@@ -1,9 +1,9 @@
 export type Predicate = (value: any) => boolean
-export type Expecter = ExpecterHash | ExpectorNode[]
+export type Expecter = ExpecterHash | ExpecterNode[]
 
-export type ExpectorNode = boolean | number | string | RegExp | Predicate | ExpecterHash
+export type ExpecterNode = boolean | number | string | RegExp | Predicate | ExpecterHash
 
-export type ExpecterHash = { [i: string]: ExpectorNode | ExpectorNode[] }
+export type ExpecterHash = { [i: string]: ExpecterNode | ExpecterNode[] }
 
 export type Struct = StructNode | StructHash | (StructNode | StructHash)[]
 
