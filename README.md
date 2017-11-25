@@ -9,24 +9,65 @@
 
 Manage and generate artifacts to test data across boundaries.
 
-## satisfy(actual, expected)
+## satisfier(expecter)
 
-`satisfy()` checks if `actual` meets the requirements specified by `expected`.
-Each property in `expected` can be a value, a `RegExp`, or a predicate function (test pass if function returns true).
+Each property in `expecter` can be a value, a `RegExp`, or a predicate function.
+
+### test(actual)
+
+test `actual` against `expecter`.
 
 ```ts
-import { satisfy } from 'satisfier'
+import { satisfier } from 'satisfier'
 
-// these passes
-satisfy({ a: 1, b: 2 }, { a: 1 })
-satisfy({ a: 'foo', b: 'boo' }, { a: /foo/ })
-satisfy({ a: 1, b, 2 }, { a: n => n === 1 })
+// these returns true
+satisfier({ a: 1 }).test({ a: 1, b: 2 })
+satisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
+satisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
 
-// these fails
-satisfy({ a: 1 }, { a: 2 })
-satisfy({ a: 1 }, { a: 1, b: 2 })
-satisfy({ a: 'foo' }, { a: /boo/ })
-satisfy({ a: 1 }, { a: () => false })
+// these returns false
+satisfier({ a: 1 }).test({ a: 2 })
+satisfier({ a: 1, b: 2 }).test({ a: 1 })
+satisfier({ a: /boo/ }).test({ a: 'foo' })
+satisfier({ a: () => false }).test({ a: 1 })
+```
+
+## exec(actual)
+
+check `actual` against `expecter` and returns the checking result.
+If `actual` meets the criteria, `null` is returned.
+
+```ts
+import { satisfier } from 'satisfier'
+
+// these returns null
+satisfier({ a: 1 }).test({ a: 1, b: 2 })
+satisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
+satisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
+
+// [{ path: ['a'], expected: 1, actual: 2}]
+satisfier({ a: 1 }).test({ a: 2 })
+
+// [{ path: ['b'], expected: 2, actual: undefined}]
+satisfier({ a: 1, b: 2 }).test({ a: 1 })
+
+// [{ path: ['a'], expected: /boo/, actual: 'foo'}]
+satisfier({ a: /boo/ }).test({ a: 'foo' })
+
+// [{ path: ['a'], expected: 'a => a === 1', actual: 2}]
+satisfier({ a: a => a === 1 }).test({ a: 2 })
+```
+
+## Satisfier
+
+This is identical to `satisfier()`, but as a class.
+
+```ts
+import { Satisfier } from 'satisfier'
+
+const s = new Satisfier({...})
+s.test(...)
+s.exec(...)
 ```
 
 ## Contribute
