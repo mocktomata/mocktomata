@@ -1,0 +1,30 @@
+language: node_js
+cache:
+  directories:
+    - ~/.npm
+notifications:
+  email: false
+node_js:
+  - '9'
+  - '8'
+  - '6'
+branches:
+  only:
+    - master
+    - assertron
+    - /^greenkeeper.*$/
+  # except:
+  #   - /^v\d+\.\d+\.\d+$/
+before_install:
+  - npm install -g greenkeeper-lockfile@1
+
+before_script: greenkeeper-lockfile-update
+
+script:
+  - npm run verify
+  - npm install coveralls && npm run coveralls
+
+after_script: greenkeeper-lockfile-upload
+
+after_success:
+  - npm run semantic-release
