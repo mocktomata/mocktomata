@@ -1,7 +1,7 @@
 {
   "name": "satisfier",
   "description": "Manage and generate artifacts to test data across boundaries",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "dist-es5/index.js",
   "module": "dist-es2015/index.js",
   "typings": "dist-es5/index.d.ts",
