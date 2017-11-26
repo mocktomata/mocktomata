@@ -1,7 +1,7 @@
 {
   "name": "satisfier",
   "description": "Manage and generate artifacts to test data across boundaries",
-  "version": "0.1.2",
+  "version": "0.0.0-development",
   "main": "dist-es5/index.js",
   "module": "dist-es2015/index.js",
   "typings": "dist-es5/index.d.ts",
@@ -60,7 +60,10 @@
   "release": {
     "analyzeCommits": {
       "releaseRules": [
-        { "breaking": true, "release": "minor"}
+        {
+          "breaking": true,
+          "release": "minor"
+        }
       ]
     }
   },
