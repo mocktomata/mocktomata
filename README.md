@@ -35,7 +35,7 @@ createSatisfier({ a: () => false }).test({ a: 1 })
 ## exec(actual)
 
 check `actual` against `expecter` and returns the checking result.
-If `actual` meets the criteria, `null` is returned.
+If `actual` meets the criteria, returns `null`.
 
 ```ts
 import { createSatisfier } from 'satisfier'
