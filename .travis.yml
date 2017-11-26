@@ -22,9 +22,9 @@ before_script: greenkeeper-lockfile-update
 
 script:
   - npm run verify
-  - npm install coveralls && npm run coveralls
 
 after_script: greenkeeper-lockfile-upload
 
 after_success:
+  - npm install coveralls && npm run coveralls
   - npm run semantic-release

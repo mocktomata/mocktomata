@@ -15,6 +15,17 @@ function assertExec(t, entry, path, expected, actual) {
   t.deepEqual(entry.actual, actual)
 }
 
+test('primitive types', t => {
+  t.is(new Satisfier(1).exec(1), null)
+  t.is(new Satisfier(true).exec(true), null)
+  t.is(new Satisfier('a').exec('a'), null)
+})
+
+test('can use generic to specify the data structure', t => {
+  t.is(new Satisfier<number>(1).exec(1), null)
+  t.is(new Satisfier<{ a: number }>({a: /1/ }).exec({a: 1}), null)
+})
+
 test('empty expecter passes everything', t => {
   t.is(new Satisfier({}).exec({}), null)
   t.is(new Satisfier({}).exec({ a: 1 }), null)

@@ -11,3 +11,9 @@ export type Struct = StructNode | StructHash | (StructNode | StructHash)[]
 export type StructNode = boolean | number | string | object
 
 export type StructHash = { [i: string]: Struct }
+
+export interface SatisfierExec {
+  path: string[],
+  expected: any,
+  actual: any
+}
