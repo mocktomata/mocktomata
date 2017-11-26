@@ -70,6 +70,23 @@ s.test(...)
 s.exec(...)
 ```
 
+## Build in predicates
+
+There are a few predicates shipped in the package for convenience.
+They all support [`tersify`](https://github.com/unional/tersify).
+This means if you use `tersify` to print the predicate (e.g. for logging purpose), you will get a terse string representing the predicates.
+
+```ts
+import { createSatisfier, isInRange } from 'satisfier'
+
+const results = createSatisfier(isInRange(1, 3)).exec(0)
+
+// prints '[1...3]'
+results[0].expected.tersify()
+// { path: [], expected: [1...3], actual: 0 }
+tersify(results[0])
+```
+
 ## Contribute
 
 ```sh
