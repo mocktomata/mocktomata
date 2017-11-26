@@ -75,9 +75,19 @@ function detectDiff(actual, expected, path: string[] = []) {
       diff.push(...detectDiff(actualValue, e, path.concat([`[${i}]`])))
     })
   }
-  else
-    Object.keys(expected).forEach(k => {
-      diff.push(...detectDiff(actual[k], expected[k], path.concat([k])))
-    })
+  else {
+    // expected is object
+    const actualType = typeof actual
+    if (actualType === 'boolean' || actualType === 'string' || actualType === 'number')
+      diff.push({
+        path,
+        expected,
+        actual
+      })
+    else
+      Object.keys(expected).forEach(k => {
+        diff.push(...detectDiff(actual[k], expected[k], path.concat([k])))
+      })
+  }
   return diff
 }

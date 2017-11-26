@@ -20,5 +20,5 @@ test('mismatch value fails', t => {
   t.false(new Satisfier({ a: () => false }).test({ a: 'b' }))
   t.false(new Satisfier([{ a: 1 }, { b: 2 }]).test([{ a: true }, { b: 'b' }, { c: 3 }]))
   t.false(new Satisfier({ a: [1, true, 'a'] }).test({ a: [1, true, 'b'] }))
-  // t.false(new Satisfier({ a: { b: 1 } }).test({ a: { b: 2 } }))
+  t.false(new Satisfier({ a: { b: 1 } }).test({ a: { b: 2 } }))
 })
