@@ -1,19 +1,7 @@
 import { test } from 'ava'
 
 import { Satisfier } from './index'
-
-function assertRegExp(t, actual, path, regex, actualValue) {
-  t.is(actual.length, 1)
-  t.deepEqual(actual[0].path, path)
-  t.is(actual[0].expected.source, regex.source)
-  t.deepEqual(actual[0].actual, actualValue)
-}
-
-function assertExec(t, entry, path, expected, actual) {
-  t.deepEqual(entry.path, path)
-  t.deepEqual(entry.expected, expected)
-  t.deepEqual(entry.actual, actual)
-}
+import { assertExec, assertRegExp } from './testUtil';
 
 test('primitive types', t => {
   t.is(new Satisfier(1).exec(1), null)
@@ -23,7 +11,7 @@ test('primitive types', t => {
 
 test('can use generic to specify the data structure', t => {
   t.is(new Satisfier<number>(1).exec(1), null)
-  t.is(new Satisfier<{ a: number }>({a: /1/ }).exec({a: 1}), null)
+  t.is(new Satisfier<{ a: number }>({ a: /1/ }).exec({ a: 1 }), null)
 })
 
 test('empty expecter passes everything', t => {

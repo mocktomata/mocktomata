@@ -41,21 +41,21 @@ If `actual` meets the criteria, `null` is returned.
 import { createSatisfier } from 'satisfier'
 
 // these returns null
-createSatisfier({ a: 1 }).test({ a: 1, b: 2 })
-createSatisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
-createSatisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
+createSatisfier({ a: 1 }).exec({ a: 1, b: 2 })
+createSatisfier({ a: /foo/ }).exec({ a: 'foo', b: 'boo' })
+createSatisfier({ a: n => n === 1 }).exec({ a: 1, b, 2 })
 
 // [{ path: ['a'], expected: 1, actual: 2}]
-createSatisfier({ a: 1 }).test({ a: 2 })
+createSatisfier({ a: 1 }).exec({ a: 2 })
 
 // [{ path: ['b'], expected: 2, actual: undefined}]
-createSatisfier({ a: 1, b: 2 }).test({ a: 1 })
+createSatisfier({ a: 1, b: 2 }).exec({ a: 1 })
 
 // [{ path: ['a'], expected: /boo/, actual: 'foo'}]
-createSatisfier({ a: /boo/ }).test({ a: 'foo' })
+createSatisfier({ a: /boo/ }).exec({ a: 'foo' })
 
 // [{ path: ['a'], expected: 'a => a === 1', actual: 2}]
-createSatisfier({ a: a => a === 1 }).test({ a: 2 })
+createSatisfier({ a: a => a === 1 }).exec({ a: 2 })
 ```
 
 ## Satisfier
