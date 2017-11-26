@@ -6,7 +6,10 @@ import { Struct, Expecter, SatisfierExec } from './interfaces'
  * creates a satisfier
  * @param expected All properties can be a value which will be compared to the same property in `actual`, RegExp, or a predicate function that will be used to check against the property.
  */
-export function createSatisfier<T extends Struct>(expected: Expecter<T>) {
+export function createSatisfier<T extends Struct>(expected: Expecter<T>): {
+  test: (actual: T) => boolean;
+  exec: (actual: T) => SatisfierExec[] | null;
+} {
   function test(actual: T) {
     return exec(actual) === null
   }

@@ -2,7 +2,10 @@ import { createSatisfier } from './createSatisfier'
 import { Expecter, Struct, SatisfierExec } from './interfaces'
 
 export class Satisfier<T extends Struct> {
-  private satisfier
+  private satisfier: {
+    test: (actual: T) => boolean;
+    exec: (actual: T) => SatisfierExec[] | null;
+  }
   /**
    * creates a Satisfier instance
    * @param expected All properties can be a value which will be compared to the same property in `actual`, RegExp, or a predicate function that will be used to check against the property.
@@ -11,7 +14,7 @@ export class Satisfier<T extends Struct> {
     this.satisfier = createSatisfier(expected)
   }
 
-  test(actual): boolean {
+  test(actual: T): boolean {
     return this.satisfier.test(actual)
   }
   /**
