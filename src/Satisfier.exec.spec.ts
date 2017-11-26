@@ -3,7 +3,7 @@ import { test } from 'ava'
 import { Satisfier } from './index'
 import { assertExec, assertRegExp } from './testUtil';
 
-test('primitive types', t => {
+test('primitive types without specifing generic will work without issue.', t => {
   t.is(new Satisfier(1).exec(1), null)
   t.is(new Satisfier(true).exec(true), null)
   t.is(new Satisfier('a').exec('a'), null)
@@ -24,6 +24,8 @@ test('empty object expecter passes all objects', t => {
 
 test('empty object expecter fails primitive', t => {
   assertExec(t, new Satisfier({}).exec(1)![0], [], {}, 1)
+  assertExec(t, new Satisfier({}).exec(true)![0], [], {}, true)
+  assertExec(t, new Satisfier({}).exec('a')![0], [], {}, 'a')
 })
 
 test('mismatch value gets path, expected, and actual', t => {
@@ -84,7 +86,7 @@ test('passing predicate gets null', t => {
 test('failing predicate', t => {
   const actual = new Satisfier({ a: function () { return false } }).exec({ a: 1 })!
   t.is(actual.length, 1)
-  assertExec(t, actual[0], ['a'], 'function () { return false; }', 1)
+  assertExec(t, actual[0], ['a'], function () { return false; }, 1)
 })
 
 test('against each element in array', t => {

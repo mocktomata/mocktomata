@@ -76,11 +76,10 @@
     "nyc": "^11.3.0",
     "rimraf": "^2.6.2",
     "semantic-release": "^8.2.0",
+    "terse-format": "^0.1.0",
     "tslint": "^5.8.0",
     "tslint-config-unional": "^0.8.0",
     "typescript": "^2.6.1"
   },
-  "dependencies": {
-    "function-formatter": "^0.1.0"
-  }
+  "dependencies": {}
 }
