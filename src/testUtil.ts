@@ -1,4 +1,4 @@
-import { formatFunction } from 'terse-format'
+import { tersify } from 'tersify'
 
 export function assertRegExp(t, actual, path, regex, actualValue) {
   t.is(actual.length, 1)
@@ -10,7 +10,7 @@ export function assertRegExp(t, actual, path, regex, actualValue) {
 export function assertExec(t, entry, path, expected, actual) {
   t.deepEqual(entry.path, path)
   if (typeof entry.expected === 'function')
-    t.is(formatFunction(entry.expected, { maxLength: Infinity }), formatFunction(expected, { maxLength: Infinity }))
+    t.is(tersify(entry.expected), tersify(expected))
   else
     t.deepEqual(entry.expected, expected)
   t.deepEqual(entry.actual, actual)

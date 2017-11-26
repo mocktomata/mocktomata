@@ -1,4 +1,8 @@
+import { Tersible } from 'tersify'
+
 export type Predicate = (value: any) => boolean
+
+export type TersiblePredicate = Tersible<Predicate>
 
 export type Expecter<T extends Struct = Struct> = Partial<ExpecterHash<T>> | Partial<ExpecterHash<T>>[]
 export type ExpecterNode<T extends Struct = Struct> = undefined | boolean | number | string | RegExp | Predicate | Partial<ExpecterHash<T>>

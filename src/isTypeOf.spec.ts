@@ -16,6 +16,6 @@ test('check type of property', t => {
   t.true(createSatisfier({ a: isTypeOf('string') }).test({ a: 'a' }))
 })
 
-test('nicer toString()', t => {
-  t.is(isTypeOf('number').toString(), 'typeof number')
+test('tersify()', t => {
+  t.is(isTypeOf('number').tersify(), 'typeof number')
 })

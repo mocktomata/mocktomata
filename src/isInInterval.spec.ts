@@ -37,9 +37,9 @@ test('right closed', t => {
   t.false(createSatisfier(isInRightClosedInterval(1, 3)).test(4))
 })
 
-test('nicer toString()', t => {
-  t.is(isInOpenInterval(1, 3).toString(), '(1...3)')
-  t.is(isInClosedInterval(1, 3).toString(), '[1...3]')
-  t.is(isInLeftClosedInterval(1, 3).toString(), '[1...3)')
-  t.is(isInRightClosedInterval(1, 3).toString(), '(1...3]')
+test('tersify()', t => {
+  t.is(isInOpenInterval(1, 3).tersify(), '(1...3)')
+  t.is(isInClosedInterval(1, 3).tersify(), '[1...3]')
+  t.is(isInLeftClosedInterval(1, 3).tersify(), '[1...3)')
+  t.is(isInRightClosedInterval(1, 3).tersify(), '(1...3]')
 })
