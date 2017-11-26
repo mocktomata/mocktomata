@@ -9,7 +9,7 @@
 
 Manage and generate artifacts to test data across boundaries.
 
-## satisfier(expecter)
+## createSatisfier(expecter)
 
 Each property in `expecter` can be a value, a `RegExp`, or a predicate function.
 
@@ -18,18 +18,18 @@ Each property in `expecter` can be a value, a `RegExp`, or a predicate function.
 test `actual` against `expecter`.
 
 ```ts
-import { satisfier } from 'satisfier'
+import { createSatisfier } from 'satisfier'
 
 // these returns true
-satisfier({ a: 1 }).test({ a: 1, b: 2 })
-satisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
-satisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
+createSatisfier({ a: 1 }).test({ a: 1, b: 2 })
+createSatisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
+createSatisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
 
 // these returns false
-satisfier({ a: 1 }).test({ a: 2 })
-satisfier({ a: 1, b: 2 }).test({ a: 1 })
-satisfier({ a: /boo/ }).test({ a: 'foo' })
-satisfier({ a: () => false }).test({ a: 1 })
+createSatisfier({ a: 1 }).test({ a: 2 })
+createSatisfier({ a: 1, b: 2 }).test({ a: 1 })
+createSatisfier({ a: /boo/ }).test({ a: 'foo' })
+createSatisfier({ a: () => false }).test({ a: 1 })
 ```
 
 ## exec(actual)
@@ -38,29 +38,29 @@ check `actual` against `expecter` and returns the checking result.
 If `actual` meets the criteria, `null` is returned.
 
 ```ts
-import { satisfier } from 'satisfier'
+import { createSatisfier } from 'satisfier'
 
 // these returns null
-satisfier({ a: 1 }).test({ a: 1, b: 2 })
-satisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
-satisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
+createSatisfier({ a: 1 }).test({ a: 1, b: 2 })
+createSatisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
+createSatisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
 
 // [{ path: ['a'], expected: 1, actual: 2}]
-satisfier({ a: 1 }).test({ a: 2 })
+createSatisfier({ a: 1 }).test({ a: 2 })
 
 // [{ path: ['b'], expected: 2, actual: undefined}]
-satisfier({ a: 1, b: 2 }).test({ a: 1 })
+createSatisfier({ a: 1, b: 2 }).test({ a: 1 })
 
 // [{ path: ['a'], expected: /boo/, actual: 'foo'}]
-satisfier({ a: /boo/ }).test({ a: 'foo' })
+createSatisfier({ a: /boo/ }).test({ a: 'foo' })
 
 // [{ path: ['a'], expected: 'a => a === 1', actual: 2}]
-satisfier({ a: a => a === 1 }).test({ a: 2 })
+createSatisfier({ a: a => a === 1 }).test({ a: 2 })
 ```
 
 ## Satisfier
 
-This is identical to `satisfier()`, but as a class.
+This is identical to `createSatisfier()`, but as a class.
 
 ```ts
 import { Satisfier } from 'satisfier'
