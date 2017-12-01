@@ -81,6 +81,6 @@
     "typescript": "^2.6.1"
   },
   "dependencies": {
-    "tersify": "^0.2.2"
+    "tersify": "^0.3.0"
   }
 }
