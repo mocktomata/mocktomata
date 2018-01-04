@@ -1,7 +1,6 @@
 import { test } from 'ava'
 
-import { spy } from './spy'
-
+import { spy } from './index'
 
 function increment(x: number) { return ++x }
 
