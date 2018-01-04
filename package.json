@@ -56,16 +56,6 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
-  "release": {
-    "analyzeCommits": {
-      "releaseRules": [
-        {
-          "breaking": true,
-          "release": "minor"
-        }
-      ]
-    }
-  },
   "devDependencies": {
     "@types/node": "^8.0.47",
     "ava": "^0.24.0",
