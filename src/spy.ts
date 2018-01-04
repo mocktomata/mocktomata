@@ -9,7 +9,7 @@ export interface CallRecord {
   error?: Error
 }
 
-export function spy<T extends any>(fn: T): T & Spy {
+export function spy<T extends Function>(fn: T): T & Spy {
   const calls: CallRecord[] = []
   const spiedFn: T = function (...args) {
     const spiedArgs = args.map(a => {
