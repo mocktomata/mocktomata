@@ -75,7 +75,7 @@
     "eslint-config-unional": "^0.2.3",
     "nyc": "^11.3.0",
     "rimraf": "^2.6.2",
-    "semantic-release": "^8.2.0",
+    "semantic-release": "^11.0.2",
     "tslint": "^5.8.0",
     "tslint-config-unional": "^0.8.0",
     "typescript": "^2.6.1"
