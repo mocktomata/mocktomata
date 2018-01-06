@@ -1,6 +1,6 @@
 import { test } from 'ava'
 
-import { spy } from './index'
+import { spy, spyAsync } from './index'
 
 function increment(x: number) { return ++x }
 
@@ -51,4 +51,39 @@ test('callback are spied', t => {
   const cr = actual.calls[0]
   t.is(cr.arguments[0], 1)
   t.is(cr.arguments[1].calls[0].arguments[0], 1)
+})
+
+const resolve = x => Promise.resolve(x)
+
+test('then() will receive result from promise', t => {
+  const spied = spyAsync(resolve)
+  // tslint:disable-next-line
+  spied(1)
+  return spied.calls[0].then(x => t.is(x, 1))
+})
+
+test('result from promise can be retrieved from await on the call', async t => {
+  const spied = spyAsync(resolve)
+  // tslint:disable-next-line
+  spied(1)
+  t.is(await spied.calls[0], 1)
+})
+
+const reject = x => Promise.reject(x)
+
+test('throws() will receive error thrown by promise', t => {
+  const spied = spyAsync(reject)
+  // tslint:disable-next-line
+  spied(1)
+  return spied.calls[0].throws(x => t.is(x, 1))
+})
+
+test('error result is received on catch block', async t => {
+  const spied = spyAsync(reject)
+  try {
+    await spied(1)
+  }
+  catch (x) {
+    t.is(x, 1)
+  }
 })

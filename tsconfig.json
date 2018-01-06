@@ -5,6 +5,11 @@
   },
   "buildOnSave": false,
   "compileOnSave": false,
+  "compilerOptions": {
+    "plugins": [
+      { "name": "tslint-language-service"}
+    ]
+  },
   "include": [
     "src"
   ]
