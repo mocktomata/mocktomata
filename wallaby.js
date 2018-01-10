@@ -14,6 +14,10 @@ module.exports = function (wallaby) {
     compilers: {
       'src/**/*.ts': wallaby.compilers.typeScript({ module: 'commonjs' }),
     },
+    hints: {
+      allowIgnoringCoverageInTests: true,
+      ignoreCoverage: /istanbul ignore next/
+    },
     testFramework: 'ava'
   }
 }
