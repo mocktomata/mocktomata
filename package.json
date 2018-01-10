@@ -1,7 +1,7 @@
 {
   "name": "b-spec",
   "description": "Code Boundary Specification System",
-  "version": "0.0.0-development",
+  "version": "0.0.0",
   "main": "dist-es5/index.js",
   "module": "dist-es2015/index.js",
   "typings": "dist-es5/index.d.ts",
