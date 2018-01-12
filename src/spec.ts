@@ -1,47 +1,30 @@
 import { satisfy } from 'assertron'
-import { Expectation, Spy, spy, CallRecord } from 'satisfier'
+import { Expectation, spy, CallRecord } from 'satisfier'
 import { unpartial } from 'unpartial'
 
+import { Spec, SpecOptions } from './interfaces'
+import { writers } from './writers'
 
-export interface SpecOptions {
-  /**
-   * ID of the spec.
-   */
-  id: string
-  description: string
-  /**
-   * Scenario that this spec belongs to.
-   * Scenario is used by global config to change the mode of the spec,
-   * so that certain scenario can be changed to `verify` to test some real call in certain context (scenario),
-   * while others remain in `replay` or `verify` mode.
-   */
-  scenario: string
-  /**
-   * Mode of the spec operating in.
-   * `verify`: making real calls and verify in `satisfy()`.
-   * `save`: making real calls and save the result in file.
-   * `replay`: replay calls from file.
-   */
-  mode: 'verify' | 'save' | 'replay'
-}
+const defaultSpecOptions = { mode: 'verify' } as SpecOptions
 
-export interface Spec<T extends Function> extends Spy<T> {
-  satisfy(expectation: Expectation): Promise<void>
-}
-
-export function spec<T extends Function>(fn: T, options?: Partial<SpecOptions>): Spec<T> {
-  const opt = unpartial({ mode: 'verify' }, options)
-  switch (opt.mode) {
-    case 'verify':
-    default:
-      const spied = spy(fn)
-      return Object.assign(spied, {
-        satisfy(expectation: Expectation<CallRecord[]>) {
-          return Promise.all(spied.calls.map(call => call.getCallRecord()))
-            .then(records => {
-              satisfy(records, expectation)
+export function spec<T extends Function>(fn: T, options?: SpecOptions): Spec<T> {
+  const opt = unpartial(defaultSpecOptions, options)
+  const subject = opt.mode === 'replay' ? spy(fn) /*player(fn)*/ : spy(fn)
+  return Object.assign(subject, {
+    satisfy(expectation: Expectation<CallRecord[]>): Promise<void> {
+      return Promise.all(subject.calls.map(call => call.getCallRecord()))
+        .then(records => {
+          satisfy(records, expectation)
+          if (opt.mode === 'save') {
+            if (!opt.id)
+              throw new Error('Cannot save spec without options.id.')
+            const write = writers.getSpecWriter()
+            return write(opt.id, opt.description, {
+              expectation,
+              records
             })
-        }
-      })
-  }
+          }
+        })
+    }
+  })
 }
