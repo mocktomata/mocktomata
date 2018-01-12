@@ -1,7 +1,7 @@
 {
   "name": "komondor",
   "description": "Code Boundary Specification System",
-  "version": "0.0.0",
+  "version": "0.0.0-development",
   "main": "dist-es5/index.js",
   "module": "dist-es2015/index.js",
   "typings": "dist-es5/index.d.ts",
@@ -15,6 +15,7 @@
     "build-es5": "tsc -p tsconfig.es5.json",
     "build-es2015": "tsc -p tsconfig.es2015.json",
     "clean": "rimraf dist dist-es5 && rimraf dist-es2015",
+    "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
     "coverage": "nyc npm test",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "dependency-check": "echo 'no dependency check yet'",
@@ -25,7 +26,8 @@
     "test": "npm run clean && tsc && ava",
     "verify": "npm run lint && npm run coverage && npm run build && npm run dependency-check",
     "watch": "npm run clean && node scripts/watch.js",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "travis-deploy-once": "travis-deploy-once"
   },
   "license": "MIT",
   "repository": {
@@ -73,7 +75,8 @@
     "semantic-release": "^11.2.0",
     "tslint": "^5.9.1",
     "tslint-config-unional": "^0.9.0",
-    "typescript": "^2.6.2"
+    "typescript": "^2.6.2",
+    "travis-deploy-once": "^4.3.0"
   },
   "dependencies": {
     "assertron": "^3.3.9",
