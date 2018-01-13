@@ -1,6 +1,7 @@
 import camelCase = require('camel-case')
 import fs = require('fs')
 import path = require('path')
+import { tersify } from 'tersify'
 
 import { SPECS_FOLDER } from './constants'
 import { SpecRecord } from './interfaces'
@@ -10,9 +11,11 @@ export function writeSpec(id: string, description: string | undefined, specRecor
     try {
       if (!fs.existsSync(SPECS_FOLDER))
         createFolders(SPECS_FOLDER)
+      const { expectation, records } = specRecord
       fs.writeFileSync(path.resolve(SPECS_FOLDER, `${camelCase(id)}.json`), JSON.stringify({
         description,
-        spec: specRecord
+        expectation: tersify(expectation, { maxLength: Infinity }),
+        records
       }))
       a()
     }
