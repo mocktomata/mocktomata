@@ -84,7 +84,7 @@
     "get-port": "^3.2.0",
     "lokijs": "^1.5.1",
     "parse-function": "^5.0.23",
-    "satisfier": "^2.1.4",
+    "satisfier": "^3.1.0",
     "tersify": "^1.1.1",
     "unpartial": "^0.4.1"
   }
