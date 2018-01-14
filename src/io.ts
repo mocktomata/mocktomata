@@ -14,7 +14,7 @@ import {
  * Depends on config, it will return different write funcitons,
  * such as file-base, database, or remote host
  */
-export const writers = {
+export const io = {
   readSpec(id: string) {
     return fileIO.readSpec(id)
   },

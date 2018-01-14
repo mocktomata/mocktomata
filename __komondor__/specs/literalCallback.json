@@ -1,0 +1,1 @@
+{"expectation":"{ asyncOutput: [3] }","records":[{"inputs":[{"data":2,"error":{},"success":{}}],"callbackPath":[0,"success"],"asyncOutput":[3]}]}

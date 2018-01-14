@@ -57,7 +57,6 @@ export const literalCallback = {
   }
 }
 
-
 export const promise = {
   increment(remote, x) {
     return remote('increment', x)
@@ -67,5 +66,17 @@ export const promise = {
   },
   fail() {
     return Promise.reject({ message: 'fail' })
+  }
+}
+
+export const synchronous = {
+  increment(remote, x) {
+    return remote('increment', x)
+  },
+  success(_url, x) {
+    return x + 1
+  },
+  fail() {
+    throw new Error('fail')
   }
 }

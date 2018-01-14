@@ -11,25 +11,42 @@
 [![Visual Studio Code][vscode-image]][vscode-url]
 [![Wallaby.js][wallaby-image]][wallaby-url]
 
-Code Boundary Specification Library.
+`komondor` is your friendly guard dog to write test across service boundary.
 
-## spy(fn)
+Service boundary is defined as a boundary between two systems that communicate with each other using data structures and primitive types.
 
-You can use `spy(fn)` to spy on function and record the calls.
-It support 3 main case of async functions.
-They are all converted to Promise syntax so you can get the result using `call[n].then(...)`
+Two common forms of service boundary are ajax call and rpc.
 
-```ts
-import { spy } from 'satisfier'
+When writing test across service boundary,
+one challenge is keeping the stub data you use in your unit test current.
 
-spy((a, b, cb) => { cb(a + 1, b - 1) })
-spy((options) => { options.success() })
-const spied = spy((a) => Promise.resolve(a + 1))
-await spied.fn(1)
-const callRecord = spied.calls[0]
-t.is(callRecord.arguments[0], 1)
-callRecord.then(result => t.is(result, 2))
-```
+Making boundary calls are expensive.
+The setup required to make the remote service to return the specific response you are looking for is expensive and time consuming,
+we often have to create stub data and use them in the test.
+
+But these stub data can create false positive when the remove service is updated.
+
+Since we run our unit test in an enclosed enviornment using the stub data,
+it is not possible to detect the problem quickly,
+and have to resort to system tests.
+
+This library is designed to tickle that problem.
+
+## spec(fn, options): Promise<Spec<T>>
+
+To write test for a service boundary,
+you will do a test waltz:
+
+- create a test that makes real calls
+- save the call result
+- replay the call result
+
+
+## Todo
+
+- Complete README
+- Add global config
+- Add scenario
 
 ## Contribute
 

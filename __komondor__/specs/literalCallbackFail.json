@@ -1,0 +1,1 @@
+{"expectation":"{ asyncOutput: [undefined, undefined, { message: 'fail' }] }","records":[{"inputs":[{"data":2,"error":{},"success":{}}],"callbackPath":[0,"error"],"asyncOutput":[null,"failStatus",{"message":"fail"}]}]}

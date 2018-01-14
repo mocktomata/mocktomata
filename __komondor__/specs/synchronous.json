@@ -1,0 +1,1 @@
+{"expectation":"{ output: 3 }","records":[{"inputs":["increment",2],"output":3}]}

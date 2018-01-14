@@ -18,7 +18,7 @@ function getFollowers(github: GitHub, username: string) {
 test.skip('getting response', async t => {
   const github = createGitHubTest()
   // suite
-  const specs = spec(github.users.getFollowersForUser, { mode: 'replay', id: 'abc' })
+  const specs = await spec(github.users.getFollowersForUser, { mode: 'replay', id: 'abc' })
   github.users.getFollowersForUser = specs.fn
   await getFollowers(github, 'unional')
   await specs.satisfy({
