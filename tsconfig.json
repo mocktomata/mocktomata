@@ -7,10 +7,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "plugins": [
-      { "name": "tslint-language-service"}
+      {
+        "name": "tslint-language-service"
+      }
     ]
   },
   "include": [
-    "src/spec.github.spec.ts"
+    "src/spec.github.spec.ts",
+    "src/spy.spec.ts"
   ]
 }

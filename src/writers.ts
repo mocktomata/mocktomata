@@ -3,7 +3,7 @@ import {
   CallRecord
 } from 'satisfier'
 
-import * as fileWriters from './fileWriters'
+import * as fileIO from './fileIO'
 import {
   // @ts-ignore
   SpecRecord
@@ -15,7 +15,10 @@ import {
  * such as file-base, database, or remote host
  */
 export const writers = {
+  readSpec(id: string) {
+    return fileIO.readSpec(id)
+  },
   getSpecWriter() {
-    return fileWriters.writeSpec
+    return fileIO.writeSpec
   }
 }

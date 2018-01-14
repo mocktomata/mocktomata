@@ -13,6 +13,24 @@
 
 Code Boundary Specification Library.
 
+## spy(fn)
+
+You can use `spy(fn)` to spy on function and record the calls.
+It support 3 main case of async functions.
+They are all converted to Promise syntax so you can get the result using `call[n].then(...)`
+
+```ts
+import { spy } from 'satisfier'
+
+spy((a, b, cb) => { cb(a + 1, b - 1) })
+spy((options) => { options.success() })
+const spied = spy((a) => Promise.resolve(a + 1))
+await spied.fn(1)
+const callRecord = spied.calls[0]
+t.is(callRecord.arguments[0], 1)
+callRecord.then(result => t.is(result, 2))
+```
+
 ## Contribute
 
 ```sh

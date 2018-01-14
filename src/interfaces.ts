@@ -1,4 +1,7 @@
-import { CallRecord, Expectation, Spy } from 'satisfier'
+import { Expectation } from 'satisfier'
+
+import { CallRecord } from './CallRecord'
+import { Spy } from './spy'
 
 export interface ScenarioOptions {
   /**
@@ -36,5 +39,8 @@ export interface SpecRecord {
 
 
 export interface Spec<T extends Function> extends Spy<T> {
+  /**
+   * @param expectation Must be pure.
+   */
   satisfy(expectation: Expectation): Promise<void>
 }
