@@ -25,13 +25,11 @@ export const fetch = {
       })
     })
   },
-  success(url, options, callback) {
-    if (url === 'remoteAdd')
-      callback(null, options.x + options.y)
+  success(_url, options, callback) {
+    callback(null, options.x + options.y)
   },
-  fail(url, _options, callback) {
-    if (url === 'remoteAdd')
-      callback({ message: 'fail' }, null)
+  fail(_url, _options, callback) {
+    callback({ message: 'fail' }, null)
   }
 }
 

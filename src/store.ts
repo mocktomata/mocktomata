@@ -6,9 +6,9 @@ export let store = {
   },
   set mode(value) {
     if (mode !== value) {
-      store.specControls.forEach(c => {
-        c.options.mode = value
-      })
+      // store.specControls.forEach(c => {
+      //   c.options.mode = value
+      // })
       mode = value
     }
   },

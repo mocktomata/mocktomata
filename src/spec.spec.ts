@@ -312,4 +312,70 @@ test('synchronous replay', async t => {
   t.is(actual, 3)
 })
 
+test('synchronous fail verify', async t => {
+  const speced = await spec(synchronous.fail)
+
+  t.throws(() => synchronous.increment(speced.fn, 2), 'fail')
+
+  await speced.satisfy({
+    error: { message: 'fail' }
+  })
+})
+
+test('synchronous fail save', async t => {
+  const speced = await spec(synchronous.fail, { id: 'synchronous fail', mode: 'save' })
+
+  t.throws(() => synchronous.increment(speced.fn, 2), 'fail')
+
+  await speced.satisfy({
+    error: { message: 'fail' }
+  })
+})
+
+test('synchronous fail replay', async t => {
+  const speced = await spec(synchronous.fail, { id: 'synchronous fail', mode: 'replay' })
+
+  t.throws(() => synchronous.increment(speced.fn, 2), 'fail')
+
+  await speced.satisfy({
+    error: { message: 'fail' }
+  })
+})
+
 //#endregion
+
+test('replay on not saved spec will spy', async t => {
+  const speced = await spec(synchronous.fail, { id: 'unknown', mode: 'replay' })
+
+  t.throws(() => synchronous.increment(speced.fn, 2), 'fail')
+
+  await speced.satisfy({
+    error: { message: 'fail' }
+  })
+})
+
+
+test('replay on not saved input will spy', async t => {
+  const speced = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+
+  const actual = await simpleCallback.increment(speced.fn, 4)
+
+  t.is(speced.calls.length, 1)
+  await speced.satisfy({
+    asyncOutput: [null, 5]
+  })
+  t.is(actual, 5)
+
+})
+
+test('replay on not saved input will spy', async t => {
+  const speced = await spec(simpleCallback.fail, { id: 'simpleCallback', mode: 'replay' })
+  await simpleCallback.increment(speced.fn, 8)
+    .then(() => t.fail)
+    .catch(() => {
+      return speced.satisfy({
+        asyncOutput: [{ message: 'fail' }, null]
+      })
+    })
+  t.pass()
+})

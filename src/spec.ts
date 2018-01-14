@@ -21,6 +21,7 @@ export async function spec<T extends Function>(fn: T, options?: SpecOptions): Pr
           createSatisfier(expectation).exec(records)
           satisfy(records, expectation)
           if (opt.mode === 'save') {
+            // istanbul ignore next
             if (!opt.id)
               throw new Error('Cannot save spec without options.id.')
             const write = io.getSpecWriter()

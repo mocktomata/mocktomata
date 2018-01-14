@@ -41,7 +41,6 @@ you will do a test waltz:
 - save the call result
 - replay the call result
 
-
 ## Todo
 
 - Complete README

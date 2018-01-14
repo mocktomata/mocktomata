@@ -40,7 +40,6 @@ export function createCallEntryCreator(args: any[]) {
         return CallRecord.create(record)
       }, asyncError => {
         const record: any = { inputs, output, error, asyncError }
-        if (callbackPath) record.callbackPath = callbackPath
         return CallRecord.create(record)
       })
     }

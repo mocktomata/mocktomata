@@ -26,8 +26,7 @@ export function spyOnCallback(fn, callbackPath) {
 /**
  * Spy on function that uses callback.
  */
-export function spy<T extends Function>(fn: T): Spy<T> {
-  const calls: CallEntry[] = []
+export function spy<T extends Function>(fn: T, calls: CallEntry[] = []): Spy<T> {
   const spied: T = function (...args) {
     const creator = createCallEntryCreator(args)
     calls.push(creator.callEntry)

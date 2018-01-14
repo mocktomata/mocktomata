@@ -27,9 +27,17 @@ function getFilePath(id: string) {
 export function writeSpec(id: string, description: string | undefined, specRecord: SpecRecord) {
   return new Promise<void>((a, r) => {
     try {
+      // istanbul ignore next
       if (!fs.existsSync(SPECS_FOLDER))
         createFolders(SPECS_FOLDER)
       const { expectation, records } = specRecord
+      records.forEach(r => {
+        // error.message is not enumerable.
+        // JSON.stringify() will get `{}`
+        if (r.error) {
+          r.error = { message: r.error.message, ...r.error }
+        }
+      })
       fs.writeFileSync(getFilePath(id), JSON.stringify({
         description,
         expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
@@ -38,11 +46,13 @@ export function writeSpec(id: string, description: string | undefined, specRecor
       a()
     }
     catch (err) {
+      // istanbul ignore next
       r(err)
     }
   })
 }
 
+// istanbul ignore next
 function createFolders(location: string) {
   const sep = path.sep;
   const initDir = path.isAbsolute(location) ? sep : '';
