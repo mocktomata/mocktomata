@@ -1,18 +1,16 @@
-import { SpecControl } from './private';
-
-let replay = false
+let mode = 'verify'
 
 export let store = {
-  get replay() {
-    return replay
+  get mode() {
+    return mode
   },
-  set replay(value) {
-    if (replay !== value) {
+  set mode(value) {
+    if (mode !== value) {
       store.specControls.forEach(c => {
-        c.options.replay = value
+        c.options.mode = value
       })
-      replay = value
+      mode = value
     }
   },
-  specControls: [] as SpecControl[]
+  specControls: [] as any[]
 }

@@ -1,5 +1,4 @@
-import { CallEntry } from './CallEntry'
-import { createCallRecordCreator } from './createCallRecordCreator'
+import { CallEntry, createCallEntryCreator } from './CallEntry'
 
 export interface Spy<T> {
   calls: ReadonlyArray<CallEntry>,
@@ -9,7 +8,7 @@ export interface Spy<T> {
   fn: T
 }
 
-export function spyOnCallback(fn, key) {
+export function spyOnCallback(fn, callbackPath) {
   let callback
   return Object.assign(
     (...args) => {
@@ -17,7 +16,7 @@ export function spyOnCallback(fn, key) {
       callback(...args)
       fn(...args)
     }, {
-      key,
+      callbackPath,
       called(cb) {
         callback = cb
       }
@@ -30,11 +29,11 @@ export function spyOnCallback(fn, key) {
 export function spy<T extends Function>(fn: T): Spy<T> {
   const calls: CallEntry[] = []
   const spied: T = function (...args) {
-    const creator = createCallRecordCreator(args)
+    const creator = createCallEntryCreator(args)
     calls.push(creator.callEntry)
 
     const spiedCallbacks: any[] = []
-    const spiedArgs = args.map(arg => {
+    const spiedArgs = args.map((arg, index) => {
       if (typeof arg === 'function') {
         const spied = spyOnCallback(arg, undefined)
         spiedCallbacks.push(spied)
@@ -43,7 +42,7 @@ export function spy<T extends Function>(fn: T): Spy<T> {
       if (typeof arg === 'object') {
         Object.keys(arg).forEach(key => {
           if (typeof arg[key] === 'function') {
-            const spied = spyOnCallback(arg[key], key)
+            const spied = spyOnCallback(arg[key], [index, key])
             spiedCallbacks.push(spied)
             arg[key] = spied
           }
@@ -55,7 +54,7 @@ export function spy<T extends Function>(fn: T): Spy<T> {
       new Promise(a => {
         spiedCallbacks.forEach(s => {
           s.called((...results) => {
-            a({ results, key: s.key })
+            a({ results, callbackPath: s.callbackPath })
           })
         })
       }).then(creator.resolve, creator.reject)

@@ -13,7 +13,6 @@
     ]
   },
   "include": [
-    "src/spec.github.spec.ts",
-    "src/spy.spec.ts"
+    "src"
   ]
 }

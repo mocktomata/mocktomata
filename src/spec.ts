@@ -1,17 +1,25 @@
 import { satisfy } from 'assertron'
-import { Expectation } from 'satisfier'
+import { Expectation, createSatisfier } from 'satisfier'
 import { unpartial } from 'unpartial'
 
-import { CallEntry } from './CallEntry'
+import { CallEntry, createCallEntryCreator } from './CallEntry'
 import { CallRecord } from './CallRecord'
 import { Spec, SpecOptions } from './interfaces'
 import { spy, Spy } from './spy'
 import { writers } from './writers'
-import { createCallRecordCreator } from './createCallRecordCreator';
 
 const defaultSpecOptions = { mode: 'verify' } as SpecOptions
 function inputMatches(_, _b) {
   return true
+}
+
+function locateCallback(args, invokedCallback) {
+  if (invokedCallback) {
+    return invokedCallback.reduce((p, v) => {
+      return p[v]
+    }, args)
+  }
+  return args.find(arg => typeof arg === 'function')
 }
 
 export function stub<T extends Function>(fn: T, id): Spy<T> {
@@ -20,56 +28,31 @@ export function stub<T extends Function>(fn: T, id): Spy<T> {
   let spied: Spy<T>
   const stub = function (...args) {
     // tslint:disable-next-line
-    reading
+    return reading
       .then(specRecord => {
         const record = specRecord.records.find(r => inputMatches(r, args))
         if (record) {
-          console.log(args)
-          const creator = createCallRecordCreator(args)
+          const creator = createCallEntryCreator(args)
           calls.push(creator.callEntry)
 
           if (record.asyncOutput) {
-            const callback = args.find(arg => typeof arg === 'function')
-            callback(...record.asyncOutput)
-            creator.resolve({ results: record.asyncOutput, key: record.invokedCallback })
+            const callback = locateCallback(args, record.callbackPath)
+            if (callback) {
+              callback(...record.asyncOutput)
+              creator.resolve({ results: record.asyncOutput, key: record.callbackPath })
+            }
+            else {
+              creator.resolve({ results: record.asyncOutput })
+              return record.asyncOutput
+            }
           }
           if (record.asyncError) {
             creator.reject(record.asyncError)
+            throw record.asyncError
           }
           if (record.error)
             throw new Error(record.error.message)
-          // todo: promise...
           return record.output
-
-          // const spiedCallbacks: any[] = []
-          // const spiedArgs = args.map(arg => {
-          //   if (typeof arg === 'function') {
-          //     const spied = spyOnCallback(arg, undefined)
-          //     spiedCallbacks.push(spied)
-          //     return spied
-          //   }
-          //   if (typeof arg === 'object') {
-          //     Object.keys(arg).forEach(key => {
-          //       if (typeof arg[key] === 'function') {
-          //         const spied = spyOnCallback(arg[key], key)
-          //         spiedCallbacks.push(spied)
-          //         arg[key] = spied
-          //       }
-          //     })
-          //   }
-          //   return arg
-          // })
-          // if (spiedCallbacks.length > 0) {
-          //   new Promise(a => {
-          //     spiedCallbacks.forEach(s => {
-          //       s.called((...results) => {
-          //         a({ results, key: s.key })
-          //       })
-          //     })
-          //   }).then(creator.resolve, creator.reject)
-
-          //   return fn(...spiedArgs)
-          // }
         }
         else {
           if (!spied) {
@@ -95,6 +78,7 @@ export function spec<T extends Function>(fn: T, options?: SpecOptions): Spec<T> 
     satisfy(expectation: Expectation<CallRecord[]>): Promise<void> {
       return Promise.all(subject.calls.map(call => call.getCallRecord()))
         .then(records => {
+          createSatisfier(expectation).exec(records)
           satisfy(records, expectation)
           if (opt.mode === 'save') {
             if (!opt.id)

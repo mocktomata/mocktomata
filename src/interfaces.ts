@@ -3,6 +3,10 @@ import { Expectation } from 'satisfier'
 import { CallRecord } from './CallRecord'
 import { Spy } from './spy'
 
+export interface KomondorOptions {
+  mode: 'verify' | 'save' | 'replay'
+}
+
 export interface ScenarioOptions {
   /**
    * ID of the Scenario.

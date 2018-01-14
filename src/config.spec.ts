@@ -8,7 +8,7 @@ test.afterEach(() => {
 })
 
 test('enable replay', t => {
-  t.false(store.replay)
-  config({ replay: true })
-  t.true(store.replay)
+  t.is(store.mode, 'verify')
+  config({ mode: 'replay' })
+  t.is(store.mode, 'replay')
 })

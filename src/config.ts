@@ -1,8 +1,8 @@
 import { store } from './store'
-import { BoundSpecOptions } from './interfaces'
+import { KomondorOptions } from './interfaces'
 import { unpartial } from 'unpartial';
 
-export function config(givenOptions: Partial<BoundSpecOptions>) {
-  const options = unpartial({ replay: false }, givenOptions)
-  store.replay = options.replay
+export function config(givenOptions: Partial<KomondorOptions>) {
+  const options = unpartial({ mode: 'verify' }, givenOptions)
+  store.mode = options.mode
 }

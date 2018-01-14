@@ -15,7 +15,7 @@ export interface CallRecordData {
    * Name of the invoked callback on object literal input.
    * This property only exists for object literal input.
    */
-  invokedCallback?: string,
+  callbackPath?: (string | number)[],
   asyncOutput?: any,
   asyncError?: any
 }
@@ -24,7 +24,7 @@ export interface CallRecord {
   inputs: any[],
   output: any,
   error: any,
-  invokedCallback: string,
+  callbackPath: (string | number)[],
   asyncOutput: any,
   asyncError: any,
   tersify(): string
@@ -34,11 +34,11 @@ export const CallRecord = {
   /**
    * Creates a call record object.
    */
-  create({ inputs, output, error, invokedCallback, asyncOutput, asyncError }: CallRecordData) {
-    return tersible({ inputs, output, error, invokedCallback, asyncOutput, asyncError },
+  create({ inputs, output, error, callbackPath, asyncOutput, asyncError }: CallRecordData) {
+    return tersible({ inputs, output, error, callbackPath, asyncOutput, asyncError },
       () => {
         const obj = { inputs, output, error } as CallRecord
-        if (invokedCallback !== undefined) obj.invokedCallback = invokedCallback
+        if (callbackPath !== undefined) obj.callbackPath = callbackPath
         if (asyncError !== undefined) obj.asyncError = asyncError
         if (asyncOutput !== undefined) obj.asyncOutput = asyncOutput
         return tersify(obj, { maxLength: Infinity })

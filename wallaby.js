@@ -1,16 +1,17 @@
 module.exports = function (wallaby) {
   return {
-    "files": [
+    'files': [
       { pattern: 'package.json', instrument: false },
       { pattern: 'tsconfig.*', instrument: false },
-      "src/**/*.ts",
-      "!src/**/*.spec.ts"
+      { pattern: '__komondor__/**/*', instrument: false },
+      'src/**/*.ts',
+      '!src/**/*.spec.ts'
     ],
-    "tests": [
-      "src/**/*.spec.ts"
+    'tests': [
+      'src/**/*.spec.ts'
     ],
-    "env": {
-      "type": "node"
+    'env': {
+      'type': 'node'
     },
     compilers: {
       'src/**/*.ts': wallaby.compilers.typeScript({ module: 'commonjs' }),

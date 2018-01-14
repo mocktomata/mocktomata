@@ -92,7 +92,7 @@ test('spec on jquery style callback', async t => {
   const output = await entry
   t.is(output[0], 2)
   const record = await entry.getCallRecord()
-  t.is(record.invokedCallback, 'success')
+  t.deepEqual(record.callbackPath, [0, 'success'])
 })
 
 test('tersify for callback', async t => {
@@ -104,7 +104,7 @@ test('tersify for callback', async t => {
     }
   })
   const record = await calls[0].getCallRecord()
-  t.is(record.tersify(), `{ inputs: [{ data: 1, success: callback }], invokedCallback: 'success', asyncOutput: [2] }`)
+  t.is(record.tersify(), `{ inputs: [{ data: 1, success: callback }], callbackPath: [0, 'success'], asyncOutput: [2] }`)
 })
 
 function callbackLiteralFail(options) {
@@ -127,7 +127,7 @@ test('spec on jquery style callback failing', async t => {
   const output = await entry
   t.is(output[0], 2)
   const record = await entry.getCallRecord()
-  t.is(record.invokedCallback, 'fail')
+  t.deepEqual(record.callbackPath, [0, 'fail'])
 })
 
 test('tersify for failing callback for object literal input', async t => {
@@ -142,7 +142,7 @@ test('tersify for failing callback for object literal input', async t => {
     }
   })
   const record = await calls[0].getCallRecord()
-  t.is(record.tersify(), `{ inputs: [{ data: 1, success: callback, fail: callback }], invokedCallback: 'fail', asyncOutput: [2] }`)
+  t.is(record.tersify(), `{ inputs: [{ data: 1, success: callback, fail: callback }], callbackPath: [0, 'fail'], asyncOutput: [2] }`)
 })
 
 const resolve = x => Promise.resolve(x)
