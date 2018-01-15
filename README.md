@@ -133,10 +133,13 @@ Please check it out to see how to define your expectation.
 Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
 you can now tell `komondor` to save the recorded result.
 
-To do that, all you need to do is adding a option to the `spec()` call:
+To do that, all you need to do is adding a option to the `spec()` call to give the spec an `id` and change the mode to `save`:
 
 ```ts
-  const getFollowersSpec = await spec(github.users.getFollowersForUser, { id: 'github getFollowersForUser', mode: 'save' })
+  const getFollowersSpec = await spec(
+    github.users.getFollowersForUser,
+    { id: 'github getFollowersForUser', mode: 'save' }
+  )
 ```
 
 When you run the test, the result will be saved.
@@ -149,15 +152,43 @@ The way to do it is extremely simple.
 All you need is to change the `mode` from `save` to `replay`:
 
 ```ts
-  const getFollowersSpec = await spec(github.users.getFollowersForUser, { id: 'github getFollowersForUser', mode: 'replay' })
+  const getFollowersSpec = await spec(
+    github.users.getFollowersForUser,
+    { id: 'github getFollowersForUser', mode: 'replay' }
+  )
 ```
 
 That's it! Now your test will be ran using the saved result and not making actual remote calls.
 
+## API
+
+### spec(fn, options)
+
+```ts
+function spec<T extends Function>(fn: T, options: Partial<SpecOptions>): Spec<T>
+
+interface SpecOptions {
+  /**
+   * A unique id of the spec.
+   * When saving to file,
+   * any '/' in the id will be used as folder separator.
+   * i.e. if a spec `id` is `github/getFollowersForUser/success`
+   * it will be saved as `<komondor_folder>/github/getFollowersForUser/success.json`
+   */
+  id: string,
+  /**
+   * Mode of the spec.
+   * `verify` (default) run real call and spy on the result.
+   * `save` run real call, spy and save the result.
+   * `replay' replay call from saved result.
+   */
+  mode: 'verify' | 'save' | 'replay'
+}
+```
+
 ## Todo
 
-- Add config section in README
-- Add scenario
+- Add scenario support
 
 ## Contribute
 

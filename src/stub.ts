@@ -17,7 +17,7 @@ function inputMatches(a, b: any[]) {
       }
 
       const va = a[i]
-      match = Object.keys(value).some(k => {
+      match = !Object.keys(value).some(k => {
         return value[k] !== va[k]
       })
       if (!match)
