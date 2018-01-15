@@ -12,6 +12,8 @@
 [![Visual Studio Code][vscode-image]][vscode-url]
 [![Wallaby.js][wallaby-image]][wallaby-url]
 
+![komondor](images/komondor.jpg)
+
 `komondor` is your friendly guard dog for writing tests across boundaries.
 
 ## The Problem
