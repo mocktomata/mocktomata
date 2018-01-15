@@ -11,10 +11,7 @@ node_js:
 branches:
   only:
     - master
-    - assertron
     - /^greenkeeper.*$/
-  # except:
-  #   - /^v\d+\.\d+\.\d+$/
 before_install:
   - npm install -g greenkeeper-lockfile@1
 
@@ -26,5 +23,7 @@ script:
 after_script: greenkeeper-lockfile-upload
 
 after_success:
-  - npm install coveralls && npm run coveralls
-  - npm run semantic-release
+  - npm install -g travis-deploy-once@4
+  - travis-deploy-once "npm run semantic-release"
+  - npm install --no-save coveralls && npm run coveralls
+  - npm install --no-save codecov && npm run codecov

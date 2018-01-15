@@ -19,7 +19,7 @@ test('simpleCallback save', async t => {
   const speced = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'save' })
   const actual = await simpleCallback.increment(speced.fn, 2)
 
-  speced.satisfy({
+  await speced.satisfy({
     asyncOutput: [null, 3]
   })
   t.is(actual, 3)
