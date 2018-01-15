@@ -5,7 +5,7 @@ import { spec } from './spec'
 import { createGitHubTest } from './testUtil'
 
 function getFollowers(github: GitHub, username: string) {
-  return new Promise((a, r) => {
+  return new Promise<any>((a, r) => {
     github.users.getFollowersForUser({
       username
     }, (err, res) => {
@@ -18,14 +18,12 @@ function getFollowers(github: GitHub, username: string) {
 test('getting response', async t => {
   const github = await createGitHubTest()
   // suite
-  const specs = await spec(github.users.getFollowersForUser, { mode: 'replay', id: 'github get follower' })
+  const specs = await spec(github.users.getFollowersForUser, { id: 'github get follower', mode: 'replay' })
   github.users.getFollowersForUser = specs.fn
   await getFollowers(github, 'unional')
   await specs.satisfy({
     asyncOutput: [null, {
-      data: e => {
-        return e.login && e.id
-      }
+      data: e => e.login && e.id
     }]
   })
   t.pass()

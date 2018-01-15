@@ -48,7 +48,7 @@ you will do a three steps test-waltz:
 
 - write a test and making it pass while making actual remote calls
 - find out and record the data you recevied from the remote calls
-- use these data to create a test double and use the test doubl in the test
+- use the recorded data to create a test double and use the test double in the test
 
 Using `komondor`, these three steps becomes very straight forward.
 
@@ -56,9 +56,13 @@ The following example will create a test that needs to communicate to GitHub api
 
 ### step 1: writing a passing test with actual remote calls
 
+Step 1 is writing a passing test.
+Your logic should be unit testable,
+i.e. you can create a test double to mock out the remote calls.
+It should be the same as what you have been doing.
+
 ```ts
 import { test } from 'ava'
-import { spec } from 'komondor'
 
 // test subject
 function getFollowers(github: GitHub, username: string) {
@@ -73,23 +77,86 @@ function getFollowers(github: GitHub, username: string) {
 }
 
 test('get follower of a user', t => {
-    const github = new GitHub()
+  const github = new GitHub()
+
+  const followers = await getFollowers(github, 'someRealUser')
+
+  // assert `followers` is correct.
 })
+```
 
+### step 2: find out and record the data
 
-## spec(fn, options): Promise<Spec<T>>
+The test is passing.
+Now it is time to figure out the shape of the data (which you probably already know as you consumed it),
+and tell `komondor` to save the data.
 
-To write test for a service boundary,
-you will do a test waltz:
+First thing to do is to use `komondor` to spy on the data.
+You can do this in step 1, but I'm doing it here to make the steps more concrete for demostration purpose.
 
-- create a test that makes real calls
-- save the call result
-- replay the call result
+Unchange (and uninterested) lines form the example above are omitted for clarity.
+
+```ts
+...
+import { spec } from 'komondor'
+
+// test subject
+...
+
+test('get follower of a user', t => {
+  const github = new GitHub()
+  const getFollowersSpec = await spec(github.users.getFollowersForUser)
+
+  // do `specs.fn.bind(github.users)` when needed.
+  github.users.getFollowersForUser = specs.fn
+
+  const followers = await getFollowers(github, 'someRealUser')
+
+  // (optional) get the actual record recorded by `komondor` for inspection
+  const record = await getFollowersSpec.calls[0].getCallRecord()
+  console.log(record)
+
+  // (required) ensure the record will meet your expectation
+  await getFollowersSpec.satisfy({
+    asyncOutput: [null, {
+      data: e => e.login && e.id
+    }]
+  })
+})
+```
+
+The code above uses `komondor` to spy on the call and make sure the data received meet your expectation.
+
+`getFollowersSpec.satisfy()` uses [`satisfier`](https://github.com/unional/satisfier) to validate the data.
+Please check it out to see how to define your expectation.
+
+Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
+you can now tell `komondor` to save the recorded result.
+
+To do that, all you need to do is adding a option to the `spec()` call:
+
+```ts
+  const getFollowersSpec = await spec(github.users.getFollowersForUser, { id: 'github getFollowersForUser', mode: 'save' })
+```
+
+When you run the test, the result will be saved.
+
+### step 3: replay the recorded data
+
+The last step is to tell `komondor` to use the recorded data in the test.
+
+The way to do it is extremely simple.
+All you need is to change the `mode` from `save` to `replay`:
+
+```ts
+  const getFollowersSpec = await spec(github.users.getFollowersForUser, { id: 'github getFollowersForUser', mode: 'replay' })
+```
+
+That's it! Now your test will be ran using the saved result and not making actual remote calls.
 
 ## Todo
 
-- Complete README
-- Add global config
+- Add config section in README
 - Add scenario
 
 ## Contribute
