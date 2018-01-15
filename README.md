@@ -1,91 +1,96 @@
-# satisfier
+# komondor
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
 [![Build status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
-[![Greenkeeper badge](https://badges.greenkeeper.io/unional/satisfier.svg)](https://greenkeeper.io/)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-Manage and generate artifacts to test data across boundaries.
+[![Greenkeeper][greenkeeper-image]][greenkeeper-url]
+[![Semantic Release][semantic-release-image]][semantic-release-url]
 
-## createSatisfier(expecter)
+[![Visual Studio Code][vscode-image]][vscode-url]
+[![Wallaby.js][wallaby-image]][wallaby-url]
 
-Each property in `expecter` can be a value, a `RegExp`, or a predicate function.
+`komondor` is your friendly guard dog to write tests across boundaries.
 
-### test(actual)
+## The Problem
 
-test `actual` against `expecter`.
+Boundary is where two systems meet and communicate with each other using data structures and primitive types.
 
-```ts
-import { createSatisfier } from 'satisfier'
+For example, making calls to remote server or component written by another team in another language.
 
-// these returns true
-createSatisfier({ a: 1 }).test({ a: 1, b: 2 })
-createSatisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
-createSatisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
+When we write tests that needs to communicate across the boundary,
+we often need to create a test double to similate the behavior we need in our tests.
 
-// these returns false
-createSatisfier({ a: 1 }).test({ a: 2 })
-createSatisfier({ a: 1, b: 2 }).test({ a: 1 })
-createSatisfier({ a: /boo/ }).test({ a: 'foo' })
-createSatisfier({ a: () => false }).test({ a: 1 })
-```
+This allow us to write tests that are fast to run and also decouple from the remote system,
+so that we don't have to configure the remote system to produce the expected behavior.
 
-## exec(actual)
+However, if we only have these tests,
+we will not be able to catch breakage when the remote system changes its behavior.
 
-check `actual` against `expecter` and returns the checking result.
-If `actual` meets the criteria, returns `null`.
+Traditionally, we will have a suite of system integration test to make sure the system is working as a whole.
+However, these tests are hard to configure and slow.
+Most of the time we can only create or run a handful of these tests to make sure all or part of the critical paths are covered.
 
-```ts
-import { createSatisfier } from 'satisfier'
+When the behavior of the other system is changed,
+you have to go through some manual process to make actual calls,
+adjust the test doubles you have, and fix the code.
 
-// these returns null
-createSatisfier({ a: 1 }).exec({ a: 1, b: 2 })
-createSatisfier({ a: /foo/ }).exec({ a: 'foo', b: 'boo' })
-createSatisfier({ a: n => n === 1 }).exec({ a: 1, b, 2 })
+That's a lot of manual work and the worst of all is that it reduce the level of trust you have on your test suite.
 
-// [{ path: ['a'], expected: 1, actual: 2}]
-createSatisfier({ a: 1 }).exec({ a: 2 })
+## The solution
 
-// [{ path: ['b'], expected: 2, actual: undefined}]
-createSatisfier({ a: 1, b: 2 }).exec({ a: 1 })
+`komondor` can turn your stubbed unit test to system integration test by a simple switch.
+It also makes writing of these tests systematic and simple.
 
-// [{ path: ['a'], expected: /boo/, actual: 'foo'}]
-createSatisfier({ a: /boo/ }).exec({ a: 'foo' })
+When writing a test that needs to access a remote system across a boundary,
+you will do a three steps test-waltz:
 
-// [{ path: ['a'], expected: 'a => a === 1', actual: 2}]
-createSatisfier({ a: a => a === 1 }).exec({ a: 2 })
-```
+- write a test and making it pass while making actual remote calls
+- find out and record the data you recevied from the remote calls
+- use these data to create a test double and use the test doubl in the test
 
-## Satisfier
+Using `komondor`, these three steps becomes very straight forward.
 
-This is identical to `createSatisfier()`, but as a class.
+The following example will create a test that needs to communicate to GitHub api.
+
+### step 1: writing a passing test with actual remote calls
 
 ```ts
-import { Satisfier } from 'satisfier'
+import { test } from 'ava'
+import { spec } from 'komondor'
 
-const s = new Satisfier({...})
-s.test(...)
-s.exec(...)
-```
+// test subject
+function getFollowers(github: GitHub, username: string) {
+  return new Promise((a, r) => {
+    github.users.getFollowersForUser({
+      username
+    }, (err, res) => {
+      if (err) r(err)
+      a(res)
+    })
+  })
+}
 
-## Build in predicates
+test('get follower of a user', t => {
+    const github = new GitHub()
+})
 
-There are a few predicates shipped in the package for convenience.
-They all support [`tersify`](https://github.com/unional/tersify).
-This means if you use `tersify` to print the predicate (e.g. for logging purpose), you will get a terse string representing the predicates.
 
-```ts
-import { createSatisfier, isInRange } from 'satisfier'
+## spec(fn, options): Promise<Spec<T>>
 
-const results = createSatisfier(isInRange(1, 3)).exec(0)
+To write test for a service boundary,
+you will do a test waltz:
 
-// prints '[1...3]'
-results[0].expected.tersify()
-// { path: [], expected: [1...3], actual: 0 }
-tersify(results[0])
-```
+- create a test that makes real calls
+- save the call result
+- replay the call result
+
+## Todo
+
+- Complete README
+- Add global config
+- Add scenario
 
 ## Contribute
 
@@ -132,11 +137,20 @@ npm run lint
 
 Generated by `generator-unional@0.0.1`
 
-[npm-image]: https://img.shields.io/npm/v/satisfier.svg?style=flat
-[npm-url]: https://npmjs.org/package/satisfier
-[downloads-image]: https://img.shields.io/npm/dm/satisfier.svg?style=flat
-[downloads-url]: https://npmjs.org/package/satisfier
-[travis-image]: https://img.shields.io/travis/unional/satisfier/master.svg?style=flat
-[travis-url]: https://travis-ci.org/unional/satisfier?branch=master
-[coveralls-image]: https://coveralls.io/repos/github/unional/satisfier/badge.svg
-[coveralls-url]: https://coveralls.io/github/unional/satisfier
+[npm-image]: https://img.shields.io/npm/v/komondor.svg?style=flat
+[npm-url]: https://npmjs.org/package/komondor
+[downloads-image]: https://img.shields.io/npm/dm/komondor.svg?style=flat
+[downloads-url]: https://npmjs.org/package/komondor
+[travis-image]: https://img.shields.io/travis/unional/komondor/master.svg?style=flat
+[travis-url]: https://travis-ci.org/unional/komondor?branch=master
+[coveralls-image]: https://coveralls.io/repos/github/unional/komondor/badge.svg
+[coveralls-url]: https://coveralls.io/github/unional/komondor
+[badge-size-es5-url]: http://img.badgesize.io/unional/komondor/master/dist/komondor.es5.js.svg?label=es5_size
+[greenkeeper-image]:https://badges.greenkeeper.io/unional/komondor.svg
+[greenkeeper-url]:https://greenkeeper.io/
+[semantic-release-image]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release-url]:https://github.com/semantic-release/semantic-release
+[wallaby-image]:https://img.shields.io/badge/wallaby.js-configured-green.svg
+[wallaby-url]:https://wallabyjs.com
+[vscode-image]:https://img.shields.io/badge/vscode-ready-green.svg
+[vscode-url]:https://code.visualstudio.com/
