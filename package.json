@@ -68,7 +68,7 @@
     "@types/github": "^7.1.0",
     "@types/node": "^9.3.0",
     "ava": "^0.24.0",
-    "dependency-check": "^2.10.0",
+    "dependency-check": "^3.0.0",
     "eslint": "^4.15.0",
     "eslint-config-unional": "^0.3.0",
     "github": "^13.1.0",
