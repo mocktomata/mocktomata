@@ -21,15 +21,19 @@ export function readSpec(id: string) {
   })
 }
 function getFilePath(id: string) {
-  return path.resolve(SPECS_FOLDER, `${camelCase(id)}.json`)
+  const basename = path.basename(id)
+  const dirname = path.dirname(id)
+  return path.resolve(SPECS_FOLDER, dirname, `${camelCase(basename)}.json`)
 }
 
 export function writeSpec(id: string, description: string | undefined, specRecord: SpecRecord) {
   return new Promise<void>((a, r) => {
     try {
+      const filePath = getFilePath(id)
+      const folder = path.dirname(filePath)
       // istanbul ignore next
-      if (!fs.existsSync(SPECS_FOLDER))
-        createFolders(SPECS_FOLDER)
+      if (!fs.existsSync(folder))
+        createFolders(folder)
       const { expectation, records } = specRecord
       records.forEach(r => {
         // error.message is not enumerable.
@@ -38,7 +42,7 @@ export function writeSpec(id: string, description: string | undefined, specRecor
           r.error = { message: r.error.message, ...r.error }
         }
       })
-      fs.writeFileSync(getFilePath(id), JSON.stringify({
+      fs.writeFileSync(filePath, JSON.stringify({
         description,
         expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
         records
