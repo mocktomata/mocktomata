@@ -3,6 +3,7 @@ import { spy, Spy } from './spy'
 import { io } from './io'
 
 function inputMatches(a, b: any[]) {
+  // istanbul ignore next
   if (b.length !== a.length)
     return false
   let match = true
@@ -11,6 +12,7 @@ function inputMatches(a, b: any[]) {
     const valueType = typeof value
     if (valueType === 'function') continue
     if (valueType === 'object') {
+      // istanbul ignore next
       if (typeof a !== 'object') {
         match = false
         break
@@ -18,6 +20,7 @@ function inputMatches(a, b: any[]) {
 
       const va = a[i]
       match = !Object.keys(value).some(k => {
+        if (typeof value[k] === 'function') return false
         return value[k] !== va[k]
       })
       if (!match)
@@ -59,7 +62,6 @@ export async function stub<T extends Function>(fn: T, id): Promise<Spy<T>> {
       creator.callEntry.error = record.error
       creator.callEntry.output = record.output
       if (record.asyncOutput) {
-
         const callback = locateCallback(args, record.callbackPath)
         if (callback) {
           callback(...record.asyncOutput)
