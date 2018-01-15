@@ -7,7 +7,9 @@
   "compileOnSave": false,
   "compilerOptions": {
     "plugins": [
-      { "name": "tslint-language-service"}
+      {
+        "name": "tslint-language-service"
+      }
     ]
   },
   "include": [

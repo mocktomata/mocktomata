@@ -1,0 +1,1 @@
+{"expectation":"{ asyncOutput: [null, 3] }","records":[{"inputs":[2,{}],"asyncOutput":[null,3]}]}

@@ -1,91 +1,163 @@
-# satisfier
+# komondor
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
 [![Build status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
-[![Greenkeeper badge](https://badges.greenkeeper.io/unional/satisfier.svg)](https://greenkeeper.io/)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-Manage and generate artifacts to test data across boundaries.
+[![Greenkeeper][greenkeeper-image]][greenkeeper-url]
+[![Semantic Release][semantic-release-image]][semantic-release-url]
 
-## createSatisfier(expecter)
+[![Visual Studio Code][vscode-image]][vscode-url]
+[![Wallaby.js][wallaby-image]][wallaby-url]
 
-Each property in `expecter` can be a value, a `RegExp`, or a predicate function.
+`komondor` is your friendly guard dog to write tests across boundaries.
 
-### test(actual)
+## The Problem
 
-test `actual` against `expecter`.
+Boundary is where two systems meet and communicate with each other using data structures and primitive types.
 
-```ts
-import { createSatisfier } from 'satisfier'
+For example, making calls to remote server or component written by another team in another language.
 
-// these returns true
-createSatisfier({ a: 1 }).test({ a: 1, b: 2 })
-createSatisfier({ a: /foo/ }).test({ a: 'foo', b: 'boo' })
-createSatisfier({ a: n => n === 1 }).test({ a: 1, b, 2 })
+When we write tests that needs to communicate across the boundary,
+we often need to create a test double to similate the behavior we need in our tests.
 
-// these returns false
-createSatisfier({ a: 1 }).test({ a: 2 })
-createSatisfier({ a: 1, b: 2 }).test({ a: 1 })
-createSatisfier({ a: /boo/ }).test({ a: 'foo' })
-createSatisfier({ a: () => false }).test({ a: 1 })
-```
+This allow us to write tests that are fast to run and also decouple from the remote system,
+so that we don't have to configure the remote system to produce the expected behavior.
 
-## exec(actual)
+However, if we only have these tests,
+we will not be able to catch breakage when the remote system changes its behavior.
 
-check `actual` against `expecter` and returns the checking result.
-If `actual` meets the criteria, returns `null`.
+Traditionally, we will have a suite of system integration test to make sure the system is working as a whole.
+However, these tests are hard to configure and slow.
+Most of the time we can only create or run a handful of these tests to make sure all or part of the critical paths are covered.
 
-```ts
-import { createSatisfier } from 'satisfier'
+When the behavior of the other system is changed,
+you have to go through some manual process to make actual calls,
+adjust the test doubles you have, and fix the code.
 
-// these returns null
-createSatisfier({ a: 1 }).exec({ a: 1, b: 2 })
-createSatisfier({ a: /foo/ }).exec({ a: 'foo', b: 'boo' })
-createSatisfier({ a: n => n === 1 }).exec({ a: 1, b, 2 })
+That's a lot of manual work and the worst of all is that it reduce the level of trust you have on your test suite.
 
-// [{ path: ['a'], expected: 1, actual: 2}]
-createSatisfier({ a: 1 }).exec({ a: 2 })
+## The solution
 
-// [{ path: ['b'], expected: 2, actual: undefined}]
-createSatisfier({ a: 1, b: 2 }).exec({ a: 1 })
+`komondor` can turn your stubbed unit test to system integration test by a simple switch.
+It also makes writing of these tests systematic and simple.
 
-// [{ path: ['a'], expected: /boo/, actual: 'foo'}]
-createSatisfier({ a: /boo/ }).exec({ a: 'foo' })
+When writing a test that needs to access a remote system across a boundary,
+you will do a three steps test-waltz:
 
-// [{ path: ['a'], expected: 'a => a === 1', actual: 2}]
-createSatisfier({ a: a => a === 1 }).exec({ a: 2 })
-```
+- write a test and making it pass while making actual remote calls
+- find out and record the data you recevied from the remote calls
+- use the recorded data to create a test double and use the test double in the test
 
-## Satisfier
+Using `komondor`, these three steps becomes very straight forward.
 
-This is identical to `createSatisfier()`, but as a class.
+The following example will create a test that needs to communicate to GitHub api.
 
-```ts
-import { Satisfier } from 'satisfier'
+### step 1: writing a passing test with actual remote calls
 
-const s = new Satisfier({...})
-s.test(...)
-s.exec(...)
-```
-
-## Build in predicates
-
-There are a few predicates shipped in the package for convenience.
-They all support [`tersify`](https://github.com/unional/tersify).
-This means if you use `tersify` to print the predicate (e.g. for logging purpose), you will get a terse string representing the predicates.
+Step 1 is writing a passing test.
+Your logic should be unit testable,
+i.e. you can create a test double to mock out the remote calls.
+It should be the same as what you have been doing.
 
 ```ts
-import { createSatisfier, isInRange } from 'satisfier'
+import { test } from 'ava'
 
-const results = createSatisfier(isInRange(1, 3)).exec(0)
+// test subject
+function getFollowers(github: GitHub, username: string) {
+  return new Promise((a, r) => {
+    github.users.getFollowersForUser({
+      username
+    }, (err, res) => {
+      if (err) r(err)
+      a(res)
+    })
+  })
+}
 
-// prints '[1...3]'
-results[0].expected.tersify()
-// { path: [], expected: [1...3], actual: 0 }
-tersify(results[0])
+test('get follower of a user', t => {
+  const github = new GitHub()
+
+  const followers = await getFollowers(github, 'someRealUser')
+
+  // assert `followers` is correct.
+})
 ```
+
+### step 2: find out and record the data
+
+The test is passing.
+Now it is time to figure out the shape of the data (which you probably already know as you consumed it),
+and tell `komondor` to save the data.
+
+First thing to do is to use `komondor` to spy on the data.
+You can do this in step 1, but I'm doing it here to make the steps more concrete for demostration purpose.
+
+Unchange (and uninterested) lines form the example above are omitted for clarity.
+
+```ts
+...
+import { spec } from 'komondor'
+
+// test subject
+...
+
+test('get follower of a user', t => {
+  const github = new GitHub()
+  const getFollowersSpec = await spec(github.users.getFollowersForUser)
+
+  // do `specs.fn.bind(github.users)` when needed.
+  github.users.getFollowersForUser = specs.fn
+
+  const followers = await getFollowers(github, 'someRealUser')
+
+  // (optional) get the actual record recorded by `komondor` for inspection
+  const record = await getFollowersSpec.calls[0].getCallRecord()
+  console.log(record)
+
+  // (required) ensure the record will meet your expectation
+  await getFollowersSpec.satisfy({
+    asyncOutput: [null, {
+      data: e => e.login && e.id
+    }]
+  })
+})
+```
+
+The code above uses `komondor` to spy on the call and make sure the data received meet your expectation.
+
+`getFollowersSpec.satisfy()` uses [`satisfier`](https://github.com/unional/satisfier) to validate the data.
+Please check it out to see how to define your expectation.
+
+Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
+you can now tell `komondor` to save the recorded result.
+
+To do that, all you need to do is adding a option to the `spec()` call:
+
+```ts
+  const getFollowersSpec = await spec(github.users.getFollowersForUser, { id: 'github getFollowersForUser', mode: 'save' })
+```
+
+When you run the test, the result will be saved.
+
+### step 3: replay the recorded data
+
+The last step is to tell `komondor` to use the recorded data in the test.
+
+The way to do it is extremely simple.
+All you need is to change the `mode` from `save` to `replay`:
+
+```ts
+  const getFollowersSpec = await spec(github.users.getFollowersForUser, { id: 'github getFollowersForUser', mode: 'replay' })
+```
+
+That's it! Now your test will be ran using the saved result and not making actual remote calls.
+
+## Todo
+
+- Add config section in README
+- Add scenario
 
 ## Contribute
 
@@ -132,11 +204,20 @@ npm run lint
 
 Generated by `generator-unional@0.0.1`
 
-[npm-image]: https://img.shields.io/npm/v/satisfier.svg?style=flat
-[npm-url]: https://npmjs.org/package/satisfier
-[downloads-image]: https://img.shields.io/npm/dm/satisfier.svg?style=flat
-[downloads-url]: https://npmjs.org/package/satisfier
-[travis-image]: https://img.shields.io/travis/unional/satisfier/master.svg?style=flat
-[travis-url]: https://travis-ci.org/unional/satisfier?branch=master
-[coveralls-image]: https://coveralls.io/repos/github/unional/satisfier/badge.svg
-[coveralls-url]: https://coveralls.io/github/unional/satisfier
+[npm-image]: https://img.shields.io/npm/v/komondor.svg?style=flat
+[npm-url]: https://npmjs.org/package/komondor
+[downloads-image]: https://img.shields.io/npm/dm/komondor.svg?style=flat
+[downloads-url]: https://npmjs.org/package/komondor
+[travis-image]: https://img.shields.io/travis/unional/komondor/master.svg?style=flat
+[travis-url]: https://travis-ci.org/unional/komondor?branch=master
+[coveralls-image]: https://coveralls.io/repos/github/unional/komondor/badge.svg
+[coveralls-url]: https://coveralls.io/github/unional/komondor
+[badge-size-es5-url]: http://img.badgesize.io/unional/komondor/master/dist/komondor.es5.js.svg?label=es5_size
+[greenkeeper-image]:https://badges.greenkeeper.io/unional/komondor.svg
+[greenkeeper-url]:https://greenkeeper.io/
+[semantic-release-image]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release-url]:https://github.com/semantic-release/semantic-release
+[wallaby-image]:https://img.shields.io/badge/wallaby.js-configured-green.svg
+[wallaby-url]:https://wallabyjs.com
+[vscode-image]:https://img.shields.io/badge/vscode-ready-green.svg
+[vscode-url]:https://code.visualstudio.com/

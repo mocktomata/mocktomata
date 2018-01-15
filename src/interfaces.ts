@@ -1,23 +1,54 @@
-import { Tersible } from 'tersify'
+import { Expectation } from 'satisfier'
 
-export type Predicate = (value: any) => boolean
+import { CallRecord } from './CallRecord'
+import { Spy } from './spy'
 
-export type TersiblePredicate = Tersible<Predicate>
+export type SpecMode = 'verify' | 'save' | 'replay'
 
-export type Expecter<T extends Struct = Struct> = Partial<ExpecterHash<T>> | Partial<ExpecterHash<T>>[]
-export type ExpecterNode<T extends Struct = Struct> = undefined | boolean | number | string | RegExp | Predicate | Partial<ExpecterHash<T>>
-export type ExpecterHash<T extends Struct = Struct> = {
-  [P in keyof T]: ExpecterNode<T[P]> | ExpecterNode<T[P]>[];
+export interface KomondorOptions {
+  mode: SpecMode,
+  spec: string | RegExp
 }
 
-export type Struct = StructNode | StructHash | (StructNode | StructHash)[]
+export interface ScenarioOptions {
+  /**
+   * ID of the Scenario.
+   * Scenario is used by global config to change the mode of the spec,
+   * so that certain scenario can be changed to `verify` to test some real call in certain context (scenario),
+   * while others remain in `replay` or `verify` mode.
+   */
+  id: string
+  /**
+   * Given statement in Behavior Driven Development.
+   * This is provided to communicate between teams to setup the scenario correctly for this suite.
+   */
+  given: string
+}
 
-export type StructNode = boolean | number | string | object
+export interface SpecOptions {
+  /**
+   * ID of the spec.
+   */
+  id: string
+  description?: string
+  /**
+   * Mode of the spec operating in.
+   * `verify`: making real calls and verify in `satisfy()`.
+   * `save`: making real calls and save the result in file.
+   * `replay`: replay calls from file.
+   */
+  mode: SpecMode
+}
 
-export type StructHash = { [i: string]: Struct }
+export interface SpecRecord {
+  records: CallRecord[],
+  expectation: Expectation<CallRecord[]>
+}
 
-export interface SatisfierExec {
-  path: string[],
-  expected: boolean | number | string | RegExp | Predicate | ExpecterHash,
-  actual: any
+
+export interface Spec<T extends Function> extends Spy<T> {
+  /**
+   * @param expectation Must be pure.
+   */
+  satisfy(expectation: Expectation): Promise<void>
 }
