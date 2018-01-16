@@ -10,21 +10,6 @@ export interface KomondorOptions {
   spec: string | RegExp
 }
 
-export interface ScenarioOptions {
-  /**
-   * ID of the Scenario.
-   * Scenario is used by global config to change the mode of the spec,
-   * so that certain scenario can be changed to `verify` to test some real call in certain context (scenario),
-   * while others remain in `replay` or `verify` mode.
-   */
-  id: string
-  /**
-   * Given statement in Behavior Driven Development.
-   * This is provided to communicate between teams to setup the scenario correctly for this suite.
-   */
-  given: string
-}
-
 export interface SpecOptions {
   /**
    * ID of the spec.
