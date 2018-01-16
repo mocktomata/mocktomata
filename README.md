@@ -191,6 +191,53 @@ interface SpecOptions {
 }
 ```
 
+## FAQ
+
+### Using komondor with node-fetch
+
+`node-fetch` and some other libraries provides more features then just handling simple data structure.
+For example they support streaming and web-socket.
+
+`komondor` cannot work with them directly because it needs to be able to serialize and deserialize the result.
+
+The response object from `node-fetch` is not serializable:
+
+```ts
+import fetch = require('node-fetch')
+
+test('response is complex', async t => {
+  const response = await fetch('some url')
+  // it contains `.text()` method and others,
+  // so it is not serializable.
+  const json = JSON.parse(response.text())
+})
+```
+
+One way to get around this is create a wraping function that returns DTO.
+`komondor` can then work on that function.
+
+```ts
+import fetch = require('node-fetch')
+
+async function simpleFetch(url, options)
+  const response = await fetch(url, options)
+  return JSON.parse(response.text())
+}
+
+test('komondor can work with simpleFetch', async t => {
+  const yourSpec = await spec(simpleFetch)
+  const json = await yourSpec.fn('someUri')
+
+  yourSpec.satisfy({ ... })
+})
+```
+
+Creating `simpleFetch()` is actually a good practice because it creates a separation between the layer.
+Your application code uses `simpleFetch()` instead of `fetch()`,
+meaning it does not know the information comes from the network.
+
+(yes, for that you should give it a more netural name and remove the HTTP specific options)
+
 ## Contribute
 
 ```sh
