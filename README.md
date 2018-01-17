@@ -194,6 +194,16 @@ interface SpecOptions {
 
 ## FAQ
 
+### Nothing happen when I change to save mode
+
+Check if you have wait for `spec.satisfy()`.
+
+i.e., you should have `await yourSpec.satisfy(...)` in your test.
+
+The record will be save once the `satisfy()` call is passed.
+
+This prevent bad information overriding saved good information.
+
 ### Using komondor with node-fetch
 
 `node-fetch` and some other libraries provides more features then just handling simple data structure.
