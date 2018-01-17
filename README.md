@@ -1,5 +1,6 @@
 # komondor
 
+![unstable][unstable-image]
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
 [![Build status][travis-image]][travis-url]
@@ -74,7 +75,7 @@ function getFollowers(github: GitHub, username: string) {
       username
     }, (err, res) => {
       if (err) r(err)
-      // message the response in some way that make since to your application.
+      // massage the response in some way that make sense to your application.
       const response = messege(res)
       a(response)
     })
@@ -281,6 +282,7 @@ npm run build
 npm run lint
 ```
 
+[unstable-image]: https://img.shields.io/badge/stability-unstable-yellow.svg
 [npm-image]: https://img.shields.io/npm/v/komondor.svg?style=flat
 [npm-url]: https://npmjs.org/package/komondor
 [downloads-image]: https://img.shields.io/npm/dm/komondor.svg?style=flat
