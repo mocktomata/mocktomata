@@ -1,6 +1,7 @@
 import { CallEntry, createCallEntryCreator } from './CallEntry'
 import { spy, Spy } from './spy'
 import { io } from './io'
+import { SpecRecord } from './interfaces';
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -44,7 +45,7 @@ function locateCallback(args, callbackPath) {
 }
 
 export async function stub<T extends Function>(fn: T, id): Promise<Spy<T>> {
-  let specRecord
+  let specRecord: SpecRecord
   try {
     specRecord = await io.readSpec(id)
   }

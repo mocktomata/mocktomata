@@ -2,6 +2,7 @@ import { Expectation } from 'satisfier'
 
 import { CallRecord } from './CallRecord'
 import { Spy } from './spy'
+import { FluxStandardAction } from 'flux-standard-action';
 
 export type SpecMode = 'verify' | 'save' | 'replay'
 
@@ -28,6 +29,11 @@ export interface SpecOptions {
 export interface SpecRecord {
   records: CallRecord[],
   expectation: Expectation<CallRecord[]>
+}
+
+export interface WebSocketSpecRecord {
+  actions: FluxStandardAction<any, any>[],
+  expectation: string
 }
 
 

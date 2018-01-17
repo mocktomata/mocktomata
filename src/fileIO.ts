@@ -4,10 +4,9 @@ import path = require('path')
 import { tersify } from 'tersify'
 
 import { SPECS_FOLDER } from './constants'
-import { SpecRecord } from './interfaces'
 
 export function readSpec(id: string) {
-  return new Promise<SpecRecord>((a, r) => {
+  return new Promise<any>((a, r) => {
     const filePath = getFilePath(id)
     try {
       const content = fs.readFileSync(filePath, 'utf8')

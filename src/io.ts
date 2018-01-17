@@ -1,13 +1,4 @@
-import {
-  // @ts-ignore
-  CallRecord
-} from 'satisfier'
-
 import * as fileIO from './fileIO'
-import {
-  // @ts-ignore
-  SpecRecord
-} from './interfaces'
 
 /**
  * Factory for writer.
