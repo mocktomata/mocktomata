@@ -3,9 +3,9 @@ import { CallEntry, createCallEntryCreator } from './CallEntry'
 export interface Spy<T> {
   calls: ReadonlyArray<CallEntry>,
   /**
-   * the spied function.
+   * the spied subject.
    */
-  fn: T
+  subject: T
 }
 
 export function spyOnCallback(fn, callbackPath) {
@@ -83,6 +83,6 @@ export function spy<T extends Function>(fn: T, calls: CallEntry[] = []): Spy<T> 
 
   return {
     calls,
-    fn: spied
+    subject: spied
   }
 }

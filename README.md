@@ -114,7 +114,7 @@ test('get follower of a user', t => {
   const getFollowersSpec = await spec(github.users.getFollowersForUser)
 
   // do `specs.fn.bind(github.users)` when needed.
-  github.users.getFollowersForUser = specs.fn
+  github.users.getFollowersForUser = specs.subject
 
   const followers = await getFollowers(github, 'someRealUser')
 

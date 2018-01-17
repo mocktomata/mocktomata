@@ -19,7 +19,7 @@ test.only('get followers (demo)', async t => {
   const github = await createGitHubTest()
   // suite
   const specs = await spec(github.users.getFollowersForUser, { id: 'github/getFollowersForUser/success', mode: 'replay' })
-  github.users.getFollowersForUser = specs.fn
+  github.users.getFollowersForUser = specs.subject
   await getFollowers(github, 'unional')
   await specs.satisfy({
     asyncOutput: [null, {

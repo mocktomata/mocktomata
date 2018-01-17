@@ -85,12 +85,12 @@ export async function stub<T extends Function>(fn: T, id): Promise<Spy<T>> {
       if (!spied) {
         spied = spy(fn, calls)
       }
-      return spied.fn(...args)
+      return spied.subject(...args)
     }
   } as any
 
   return {
     calls,
-    fn: stub
+    subject: stub
   }
 }

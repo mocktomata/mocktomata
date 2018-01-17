@@ -28,10 +28,10 @@ export async function spec<T extends Function>(fn: T, options?: SpecOptions): Pr
   const opt = unpartial(defaultSpecOptions, options)
   const mode = getMode(opt)
 
-  const subject = mode === 'replay' ? await stub(fn, opt.id) : spy(fn)
-  return Object.assign(subject, {
+  const specedSubject = mode === 'replay' ? await stub(fn, opt.id) : spy(fn)
+  return Object.assign(specedSubject, {
     satisfy(expectation: Expectation<CallRecord[]>): Promise<void> {
-      return Promise.all(subject.calls.map(call => call.getCallRecord()))
+      return Promise.all(specedSubject.calls.map(call => call.getCallRecord()))
         .then(records => {
           createSatisfier(expectation).exec(records)
           satisfy(records, expectation)
