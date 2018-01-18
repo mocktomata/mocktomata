@@ -230,7 +230,7 @@ One way to get around this is create a wraping function that returns DTO.
 ```ts
 import fetch = require('node-fetch')
 
-async function simpleFetch(url, options)
+async function simpleFetch(url, options) {
   const response = await fetch(url, options)
   return JSON.parse(response.text())
 }
