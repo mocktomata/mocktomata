@@ -15,7 +15,7 @@ function getFollowers(github: GitHub, username: string) {
   })
 }
 
-test.only('get followers (demo)', async t => {
+test('get followers (demo)', async t => {
   const github = await createGitHubTest()
   // suite
   const specs = await spec(github.users.getFollowersForUser, { id: 'github/getFollowersForUser/success', mode: 'replay' })
