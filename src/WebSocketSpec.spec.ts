@@ -1,12 +1,11 @@
+import { satisfy } from 'assertron'
 import { test } from 'ava'
+import { FluxStandardAction } from 'flux-standard-action'
 // import { unpartial } from 'unpartial'
 import WebSocket = require('ws')
 import { ClientOptions } from 'ws'
 
 import { SpecOptions } from './index'
-import { FluxStandardAction } from 'flux-standard-action';
-import { callbackify } from 'util';
-import { satisfy } from 'assertron';
 // import { defaultSpecOptions, getMode } from './SpecOptions'
 
 
@@ -16,7 +15,6 @@ function spyWebSocket() {
   const actions: FluxStandardAction<any, void>[] = []
 
   let resolve
-  let reject
   let onChangeCallback
   function addAction(action) {
     actions.push(action)
@@ -25,11 +23,10 @@ function spyWebSocket() {
     }
   }
 
-  const closing = new Promise<FluxStandardAction<any, any>[]>((a, r) => {
+  const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
     resolve = () => {
       a(actions)
     }
-    reject = r
   })
 
   const subject = class {
@@ -106,11 +103,22 @@ test('actively closing web socket', async () => {
 
   ws.on('close', function () {
     console.log('closing connection')
-    console.log(arguments)
   })
   ws.on('open', () => {
     ws.send('Ping')
   })
+
+  // const recordShouldBe = {
+  //   id: 'websocket',
+  //   description: 'some description',
+  //   actions: [
+  //     { type: 'open', payload: [] },
+  //     { type: 'send', payload: 'Ping', meta: 'input' },
+  //     { type: 'message', payload: 'Ping' },
+  //     { type: 'terminate', payload: [], meta: 'input' },
+  //     { type: 'close', payload: [1006, ''] }
+  //   ]
+  // }
 
   await webSocketSpec.closing
   console.log(webSocketSpec['actions'])

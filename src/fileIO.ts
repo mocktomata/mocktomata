@@ -4,6 +4,7 @@ import path = require('path')
 import { tersify } from 'tersify'
 
 import { SPECS_FOLDER } from './constants'
+import { SpecRecord } from './interfaces'
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {

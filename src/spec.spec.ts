@@ -5,10 +5,21 @@ import { fetch, promise, simpleCallback, literalCallback, synchronous } from './
 
 //#region simpleCallback
 test('simpleCallback verify', async t => {
-  const speced = await spec(simpleCallback.success)
-  const actual = await simpleCallback.increment(speced.subject, 2)
+  const cbSpec = await spec(simpleCallback.success)
+  const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
-  await speced.satisfy({
+  const record = await cbSpec.calls[0].getCallRecord()
+
+  // const recordShouldBe = {
+  //   id: 'simpleCallback',
+  //   actions: [
+  //     { type: 'call', payload: [2, {}], meta: 'input' },
+  //     { type: 'callback', payload: [null, 3] },
+  //     { type: 'return', paylaod: undefined, meta: 'output' }
+  //   ]
+  // }
+  console.log(record)
+  await cbSpec.satisfy({
     asyncOutput: [null, 3]
   })
   t.is(actual, 3)
