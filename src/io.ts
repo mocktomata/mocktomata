@@ -1,13 +1,4 @@
-import {
-  // @ts-ignore
-  CallRecord
-} from 'satisfier'
-
 import * as fileIO from './fileIO'
-import {
-  // @ts-ignore
-  SpecRecord
-} from './interfaces'
 
 /**
  * Factory for writer.
@@ -15,10 +6,10 @@ import {
  * such as file-base, database, or remote host
  */
 export const io = {
-  readSpec(id: string) {
-    return fileIO.readSpec(id)
+  get readSpec() {
+    return fileIO.readSpec
   },
-  getSpecWriter() {
+  get writeSpec() {
     return fileIO.writeSpec
   }
 }

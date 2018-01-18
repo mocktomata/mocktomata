@@ -114,7 +114,7 @@ test('get follower of a user', t => {
   const getFollowersSpec = await spec(github.users.getFollowersForUser)
 
   // do `specs.fn.bind(github.users)` when needed.
-  github.users.getFollowersForUser = specs.fn
+  github.users.getFollowersForUser = specs.subject
 
   const followers = await getFollowers(github, 'someRealUser')
 
@@ -193,6 +193,16 @@ interface SpecOptions {
 ```
 
 ## FAQ
+
+### Nothing happen when I change to save mode
+
+Check if you have wait for `spec.satisfy()`.
+
+i.e., you should have `await yourSpec.satisfy(...)` in your test.
+
+The record will be save once the `satisfy()` call is passed.
+
+This prevent bad information overriding saved good information.
 
 ### Using komondor with node-fetch
 

@@ -1,6 +1,8 @@
-import { CallEntry, createCallEntryCreator } from './CallEntry'
-import { spy, Spy } from './spy'
+// @ts-ignore
+import { FluxStandardAction } from 'flux-standard-action'
 import { io } from './io'
+import { SpecRecord } from './interfaces'
+import { spy, Spy } from './spy'
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -43,54 +45,82 @@ function locateCallback(args, callbackPath) {
   return args.find(arg => typeof arg === 'function')
 }
 
-export async function stub<T extends Function>(fn: T, id): Promise<Spy<T>> {
-  let specRecord
+function stubFunction({ resolve }, subject, actions: any[]) {
+  let i = 0
+  let spied
+  return function (...args) {
+    if (spied)
+      return spied.subject.call(this, ...args)
+
+    const inputAction = actions[i++]
+    if (!inputMatches(inputAction.payload, args)) {
+      if (!spied) {
+        spied = spy(subject)
+        spied.closing.then(spiedActions => {
+          actions.splice(0, actions.length, ...spiedActions)
+          resolve()
+        })
+      }
+      return spied.subject.call(this, ...args)
+    }
+
+    const result = processUntilReturn()
+    if (i >= actions.length) {
+      resolve()
+    }
+    return result
+
+    function processUntilReturn() {
+      const action = actions[i++]
+      if (action.type === 'return') {
+        if (action.meta) {
+          if (action.meta.type === 'promise') {
+            if (action.meta.meta === 'resolve')
+              return Promise.resolve(action.payload)
+            else
+              return Promise.reject(action.payload)
+          }
+        }
+        return action.payload
+      }
+      if (action.type === 'invoke') {
+        return undefined
+      }
+      if (action.type === 'callback') {
+        const callback = locateCallback(args, action.meta)
+        callback(...action.payload)
+      }
+      if (action.type === 'throw') {
+        resolve()
+        throw action.payload
+      }
+      return processUntilReturn()
+    }
+  }
+}
+
+
+export async function stub<T>(subject: T, id): Promise<Spy<T>> {
+  let specRecord: SpecRecord
   try {
     specRecord = await io.readSpec(id)
   }
   catch {
-    return spy(fn)
+    // istanbul ignore next
+    return spy(subject)
   }
+  let resolve
+  const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
+    resolve = () => {
+      a(specRecord.actions)
+    }
+  })
 
-  let calls: CallEntry[] = []
-  let spied: Spy<T>
-  const stub = function (...args) {
-    const record = specRecord.records.find(r => inputMatches(r.inputs, args))
-    if (record) {
-      const creator = createCallEntryCreator(args)
-      calls.push(creator.callEntry)
-      creator.callEntry.error = record.error
-      creator.callEntry.output = record.output
-      if (record.asyncOutput) {
-        const callback = locateCallback(args, record.callbackPath)
-        if (callback) {
-          callback(...record.asyncOutput)
-          creator.resolve({ results: record.asyncOutput, key: record.callbackPath })
-        }
-        else {
-          creator.resolve({ results: record.asyncOutput })
-          return creator.callEntry.output = Promise.resolve(record.asyncOutput)
-        }
-      }
-      if (record.asyncError) {
-        creator.reject(record.asyncError)
-        return Promise.reject(record.asyncError)
-      }
-      creator.resolve()
-      if (record.error)
-        throw record.error
-      return record.output
-    }
-    else {
-      if (!spied) {
-        spied = spy(fn, calls)
-      }
-      return spied.fn(...args)
-    }
-  } as any
+  const stubbed = stubFunction({ resolve }, subject, specRecord.actions)
 
   return {
-    calls,
-    fn: stub
-  }
+    actions: specRecord.actions,
+    closing,
+    subject: stubbed
+  } as any
 }

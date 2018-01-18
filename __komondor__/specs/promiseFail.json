@@ -1,1 +1,1 @@
-{"expectation":"{ asyncError: { message: 'fail' } }","records":[{"inputs":["increment",2],"output":{},"asyncError":{"message":"fail"}}]}
+{"expectation":"[{ type: 'invoke', payload: ['increment', 2] }, { type: 'return', payload: { message: 'fail' }, meta: { type: 'promise', meta: 'reject' } }]","actions":[{"type":"invoke","payload":["increment",2]},{"type":"return","payload":{"message":"fail"},"meta":{"type":"promise","meta":"reject"}}]}

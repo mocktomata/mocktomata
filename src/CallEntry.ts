@@ -1,3 +1,5 @@
+import { tersible } from 'tersify'
+
 import { CallRecord } from './CallRecord'
 
 export interface CallEntry extends Promise<any> {
@@ -52,7 +54,7 @@ export function createCallEntryCreator(args: any[]) {
   }
 }
 
-const callbackLiteral = { tersify() { return 'callback' } }
+const callbackLiteral = tersible({}, () => 'callback')
 
 function trimCallbacks(inputs: any[]) {
   return inputs.map(arg => {

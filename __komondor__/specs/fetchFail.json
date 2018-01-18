@@ -1,1 +1,1 @@
-{"expectation":"{ asyncOutput: [{ message: 'fail' }, null] }","records":[{"inputs":["remoteAdd",{"x":1,"y":2},{}],"asyncOutput":[{"message":"fail"},null]}]}
+{"expectation":"[{ type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] }, { type: 'callback', payload: [{ message: 'fail' }, null] }, { type: 'return' }]","actions":[{"type":"invoke","payload":["remoteAdd",{"x":1,"y":2},null]},{"type":"callback","payload":[{"message":"fail"},null]},{"type":"return"}]}
