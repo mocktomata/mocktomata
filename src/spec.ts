@@ -9,7 +9,7 @@ import { unpartial } from 'unpartial'
 import {
   SpecOptions,
   // @ts-ignore
-  SpecRecord2,
+  SpecRecord,
   Spec
 } from './interfaces'
 import { io } from './io';

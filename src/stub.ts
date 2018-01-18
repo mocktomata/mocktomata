@@ -1,7 +1,7 @@
 // @ts-ignore
 import { FluxStandardAction } from 'flux-standard-action'
 import { io } from './io'
-import { SpecRecord2 } from './interfaces'
+import { SpecRecord } from './interfaces'
 import { spy, Spy } from './spy'
 
 function inputMatches(a, b: any[]) {
@@ -101,7 +101,7 @@ function stubFunction({ resolve }, subject, actions: any[]) {
 
 
 export async function stub<T>(subject: T, id): Promise<Spy<T>> {
-  let specRecord: SpecRecord2
+  let specRecord: SpecRecord
   try {
     specRecord = await io.readSpec(id)
   }
