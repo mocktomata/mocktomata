@@ -13,6 +13,39 @@ function spyOnCallback(fn, callbackPath) {
     })
 }
 
+function spyOnResult({ sites, addAction }, result, paths) {
+  Object.keys(result).sort().forEach(key => {
+    const value = result[key]
+    if (typeof value === 'function') {
+      sites.push([...paths, key])
+      // spy(value)
+      // spy.onAny((event, ...args) => {
+      //   addAction({
+      //     type: 'callback',
+      //     payload: args,
+      //     meta: {
+      //       site: ['return', ...paths, key],
+      //       event
+      //     }
+      //   })
+      // })
+
+      // const spied = spyOnCallback(value, ['result', ...paths, key])
+      // spied.called((callbackPath, ...args) => {
+      //   addAction({
+      //     type: 'callback',
+      //     payload: args,
+      //     meta: callbackPath
+      //   })
+      // })
+      // result[key] = spied
+    }
+    else if (typeof value === 'object') {
+      spyOnResult({ sites, addAction }, result[key], [...paths, key])
+    }
+  })
+}
+
 function spyFunction({ resolve, addAction }, subject) {
   return function (...args) {
     addAction({
@@ -87,14 +120,25 @@ function spyFunction({ resolve, addAction }, subject) {
             meta: { type: 'promise', meta: action.type }
           })
         }).then(() => resolve())
+        return result
+      }
+
+      if (typeof result === 'object') {
+        const sites: any[] = []
+        spyOnResult({ sites, addAction }, result, [])
+        addAction({
+          type: 'return',
+          payload: result,
+          meta: { sites }
+        })
       }
       else {
         addAction({
           type: 'return',
           payload: result
         })
-        resolve()
       }
+      resolve()
       return result
     }
   }

@@ -18,7 +18,7 @@
     "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
     "coverage": "nyc npm test",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
-    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "dependency-check": "dependency-check . --unused --no-dev -i flux-standard-action && dependency-check . --missing --no-dev",
     "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
     "prepublishOnly": "npm run build",
     "test": "npm run clean && tsc && ava",
@@ -86,7 +86,6 @@
     "assertron": "^3.3.12",
     "camel-case": "^3.0.0",
     "flux-standard-action": "^2.0.0",
-    "satisfier": "^3.1.1",
     "tersify": "^1.2.0",
     "unpartial": "^0.4.1"
   }

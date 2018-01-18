@@ -6,7 +6,8 @@ import {
   fetch,
   literalCallback,
   promise,
-  synchronous
+  synchronous,
+  streamWaiting
 } from './specTestSuites'
 import { spec } from './spec'
 
@@ -200,7 +201,6 @@ test('fetch fail verify', async t => {
     })
 })
 //#endregion
-
 
 //#region literalCallback
 test('literalCallback verify', async t => {
@@ -423,4 +423,100 @@ test('synchronous fail replay', async t => {
   ])
 })
 
+//#endregion
+
+//#region streamWaiting
+test('streamWaiting verify', async () => {
+  const speced = await spec(streamWaiting.spawnSuccess)
+  await streamWaiting.increment(speced.subject, 2)
+  console.log(speced.actions)
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', [2]] },
+    {
+      type: 'return',
+      payload: { on: {}, stdout: {}, stderr: {} },
+      meta: {
+        sites: [
+          ['on'],
+          ['stderr', 'on'],
+          ['stdout', 'on']
+        ]
+      }
+    }
+    // {
+    //   type: 'callback',
+    //   payload: [3],
+    //   meta: {
+    //     site: ['return', 'stdout', 'on'],
+    //     event: 'data'
+    //   }
+    // }
+  ])
+  // t.is(actual, 3)
+})
+
+// test('streamWaiting save', async t => {
+//   const speced = await spec(streamWaiting.spawnSuccess, { id: 'streamWaiting', mode: 'save' })
+//   const actual = await streamWaiting.increment(speced.subject, 2)
+
+//   await speced.satisfy([
+//     { type: 'invoke', payload: [{ 'data': 2 }] },
+//     { type: 'callback', payload: [3], meta: [0, 'success'] },
+//     { type: 'return' }
+//   ])
+//   t.is(actual, 3)
+// })
+
+// test('streamWaiting replay', async t => {
+//   const speced = await spec(streamWaiting.spawnSuccess, { id: 'streamWaiting', mode: 'replay' })
+//   const actual = await streamWaiting.increment(speced.subject, 2)
+
+//   await speced.satisfy([
+//     { type: 'invoke', payload: [{ 'data': 2 }] },
+//     { type: 'callback', payload: [3], meta: [0, 'success'] },
+//     { type: 'return' }
+//   ])
+//   t.is(actual, 3)
+// })
+
+// test('streamWaiting fail case verify', async t => {
+//   const speced = await spec(streamWaiting.spawnFail)
+//   return streamWaiting.increment(speced.subject, 2)
+//     .then(() => t.fail())
+//     .catch(() => {
+//       return speced.satisfy([
+//         { type: 'invoke', payload: [{ 'data': 2 }] },
+//         { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+//         { type: 'return' }
+//       ])
+//     })
+// })
+
+// test('streamWaiting fail case save', async t => {
+//   const speced = await spec(streamWaiting.spawnFail, { id: 'streamWaiting fail', mode: 'save' })
+//   await streamWaiting.increment(speced.subject, 2)
+//     .then(() => t.fail())
+//     .catch(() => {
+//       return speced.satisfy([
+//         { type: 'invoke', payload: [{ 'data': 2 }] },
+//         { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+//         { type: 'return' }
+//       ])
+//     })
+//   t.pass()
+// })
+
+// test('streamWaiting fail case replay', async t => {
+//   const speced = await spec(streamWaiting.spawnFail, { id: 'streamWaiting fail', mode: 'replay' })
+//   await streamWaiting.increment(speced.subject, 2)
+//     .then(() => t.fail())
+//     .catch(() => {
+//       return speced.satisfy([
+//         { type: 'invoke', payload: [{ 'data': 2 }] },
+//         { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+//         { type: 'return' }
+//       ])
+//     })
+//   t.pass()
+// })
 //#endregion
