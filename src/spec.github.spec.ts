@@ -17,7 +17,6 @@ function getFollowers(github: GitHub, username: string) {
 
 test('get followers (demo)', async t => {
   const github = await createGitHubTest()
-  // suite
   const specs = await spec(github.users.getFollowersForUser, { id: 'github/getFollowersForUser/success', mode: 'verify' })
 
   github.users.getFollowersForUser = specs.subject
@@ -26,7 +25,8 @@ test('get followers (demo)', async t => {
   await specs.satisfy([
     undefined,
     {
-      type: 'callback', payload: [null, {
+      type: 'callback',
+      payload: [null, {
         data: e => e.login && e.id
       }]
     }
