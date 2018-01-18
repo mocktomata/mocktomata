@@ -1,36 +1,24 @@
-import { CallEntry, createCallEntryCreator } from './CallEntry'
+import { FluxStandardAction } from 'flux-standard-action'
 
-export interface Spy<T> {
-  calls: ReadonlyArray<CallEntry>,
-  /**
-   * the spied subject.
-   */
-  subject: T
-}
-
-export function spyOnCallback(fn, callbackPath) {
+function spyOnCallback(fn, callbackPath) {
   let callback
   return Object.assign(
     (...args) => {
-      // callback is always assigned as it is used internally.
-      callback(...args)
+      callback(callbackPath, ...args)
       fn(...args)
     }, {
-      callbackPath,
       called(cb) {
         callback = cb
       }
     })
 }
 
-/**
- * Spy on function that uses callback.
- */
-export function spy<T extends Function>(fn: T, calls: CallEntry[] = []): Spy<T> {
-  const spied: T = function (...args) {
-    const creator = createCallEntryCreator(args)
-    calls.push(creator.callEntry)
-
+function spyFunction({ resolve, addAction }, subject) {
+  return function (...args) {
+    addAction({
+      type: 'invoke',
+      payload: args
+    })
     const spiedCallbacks: any[] = []
     const spiedArgs = args.map((arg, index) => {
       if (typeof arg === 'function') {
@@ -50,39 +38,90 @@ export function spy<T extends Function>(fn: T, calls: CallEntry[] = []): Spy<T> 
       return arg
     })
     if (spiedCallbacks.length > 0) {
-      new Promise(a => {
+      const waiting = new Promise(a => {
         spiedCallbacks.forEach(s => {
-          s.called((...results) => {
-            a({ results, callbackPath: s.callbackPath })
+          s.called((callbackPath, ...results) => {
+            addAction({
+              type: 'callback',
+              payload: results,
+              meta: callbackPath
+            })
+            a()
           })
         })
-      }).then(creator.resolve, creator.reject)
-
-      return fn.call(this, ...spiedArgs)
+      })
+      const result = subject.call(this, ...spiedArgs)
+      waiting.then(() => {
+        addAction({
+          type: 'return',
+          payload: result
+        })
+        resolve()
+      }, resolve)
+      return result
     }
     else {
+      let result
       try {
-        const result = fn.call(this, ...args)
-        creator.callEntry.output = result
-        if (result && typeof result.then === 'function')
-          result.then(results => ({ results })).then(creator.resolve, creator.reject)
-        else {
-          creator.resolve()
-        }
-        return result
+        result = subject.call(this, ...args)
       }
-      catch (error) {
-        creator.callEntry.error = error
-        // just resolve, no need to reject,
-        // the error is on `error` property.
-        creator.resolve()
-        throw error
+      catch (err) {
+        addAction({
+          type: 'throw',
+          payload: err
+        })
+        // resolve instead of reject because it is the call that fails,
+        // the spying didn't fail.
+        resolve()
+        throw err
       }
+      if (result && typeof result.then === 'function') {
+        result.then(
+          results => ({ type: 'resolve', payload: results }),
+          err => ({ type: 'reject', payload: err })
+        ).then(action => {
+          // addAction(action)
+          addAction({
+            type: 'return',
+            payload: action.payload,
+            meta: { type: 'promise', meta: action.type }
+          })
+        }).then(() => resolve())
+      }
+      else {
+        addAction({
+          type: 'return',
+          payload: result
+        })
+        resolve()
+      }
+      return result
     }
-  } as any
+  }
+}
+
+export interface Spy<T> {
+  actions: FluxStandardAction<any, any>[];
+  closing: Promise<FluxStandardAction<any, any>[]>;
+  subject: T;
+}
+
+export function spy<T>(subject: T): Spy<T> {
+  const actions: FluxStandardAction<any, any>[] = []
+  function addAction(action) {
+    actions.push(action)
+  }
+  let resolve
+  const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
+    resolve = () => {
+      a(actions)
+    }
+  })
+  const spied = spyFunction({ resolve, addAction }, subject)
 
   return {
-    calls,
+    actions,
+    closing,
     subject: spied
-  }
+  } as any
 }

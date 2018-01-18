@@ -1,1 +1,1 @@
-{"expectation":"{ asyncOutput: [undefined, undefined, { message: 'fail' }] }","records":[{"inputs":[{"data":2,"error":{},"success":{}}],"callbackPath":[0,"error"],"asyncOutput":[null,"failStatus",{"message":"fail"}]}]}
+{"expectation":"[{ type: 'invoke', payload: [{ data: 2 }] }, { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] }, { type: 'return' }]","actions":[{"type":"invoke","payload":[{"data":2}]},{"type":"callback","payload":[null,"failStatus",{"message":"fail"}],"meta":[0,"error"]},{"type":"return"}]}

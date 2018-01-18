@@ -1,95 +1,139 @@
 import { test } from 'ava'
+import { satisfy } from 'assertron'
 
+import {
+  simpleCallback,
+  fetch,
+  literalCallback,
+  promise,
+  synchronous
+} from './specTestSuites'
 import { spec } from './spec'
-import { fetch, promise, simpleCallback, literalCallback, synchronous } from './specTestSuites'
+
+test('spec.closing will get spec record', async () => {
+  const cbSpec = await spec(simpleCallback.success)
+  await simpleCallback.increment(cbSpec.subject, 2)
+  const actions = await cbSpec.closing
+  satisfy(actions, [
+    { type: 'invoke', payload: [2] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
+})
 
 //#region simpleCallback
 test('simpleCallback verify', async t => {
   const cbSpec = await spec(simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
-  const record = await cbSpec.calls[0].getCallRecord()
-
-  // const recordShouldBe = {
-  //   id: 'simpleCallback',
-  //   actions: [
-  //     { type: 'call', payload: [2, {}], meta: 'input' },
-  //     { type: 'callback', payload: [null, 3] },
-  //     { type: 'return', paylaod: undefined, meta: 'output' }
-  //   ]
-  // }
-  console.log(record)
-  await cbSpec.satisfy({
-    asyncOutput: [null, 3]
-  })
+  await cbSpec.satisfy([
+    { type: 'invoke', payload: [2] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
-test('simpleCallback save', async t => {
-  const speced = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'save' })
-  const actual = await simpleCallback.increment(speced.subject, 2)
 
-  await speced.satisfy({
-    asyncOutput: [null, 3]
-  })
+test('simpleCallback save', async t => {
+  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'save' })
+  const actual = await simpleCallback.increment(cbSpec.subject, 2)
+
+  await cbSpec.satisfy([
+    { type: 'invoke', payload: [2] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
 test('simpleCallback replay', async t => {
-  const speced = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
-  const actual = await simpleCallback.increment(speced.subject, 2)
+  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
-  await speced.satisfy({
-    asyncOutput: [null, 3]
-  })
+  await cbSpec.satisfy([
+    { type: 'invoke', payload: [2] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
 test('simpleCallback fail case verify', async t => {
-  const speced = await spec(simpleCallback.fail)
-  await simpleCallback.increment(speced.subject, 2)
+  const cbSpec = await spec(simpleCallback.fail)
+  return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return cbSpec.satisfy([
+        { type: 'invoke', payload: [2] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
 
 test('simpleCallback fail case save', async t => {
-  const speced = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'save' })
-  await simpleCallback.increment(speced.subject, 2)
+  const cbSpec = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'save' })
+  return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return cbSpec.satisfy([
+        { type: 'invoke', payload: [2] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
 
 test('simpleCallback fail case replay', async t => {
-  const speced = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'replay' })
-  await simpleCallback.increment(speced.subject, 2)
+  const cbSpec = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'replay' })
+  return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return cbSpec.satisfy([
+        { type: 'invoke', payload: [2] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
+
+test('replay on not saved input will spy', async t => {
+  const successSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+
+  const actual = await simpleCallback.increment(successSpec.subject, 4)
+  await successSpec.satisfy([
+    { type: 'invoke', payload: [4] },
+    { type: 'callback', payload: [null, 5] },
+    { type: 'return' }
+  ])
+  t.is(actual, 5)
+
+  const failSpec = await spec(simpleCallback.fail, { id: 'simpleCallback', mode: 'replay' })
+  await simpleCallback.increment(failSpec.subject, 8)
+    .then(() => t.fail())
+    .catch(() => {
+      return failSpec.satisfy([
+        { type: 'invoke', payload: [8] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
+    })
+})
+
 //#endregion
+
 
 //#region fetch
 test('fetch verify', async t => {
   const speced = await spec(fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
-  await speced.satisfy({
-    asyncOutput: [null, 3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
@@ -97,9 +141,11 @@ test('fetch save', async t => {
   const speced = await spec(fetch.success, { id: 'fetch', mode: 'save' })
   const actual = await fetch.add(speced.subject, 1, 2)
 
-  await speced.satisfy({
-    asyncOutput: [null, 3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
@@ -107,57 +153,64 @@ test('fetch replay', async t => {
   const speced = await spec(fetch.success, { id: 'fetch', mode: 'replay' })
   const actual = await fetch.add(speced.subject, 1, 2)
 
-  await speced.satisfy({
-    asyncOutput: [null, 3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
 test('fetch fail verify', async t => {
   const speced = await spec(fetch.fail)
-  await fetch.add(speced.subject, 1, 2)
+  return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
 
 test('fetch fail save', async t => {
   const speced = await spec(fetch.fail, { id: 'fetch fail', mode: 'save' })
-  await fetch.add(speced.subject, 1, 2)
+  return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
 
 test('fetch fail verify', async t => {
   const speced = await spec(fetch.fail, { id: 'fetch fail', mode: 'verify' })
-  await fetch.add(speced.subject, 1, 2)
+  return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
 //#endregion
+
 
 //#region literalCallback
 test('literalCallback verify', async t => {
   const speced = await spec(literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
-
-  await speced.satisfy({
-    asyncOutput: [3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: [{ 'data': 2 }] },
+    { type: 'callback', payload: [3], meta: [0, 'success'] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
@@ -165,9 +218,11 @@ test('literalCallback save', async t => {
   const speced = await spec(literalCallback.success, { id: 'literalCallback', mode: 'save' })
   const actual = await literalCallback.increment(speced.subject, 2)
 
-  await speced.satisfy({
-    asyncOutput: [3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: [{ 'data': 2 }] },
+    { type: 'callback', payload: [3], meta: [0, 'success'] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
@@ -175,22 +230,25 @@ test('literalCallback replay', async t => {
   const speced = await spec(literalCallback.success, { id: 'literalCallback', mode: 'replay' })
   const actual = await literalCallback.increment(speced.subject, 2)
 
-  await speced.satisfy({
-    asyncOutput: [3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: [{ 'data': 2 }] },
+    { type: 'callback', payload: [3], meta: [0, 'success'] },
+    { type: 'return' }
+  ])
   t.is(actual, 3)
 })
 
 test('literalCallback fail case verify', async t => {
   const speced = await spec(literalCallback.fail)
-  await literalCallback.increment(speced.subject, 2)
+  return literalCallback.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [undefined, undefined, { message: 'fail' }]
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: [{ 'data': 2 }] },
+        { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'return' }
+      ])
     })
-  t.pass()
 })
 
 test('literalCallback fail case save', async t => {
@@ -198,9 +256,11 @@ test('literalCallback fail case save', async t => {
   await literalCallback.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [undefined, undefined, { message: 'fail' }]
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: [{ 'data': 2 }] },
+        { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'return' }
+      ])
     })
   t.pass()
 })
@@ -210,13 +270,14 @@ test('literalCallback fail case replay', async t => {
   await literalCallback.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncOutput: [undefined, undefined, { message: 'fail' }]
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: [{ 'data': 2 }] },
+        { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'return' }
+      ])
     })
   t.pass()
 })
-
 //#endregion
 
 //#region promise
@@ -227,9 +288,10 @@ test('promise verify', async t => {
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
-      return speced.satisfy({
-        asyncOutput: 3
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['increment', 2] },
+        { type: 'return', payload: 3, meta: { type: 'promise', meta: 'resolve' } }
+      ])
     })
 })
 
@@ -238,9 +300,10 @@ test('promise verify save', async t => {
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
-      return speced.satisfy({
-        asyncOutput: 3
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['increment', 2] },
+        { type: 'return', payload: 3, meta: { type: 'promise', meta: 'resolve' } }
+      ])
     })
 })
 
@@ -249,57 +312,60 @@ test('promise verify replay', async t => {
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
-      return speced.satisfy({
-        asyncOutput: 3
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['increment', 2] },
+        { type: 'return', payload: 3, meta: { type: 'promise', meta: 'resolve' } }
+      ])
     })
 })
 
 test('promise rejected verify', async t => {
   const speced = await spec(promise.fail)
-  await promise.increment(speced.subject, 2)
+  return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncError: { message: 'fail' }
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['increment', 2] },
+        { type: 'return', payload: { message: 'fail' }, meta: { type: 'promise', meta: 'reject' } }
+      ])
     })
-  t.pass()
 })
 
 test('promise rejected save', async t => {
   const speced = await spec(promise.fail, { id: 'promise fail', mode: 'save' })
-  await promise.increment(speced.subject, 2)
+  return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncError: { message: 'fail' }
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['increment', 2] },
+        { type: 'return', payload: { message: 'fail' }, meta: { type: 'promise', meta: 'reject' } }
+      ])
     })
-  t.pass()
 })
 
 test('promise rejected replay', async t => {
   const speced = await spec(promise.fail, { id: 'promise fail', mode: 'replay' })
-  await promise.increment(speced.subject, 2)
-    .then(t.fail)
+  return promise.increment(speced.subject, 2)
+    .then(() => t.fail())
     .catch(() => {
-      return speced.satisfy({
-        asyncError: { message: 'fail' }
-      })
+      return speced.satisfy([
+        { type: 'invoke', payload: ['increment', 2] },
+        { type: 'return', payload: { message: 'fail' }, meta: { type: 'promise', meta: 'reject' } }
+      ])
     })
-  t.pass()
 })
 //#endregion
+
 
 //#region synchronous
 test('synchronous verify', async t => {
   const speced = await spec(synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
 
-  await speced.satisfy({
-    output: 3
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', 2] },
+    { type: 'return', payload: 3 }
+  ])
   t.is(actual, 3)
 })
 
@@ -307,18 +373,20 @@ test('synchronous save', async t => {
   const speced = await spec(synchronous.success, { id: 'synchronous', mode: 'save' })
   const actual = synchronous.increment(speced.subject, 2)
 
-  await speced.satisfy({
-    output: 3
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', 2] },
+    { type: 'return', payload: 3 }
+  ])
   t.is(actual, 3)
 })
 
 test('synchronous replay', async t => {
   const speced = await spec(synchronous.success, { id: 'synchronous', mode: 'replay' })
   const actual = synchronous.increment(speced.subject, 2)
-  await speced.satisfy({
-    output: 3
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', 2] },
+    { type: 'return', payload: 3 }
+  ])
   t.is(actual, 3)
 })
 
@@ -327,9 +395,10 @@ test('synchronous fail verify', async t => {
 
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
-  await speced.satisfy({
-    error: { message: 'fail' }
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', 2] },
+    { type: 'throw', payload: { message: 'fail' } }
+  ])
 })
 
 test('synchronous fail save', async t => {
@@ -337,9 +406,10 @@ test('synchronous fail save', async t => {
 
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
-  await speced.satisfy({
-    error: { message: 'fail' }
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', 2] },
+    { type: 'throw', payload: { message: 'fail' } }
+  ])
 })
 
 test('synchronous fail replay', async t => {
@@ -347,41 +417,10 @@ test('synchronous fail replay', async t => {
 
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
-  await speced.satisfy({
-    error: { message: 'fail' }
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', 2] },
+    { type: 'throw', payload: { message: 'fail' } }
+  ])
 })
 
 //#endregion
-
-test('replay on not saved spec will spy', async t => {
-  const speced = await spec(synchronous.fail, { id: 'unknown', mode: 'replay' })
-
-  t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
-
-  await speced.satisfy({
-    error: { message: 'fail' }
-  })
-})
-
-
-test('replay on not saved input will spy', async t => {
-  const successSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
-
-  const actual = await simpleCallback.increment(successSpec.subject, 4)
-
-  t.is(successSpec.calls.length, 1)
-  await successSpec.satisfy({
-    asyncOutput: [null, 5]
-  })
-  t.is(actual, 5)
-
-  const failSpec = await spec(simpleCallback.fail, { id: 'simpleCallback', mode: 'replay' })
-  await simpleCallback.increment(failSpec.subject, 8)
-    .then(() => t.fail())
-    .catch(() => {
-      return failSpec.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
-    })
-})

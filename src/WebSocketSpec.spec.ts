@@ -12,7 +12,7 @@ import { SpecOptions } from './index'
 export type WebSocketConstructor = new (url, options?: ClientOptions) => WebSocket
 
 function spyWebSocket() {
-  const actions: FluxStandardAction<any, void>[] = []
+  const actions: FluxStandardAction<any, string>[] = []
 
   let resolve
   let onChangeCallback
@@ -23,7 +23,7 @@ function spyWebSocket() {
     }
   }
 
-  const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
+  const closing = new Promise<FluxStandardAction<any, string>[]>(a => {
     resolve = () => {
       a(actions)
     }

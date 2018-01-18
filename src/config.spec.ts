@@ -1,6 +1,9 @@
 import { test } from 'ava'
 
-import { config, spec } from './index'
+import {
+  config,
+  spec
+} from './index'
 import { simpleCallback } from './specTestSuites'
 import { store } from './store'
 
@@ -29,9 +32,12 @@ test('config replay will force subsequence spec in replay mode', async t => {
   const speced = await spec(simpleCallback.fail, { id: 'simpleCallback', mode: 'verify' })
   const actual = await simpleCallback.increment(speced.subject, 2)
 
-  await speced.satisfy({
-    asyncOutput: [null, 3]
-  })
+  await speced.satisfy([
+    { type: 'invoke', payload: [2] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' }
+  ])
+
   t.is(actual, 3)
 })
 
@@ -42,9 +48,11 @@ test('config mode to work on specific spec', async t => {
   await simpleCallback.increment(failSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return failSpec.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return failSpec.satisfy([
+        { type: 'invoke', payload: [2] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
   config({ mode: 'replay', spec: 'simpleCallback failed' })
 
@@ -52,9 +60,11 @@ test('config mode to work on specific spec', async t => {
   await simpleCallback.increment(sucessSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return sucessSpec.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return sucessSpec.satisfy([
+        { type: 'invoke', payload: [2] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
   t.pass()
 })
@@ -65,9 +75,11 @@ test('config mode to work on specific spec using regex', async t => {
   await simpleCallback.increment(sucessSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
-      return sucessSpec.satisfy({
-        asyncOutput: [{ message: 'fail' }, null]
-      })
+      return sucessSpec.satisfy([
+        { type: 'invoke', payload: [2] },
+        { type: 'callback', payload: [{ message: 'fail' }, null] },
+        { type: 'return' }
+      ])
     })
   t.pass()
 })

@@ -1,1 +1,1 @@
-{"expectation":"{ asyncOutput: 3 }","records":[{"inputs":["increment",2],"output":{},"asyncOutput":3}]}
+{"expectation":"[{ type: 'invoke', payload: ['increment', 2] }, { type: 'return', payload: 3, meta: { type: 'promise', meta: 'resolve' } }]","actions":[{"type":"invoke","payload":["increment",2]},{"type":"return","payload":3,"meta":{"type":"promise","meta":"resolve"}}]}

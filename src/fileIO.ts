@@ -1,10 +1,8 @@
 import camelCase = require('camel-case')
 import fs = require('fs')
 import path = require('path')
-import { tersify } from 'tersify'
 
 import { SPECS_FOLDER } from './constants'
-import { SpecRecord } from './interfaces'
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {
@@ -12,10 +10,10 @@ export function readSpec(id: string) {
     try {
       const content = fs.readFileSync(filePath, 'utf8')
       const json = JSON.parse(content)
-      // todo: convert json.expectation from string back to Expectation.
       a(json)
     }
     catch (err) {
+      // istanbul ignore next
       r(err)
     }
   })
@@ -26,7 +24,7 @@ function getFilePath(id: string) {
   return path.resolve(SPECS_FOLDER, dirname, `${camelCase(basename)}.json`)
 }
 
-export function writeSpec(id: string, description: string | undefined, specRecord: SpecRecord) {
+export function writeSpec(id: string, specRecord) {
   return new Promise<void>((a, r) => {
     try {
       const filePath = getFilePath(id)
@@ -34,19 +32,7 @@ export function writeSpec(id: string, description: string | undefined, specRecor
       // istanbul ignore next
       if (!fs.existsSync(folder))
         createFolders(folder)
-      const { expectation, records } = specRecord
-      records.forEach(r => {
-        // error.message is not enumerable.
-        // JSON.stringify() will get `{}`
-        if (r.error) {
-          r.error = { message: r.error.message, ...r.error }
-        }
-      })
-      fs.writeFileSync(filePath, JSON.stringify({
-        description,
-        expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
-        records
-      }))
+      fs.writeFileSync(filePath, JSON.stringify(specRecord))
       a()
     }
     catch (err) {
@@ -68,6 +54,7 @@ function createFolders(location: string) {
     }
     catch (err) {
       if (err.code !== 'EEXIST') {
+        // istanbul ignore next
         throw err;
       }
 

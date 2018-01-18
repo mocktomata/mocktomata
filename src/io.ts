@@ -6,10 +6,10 @@ import * as fileIO from './fileIO'
  * such as file-base, database, or remote host
  */
 export const io = {
-  readSpec(id: string) {
-    return fileIO.readSpec(id)
+  get readSpec() {
+    return fileIO.readSpec
   },
-  getSpecWriter() {
+  get writeSpec() {
     return fileIO.writeSpec
   }
 }

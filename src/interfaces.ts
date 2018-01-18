@@ -1,8 +1,8 @@
+import { FluxStandardAction } from 'flux-standard-action';
 import { Expectation } from 'satisfier'
 
 import { CallRecord } from './CallRecord'
 import { Spy } from './spy'
-import { FluxStandardAction } from 'flux-standard-action';
 
 export type SpecMode = 'verify' | 'save' | 'replay'
 
@@ -31,13 +31,19 @@ export interface SpecRecord {
   expectation: Expectation<CallRecord[]>
 }
 
+export interface SpecRecord2 {
+  id: string,
+  expectation: string,
+  actions: FluxStandardAction<any, any>[]
+}
+
 export interface WebSocketSpecRecord {
   actions: FluxStandardAction<any, any>[],
   expectation: string
 }
 
 
-export interface Spec<T extends Function> extends Spy<T> {
+export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
