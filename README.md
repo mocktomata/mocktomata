@@ -230,21 +230,21 @@ One way to get around this is create a wraping function that returns DTO.
 ```ts
 import fetch = require('node-fetch')
 
-async function simpleFetch(url, options) {
+async function fetchJson(url, options) {
   const response = await fetch(url, options)
   return JSON.parse(response.text())
 }
 
-test('komondor can work with simpleFetch', async t => {
-  const yourSpec = await spec(simpleFetch)
+test('komondor can work with fetchJson', async t => {
+  const yourSpec = await spec(fetchJson)
   const json = await yourSpec.fn('someUri')
 
   yourSpec.satisfy({ ... })
 })
 ```
 
-Creating `simpleFetch()` is actually a good practice because it creates a separation between the layer.
-Your application code uses `simpleFetch()` instead of `fetch()`,
+Creating `fetchJson()` is actually a good practice because it creates a separation between the layer.
+Your application code uses `fetchJson()` instead of `fetch()`,
 meaning it does not know the information comes from the network.
 
 (yes, for that you should give it a more netural name and remove the HTTP specific options)
