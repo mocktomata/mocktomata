@@ -110,7 +110,7 @@ test('replay on not saved input will spy', async t => {
   ])
   t.is(actual, 5)
 
-  const failSpec = await spec(simpleCallback.fail, { id: 'simpleCallback', mode: 'replay' })
+  const failSpec = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'replay' })
   await simpleCallback.increment(failSpec.subject, 8)
     .then(() => t.fail())
     .catch(() => {
@@ -295,7 +295,7 @@ test('promise verify', async t => {
     })
 })
 
-test('promise verify save', async t => {
+test.skip('promise verify save', async t => {
   const speced = await spec(promise.success, { id: 'promise', mode: 'save' })
   return promise.increment(speced.subject, 2)
     .then(actual => {
