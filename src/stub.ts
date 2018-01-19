@@ -45,7 +45,7 @@ function locateCallback(args, callbackPath) {
   return args.find(arg => typeof arg === 'function')
 }
 
-function stubFunction({ resolve }, subject, actions: any[]) {
+function stubFunction({ resolve }, subject, id: string, actions: FluxStandardAction<any, any>[]) {
   let i = 0
   let spied
   return function (...args) {
@@ -55,6 +55,7 @@ function stubFunction({ resolve }, subject, actions: any[]) {
     const inputAction = actions[i++]
     if (!inputMatches(inputAction.payload, args)) {
       if (!spied) {
+        console.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
         spied = spy(subject)
         spied.closing.then(spiedActions => {
           actions.splice(0, actions.length, ...spiedActions)
@@ -105,8 +106,9 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
   try {
     specRecord = await io.readSpec(id)
   }
+  // istanbul ignore next
   catch {
-    // istanbul ignore next
+    console.warn(`Cannot find saved record for spec '${id}'. Run in 'verify' mode instead.`)
     return spy(subject)
   }
   let resolve
@@ -116,7 +118,7 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
     }
   })
 
-  const stubbed = stubFunction({ resolve }, subject, specRecord.actions)
+  const stubbed = stubFunction({ resolve }, subject, id, specRecord.actions)
 
   return {
     actions: specRecord.actions,
