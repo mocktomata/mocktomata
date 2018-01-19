@@ -1,5 +1,5 @@
 import { test } from 'ava'
-import { satisfy } from 'assertron'
+import { satisfy, AssertOrder } from 'assertron'
 
 import {
   simpleCallback,
@@ -21,6 +21,46 @@ test('spec.closing will get actions recorded', async () => {
     { type: 'callback', payload: [null, 3] },
     { type: 'return' }
   ])
+})
+
+test('on(event, callback) will invoke when action is added.', async () => {
+  const order = new AssertOrder()
+  const cbSpec = await spec(simpleCallback.success)
+
+  cbSpec.on('invoke', action => {
+    order.once(1)
+    satisfy(action, { payload: [2] })
+  })
+  cbSpec.on('callback', action => {
+    order.once(2)
+    satisfy(action, { payload: [null, 3] } as any)
+  })
+  cbSpec.on('return', () => {
+    order.once(3)
+  })
+
+  await simpleCallback.increment(cbSpec.subject, 2)
+  order.end()
+})
+
+test('on(event, callback) will invoke when action is replay.', async () => {
+  const order = new AssertOrder()
+  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+
+  cbSpec.on('invoke', action => {
+    order.once(1)
+    satisfy(action, { payload: [2] })
+  })
+  cbSpec.on('callback', action => {
+    order.once(2)
+    satisfy(action, { payload: [null, 3] } as any)
+  })
+  cbSpec.on('return', () => {
+    order.once(3)
+  })
+
+  await simpleCallback.increment(cbSpec.subject, 2)
+  order.end()
 })
 
 test('function spec can be called multiple times', async t => {
