@@ -149,3 +149,22 @@ export const streamWaiting = {
     }
   }
 }
+
+export const delayed = {
+  increment(remote, x) {
+    return new Promise((a, r) => {
+      remote(x, (err, response) => {
+        if (err) r(err)
+        a(response)
+      })
+    })
+  },
+  success(a, callback) {
+    setTimeout(() => {
+      callback(null, a + 1)
+    }, 100)
+  },
+  fail(_a, callback) {
+    callback({ message: 'fail' }, null)
+  }
+}

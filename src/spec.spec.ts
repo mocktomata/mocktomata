@@ -7,11 +7,12 @@ import {
   literalCallback,
   promise,
   synchronous,
-  streamWaiting
+  streamWaiting,
+  delayed
 } from './specTestSuites'
 import { spec } from './spec'
 
-test('spec.closing will get spec record', async () => {
+test('spec.closing will get actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
   const actions = await cbSpec.closing
@@ -20,6 +21,14 @@ test('spec.closing will get spec record', async () => {
     { type: 'callback', payload: [null, 3] },
     { type: 'return' }
   ])
+})
+
+test('function spec can be called multiple times', async t => {
+  const cbSpec = await spec(delayed.success)
+  await delayed.increment(cbSpec.subject, 2)
+  await delayed.increment(cbSpec.subject, 4)
+  const actions = await cbSpec.closing
+  t.is(actions.length, 6)
 })
 
 //#region simpleCallback
