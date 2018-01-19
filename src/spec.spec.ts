@@ -11,6 +11,7 @@ import {
   delayed
 } from './specTestSuites'
 import { spec } from './spec'
+import { isFSA } from 'flux-standard-action';
 
 test('spec.closing will get actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
@@ -57,6 +58,32 @@ test('on(event, callback) will invoke when action is replay.', async () => {
   })
   cbSpec.on('return', () => {
     order.once(3)
+  })
+
+  await simpleCallback.increment(cbSpec.subject, 2)
+  order.end()
+})
+
+test('onAny(callback) will invoke on any action', async t => {
+  const order = new AssertOrder()
+  const cbSpec = await spec(simpleCallback.success)
+
+  cbSpec.onAny(action => {
+    order.any([1, 2, 3])
+    t.true(isFSA(action))
+  })
+
+  await simpleCallback.increment(cbSpec.subject, 2)
+  order.end()
+})
+
+test('onAny(callback) will invoke when any action is replay', async t => {
+  const order = new AssertOrder()
+  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+
+  cbSpec.onAny(action => {
+    order.any([1, 2, 3])
+    t.true(isFSA(action))
   })
 
   await simpleCallback.increment(cbSpec.subject, 2)
