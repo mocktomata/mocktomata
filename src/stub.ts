@@ -45,14 +45,26 @@ function locateCallback(args, callbackPath) {
   return args.find(arg => typeof arg === 'function')
 }
 
-function stubFunction({ resolve }, subject, id: string, actions: FluxStandardAction<any, any>[]) {
+function stubFunction({ resolve, events, listenAll }, subject, id: string, actions: FluxStandardAction<any, any>[]) {
   let i = 0
+  function getAction() {
+    const action = actions[i++]
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
+    return action
+  }
+
   let spied
   return function (...args) {
     if (spied)
       return spied.subject.call(this, ...args)
 
-    const inputAction = actions[i++]
+    const inputAction = getAction()
+
     if (!inputMatches(inputAction.payload, args)) {
       if (!spied) {
         console.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
@@ -72,7 +84,7 @@ function stubFunction({ resolve }, subject, id: string, actions: FluxStandardAct
     return result
 
     function processUntilReturn() {
-      const action = actions[i++]
+      const action = getAction()
       if (action.type === 'return') {
         if (action.meta) {
           if (action.meta.type === 'promise') {
@@ -112,6 +124,17 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
       return spy(subject)
     }
   }
+
+  const events = {}
+  const listenAll: any[] = []
+  function on(event, callback) {
+    if (!events[event])
+      events[event] = []
+    events[event].push(callback)
+  }
+  function onAny(callback) {
+    listenAll.push(callback)
+  }
   let resolve
   const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
     resolve = () => {
@@ -119,9 +142,11 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
     }
   })
 
-  const stubbed = stubFunction({ resolve }, subject, id, specRecord.actions)
+  const stubbed = stubFunction({ resolve, events, listenAll }, subject, id, specRecord.actions)
 
   return {
+    on,
+    onAny,
     actions: specRecord.actions,
     closing,
     subject: stubbed

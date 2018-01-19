@@ -145,15 +145,33 @@ function spyFunction({ resolve, addAction }, subject) {
 }
 
 export interface Spy<T> {
-  actions: FluxStandardAction<any, any>[];
-  closing: Promise<FluxStandardAction<any, any>[]>;
-  subject: T;
+  on(event: string, callback: (action: FluxStandardAction<any, any>) => void),
+  onAny(callback: (action: FluxStandardAction<any, any>) => void),
+  actions: FluxStandardAction<any, any>[],
+  closing: Promise<FluxStandardAction<any, any>[]>,
+  subject: T
 }
 
 export function spy<T>(subject: T): Spy<T> {
   const actions: FluxStandardAction<any, any>[] = []
+  const events = {}
+  const listenAll: any[] = []
+  function on(event, callback) {
+    if (!events[event])
+      events[event] = []
+    events[event].push(callback)
+  }
+  function onAny(callback) {
+    listenAll.push(callback)
+  }
   function addAction(action) {
     actions.push(action)
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
   }
   let resolve
   const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
@@ -164,6 +182,8 @@ export function spy<T>(subject: T): Spy<T> {
   const spied = spyFunction({ resolve, addAction }, subject)
 
   return {
+    on,
+    onAny,
     actions,
     closing,
     subject: spied
