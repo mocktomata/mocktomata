@@ -106,10 +106,11 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
   try {
     specRecord = await io.readSpec(id)
   }
-  // istanbul ignore next
   catch {
-    console.warn(`Cannot find saved record for spec '${id}'. Run in 'verify' mode instead.`)
-    return spy(subject)
+    /* istanbul ignore next */ {
+      console.warn(`Cannot find saved record for spec '${id}'. Run in 'verify' mode instead.`)
+      return spy(subject)
+    }
   }
   let resolve
   const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
