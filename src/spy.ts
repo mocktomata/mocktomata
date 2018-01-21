@@ -1,4 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action'
+
+import { getReturnSpy } from './returnSpys'
 import { createSpecStore } from './specStore';
 
 function spyOnCallback(fn, callbackPath) {
@@ -12,42 +14,6 @@ function spyOnCallback(fn, callbackPath) {
         callback = cb
       }
     })
-}
-function isChildProcess(result) {
-  return typeof result.on === 'function' &&
-    result.stdout && typeof result.stdout.on === 'function' &&
-    result.stderr && typeof result.stderr.on === 'function'
-}
-
-function spyOnEventHandler({ store }, subject, methodName, site: string[]) {
-  const returnSite = [...site, methodName]
-  const fn = subject[methodName]
-  subject[methodName] = function (event, cb) {
-    const wrap = (...args) => {
-      store.add({
-        type: 'callback',
-        payload: args,
-        meta: {
-          site: returnSite,
-          event
-        }
-      })
-      cb(...args)
-    }
-    return fn.call(subject, event, wrap)
-  }
-}
-
-function spyChildProcess({ store }, subject) {
-  spyOnEventHandler({ store }, subject, 'on', ['return'])
-  spyOnEventHandler({ store }, subject.stdout, 'on', ['return', 'stdout'])
-  spyOnEventHandler({ store }, subject.stderr, 'on', ['return', 'stderr'])
-  return { type: 'childProcess' }
-}
-function spyOnResult({ store }, result) {
-  if (isChildProcess(result))
-    return spyChildProcess({ store }, result)
-  return undefined
 }
 
 function spyFunction({ resolve, store }, subject) {
@@ -112,28 +78,14 @@ function spyFunction({ resolve, store }, subject) {
         resolve()
         throw err
       }
-      if (result && typeof result.then === 'function') {
-        result.then(
-          results => ({ type: 'resolve', payload: results }),
-          err => ({ type: 'reject', payload: err })
-        ).then(action => {
-          store.add({
-            type: 'return',
-            payload: action.payload,
-            meta: { type: 'promise', meta: action.type }
-          })
-        }).then(() => resolve())
-        return result
-      }
-
-      if (typeof result === 'object') {
-        const meta = spyOnResult({ store }, result)
-        store.add({ type: 'return', payload: result, meta })
+      const returnSpy = getReturnSpy(result)
+      if (returnSpy) {
+        return returnSpy({ store, resolve }, result)
       }
       else {
         store.add({ type: 'return', payload: result })
+        resolve()
       }
-      resolve()
       return result
     }
   }

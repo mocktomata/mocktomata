@@ -1,6 +1,7 @@
 import { FluxStandardAction } from 'flux-standard-action'
 
 import { log } from './log'
+import { getReturnStub } from './returnStubs'
 import { createSpecStore, SpecStore } from './specStore'
 import { spy, Spy } from './spy'
 
@@ -81,87 +82,13 @@ function stubFunction({ resolve, store }: { resolve: any, store: SpecStore }, su
     }
     return result
 
-    function promiseStub(action) {
-      if (action.meta.meta === 'resolve')
-        return Promise.resolve(action.payload)
-      else
-        return Promise.reject(action.payload)
-    }
-
-    function processUntilCloseEvent({ on, stdout, stderr }) {
-      const action = store.peek()
-      if (action === undefined) {
-        resolve()
-        return
-      }
-      if (action.type !== 'callback') {
-        // istanbul ignore next
-        throw new Error('not supported. childProcess stub processing non-callback')
-      }
-
-      const site = action.meta.site.join('.')
-      let target
-      switch (site) {
-        case 'return.on':
-          target = on
-          break
-        case 'return.stdout.on':
-          target = stdout
-          break
-        case 'return.stderr.on':
-          target = stderr
-          break
-      }
-      if (!target) {
-        // istanbul ignore next
-        throw new Error(`unknown callback site: ${site}`)
-      }
-
-      target[action.meta.event].forEach(cb => cb(...action.payload))
-
-      store.next()
-      processUntilCloseEvent({ on, stdout, stderr })
-    }
-    function childProcessStub() {
-      const on = {}
-      const stdout = {}
-      const stderr = {}
-      setImmediate(() => {
-        processUntilCloseEvent({ on, stdout, stderr })
-      })
-      return {
-        on(event, callback) {
-          if (!on[event])
-            on[event] = []
-          on[event].push(callback)
-        },
-        stdout: {
-          on(event, callback) {
-            if (!stdout[event])
-              stdout[event] = []
-            stdout[event].push(callback)
-          }
-        },
-        stderr: {
-          on(event, callback) {
-            if (!stderr[event])
-              stderr[event] = []
-            stderr[event].push(callback)
-          }
-        }
-      }
-    }
-
     function processUntilReturn() {
       const action = store.next()
       if (action.type === 'return') {
         if (action.meta) {
-          if (action.meta.type === 'promise') {
-            return promiseStub(action)
-          }
-          if (action.meta.type === 'childProcess') {
-            return childProcessStub()
-          }
+          const returnStub = getReturnStub(action.meta.type)
+          if (returnStub)
+            return returnStub({ store, resolve })
         }
         return action.payload
       }
