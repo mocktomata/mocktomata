@@ -1,7 +1,8 @@
 import { FluxStandardAction } from 'flux-standard-action'
+import { tersify } from 'tersify'
 
 import { io } from './io'
-import { tersify } from 'tersify';
+import { log } from './log'
 
 export interface SpecAction {
   type: string,
@@ -57,8 +58,8 @@ export function createSpecStore(): SpecStore {
         actions.splice(0, actions.length, ...specRecord.actions)
       }
       catch (err) {
-        console.warn(`Cannot load saved record for spec '${id}'.`)
-        console.debug(tersify(err))
+        log.warn(`Cannot load saved record for spec '${id}'.`)
+        log.debug(tersify(err))
         expectation = ''
         actions.splice(0, actions.length)
       }

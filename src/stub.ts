@@ -1,5 +1,6 @@
 import { FluxStandardAction } from 'flux-standard-action'
 
+import { log } from './log'
 import { createSpecStore, SpecStore } from './specStore'
 import { spy, Spy } from './spy'
 
@@ -63,7 +64,7 @@ function stubFunction({ resolve, store }: { resolve: any, store: SpecStore }, su
 
     if (!inputMatches(inputAction.payload, args)) {
       if (!spied) {
-        console.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
+        log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
         spied = spy(subject)
         spied.closing.then(spiedActions => {
           store.graft(...spiedActions)

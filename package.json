@@ -48,6 +48,9 @@
     "files": [
       "dist-es5/**/*.spec.js"
     ],
+    "require": [
+      "./scripts/setup-test-env.js"
+    ],
     "source": [
       "scripts/*.js",
       "dist-es5/**/*.js",
@@ -69,6 +72,7 @@
     "@types/github": "^7.1.0",
     "@types/node": "^9.3.0",
     "@types/ws": "^4.0.0",
+    "aurelia-logging-color": "^0.5.15",
     "ava": "^0.24.0",
     "dependency-check": "^3.0.0",
     "eslint": "^4.15.0",
@@ -83,6 +87,7 @@
     "ws": "^4.0.0"
   },
   "dependencies": {
+    "@unional/logging": "^0.2.5",
     "assertron": "^3.3.12",
     "camel-case": "^3.0.0",
     "flux-standard-action": "^2.0.1",
