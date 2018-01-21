@@ -66,7 +66,7 @@ function stubFunction({ resolve, store }: { resolve: any, store: SpecStore }, su
       if (!spied) {
         log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
         spied = spy(subject)
-        spied.closing.then(spiedActions => {
+        spied.completed.then(spiedActions => {
           store.graft(...spiedActions)
           resolve()
         })
@@ -187,7 +187,7 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
   await store.load(id)
 
   let resolve
-  const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
+  const completed = new Promise<FluxStandardAction<any, any>[]>(a => {
     resolve = () => {
       a(store.actions)
     }
@@ -200,7 +200,7 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
     on: store.on,
     onAny: store.onAny,
     actions: store.actions,
-    closing,
+    completed,
     subject: stubbed
   } as any
 }

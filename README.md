@@ -119,7 +119,10 @@ test('get follower of a user', t => {
   const followers = await getFollowers(github, 'someRealUser')
 
   // (optional) get the actual actions recorded by `komondor` for inspection
-  const actions = await getFollowersSpec.closing
+  // if your call above does not guarantee the code completes it execution,
+  // you can do `const actions = await getFollowersSpec.completed`
+  const actions = getFollowersSpec.actions
+
   console.log(actions)
 
   // (required) ensure the record will meet your expectation

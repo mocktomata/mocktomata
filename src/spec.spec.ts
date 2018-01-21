@@ -16,7 +16,7 @@ import {
 test('spec.closing will get actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
-  const actions = await cbSpec.closing
+  const actions = await cbSpec.completed
   satisfy(actions, [
     { type: 'invoke', payload: [2] },
     { type: 'callback', payload: [null, 3] },
@@ -94,7 +94,7 @@ test('function spec can be called multiple times', async t => {
   const cbSpec = await spec(delayed.success)
   await delayed.increment(cbSpec.subject, 2)
   await delayed.increment(cbSpec.subject, 4)
-  const actions = await cbSpec.closing
+  const actions = await cbSpec.completed
   t.is(actions.length, 6)
 })
 
