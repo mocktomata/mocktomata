@@ -3,6 +3,7 @@ import fs = require('fs')
 import path = require('path')
 
 import { SPECS_FOLDER } from './constants'
+import { log } from './log'
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {
@@ -58,7 +59,7 @@ function createFolders(location: string) {
         throw err;
       }
 
-      console.log(`Directory ${curDir} already exists!`);
+      log.info(`Directory ${curDir} already exists!`);
     }
 
     return curDir;

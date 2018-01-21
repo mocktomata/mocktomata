@@ -93,7 +93,7 @@ export function specWebSocket(_options?: SpecOptions) {
   })
 }
 
-test('actively closing web socket', async () => {
+test.skip('actively closing web socket', async () => {
   const webSocketSpec = specWebSocket()
   const ws = new webSocketSpec.subject('ws://html5rocks.websocket.org/echo')
   ws.on('message', function (data) {

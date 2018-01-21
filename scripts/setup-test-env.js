@@ -1,7 +1,5 @@
-// require('aurelia-polyfills')
-// const LogManager = require('aurelia-logging')
-// const ColorAppender = require('aurelia-logging-color').ColorAppender
+const logging = require('@unional/logging')
+const ColorAppender = require('aurelia-logging-color').ColorAppender
 
-// LogManager.addAppender(new ColorAppender())
-
-// LogManager.setLevel(LogManager.logLevel.debug)
+logging.addAppender(new ColorAppender())
+logging.setLevel(logging.logLevel.debug)

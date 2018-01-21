@@ -1,17 +1,17 @@
 import { test } from 'ava'
 import { satisfy, AssertOrder } from 'assertron'
+import { isFSA } from 'flux-standard-action'
 
+import { spec } from './spec'
 import {
   simpleCallback,
   fetch,
   literalCallback,
   promise,
   synchronous,
-  streamWaiting,
+  childProcess,
   delayed
 } from './specTestSuites'
-import { spec } from './spec'
-import { isFSA } from 'flux-standard-action';
 
 test('spec.closing will get actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
@@ -501,98 +501,287 @@ test('synchronous fail replay', async t => {
 
 //#endregion
 
-//#region streamWaiting
-test('streamWaiting verify', async () => {
-  const speced = await spec(streamWaiting.spawnSuccess)
-  await streamWaiting.increment(speced.subject, 2)
-  console.log(speced.actions)
+//#region childProcess
+test('childProcess verify', async t => {
+  const speced = await spec(childProcess.spawnSuccess)
+  const actual = await childProcess.increment(speced.subject, 2)
   await speced.satisfy([
     { type: 'invoke', payload: ['increment', [2]] },
     {
       type: 'return',
-      payload: { on: {}, stdout: {}, stderr: {} },
+      payload: {},
       meta: {
-        sites: [
-          ['on'],
-          ['stderr', 'on'],
-          ['stdout', 'on']
-        ]
+        type: 'childProcess'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [3],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [4],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [5],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [0],
+      meta: {
+        site: ['return', 'on'],
+        event: 'close'
       }
     }
-    // {
-    //   type: 'callback',
-    //   payload: [3],
-    //   meta: {
-    //     site: ['return', 'stdout', 'on'],
-    //     event: 'data'
-    //   }
-    // }
   ])
-  // t.is(actual, 3)
+  t.deepEqual(actual, {
+    result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
+    code: 0
+  })
 })
 
-// test('streamWaiting save', async t => {
-//   const speced = await spec(streamWaiting.spawnSuccess, { id: 'streamWaiting', mode: 'save' })
-//   const actual = await streamWaiting.increment(speced.subject, 2)
+test('childProcess save', async t => {
+  const speced = await spec(childProcess.spawnSuccess, { id: 'childProcess/success', mode: 'save' })
+  const actual = await childProcess.increment(speced.subject, 2)
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', [2]] },
+    {
+      type: 'return',
+      payload: {},
+      meta: {
+        type: 'childProcess'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [3],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [4],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [5],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [0],
+      meta: {
+        site: ['return', 'on'],
+        event: 'close'
+      }
+    }
+  ])
 
-//   await speced.satisfy([
-//     { type: 'invoke', payload: [{ 'data': 2 }] },
-//     { type: 'callback', payload: [3], meta: [0, 'success'] },
-//     { type: 'return' }
-//   ])
-//   t.is(actual, 3)
-// })
+  t.deepEqual(actual, {
+    result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
+    code: 0
+  })
+})
 
-// test('streamWaiting replay', async t => {
-//   const speced = await spec(streamWaiting.spawnSuccess, { id: 'streamWaiting', mode: 'replay' })
-//   const actual = await streamWaiting.increment(speced.subject, 2)
+test('childProcess replay', async t => {
+  const speced = await spec(childProcess.spawnSuccess, { id: 'childProcess/success', mode: 'replay' })
+  const actual = await childProcess.increment(speced.subject, 2)
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', [2]] },
+    {
+      type: 'return',
+      payload: {},
+      meta: {
+        type: 'childProcess'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [3],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [4],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [5],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [0],
+      meta: {
+        site: ['return', 'on'],
+        event: 'close'
+      }
+    }
+  ])
+  t.deepEqual(actual, {
+    result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
+    code: 0
+  })
+})
 
-//   await speced.satisfy([
-//     { type: 'invoke', payload: [{ 'data': 2 }] },
-//     { type: 'callback', payload: [3], meta: [0, 'success'] },
-//     { type: 'return' }
-//   ])
-//   t.is(actual, 3)
-// })
+test('childProcess fail case verify', async t => {
+  const speced = await spec(childProcess.spawnFail)
+  const actual = await childProcess.increment(speced.subject, 2)
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', [2]] },
+    {
+      type: 'return',
+      payload: {},
+      meta: {
+        type: 'childProcess'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [3],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [4],
+      meta: {
+        site: ['return', 'stderr', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [1],
+      meta: {
+        site: ['return', 'on'],
+        event: 'close'
+      }
+    }
+  ])
+  t.deepEqual(actual, {
+    result: [['stdout', 3], ['stderr', 4]],
+    code: 1
+  })
+})
 
-// test('streamWaiting fail case verify', async t => {
-//   const speced = await spec(streamWaiting.spawnFail)
-//   return streamWaiting.increment(speced.subject, 2)
-//     .then(() => t.fail())
-//     .catch(() => {
-//       return speced.satisfy([
-//         { type: 'invoke', payload: [{ 'data': 2 }] },
-//         { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
-//         { type: 'return' }
-//       ])
-//     })
-// })
+test('childProcess fail case save', async t => {
+  const speced = await spec(childProcess.spawnFail, { id: 'childProcess/fail', mode: 'save' })
+  const actual = await childProcess.increment(speced.subject, 2)
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', [2]] },
+    {
+      type: 'return',
+      payload: {},
+      meta: {
+        type: 'childProcess'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [3],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [4],
+      meta: {
+        site: ['return', 'stderr', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [1],
+      meta: {
+        site: ['return', 'on'],
+        event: 'close'
+      }
+    }
+  ])
+  t.deepEqual(actual, {
+    result: [['stdout', 3], ['stderr', 4]],
+    code: 1
+  })
+})
 
-// test('streamWaiting fail case save', async t => {
-//   const speced = await spec(streamWaiting.spawnFail, { id: 'streamWaiting fail', mode: 'save' })
-//   await streamWaiting.increment(speced.subject, 2)
-//     .then(() => t.fail())
-//     .catch(() => {
-//       return speced.satisfy([
-//         { type: 'invoke', payload: [{ 'data': 2 }] },
-//         { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
-//         { type: 'return' }
-//       ])
-//     })
-//   t.pass()
-// })
-
-// test('streamWaiting fail case replay', async t => {
-//   const speced = await spec(streamWaiting.spawnFail, { id: 'streamWaiting fail', mode: 'replay' })
-//   await streamWaiting.increment(speced.subject, 2)
-//     .then(() => t.fail())
-//     .catch(() => {
-//       return speced.satisfy([
-//         { type: 'invoke', payload: [{ 'data': 2 }] },
-//         { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
-//         { type: 'return' }
-//       ])
-//     })
-//   t.pass()
-// })
+test('childProcess fail case replay', async t => {
+  const speced = await spec(childProcess.spawnFail, { id: 'childProcess/fail', mode: 'replay' })
+  const actual = await childProcess.increment(speced.subject, 2)
+  await speced.satisfy([
+    { type: 'invoke', payload: ['increment', [2]] },
+    {
+      type: 'return',
+      payload: {},
+      meta: {
+        type: 'childProcess'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [3],
+      meta: {
+        site: ['return', 'stdout', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [4],
+      meta: {
+        site: ['return', 'stderr', 'on'],
+        event: 'data'
+      }
+    },
+    {
+      type: 'callback',
+      payload: [1],
+      meta: {
+        site: ['return', 'on'],
+        event: 'close'
+      }
+    }
+  ])
+  t.deepEqual(actual, {
+    result: [['stdout', 3], ['stderr', 4]],
+    code: 1
+  })
+})
 //#endregion
