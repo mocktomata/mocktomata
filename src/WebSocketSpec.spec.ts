@@ -1,18 +1,17 @@
 import { satisfy } from 'assertron'
 import { test } from 'ava'
-import { FluxStandardAction } from 'flux-standard-action'
 // import { unpartial } from 'unpartial'
 import WebSocket = require('ws')
 import { ClientOptions } from 'ws'
 
-import { SpecOptions } from './index'
+import { SpecOptions, SpecAction } from './interfaces'
 // import { defaultSpecOptions, getMode } from './SpecOptions'
 
 
 export type WebSocketConstructor = new (url, options?: ClientOptions) => WebSocket
 
 function spyWebSocket() {
-  const actions: FluxStandardAction<any, string>[] = []
+  const actions: SpecAction[] = []
 
   let resolve
   let onChangeCallback
@@ -23,7 +22,7 @@ function spyWebSocket() {
     }
   }
 
-  const closing = new Promise<FluxStandardAction<any, string>[]>(a => {
+  const closing = new Promise<SpecAction[]>(a => {
     resolve = () => {
       a(actions)
     }

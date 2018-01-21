@@ -1,38 +1,59 @@
-import { FluxStandardAction } from 'flux-standard-action'
 import { tersify } from 'tersify'
 
 import { io } from './io'
 import { log } from './log'
+import { SpecAction, SpecPlayer, SpecRecorder } from './interfaces'
 
-export interface SpecAction {
-  type: string,
-  payload: any,
-  meta?: any
-}
-export interface SpecStore {
-  actions: FluxStandardAction<any, any>[],
+export interface SpecStore extends SpecPlayer, SpecRecorder {
+  /**
+   * Collected or loaded actions.
+   */
+  readonly actions: SpecAction[],
+  readonly completed: Promise<SpecAction[]>,
+  /**
+   * Marking the spec store is completed.
+   */
+  readonly resolve: () => void,
+  /**
+   * String representation of the expectation of the Spec.
+   */
   expectation: string,
-  add(action: SpecAction),
+  /**
+   * Save the actions.
+   */
   save(id: string),
+  /**
+   * Load the actions.
+   */
   load(id: string),
-  next(): FluxStandardAction<any, any>,
-  peek(): FluxStandardAction<any, any>,
-  prune(): void,
-  graft(...actions: SpecAction[]): void,
   on(actionType: string, callback: Function),
   onAny(callback: Function)
 }
 
 export function createSpecStore(): SpecStore {
-  const actions: FluxStandardAction<any, any>[] = []
+  const actions: SpecAction[] = []
   let i = 0
   let expectation
 
+  let resolve
+  const completed = new Promise<SpecAction[]>(a => {
+    resolve = () => {
+      a(actions)
+    }
+  })
   const events = {}
   const listenAll: any[] = []
 
   return {
-    actions,
+    get actions() {
+      return actions
+    },
+    get completed() {
+      return completed
+    },
+    get resolve() {
+      return resolve
+    },
     get expectation() {
       return expectation
     },
@@ -64,11 +85,11 @@ export function createSpecStore(): SpecStore {
         actions.splice(0, actions.length)
       }
     },
-    peek() {
-      return actions[i]
+    peek<A extends SpecAction>(): A | undefined {
+      return actions[i] as any
     },
-    next() {
-      return actions[i++]
+    next<A extends SpecAction>(): A | undefined {
+      return actions[i++] as any
     },
     prune() {
       actions.splice(i, actions.length - i)

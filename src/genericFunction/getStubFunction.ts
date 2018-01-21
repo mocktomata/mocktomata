@@ -1,3 +1,5 @@
+import { SpecContext, SpecPluginUtil } from '../index';
+
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
   if (b.length !== a.length)
@@ -47,36 +49,37 @@ function locateCallback(meta, args) {
   }
 }
 
-export function stubFunction(context, subject, id: string) {
-  const { store, resolve, komondor } = context
+export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, subject, id: string) {
   let spied
   return function (...args) {
     if (spied)
       return spied.call(this, ...args)
 
-    const inputAction = store.peek()
+    const inputAction = context.peek()
 
-    if (!inputMatches(inputAction.payload, args)) {
+    if (!inputAction || !inputMatches(inputAction.payload, args)) {
       if (!spied) {
         komondor.log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
-        store.prune()
-        spied = komondor.getSpy({ store, resolve }, subject)
+        context.prune()
+        spied = komondor.getSpy(context, subject)
       }
       return spied.call(this, ...args)
     }
-    store.next()
+    context.next()
 
     const result = processUntilReturn()
-    if (store.peek() === undefined) {
-      resolve()
+    if (context.peek() === undefined) {
+      context.resolve()
     }
     return result
 
     function processUntilReturn() {
-      const action = store.next()
+      const action = context.next()
+      if (!action) return undefined
+
       if (action.type === 'return') {
         if (action.meta) {
-          const returnStub = komondor.getReturnStub({ store, resolve }, action.meta.type)
+          const returnStub = komondor.getReturnStub(context, action.meta.type)
           if (returnStub)
             return returnStub
         }
@@ -90,7 +93,7 @@ export function stubFunction(context, subject, id: string) {
         callback(...action.payload)
       }
       if (action.type === 'throw') {
-        resolve()
+        context.resolve()
         throw action.payload
       }
       return processUntilReturn()

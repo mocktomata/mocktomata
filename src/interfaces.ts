@@ -1,4 +1,4 @@
-import { FluxStandardAction } from 'flux-standard-action';
+import { Logger } from '@unional/logging'
 import { Expectation } from 'satisfier'
 
 import { Spy } from './spy'
@@ -24,15 +24,16 @@ export interface SpecOptions {
   mode: SpecMode
 }
 
+export interface SpecAction {
+  type: string,
+  payload: any,
+  meta?: any
+}
+
 export interface SpecRecord {
   id: string,
   expectation: string,
-  actions: FluxStandardAction<any, any>[]
-}
-
-export interface WebSocketSpecRecord {
-  actions: FluxStandardAction<any, any>[],
-  expectation: string
+  actions: SpecAction[]
 }
 
 
@@ -42,3 +43,55 @@ export interface Spec<T> extends Spy<T> {
    */
   satisfy(expectation: Expectation): Promise<void>
 }
+
+export interface SpecCompleter {
+  /**
+   * Call this function to indicates the execution is completed.
+   * i.e. for Spy, all relevant actions are added to the store,
+   * for Stub, all relevant actions has be replayed.
+   */
+  resolve(): void,
+}
+
+export interface SpecRecorder {
+  /**
+   * Add an action to the store.
+   * Used by spies.
+   */
+  add(action: SpecAction)
+}
+
+export interface SpecPlayer {
+  /**
+   * Move to the next action during replay.
+   */
+  next<A extends SpecAction>(): A | undefined,
+  /**
+   * Peep the current action during replay.
+   */
+  peek<A extends SpecAction>(): A | undefined,
+  /**
+   * Prune remaining actions during replay
+   */
+  prune(): void,
+  /**
+   * Prune remaining actions and replace with specified actions.
+   */
+  graft(...actions: SpecAction[]): void,
+}
+
+export interface SpecContext extends SpecCompleter, SpecRecorder, SpecPlayer { }
+
+export interface SpecPluginUtil {
+  getSpy<T = any>(context: SpecContext, subject: T): T,
+  getStub<T = any>(context: SpecContext, subject: T, id: string): T,
+  getReturnSpy<T = any>(context: SpecContext, subject: T): T,
+  getReturnStub(context: SpecContext, type: string): any,
+  log: Logger
+}
+
+export interface WebSocketSpecRecord {
+  actions: SpecAction[],
+  expectation: string
+}
+

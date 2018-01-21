@@ -1,15 +1,14 @@
-import { SpecStore } from '../specStore'
+import { SpecContext } from '../index'
 
-export function getReturnSpy({ resolve, store }, subject) {
+export function getReturnSpy(context: SpecContext, subject) {
   if (!isChildProcess(subject)) return undefined
-  return spyChildProcess({ resolve, store }, subject)
+  return spyChildProcess(context, subject)
 }
 
-export function getReturnStub({ store, resolve }: { store: SpecStore, resolve: any }, type: string) {
+export function getReturnStub(context: SpecContext, type: string) {
   if (type !== 'childProcess') return undefined
-  return childProcessStub({ store, resolve })
+  return childProcessStub(context)
 }
-
 
 function isChildProcess(result) {
   return typeof result.on === 'function' &&
@@ -17,7 +16,7 @@ function isChildProcess(result) {
     result.stderr && typeof result.stderr.on === 'function'
 }
 
-function spyOnListener({ store, resolve }, type, base, site: string[], terminateEvent?: string) {
+function spyOnListener(context: SpecContext, type: string, base, site: string[], terminateEvent?: string) {
   const subject = site.reduce((p, v, i) => {
     if (i === site.length - 1)
       return p
@@ -27,7 +26,7 @@ function spyOnListener({ store, resolve }, type, base, site: string[], terminate
   const fn = subject[methodName]
   subject[methodName] = function (event, cb) {
     const wrap = (...args) => {
-      store.add({
+      context.add({
         type,
         payload: args,
         meta: {
@@ -37,32 +36,32 @@ function spyOnListener({ store, resolve }, type, base, site: string[], terminate
       })
       cb(...args)
       if (terminateEvent === event)
-        resolve()
+        context.resolve()
     }
     return fn.call(subject, event, wrap)
   }
 
 }
 
-function spyChildProcess({ store, resolve }, subject) {
-  store.add({
+function spyChildProcess(context: SpecContext, subject) {
+  context.add({
     type: 'return',
     payload: {},
     meta: { type: 'childProcess' }
   })
-  spyOnListener({ store, resolve }, 'childProcess', subject, ['on'], 'close')
-  spyOnListener({ store, resolve }, 'childProcess', subject, ['stdout', 'on'])
-  spyOnListener({ store, resolve }, 'childProcess', subject, ['stderr', 'on'])
+  spyOnListener(context, 'childProcess', subject, ['on'], 'close')
+  spyOnListener(context, 'childProcess', subject, ['stdout', 'on'])
+  spyOnListener(context, 'childProcess', subject, ['stderr', 'on'])
   return subject
 }
 
-function childProcessStub({ store, resolve }: { store: SpecStore, resolve: any }) {
+function childProcessStub(context: SpecContext) {
   const on = {}
   const stdout = {}
   const stderr = {}
   setImmediate(() => {
-    processUntilCloseEvent({ store, on, stdout, stderr })
-    resolve()
+    processUntilCloseEvent(context, { on, stdout, stderr })
+    context.resolve()
   })
   return {
     on(event, callback) {
@@ -87,8 +86,8 @@ function childProcessStub({ store, resolve }: { store: SpecStore, resolve: any }
   }
 }
 
-function processUntilCloseEvent({ store, on, stdout, stderr }) {
-  const action = store.peek()
+function processUntilCloseEvent(context: SpecContext, { on, stdout, stderr }) {
+  const action = context.peek()
   if (action === undefined) {
     return
   }
@@ -111,7 +110,7 @@ function processUntilCloseEvent({ store, on, stdout, stderr }) {
 
   target[action.meta.event].forEach(cb => cb(...action.payload))
 
-  store.next()
-  processUntilCloseEvent({ store, on, stdout, stderr })
+  context.next()
+  processUntilCloseEvent(context, { on, stdout, stderr })
 }
 

@@ -1,16 +1,17 @@
 import { spyFunction } from './getSpyFunction'
 import { stubFunction } from './getStubFunction'
+import { SpecContext, SpecPluginUtil } from '../index'
 
-let komondor
+let komondorUtil: SpecPluginUtil
 
-export function activate(k) {
-  komondor = k
+export function activate(util: SpecPluginUtil) {
+  komondorUtil = util
 }
 
-export function getSpy({ resolve, store }, subject) {
-  return spyFunction({ komondor, resolve, store }, subject)
+export function getSpy(context: SpecContext, subject: any) {
+  return spyFunction(context, komondorUtil, subject)
 }
 
-export function getStub({ resolve, store }, subject, id) {
-  return stubFunction({ komondor, resolve, store }, subject, id)
+export function getStub(context: SpecContext, subject: any, id: string) {
+  return stubFunction(context, komondorUtil, subject, id)
 }

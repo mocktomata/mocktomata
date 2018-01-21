@@ -40,7 +40,7 @@ test('peek with actions returns first action', async () => {
   const store = createSpecStore()
   await store.load('specStore/twoActions')
 
-  satisfy(store.peek(), { type: 'action1' })
+  satisfy(store.peek()!, { type: 'action1' })
 })
 
 test('next with no action returns undefined', t => {
@@ -52,8 +52,8 @@ test('next with no action returns undefined', t => {
 test('next gets next action', async t => {
   const store = createSpecStore()
   await store.load('specStore/twoActions')
-  const a1 = store.next()
-  const a2 = store.next()
+  const a1 = store.next()!
+  const a2 = store.next()!
   const a3 = store.next()
 
   satisfy(a1, { type: 'action1', payload: [] })

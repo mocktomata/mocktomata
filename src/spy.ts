@@ -1,32 +1,25 @@
-import { FluxStandardAction } from 'flux-standard-action'
-
+import { SpecAction } from './interfaces'
 import { createSpecStore } from './specStore'
 import { plugin } from './plugin';
 
 export interface Spy<T> {
-  on(event: string, callback: (action: FluxStandardAction<any, any>) => void),
-  onAny(callback: (action: FluxStandardAction<any, any>) => void),
-  actions: FluxStandardAction<any, any>[],
-  completed: Promise<FluxStandardAction<any, any>[]>,
+  on(event: string, callback: (action: SpecAction) => void),
+  onAny(callback: (action: SpecAction) => void),
+  actions: SpecAction[],
+  completed: Promise<SpecAction[]>,
   subject: T
 }
 
 export function spy<T>(subject: T): Spy<T> {
   const store = createSpecStore()
 
-  let resolve
-  const completed = new Promise<FluxStandardAction<any, any>[]>(a => {
-    resolve = () => {
-      a(store.actions)
-    }
-  })
-  const spied = plugin.getSpy({ resolve, store }, subject)
+  const spied = plugin.getSpy(store, subject)
 
   return {
     on: store.on,
     onAny: store.onAny,
     actions: store.actions,
-    completed,
+    completed: store.completed,
     subject: spied
   } as any
 }

@@ -1,3 +1,5 @@
+import { SpecPluginUtil, SpecContext } from '../index'
+
 function spyOnCallback(fn, callbackPath) {
   let callback
   return Object.assign(
@@ -11,11 +13,10 @@ function spyOnCallback(fn, callbackPath) {
     })
 }
 
-export function spyFunction(context, subject) {
-  const { store, resolve, komondor } = context
+export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subject) {
 
   return function (...args) {
-    store.add({
+    context.add({
       type: 'invoke',
       payload: args
     })
@@ -41,7 +42,7 @@ export function spyFunction(context, subject) {
       const waiting = new Promise(a => {
         spiedCallbacks.forEach(s => {
           s.called((callbackPath, ...results) => {
-            store.add({
+            context.add({
               type: 'callback',
               payload: results,
               meta: callbackPath
@@ -52,12 +53,12 @@ export function spyFunction(context, subject) {
       })
       const result = subject.call(this, ...spiedArgs)
       waiting.then(() => {
-        store.add({
+        context.add({
           type: 'return',
           payload: result
         })
-        resolve()
-      }, resolve)
+        context.resolve()
+      }, context.resolve)
       return result
     }
     else {
@@ -66,22 +67,22 @@ export function spyFunction(context, subject) {
         result = subject.call(this, ...args)
       }
       catch (err) {
-        store.add({
+        context.add({
           type: 'throw',
           payload: err
         })
         // resolve instead of reject because it is the call that fails,
         // the spying didn't fail.
-        resolve()
+        context.resolve()
         throw err
       }
-      const returnSpy = komondor.getReturnSpy({ store, resolve }, result)
+      const returnSpy = komondor.getReturnSpy(context, result)
       if (returnSpy) {
         return returnSpy
       }
       else {
-        store.add({ type: 'return', payload: result })
-        resolve()
+        context.add({ type: 'return', payload: result })
+        context.resolve()
       }
       return result
     }
