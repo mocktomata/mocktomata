@@ -1,5 +1,3 @@
-import { getReturnSpy } from '../returnSpys';
-
 function spyOnCallback(fn, callbackPath) {
   let callback
   return Object.assign(
@@ -13,7 +11,9 @@ function spyOnCallback(fn, callbackPath) {
     })
 }
 
-export function spyFunction({ resolve, store }, subject) {
+export function spyFunction(context, subject) {
+  const { store, resolve, komondor } = context
+
   return function (...args) {
     store.add({
       type: 'invoke',
@@ -75,9 +75,9 @@ export function spyFunction({ resolve, store }, subject) {
         resolve()
         throw err
       }
-      const returnSpy = getReturnSpy(result)
+      const returnSpy = komondor.getReturnSpy({ store, resolve }, result)
       if (returnSpy) {
-        return returnSpy({ store, resolve }, result)
+        return returnSpy
       }
       else {
         store.add({ type: 'return', payload: result })

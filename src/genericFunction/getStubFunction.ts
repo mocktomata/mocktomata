@@ -1,8 +1,5 @@
-import { SpecStore } from '../specStore'
-import { getReturnStub } from '../returnStubs'
 import { log } from '../log'
 import { spy } from '../spy'
-
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -53,8 +50,8 @@ function locateCallback(meta, args) {
   }
 }
 
-export function stubFunction({ resolve, store }: { resolve: any, store: SpecStore }, subject, id: string) {
-
+export function stubFunction(context, subject, id: string) {
+  const { store, resolve, komondor } = context
   let spied
   return function (...args) {
     if (spied)
@@ -85,9 +82,9 @@ export function stubFunction({ resolve, store }: { resolve: any, store: SpecStor
       const action = store.next()
       if (action.type === 'return') {
         if (action.meta) {
-          const returnStub = getReturnStub(action.meta.type)
+          const returnStub = komondor.getReturnStub({ store, resolve }, action.meta.type)
           if (returnStub)
-            return returnStub({ store, resolve })
+            return returnStub
         }
         return action.payload
       }
