@@ -118,16 +118,20 @@ test('get follower of a user', t => {
 
   const followers = await getFollowers(github, 'someRealUser')
 
-  // (optional) get the actual record recorded by `komondor` for inspection
-  const record = await getFollowersSpec.calls[0].getCallRecord()
-  console.log(record)
+  // (optional) get the actual actions recorded by `komondor` for inspection
+  const actions = await getFollowersSpec.closing
+  console.log(actions)
 
   // (required) ensure the record will meet your expectation
-  await getFollowersSpec.satisfy({
-    asyncOutput: [null, {
-      data: e => e.login && e.id
-    }]
-  })
+  await getFollowersSpec.satisfy([
+    undefined,
+    {
+      type: 'callback',
+      payload: [null, {
+        data: e => e.login && e.id
+      }]
+    }
+  ])
 })
 ```
 
