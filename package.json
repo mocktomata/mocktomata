@@ -88,8 +88,9 @@
   },
   "dependencies": {
     "@unional/logging": "^0.2.5",
-    "assertron": "^3.3.12",
+    "assertron": "^3.3.13",
     "flux-standard-action": "^2.0.1",
+    "satisfier": "^4.1.0",
     "tersify": "^1.2.0",
     "unpartial": "^0.4.1"
   }
