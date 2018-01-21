@@ -1,5 +1,4 @@
 import { log } from '../log'
-import { spy } from '../spy'
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -55,20 +54,17 @@ export function stubFunction(context, subject, id: string) {
   let spied
   return function (...args) {
     if (spied)
-      return spied.subject.call(this, ...args)
+      return spied.call(this, ...args)
 
     const inputAction = store.peek()
 
     if (!inputMatches(inputAction.payload, args)) {
       if (!spied) {
         log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
-        spied = spy(subject)
-        spied.completed.then(spiedActions => {
-          store.graft(...spiedActions)
-          resolve()
-        })
+        store.prune()
+        spied = komondor.getSpy({ store, resolve }, subject)
       }
-      return spied.subject.call(this, ...args)
+      return spied.call(this, ...args)
     }
     store.next()
 

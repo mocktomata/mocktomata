@@ -34,7 +34,6 @@ function getReturnStub({ store, resolve }: { store: SpecStore, resolve: any }, t
   for (let i = 0; i < plugins.length; i++) {
     const p = plugins[i]
     const stub = p.getReturnStub && p.getReturnStub({ store, resolve }, type)
-    console.log('got stub', stub)
     if (stub)
       return stub
   }
