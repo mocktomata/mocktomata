@@ -80,7 +80,7 @@ export const synchronous = {
   }
 }
 
-export const streamWaiting = {
+export const childProcess = {
   increment(remote, x) {
     return new Promise((a, r) => {
       const result: any[] = []
@@ -104,7 +104,7 @@ export const streamWaiting = {
       stdout.data(++x)
       stdout.data(++x)
       stdout.data(++x)
-      cp.close()
+      cp.close(0)
     })
     return {
       stdout: {
@@ -163,8 +163,8 @@ export const delayed = {
     setTimeout(() => {
       callback(null, a + 1)
     }, 100)
-  },
-  fail(_a, callback) {
-    callback({ message: 'fail' }, null)
   }
+  // fail(_a, callback) {
+  //   callback({ message: 'fail' }, null)
+  // }
 }

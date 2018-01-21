@@ -1,4 +1,5 @@
 import { FluxStandardAction } from 'flux-standard-action'
+import { createSpecStore } from './specStore';
 
 function spyOnCallback(fn, callbackPath) {
   let callback
@@ -12,43 +13,46 @@ function spyOnCallback(fn, callbackPath) {
       }
     })
 }
-
-function spyOnResult({ sites, addAction }, result, paths) {
-  Object.keys(result).sort().forEach(key => {
-    const value = result[key]
-    if (typeof value === 'function') {
-      sites.push([...paths, key])
-      // spy(value)
-      // spy.onAny((event, ...args) => {
-      //   addAction({
-      //     type: 'callback',
-      //     payload: args,
-      //     meta: {
-      //       site: ['return', ...paths, key],
-      //       event
-      //     }
-      //   })
-      // })
-
-      // const spied = spyOnCallback(value, ['result', ...paths, key])
-      // spied.called((callbackPath, ...args) => {
-      //   addAction({
-      //     type: 'callback',
-      //     payload: args,
-      //     meta: callbackPath
-      //   })
-      // })
-      // result[key] = spied
-    }
-    else if (typeof value === 'object') {
-      spyOnResult({ sites, addAction }, result[key], [...paths, key])
-    }
-  })
+function isChildProcess(result) {
+  return typeof result.on === 'function' &&
+    result.stdout && typeof result.stdout.on === 'function' &&
+    result.stderr && typeof result.stderr.on === 'function'
 }
 
-function spyFunction({ resolve, addAction }, subject) {
+function spyOnEventHandler({ store }, subject, methodName, site: string[]) {
+  const returnSite = [...site, methodName]
+  const fn = subject[methodName]
+  subject[methodName] = function (event, cb) {
+    const wrap = (...args) => {
+      store.add({
+        type: 'callback',
+        payload: args,
+        meta: {
+          site: returnSite,
+          event
+        }
+      })
+      cb(...args)
+    }
+    return fn.call(subject, event, wrap)
+  }
+}
+
+function spyChildProcess({ store }, subject) {
+  spyOnEventHandler({ store }, subject, 'on', ['return'])
+  spyOnEventHandler({ store }, subject.stdout, 'on', ['return', 'stdout'])
+  spyOnEventHandler({ store }, subject.stderr, 'on', ['return', 'stderr'])
+  return { type: 'childProcess' }
+}
+function spyOnResult({ store }, result) {
+  if (isChildProcess(result))
+    return spyChildProcess({ store }, result)
+  return undefined
+}
+
+function spyFunction({ resolve, store }, subject) {
   return function (...args) {
-    addAction({
+    store.add({
       type: 'invoke',
       payload: args
     })
@@ -74,7 +78,7 @@ function spyFunction({ resolve, addAction }, subject) {
       const waiting = new Promise(a => {
         spiedCallbacks.forEach(s => {
           s.called((callbackPath, ...results) => {
-            addAction({
+            store.add({
               type: 'callback',
               payload: results,
               meta: callbackPath
@@ -85,7 +89,7 @@ function spyFunction({ resolve, addAction }, subject) {
       })
       const result = subject.call(this, ...spiedArgs)
       waiting.then(() => {
-        addAction({
+        store.add({
           type: 'return',
           payload: result
         })
@@ -99,7 +103,7 @@ function spyFunction({ resolve, addAction }, subject) {
         result = subject.call(this, ...args)
       }
       catch (err) {
-        addAction({
+        store.add({
           type: 'throw',
           payload: err
         })
@@ -113,8 +117,7 @@ function spyFunction({ resolve, addAction }, subject) {
           results => ({ type: 'resolve', payload: results }),
           err => ({ type: 'reject', payload: err })
         ).then(action => {
-          // addAction(action)
-          addAction({
+          store.add({
             type: 'return',
             payload: action.payload,
             meta: { type: 'promise', meta: action.type }
@@ -124,19 +127,11 @@ function spyFunction({ resolve, addAction }, subject) {
       }
 
       if (typeof result === 'object') {
-        const sites: any[] = []
-        spyOnResult({ sites, addAction }, result, [])
-        addAction({
-          type: 'return',
-          payload: result,
-          meta: { sites }
-        })
+        const meta = spyOnResult({ store }, result)
+        store.add({ type: 'return', payload: result, meta })
       }
       else {
-        addAction({
-          type: 'return',
-          payload: result
-        })
+        store.add({ type: 'return', payload: result })
       }
       resolve()
       return result
@@ -153,38 +148,20 @@ export interface Spy<T> {
 }
 
 export function spy<T>(subject: T): Spy<T> {
-  const actions: FluxStandardAction<any, any>[] = []
-  const events = {}
-  const listenAll: any[] = []
-  function on(event, callback) {
-    if (!events[event])
-      events[event] = []
-    events[event].push(callback)
-  }
-  function onAny(callback) {
-    listenAll.push(callback)
-  }
-  function addAction(action) {
-    actions.push(action)
-    if (events[action.type]) {
-      events[action.type].forEach(cb => cb(action))
-    }
-    if (listenAll.length > 0) {
-      listenAll.forEach(cb => cb(action))
-    }
-  }
+  const store = createSpecStore()
+
   let resolve
   const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
     resolve = () => {
-      a(actions)
+      a(store.actions)
     }
   })
-  const spied = spyFunction({ resolve, addAction }, subject)
+  const spied = spyFunction({ resolve, store }, subject)
 
   return {
-    on,
-    onAny,
-    actions,
+    on: store.on,
+    onAny: store.onAny,
+    actions: store.actions,
     closing,
     subject: spied
   } as any

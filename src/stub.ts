@@ -1,7 +1,6 @@
-// @ts-ignore
 import { FluxStandardAction } from 'flux-standard-action'
-import { io } from './io'
-import { SpecRecord } from './interfaces'
+
+import { createSpecStore, SpecStore } from './specStore'
 import { spy, Spy } from './spy'
 
 function inputMatches(a, b: any[]) {
@@ -36,62 +35,131 @@ function inputMatches(a, b: any[]) {
   return match
 }
 
-function locateCallback(args, callbackPath) {
-  if (callbackPath) {
-    return callbackPath.reduce((p, v) => {
+function locateCallback(meta, args) {
+  if (!meta) {
+    return args.find(arg => typeof arg === 'function')
+  }
+  if (Array.isArray(meta))
+    return meta.reduce((p, v) => {
       return p[v]
     }, args)
+  else if (meta.site) {
+    if (typeof meta.site[0] === 'number') {
+      return meta.site.reduce((p, v) => {
+        return p[v]
+      }, args)
+    }
   }
-  return args.find(arg => typeof arg === 'function')
 }
 
-function stubFunction({ resolve, events, listenAll }, subject, id: string, actions: FluxStandardAction<any, any>[]) {
-  let i = 0
-  function getAction() {
-    const action = actions[i++]
-    if (events[action.type]) {
-      events[action.type].forEach(cb => cb(action))
-    }
-    if (listenAll.length > 0) {
-      listenAll.forEach(cb => cb(action))
-    }
-    return action
-  }
+function stubFunction({ resolve, store }: { resolve: any, store: SpecStore }, subject, id: string) {
 
   let spied
   return function (...args) {
     if (spied)
       return spied.subject.call(this, ...args)
 
-    const inputAction = getAction()
+    const inputAction = store.peek()
 
     if (!inputMatches(inputAction.payload, args)) {
       if (!spied) {
         console.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
         spied = spy(subject)
         spied.closing.then(spiedActions => {
-          actions.splice(0, actions.length, ...spiedActions)
+          store.graft(...spiedActions)
           resolve()
         })
       }
       return spied.subject.call(this, ...args)
     }
+    store.next()
 
     const result = processUntilReturn()
-    if (i >= actions.length) {
+    if (store.peek() === undefined) {
       resolve()
     }
     return result
 
+    function promiseStub(action) {
+      if (action.meta.meta === 'resolve')
+        return Promise.resolve(action.payload)
+      else
+        return Promise.reject(action.payload)
+    }
+
+    function processUntilCloseEvent({ on, stdout, stderr }) {
+      const action = store.peek()
+      if (action === undefined) {
+        resolve()
+        return
+      }
+      if (action.type !== 'callback') {
+        // istanbul ignore next
+        throw new Error('not supported. childProcess stub processing non-callback')
+      }
+
+      const site = action.meta.site.join('.')
+      let target
+      switch (site) {
+        case 'return.on':
+          target = on
+          break
+        case 'return.stdout.on':
+          target = stdout
+          break
+        case 'return.stderr.on':
+          target = stderr
+          break
+      }
+      if (!target) {
+        // istanbul ignore next
+        throw new Error(`unknown callback site: ${site}`)
+      }
+
+      target[action.meta.event].forEach(cb => cb(...action.payload))
+
+      store.next()
+      processUntilCloseEvent({ on, stdout, stderr })
+    }
+    function childProcessStub() {
+      const on = {}
+      const stdout = {}
+      const stderr = {}
+      setImmediate(() => {
+        processUntilCloseEvent({ on, stdout, stderr })
+      })
+      return {
+        on(event, callback) {
+          if (!on[event])
+            on[event] = []
+          on[event].push(callback)
+        },
+        stdout: {
+          on(event, callback) {
+            if (!stdout[event])
+              stdout[event] = []
+            stdout[event].push(callback)
+          }
+        },
+        stderr: {
+          on(event, callback) {
+            if (!stderr[event])
+              stderr[event] = []
+            stderr[event].push(callback)
+          }
+        }
+      }
+    }
+
     function processUntilReturn() {
-      const action = getAction()
+      const action = store.next()
       if (action.type === 'return') {
         if (action.meta) {
           if (action.meta.type === 'promise') {
-            if (action.meta.meta === 'resolve')
-              return Promise.resolve(action.payload)
-            else
-              return Promise.reject(action.payload)
+            return promiseStub(action)
+          }
+          if (action.meta.type === 'childProcess') {
+            return childProcessStub()
           }
         }
         return action.payload
@@ -100,7 +168,7 @@ function stubFunction({ resolve, events, listenAll }, subject, id: string, actio
         return undefined
       }
       if (action.type === 'callback') {
-        const callback = locateCallback(args, action.meta)
+        const callback = locateCallback(action.meta, args)
         callback(...action.payload)
       }
       if (action.type === 'throw') {
@@ -114,40 +182,23 @@ function stubFunction({ resolve, events, listenAll }, subject, id: string, actio
 
 
 export async function stub<T>(subject: T, id): Promise<Spy<T>> {
-  let specRecord: SpecRecord
-  try {
-    specRecord = await io.readSpec(id)
-  }
-  catch {
-    /* istanbul ignore next */ {
-      console.warn(`Cannot find saved record for spec '${id}'. Run in 'verify' mode instead.`)
-      return spy(subject)
-    }
-  }
+  const store = createSpecStore()
+  await store.load(id)
 
-  const events = {}
-  const listenAll: any[] = []
-  function on(event, callback) {
-    if (!events[event])
-      events[event] = []
-    events[event].push(callback)
-  }
-  function onAny(callback) {
-    listenAll.push(callback)
-  }
   let resolve
   const closing = new Promise<FluxStandardAction<any, any>[]>(a => {
     resolve = () => {
-      a(specRecord.actions)
+      a(store.actions)
     }
   })
 
-  const stubbed = stubFunction({ resolve, events, listenAll }, subject, id, specRecord.actions)
+
+  const stubbed = stubFunction({ resolve, store }, subject, id)
 
   return {
-    on,
-    onAny,
-    actions: specRecord.actions,
+    on: store.on,
+    onAny: store.onAny,
+    actions: store.actions,
     closing,
     subject: stubbed
   } as any
