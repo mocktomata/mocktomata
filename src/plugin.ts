@@ -3,6 +3,7 @@ import * as promise from './promise'
 import * as childProcess from './childProcess'
 
 import { SpecStore } from './specStore'
+import { log } from './log'
 
 const plugins: any[] = []
 function getSpy({ resolve, store }, subject) {
@@ -47,7 +48,8 @@ export const plugin = {
         getSpy,
         getStub,
         getReturnSpy,
-        getReturnStub
+        getReturnStub,
+        log
       })
   },
   getSpy,

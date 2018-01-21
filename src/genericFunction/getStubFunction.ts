@@ -1,5 +1,3 @@
-import { log } from '../log'
-
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
   if (b.length !== a.length)
@@ -60,7 +58,7 @@ export function stubFunction(context, subject, id: string) {
 
     if (!inputMatches(inputAction.payload, args)) {
       if (!spied) {
-        log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
+        komondor.log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
         store.prune()
         spied = komondor.getSpy({ store, resolve }, subject)
       }
