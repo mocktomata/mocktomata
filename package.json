@@ -89,7 +89,6 @@
   "dependencies": {
     "@unional/logging": "^0.2.5",
     "assertron": "^3.3.12",
-    "camel-case": "^3.0.0",
     "flux-standard-action": "^2.0.1",
     "tersify": "^1.2.0",
     "unpartial": "^0.4.1"

@@ -1,4 +1,3 @@
-import camelCase = require('camel-case')
 import fs = require('fs')
 import path = require('path')
 
@@ -22,7 +21,7 @@ export function readSpec(id: string) {
 function getFilePath(id: string) {
   const basename = path.basename(id)
   const dirname = path.dirname(id)
-  return path.resolve(SPECS_FOLDER, dirname, `${camelCase(basename)}.json`)
+  return path.resolve(SPECS_FOLDER, dirname, `${basename}.json`)
 }
 
 export function writeSpec(id: string, specRecord) {
