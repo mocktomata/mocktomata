@@ -1,5 +1,5 @@
 import * as childProcess from './childProcess'
-import * as genericFunction from './genericFunction'
+import * as genericFunction from './function'
 import * as promise from './promise'
 import * as ws from './ws'
 
