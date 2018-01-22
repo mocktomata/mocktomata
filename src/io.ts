@@ -8,7 +8,7 @@ import {
  * such as file-base, database, or remote host
  */
 export const io = {
-  get readSpec(): (id: string) => Promise<SpecRecord | undefined> {
+  get readSpec(): (id: string) => Promise<SpecRecord> {
     return fileIO.readSpec
   },
   get writeSpec(): (id: string, record: SpecRecord) => void {
