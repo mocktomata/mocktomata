@@ -1,6 +1,7 @@
 import WebSocket = require('ws')
 import { ClientOptions } from 'ws'
 
+// istanbul ignore next
 export function createFakeClientBase(subject: typeof WebSocket): typeof WebSocket {
   return class {
     static CONNECTING = subject.CONNECTING
