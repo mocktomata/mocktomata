@@ -43,6 +43,14 @@ export function createSpecStore(): SpecStore {
   })
   const events = {}
   const listenAll: any[] = []
+  function callListeners(action) {
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
+  }
 
   return {
     get actions() {
@@ -62,12 +70,7 @@ export function createSpecStore(): SpecStore {
     },
     add(action: { type: string, payload: any, meta?: any }) {
       actions.push(action as any)
-      if (events[action.type]) {
-        events[action.type].forEach(cb => cb(action))
-      }
-      if (listenAll.length > 0) {
-        listenAll.forEach(cb => cb(action))
-      }
+      callListeners(action)
     },
     save(id) {
       return io.writeSpec(id, { expectation, actions })
@@ -89,7 +92,11 @@ export function createSpecStore(): SpecStore {
       return actions[i] as any
     },
     next<A extends SpecAction>(): A | undefined {
-      return actions[i++] as any
+      const action = actions[i++]
+      if (action) {
+        callListeners(action)
+      }
+      return action as any
     },
     prune() {
       actions.splice(i, actions.length - i)
