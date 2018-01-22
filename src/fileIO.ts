@@ -2,6 +2,7 @@ import fs = require('fs')
 import path = require('path')
 
 import { SPECS_FOLDER } from './constants'
+import { SpecRecord } from './interfaces'
 import { log } from './log'
 
 export function readSpec(id: string) {
@@ -24,7 +25,7 @@ function getFilePath(id: string) {
   return path.resolve(SPECS_FOLDER, dirname, `${basename}.json`)
 }
 
-export function writeSpec(id: string, specRecord) {
+export function writeSpec(id: string, record: SpecRecord) {
   return new Promise<void>((a, r) => {
     try {
       const filePath = getFilePath(id)
@@ -32,7 +33,7 @@ export function writeSpec(id: string, specRecord) {
       // istanbul ignore next
       if (!fs.existsSync(folder))
         createFolders(folder)
-      fs.writeFileSync(filePath, JSON.stringify(specRecord))
+      fs.writeFileSync(filePath, JSON.stringify(record))
       a()
     }
     catch (err) {

@@ -31,7 +31,6 @@ export interface SpecAction {
 }
 
 export interface SpecRecord {
-  id: string,
   expectation: string,
   actions: SpecAction[]
 }
