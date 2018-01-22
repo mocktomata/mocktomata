@@ -1,6 +1,7 @@
+import * as childProcess from './childProcess'
 import * as genericFunction from './genericFunction'
 import * as promise from './promise'
-import * as childProcess from './childProcess'
+import * as ws from './ws'
 
 import { SpecContext, SpecPlayer } from './interfaces'
 import { log } from './log'
@@ -74,3 +75,4 @@ export const plugin = {
 plugin.register(promise)
 plugin.register(childProcess)
 plugin.register(genericFunction)
+plugin.register(ws)
