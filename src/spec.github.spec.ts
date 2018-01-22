@@ -1,5 +1,6 @@
 import { test } from 'ava'
 import GitHub = require('github')
+import { every } from 'satisfier'
 
 import { spec } from './spec'
 import { createGitHubTest } from './testUtil'
@@ -27,7 +28,7 @@ test('get followers (demo)', async t => {
     {
       type: 'callback',
       payload: [null, {
-        data: e => e.login && e.id
+        data: every(e => e.login && e.id)
       }]
     }
   ])

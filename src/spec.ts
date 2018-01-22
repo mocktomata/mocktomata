@@ -1,12 +1,9 @@
 import { satisfy } from 'assertron'
-import {
-  // @ts-ignore
-  FluxStandardAction
-} from 'flux-standard-action'
 import { tersify } from 'tersify'
 import { unpartial } from 'unpartial'
 
 import {
+  SpecAction,
   SpecOptions,
   // @ts-ignore
   SpecRecord,
@@ -17,7 +14,7 @@ import { defaultSpecOptions, getMode } from './SpecOptions'
 import { spy } from './spy'
 import { stub } from './stub'
 
-export function makeErrorSerializable(actions: FluxStandardAction<any, any>[]) {
+export function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
     if (isRejectErrorPromiseReturnAction(a) ||
       isErrorThrowAction(a)) {
@@ -41,7 +38,7 @@ export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T
 
   return Object.assign(specBase, {
     satisfy(expectation) {
-      return specBase.closing.then(actions => {
+      return specBase.completed.then(actions => {
         satisfy(actions, expectation)
         if (opt.mode === 'save') {
           // istanbul ignore next

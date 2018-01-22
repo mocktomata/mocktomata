@@ -21,7 +21,7 @@
 
 Boundary is where two systems meet and communicate with each other using data structures and primitive types.
 
-For example, making calls to remote server or component written by another team in another language.
+For example, making calls to a remote server or a component written by another team in another language.
 
 When we write tests that needs to communicate across the boundary,
 we often need to create a test double to similate the behavior.
@@ -119,7 +119,10 @@ test('get follower of a user', t => {
   const followers = await getFollowers(github, 'someRealUser')
 
   // (optional) get the actual actions recorded by `komondor` for inspection
-  const actions = await getFollowersSpec.closing
+  // if your call above does not guarantee the code completes it execution,
+  // you can do `const actions = await getFollowersSpec.completed`
+  const actions = getFollowersSpec.actions
+
   console.log(actions)
 
   // (required) ensure the record will meet your expectation
