@@ -40,13 +40,6 @@ function locateCallback(meta, args) {
     return meta.reduce((p, v) => {
       return p[v]
     }, args)
-  else if (meta.site) {
-    if (typeof meta.site[0] === 'number') {
-      return meta.site.reduce((p, v) => {
-        return p[v]
-      }, args)
-    }
-  }
 }
 
 export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, subject, id: string) {

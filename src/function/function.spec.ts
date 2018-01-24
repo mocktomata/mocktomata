@@ -2,14 +2,14 @@ import { test } from 'ava'
 import { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
 
-import { spec } from './spec'
+import { spec } from '../spec'
 import {
   simpleCallback,
   fetch,
   literalCallback,
   synchronous,
   delayed
-} from './specTestSuites'
+} from '../specTestSuites'
 
 test('spec.closing will get actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
@@ -420,3 +420,21 @@ test('synchronous fail replay', async t => {
 })
 
 //#endregion
+
+test('simpleCallback call again will turn into spy mode', async t => {
+  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const actual = await simpleCallback.increment(cbSpec.subject, 2)
+  t.is(actual, 3)
+
+  const actual2 = await simpleCallback.increment(cbSpec.subject, 4)
+  t.is(actual2, 5)
+
+  await cbSpec.satisfy([
+    { type: 'invoke', payload: [2] },
+    { type: 'callback', payload: [null, 3] },
+    { type: 'return' },
+    { type: 'invoke', payload: [4] },
+    { type: 'callback', payload: [null, 5] },
+    { type: 'return' }
+  ])
+})
