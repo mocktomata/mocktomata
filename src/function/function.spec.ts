@@ -9,7 +9,7 @@ import {
   literalCallback,
   synchronous,
   delayed
-} from '../specTestSuites'
+} from './testSuites'
 
 test('spec.closing will get actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)

@@ -2,7 +2,7 @@ import { AssertOrder } from 'assertron'
 import { test } from 'ava'
 import WebSocket = require('ws')
 
-import { spec } from './index'
+import { spec } from '../index'
 
 test('ws verify', async t => {
   const wsSpec = await spec(WebSocket)
