@@ -88,12 +88,11 @@ export function createSpecStore(): SpecStore {
     peek<A extends SpecAction>(): A | undefined {
       return actions[i] as any
     },
-    next<A extends SpecAction>(): A | undefined {
+    next(): void {
       const action = actions[i++]
       if (action) {
         callListeners(action)
       }
-      return action as any
     },
     prune() {
       actions.splice(i, actions.length - i)

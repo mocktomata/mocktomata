@@ -49,17 +49,20 @@ test('next with no action returns undefined', t => {
   t.is(store.next(), undefined)
 })
 
-test('next gets next action', async t => {
+test('next moves to next action and peek gets it', async t => {
   const store = createSpecStore()
   await store.load('specStore/twoActions')
-  const a1 = store.next()!
-  const a2 = store.next()!
-  const a3 = store.next()
+  const a1 = store.peek()!
+  store.next()
+  const a2 = store.peek()!
+  store.next()
+  const a3 = store.peek()
 
   satisfy(a1, { type: 'action1', payload: [] })
   satisfy(a2, { type: 'action2', payload: [] })
   t.is(a3, undefined)
 })
+
 test('prune with no action ends with no action', t => {
   const store = createSpecStore()
   store.prune()
