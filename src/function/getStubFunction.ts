@@ -67,7 +67,8 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
     return result
 
     function processUntilReturn() {
-      const action = context.next()
+      const action = context.peek()
+      context.next()
       if (!action) return undefined
 
       if (action.type === 'return') {

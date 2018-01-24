@@ -1,6 +1,7 @@
 import { test } from 'ava'
 
 import { spec } from '../index'
+import { setImmediate } from 'timers';
 
 class Foo {
   constructor(public x) { }
@@ -124,5 +125,94 @@ test('replay on not matching spec will spy instead (check log)', async t => {
     { type: 'class/constructor', payload: [2] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
     { type: 'class/return', payload: 3 }
+  ])
+})
+
+class WithCallback {
+  callback(cb) {
+    setImmediate(() => {
+      cb('called')
+    })
+  }
+}
+
+test('captures callbacks verify', async t => {
+  const cbSpec = await spec(WithCallback)
+  const cb = new cbSpec.subject()
+  await new Promise(a => {
+    cb.callback(v => {
+      t.is(v, 'called')
+      a()
+    })
+  })
+
+  await cbSpec.complete()
+  await cbSpec.satisfy([
+    { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', meta: { name: 'callback' } },
+    { type: 'class/return' },
+    {
+      type: 'class/callback',
+      payload: ['called'],
+      meta: {
+        name: 'callback',
+        invokeIndex: 0,
+        callSite: 0
+      }
+    }
+  ])
+})
+
+test('captures callbacks save', async t => {
+  const cbSpec = await spec(WithCallback, { id: 'class/withCallback', mode: 'save' })
+  const cb = new cbSpec.subject()
+  await new Promise(a => {
+    cb.callback(v => {
+      t.is(v, 'called')
+      a()
+    })
+  })
+
+  await cbSpec.complete()
+  await cbSpec.satisfy([
+    { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', meta: { name: 'callback' } },
+    { type: 'class/return' },
+    {
+      type: 'class/callback',
+      payload: ['called'],
+      meta: {
+        name: 'callback',
+        invokeIndex: 0,
+        callSite: 0
+      }
+    }
+  ])
+})
+
+test('captures callbacks replay', async t => {
+  const cbSpec = await spec(WithCallback, { id: 'class/withCallback', mode: 'replay' })
+  const cb = new cbSpec.subject()
+  await new Promise(a => {
+    cb.callback(v => {
+      t.is(v, 'called')
+      a()
+    })
+  })
+
+  await cbSpec.complete()
+  await cbSpec.satisfy([
+    { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', meta: { name: 'callback' } },
+    { type: 'class/return' },
+    {
+      type: 'class/callback',
+      payload: ['called'],
+      meta: {
+        name: 'callback',
+        invokeIndex: 0,
+        callSite: 0
+      }
+    }
   ])
 })

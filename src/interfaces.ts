@@ -64,7 +64,7 @@ export interface SpecPlayer {
   /**
    * Move to the next action during replay.
    */
-  next<A extends SpecAction>(): A | undefined,
+  next(): void,
   /**
    * Peep the current action during replay.
    */

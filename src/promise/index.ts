@@ -2,19 +2,19 @@ import { SpecContext } from '../index'
 
 export function getReturnSpy(context: SpecContext, subject) {
   if (!isPromise(subject)) return undefined
-  return spyOnPromise(context, subject)
+  return spyPromise(context, subject)
 }
 
 export function getReturnStub(context: SpecContext, type: string) {
   if (type !== 'promise') return undefined
-  return promiseStub(context)
+  return stubPromise(context)
 }
 
 function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-function spyOnPromise(context: SpecContext, result) {
+function spyPromise(context: SpecContext, result) {
   context.add({
     type: 'return',
     payload: {},
@@ -29,7 +29,7 @@ function spyOnPromise(context: SpecContext, result) {
   return result
 }
 
-function promiseStub(context: SpecContext) {
+function stubPromise(context: SpecContext) {
   const action = context.peek()
   if (action && action.type === 'promise') {
     context.next()
