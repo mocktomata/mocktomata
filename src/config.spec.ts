@@ -1,11 +1,25 @@
 import { test } from 'ava'
 
-import {
-  config,
-  spec
-} from './index'
-import { simpleCallback } from './specTestSuites'
+import { config, spec } from './index'
 import { store } from './store'
+
+const simpleCallback = {
+  increment(remote, x) {
+    return new Promise((a, r) => {
+      remote(x, (err, response) => {
+        if (err) r(err)
+        a(response)
+      })
+    })
+  },
+  success(a, callback) {
+    callback(null, a + 1)
+  },
+  fail(_a, callback) {
+    callback({ message: 'fail' }, null)
+  }
+}
+
 
 test.beforeEach(() => {
   config()

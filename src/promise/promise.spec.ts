@@ -1,7 +1,18 @@
 import { test } from 'ava'
 
-import { spec } from './spec'
-import { promise } from './specTestSuites'
+import { spec } from '../spec'
+
+const promise = {
+  increment(remote, x) {
+    return remote('increment', x)
+  },
+  success(_url, x) {
+    return Promise.resolve(x + 1)
+  },
+  fail() {
+    return Promise.reject({ message: 'fail' })
+  }
+}
 
 test('promise verify', async t => {
   const speced = await spec(promise.success)
