@@ -57,8 +57,8 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
           type: 'return',
           payload: result
         })
-        context.resolve()
-      }, context.resolve)
+        context.complete()
+      }, context.complete)
       return result
     }
     else {
@@ -73,7 +73,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
         })
         // resolve instead of reject because it is the call that fails,
         // the spying didn't fail.
-        context.resolve()
+        context.complete()
         throw err
       }
       const returnSpy = komondor.getReturnSpy(context, result)
@@ -82,7 +82,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
       }
       else {
         context.add({ type: 'return', payload: result })
-        context.resolve()
+        context.complete()
       }
       return result
     }

@@ -11,10 +11,6 @@ export interface SpecStore extends SpecPlayer, SpecRecorder {
   readonly actions: SpecAction[],
   readonly completed: Promise<SpecAction[]>,
   /**
-   * Marking the spec store is completed.
-   */
-  readonly resolve: () => void,
-  /**
    * String representation of the expectation of the Spec.
    */
   expectation: string,
@@ -27,7 +23,11 @@ export interface SpecStore extends SpecPlayer, SpecRecorder {
    */
   load(id: string),
   on(actionType: string, callback: Function),
-  onAny(callback: Function)
+  onAny(callback: Function),
+  /**
+   * Tells the spec store recording is completed.
+   */
+  complete(): void
 }
 
 export function createSpecStore(): SpecStore {
@@ -58,9 +58,6 @@ export function createSpecStore(): SpecStore {
     },
     get completed() {
       return completed
-    },
-    get resolve() {
-      return resolve
     },
     get expectation() {
       return expectation
@@ -111,6 +108,10 @@ export function createSpecStore(): SpecStore {
     },
     onAny(callback) {
       listenAll.push(callback)
+    },
+    complete() {
+      resolve()
+      return completed
     }
   }
 }

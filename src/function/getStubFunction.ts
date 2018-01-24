@@ -69,7 +69,7 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
 
     const result = processUntilReturn()
     if (context.peek() === undefined) {
-      context.resolve()
+      context.complete()
     }
     return result
 
@@ -93,7 +93,7 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
         callback(...action.payload)
       }
       if (action.type === 'throw') {
-        context.resolve()
+        context.complete()
         throw action.payload
       }
       return processUntilReturn()

@@ -36,7 +36,7 @@ function spyOnListener(context: SpecContext, type: string, base, site: string[],
       })
       cb(...args)
       if (terminateEvent === event)
-        context.resolve()
+        context.complete()
     }
     return fn.call(subject, event, wrap)
   }
@@ -61,7 +61,7 @@ function childProcessStub(context: SpecContext) {
   const stderr = {}
   setImmediate(() => {
     processUntilCloseEvent(context, { on, stdout, stderr })
-    context.resolve()
+    context.complete()
   })
   return {
     on(event, callback) {
