@@ -14,8 +14,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
 
   function emitNextActions() {
     const action = context.peek()
-    if (!action) return
-    if (action.type === 'class/return') {
+    if (action && action.type === 'class/return') {
       return action.payload
     }
   }
