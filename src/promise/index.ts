@@ -25,7 +25,7 @@ function spyOnPromise(context: SpecContext, result) {
     err => ({ type: 'promise', payload: err, meta: { type: 'reject' } })
   ).then(action => {
     context.add(action)
-  }).then(() => context.resolve())
+  }).then(() => context.complete())
   return result
 }
 
@@ -33,7 +33,7 @@ function promiseStub(context: SpecContext) {
   const action = context.peek()
   if (action && action.type === 'promise') {
     context.next()
-    context.resolve()
+    context.complete()
     if (action.meta.type === 'resolve')
       return Promise.resolve(action.payload)
     else

@@ -41,7 +41,7 @@ export function stubWebSocketClient(context: SpecContext, util: SpecPluginUtil, 
           if (listeners)
             listeners.forEach(l => l(...action.payload))
           if (action.meta.event === 'close') {
-            context.resolve()
+            context.complete()
           }
         }
       })

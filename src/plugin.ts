@@ -1,4 +1,5 @@
 import * as childProcess from './childProcess'
+import * as genericClass from './class'
 import * as genericFunction from './function'
 import * as promise from './promise'
 import * as ws from './ws'
@@ -72,7 +73,9 @@ export const plugin = {
   getReturnStub
 }
 
+// order is important, top is generic, bottom is specific.
+plugin.register(genericFunction)
+plugin.register(genericClass)
 plugin.register(promise)
 plugin.register(childProcess)
-plugin.register(genericFunction)
 plugin.register(ws)

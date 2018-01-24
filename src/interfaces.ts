@@ -49,7 +49,7 @@ export interface SpecCompleter {
    * i.e. for Spy, all relevant actions are added to the store,
    * for Stub, all relevant actions has be replayed.
    */
-  resolve(): void,
+  complete(): void,
 }
 
 export interface SpecRecorder {
