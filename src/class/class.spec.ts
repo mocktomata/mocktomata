@@ -134,12 +134,19 @@ class WithCallback {
       cb('called')
     })
   }
+  justDo(x) {
+    return x
+  }
 }
 
 test('captures callbacks verify', async t => {
   const cbSpec = await spec(WithCallback)
   const cb = new cbSpec.subject()
+  cb.justDo(1)
   await new Promise(a => {
+    cb.callback(v => {
+      t.is(v, 'called')
+    })
     cb.callback(v => {
       t.is(v, 'called')
       a()
@@ -149,6 +156,10 @@ test('captures callbacks verify', async t => {
   await cbSpec.complete()
   await cbSpec.satisfy([
     { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
+    { type: 'class/return', payload: 1 },
+    { type: 'class/invoke', meta: { name: 'callback' } },
+    { type: 'class/return' },
     { type: 'class/invoke', meta: { name: 'callback' } },
     { type: 'class/return' },
     {
@@ -157,6 +168,15 @@ test('captures callbacks verify', async t => {
       meta: {
         name: 'callback',
         invokeIndex: 0,
+        callSite: 0
+      }
+    },
+    {
+      type: 'class/callback',
+      payload: ['called'],
+      meta: {
+        name: 'callback',
+        invokeIndex: 1,
         callSite: 0
       }
     }
@@ -166,7 +186,11 @@ test('captures callbacks verify', async t => {
 test('captures callbacks save', async t => {
   const cbSpec = await spec(WithCallback, { id: 'class/withCallback', mode: 'save' })
   const cb = new cbSpec.subject()
+  cb.justDo(1)
   await new Promise(a => {
+    cb.callback(v => {
+      t.is(v, 'called')
+    })
     cb.callback(v => {
       t.is(v, 'called')
       a()
@@ -176,6 +200,10 @@ test('captures callbacks save', async t => {
   await cbSpec.complete()
   await cbSpec.satisfy([
     { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
+    { type: 'class/return', payload: 1 },
+    { type: 'class/invoke', meta: { name: 'callback' } },
+    { type: 'class/return' },
     { type: 'class/invoke', meta: { name: 'callback' } },
     { type: 'class/return' },
     {
@@ -186,6 +214,15 @@ test('captures callbacks save', async t => {
         invokeIndex: 0,
         callSite: 0
       }
+    },
+    {
+      type: 'class/callback',
+      payload: ['called'],
+      meta: {
+        name: 'callback',
+        invokeIndex: 1,
+        callSite: 0
+      }
     }
   ])
 })
@@ -193,7 +230,11 @@ test('captures callbacks save', async t => {
 test('captures callbacks replay', async t => {
   const cbSpec = await spec(WithCallback, { id: 'class/withCallback', mode: 'replay' })
   const cb = new cbSpec.subject()
+  cb.justDo(1)
   await new Promise(a => {
+    cb.callback(v => {
+      t.is(v, 'called')
+    })
     cb.callback(v => {
       t.is(v, 'called')
       a()
@@ -203,6 +244,10 @@ test('captures callbacks replay', async t => {
   await cbSpec.complete()
   await cbSpec.satisfy([
     { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
+    { type: 'class/return', payload: 1 },
+    { type: 'class/invoke', meta: { name: 'callback' } },
+    { type: 'class/return' },
     { type: 'class/invoke', meta: { name: 'callback' } },
     { type: 'class/return' },
     {
@@ -211,6 +256,15 @@ test('captures callbacks replay', async t => {
       meta: {
         name: 'callback',
         invokeIndex: 0,
+        callSite: 0
+      }
+    },
+    {
+      type: 'class/callback',
+      payload: ['called'],
+      meta: {
+        name: 'callback',
+        invokeIndex: 1,
         callSite: 0
       }
     }
