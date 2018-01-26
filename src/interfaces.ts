@@ -43,15 +43,6 @@ export interface Spec<T> extends Spy<T> {
   satisfy(expectation: Expectation): Promise<void>
 }
 
-export interface SpecCompleter {
-  /**
-   * Call this function to indicates the execution is completed.
-   * i.e. for Spy, all relevant actions are added to the store,
-   * for Stub, all relevant actions has be replayed.
-   */
-  complete(): void,
-}
-
 export interface SpecRecorder {
   /**
    * Add an action to the store.
@@ -77,9 +68,11 @@ export interface SpecPlayer {
    * Prune remaining actions and replace with specified actions.
    */
   graft(...actions: SpecAction[]): void,
+  on(actionType: string, callback: Function),
+  onAny(callback: Function),
 }
 
-export interface SpecContext extends SpecCompleter, SpecRecorder, SpecPlayer { }
+export interface SpecContext extends SpecRecorder, SpecPlayer { }
 
 export interface SpecPluginUtil {
   getSpy<T = any>(context: SpecContext, subject: T): T,

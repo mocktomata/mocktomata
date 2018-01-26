@@ -16,7 +16,7 @@ function isChildProcess(result) {
     result.stderr && typeof result.stderr.on === 'function'
 }
 
-function spyOnListener(context: SpecContext, type: string, base, site: string[], terminateEvent?: string) {
+function spyOnListener(context: SpecContext, type: string, base, site: string[]) {
   const subject = site.reduce((p, v, i) => {
     if (i === site.length - 1)
       return p
@@ -35,8 +35,6 @@ function spyOnListener(context: SpecContext, type: string, base, site: string[],
         }
       })
       cb(...args)
-      if (terminateEvent === event)
-        context.complete()
     }
     return fn.call(subject, event, wrap)
   }
@@ -49,7 +47,7 @@ function spyChildProcess(context: SpecContext, subject, scope) {
     payload: {},
     meta: { type: 'childProcess' }
   })
-  spyOnListener(context, 'childProcess', subject, ['on'], 'close')
+  spyOnListener(context, 'childProcess', subject, ['on'])
   spyOnListener(context, 'childProcess', subject, ['stdout', 'on'])
   spyOnListener(context, 'childProcess', subject, ['stderr', 'on'])
   return subject
@@ -61,7 +59,6 @@ function childProcessStub(context: SpecContext) {
   const stderr = {}
   setImmediate(() => {
     processUntilCloseEvent(context, { on, stdout, stderr })
-    context.complete()
   })
   return {
     on(event, callback) {

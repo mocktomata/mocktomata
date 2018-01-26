@@ -57,7 +57,6 @@ export function spyWebSocketClient(context: SpecContext, subject: typeof WebSock
         payload: undefined
       })
       super.terminate()
-      context.complete()
     }
   }
 }

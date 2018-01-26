@@ -21,6 +21,7 @@ test('ws verify', async t => {
   })
 
   ws.on('close', () => { order.once(2) })
+  await order.wait(2)
 
   await wsSpec.satisfy([
     { type: 'ws/constructor', payload: ['ws://html5rocks.websocket.org/echo'] },
@@ -52,6 +53,7 @@ test('ws save', async t => {
   })
 
   ws.on('close', () => { order.once(2) })
+  await order.wait(2)
 
   await wsSpec.satisfy([
     { type: 'ws/constructor', payload: ['ws://html5rocks.websocket.org/echo'] },
@@ -84,6 +86,7 @@ test('ws replay', async t => {
   })
 
   ws.on('close', () => { order.once(2) })
+  await order.wait(2)
 
   await wsSpec.satisfy([
     { type: 'ws/constructor', payload: ['ws://html5rocks.websocket.org/echo'] },

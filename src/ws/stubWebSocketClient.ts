@@ -40,9 +40,6 @@ export function stubWebSocketClient(context: SpecContext, util: SpecPluginUtil, 
           const listeners = this.stubBag.listeners[action.meta.event]
           if (listeners)
             listeners.forEach(l => l(...action.payload))
-          if (action.meta.event === 'close') {
-            context.complete()
-          }
         }
       })
     }

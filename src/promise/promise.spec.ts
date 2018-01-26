@@ -1,6 +1,7 @@
 import { test } from 'ava'
 
 import { spec } from '../spec'
+import { setTimeout } from 'timers';
 
 const promise = {
   increment(remote, x) {
@@ -90,6 +91,36 @@ test('promise rejected replay', async t => {
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
         { type: 'promise', payload: { message: 'fail' }, meta: { type: 'reject' } }
+      ])
+    })
+})
+
+test('promise with callback in between', async t => {
+  function foo(x, cb) {
+    return new Promise(a => {
+      setTimeout(() => {
+        cb('called')
+        a(x + 1)
+      }, 10)
+    })
+  }
+  const fooSpec = await spec(foo);
+
+  let fooing
+  return new Promise(a => {
+    fooing = fooSpec.subject(2, msg => {
+      t.is(msg, 'called')
+      a()
+    })
+  })
+    .then(() => fooing)
+    .then(actual => {
+      t.is(actual, 3)
+      return fooSpec.satisfy([
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/return', meta: { type: 'promise' } },
+        { type: 'fn/callback', payload: ['called'] },
+        { type: 'promise', payload: 3, meta: { type: 'resolve' } }
       ])
     })
 })

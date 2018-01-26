@@ -52,7 +52,7 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
 
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
       if (!spied) {
-        komondor.log.warn(`Calling input does not match with saved record of spec '${id}'. Run in 'verify' mode instead.`)
+        komondor.log.warn(`Calling input does not match with saved record of spec '${id}'. Spying instead.`)
         context.prune()
         spied = komondor.getSpy(context, subject)
       }
@@ -61,9 +61,6 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
     context.next()
 
     const result = processUntilReturn()
-    if (context.peek() === undefined) {
-      context.complete()
-    }
     return result
 
     function processUntilReturn() {
@@ -87,7 +84,6 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
         callback(...action.payload)
       }
       if (action.type === 'fn/throw') {
-        context.complete()
         throw action.payload
       }
       return processUntilReturn()

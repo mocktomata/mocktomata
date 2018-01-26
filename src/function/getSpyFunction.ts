@@ -1,16 +1,14 @@
 import { SpecPluginUtil, SpecContext } from '../index'
 
-function spyOnCallback(fn, callbackPath) {
-  let callback
-  return Object.assign(
-    (...args) => {
-      callback(callbackPath, ...args)
-      fn(...args)
-    }, {
-      called(cb) {
-        callback = cb
-      }
+function spyOnCallback(context: SpecContext, fn, callbackPath) {
+  return (...args) => {
+    context.add({
+      type: 'fn/callback',
+      payload: args,
+      meta: callbackPath
     })
+    fn(...args)
+  }
 }
 
 export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subject) {
@@ -20,71 +18,36 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
       type: 'fn/invoke',
       payload: args
     })
-    const spiedCallbacks: any[] = []
     const spiedArgs = args.map((arg, index) => {
       if (typeof arg === 'function') {
-        const spied = spyOnCallback(arg, undefined)
-        spiedCallbacks.push(spied)
-        return spied
+        return spyOnCallback(context, arg, undefined)
       }
       if (typeof arg === 'object') {
         Object.keys(arg).forEach(key => {
           if (typeof arg[key] === 'function') {
-            const spied = spyOnCallback(arg[key], [index, key])
-            spiedCallbacks.push(spied)
-            arg[key] = spied
+            arg[key] = spyOnCallback(context, arg[key], [index, key])
           }
         })
       }
       return arg
     })
-    if (spiedCallbacks.length > 0) {
-      const waiting = new Promise(a => {
-        spiedCallbacks.forEach(s => {
-          s.called((callbackPath, ...results) => {
-            context.add({
-              type: 'fn/callback',
-              payload: results,
-              meta: callbackPath
-            })
-            a()
-          })
-        })
+    let result
+    try {
+      result = subject.apply(this, spiedArgs)
+    }
+    catch (err) {
+      context.add({
+        type: 'fn/throw',
+        payload: err
       })
-      const result = subject.call(this, ...spiedArgs)
-      waiting.then(() => {
-        context.add({
-          type: 'fn/return',
-          payload: result
-        })
-        context.complete()
-      }, context.complete)
-      return result
+      throw err
     }
-    else {
-      let result
-      try {
-        result = subject.call(this, ...args)
-      }
-      catch (err) {
-        context.add({
-          type: 'fn/throw',
-          payload: err
-        })
-        // resolve instead of reject because it is the call that fails,
-        // the spying didn't fail.
-        context.complete()
-        throw err
-      }
-      const returnSpy = komondor.getReturnSpy(context, result, 'fn')
-      if (returnSpy) {
-        return returnSpy
-      }
-      else {
-        context.add({ type: 'fn/return', payload: result })
-        context.complete()
-      }
-      return result
+    const returnSpy = komondor.getReturnSpy(context, result, 'fn')
+    if (returnSpy) {
+      return returnSpy
     }
+
+    context.add({ type: 'fn/return', payload: result })
+    return result
   }
 }

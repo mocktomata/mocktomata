@@ -15,7 +15,6 @@ test('simple class verify', async t => {
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
   t.is(actual, 1)
-  await fooSpec.complete()
 
   await fooSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
@@ -29,7 +28,6 @@ test('simple class save', async t => {
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
   t.is(actual, 1)
-  await fooSpec.complete()
 
   await fooSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
@@ -43,7 +41,6 @@ test('simple class verify', async t => {
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
   t.is(actual, 1)
-  await fooSpec.complete()
 
   await fooSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
@@ -64,7 +61,6 @@ test('extended class verify', async t => {
   const actual = boo.getPlusOne()
 
   t.is(actual, 2)
-  await booSpec.complete()
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -78,7 +74,6 @@ test('extended class save', async t => {
   const actual = boo.getPlusOne()
 
   t.is(actual, 2)
-  await booSpec.complete()
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -92,7 +87,6 @@ test('extended class replay', async t => {
   const actual = boo.getPlusOne()
 
   t.is(actual, 2)
-  await booSpec.complete()
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -106,7 +100,6 @@ test('replay on not existing spec will spy instead (check log)', async t => {
   const actual = boo.getPlusOne()
 
   t.is(actual, 2)
-  await booSpec.complete()
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -120,7 +113,6 @@ test('replay on not matching spec will spy instead (check log)', async t => {
   const actual = boo.getPlusOne()
 
   t.is(actual, 3)
-  await booSpec.complete()
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [2] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -153,7 +145,6 @@ test('captures callbacks verify', async t => {
     })
   })
 
-  await cbSpec.complete()
   await cbSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
@@ -197,7 +188,6 @@ test('captures callbacks save', async t => {
     })
   })
 
-  await cbSpec.complete()
   await cbSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
@@ -241,7 +231,6 @@ test('captures callbacks replay', async t => {
     })
   })
 
-  await cbSpec.complete()
   await cbSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
@@ -285,7 +274,37 @@ test('method returning promise should have result of promise saved in payload', 
   const actual = await p.increment(3)
 
   t.is(actual, 4)
-  await promiseSpec.complete()
+
+  await promiseSpec.satisfy([
+    { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
+    { type: 'class/return', payload: {}, meta: { type: 'promise' } },
+    { type: 'promise', payload: 4, meta: { type: 'resolve' } }
+  ])
+})
+
+test('method returning promise should have result of promise saved in payload', async t => {
+  const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'save' })
+  const p = new promiseSpec.subject()
+  const actual = await p.increment(3)
+
+  t.is(actual, 4)
+
+  await promiseSpec.satisfy([
+    { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
+    { type: 'class/return', payload: {}, meta: { type: 'promise' } },
+    { type: 'promise', payload: 4, meta: { type: 'resolve' } }
+  ])
+})
+
+test('method returning promise should have result of promise saved in payload', async t => {
+  const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'replay' })
+  const p = new promiseSpec.subject()
+  const actual = await p.increment(3)
+
+  t.is(actual, 4)
+
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
