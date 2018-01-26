@@ -1,4 +1,4 @@
-import { SpecContext } from '../index'
+import { SpecContext, SpecAction } from '../index'
 
 export function getReturnSpy(context: SpecContext, subject, scope) {
   if (!isPromise(subject)) return undefined
@@ -20,23 +20,29 @@ function spyPromise(context: SpecContext, result, scope) {
     payload: {},
     meta: { type: 'promise' }
   })
-  result.then(
-    results => ({ type: 'promise', payload: results, meta: { type: 'resolve' } }),
-    err => ({ type: 'promise', payload: err, meta: { type: 'reject' } })
-  ).then(action => {
-    context.add(action)
-  }).then(() => context.complete())
-  return result
+  return result.then(
+    results => {
+      context.add({ type: 'promise', payload: results, meta: { type: 'resolve' } })
+      return results
+    },
+    err => {
+      context.add({ type: 'promise', payload: err, meta: { type: 'reject' } })
+      throw err
+    })
 }
 
 function stubPromise(context: SpecContext) {
   const action = context.peek()
-  if (action && action.type === 'promise') {
-    context.next()
-    context.complete()
-    if (action.meta.type === 'resolve')
-      return Promise.resolve(action.payload)
-    else
-      return Promise.reject(action.payload)
-  }
+  return (action && action.type === 'promise' ?
+    Promise.resolve(action) :
+    new Promise<SpecAction>(a => {
+      context.on('promise', action => a(action))
+    }))
+    .then(action => {
+      context.next()
+      if (action.meta.type === 'resolve')
+        return Promise.resolve(action.payload)
+      else
+        return Promise.reject(action.payload)
+    })
 }

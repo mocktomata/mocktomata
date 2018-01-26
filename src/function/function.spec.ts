@@ -11,11 +11,10 @@ import {
   delayed
 } from './testSuites'
 
-test('spec.closing will get actions recorded', async () => {
+test('spec.actions contains all actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
-  const actions = await cbSpec.completed
-  satisfy(actions, [
+  satisfy(cbSpec.actions, [
     { type: 'fn/invoke', payload: [2] },
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
@@ -92,8 +91,7 @@ test('function spec can be called multiple times', async t => {
   const cbSpec = await spec(delayed.success)
   await delayed.increment(cbSpec.subject, 2)
   await delayed.increment(cbSpec.subject, 4)
-  const actions = await cbSpec.completed
-  t.is(actions.length, 6)
+  t.is(cbSpec.actions.length, 6)
 })
 
 //#region simpleCallback
@@ -174,7 +172,7 @@ test('simpleCallback fail case replay', async t => {
 })
 
 test('replay on not saved input will spy', async t => {
-  const successSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const successSpec = await spec(simpleCallback.success, { id: 'function/simpleCallback/notSavedToSpy', mode: 'replay' })
 
   const actual = await simpleCallback.increment(successSpec.subject, 4)
   await successSpec.satisfy([
@@ -184,7 +182,7 @@ test('replay on not saved input will spy', async t => {
   ])
   t.is(actual, 5)
 
-  const failSpec = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'replay' })
+  const failSpec = await spec(simpleCallback.fail, { id: 'function/simpleCallback failed/notSavedToSpy', mode: 'replay' })
   await simpleCallback.increment(failSpec.subject, 8)
     .then(() => t.fail())
     .catch(() => {
@@ -422,7 +420,7 @@ test('synchronous fail replay', async t => {
 //#endregion
 
 test('simpleCallback call again will turn into spy mode', async t => {
-  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const cbSpec = await spec(simpleCallback.success, { id: 'function/simpleCallback/callAgainToSpy', mode: 'replay' })
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
   t.is(actual, 3)
 

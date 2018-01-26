@@ -12,8 +12,6 @@ export async function stub<T>(subject: T, id): Promise<Spy<T>> {
     on: store.on,
     onAny: store.onAny,
     actions: store.actions,
-    completed: store.completed,
-    complete: store.complete,
     subject: stubbed
   } as any
 }

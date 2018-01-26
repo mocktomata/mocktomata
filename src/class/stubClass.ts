@@ -4,10 +4,13 @@ import { spyClass } from './spyClass';
 import { setImmediate } from 'timers';
 
 export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, id: string) {
-  function switchToSpy(currentAction, info) {
+  function switchToSpy(callSite, info) {
     if (info.spy) return info.spy
 
-    util.log.warn(`The current action '${currentAction}' does not match with saved record of ${id}. Spying instead.`)
+    if (context.peek())
+      util.log.warn(`The current action '${callSite}' does not match with saved record of ${id}. Spying instead.`)
+    else
+      util.log.warn(`No record for '${callSite}'. Spying instead`)
     context.prune()
     info.spy = new (spyClass(context, util, subject) as any)(...info.ctorArgs)
     return info.spy
@@ -20,6 +23,12 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
       const next = context.peek()
       if (next && next.type === 'class/callback') {
         setImmediate(() => emitNextActions(info))
+      }
+
+      if (action.meta) {
+        const returnStub = util.getReturnStub(context, action.meta.type)
+        if (returnStub)
+          return returnStub
       }
       return action.payload
     }

@@ -38,7 +38,8 @@ export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T
 
   return Object.assign(specBase, {
     satisfy(expectation) {
-      return specBase.completed.then(actions => {
+      return Promise.resolve().then(() => {
+        const actions = specBase.actions
         satisfy(actions, expectation)
         if (opt.mode === 'save') {
           // istanbul ignore next
