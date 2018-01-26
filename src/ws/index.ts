@@ -18,9 +18,6 @@ export function getSpy(context: SpecContext, subject: any) {
 export function getStub(context: SpecContext, subject: any, id: string) {
   if (!isWebSocketClient(subject)) return undefined
 
-  const action = context.peek()
-  if (!action || !action.type.startsWith('ws/')) return undefined
-
   return stubWebSocketClient(context, komondorUtil, subject, id)
 }
 
