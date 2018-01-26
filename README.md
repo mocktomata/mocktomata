@@ -197,6 +197,12 @@ interface SpecOptions {
 }
 ```
 
+## Security
+
+Since `komondor` will record the calls,
+if they contain sensitive information you don't want to keep in the record,
+you can remove them in the `spec.actions` before you make the `spec.satisfy()` call.
+
 ## FAQ
 
 ### Nothing happen when I change to save mode
