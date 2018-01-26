@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'invoke', payload: [{ data: 2 }] }, { type: 'callback', payload: [3], meta: [0, 'success'] }, { type: 'return' }]","actions":[{"type":"invoke","payload":[{"data":2}]},{"type":"callback","payload":[3],"meta":[0,"success"]},{"type":"return"}]}
+{"expectation":"[{ type: 'fn/invoke', payload: [{ data: 2 }] }, { type: 'fn/callback', payload: [3], meta: [0, 'success'] }, { type: 'fn/return' }]","actions":[{"type":"fn/invoke","payload":[{"data":2}]},{"type":"fn/callback","payload":[3],"meta":[0,"success"]},{"type":"fn/return"}]}

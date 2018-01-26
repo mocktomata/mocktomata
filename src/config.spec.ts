@@ -49,9 +49,9 @@ test('config replay will force subsequence spec in replay mode', async t => {
   // this should have failed if the spec is running in 'verify' mode.
   // The actual call is failing.
   await speced.satisfy([
-    { type: 'invoke', payload: [2] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
 
   t.is(actual, 3)
@@ -67,9 +67,9 @@ test('config mode to work on specific spec', async t => {
       // this should fail if the spec is in 'replay' mode.
       // The saved record is succeeding.
       return failSpec.satisfy([
-        { type: 'invoke', payload: [2] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
   config({ mode: 'replay', spec: 'config/forceReplayFail' })
@@ -81,9 +81,9 @@ test('config mode to work on specific spec', async t => {
       // this should fail if the spec is in 'verify' mode.
       // The save record is failing.
       return sucessSpec.satisfy([
-        { type: 'invoke', payload: [2] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
   t.pass()
@@ -96,9 +96,9 @@ test('config mode to work on specific spec using regex', async t => {
     .then(() => t.fail())
     .catch(() => {
       return sucessSpec.satisfy([
-        { type: 'invoke', payload: [2] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
   t.pass()

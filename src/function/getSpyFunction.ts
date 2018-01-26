@@ -17,7 +17,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
 
   return function (...args) {
     context.add({
-      type: 'invoke',
+      type: 'fn/invoke',
       payload: args
     })
     const spiedCallbacks: any[] = []
@@ -43,7 +43,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
         spiedCallbacks.forEach(s => {
           s.called((callbackPath, ...results) => {
             context.add({
-              type: 'callback',
+              type: 'fn/callback',
               payload: results,
               meta: callbackPath
             })
@@ -54,7 +54,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
       const result = subject.call(this, ...spiedArgs)
       waiting.then(() => {
         context.add({
-          type: 'return',
+          type: 'fn/return',
           payload: result
         })
         context.complete()
@@ -68,7 +68,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
       }
       catch (err) {
         context.add({
-          type: 'throw',
+          type: 'fn/throw',
           payload: err
         })
         // resolve instead of reject because it is the call that fails,
@@ -76,12 +76,12 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
         context.complete()
         throw err
       }
-      const returnSpy = komondor.getReturnSpy(context, result)
+      const returnSpy = komondor.getReturnSpy(context, result, 'fn')
       if (returnSpy) {
         return returnSpy
       }
       else {
-        context.add({ type: 'return', payload: result })
+        context.add({ type: 'fn/return', payload: result })
         context.complete()
       }
       return result

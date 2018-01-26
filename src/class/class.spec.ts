@@ -270,3 +270,26 @@ test('captures callbacks replay', async t => {
     }
   ])
 })
+
+class WithPromise {
+  increment(x) {
+    return new Promise(a => {
+      setImmediate(() => a(x + 1))
+    })
+  }
+}
+
+test('method returning promise should have result of promise saved in payload', async t => {
+  const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'verify' })
+  const p = new promiseSpec.subject()
+  const actual = await p.increment(3)
+
+  t.is(actual, 4)
+  await promiseSpec.complete()
+  await promiseSpec.satisfy([
+    { type: 'class/constructor', payload: [] },
+    { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
+    { type: 'class/return', payload: {}, meta: { type: 'promise' } },
+    { type: 'promise', payload: 4, meta: { type: 'resolve' } }
+  ])
+})

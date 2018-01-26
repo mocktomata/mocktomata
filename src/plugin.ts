@@ -25,10 +25,10 @@ function getStub(context: SpecContext, subject: any, id: string) {
   }
 }
 
-function getReturnSpy(context: SpecContext, subject: any) {
+function getReturnSpy(context: SpecContext, subject: any, scope: string) {
   for (let i = 0; i < plugins.length; i++) {
     const p = plugins[i]
-    const spy = p.getReturnSpy && p.getReturnSpy(context, subject)
+    const spy = p.getReturnSpy && p.getReturnSpy(context, subject, scope)
     if (spy)
       return spy
   }

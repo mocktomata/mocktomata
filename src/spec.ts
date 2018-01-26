@@ -24,11 +24,11 @@ export function makeErrorSerializable(actions: SpecAction[]) {
 }
 
 function isErrorThrowAction(action) {
-  return action.type === 'throw' && action.payload instanceof Error
+  return /\/throw/.test(action.type) && action.payload instanceof Error
 }
 
 function isRejectErrorPromiseReturnAction(action) {
-  return action.type === 'return' && action.meta && action.meta.type === 'promise' && action.meta.meta === 'reject' && action.payload instanceof Error
+  return /\/return/.test(action.type) && action.meta && action.meta.type === 'promise' && action.meta.meta === 'reject' && action.payload instanceof Error
 }
 
 export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T>> {

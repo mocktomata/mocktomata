@@ -81,8 +81,8 @@ test('childProcess verify', async t => {
   })
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', [2]] },
-    { type: 'return', payload: {}, meta: { type: 'childProcess' } },
+    { type: 'fn/invoke', payload: ['increment', [2]] },
+    { type: 'fn/return', payload: {}, meta: { type: 'childProcess' } },
     { type: 'childProcess', payload: [3], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [4], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [5], meta: { site: ['stdout', 'on'], event: 'data' } },
@@ -99,8 +99,8 @@ test('childProcess save', async t => {
   })
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', [2]] },
-    { type: 'return', payload: {}, meta: { type: 'childProcess' } },
+    { type: 'fn/invoke', payload: ['increment', [2]] },
+    { type: 'fn/return', payload: {}, meta: { type: 'childProcess' } },
     { type: 'childProcess', payload: [3], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [4], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [5], meta: { site: ['stdout', 'on'], event: 'data' } },
@@ -117,8 +117,8 @@ test('childProcess replay', async t => {
   })
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', [2]] },
-    { type: 'return', payload: {}, meta: { type: 'childProcess' } },
+    { type: 'fn/invoke', payload: ['increment', [2]] },
+    { type: 'fn/return', payload: {}, meta: { type: 'childProcess' } },
     { type: 'childProcess', payload: [3], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [4], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [5], meta: { site: ['stdout', 'on'], event: 'data' } },
@@ -135,8 +135,8 @@ test('childProcess fail case verify', async t => {
   })
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', [2]] },
-    { type: 'return', payload: {}, meta: { type: 'childProcess' } },
+    { type: 'fn/invoke', payload: ['increment', [2]] },
+    { type: 'fn/return', payload: {}, meta: { type: 'childProcess' } },
     { type: 'childProcess', payload: [3], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [4], meta: { site: ['stderr', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [1], meta: { site: ['on'], event: 'close' } }
@@ -152,8 +152,8 @@ test('childProcess fail case save', async t => {
   })
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', [2]] },
-    { type: 'return', payload: {}, meta: { type: 'childProcess' } },
+    { type: 'fn/invoke', payload: ['increment', [2]] },
+    { type: 'fn/return', payload: {}, meta: { type: 'childProcess' } },
     { type: 'childProcess', payload: [3], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [4], meta: { site: ['stderr', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [1], meta: { site: ['on'], event: 'close' } }
@@ -169,8 +169,8 @@ test('childProcess fail case replay', async t => {
   })
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', [2]] },
-    { type: 'return', payload: {}, meta: { type: 'childProcess' } },
+    { type: 'fn/invoke', payload: ['increment', [2]] },
+    { type: 'fn/return', payload: {}, meta: { type: 'childProcess' } },
     { type: 'childProcess', payload: [3], meta: { site: ['stdout', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [4], meta: { site: ['stderr', 'on'], event: 'data' } },
     { type: 'childProcess', payload: [1], meta: { site: ['on'], event: 'close' } }

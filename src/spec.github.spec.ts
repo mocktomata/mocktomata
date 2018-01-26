@@ -26,7 +26,7 @@ test('get followers (demo)', async t => {
   await specs.satisfy([
     undefined,
     {
-      type: 'callback',
+      type: 'fn/callback',
       payload: [null, {
         data: every(e => e.login && e.id)
       }]

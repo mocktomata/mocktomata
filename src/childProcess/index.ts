@@ -1,8 +1,8 @@
 import { SpecContext } from '../index'
 
-export function getReturnSpy(context: SpecContext, subject) {
+export function getReturnSpy(context: SpecContext, subject, scope: string) {
   if (!isChildProcess(subject)) return undefined
-  return spyChildProcess(context, subject)
+  return spyChildProcess(context, subject, scope)
 }
 
 export function getReturnStub(context: SpecContext, type: string) {
@@ -11,7 +11,7 @@ export function getReturnStub(context: SpecContext, type: string) {
 }
 
 function isChildProcess(result) {
-  return typeof result.on === 'function' &&
+  return result && typeof result.on === 'function' &&
     result.stdout && typeof result.stdout.on === 'function' &&
     result.stderr && typeof result.stderr.on === 'function'
 }
@@ -43,9 +43,9 @@ function spyOnListener(context: SpecContext, type: string, base, site: string[],
 
 }
 
-function spyChildProcess(context: SpecContext, subject) {
+function spyChildProcess(context: SpecContext, subject, scope) {
   context.add({
-    type: 'return',
+    type: `${scope}/return`,
     payload: {},
     meta: { type: 'childProcess' }
   })
