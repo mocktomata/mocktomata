@@ -1,6 +1,6 @@
 import { SpecContext, SpecPluginUtil } from '../index';
 
-export function spyClass(context: SpecContext, _util: SpecPluginUtil, subject) {
+export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
   const spiedClass = class extends subject {
     // @ts-ignore
     // tslint:disable-next-line
@@ -54,13 +54,16 @@ export function spyClass(context: SpecContext, _util: SpecPluginUtil, subject) {
           return arg
         })
         const result = method.apply(this, spiedArgs)
-
-        context.add({
-          type: 'class/return',
-          payload: result
-        })
+        const resultSpy = util.getReturnSpy(context, result, 'class')
         invoking = false
-        return result
+        if (!resultSpy) {
+          context.add({
+            type: 'class/return',
+            payload: result
+          })
+          return result
+        }
+        return resultSpy
       }
       else {
         return method.apply(this, args)

@@ -1,8 +1,8 @@
 import { SpecContext } from '../index'
 
-export function getReturnSpy(context: SpecContext, subject) {
+export function getReturnSpy(context: SpecContext, subject, scope) {
   if (!isPromise(subject)) return undefined
-  return spyPromise(context, subject)
+  return spyPromise(context, subject, scope)
 }
 
 export function getReturnStub(context: SpecContext, type: string) {
@@ -14,9 +14,9 @@ function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-function spyPromise(context: SpecContext, result) {
+function spyPromise(context: SpecContext, result, scope) {
   context.add({
-    type: 'return',
+    type: `${scope}/return`,
     payload: {},
     meta: { type: 'promise' }
   })

@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'invoke', payload: ['increment', 2] }, { type: 'throw', payload: { message: 'fail' } }]","actions":[{"type":"invoke","payload":["increment",2]},{"type":"throw","payload":{"message":"fail"}}]}
+{"expectation":"[{ type: 'fn/invoke', payload: ['increment', 2] }, { type: 'fn/throw', payload: { message: 'fail' } }]","actions":[{"type":"fn/invoke","payload":["increment",2]},{"type":"fn/throw","payload":{"message":"fail"}}]}

@@ -16,9 +16,9 @@ test('spec.closing will get actions recorded', async () => {
   await simpleCallback.increment(cbSpec.subject, 2)
   const actions = await cbSpec.completed
   satisfy(actions, [
-    { type: 'invoke', payload: [2] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
 })
 
@@ -26,15 +26,15 @@ test('on(event, callback) will invoke when action is added.', async () => {
   const order = new AssertOrder()
   const cbSpec = await spec(simpleCallback.success)
 
-  cbSpec.on('invoke', action => {
+  cbSpec.on('fn/invoke', action => {
     order.once(1)
     satisfy(action, { payload: [2] })
   })
-  cbSpec.on('callback', action => {
+  cbSpec.on('fn/callback', action => {
     order.once(2)
     satisfy(action, { payload: [null, 3] } as any)
   })
-  cbSpec.on('return', () => {
+  cbSpec.on('fn/return', () => {
     order.once(3)
   })
 
@@ -46,15 +46,15 @@ test('on(event, callback) will invoke when action is replay.', async () => {
   const order = new AssertOrder()
   const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
 
-  cbSpec.on('invoke', action => {
+  cbSpec.on('fn/invoke', action => {
     order.once(1)
     satisfy(action, { payload: [2] })
   })
-  cbSpec.on('callback', action => {
+  cbSpec.on('fn/callback', action => {
     order.once(2)
     satisfy(action, { payload: [null, 3] } as any)
   })
-  cbSpec.on('return', () => {
+  cbSpec.on('fn/return', () => {
     order.once(3)
   })
 
@@ -102,9 +102,9 @@ test('simpleCallback verify', async t => {
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([
-    { type: 'invoke', payload: [2] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -115,9 +115,9 @@ test('simpleCallback save', async t => {
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([
-    { type: 'invoke', payload: [2] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -127,9 +127,9 @@ test('simpleCallback replay', async t => {
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([
-    { type: 'invoke', payload: [2] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -140,9 +140,9 @@ test('simpleCallback fail case verify', async t => {
     .then(() => t.fail())
     .catch(() => {
       return cbSpec.satisfy([
-        { type: 'invoke', payload: [2] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -153,9 +153,9 @@ test('simpleCallback fail case save', async t => {
     .then(() => t.fail())
     .catch(() => {
       return cbSpec.satisfy([
-        { type: 'invoke', payload: [2] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -166,9 +166,9 @@ test('simpleCallback fail case replay', async t => {
     .then(() => t.fail())
     .catch(() => {
       return cbSpec.satisfy([
-        { type: 'invoke', payload: [2] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [2] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -178,9 +178,9 @@ test('replay on not saved input will spy', async t => {
 
   const actual = await simpleCallback.increment(successSpec.subject, 4)
   await successSpec.satisfy([
-    { type: 'invoke', payload: [4] },
-    { type: 'callback', payload: [null, 5] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [4] },
+    { type: 'fn/callback', payload: [null, 5] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 5)
 
@@ -189,9 +189,9 @@ test('replay on not saved input will spy', async t => {
     .then(() => t.fail())
     .catch(() => {
       return failSpec.satisfy([
-        { type: 'invoke', payload: [8] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [8] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -204,9 +204,9 @@ test('fetch verify', async t => {
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -216,9 +216,9 @@ test('fetch save', async t => {
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -228,9 +228,9 @@ test('fetch replay', async t => {
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -241,9 +241,9 @@ test('fetch fail verify', async t => {
     .then(() => t.fail())
     .catch(() => {
       return speced.satisfy([
-        { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -254,9 +254,9 @@ test('fetch fail save', async t => {
     .then(() => t.fail())
     .catch(() => {
       return speced.satisfy([
-        { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -267,9 +267,9 @@ test('fetch fail verify', async t => {
     .then(() => t.fail())
     .catch(() => {
       return speced.satisfy([
-        { type: 'invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
-        { type: 'callback', payload: [{ message: 'fail' }, null] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
+        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -280,9 +280,9 @@ test('literalCallback verify', async t => {
   const speced = await spec(literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
   await speced.satisfy([
-    { type: 'invoke', payload: [{ 'data': 2 }] },
-    { type: 'callback', payload: [3], meta: [0, 'success'] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [{ 'data': 2 }] },
+    { type: 'fn/callback', payload: [3], meta: [0, 'success'] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -292,9 +292,9 @@ test('literalCallback save', async t => {
   const actual = await literalCallback.increment(speced.subject, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: [{ 'data': 2 }] },
-    { type: 'callback', payload: [3], meta: [0, 'success'] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [{ 'data': 2 }] },
+    { type: 'fn/callback', payload: [3], meta: [0, 'success'] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -304,9 +304,9 @@ test('literalCallback replay', async t => {
   const actual = await literalCallback.increment(speced.subject, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: [{ 'data': 2 }] },
-    { type: 'callback', payload: [3], meta: [0, 'success'] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [{ 'data': 2 }] },
+    { type: 'fn/callback', payload: [3], meta: [0, 'success'] },
+    { type: 'fn/return' }
   ])
   t.is(actual, 3)
 })
@@ -317,9 +317,9 @@ test('literalCallback fail case verify', async t => {
     .then(() => t.fail())
     .catch(() => {
       return speced.satisfy([
-        { type: 'invoke', payload: [{ 'data': 2 }] },
-        { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [{ 'data': 2 }] },
+        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'fn/return' }
       ])
     })
 })
@@ -330,9 +330,9 @@ test('literalCallback fail case save', async t => {
     .then(() => t.fail())
     .catch(() => {
       return speced.satisfy([
-        { type: 'invoke', payload: [{ 'data': 2 }] },
-        { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [{ 'data': 2 }] },
+        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'fn/return' }
       ])
     })
   t.pass()
@@ -344,9 +344,9 @@ test('literalCallback fail case replay', async t => {
     .then(() => t.fail())
     .catch(() => {
       return speced.satisfy([
-        { type: 'invoke', payload: [{ 'data': 2 }] },
-        { type: 'callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
-        { type: 'return' }
+        { type: 'fn/invoke', payload: [{ 'data': 2 }] },
+        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'fn/return' }
       ])
     })
   t.pass()
@@ -359,8 +359,8 @@ test('synchronous verify', async t => {
   const actual = synchronous.increment(speced.subject, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', 2] },
-    { type: 'return', payload: 3 }
+    { type: 'fn/invoke', payload: ['increment', 2] },
+    { type: 'fn/return', payload: 3 }
   ])
   t.is(actual, 3)
 })
@@ -370,8 +370,8 @@ test('synchronous save', async t => {
   const actual = synchronous.increment(speced.subject, 2)
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', 2] },
-    { type: 'return', payload: 3 }
+    { type: 'fn/invoke', payload: ['increment', 2] },
+    { type: 'fn/return', payload: 3 }
   ])
   t.is(actual, 3)
 })
@@ -380,8 +380,8 @@ test('synchronous replay', async t => {
   const speced = await spec(synchronous.success, { id: 'synchronous', mode: 'replay' })
   const actual = synchronous.increment(speced.subject, 2)
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', 2] },
-    { type: 'return', payload: 3 }
+    { type: 'fn/invoke', payload: ['increment', 2] },
+    { type: 'fn/return', payload: 3 }
   ])
   t.is(actual, 3)
 })
@@ -392,8 +392,8 @@ test('synchronous fail verify', async t => {
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', 2] },
-    { type: 'throw', payload: { message: 'fail' } }
+    { type: 'fn/invoke', payload: ['increment', 2] },
+    { type: 'fn/throw', payload: { message: 'fail' } }
   ])
 })
 
@@ -403,8 +403,8 @@ test('synchronous fail save', async t => {
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', 2] },
-    { type: 'throw', payload: { message: 'fail' } }
+    { type: 'fn/invoke', payload: ['increment', 2] },
+    { type: 'fn/throw', payload: { message: 'fail' } }
   ])
 })
 
@@ -414,8 +414,8 @@ test('synchronous fail replay', async t => {
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
   await speced.satisfy([
-    { type: 'invoke', payload: ['increment', 2] },
-    { type: 'throw', payload: { message: 'fail' } }
+    { type: 'fn/invoke', payload: ['increment', 2] },
+    { type: 'fn/throw', payload: { message: 'fail' } }
   ])
 })
 
@@ -430,11 +430,11 @@ test('simpleCallback call again will turn into spy mode', async t => {
   t.is(actual2, 5)
 
   await cbSpec.satisfy([
-    { type: 'invoke', payload: [2] },
-    { type: 'callback', payload: [null, 3] },
-    { type: 'return' },
-    { type: 'invoke', payload: [4] },
-    { type: 'callback', payload: [null, 5] },
-    { type: 'return' }
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' },
+    { type: 'fn/invoke', payload: [4] },
+    { type: 'fn/callback', payload: [null, 5] },
+    { type: 'fn/return' }
   ])
 })

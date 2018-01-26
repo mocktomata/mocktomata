@@ -84,7 +84,15 @@ export interface SpecContext extends SpecCompleter, SpecRecorder, SpecPlayer { }
 export interface SpecPluginUtil {
   getSpy<T = any>(context: SpecContext, subject: T): T,
   getStub<T = any>(context: SpecContext, subject: T, id: string): T,
-  getReturnSpy<T = any>(context: SpecContext, subject: T): T,
+  /**
+   * @scope Scope of the spec.
+   * This will be used as prefix in `action.type` so that the respective spec and handles the result.
+   */
+  getReturnSpy<T = any>(context: SpecContext, subject: T, scope: string): T,
+  /**
+   * @scope Scope of the spec.
+   * This will be used as prefix in `action.type` so that the respective spec and handles the result.
+   */
   getReturnStub(context: SpecContext, type: string): any,
   log: Logger
 }

@@ -71,7 +71,7 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
       context.next()
       if (!action) return undefined
 
-      if (action.type === 'return') {
+      if (action.type === 'fn/return') {
         if (action.meta) {
           const returnStub = komondor.getReturnStub(context, action.meta.type)
           if (returnStub)
@@ -79,14 +79,14 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
         }
         return action.payload
       }
-      if (action.type === 'invoke') {
+      if (action.type === 'fn/invoke') {
         return undefined
       }
-      if (action.type === 'callback') {
+      if (action.type === 'fn/callback') {
         const callback = locateCallback(action.meta, args)
         callback(...action.payload)
       }
-      if (action.type === 'throw') {
+      if (action.type === 'fn/throw') {
         context.complete()
         throw action.payload
       }
