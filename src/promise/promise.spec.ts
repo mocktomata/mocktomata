@@ -1,7 +1,8 @@
 import { test } from 'ava'
+import stream = require('stream')
+import { setTimeout, setImmediate } from 'timers'
 
 import { spec } from '../spec'
-import { setTimeout } from 'timers';
 
 const promise = {
   increment(remote, x) {
@@ -123,4 +124,93 @@ test('promise with callback in between', async t => {
         { type: 'promise', payload: 3, meta: { status: 'resolve' } }
       ])
     })
+})
+
+function promiseStream() {
+  function readStream(): stream.Stream {
+    const rs = new stream.Readable()
+    const message = 'hello world'
+    let i = 0
+    rs._read = function () {
+      if (message[i])
+        rs.push(message[i++])
+      else
+        rs.push(null)
+    }
+    return rs
+  }
+  const read = readStream()
+  return new Promise<stream.Stream>(a => {
+    setImmediate(() => {
+      a(read)
+    })
+  })
+}
+
+test('promise returning a stream', async t => {
+  const target = await spec(promiseStream)
+  const read = await target.subject()
+  const actual = await new Promise(a => {
+    let message = ''
+    read.on('data', m => {
+      message += m
+    })
+    read.on('end', () => {
+      a(message)
+    })
+    t.pass()
+  })
+  t.is(actual, 'hello world')
+
+  await target.satisfy([
+    undefined,
+    undefined,
+    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }
+  ])
+})
+
+test('promise returning a stream (save)', async t => {
+  const target = await spec(promiseStream, { id: 'promise/readStream', mode: 'save' })
+  const read = await target.subject()
+  const actual = await new Promise(a => {
+    let message = ''
+    read.on('data', m => {
+      message += m
+    })
+    read.on('end', () => {
+      a(message)
+    })
+    t.pass()
+  })
+  t.is(actual, 'hello world')
+
+  await target.satisfy([
+    undefined,
+    undefined,
+    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }
+  ])
+})
+
+test('promise returning a stream (replay)', async t => {
+  // this test uses `readStreamReplay` as source because it causes concurrency issue with the `save` test.
+  // It doesn't happen in actual usage as there should be only one test accessing one spec file.
+  const target = await spec(promiseStream, { id: 'promise/readStreamReplay', mode: 'replay' })
+  const read = await target.subject()
+  const actual = await new Promise(a => {
+    let message = ''
+    read.on('data', m => {
+      message += m
+    })
+    read.on('end', () => {
+      a(message)
+    })
+    t.pass()
+  })
+  t.is(actual, 'hello world')
+
+  await target.satisfy([
+    undefined,
+    undefined,
+    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }
+  ])
 })

@@ -1,13 +1,13 @@
 // import stream = require('stream')
 import { Stream, Writable, Readable } from 'stream'
 
-import { SpecContext, SpecAction } from '../index'
+import { SpecContext, SpecAction, ReturnAction } from '../index'
 import { io } from '../io'
 // import { setImmediate } from 'timers';
 
-export function getReturnSpy(context: SpecContext, subject, scope) {
+export function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
   if (!isStream(subject)) return undefined
-  return spyStream(context, subject, scope)
+  return spyStream(context, subject, action)
 }
 
 export function getReturnStub(context: SpecContext, action: SpecAction) {
@@ -20,13 +20,10 @@ function isStream(subject) {
 }
 
 let counts = {}
-function spyStream(context: SpecContext, subject: Stream, scope: string) {
+function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) {
   const id = counts[context.id] = counts[context.id] ? counts[context.id] + 1 : 1
-  context.add({
-    type: `${scope}/return`,
-    payload: {},
-    meta: { returnType: 'stream', id }
-  })
+  action.meta = { ...action.meta, returnType: 'stream', id }
+
   let writer: Writable
   if (context.mode === 'save') {
     writer = io.createWriteStream(`${context.id}/stream_${id}`)
@@ -55,13 +52,6 @@ function stubStream(context: SpecContext, action: SpecAction): Readable {
   else {
     context.on('stream', () => context.next())
   }
-  // setImmediate(() => {
-  //   if (!action || (action.type === 'stream' && action.meta.end))
-  //     readStream.close()
-  //   else if (action.type === 'stream') {
-  //     const length = action.meta.length
-  //     readStream.push()
-  //   }
-  // })
+
   return readStream
 }

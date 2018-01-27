@@ -35,6 +35,11 @@ export interface SpecAction {
   meta?: any
 }
 
+export interface ReturnActionBase {
+  type: string,
+  meta: { [k: string]: any }
+}
+
 export interface ReturnAction {
   type: string,
   payload: any,
@@ -95,7 +100,7 @@ export interface SpecPluginUtil {
    * @scope Scope of the spec.
    * This will be used as prefix in `action.type` so that the respective spec and handles the result.
    */
-  getReturnSpy<T = any>(context: SpecContext, subject: T, scope: string): T,
+  getReturnSpy<T = any>(context: SpecContext, subject: T, action: ReturnActionBase): T,
   getReturnStub(context: SpecContext, action: SpecAction): any,
   log: Logger
 }

@@ -54,16 +54,16 @@ export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
           return arg
         })
         const result = method.apply(this, spiedArgs)
-        const resultSpy = util.getReturnSpy(context, result, 'class')
-        invoking = false
-        if (!resultSpy) {
-          context.add({
-            type: 'class/return',
-            payload: result
-          })
-          return result
+
+        const returnAction = {
+          type: 'class/return',
+          payload: result,
+          meta: {}
         }
-        return resultSpy
+        context.add(returnAction)
+        const resultSpy = util.getReturnSpy(context, result, returnAction)
+        invoking = false
+        return resultSpy || result
       }
       else {
         return method.apply(this, args)

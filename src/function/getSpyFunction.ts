@@ -42,12 +42,14 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
       })
       throw err
     }
-    const returnSpy = komondor.getReturnSpy(context, result, 'fn')
+    const returnAction = { type: 'fn/return', payload: result, meta: {} }
+    context.add(returnAction)
+
+    const returnSpy = komondor.getReturnSpy(context, result, returnAction)
     if (returnSpy) {
       return returnSpy
     }
 
-    context.add({ type: 'fn/return', payload: result })
     return result
   }
 }

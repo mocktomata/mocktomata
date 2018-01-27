@@ -77,6 +77,5 @@ export function createWriteStream(id: string) {
 
 export function createReadStream(id: string) {
   const filePath = getFilePath(id)
-  console.log(id, filePath)
   return fs.createReadStream(filePath)
 }
