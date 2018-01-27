@@ -28,7 +28,7 @@ function isErrorThrowAction(action) {
 }
 
 function isRejectErrorPromiseReturnAction(action) {
-  return /\/return/.test(action.type) && action.meta && action.meta.type === 'promise' && action.meta.meta === 'reject' && action.payload instanceof Error
+  return action.type === 'promise' && action.meta.type === 'reject' && action.payload instanceof Error
 }
 
 export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T>> {
