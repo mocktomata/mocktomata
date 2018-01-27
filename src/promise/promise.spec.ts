@@ -11,7 +11,7 @@ const promise = {
     return Promise.resolve(x + 1)
   },
   fail() {
-    return Promise.reject({ message: 'fail' })
+    return Promise.reject(new Error('fail'))
   }
 }
 
@@ -31,7 +31,7 @@ test('promise verify', async t => {
 })
 
 test('promise verify save', async t => {
-  const speced = await spec(promise.success, { id: 'promise', mode: 'save' })
+  const speced = await spec(promise.success, { id: 'promise/resolve', mode: 'save' })
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
@@ -44,7 +44,7 @@ test('promise verify save', async t => {
 })
 
 test('promise verify replay', async t => {
-  const speced = await spec(promise.success, { id: 'promise', mode: 'replay' })
+  const speced = await spec(promise.success, { id: 'promise/resolve', mode: 'replay' })
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
@@ -70,7 +70,7 @@ test('promise rejected verify', async t => {
 })
 
 test('promise rejected save', async t => {
-  const speced = await spec(promise.fail, { id: 'promise fail', mode: 'save' })
+  const speced = await spec(promise.fail, { id: 'promise/reject', mode: 'save' })
   return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -83,7 +83,7 @@ test('promise rejected save', async t => {
 })
 
 test('promise rejected replay', async t => {
-  const speced = await spec(promise.fail, { id: 'promise fail', mode: 'replay' })
+  const speced = await spec(promise.fail, { id: 'promise/reject', mode: 'replay' })
   return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
