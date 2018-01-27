@@ -8,6 +8,16 @@
   "publishConfig": {
     "tag": "next"
   },
+  "release": {
+    "analyzeCommits": {
+      "releaseRules": [
+        {
+          "breaking": true,
+          "release": "minor"
+        }
+      ]
+    }
+  },
   "files": [
     "dist-es5",
     "dist-es2015",
