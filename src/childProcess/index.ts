@@ -1,12 +1,12 @@
-import { SpecContext } from '../index'
+import { SpecContext, SpecAction } from '../index'
 
 export function getReturnSpy(context: SpecContext, subject, scope: string) {
   if (!isChildProcess(subject)) return undefined
   return spyChildProcess(context, subject, scope)
 }
 
-export function getReturnStub(context: SpecContext, type: string) {
-  if (type !== 'childProcess') return undefined
+export function getReturnStub(context: SpecContext, action: SpecAction) {
+  if (action.meta.type !== 'childProcess') return undefined
   return childProcessStub(context)
 }
 

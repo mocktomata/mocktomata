@@ -2,10 +2,12 @@ import * as childProcess from './childProcess'
 import * as genericClass from './class'
 import * as genericFunction from './function'
 import * as promise from './promise'
+import * as stream from './stream'
 import * as ws from './ws'
 
 import { SpecContext, SpecPlayer } from './interfaces'
 import { log } from './log'
+import { SpecAction } from './index';
 
 const plugins: any[] = []
 function getSpy(context: SpecContext, subject: any) {
@@ -33,10 +35,10 @@ function getReturnSpy(context: SpecContext, subject: any, scope: string) {
       return spy
   }
 }
-function getReturnStub(context: SpecContext, type: string) {
+function getReturnStub(context: SpecContext, action: SpecAction) {
   for (let i = 0; i < plugins.length; i++) {
     const p = plugins[i]
-    const stub = p.getReturnStub && p.getReturnStub(context, type)
+    const stub = p.getReturnStub && p.getReturnStub(context, action)
     if (stub)
       return stub
   }
@@ -74,8 +76,9 @@ export const plugin = {
 }
 
 // order is important, top is generic, bottom is specific.
+plugin.register(promise)
+plugin.register(stream)
+plugin.register(childProcess)
 plugin.register(genericFunction)
 plugin.register(genericClass)
-plugin.register(promise)
-plugin.register(childProcess)
 plugin.register(ws)

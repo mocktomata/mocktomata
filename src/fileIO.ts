@@ -65,3 +65,18 @@ function createFolders(location: string) {
     return curDir;
   }, initDir);
 }
+
+export function createWriteStream(id: string) {
+  const filePath = getFilePath(id)
+  const folder = path.dirname(filePath)
+  // istanbul ignore next
+  if (!fs.existsSync(folder))
+    createFolders(folder)
+  return fs.createWriteStream(filePath)
+}
+
+export function createReadStream(id: string) {
+  const filePath = getFilePath(id)
+  console.log(id, filePath)
+  return fs.createReadStream(filePath)
+}

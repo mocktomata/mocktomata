@@ -11,8 +11,8 @@ import {
 } from './interfaces'
 import { io } from './io';
 import { defaultSpecOptions, getMode } from './SpecOptions'
-import { spy } from './spy'
-import { stub } from './stub'
+import { createSpecStore } from './specStore'
+import { plugin } from './plugin'
 
 export function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
@@ -34,12 +34,23 @@ function isRejectErrorPromiseReturnAction(action) {
 export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T>> {
   const opt = unpartial(defaultSpecOptions, options)
   const mode = getMode(opt)
-  const specBase = mode === 'replay' ? await stub(subject, opt.id) : spy(subject)
+  const store = createSpecStore()
+  const context = store as any
+  context.mode = opt.mode
+  context.id = opt.id
 
-  return Object.assign(specBase, {
+  if (mode === 'replay') {
+    await store.load(opt.id)
+    context.subject = plugin.getStub(context, subject, opt.id)
+  }
+  else {
+    context.subject = plugin.getSpy(context, subject)
+  }
+
+  return Object.assign(context, {
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        const actions = specBase.actions
+        const actions = store.actions
         satisfy(actions, expectation)
         if (opt.mode === 'save') {
           // istanbul ignore next

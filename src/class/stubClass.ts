@@ -26,7 +26,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
       }
 
       if (action.meta) {
-        const returnStub = util.getReturnStub(context, action.meta.type)
+        const returnStub = util.getReturnStub(context, action)
         if (returnStub)
           return returnStub
       }

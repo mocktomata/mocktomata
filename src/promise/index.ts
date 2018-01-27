@@ -5,8 +5,8 @@ export function getReturnSpy(context: SpecContext, subject, scope) {
   return spyPromise(context, subject, scope)
 }
 
-export function getReturnStub(context: SpecContext, type: string) {
-  if (type !== 'promise') return undefined
+export function getReturnStub(context: SpecContext, action: SpecAction) {
+  if (action.meta.type !== 'promise') return undefined
   return stubPromise(context)
 }
 
