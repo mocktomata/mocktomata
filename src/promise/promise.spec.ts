@@ -24,8 +24,8 @@ test('promise verify', async t => {
       t.is(actual, 3)
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
-        { type: 'promise', payload: 3, meta: { type: 'resolve' } }
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
       ])
     })
 })
@@ -37,8 +37,8 @@ test('promise verify save', async t => {
       t.is(actual, 3)
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
-        { type: 'promise', payload: 3, meta: { type: 'resolve' } }
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
       ])
     })
 })
@@ -50,8 +50,8 @@ test('promise verify replay', async t => {
       t.is(actual, 3)
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
-        { type: 'promise', payload: 3, meta: { type: 'resolve' } }
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
       ])
     })
 })
@@ -63,8 +63,8 @@ test('promise rejected verify', async t => {
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { type: 'reject' } }
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
       ])
     })
 })
@@ -76,8 +76,8 @@ test('promise rejected save', async t => {
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { type: 'reject' } }
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
       ])
     })
 })
@@ -89,8 +89,8 @@ test('promise rejected replay', async t => {
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { type: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { type: 'reject' } }
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
       ])
     })
 })
@@ -118,9 +118,9 @@ test('promise with callback in between', async t => {
       t.is(actual, 3)
       return fooSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/return', meta: { type: 'promise' } },
+        { type: 'fn/return', meta: { returnType: 'promise' } },
         { type: 'fn/callback', payload: ['called'] },
-        { type: 'promise', payload: 3, meta: { type: 'resolve' } }
+        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
       ])
     })
 })

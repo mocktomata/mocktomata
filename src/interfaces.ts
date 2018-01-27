@@ -35,6 +35,12 @@ export interface SpecAction {
   meta?: any
 }
 
+export interface ReturnAction {
+  type: string,
+  payload: any,
+  meta: { returnType: string } & { [k: string]: any }
+}
+
 export interface SpecRecord {
   expectation: string,
   actions: SpecAction[]

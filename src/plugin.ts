@@ -5,9 +5,8 @@ import * as promise from './promise'
 import * as stream from './stream'
 import * as ws from './ws'
 
-import { SpecContext, SpecPlayer } from './interfaces'
+import { ReturnAction, SpecContext, SpecPlayer } from './interfaces'
 import { log } from './log'
-import { SpecAction } from './index';
 
 const plugins: any[] = []
 function getSpy(context: SpecContext, subject: any) {
@@ -35,7 +34,7 @@ function getReturnSpy(context: SpecContext, subject: any, scope: string) {
       return spy
   }
 }
-function getReturnStub(context: SpecContext, action: SpecAction) {
+function getReturnStub(context: SpecContext, action: ReturnAction) {
   for (let i = 0; i < plugins.length; i++) {
     const p = plugins[i]
     const stub = p.getReturnStub && p.getReturnStub(context, action)

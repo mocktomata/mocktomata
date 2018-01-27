@@ -1,12 +1,12 @@
-import { SpecContext, SpecAction } from '../index'
+import { SpecContext, SpecAction, ReturnAction } from '../index'
 
 export function getReturnSpy(context: SpecContext, subject, scope) {
   if (!isPromise(subject)) return undefined
   return spyPromise(context, subject, scope)
 }
 
-export function getReturnStub(context: SpecContext, action: SpecAction) {
-  if (action.meta.type !== 'promise') return undefined
+export function getReturnStub(context: SpecContext, action: ReturnAction) {
+  if (action.meta.returnType !== 'promise') return undefined
   return stubPromise(context)
 }
 
@@ -18,15 +18,15 @@ function spyPromise(context: SpecContext, result, scope) {
   context.add({
     type: `${scope}/return`,
     payload: {},
-    meta: { type: 'promise' }
+    meta: { returnType: 'promise' }
   })
   return result.then(
     results => {
-      context.add({ type: 'promise', payload: results, meta: { type: 'resolve' } })
+      context.add({ type: 'promise', payload: results, meta: { status: 'resolve' } })
       return results
     },
     err => {
-      context.add({ type: 'promise', payload: err, meta: { type: 'reject' } })
+      context.add({ type: 'promise', payload: err, meta: { status: 'reject' } })
       throw err
     })
 }
@@ -40,7 +40,7 @@ function stubPromise(context: SpecContext) {
     }))
     .then(action => {
       context.next()
-      if (action.meta.type === 'resolve')
+      if (action.meta.status === 'resolve')
         return Promise.resolve(action.payload)
       else
         return Promise.reject(action.payload)

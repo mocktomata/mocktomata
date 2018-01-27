@@ -33,12 +33,12 @@ test('read stream', async t => {
 
   await streamSpec.satisfy([
     undefined,
-    { type: 'fn/return', meta: { type: 'stream', id: 1 } },
+    { type: 'fn/return', meta: { returnType: 'stream', id: 1 } },
     { type: 'stream', meta: { id: 1, length: 11 } }
   ])
 })
 
-test('read stream verify', async t => {
+test('read stream replay', async t => {
   const streamSpec = await spec(readStream, { id: 'stream/read', mode: 'replay' })
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
@@ -55,7 +55,7 @@ test('read stream verify', async t => {
 
   await streamSpec.satisfy([
     undefined,
-    { type: 'fn/return', meta: { type: 'stream', id: 1 } },
+    { type: 'fn/return', meta: { returnType: 'stream', id: 1 } },
     { type: 'stream', meta: { id: 1, length: 11 } }
   ])
 })

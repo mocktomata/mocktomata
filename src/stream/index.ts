@@ -11,7 +11,7 @@ export function getReturnSpy(context: SpecContext, subject, scope) {
 }
 
 export function getReturnStub(context: SpecContext, action: SpecAction) {
-  if (action.meta.type !== 'stream') return undefined
+  if (action.meta.returnType !== 'stream') return undefined
   return stubStream(context, action)
 }
 
@@ -25,7 +25,7 @@ function spyStream(context: SpecContext, subject: Stream, scope: string) {
   context.add({
     type: `${scope}/return`,
     payload: {},
-    meta: { type: 'stream', id }
+    meta: { returnType: 'stream', id }
   })
   let writer: Writable
   if (context.mode === 'save') {
