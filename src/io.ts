@@ -1,9 +1,7 @@
-import { WriteStream, ReadStream } from 'fs';
+import { WriteStream, ReadStream } from 'fs'
 
 import * as fileIO from './fileIO'
-import {
-  SpecRecord
-} from './interfaces'
+import { SpecRecord } from './interfaces'
 
 /**
  * Factory for writer.
@@ -14,7 +12,7 @@ export const io = {
   get readSpec(): (id: string) => Promise<SpecRecord> {
     return fileIO.readSpec
   },
-  get writeSpec(): (id: string, record: SpecRecord) => void {
+  get writeSpec(): (id: string, record: SpecRecord) => Promise<void> {
     return fileIO.writeSpec
   },
   get createWriteStream(): (id: string) => WriteStream {
