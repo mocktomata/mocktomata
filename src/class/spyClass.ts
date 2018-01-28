@@ -37,7 +37,6 @@ export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
         })
         const spiedArgs = args.map((arg, i) => {
           if (typeof arg === 'function') {
-
             return function (...cbArgs) {
               context.add({
                 type: 'class/callback',

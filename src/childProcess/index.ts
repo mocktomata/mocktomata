@@ -60,56 +60,41 @@ function stubChildProcess(context: SpecContext) {
   const stdout = {}
   const stderr = {}
   setImmediate(() => {
-    processUntilCloseEvent(context, { on, stdout, stderr })
+    context.on('childProcess', action => {
+      const site = action.meta.site.join('.')
+      let target
+      switch (site) {
+        case 'on':
+          target = on
+          break
+        case 'stdout.on':
+          target = stdout
+          break
+        case 'stderr.on':
+          target = stderr
+          break
+      }
+
+      target[action.meta.event].forEach(cb => cb(...action.payload))
+      context.next()
+    })
   })
+  function push(bag, event, callback) {
+    (bag[event] = bag[event] || []).push(callback)
+  }
   return {
     on(event, callback) {
-      if (!on[event])
-        on[event] = []
-      on[event].push(callback)
+      push(on, event, callback)
     },
     stdout: {
       on(event, callback) {
-        if (!stdout[event])
-          stdout[event] = []
-        stdout[event].push(callback)
+        push(stdout, event, callback)
       }
     },
     stderr: {
       on(event, callback) {
-        if (!stderr[event])
-          stderr[event] = []
-        stderr[event].push(callback)
+        push(stderr, event, callback)
       }
     }
   }
 }
-
-function processUntilCloseEvent(context: SpecContext, { on, stdout, stderr }) {
-  const action = context.peek()
-  if (action === undefined) {
-    return
-  }
-  if (action.type !== 'childProcess')
-    return
-
-  const site = action.meta.site.join('.')
-  let target
-  switch (site) {
-    case 'on':
-      target = on
-      break
-    case 'stdout.on':
-      target = stdout
-      break
-    case 'stderr.on':
-      target = stderr
-      break
-  }
-
-  target[action.meta.event].forEach(cb => cb(...action.payload))
-
-  context.next()
-  processUntilCloseEvent(context, { on, stdout, stderr })
-}
-
