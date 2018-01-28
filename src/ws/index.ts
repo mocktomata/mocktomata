@@ -1,23 +1,24 @@
 import WebSocket = require('ws')
+import { SpecPluginUtil, SpecContext, KomondorRegistrar } from '../index'
 
-import { SpecPluginUtil, SpecContext } from '../index'
 import { spyWebSocketClient } from './spyWebSocketClient'
 import { stubWebSocketClient } from './stubWebSocketClient'
 
 let komondorUtil: SpecPluginUtil
 
-export function activate(util: SpecPluginUtil) {
-  komondorUtil = util
+export function activate(registrar: KomondorRegistrar, komondor: SpecPluginUtil) {
+  komondorUtil = komondor
+  registrar.registerGetSpy(getSpy)
+  registrar.registerGetStub(getStub)
 }
 
-export function getSpy(context: SpecContext, subject: any) {
+function getSpy(context: SpecContext, subject: any) {
   if (!isWebSocketClient(subject)) return undefined
   return spyWebSocketClient(context, subject)
 }
 
-export function getStub(context: SpecContext, subject: any, id: string) {
+function getStub(context: SpecContext, subject: any, id: string) {
   if (!isWebSocketClient(subject)) return undefined
-
   return stubWebSocketClient(context, komondorUtil, subject, id)
 }
 

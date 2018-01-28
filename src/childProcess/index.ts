@@ -1,11 +1,16 @@
-import { SpecContext, ReturnAction } from '../index'
+import { SpecContext, ReturnAction, KomondorRegistrar } from '../index'
 
-export function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
+export function activate(registrar: KomondorRegistrar) {
+  registrar.registerGetReturnSpy(getReturnSpy)
+  registrar.registerGetReturnStub(getReturnStub)
+}
+
+function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
   if (!isChildProcess(subject)) return undefined
   return spyChildProcess(context, subject, action)
 }
 
-export function getReturnStub(context: SpecContext, action: ReturnAction) {
+function getReturnStub(context: SpecContext, action: ReturnAction) {
   if (action.meta.returnType !== 'childProcess') return undefined
   return childProcessStub(context)
 }

@@ -1,15 +1,17 @@
-import { SpecContext, SpecAction, ReturnAction, SpecPluginUtil } from '../index'
+import { SpecContext, SpecAction, ReturnAction, SpecPluginUtil, KomondorRegistrar } from '../index'
 
 let komondor: SpecPluginUtil
-export function activate(util: SpecPluginUtil) {
+export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {
   komondor = util
+  registrar.registerGetReturnSpy(getReturnSpy)
+  registrar.registerGetReturnStub(getReturnStub)
 }
-export function getReturnSpy(context: SpecContext, subject, scope) {
+function getReturnSpy(context: SpecContext, subject, scope) {
   if (!isPromise(subject)) return undefined
   return spyPromise(context, subject, scope)
 }
 
-export function getReturnStub(context: SpecContext, action: ReturnAction) {
+function getReturnStub(context: SpecContext, action: ReturnAction) {
   if (action.meta.returnType !== 'promise') return undefined
   return stubPromise(context)
 }

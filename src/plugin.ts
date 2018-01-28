@@ -5,79 +5,75 @@ import * as promise from './promise'
 import * as stream from './stream'
 import * as ws from './ws'
 
-import { ReturnAction, SpecContext, SpecPlayer } from './interfaces'
+import {
+  // @ts-ignore
+  Spy,
+  SpecContext, getStub, SpecPluginUtil, getSpy, getReturnSpy, getReturnStub, ReturnActionBase, SpecAction, KomondorRegistrar
+} from './interfaces'
 import { log } from './log'
 
-const plugins: any[] = []
-function getSpy(context: SpecContext, subject: any) {
-  for (let i = 0; i < plugins.length; i++) {
-    const p = plugins[i]
-    const spy = p.getSpy && p.getSpy(context, subject)
-    if (spy)
-      return spy
-  }
-}
-function getStub(context: SpecContext, subject: any, id: string) {
-  for (let i = 0; i < plugins.length; i++) {
-    const p = plugins[i]
-    const stub = p.getStub && p.getStub(context, subject, id)
-    if (stub)
-      return stub
-  }
-}
+const getSpyFunctions: getSpy[] = []
+const getStubFunctions: getStub[] = []
+const getReturnSpyFunctions: getReturnSpy[] = []
+const getReturnStubFunctions: getReturnStub[] = []
 
-function getReturnSpy(context: SpecContext, subject: any, scope: string) {
-  for (let i = 0; i < plugins.length; i++) {
-    const p = plugins[i]
-    const spy = p.getReturnSpy && p.getReturnSpy(context, subject, scope)
-    if (spy)
-      return spy
-  }
-}
-function getReturnStub(context: SpecContext, action: ReturnAction) {
-  for (let i = 0; i < plugins.length; i++) {
-    const p = plugins[i]
-    const stub = p.getReturnStub && p.getReturnStub(context, action)
-    if (stub)
-      return stub
-  }
-}
-
-export interface PluginContext {
-  /**
-   * Call this function to indicates the execution is completed.
-   * i.e. for Spy, all relevant actions are added to the store,
-   * for Stub, all relevant actions has be replayed.
-   */
-  resolve(): void,
-  /**
-   * The action store for recording and replaying the actions.
-   */
-  store: SpecPlayer
-}
-
-export const plugin = {
-  register(plugin) {
-    plugins.unshift(plugin)
-    if (plugin.activate)
-      plugin.activate({
-        getSpy,
-        getStub,
-        getReturnSpy,
-        getReturnStub,
-        log
-      })
+export const komondorUtil: SpecPluginUtil = {
+  getSpy(context: SpecContext, subject: any) {
+    for (let i = 0; i < getSpyFunctions.length; i++) {
+      const spy = getSpyFunctions[i](context, subject)
+      if (spy)
+        return spy
+    }
   },
-  getSpy,
-  getStub,
-  getReturnSpy,
-  getReturnStub
+  getStub(context: SpecContext, subject: any, id: string) {
+    for (let i = 0; i < getStubFunctions.length; i++) {
+      const stub = getStubFunctions[i](context, subject, id)
+      if (stub)
+        return stub
+    }
+  },
+  getReturnSpy(context: SpecContext, subject: any, action: ReturnActionBase) {
+    for (let i = 0; i < getReturnSpyFunctions.length; i++) {
+      const spy = getReturnSpyFunctions[i](context, subject, action)
+      if (spy)
+        return spy
+    }
+  },
+  getReturnStub(context: SpecContext, action: SpecAction) {
+    for (let i = 0; i < getReturnStubFunctions.length; i++) {
+      const stub = getReturnStubFunctions[i](context, action)
+      if (stub)
+        return stub
+    }
+  },
+  log
+}
+
+const komondorRegistrar: KomondorRegistrar = {
+  registerGetSpy(getSpy) {
+    getSpyFunctions.unshift(getSpy)
+  },
+  registerGetStub(getStub) {
+    getStubFunctions.unshift(getStub)
+  },
+  registerGetReturnSpy(getReturnSpy) {
+    getReturnSpyFunctions.unshift(getReturnSpy)
+  },
+  registerGetReturnStub(getReturnStub) {
+    getReturnStubFunctions.unshift(getReturnStub)
+  }
+}
+
+function registerPlugin(plugin) {
+  if (plugin.activate) {
+    plugin.activate(komondorRegistrar, komondorUtil)
+  }
 }
 
 // order is important, top is generic, bottom is specific.
-plugin.register(promise)
-plugin.register(stream)
-plugin.register(childProcess)
-plugin.register(genericFunction)
-plugin.register(genericClass)
-plugin.register(ws)
+registerPlugin(promise)
+registerPlugin(stream)
+registerPlugin(childProcess)
+registerPlugin(genericFunction)
+registerPlugin(genericClass)
+registerPlugin(ws)

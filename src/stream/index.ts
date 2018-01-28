@@ -1,16 +1,18 @@
-// import stream = require('stream')
 import { Stream, Writable, Readable } from 'stream'
 
-import { SpecContext, SpecAction, ReturnAction } from '../index'
-import { io } from '../io'
-// import { setImmediate } from 'timers';
+import { SpecContext, SpecAction, ReturnAction, KomondorRegistrar, io } from '../index'
 
-export function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
+export function activate(registrar: KomondorRegistrar) {
+  registrar.registerGetReturnSpy(getReturnSpy)
+  registrar.registerGetReturnStub(getReturnStub)
+}
+
+function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
   if (!isStream(subject)) return undefined
   return spyStream(context, subject, action)
 }
 
-export function getReturnStub(context: SpecContext, action: SpecAction) {
+function getReturnStub(context: SpecContext, action: SpecAction) {
   if (action.meta.returnType !== 'stream') return undefined
   return stubStream(context, action)
 }

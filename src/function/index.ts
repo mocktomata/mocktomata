@@ -1,17 +1,20 @@
+import { SpecContext, SpecPluginUtil, KomondorRegistrar } from '../index'
+
 import { spyFunction } from './getSpyFunction'
 import { stubFunction } from './getStubFunction'
-import { SpecContext, SpecPluginUtil } from '../index'
 
 let komondorUtil: SpecPluginUtil
 
-export function activate(util: SpecPluginUtil) {
+export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {
   komondorUtil = util
+  registrar.registerGetSpy(getSpy)
+  registrar.registerGetStub(getStub)
 }
 
-export function getSpy(context: SpecContext, subject: any) {
+function getSpy(context: SpecContext, subject: any) {
   return spyFunction(context, komondorUtil, subject)
 }
 
-export function getStub(context: SpecContext, subject: any, id: string) {
+function getStub(context: SpecContext, subject: any, id: string) {
   return stubFunction(context, komondorUtil, subject, id)
 }

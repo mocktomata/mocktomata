@@ -12,7 +12,7 @@ import {
 import { io } from './io';
 import { defaultSpecOptions, getMode } from './SpecOptions'
 import { createSpecStore } from './specStore'
-import { plugin } from './plugin'
+import { komondorUtil } from './plugin'
 
 export function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
@@ -41,10 +41,10 @@ export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T
 
   if (mode === 'replay') {
     await store.load(opt.id)
-    context.subject = plugin.getStub(context, subject, opt.id)
+    context.subject = komondorUtil.getStub(context, subject, opt.id)
   }
   else {
-    context.subject = plugin.getSpy(context, subject)
+    context.subject = komondorUtil.getSpy(context, subject)
   }
 
   return Object.assign(context, {
