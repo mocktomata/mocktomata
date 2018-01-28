@@ -7,7 +7,7 @@ import { log } from './log'
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {
-    const filePath = getFilePath(id)
+    const filePath = getJsonFilePath(id)
     try {
       const content = fs.readFileSync(filePath, 'utf8')
       const json = JSON.parse(content)
@@ -20,6 +20,10 @@ export function readSpec(id: string) {
   })
 }
 function getFilePath(id: string) {
+  return path.resolve(SPECS_FOLDER, id)
+}
+
+function getJsonFilePath(id: string) {
   const basename = path.basename(id)
   const dirname = path.dirname(id)
   return path.resolve(SPECS_FOLDER, dirname, `${basename}.json`)
@@ -28,7 +32,7 @@ function getFilePath(id: string) {
 export function writeSpec(id: string, record: SpecRecord) {
   return new Promise<void>((a, r) => {
     try {
-      const filePath = getFilePath(id)
+      const filePath = getJsonFilePath(id)
       const folder = path.dirname(filePath)
       // istanbul ignore next
       if (!fs.existsSync(folder))
