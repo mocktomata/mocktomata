@@ -65,9 +65,6 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
       const action = context.peek()
       if (!action) return undefined
 
-      if (action.type === 'fn/invoke') {
-        return undefined
-      }
       if (action.type === 'fn/return') {
         const result = action.meta && komondor.getReturnStub(context, action) || action.payload
         context.next()
