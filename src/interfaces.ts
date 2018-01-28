@@ -1,5 +1,6 @@
 import { Logger } from '@unional/logging'
 import { Expectation } from 'satisfier'
+import { getReturnSpy, getReturnStub } from './index';
 
 export type SpecMode = 'verify' | 'save' | 'replay'
 
@@ -92,16 +93,26 @@ export interface SpecContext extends SpecRecorder, SpecPlayer {
   mode: SpecMode,
   id: string
 }
+export type getSpy = (context: SpecContext, subject: any) => any
+export type getStub = (context: SpecContext, subject: any, id: string) => any
+export type getReturnSpy = (context: SpecContext, subject: any, action: ReturnActionBase) => any
+export type getReturnStub = (context: SpecContext, action: SpecAction) => any
 
+export interface KomondorRegistrar {
+  registerGetSpy(getSpy: getSpy): void,
+  registerGetStub(getStub: getStub): void,
+  registerGetReturnSpy(getReturnSpy: getReturnSpy): void,
+  registerGetReturnStub(getReturnStub: getReturnStub): void
+}
 export interface SpecPluginUtil {
-  getSpy<T = any>(context: SpecContext, subject: T): T,
-  getStub<T = any>(context: SpecContext, subject: T, id: string): T,
+  getSpy: getSpy,
+  getStub: getStub,
   /**
    * @scope Scope of the spec.
    * This will be used as prefix in `action.type` so that the respective spec and handles the result.
    */
-  getReturnSpy<T = any>(context: SpecContext, subject: T, action: ReturnActionBase): T,
-  getReturnStub(context: SpecContext, action: SpecAction): any,
+  getReturnSpy: getReturnSpy,
+  getReturnStub: getReturnStub,
   log: Logger
 }
 

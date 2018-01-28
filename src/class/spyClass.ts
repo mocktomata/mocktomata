@@ -25,26 +25,26 @@ export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
         this.__komondorSpy.methods[p] = { counter: 0 }
       else
         this.__komondorSpy.methods[p].counter++
-      const invokeIndex = this.__komondorSpy.methods[p].counter
+      const methodId = this.__komondorSpy.methods[p].counter
       if (!invoking) {
         invoking = true
         context.add({
           type: 'class/invoke',
           payload: args,
           meta: {
+            methodId,
             name: p
           }
         })
         const spiedArgs = args.map((arg, i) => {
           if (typeof arg === 'function') {
-
             return function (...cbArgs) {
               context.add({
                 type: 'class/callback',
                 payload: cbArgs,
                 meta: {
                   name: p,
-                  invokeIndex,
+                  methodId,
                   callSite: i
                 }
               })
@@ -58,7 +58,7 @@ export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
         const returnAction = {
           type: 'class/return',
           payload: result,
-          meta: {}
+          meta: { methodId }
         }
         context.add(returnAction)
         const resultSpy = util.getReturnSpy(context, result, returnAction)

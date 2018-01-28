@@ -49,7 +49,7 @@ export function createSpecStore(): SpecStore {
     set expectation(value) {
       expectation = value
     },
-    add(action: { type: string, payload: any, meta?: any }) {
+    add(action: { type: string }) {
       actions.push(action as any)
       callListeners(action)
     },
@@ -73,7 +73,7 @@ export function createSpecStore(): SpecStore {
       return actions[i] as any
     },
     next(): void {
-      const action = actions[i++]
+      const action = actions[++i]
       if (action) {
         callListeners(action)
       }
@@ -88,6 +88,10 @@ export function createSpecStore(): SpecStore {
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
+      const action = actions[i]
+      if (action && action.type === actionType) {
+        callback(action)
+      }
     },
     onAny(callback) {
       listenAll.push(callback)

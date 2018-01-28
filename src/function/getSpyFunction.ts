@@ -12,7 +12,6 @@ function spyOnCallback(context: SpecContext, fn, callbackPath) {
 }
 
 export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subject) {
-
   return function (...args) {
     context.add({
       type: 'fn/invoke',
@@ -45,11 +44,6 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
     const returnAction = { type: 'fn/return', payload: result, meta: {} }
     context.add(returnAction)
 
-    const returnSpy = komondor.getReturnSpy(context, result, returnAction)
-    if (returnSpy) {
-      return returnSpy
-    }
-
-    return result
+    return komondor.getReturnSpy(context, result, returnAction) || result
   }
 }

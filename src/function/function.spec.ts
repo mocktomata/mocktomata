@@ -8,7 +8,8 @@ import {
   fetch,
   literalCallback,
   synchronous,
-  delayed
+  delayed,
+  recursive
 } from './testSuites'
 
 test('spec.actions contains all actions recorded', async () => {
@@ -421,11 +422,11 @@ test('synchronous fail replay', async t => {
 
 test('simpleCallback call again will turn into spy mode', async t => {
   const cbSpec = await spec(simpleCallback.success, { id: 'function/simpleCallback/callAgainToSpy', mode: 'replay' })
-  const actual = await simpleCallback.increment(cbSpec.subject, 2)
-  t.is(actual, 3)
+  t.is(await simpleCallback.increment(cbSpec.subject, 2), 3)
 
-  const actual2 = await simpleCallback.increment(cbSpec.subject, 4)
-  t.is(actual2, 5)
+  t.is(await simpleCallback.increment(cbSpec.subject, 4), 5)
+
+  t.is(await simpleCallback.increment(cbSpec.subject, 5), 6)
 
   await cbSpec.satisfy([
     { type: 'fn/invoke', payload: [2] },
@@ -433,6 +434,40 @@ test('simpleCallback call again will turn into spy mode', async t => {
     { type: 'fn/return' },
     { type: 'fn/invoke', payload: [4] },
     { type: 'fn/callback', payload: [null, 5] },
+    { type: 'fn/return' },
+    { type: 'fn/invoke', payload: [5] },
+    { type: 'fn/callback', payload: [null, 6] },
+    { type: 'fn/return' }
+  ])
+})
+
+
+test('recursive (save)', async t => {
+  const cbSpec = await spec(recursive.success, { id: 'function/recursive/twoCalls', mode: 'save' })
+  const actual = await recursive.decrementToZero(cbSpec.subject, 2)
+  t.is(actual, 0)
+
+  await cbSpec.satisfy([
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 1] },
+    { type: 'fn/invoke', payload: [1] },
+    { type: 'fn/callback', payload: [null, 0] },
+    { type: 'fn/return' },
+    { type: 'fn/return' }
+  ])
+})
+
+test('recursive (replay)', async t => {
+  const cbSpec = await spec(recursive.success, { id: 'function/recursive/twoCalls', mode: 'replay' })
+  const actual = await recursive.decrementToZero(cbSpec.subject, 2)
+  t.is(actual, 0)
+
+  await cbSpec.satisfy([
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 1] },
+    { type: 'fn/invoke', payload: [1] },
+    { type: 'fn/callback', payload: [null, 0] },
+    { type: 'fn/return' },
     { type: 'fn/return' }
   ])
 })

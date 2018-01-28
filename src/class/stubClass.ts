@@ -1,7 +1,7 @@
+import { createSatisfier } from 'satisfier'
 import { SpecContext, SpecPluginUtil } from '../index'
-import { createSatisfier } from 'satisfier';
-import { spyClass } from './spyClass';
-import { setImmediate } from 'timers';
+
+import { spyClass } from './spyClass'
 
 export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, id: string) {
   function switchToSpy(callSite, info) {
@@ -16,30 +16,13 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
     return info.spy
   }
 
-  function emitNextActions(info) {
+  function emitNextActions() {
     let action = context.peek()
     if (action && action.type === 'class/return') {
-      context.next()
-      const next = context.peek()
-      if (next && next.type === 'class/callback') {
-        setImmediate(() => emitNextActions(info))
-      }
+      let returnStub = util.getReturnStub(context, action)
 
-      if (action.meta) {
-        const returnStub = util.getReturnStub(context, action)
-        if (returnStub)
-          return returnStub
-      }
-      return action.payload
-    }
-    else {
-      while (action && action.type === 'class/callback') {
-        const invokeInfo = info.methods[action.meta.name][action.meta.invokeIndex]
-        const callback = invokeInfo.callbacks[action.meta.callSite]
-        callback(...action.payload)
-        context.next()
-        action = context.peek()
-      }
+      context.next()
+      return returnStub || action.payload
     }
   }
 
@@ -50,13 +33,21 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
       // @ts-ignore
       super(...args)
       this.__komondorStub.ctorArgs = args
+
+      context.on('class/callback', action => {
+        const invokeInfo = this.__komondorStub.methods[action.meta.name][action.meta.methodId]
+        const callback = invokeInfo.callbacks[action.meta.callSite]
+        callback(...action.payload)
+        context.next()
+      })
+
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
         switchToSpy('constructor', this.__komondorStub)
       }
       else {
         context.next()
-        emitNextActions(this.__komondorStub)
+        emitNextActions()
       }
     }
   }
@@ -74,14 +65,14 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
         return spy[p](...args)
       }
       else {
-        context.next()
         args.forEach((arg, i) => {
           if (typeof arg === 'function') {
             arg.bind(this)
             invokeInfo.callbacks[i] = arg
           }
         })
-        return emitNextActions(this.__komondorStub)
+        context.next()
+        return emitNextActions()
       }
     }
   }

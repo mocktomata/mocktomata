@@ -68,9 +68,8 @@ export const synchronous = {
 
 export const delayed = {
   increment(remote, x) {
-    return new Promise((a, r) => {
-      remote(x, (err, response) => {
-        if (err) r(err)
+    return new Promise(a => {
+      remote(x, (_, response) => {
         a(response)
       })
     })
@@ -80,7 +79,19 @@ export const delayed = {
       callback(null, a + 1)
     }, 100)
   }
-  // fail(_a, callback) {
-  //   callback({ message: 'fail' }, null)
-  // }
+}
+
+export const recursive = {
+  decrementToZero(remote, x) {
+    return new Promise(a => {
+      remote(x, (_, response) => {
+        a(response > 0 ?
+          recursive.decrementToZero(remote, x - 1) :
+          response)
+      })
+    })
+  },
+  success(a, callback) {
+    callback(null, a - 1)
+  }
 }

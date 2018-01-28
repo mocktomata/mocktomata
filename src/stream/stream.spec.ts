@@ -16,7 +16,7 @@ function readStream(): stream.Stream {
   return rs
 }
 
-test('read stream', async t => {
+test.skip('read stream', async t => {
   const streamSpec = await spec(readStream, { id: 'stream/read', mode: 'save' })
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
@@ -38,7 +38,7 @@ test('read stream', async t => {
   ])
 })
 
-test('read stream replay', async t => {
+test.skip('read stream replay', async t => {
   const streamSpec = await spec(readStream, { id: 'stream/read', mode: 'replay' })
   const read = streamSpec.subject()
   const actual = await new Promise(a => {

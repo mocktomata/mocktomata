@@ -165,7 +165,8 @@ test('promise returning a stream', async t => {
   await target.satisfy([
     undefined,
     undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }
+    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
+    { type: 'stream', meta: { length: 11 } }
   ])
 })
 
@@ -187,7 +188,8 @@ test('promise returning a stream (save)', async t => {
   await target.satisfy([
     undefined,
     undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }
+    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
+    { type: 'stream', meta: { length: 11 } }
   ])
 })
 
@@ -211,6 +213,7 @@ test('promise returning a stream (replay)', async t => {
   await target.satisfy([
     undefined,
     undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }
+    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
+    { type: 'stream', meta: { length: 11 } }
   ])
 })

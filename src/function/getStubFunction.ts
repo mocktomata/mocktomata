@@ -49,7 +49,6 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
       return spied.call(this, ...args)
 
     const inputAction = context.peek()
-
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
       if (!spied) {
         komondor.log.warn(`Calling input does not match with saved record of spec '${id}'. Spying instead.`)
@@ -60,29 +59,24 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
     }
     context.next()
 
-    const result = processUntilReturn()
-    return result
+    return processUntilReturn()
 
     function processUntilReturn() {
       const action = context.peek()
-      context.next()
       if (!action) return undefined
 
       if (action.type === 'fn/return') {
-        if (action.meta) {
-          const returnStub = komondor.getReturnStub(context, action)
-          if (returnStub)
-            return returnStub
-        }
-        return action.payload
+        const result = action.meta && komondor.getReturnStub(context, action) || action.payload
+        context.next()
+        return result
       }
-      if (action.type === 'fn/invoke') {
-        return undefined
-      }
+
+      context.next()
       if (action.type === 'fn/callback') {
         const callback = locateCallback(action.meta, args)
         callback(...action.payload)
       }
+
       if (action.type === 'fn/throw') {
         throw action.payload
       }

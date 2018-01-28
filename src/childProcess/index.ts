@@ -1,13 +1,18 @@
-import { SpecContext, ReturnAction } from '../index'
+import { SpecContext, ReturnAction, KomondorRegistrar } from '../index'
 
-export function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
+export function activate(registrar: KomondorRegistrar) {
+  registrar.registerGetReturnSpy(getReturnSpy)
+  registrar.registerGetReturnStub(getReturnStub)
+}
+
+function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
   if (!isChildProcess(subject)) return undefined
   return spyChildProcess(context, subject, action)
 }
 
-export function getReturnStub(context: SpecContext, action: ReturnAction) {
+function getReturnStub(context: SpecContext, action: ReturnAction) {
   if (action.meta.returnType !== 'childProcess') return undefined
-  return childProcessStub(context)
+  return stubChildProcess(context)
 }
 
 function isChildProcess(result) {
@@ -50,61 +55,46 @@ function spyChildProcess(context: SpecContext, subject, action: ReturnAction) {
   return subject
 }
 
-function childProcessStub(context: SpecContext) {
+function stubChildProcess(context: SpecContext) {
   const on = {}
   const stdout = {}
   const stderr = {}
   setImmediate(() => {
-    processUntilCloseEvent(context, { on, stdout, stderr })
+    context.on('childProcess', action => {
+      const site = action.meta.site.join('.')
+      let target
+      switch (site) {
+        case 'on':
+          target = on
+          break
+        case 'stdout.on':
+          target = stdout
+          break
+        case 'stderr.on':
+          target = stderr
+          break
+      }
+
+      target[action.meta.event].forEach(cb => cb(...action.payload))
+      context.next()
+    })
   })
+  function push(bag, event, callback) {
+    (bag[event] = bag[event] || []).push(callback)
+  }
   return {
     on(event, callback) {
-      if (!on[event])
-        on[event] = []
-      on[event].push(callback)
+      push(on, event, callback)
     },
     stdout: {
       on(event, callback) {
-        if (!stdout[event])
-          stdout[event] = []
-        stdout[event].push(callback)
+        push(stdout, event, callback)
       }
     },
     stderr: {
       on(event, callback) {
-        if (!stderr[event])
-          stderr[event] = []
-        stderr[event].push(callback)
+        push(stderr, event, callback)
       }
     }
   }
 }
-
-function processUntilCloseEvent(context: SpecContext, { on, stdout, stderr }) {
-  const action = context.peek()
-  if (action === undefined) {
-    return
-  }
-  if (action.type !== 'childProcess')
-    return
-
-  const site = action.meta.site.join('.')
-  let target
-  switch (site) {
-    case 'on':
-      target = on
-      break
-    case 'stdout.on':
-      target = stdout
-      break
-    case 'stderr.on':
-      target = stderr
-      break
-  }
-
-  target[action.meta.event].forEach(cb => cb(...action.payload))
-
-  context.next()
-  processUntilCloseEvent(context, { on, stdout, stderr })
-}
-
