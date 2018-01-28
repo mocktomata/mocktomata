@@ -1,12 +1,12 @@
-import { SpecContext } from '../index'
+import { SpecContext, ReturnAction } from '../index'
 
-export function getReturnSpy(context: SpecContext, subject, scope: string) {
+export function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
   if (!isChildProcess(subject)) return undefined
-  return spyChildProcess(context, subject, scope)
+  return spyChildProcess(context, subject, action)
 }
 
-export function getReturnStub(context: SpecContext, type: string) {
-  if (type !== 'childProcess') return undefined
+export function getReturnStub(context: SpecContext, action: ReturnAction) {
+  if (action.meta.returnType !== 'childProcess') return undefined
   return childProcessStub(context)
 }
 
@@ -41,12 +41,9 @@ function spyOnListener(context: SpecContext, type: string, base, site: string[])
 
 }
 
-function spyChildProcess(context: SpecContext, subject, scope) {
-  context.add({
-    type: `${scope}/return`,
-    payload: {},
-    meta: { type: 'childProcess' }
-  })
+function spyChildProcess(context: SpecContext, subject, action: ReturnAction) {
+  action.meta.returnType = 'childProcess'
+
   spyOnListener(context, 'childProcess', subject, ['on'])
   spyOnListener(context, 'childProcess', subject, ['stdout', 'on'])
   spyOnListener(context, 'childProcess', subject, ['stderr', 'on'])

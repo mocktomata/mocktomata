@@ -1,12 +1,16 @@
-import { SpecContext, SpecAction } from '../index'
+import { SpecContext, SpecAction, ReturnAction, SpecPluginUtil } from '../index'
 
+let komondor: SpecPluginUtil
+export function activate(util: SpecPluginUtil) {
+  komondor = util
+}
 export function getReturnSpy(context: SpecContext, subject, scope) {
   if (!isPromise(subject)) return undefined
   return spyPromise(context, subject, scope)
 }
 
-export function getReturnStub(context: SpecContext, type: string) {
-  if (type !== 'promise') return undefined
+export function getReturnStub(context: SpecContext, action: ReturnAction) {
+  if (action.meta.returnType !== 'promise') return undefined
   return stubPromise(context)
 }
 
@@ -14,19 +18,30 @@ function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-function spyPromise(context: SpecContext, result, scope) {
-  context.add({
-    type: `${scope}/return`,
-    payload: {},
-    meta: { type: 'promise' }
-  })
-  return result.then(
-    results => {
-      context.add({ type: 'promise', payload: results, meta: { type: 'resolve' } })
-      return results
+function spyPromise(context: SpecContext, subject, action) {
+  action.meta.returnType = 'promise'
+  return subject.then(
+    result => {
+      const action: any = {
+        type: 'promise',
+        meta: {
+          status: 'resolve'
+        }
+      }
+
+      context.add(action)
+
+      const spied = komondor.getReturnSpy(context, result, action)
+      if (spied) {
+        return spied
+      }
+      else {
+        action.payload = result
+        return result
+      }
     },
     err => {
-      context.add({ type: 'promise', payload: err, meta: { type: 'reject' } })
+      context.add({ type: 'promise', payload: err, meta: { status: 'reject' } })
       throw err
     })
 }
@@ -40,8 +55,12 @@ function stubPromise(context: SpecContext) {
     }))
     .then(action => {
       context.next()
-      if (action.meta.type === 'resolve')
+      if (action.meta.status === 'resolve') {
+        if (action.meta.returnType) {
+          return Promise.resolve(komondor.getReturnStub(context, action))
+        }
         return Promise.resolve(action.payload)
+      }
       else
         return Promise.reject(action.payload)
     })

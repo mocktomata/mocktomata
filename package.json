@@ -5,6 +5,19 @@
   "main": "dist-es5/index.js",
   "module": "dist-es2015/index.js",
   "typings": "dist-es5/index.d.ts",
+  "publishConfig": {
+    "tag": "next"
+  },
+  "release": {
+    "analyzeCommits": {
+      "releaseRules": [
+        {
+          "breaking": true,
+          "release": "minor"
+        }
+      ]
+    }
+  },
   "files": [
     "dist-es5",
     "dist-es2015",

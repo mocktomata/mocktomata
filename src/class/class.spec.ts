@@ -278,8 +278,8 @@ test('method returning promise should have result of promise saved in payload', 
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
-    { type: 'class/return', payload: {}, meta: { type: 'promise' } },
-    { type: 'promise', payload: 4, meta: { type: 'resolve' } }
+    { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
+    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
   ])
 })
 
@@ -293,8 +293,8 @@ test('method returning promise should have result of promise saved in payload', 
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
-    { type: 'class/return', payload: {}, meta: { type: 'promise' } },
-    { type: 'promise', payload: 4, meta: { type: 'resolve' } }
+    { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
+    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
   ])
 })
 
@@ -308,7 +308,7 @@ test('method returning promise should have result of promise saved in payload', 
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
-    { type: 'class/return', payload: {}, meta: { type: 'promise' } },
-    { type: 'promise', payload: 4, meta: { type: 'resolve' } }
+    { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
+    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
   ])
 })

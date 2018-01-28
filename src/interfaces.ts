@@ -1,13 +1,18 @@
 import { Logger } from '@unional/logging'
 import { Expectation } from 'satisfier'
 
-import { Spy } from './spy'
-
 export type SpecMode = 'verify' | 'save' | 'replay'
 
 export interface KomondorOptions {
   mode: SpecMode,
   spec: string | RegExp
+}
+
+export interface Spy<T> {
+  on(event: string, callback: (action: SpecAction) => void),
+  onAny(callback: (action: SpecAction) => void),
+  actions: SpecAction[],
+  subject: T
 }
 
 export interface SpecOptions {
@@ -28,6 +33,17 @@ export interface SpecAction {
   type: string,
   payload: any,
   meta?: any
+}
+
+export interface ReturnActionBase {
+  type: string,
+  meta: { [k: string]: any }
+}
+
+export interface ReturnAction {
+  type: string,
+  payload: any,
+  meta: { returnType: string } & { [k: string]: any }
 }
 
 export interface SpecRecord {
@@ -72,7 +88,10 @@ export interface SpecPlayer {
   onAny(callback: Function),
 }
 
-export interface SpecContext extends SpecRecorder, SpecPlayer { }
+export interface SpecContext extends SpecRecorder, SpecPlayer {
+  mode: SpecMode,
+  id: string
+}
 
 export interface SpecPluginUtil {
   getSpy<T = any>(context: SpecContext, subject: T): T,
@@ -81,12 +100,8 @@ export interface SpecPluginUtil {
    * @scope Scope of the spec.
    * This will be used as prefix in `action.type` so that the respective spec and handles the result.
    */
-  getReturnSpy<T = any>(context: SpecContext, subject: T, scope: string): T,
-  /**
-   * @scope Scope of the spec.
-   * This will be used as prefix in `action.type` so that the respective spec and handles the result.
-   */
-  getReturnStub(context: SpecContext, type: string): any,
+  getReturnSpy<T = any>(context: SpecContext, subject: T, action: ReturnActionBase): T,
+  getReturnStub(context: SpecContext, action: SpecAction): any,
   log: Logger
 }
 

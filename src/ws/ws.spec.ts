@@ -72,7 +72,6 @@ test('ws replay', async t => {
   const wsSpec = await spec(WebSocket, { id: 'ws/echo/success', mode: 'replay' })
   const ws = new wsSpec.subject('ws://html5rocks.websocket.org/echo')
 
-
   const actionCount = new AssertOrder()
   wsSpec.onAny(() => { actionCount.exactly(1, 6) })
 

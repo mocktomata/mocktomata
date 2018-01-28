@@ -70,7 +70,7 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
 
       if (action.type === 'fn/return') {
         if (action.meta) {
-          const returnStub = komondor.getReturnStub(context, action.meta.type)
+          const returnStub = komondor.getReturnStub(context, action)
           if (returnStub)
             return returnStub
         }

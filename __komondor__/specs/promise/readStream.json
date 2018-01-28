@@ -1,0 +1,1 @@
+{"expectation":"[undefined, undefined, { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } }]","actions":[{"type":"fn/invoke","payload":[]},{"type":"fn/return","payload":{},"meta":{"returnType":"promise"}},{"type":"promise","meta":{"status":"resolve","returnType":"stream","id":1}},{"type":"stream","meta":{"id":1,"length":11}}]}
