@@ -34,7 +34,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
     }
     else {
       while (action && action.type === 'class/callback') {
-        const invokeInfo = info.methods[action.meta.name][action.meta.invokeIndex]
+        const invokeInfo = info.methods[action.meta.name][action.meta.id]
         const callback = invokeInfo.callbacks[action.meta.callSite]
         callback(...action.payload)
         context.next()

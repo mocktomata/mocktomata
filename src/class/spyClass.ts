@@ -25,7 +25,7 @@ export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
         this.__komondorSpy.methods[p] = { counter: 0 }
       else
         this.__komondorSpy.methods[p].counter++
-      const invokeIndex = this.__komondorSpy.methods[p].counter
+      const id = this.__komondorSpy.methods[p].counter
       if (!invoking) {
         invoking = true
         context.add({
@@ -44,7 +44,7 @@ export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
                 payload: cbArgs,
                 meta: {
                   name: p,
-                  invokeIndex,
+                  id,
                   callSite: i
                 }
               })

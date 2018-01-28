@@ -12,7 +12,7 @@ function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
 
 function getReturnStub(context: SpecContext, action: ReturnAction) {
   if (action.meta.returnType !== 'childProcess') return undefined
-  return childProcessStub(context)
+  return stubChildProcess(context)
 }
 
 function isChildProcess(result) {
@@ -55,7 +55,7 @@ function spyChildProcess(context: SpecContext, subject, action: ReturnAction) {
   return subject
 }
 
-function childProcessStub(context: SpecContext) {
+function stubChildProcess(context: SpecContext) {
   const on = {}
   const stdout = {}
   const stderr = {}

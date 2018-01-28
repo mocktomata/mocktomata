@@ -158,7 +158,7 @@ test('captures callbacks verify', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        invokeIndex: 0,
+        id: 0,
         callSite: 0
       }
     },
@@ -167,7 +167,7 @@ test('captures callbacks verify', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        invokeIndex: 1,
+        id: 1,
         callSite: 0
       }
     }
@@ -201,7 +201,7 @@ test('captures callbacks save', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        invokeIndex: 0,
+        id: 0,
         callSite: 0
       }
     },
@@ -210,7 +210,7 @@ test('captures callbacks save', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        invokeIndex: 1,
+        id: 1,
         callSite: 0
       }
     }
@@ -244,7 +244,7 @@ test('captures callbacks replay', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        invokeIndex: 0,
+        id: 0,
         callSite: 0
       }
     },
@@ -253,7 +253,7 @@ test('captures callbacks replay', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        invokeIndex: 1,
+        id: 1,
         callSite: 0
       }
     }
