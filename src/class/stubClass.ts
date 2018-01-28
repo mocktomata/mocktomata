@@ -35,7 +35,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
       this.__komondorStub.ctorArgs = args
 
       context.on('class/callback', action => {
-        const invokeInfo = this.__komondorStub.methods[action.meta.name][action.meta.id]
+        const invokeInfo = this.__komondorStub.methods[action.meta.name][action.meta.methodId]
         const callback = invokeInfo.callbacks[action.meta.callSite]
         callback(...action.payload)
         context.next()

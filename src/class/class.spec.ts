@@ -158,7 +158,7 @@ test('captures callbacks verify', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        id: 0,
+        methodId: 0,
         callSite: 0
       }
     },
@@ -167,7 +167,7 @@ test('captures callbacks verify', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        id: 1,
+        methodId: 1,
         callSite: 0
       }
     }
@@ -201,7 +201,7 @@ test('captures callbacks save', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        id: 0,
+        methodId: 0,
         callSite: 0
       }
     },
@@ -210,7 +210,7 @@ test('captures callbacks save', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        id: 1,
+        methodId: 1,
         callSite: 0
       }
     }
@@ -244,7 +244,7 @@ test('captures callbacks replay', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        id: 0,
+        methodId: 0,
         callSite: 0
       }
     },
@@ -253,7 +253,7 @@ test('captures callbacks replay', async t => {
       payload: ['called'],
       meta: {
         name: 'callback',
-        id: 1,
+        methodId: 1,
         callSite: 0
       }
     }
@@ -283,7 +283,7 @@ test('method returning promise should have result of promise saved in payload', 
   ])
 })
 
-test('method returning promise should have result of promise saved in payload', async t => {
+test('method returning promise should have result of promise saved in payload (save)', async t => {
   const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'save' })
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
@@ -298,7 +298,7 @@ test('method returning promise should have result of promise saved in payload', 
   ])
 })
 
-test('method returning promise should have result of promise saved in payload', async t => {
+test('method returning promise should have result of promise saved in payload (replay)', async t => {
   const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'replay' })
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)

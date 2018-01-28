@@ -23,12 +23,11 @@ function isStream(subject) {
 
 let counts = {}
 function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) {
-  const id = counts[context.id] = counts[context.id] ? counts[context.id] + 1 : 1
-  action.meta = { ...action.meta, returnType: 'stream', id }
-
+  const streamId = counts[context.id] = counts[context.id] ? counts[context.id] + 1 : 1
+  action.meta = { ...action.meta, returnType: 'stream', streamId }
   let writer: Writable
   if (context.mode === 'save') {
-    writer = io.createWriteStream(`${context.id}/stream_${id}`)
+    writer = io.createWriteStream(`${context.id}/stream_${streamId}`)
   }
   let length = 0
   subject.on('data', chunk => {
@@ -39,7 +38,7 @@ function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) 
     context.add({
       type: 'stream',
       payload: undefined,
-      meta: { id, length }
+      meta: { streamId, length }
     })
     if (writer) writer.end()
   })
@@ -47,9 +46,9 @@ function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) 
 }
 
 function stubStream(context: SpecContext, action: SpecAction): Readable {
-  const readStream = io.createReadStream(`${context.id}/stream_${action.meta.id}`)
+  const readStream = io.createReadStream(`${context.id}/stream_${action.meta.streamId}`)
   context.on('stream', a => {
-    if (a.meta.id === action.meta.id)
+    if (a.meta.streamId === action.meta.streamId)
       context.next()
   })
 
