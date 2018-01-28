@@ -41,19 +41,17 @@ function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) 
       payload: undefined,
       meta: { id, length }
     })
+    if (writer) writer.end()
   })
   return subject
 }
 
 function stubStream(context: SpecContext, action: SpecAction): Readable {
   const readStream = io.createReadStream(`${context.id}/stream_${action.meta.id}`)
-  const nextAction = context.peek()
-  if (nextAction && nextAction.type === 'stream') {
-    context.next()
-  }
-  else {
-    context.on('stream', () => context.next())
-  }
+  context.on('stream', a => {
+    if (a.meta.id === action.meta.id)
+      context.next()
+  })
 
   return readStream
 }
