@@ -104,4 +104,18 @@ test('config mode to work on specific spec using regex', async t => {
   t.pass()
 })
 
-test.todo('config to save on remote server')
+test.skip('config to save on remote server', async () => {
+  config({
+    store: {
+      url: 'http://localhost:3000'
+    }
+  })
+
+  const cbSpec = await spec(simpleCallback.success)
+  await simpleCallback.increment(cbSpec.subject, 2)
+  await cbSpec.satisfy([
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
+  ])
+})

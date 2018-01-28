@@ -4,6 +4,7 @@ import path = require('path')
 import { SPECS_FOLDER } from './constants'
 import { SpecRecord } from './interfaces'
 import { log } from './log'
+import { Stream, Writable } from 'stream';
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {
@@ -70,16 +71,16 @@ function createFolders(location: string) {
   }, initDir);
 }
 
-export function createWriteStream(id: string) {
+export function createWriteStream(id: string): Promise<Writable> {
   const filePath = getFilePath(id)
   const folder = path.dirname(filePath)
   // istanbul ignore next
   if (!fs.existsSync(folder))
     createFolders(folder)
-  return fs.createWriteStream(filePath)
+  return Promise.resolve(fs.createWriteStream(filePath))
 }
 
-export function createReadStream(id: string) {
+export function createReadStream(id: string): Promise<Stream> {
   const filePath = getFilePath(id)
-  return fs.createReadStream(filePath)
+  return Promise.resolve(fs.createReadStream(filePath))
 }

@@ -1,4 +1,4 @@
-import { Stream, Writable, Readable } from 'stream'
+import { Stream, Writable } from 'stream'
 
 import { SpecContext, SpecAction, ReturnAction, KomondorRegistrar, io } from '../index'
 
@@ -22,12 +22,12 @@ function isStream(subject) {
 }
 
 let counts = {}
-function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) {
+async function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) {
   const streamId = counts[context.id] = counts[context.id] ? counts[context.id] + 1 : 1
   action.meta = { ...action.meta, returnType: 'stream', streamId }
   let writer: Writable
   if (context.mode === 'save') {
-    writer = io.createWriteStream(`${context.id}/stream_${streamId}`)
+    writer = await io.createWriteStream(`${context.id}/stream_${streamId}`)
   }
   let length = 0
   subject.on('data', chunk => {
@@ -45,7 +45,7 @@ function spyStream(context: SpecContext, subject: Stream, action: ReturnAction) 
   return subject
 }
 
-function stubStream(context: SpecContext, action: SpecAction): Readable {
+function stubStream(context: SpecContext, action: SpecAction): Promise<Stream> {
   const readStream = io.createReadStream(`${context.id}/stream_${action.meta.streamId}`)
   context.on('stream', a => {
     if (a.meta.streamId === action.meta.streamId)

@@ -113,7 +113,7 @@ test('get follower of a user', t => {
   const github = new GitHub()
   const getFollowersSpec = await spec(github.users.getFollowersForUser)
 
-  // do `specs.fn.bind(github.users)` when needed.
+  // do `specs.subject.bind(github.users)` when needed.
   github.users.getFollowersForUser = specs.subject
 
   const followers = await getFollowers(github, 'someRealUser')
@@ -127,7 +127,7 @@ test('get follower of a user', t => {
   await getFollowersSpec.satisfy([
     undefined,
     {
-      type: 'callback',
+      type: 'fn/callback',
       payload: [null, {
         data: e => e.login && e.id
       }]

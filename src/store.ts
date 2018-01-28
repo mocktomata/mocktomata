@@ -1,7 +1,10 @@
 import { SpecMode } from './interfaces'
+import { RemoteStoreOptions } from './index';
 
 let mode
 let spec
+let storage
+
 export let store = {
   get mode(): SpecMode | undefined {
     return mode
@@ -16,5 +19,11 @@ export let store = {
   },
   set spec(value: string | RegExp) {
     spec = value
+  },
+  get store(): RemoteStoreOptions {
+    return storage
+  },
+  set store(value: RemoteStoreOptions) {
+    storage = value
   }
 }

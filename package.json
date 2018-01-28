@@ -103,6 +103,7 @@
     "@unional/logging": "^0.2.5",
     "assertron": "^3.4.0",
     "flux-standard-action": "^2.0.1",
+    "node-fetch": "^1.7.3",
     "satisfier": "^4.1.0",
     "tersify": "^1.2.2",
     "unpartial": "^0.4.1"
