@@ -422,11 +422,11 @@ test('synchronous fail replay', async t => {
 
 test('simpleCallback call again will turn into spy mode', async t => {
   const cbSpec = await spec(simpleCallback.success, { id: 'function/simpleCallback/callAgainToSpy', mode: 'replay' })
-  const actual = await simpleCallback.increment(cbSpec.subject, 2)
-  t.is(actual, 3)
+  t.is(await simpleCallback.increment(cbSpec.subject, 2), 3)
 
-  const actual2 = await simpleCallback.increment(cbSpec.subject, 4)
-  t.is(actual2, 5)
+  t.is(await simpleCallback.increment(cbSpec.subject, 4), 5)
+
+  t.is(await simpleCallback.increment(cbSpec.subject, 5), 6)
 
   await cbSpec.satisfy([
     { type: 'fn/invoke', payload: [2] },
@@ -434,6 +434,9 @@ test('simpleCallback call again will turn into spy mode', async t => {
     { type: 'fn/return' },
     { type: 'fn/invoke', payload: [4] },
     { type: 'fn/callback', payload: [null, 5] },
+    { type: 'fn/return' },
+    { type: 'fn/invoke', payload: [5] },
+    { type: 'fn/callback', payload: [null, 6] },
     { type: 'fn/return' }
   ])
 })
