@@ -108,7 +108,7 @@ test('replay on not existing spec will spy instead (check log)', async t => {
 })
 
 test('replay on not matching spec will spy instead (check log)', async t => {
-  const booSpec = await spec(Boo, { id: 'class/extend', mode: 'replay' })
+  const booSpec = await spec(Boo, { id: 'class/extendToSpy', mode: 'replay' })
   const boo = new booSpec.subject(2)
   const actual = boo.getPlusOne()
 

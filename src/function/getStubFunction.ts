@@ -66,7 +66,6 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
       if (!action) return undefined
 
       if (action.type === 'fn/invoke') {
-        context.next()
         return undefined
       }
       if (action.type === 'fn/return') {
@@ -75,12 +74,12 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
         return result
       }
 
+      context.next()
       if (action.type === 'fn/callback') {
         const callback = locateCallback(action.meta, args)
         callback(...action.payload)
       }
 
-      context.next()
       if (action.type === 'fn/throw') {
         throw action.payload
       }
