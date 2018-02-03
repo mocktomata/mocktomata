@@ -1,9 +1,15 @@
-import { SpecMode } from './interfaces'
-import { RemoteStoreOptions } from './index';
+import { RemoteStoreOptions, SpecMode } from './interfaces'
+
+export interface EnvironmentHandlerEntry {
+  clause: string | RegExp,
+  handler: any,
+  invoked?: true
+}
 
 let mode
 let spec
 let storage
+let envEntries: EnvironmentHandlerEntry[] = []
 
 export let store = {
   get mode(): SpecMode | undefined {
@@ -25,5 +31,6 @@ export let store = {
   },
   set store(value: RemoteStoreOptions) {
     storage = value
-  }
+  },
+  envEntries
 }

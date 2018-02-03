@@ -1,5 +1,4 @@
 import { Logger } from '@unional/logging'
-import { Expectation } from 'satisfier'
 import { getReturnSpy, getReturnStub } from './index';
 
 export type SpecMode = 'verify' | 'save' | 'replay'
@@ -62,7 +61,7 @@ export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
-  satisfy(expectation: Expectation): Promise<void>
+  satisfy(expectation: any): Promise<void>
 }
 
 export interface SpecRecorder {
