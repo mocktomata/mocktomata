@@ -17,7 +17,7 @@ const promise = {
 }
 
 test('promise verify', async t => {
-  const speced = await spec('', promise.success)
+  const speced = await spec(promise.success)
   // not using `await` to make sure the return value is a promise.
   // `await` will hide the error if the return value is not a promise.
   return promise.increment(speced.subject, 2)
@@ -58,7 +58,7 @@ test('promise verify replay', async t => {
 })
 
 test('promise rejected verify', async t => {
-  const speced = await spec('', promise.fail)
+  const speced = await spec(promise.fail)
   return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -105,7 +105,7 @@ test('promise with callback in between', async t => {
       }, 10)
     })
   }
-  const fooSpec = await spec('', foo);
+  const fooSpec = await spec(foo);
 
   let fooing
   return new Promise(a => {
@@ -148,7 +148,7 @@ function promiseStream() {
 }
 
 test('promise returning a stream', async t => {
-  const target = await spec('', promiseStream)
+  const target = await spec(promiseStream)
   const read = await target.subject()
   const actual = await new Promise(a => {
     let message = ''

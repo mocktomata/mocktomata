@@ -11,7 +11,7 @@ class Foo {
 }
 
 test('simple class verify', async t => {
-  const fooSpec = await spec('', Foo)
+  const fooSpec = await spec(Foo)
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
   t.is(actual, 1)
@@ -56,7 +56,7 @@ class Boo extends Foo {
 }
 
 test('extended class verify', async t => {
-  const booSpec = await spec('', Boo)
+  const booSpec = await spec(Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
@@ -132,7 +132,7 @@ class WithCallback {
 }
 
 test('captures callbacks verify', async t => {
-  const cbSpec = await spec('', WithCallback)
+  const cbSpec = await spec(WithCallback)
   const cb = new cbSpec.subject()
   cb.justDo(1)
   await new Promise(a => {

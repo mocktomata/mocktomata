@@ -73,7 +73,7 @@ const childProcess = {
 }
 
 test('childProcess verify', async t => {
-  const speced = await spec('', childProcess.spawnSuccess)
+  const speced = await spec(childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
@@ -127,7 +127,7 @@ test('childProcess simulate', async t => {
 })
 
 test('childProcess fail case verify', async t => {
-  const speced = await spec('', childProcess.spawnFail)
+  const speced = await spec(childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stderr', 4]],

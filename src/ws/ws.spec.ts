@@ -5,7 +5,7 @@ import WebSocket = require('ws')
 import { spec } from '../index'
 
 test('ws verify', async t => {
-  const wsSpec = await spec('', WebSocket)
+  const wsSpec = await spec(WebSocket)
   const ws = new wsSpec.subject('ws://html5rocks.websocket.org/echo')
 
   const actionCount = new AssertOrder()

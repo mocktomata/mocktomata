@@ -30,8 +30,19 @@ function isRejectErrorPromiseReturnAction(action) {
   return action.type === 'promise' && action.meta.status === 'reject' && action.payload instanceof Error
 }
 
-export const spec = Object.assign(
-  async function spec<T>(id: string, subject: T): Promise<Spec<T>> {
+export interface SpecFn {
+  <T>(id: string, subject: T): Promise<Spec<T>>
+  <T>(subject: T): Promise<Spec<T>>
+  save<T>(id: string, subject: T): Promise<Spec<T>>
+  simulate<T>(id: string, subject: T): Promise<Spec<T>>
+}
+
+export const spec: SpecFn = Object.assign(
+  async function spec(id, subject) {
+    if (typeof id !== 'string') {
+      subject = id
+      id = ''
+    }
     const opt = unpartial(defaultSpecOptions, { id, mode: 'verify' })
     const mode = getMode(opt)
     return createSpec(opt.id, subject, mode)
@@ -45,7 +56,7 @@ export const spec = Object.assign(
       const mode = getMode({ id, mode: 'simulate' })
       return createSpec(id, subject, mode)
     }
-  })
+  }) as any
 
 async function createSpec(id, subject, mode) {
   const store = createSpecStore()
