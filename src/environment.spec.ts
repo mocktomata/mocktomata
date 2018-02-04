@@ -2,10 +2,10 @@ import { AssertOrder } from 'assertron'
 import { test } from 'ava'
 
 import { onEnvironment, environment } from './environment'
-import { MissingClauseHandler } from './errors'
+import { MissingEnvironmentHandler } from './errors'
 
-test('no handler registered throws MissingClauseHandler', async t => {
-  await t.throws(environment('no handler'), MissingClauseHandler)
+test('no handler registered throws MissingEnvironmentHandler', async t => {
+  await t.throws(environment('no handler'), MissingEnvironmentHandler)
 })
 
 test('handler will be invoked', async () => {
@@ -50,6 +50,9 @@ test('receives async environment context from the handler', async t => {
   t.deepEqual(actual, { a: 1 })
 })
 
+test('with listener, MissingEnvironmentHandler will not be thrown', async () => {
+  await environment('no throw with listener', () => { return })
+})
 
 test('invoke listener after handler', async () => {
   const order = new AssertOrder(2)
@@ -105,13 +108,13 @@ test('calling environment within simulated environment will simulate', async t =
   onEnvironment('simulate calling env', ({ mode, environment }) => {
     o.once(1)
     t.is(mode, 'simulate')
-    return environment('should simulate for onEnvironment')
+    return environment('should simulate inside onEnvironment')
   })
-  onEnvironment('should simulate for onEnvironment', ({ mode }) => {
+  onEnvironment('should simulate inside onEnvironment', ({ mode }) => {
     o.once(2)
     t.is(mode, 'simulate')
   })
-  onEnvironment('should simulate', ({ mode }) => {
+  onEnvironment('should simulate listener calling env', ({ mode }) => {
     o.once(4)
     t.is(mode, 'simulate')
   })
@@ -119,10 +122,20 @@ test('calling environment within simulated environment will simulate', async t =
   await environment.simulate('simulate calling env', ({ mode, environment }) => {
     o.once(3)
     t.is(mode, 'simulate')
-    return environment('should simulate', ({ mode }) => {
+    return environment('should simulate listener calling env', ({ mode }) => {
       o.once(5)
       t.is(mode, 'simulate')
     })
   })
   o.end()
+})
+
+test('envronment context contains spec', async t => {
+  onEnvironment('context has spec', ({ spec }) => t.truthy(spec))
+  await environment('context has spec', ({ spec }) => t.truthy(spec))
+})
+
+test('simulate envronment context contains spec', async t => {
+  onEnvironment('simulate context has spec', ({ spec }) => t.truthy(spec))
+  await environment.simulate('simulate context has spec', ({ spec }) => t.truthy(spec))
 })

@@ -1,9 +1,9 @@
 import merge from 'lodash.merge'
 
-import { MissingClauseHandler } from './errors'
+import { MissingEnvironmentHandler } from './errors'
 import { EnvironmentMode } from './interfaces'
 import { store } from './store'
-import { spec } from './spec'
+import { spec, SpecFn } from './spec'
 
 function getMatchingEntries(clause: string) {
   return store.envEntries.filter(entry => {
@@ -25,8 +25,8 @@ function runHandlers(envContext, entries) {
 
 async function runEnvironment(envContext: EnvironmentContext, clause, listener) {
   const entries = getMatchingEntries(clause)
-  if (entries.length === 0)
-    throw new MissingClauseHandler(clause)
+  if (entries.length === 0 && !listener)
+    throw new MissingEnvironmentHandler(clause)
 
   const context = runHandlers(envContext, entries)
   if (listener) {
@@ -58,11 +58,12 @@ export const environment = Object.assign(
 const liveContext = { mode: 'live', environment, spec } as any
 
 const simEnvironment = Object.assign(environment.simulate, { simulate: environment.simulate })
-const simulateContext = { mode: 'simulate', environment: simEnvironment } as any
+const simulateContext = { mode: 'simulate', environment: simEnvironment, spec } as any
 
 export interface EnvironmentContext {
   mode: EnvironmentMode,
-  environment: typeof environment
+  environment: typeof environment,
+  spec: SpecFn
 }
 
 function getContext(clause: string, mode: EnvironmentMode) {
@@ -80,6 +81,7 @@ function getContext(clause: string, mode: EnvironmentMode) {
   if (actualMode === 'simulate')
     return simulateContext
 }
+
 export function onEnvironment(clause: string | RegExp, handler: (context: EnvironmentContext) => any) {
   store.envEntries.push({ clause, handler })
 }
