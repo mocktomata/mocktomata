@@ -1,4 +1,4 @@
-import { RemoteStoreOptions, SpecMode } from './interfaces'
+import { RemoteStoreOptions, ExecutionModes } from './interfaces'
 
 export interface EnvironmentHandlerEntry {
   clause: string | RegExp,
@@ -6,26 +6,14 @@ export interface EnvironmentHandlerEntry {
   invoked?: true
 }
 
-let mode
-let spec
+let specDefaultMode
 let storage
+let specOverrides: { mode: ExecutionModes, filter: string | RegExp }[] = []
 let envEntries: EnvironmentHandlerEntry[] = []
 
 export let store = {
-  get mode(): SpecMode | undefined {
-    return mode
-  },
-  set mode(value: SpecMode | undefined) {
-    if (mode !== value) {
-      mode = value
-    }
-  },
-  get spec(): string | RegExp {
-    return spec
-  },
-  set spec(value: string | RegExp) {
-    spec = value
-  },
+  specDefaultMode,
+  specOverrides,
   get store(): RemoteStoreOptions {
     return storage
   },

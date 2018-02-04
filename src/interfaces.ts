@@ -1,39 +1,23 @@
 import { Logger } from '@unional/logging'
 import { getReturnSpy, getReturnStub } from './index';
 
-export type SpecMode = 'verify' | 'save' | 'simulate'
+export type ExecutionModes = 'live' | 'save' | 'simulate'
 
 export interface RemoteStoreOptions {
   url: string
 }
 
 export interface KomondorOptions {
-  mode: SpecMode,
+  mode: ExecutionModes,
   spec: string | RegExp,
   store: RemoteStoreOptions
 }
-
-export type ExecutionModes = 'real' | 'simulate'
 
 export interface Spy<T> {
   on(event: string, callback: (action: SpecAction) => void),
   onAny(callback: (action: SpecAction) => void),
   actions: SpecAction[],
   subject: T
-}
-
-export interface SpecOptions {
-  /**
-   * ID of the spec.
-   */
-  id: string
-  /**
-   * Mode of the spec operating in.
-   * `verify`: making real calls and verify in `satisfy()`.
-   * `save`: making real calls and save the result in file.
-   * `replay`: replay calls from file.
-   */
-  mode: SpecMode
 }
 
 export interface SpecAction {
@@ -96,7 +80,7 @@ export interface SpecPlayer {
 }
 
 export interface SpecContext extends SpecRecorder, SpecPlayer {
-  mode: SpecMode,
+  mode: ExecutionModes,
   id: string
 }
 export type getSpy = (context: SpecContext, subject: any) => any

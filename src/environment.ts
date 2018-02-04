@@ -59,7 +59,7 @@ export interface EnvironmentContext {
   environment: typeof environment
 }
 
-const realContext = { mode: 'real', environment, spec } as any
+const realContext = { mode: 'live', environment, spec } as any
 
 const simEnvironment = Object.assign(environment.simulate, { simulate: environment.simulate })
 const simulateContext = { mode: 'simulate', environment: simEnvironment } as any

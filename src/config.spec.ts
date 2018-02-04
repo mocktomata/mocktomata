@@ -20,33 +20,35 @@ const simpleCallback = {
   }
 }
 
+function resetStore() {
+  store.specDefaultMode = undefined
+  store.specOverrides = []
+  store.envEntries = []
+}
 
 test.beforeEach(() => {
-  config()
+  resetStore()
 })
 
 test.afterEach(() => {
-  config()
+  resetStore()
 })
 
-test('config with no argument set things to default', t => {
-  config({ mode: 'save' })
-  t.is(store.mode, 'save')
-
-  config()
-  t.is(store.mode, undefined)
+test('config.spec() with no filter sets mode as default', t => {
+  config.spec('save')
+  t.is(store.specDefaultMode, 'save')
 })
 
 
-test('config replay will force subsequence spec in replay mode', async t => {
-  config({ mode: 'simulate' })
+test(`config.spec('simulate') will force all specs in simulate mode`, async t => {
+  config.spec('simulate')
 
-  t.is(store.mode, 'simulate')
+  t.is(store.specDefaultMode, 'simulate')
 
   const speced = await spec('config/forceReplaySuccess', simpleCallback.fail)
   const actual = await simpleCallback.increment(speced.subject, 2)
 
-  // this should have failed if the spec is running in 'verify' mode.
+  // this should have failed if the spec is running in 'live' mode.
   // The actual call is failing.
   await speced.satisfy([
     { type: 'fn/invoke', payload: [2] },
@@ -57,8 +59,8 @@ test('config replay will force subsequence spec in replay mode', async t => {
   t.is(actual, 3)
 })
 
-test('config mode to work on specific spec', async t => {
-  config({ mode: 'simulate', spec: 'not exist' })
+test('config.spec() can filter for specific spec', async t => {
+  config.spec('simulate', 'not exist - no effect')
 
   const failSpec = await spec('config/forceReplaySuccess', simpleCallback.fail)
   await simpleCallback.increment(failSpec.subject, 2)
@@ -72,7 +74,7 @@ test('config mode to work on specific spec', async t => {
         { type: 'fn/return' }
       ])
     })
-  config({ mode: 'simulate', spec: 'config/forceReplayFail' })
+  config.spec('simulate', 'config/forceReplayFail')
 
   const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
   await simpleCallback.increment(sucessSpec.subject, 2)
@@ -86,11 +88,10 @@ test('config mode to work on specific spec', async t => {
         { type: 'fn/return' }
       ])
     })
-  t.pass()
 })
 
-test('config mode to work on specific spec using regex', async t => {
-  config({ mode: 'simulate', spec: /config\/forceReplay/ })
+test('config.spec() can filter using regex', async t => {
+  config.spec('simulate', /config\/forceReplay/)
   const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
   await simpleCallback.increment(sucessSpec.subject, 2)
     .then(() => t.fail())
@@ -101,21 +102,33 @@ test('config mode to work on specific spec using regex', async t => {
         { type: 'fn/return' }
       ])
     })
-  t.pass()
 })
 
-test.skip('config to save on remote server', async () => {
-  config({
-    store: {
-      url: 'http://localhost:3000'
-    }
-  })
+test(`config.spec() can use 'real' mode to switch spec in simulation to make real call`, async t => {
+  config.spec('live')
+  const sucessSpec = await spec.simulate('config/forceReplayFail', simpleCallback.success)
+  const actual = await simpleCallback.increment(sucessSpec.subject, 2)
+  t.is(actual, 3)
 
-  const cbSpec = await spec(simpleCallback.success)
-  await simpleCallback.increment(cbSpec.subject, 2)
-  await cbSpec.satisfy([
+  await sucessSpec.satisfy([
     { type: 'fn/invoke', payload: [2] },
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
 })
+
+// test.skip('config to save on remote server', async () => {
+//   config({
+//     store: {
+//       url: 'http://localhost:3000'
+//     }
+//   })
+
+//   const cbSpec = await spec(simpleCallback.success)
+//   await simpleCallback.increment(cbSpec.subject, 2)
+//   await cbSpec.satisfy([
+//     { type: 'fn/invoke', payload: [2] },
+//     { type: 'fn/callback', payload: [null, 3] },
+//     { type: 'fn/return' }
+//   ])
+// })

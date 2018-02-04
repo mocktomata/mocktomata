@@ -1,17 +1,17 @@
 import { satisfy } from 'assertron'
 import { tersify } from 'tersify'
-import { unpartial } from 'unpartial'
 
 import {
   SpecAction,
   // @ts-ignore
   SpecRecord,
-  Spec
+  Spec,
+  ExecutionModes
 } from './interfaces'
-import { io } from './io';
-import { defaultSpecOptions, getMode } from './SpecOptions'
+import { io } from './io'
 import { createSpecStore } from './specStore'
 import { komondorUtil } from './plugin'
+import { store } from './store'
 
 export function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
@@ -30,6 +30,16 @@ function isRejectErrorPromiseReturnAction(action) {
   return action.type === 'promise' && action.meta.status === 'reject' && action.payload instanceof Error
 }
 
+function getMode(id: string, mode: ExecutionModes) {
+  const override = store.specOverrides.find(s => {
+    if (typeof s.filter === 'string')
+      return s.filter === id
+    else
+      return s.filter.test(id)
+  })
+  return override ? override.mode :
+    store.specDefaultMode || mode
+}
 export interface SpecFn {
   <T>(id: string, subject: T): Promise<Spec<T>>
   <T>(subject: T): Promise<Spec<T>>
@@ -43,17 +53,16 @@ export const spec: SpecFn = Object.assign(
       subject = id
       id = ''
     }
-    const opt = unpartial(defaultSpecOptions, { id, mode: 'verify' })
-    const mode = getMode(opt)
-    return createSpec(opt.id, subject, mode)
+    const mode = getMode(id, 'live')
+    return createSpec(id, subject, mode)
   },
   {
     async save<T>(id: string, subject: T): Promise<Spec<T>> {
-      const mode = getMode({ id, mode: 'save' })
+      const mode = getMode(id, 'save')
       return createSpec(id, subject, mode)
     },
     async simulate<T>(id: string, subject: T): Promise<Spec<T>> {
-      const mode = getMode({ id, mode: 'simulate' })
+      const mode = getMode(id, 'simulate')
       return createSpec(id, subject, mode)
     }
   }) as any
