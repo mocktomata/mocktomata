@@ -13,6 +13,8 @@ export interface KomondorOptions {
   store: RemoteStoreOptions
 }
 
+export type ExecutionModes = 'real' | 'simulate'
+
 export interface Spy<T> {
   on(event: string, callback: (action: SpecAction) => void),
   onAny(callback: (action: SpecAction) => void),

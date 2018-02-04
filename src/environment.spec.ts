@@ -36,9 +36,93 @@ test('using environment twice will only invoke handler once', async () => {
   order.end()
 })
 
-test('return environment context from the handler', async t => {
+test('receives environment context from the handler', async t => {
   onEnvironment('returning context', () => ({ a: 1 }))
 
-  const actual = await environment('returning context')
+  const actual = await environment<{ a: number }>('returning context')
   t.deepEqual(actual, { a: 1 })
+})
+
+test('receives async environment context from the handler', async t => {
+  onEnvironment('returning context', () => Promise.resolve({ a: 1 }))
+
+  const actual = await environment<{ a: number }>('returning context')
+  t.deepEqual(actual, { a: 1 })
+})
+
+
+test('invoke listener after handler', async t => {
+  const order = new AssertOrder(2)
+  onEnvironment('invoke listener', () => order.once(1))
+
+  await environment('invoke listener', () => order.once(2))
+
+  order.end()
+})
+
+test('receive context from listener', async t => {
+  onEnvironment('returning listener context', () => ({ a: 1 }))
+
+  const actual = await environment('returning listener context', () => ({ b: 2 }))
+  t.deepEqual(actual, { a: 1, b: 2 })
+})
+
+
+test('receive async context from listener', async t => {
+  onEnvironment('returning async listener context', () => ({ a: 1 }))
+
+  const actual = await environment<{ a: number } & { b: number }>('returning async listener context', () => Promise.resolve({ b: 2 }))
+  t.deepEqual(actual, { a: 1, b: 2 })
+})
+
+test('simulate model calls handler with EnvironmentContext', async t => {
+  const o = new AssertOrder(1)
+  onEnvironment('simulate mode', ({ mode }) => {
+    o.once(1)
+    t.is(mode, 'simulate')
+  })
+
+  await environment.simulate('simulate mode')
+  o.end()
+})
+
+test('simulate model calls listener with EnvironmentContext', async t => {
+  const o = new AssertOrder(2)
+  onEnvironment('simulate mode', ({ mode }) => {
+    o.once(1)
+    t.is(mode, 'simulate')
+  })
+
+  await environment.simulate('simulate mode', ({ mode }) => {
+    o.once(2)
+    t.is(mode, 'simulate')
+  })
+  o.end()
+})
+
+test('calling environment within simulated environment will simulate', async t => {
+  const o = new AssertOrder(5)
+  onEnvironment('simulate calling env', ({ mode, environment }) => {
+    o.once(1)
+    t.is(mode, 'simulate')
+    return environment('should simulate for onEnvironment')
+  })
+  onEnvironment('should simulate for onEnvironment', ({ mode }) => {
+    o.once(2)
+    t.is(mode, 'simulate')
+  })
+  onEnvironment('should simulate', ({ mode }) => {
+    o.once(4)
+    t.is(mode, 'simulate')
+  })
+
+  await environment.simulate('simulate calling env', ({ mode, environment }) => {
+    o.once(3)
+    t.is(mode, 'simulate')
+    return environment('should simulate', ({ mode }) => {
+      o.once(5)
+      t.is(mode, 'simulate')
+    })
+  })
+  o.end()
 })
