@@ -1,6 +1,7 @@
 import { satisfy } from 'assertron'
 import { tersify } from 'tersify'
 
+import { MissingSpecID } from './errors'
 import {
   Spec,
   SpecAction,
@@ -40,8 +41,8 @@ function getMode(id: string, mode: SpecMode) {
 }
 
 export interface SpecFn {
-  <T>(id: string, subject: T): Promise<Spec<T>>
   <T>(subject: T): Promise<Spec<T>>
+  <T>(id: string, subject: T): Promise<Spec<T>>
   save<T>(id: string, subject: T): Promise<Spec<T>>
   simulate<T>(id: string, subject: T): Promise<Spec<T>>
 }
@@ -71,6 +72,9 @@ async function createSpec(id, subject, mode) {
   const context = store as any
   context.mode = mode
   context.id = id
+
+  if (!id && mode !== 'live')
+    throw new MissingSpecID(mode)
 
   if (mode === 'simulate') {
     await store.load(id)
