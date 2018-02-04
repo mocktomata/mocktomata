@@ -1,7 +1,8 @@
 import { test } from 'ava'
 
 import { config, spec } from './index'
-import { store } from './store'
+import { resetStore } from './store'
+import { onEnvironment, environment } from './environment';
 
 const simpleCallback = {
   increment(remote, x) {
@@ -20,30 +21,18 @@ const simpleCallback = {
   }
 }
 
-function resetStore() {
-  store.specDefaultMode = undefined
-  store.specOverrides = []
-  store.envEntries = []
-}
-
 test.beforeEach(() => {
+  console.log('before')
   resetStore()
 })
 
 test.afterEach(() => {
+  console.log('after')
   resetStore()
 })
 
-test('config.spec() with no filter sets mode as default', t => {
-  config.spec('save')
-  t.is(store.specDefaultMode, 'save')
-})
-
-
 test(`config.spec('simulate') will force all specs in simulate mode`, async t => {
   config.spec('simulate')
-
-  t.is(store.specDefaultMode, 'simulate')
 
   const speced = await spec('config/forceReplaySuccess', simpleCallback.fail)
   const actual = await simpleCallback.increment(speced.subject, 2)
@@ -104,7 +93,7 @@ test('config.spec() can filter using regex', async t => {
     })
 })
 
-test(`config.spec() can use 'real' mode to switch spec in simulation to make real call`, async t => {
+test(`config.spec() can use 'live' mode to switch spec in simulation to make live call`, async t => {
   config.spec('live')
   const sucessSpec = await spec.simulate('config/forceReplayFail', simpleCallback.success)
   const actual = await simpleCallback.increment(sucessSpec.subject, 2)
@@ -116,6 +105,37 @@ test(`config.spec() can use 'real' mode to switch spec in simulation to make rea
     { type: 'fn/return' }
   ])
 })
+
+test('config.environment() with no filter sets mode for all environments', async t => {
+  config.environment('live')
+  onEnvironment('config all 1', ({ mode }) => {
+    t.is(mode, 'live')
+  })
+  onEnvironment('config all 2', ({ mode }) => {
+    t.is(mode, 'live')
+  })
+  console.log(1)
+  await environment.simulate('config all 1')
+  console.log(2)
+  await environment.simulate('config all 2')
+  console.log(3)
+})
+
+test('config.environment() can filter by string', async t => {
+  config.environment('live', 'config specific yes')
+  onEnvironment('config specific yes', ({ mode }) => {
+    t.is(mode, 'live')
+  })
+  onEnvironment('config specific no', ({ mode }) => {
+    t.is(mode, 'simulate')
+  })
+  console.log(4)
+  await environment.simulate('config specific yes')
+  console.log(5)
+  await environment.simulate('config specific no')
+  console.log(6)
+})
+
 
 // test.skip('config to save on remote server', async () => {
 //   config({

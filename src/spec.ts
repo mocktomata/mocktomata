@@ -2,11 +2,9 @@ import { satisfy } from 'assertron'
 import { tersify } from 'tersify'
 
 import {
-  SpecAction,
-  // @ts-ignore
-  SpecRecord,
   Spec,
-  ExecutionModes
+  SpecAction,
+  SpecMode
 } from './interfaces'
 import { io } from './io'
 import { createSpecStore } from './specStore'
@@ -30,7 +28,7 @@ function isRejectErrorPromiseReturnAction(action) {
   return action.type === 'promise' && action.meta.status === 'reject' && action.payload instanceof Error
 }
 
-function getMode(id: string, mode: ExecutionModes) {
+function getMode(id: string, mode: SpecMode) {
   const override = store.specOverrides.find(s => {
     if (typeof s.filter === 'string')
       return s.filter === id
@@ -40,6 +38,7 @@ function getMode(id: string, mode: ExecutionModes) {
   return override ? override.mode :
     store.specDefaultMode || mode
 }
+
 export interface SpecFn {
   <T>(id: string, subject: T): Promise<Spec<T>>
   <T>(subject: T): Promise<Spec<T>>

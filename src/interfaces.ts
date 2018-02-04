@@ -1,14 +1,15 @@
 import { Logger } from '@unional/logging'
 import { getReturnSpy, getReturnStub } from './index';
 
-export type ExecutionModes = 'live' | 'save' | 'simulate'
+export type SpecMode = 'live' | 'save' | 'simulate'
+export type EnvironmentMode = 'live' | 'simulate'
 
 export interface RemoteStoreOptions {
   url: string
 }
 
 export interface KomondorOptions {
-  mode: ExecutionModes,
+  mode: SpecMode,
   spec: string | RegExp,
   store: RemoteStoreOptions
 }
@@ -80,7 +81,7 @@ export interface SpecPlayer {
 }
 
 export interface SpecContext extends SpecRecorder, SpecPlayer {
-  mode: ExecutionModes,
+  mode: SpecMode,
   id: string
 }
 export type getSpy = (context: SpecContext, subject: any) => any

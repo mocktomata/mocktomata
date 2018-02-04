@@ -1,7 +1,7 @@
 import merge from 'lodash.merge'
 
 import { MissingClauseHandler } from './errors'
-import { ExecutionModes } from './interfaces'
+import { EnvironmentMode } from './interfaces'
 import { store } from './store'
 import { spec } from './spec'
 
@@ -38,32 +38,48 @@ async function runEnvironment(envContext: EnvironmentContext, clause, listener) 
   return context as any
 }
 
+
 export const environment = Object.assign(
   async function environment<T = any>(
     clause: string,
     listener?: (context: EnvironmentContext) => any
   ): Promise<T> {
-    // tslint:disable-next-line
-    return runEnvironment(realContext, clause, listener)
+    return runEnvironment(getContext(clause, 'live'), clause, listener)
   }, {
     simulate<T = any>(
       clause: string,
       listener?: (context: EnvironmentContext) => any
     ): Promise<T> {
-      // tslint:disable-next-line
-      return runEnvironment(simulateContext, clause, listener)
+      return runEnvironment(getContext(clause, 'simulate'), clause, listener)
     }
-  })
-export interface EnvironmentContext {
-  mode: ExecutionModes,
-  environment: typeof environment
-}
+  }
+)
 
-const realContext = { mode: 'live', environment, spec } as any
+const liveContext = { mode: 'live', environment, spec } as any
 
 const simEnvironment = Object.assign(environment.simulate, { simulate: environment.simulate })
 const simulateContext = { mode: 'simulate', environment: simEnvironment } as any
 
+export interface EnvironmentContext {
+  mode: EnvironmentMode,
+  environment: typeof environment
+}
+
+function getContext(clause: string, mode: EnvironmentMode) {
+  const override = store.envOverrides.find(s => {
+    if (typeof s.filter === 'string')
+      return s.filter === clause
+    else
+      return s.filter.test(clause)
+  })
+  const actualMode = override ? override.mode :
+    store.envDefaultMode || mode
+
+  if (actualMode === 'live')
+    return liveContext
+  if (actualMode === 'simulate')
+    return simulateContext
+}
 export function onEnvironment(clause: string | RegExp, handler: (context: EnvironmentContext) => any) {
   store.envEntries.push({ clause, handler })
 }
