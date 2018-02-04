@@ -38,25 +38,26 @@ async function runEnvironment(envContext: EnvironmentContext, clause, listener) 
   return context as any
 }
 
-export interface EnvironmentContext {
-  mode: ExecutionModes,
-  environment: typeof environment
-}
-
 export const environment = Object.assign(
   async function environment<T = any>(
     clause: string,
     listener?: (context: EnvironmentContext) => any
   ): Promise<T> {
+    // tslint:disable-next-line
     return runEnvironment(realContext, clause, listener)
   }, {
     simulate<T = any>(
       clause: string,
       listener?: (context: EnvironmentContext) => any
     ): Promise<T> {
+      // tslint:disable-next-line
       return runEnvironment(simulateContext, clause, listener)
     }
   })
+export interface EnvironmentContext {
+  mode: ExecutionModes,
+  environment: typeof environment
+}
 
 const realContext = { mode: 'real', environment, spec } as any
 

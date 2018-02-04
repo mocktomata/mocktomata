@@ -1,7 +1,7 @@
 import { Logger } from '@unional/logging'
 import { getReturnSpy, getReturnStub } from './index';
 
-export type SpecMode = 'verify' | 'save' | 'replay'
+export type SpecMode = 'verify' | 'save' | 'simulate'
 
 export interface RemoteStoreOptions {
   url: string

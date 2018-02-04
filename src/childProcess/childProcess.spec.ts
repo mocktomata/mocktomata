@@ -73,7 +73,7 @@ const childProcess = {
 }
 
 test('childProcess verify', async t => {
-  const speced = await spec(childProcess.spawnSuccess)
+  const speced = await spec('', childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
@@ -91,7 +91,7 @@ test('childProcess verify', async t => {
 })
 
 test('childProcess save', async t => {
-  const speced = await spec(childProcess.spawnSuccess, { id: 'childProcess/success', mode: 'save' })
+  const speced = await spec.save('childProcess/success', childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
@@ -108,8 +108,8 @@ test('childProcess save', async t => {
   ])
 })
 
-test('childProcess replay', async t => {
-  const speced = await spec(childProcess.spawnSuccess, { id: 'childProcess/success', mode: 'replay' })
+test('childProcess simulate', async t => {
+  const speced = await spec.simulate('childProcess/success', childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stdout', 4], ['stdout', 5]],
@@ -127,7 +127,7 @@ test('childProcess replay', async t => {
 })
 
 test('childProcess fail case verify', async t => {
-  const speced = await spec(childProcess.spawnFail)
+  const speced = await spec('', childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stderr', 4]],
@@ -144,7 +144,7 @@ test('childProcess fail case verify', async t => {
 })
 
 test('childProcess fail case save', async t => {
-  const speced = await spec(childProcess.spawnFail, { id: 'childProcess/fail', mode: 'save' })
+  const speced = await spec.save('childProcess/fail', childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stderr', 4]],
@@ -161,7 +161,7 @@ test('childProcess fail case save', async t => {
 })
 
 test('childProcess fail case replay', async t => {
-  const speced = await spec(childProcess.spawnFail, { id: 'childProcess/fail', mode: 'replay' })
+  const speced = await spec.simulate('childProcess/fail', childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
     result: [['stdout', 3], ['stderr', 4]],

@@ -51,7 +51,7 @@ test('receives async environment context from the handler', async t => {
 })
 
 
-test('invoke listener after handler', async t => {
+test('invoke listener after handler', async () => {
   const order = new AssertOrder(2)
   onEnvironment('invoke listener', () => order.once(1))
 

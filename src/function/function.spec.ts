@@ -13,7 +13,7 @@ import {
 } from './testSuites'
 
 test('spec.actions contains all actions recorded', async () => {
-  const cbSpec = await spec(simpleCallback.success)
+  const cbSpec = await spec('', simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
   satisfy(cbSpec.actions, [
     { type: 'fn/invoke', payload: [2] },
@@ -24,7 +24,7 @@ test('spec.actions contains all actions recorded', async () => {
 
 test('on(event, callback) will invoke when action is added.', async () => {
   const order = new AssertOrder()
-  const cbSpec = await spec(simpleCallback.success)
+  const cbSpec = await spec('', simpleCallback.success)
 
   cbSpec.on('fn/invoke', action => {
     order.once(1)
@@ -42,9 +42,9 @@ test('on(event, callback) will invoke when action is added.', async () => {
   order.end()
 })
 
-test('on(event, callback) will invoke when action is replay.', async () => {
+test('on(event, callback) will invoke when action is simulated.', async () => {
   const order = new AssertOrder()
-  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
 
   cbSpec.on('fn/invoke', action => {
     order.once(1)
@@ -64,7 +64,7 @@ test('on(event, callback) will invoke when action is replay.', async () => {
 
 test('onAny(callback) will invoke on any action', async t => {
   const order = new AssertOrder()
-  const cbSpec = await spec(simpleCallback.success)
+  const cbSpec = await spec('', simpleCallback.success)
 
   cbSpec.onAny(action => {
     order.any([1, 2, 3])
@@ -75,9 +75,9 @@ test('onAny(callback) will invoke on any action', async t => {
   order.end()
 })
 
-test('onAny(callback) will invoke when any action is replay', async t => {
+test('onAny(callback) will invoke when any action is simulated', async t => {
   const order = new AssertOrder()
-  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
 
   cbSpec.onAny(action => {
     order.any([1, 2, 3])
@@ -89,7 +89,7 @@ test('onAny(callback) will invoke when any action is replay', async t => {
 })
 
 test('function spec can be called multiple times', async t => {
-  const cbSpec = await spec(delayed.success)
+  const cbSpec = await spec('', delayed.success)
   await delayed.increment(cbSpec.subject, 2)
   await delayed.increment(cbSpec.subject, 4)
   t.is(cbSpec.actions.length, 6)
@@ -97,7 +97,7 @@ test('function spec can be called multiple times', async t => {
 
 //#region simpleCallback
 test('simpleCallback verify', async t => {
-  const cbSpec = await spec(simpleCallback.success)
+  const cbSpec = await spec('', simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([
@@ -110,7 +110,7 @@ test('simpleCallback verify', async t => {
 
 
 test('simpleCallback save', async t => {
-  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'save' })
+  const cbSpec = await spec.save('simpleCallback', simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([
@@ -122,7 +122,7 @@ test('simpleCallback save', async t => {
 })
 
 test('simpleCallback replay', async t => {
-  const cbSpec = await spec(simpleCallback.success, { id: 'simpleCallback', mode: 'replay' })
+  const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([
@@ -134,7 +134,7 @@ test('simpleCallback replay', async t => {
 })
 
 test('simpleCallback fail case verify', async t => {
-  const cbSpec = await spec(simpleCallback.fail)
+  const cbSpec = await spec('', simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -147,7 +147,7 @@ test('simpleCallback fail case verify', async t => {
 })
 
 test('simpleCallback fail case save', async t => {
-  const cbSpec = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'save' })
+  const cbSpec = await spec.save('simpleCallback failed', simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -160,7 +160,7 @@ test('simpleCallback fail case save', async t => {
 })
 
 test('simpleCallback fail case replay', async t => {
-  const cbSpec = await spec(simpleCallback.fail, { id: 'simpleCallback failed', mode: 'replay' })
+  const cbSpec = await spec.simulate('simpleCallback failed', simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -173,7 +173,7 @@ test('simpleCallback fail case replay', async t => {
 })
 
 test('replay on not saved input will spy', async t => {
-  const successSpec = await spec(simpleCallback.success, { id: 'function/simpleCallback/notSavedToSpy', mode: 'replay' })
+  const successSpec = await spec.simulate('function/simpleCallback/notSavedToSpy', simpleCallback.success)
 
   const actual = await simpleCallback.increment(successSpec.subject, 4)
   await successSpec.satisfy([
@@ -183,7 +183,7 @@ test('replay on not saved input will spy', async t => {
   ])
   t.is(actual, 5)
 
-  const failSpec = await spec(simpleCallback.fail, { id: 'function/simpleCallback failed/notSavedToSpy', mode: 'replay' })
+  const failSpec = await spec.simulate('function/simpleCallback failed/notSavedToSpy', simpleCallback.fail)
   await simpleCallback.increment(failSpec.subject, 8)
     .then(() => t.fail())
     .catch(() => {
@@ -199,7 +199,7 @@ test('replay on not saved input will spy', async t => {
 
 //#region fetch
 test('fetch verify', async t => {
-  const speced = await spec(fetch.success)
+  const speced = await spec('', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
@@ -211,7 +211,7 @@ test('fetch verify', async t => {
 })
 
 test('fetch save', async t => {
-  const speced = await spec(fetch.success, { id: 'fetch', mode: 'save' })
+  const speced = await spec.save('fetch', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
@@ -223,7 +223,7 @@ test('fetch save', async t => {
 })
 
 test('fetch replay', async t => {
-  const speced = await spec(fetch.success, { id: 'fetch', mode: 'replay' })
+  const speced = await spec.simulate('fetch', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
@@ -235,7 +235,7 @@ test('fetch replay', async t => {
 })
 
 test('fetch fail verify', async t => {
-  const speced = await spec(fetch.fail)
+  const speced = await spec('', fetch.fail)
   return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -248,7 +248,7 @@ test('fetch fail verify', async t => {
 })
 
 test('fetch fail save', async t => {
-  const speced = await spec(fetch.fail, { id: 'fetch fail', mode: 'save' })
+  const speced = await spec.save('fetch fail', fetch.fail)
   return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -261,7 +261,7 @@ test('fetch fail save', async t => {
 })
 
 test('fetch fail verify', async t => {
-  const speced = await spec(fetch.fail, { id: 'fetch fail', mode: 'verify' })
+  const speced = await spec('fetch fail', fetch.fail)
   return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -276,7 +276,7 @@ test('fetch fail verify', async t => {
 
 //#region literalCallback
 test('literalCallback verify', async t => {
-  const speced = await spec(literalCallback.success)
+  const speced = await spec('', literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
   await speced.satisfy([
     { type: 'fn/invoke', payload: [{ 'data': 2 }] },
@@ -287,7 +287,7 @@ test('literalCallback verify', async t => {
 })
 
 test('literalCallback save', async t => {
-  const speced = await spec(literalCallback.success, { id: 'literalCallback', mode: 'save' })
+  const speced = await spec.save('literalCallback', literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
 
   await speced.satisfy([
@@ -299,7 +299,7 @@ test('literalCallback save', async t => {
 })
 
 test('literalCallback replay', async t => {
-  const speced = await spec(literalCallback.success, { id: 'literalCallback', mode: 'replay' })
+  const speced = await spec.simulate('literalCallback', literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
 
   await speced.satisfy([
@@ -311,7 +311,7 @@ test('literalCallback replay', async t => {
 })
 
 test('literalCallback fail case verify', async t => {
-  const speced = await spec(literalCallback.fail)
+  const speced = await spec('', literalCallback.fail)
   return literalCallback.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -324,7 +324,7 @@ test('literalCallback fail case verify', async t => {
 })
 
 test('literalCallback fail case save', async t => {
-  const speced = await spec(literalCallback.fail, { id: 'literalCallback fail', mode: 'save' })
+  const speced = await spec.save('literalCallback fail', literalCallback.fail)
   await literalCallback.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -338,7 +338,7 @@ test('literalCallback fail case save', async t => {
 })
 
 test('literalCallback fail case replay', async t => {
-  const speced = await spec(literalCallback.fail, { id: 'literalCallback fail', mode: 'replay' })
+  const speced = await spec.simulate('literalCallback fail', literalCallback.fail)
   await literalCallback.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -354,7 +354,7 @@ test('literalCallback fail case replay', async t => {
 
 //#region synchronous
 test('synchronous verify', async t => {
-  const speced = await spec(synchronous.success)
+  const speced = await spec('', synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
 
   await speced.satisfy([
@@ -365,7 +365,7 @@ test('synchronous verify', async t => {
 })
 
 test('synchronous save', async t => {
-  const speced = await spec(synchronous.success, { id: 'synchronous', mode: 'save' })
+  const speced = await spec.save('synchronous', synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
 
   await speced.satisfy([
@@ -376,7 +376,7 @@ test('synchronous save', async t => {
 })
 
 test('synchronous replay', async t => {
-  const speced = await spec(synchronous.success, { id: 'synchronous', mode: 'replay' })
+  const speced = await spec.simulate('synchronous', synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
   await speced.satisfy([
     { type: 'fn/invoke', payload: ['increment', 2] },
@@ -386,7 +386,7 @@ test('synchronous replay', async t => {
 })
 
 test('synchronous fail verify', async t => {
-  const speced = await spec(synchronous.fail)
+  const speced = await spec('', synchronous.fail)
 
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
@@ -397,7 +397,7 @@ test('synchronous fail verify', async t => {
 })
 
 test('synchronous fail save', async t => {
-  const speced = await spec(synchronous.fail, { id: 'synchronous fail', mode: 'save' })
+  const speced = await spec.save('synchronous fail', synchronous.fail)
 
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
@@ -408,7 +408,7 @@ test('synchronous fail save', async t => {
 })
 
 test('synchronous fail replay', async t => {
-  const speced = await spec(synchronous.fail, { id: 'synchronous fail', mode: 'replay' })
+  const speced = await spec.simulate('synchronous fail', synchronous.fail)
 
   t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
 
@@ -421,7 +421,7 @@ test('synchronous fail replay', async t => {
 //#endregion
 
 test('simpleCallback call again will turn into spy mode', async t => {
-  const cbSpec = await spec(simpleCallback.success, { id: 'function/simpleCallback/callAgainToSpy', mode: 'replay' })
+  const cbSpec = await spec.simulate('function/simpleCallback/callAgainToSpy', simpleCallback.success)
   t.is(await simpleCallback.increment(cbSpec.subject, 2), 3)
 
   t.is(await simpleCallback.increment(cbSpec.subject, 4), 5)
@@ -443,7 +443,7 @@ test('simpleCallback call again will turn into spy mode', async t => {
 
 
 test('recursive (save)', async t => {
-  const cbSpec = await spec(recursive.success, { id: 'function/recursive/twoCalls', mode: 'save' })
+  const cbSpec = await spec.save('function/recursive/twoCalls', recursive.success)
   const actual = await recursive.decrementToZero(cbSpec.subject, 2)
   t.is(actual, 0)
 
@@ -458,7 +458,7 @@ test('recursive (save)', async t => {
 })
 
 test('recursive (replay)', async t => {
-  const cbSpec = await spec(recursive.success, { id: 'function/recursive/twoCalls', mode: 'replay' })
+  const cbSpec = await spec.simulate('function/recursive/twoCalls', recursive.success)
   const actual = await recursive.decrementToZero(cbSpec.subject, 2)
   t.is(actual, 0)
 

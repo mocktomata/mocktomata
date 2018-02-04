@@ -39,9 +39,9 @@ test('config with no argument set things to default', t => {
 
 
 test('config replay will force subsequence spec in replay mode', async t => {
-  config({ mode: 'replay' })
+  config({ mode: 'simulate' })
 
-  t.is(store.mode, 'replay')
+  t.is(store.mode, 'simulate')
 
   const speced = await spec(simpleCallback.fail, { id: 'config/forceReplaySuccess', mode: 'verify' })
   const actual = await simpleCallback.increment(speced.subject, 2)
@@ -58,7 +58,7 @@ test('config replay will force subsequence spec in replay mode', async t => {
 })
 
 test('config mode to work on specific spec', async t => {
-  config({ mode: 'replay', spec: 'not exist' })
+  config({ mode: 'simulate', spec: 'not exist' })
 
   const failSpec = await spec(simpleCallback.fail, { id: 'config/forceReplaySuccess', mode: 'verify' })
   await simpleCallback.increment(failSpec.subject, 2)
@@ -72,7 +72,7 @@ test('config mode to work on specific spec', async t => {
         { type: 'fn/return' }
       ])
     })
-  config({ mode: 'replay', spec: 'config/forceReplayFail' })
+  config({ mode: 'simulate', spec: 'config/forceReplayFail' })
 
   const sucessSpec = await spec(simpleCallback.success, { id: 'config/forceReplayFail', mode: 'verify' })
   await simpleCallback.increment(sucessSpec.subject, 2)
@@ -90,7 +90,7 @@ test('config mode to work on specific spec', async t => {
 })
 
 test('config mode to work on specific spec using regex', async t => {
-  config({ mode: 'replay', spec: /config\/forceReplay/ })
+  config({ mode: 'simulate', spec: /config\/forceReplay/ })
   const sucessSpec = await spec(simpleCallback.success, { id: 'config/forceReplayFail', mode: 'verify' })
   await simpleCallback.increment(sucessSpec.subject, 2)
     .then(() => t.fail())

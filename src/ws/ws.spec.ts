@@ -5,7 +5,7 @@ import WebSocket = require('ws')
 import { spec } from '../index'
 
 test('ws verify', async t => {
-  const wsSpec = await spec(WebSocket)
+  const wsSpec = await spec('', WebSocket)
   const ws = new wsSpec.subject('ws://html5rocks.websocket.org/echo')
 
   const actionCount = new AssertOrder()
@@ -36,7 +36,7 @@ test('ws verify', async t => {
 })
 
 test('ws save', async t => {
-  const wsSpec = await spec(WebSocket, { id: 'ws/echo/success', mode: 'save' })
+  const wsSpec = await spec.save('ws/echo/success', WebSocket)
   const ws = new wsSpec.subject('ws://html5rocks.websocket.org/echo')
 
 
@@ -68,8 +68,8 @@ test('ws save', async t => {
 })
 
 
-test.skip('ws replay', async t => {
-  const wsSpec = await spec(WebSocket, { id: 'ws/echo/success', mode: 'replay' })
+test.skip('ws simulate', async t => {
+  const wsSpec = await spec.simulate('ws/echo/success', WebSocket)
   const ws = new wsSpec.subject('ws://html5rocks.websocket.org/echo')
 
   const actionCount = new AssertOrder()
@@ -100,8 +100,8 @@ test.skip('ws replay', async t => {
 })
 
 
-test('ws replay on not exist will spy', async t => {
-  const wsSpec = await spec(WebSocket, { id: 'ws/echo/notExist', mode: 'replay' })
+test('ws simulate on not exist record will spy', async t => {
+  const wsSpec = await spec.simulate('ws/echo/notExist', WebSocket)
   const ws = new wsSpec.subject('ws://html5rocks.websocket.org/echo')
 
 
