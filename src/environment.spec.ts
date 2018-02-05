@@ -115,7 +115,7 @@ test('simulating environment will force spec to simulate', async t => {
     const cbSpec = await spec('environment/simulate/spec', success)
     cbSpec.subject(2, (_, a) => t.is(a, 3))
 
-    cbSpec.satisfy([undefined, { payload: [undefined, 3] }])
+    return cbSpec.satisfy([undefined, { payload: [undefined, 3] }])
   })
 
   await environment.simulate('simulate calling env', ({ mode }) => {
