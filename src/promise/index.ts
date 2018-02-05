@@ -1,4 +1,4 @@
-import { SpecContext, ReturnAction, SpecPluginUtil, KomondorRegistrar } from '../index'
+import { SpecContext, ReturnAction, SpecPluginUtil, KomondorRegistrar } from '../interfaces'
 
 let komondor: SpecPluginUtil
 export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {

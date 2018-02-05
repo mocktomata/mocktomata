@@ -1,6 +1,7 @@
 import { Stream, Writable } from 'stream'
 
-import { SpecContext, SpecAction, ReturnAction, KomondorRegistrar, io } from '../index'
+import { SpecContext, SpecAction, ReturnAction, KomondorRegistrar } from '../interfaces'
+import { io } from '../io'
 
 export function activate(registrar: KomondorRegistrar) {
   registrar.registerGetReturnSpy(getReturnSpy)

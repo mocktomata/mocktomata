@@ -24,7 +24,7 @@ test('simple class verify', async t => {
 })
 
 test('simple class save', async t => {
-  const fooSpec = await spec(Foo, { id: 'class/simple', mode: 'save' })
+  const fooSpec = await spec.save('class/simple', Foo)
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
   t.is(actual, 1)
@@ -36,8 +36,8 @@ test('simple class save', async t => {
   ])
 })
 
-test('simple class verify', async t => {
-  const fooSpec = await spec(Foo, { id: 'class/simple', mode: 'replay' })
+test('simple class simulate', async t => {
+  const fooSpec = await spec.simulate('class/simple', Foo)
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
   t.is(actual, 1)
@@ -69,7 +69,7 @@ test('extended class verify', async t => {
 })
 
 test('extended class save', async t => {
-  const booSpec = await spec(Boo, { id: 'class/extend', mode: 'save' })
+  const booSpec = await spec.save('class/extend', Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
@@ -82,7 +82,7 @@ test('extended class save', async t => {
 })
 
 test('extended class replay', async t => {
-  const booSpec = await spec(Boo, { id: 'class/extend', mode: 'replay' })
+  const booSpec = await spec.simulate('class/extend', Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
@@ -95,7 +95,7 @@ test('extended class replay', async t => {
 })
 
 test('replay on not existing spec will spy instead (check log)', async t => {
-  const booSpec = await spec(Boo, { id: 'class/notExist', mode: 'replay' })
+  const booSpec = await spec.simulate('class/notExist', Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
@@ -108,7 +108,7 @@ test('replay on not existing spec will spy instead (check log)', async t => {
 })
 
 test('replay on not matching spec will spy instead (check log)', async t => {
-  const booSpec = await spec(Boo, { id: 'class/extendToSpy', mode: 'replay' })
+  const booSpec = await spec.simulate('class/extendToSpy', Boo)
   const boo = new booSpec.subject(2)
   const actual = boo.getPlusOne()
 
@@ -175,7 +175,7 @@ test('captures callbacks verify', async t => {
 })
 
 test('captures callbacks save', async t => {
-  const cbSpec = await spec(WithCallback, { id: 'class/withCallback', mode: 'save' })
+  const cbSpec = await spec.save('class/withCallback', WithCallback)
   const cb = new cbSpec.subject()
   cb.justDo(1)
   await new Promise(a => {
@@ -218,7 +218,7 @@ test('captures callbacks save', async t => {
 })
 
 test('captures callbacks replay', async t => {
-  const cbSpec = await spec(WithCallback, { id: 'class/withCallback', mode: 'replay' })
+  const cbSpec = await spec.simulate('class/withCallback', WithCallback)
   const cb = new cbSpec.subject()
   cb.justDo(1)
   await new Promise(a => {
@@ -269,7 +269,7 @@ class WithPromise {
 }
 
 test('method returning promise should have result of promise saved in payload', async t => {
-  const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'verify' })
+  const promiseSpec = await spec('class/withPromise', WithPromise)
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
 
@@ -284,7 +284,7 @@ test('method returning promise should have result of promise saved in payload', 
 })
 
 test('method returning promise should have result of promise saved in payload (save)', async t => {
-  const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'save' })
+  const promiseSpec = await spec.save('class/withPromise', WithPromise)
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
 
@@ -299,7 +299,7 @@ test('method returning promise should have result of promise saved in payload (s
 })
 
 test('method returning promise should have result of promise saved in payload (replay)', async t => {
-  const promiseSpec = await spec(WithPromise, { id: 'class/withPromise', mode: 'replay' })
+  const promiseSpec = await spec.simulate('class/withPromise', WithPromise)
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
 

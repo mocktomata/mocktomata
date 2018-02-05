@@ -1,3 +1,7 @@
+TODO
+- env -> spec
+- expose plugin
+
 # komondor
 
 ![unstable][unstable-image]

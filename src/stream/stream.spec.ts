@@ -17,7 +17,8 @@ function readStream(): stream.Stream {
 }
 
 test.skip('read stream', async t => {
-  const streamSpec = await spec(readStream, { id: 'stream/read', mode: 'save' })
+  const streamSpec = await spec.save('stream/read', readStream)
+  console.log(streamSpec.subject)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
     let message = ''
@@ -38,8 +39,8 @@ test.skip('read stream', async t => {
   ])
 })
 
-test.skip('read stream replay', async t => {
-  const streamSpec = await spec(readStream, { id: 'stream/read', mode: 'replay' })
+test.skip('read stream simulate', async t => {
+  const streamSpec = await spec.simulate('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
     let message = ''

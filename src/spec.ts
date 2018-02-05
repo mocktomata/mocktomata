@@ -1,18 +1,16 @@
 import { satisfy } from 'assertron'
 import { tersify } from 'tersify'
-import { unpartial } from 'unpartial'
 
+import { MissingSpecID } from './errors'
 import {
+  Spec,
   SpecAction,
-  SpecOptions,
-  // @ts-ignore
-  SpecRecord,
-  Spec
+  SpecMode
 } from './interfaces'
-import { io } from './io';
-import { defaultSpecOptions, getMode } from './SpecOptions'
+import { io } from './io'
 import { createSpecStore } from './specStore'
 import { komondorUtil } from './plugin'
+import { store } from './store'
 
 export function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
@@ -31,17 +29,56 @@ function isRejectErrorPromiseReturnAction(action) {
   return action.type === 'promise' && action.meta.status === 'reject' && action.payload instanceof Error
 }
 
-export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T>> {
-  const opt = unpartial(defaultSpecOptions, options)
-  const mode = getMode(opt)
+function getMode(id: string, mode: SpecMode) {
+  const override = store.specOverrides.find(s => {
+    if (typeof s.filter === 'string')
+      return s.filter === id
+    else
+      return s.filter.test(id)
+  })
+  return override ? override.mode :
+    store.specDefaultMode || mode
+}
+
+export interface SpecFn {
+  <T>(subject: T): Promise<Spec<T>>
+  <T>(id: string, subject: T): Promise<Spec<T>>
+  save<T>(id: string, subject: T): Promise<Spec<T>>
+  simulate<T>(id: string, subject: T): Promise<Spec<T>>
+}
+
+export const spec: SpecFn = Object.assign(
+  async function spec(id, subject) {
+    if (typeof id !== 'string') {
+      subject = id
+      id = ''
+    }
+    const mode = getMode(id, 'live')
+    return createSpec(id, subject, mode)
+  },
+  {
+    async save<T>(id: string, subject: T): Promise<Spec<T>> {
+      const mode = getMode(id, 'save')
+      return createSpec(id, subject, mode)
+    },
+    async simulate<T>(id: string, subject: T): Promise<Spec<T>> {
+      const mode = getMode(id, 'simulate')
+      return createSpec(id, subject, mode)
+    }
+  }) as any
+
+async function createSpec(id, subject, mode) {
   const store = createSpecStore()
   const context = store as any
-  context.mode = opt.mode
-  context.id = opt.id
+  context.mode = mode
+  context.id = id
 
-  if (mode === 'replay') {
-    await store.load(opt.id)
-    context.subject = komondorUtil.getStub(context, subject, opt.id)
+  if (!id && mode !== 'live')
+    throw new MissingSpecID(mode)
+
+  if (mode === 'simulate') {
+    await store.load(id)
+    context.subject = komondorUtil.getStub(context, subject, id)
   }
   else {
     context.subject = komondorUtil.getSpy(context, subject)
@@ -52,12 +89,12 @@ export async function spec<T>(subject: T, options?: SpecOptions): Promise<Spec<T
       return Promise.resolve().then(() => {
         const actions = store.actions
         satisfy(actions, expectation)
-        if (opt.mode === 'save') {
+        if (mode === 'save') {
           // istanbul ignore next
-          if (!opt.id)
+          if (!id)
             throw new Error('Cannot save spec without options.id.')
           makeErrorSerializable(actions)
-          return io.writeSpec(opt.id, {
+          return io.writeSpec(id, {
             expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
             actions
           })

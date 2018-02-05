@@ -1,4 +1,4 @@
-import { SpecPluginUtil, SpecContext } from '../index'
+import { SpecPluginUtil, SpecContext } from '../interfaces'
 
 function spyOnCallback(context: SpecContext, fn, callbackPath) {
   return (...args) => {

@@ -1,29 +1,37 @@
-import { SpecMode } from './interfaces'
-import { RemoteStoreOptions } from './index';
+import { RemoteStoreOptions, SpecMode } from './interfaces'
 
-let mode
-let spec
+export interface EnvironmentHandlerEntry {
+  clause: string | RegExp,
+  handler: any,
+  invoked?: true
+}
+
+let specDefaultMode
+let specOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
+let envEntries: EnvironmentHandlerEntry[] = []
+let envDefaultMode
+let envOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 let storage
 
 export let store = {
-  get mode(): SpecMode | undefined {
-    return mode
-  },
-  set mode(value: SpecMode | undefined) {
-    if (mode !== value) {
-      mode = value
-    }
-  },
-  get spec(): string | RegExp {
-    return spec
-  },
-  set spec(value: string | RegExp) {
-    spec = value
-  },
+  specDefaultMode,
+  specOverrides,
+  envEntries,
+  envDefaultMode,
+  envOverrides,
   get store(): RemoteStoreOptions {
     return storage
   },
   set store(value: RemoteStoreOptions) {
     storage = value
   }
+}
+
+// for testing only
+export function resetStore() {
+  store.specDefaultMode = undefined
+  store.specOverrides = []
+  store.envEntries = []
+  store.envDefaultMode = undefined
+  store.envOverrides = []
 }

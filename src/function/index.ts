@@ -1,4 +1,4 @@
-import { SpecContext, SpecPluginUtil, KomondorRegistrar } from '../index'
+import { SpecContext, SpecPluginUtil, KomondorRegistrar } from '../interfaces'
 
 import { spyFunction } from './getSpyFunction'
 import { stubFunction } from './getStubFunction'

@@ -1,10 +1,21 @@
 import { store } from './store'
-import { KomondorOptions } from './interfaces'
-import { unpartial } from 'unpartial';
+import { SpecMode, EnvironmentMode } from './interfaces'
 
-export function config(givenOptions?: Partial<KomondorOptions>) {
-  const options = unpartial<KomondorOptions>({} as any, givenOptions)
-  store.mode = options.mode as any
-  store.spec = options.spec
-  store.store = options.store
+export const config = {
+  environment(mode: EnvironmentMode, filter?: string | RegExp) {
+    if (filter) {
+      store.envOverrides.push({ mode, filter })
+    }
+    else {
+      store.envDefaultMode = mode
+    }
+  },
+  spec(mode: SpecMode, filter?: string | RegExp) {
+    if (filter) {
+      store.specOverrides.push({ mode, filter })
+    }
+    else {
+      store.specDefaultMode = mode
+    }
+  }
 }

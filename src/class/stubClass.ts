@@ -1,5 +1,5 @@
 import { createSatisfier } from 'satisfier'
-import { SpecContext, SpecPluginUtil } from '../index'
+import { SpecContext, SpecPluginUtil } from '../interfaces'
 
 import { spyClass } from './spyClass'
 

@@ -32,7 +32,7 @@ test('promise verify', async t => {
 })
 
 test('promise verify save', async t => {
-  const speced = await spec(promise.success, { id: 'promise/resolve', mode: 'save' })
+  const speced = await spec.save('promise/resolve', promise.success)
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
@@ -45,7 +45,7 @@ test('promise verify save', async t => {
 })
 
 test('promise verify replay', async t => {
-  const speced = await spec(promise.success, { id: 'promise/resolve', mode: 'replay' })
+  const speced = await spec.simulate('promise/resolve', promise.success)
   return promise.increment(speced.subject, 2)
     .then(actual => {
       t.is(actual, 3)
@@ -71,7 +71,7 @@ test('promise rejected verify', async t => {
 })
 
 test('promise rejected save', async t => {
-  const speced = await spec(promise.fail, { id: 'promise/reject', mode: 'save' })
+  const speced = await spec.save('promise/reject', promise.fail)
   return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -83,8 +83,8 @@ test('promise rejected save', async t => {
     })
 })
 
-test('promise rejected replay', async t => {
-  const speced = await spec(promise.fail, { id: 'promise/reject', mode: 'replay' })
+test('promise rejected simulate', async t => {
+  const speced = await spec.simulate('promise/reject', promise.fail)
   return promise.increment(speced.subject, 2)
     .then(() => t.fail())
     .catch(() => {
@@ -171,7 +171,7 @@ test('promise returning a stream', async t => {
 })
 
 test('promise returning a stream (save)', async t => {
-  const target = await spec(promiseStream, { id: 'promise/readStream', mode: 'save' })
+  const target = await spec.save('promise/readStream', promiseStream)
   const read = await target.subject()
   const actual = await new Promise(a => {
     let message = ''
@@ -193,10 +193,10 @@ test('promise returning a stream (save)', async t => {
   ])
 })
 
-test('promise returning a stream (replay)', async t => {
+test('promise returning a stream (simulate)', async t => {
   // this test uses `readStreamReplay` as source because it causes concurrency issue with the `save` test.
   // It doesn't happen in actual usage as there should be only one test accessing one spec file.
-  const target = await spec(promiseStream, { id: 'promise/readStreamReplay', mode: 'replay' })
+  const target = await spec.simulate('promise/readStreamReplay', promiseStream)
   const read = await target.subject()
   const actual = await new Promise(a => {
     let message = ''

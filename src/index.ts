@@ -1,4 +1,6 @@
 export * from './config'
+export * from './environment'
+export * from './errors'
 export * from './interfaces'
 export * from './io'
 export * from './spec'

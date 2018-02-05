@@ -1,7 +1,7 @@
 import WebSocket = require('ws')
 import { ClientOptions } from 'ws'
 
-import { SpecContext } from '../index'
+import { SpecContext } from '../interfaces'
 import { createFakeClientBase } from './createFakeClientBase'
 
 export function spyWebSocketClient(context: SpecContext, subject: typeof WebSocket): Partial<typeof WebSocket> {

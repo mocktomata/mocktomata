@@ -1,8 +1,8 @@
 import { Logger } from '@unional/logging'
-import { Expectation } from 'satisfier'
 import { getReturnSpy, getReturnStub } from './index';
 
-export type SpecMode = 'verify' | 'save' | 'replay'
+export type SpecMode = 'live' | 'save' | 'simulate'
+export type EnvironmentMode = 'live' | 'simulate'
 
 export interface RemoteStoreOptions {
   url: string
@@ -19,20 +19,6 @@ export interface Spy<T> {
   onAny(callback: (action: SpecAction) => void),
   actions: SpecAction[],
   subject: T
-}
-
-export interface SpecOptions {
-  /**
-   * ID of the spec.
-   */
-  id: string
-  /**
-   * Mode of the spec operating in.
-   * `verify`: making real calls and verify in `satisfy()`.
-   * `save`: making real calls and save the result in file.
-   * `replay`: replay calls from file.
-   */
-  mode: SpecMode
 }
 
 export interface SpecAction {
@@ -62,7 +48,7 @@ export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
-  satisfy(expectation: Expectation): Promise<void>
+  satisfy(expectation: any): Promise<void>
 }
 
 export interface SpecRecorder {
