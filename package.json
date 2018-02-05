@@ -105,7 +105,6 @@
     "flux-standard-action": "^2.0.1",
     "node-fetch": "^1.7.3",
     "satisfier": "^4.1.1",
-    "tersify": "^1.2.2",
-    "unpartial": "^0.4.1"
+    "tersify": "^1.2.2"
   }
 }
