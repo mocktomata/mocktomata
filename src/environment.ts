@@ -23,19 +23,19 @@ function runHandlers(envContext, entries) {
   return context
 }
 
-async function runEnvironment(envContext: EnvironmentContext, clause, listener) {
+async function createEnvironment<T>(envContext: EnvironmentContext, clause, listener) {
   const entries = getMatchingEntries(clause)
   if (entries.length === 0 && !listener)
     throw new MissingEnvironmentHandler(clause)
 
-  const context = runHandlers(envContext, entries)
+  const fixture = runHandlers(envContext, entries)
   if (listener) {
     const listenerContext = await listener(envContext)
     if (listenerContext)
-      merge(context, listenerContext)
+      merge(fixture, listenerContext)
   }
 
-  return context as any
+  return { ...envContext, fixture } as Environment<T>
 }
 
 
@@ -43,27 +43,30 @@ export const environment = Object.assign(
   async function environment<T = any>(
     clause: string,
     listener?: (context: EnvironmentContext) => any
-  ): Promise<T> {
-    return runEnvironment(getContext(clause, 'live'), clause, listener)
+  ): Promise<Environment<T>> {
+    return createEnvironment<T>(getContext(clause, 'live'), clause, listener)
   }, {
     simulate<T = any>(
       clause: string,
       listener?: (context: EnvironmentContext) => any
-    ): Promise<T> {
-      return runEnvironment(getContext(clause, 'simulate'), clause, listener)
+    ): Promise<Environment<T>> {
+      return createEnvironment<T>(getContext(clause, 'simulate'), clause, listener)
     }
   }
 )
 
-const liveContext = { mode: 'live', environment, spec } as any
+const liveContext = { mode: 'live', spec } as any
 
-const simEnvironment = Object.assign(environment.simulate, { simulate: environment.simulate })
-const simulateContext = { mode: 'simulate', environment: simEnvironment, spec } as any
+const simSpec = Object.assign(spec.simulate, { save: spec.save, simulate: spec.simulate })
+const simulateContext = { mode: 'simulate', spec: simSpec } as any
 
 export interface EnvironmentContext {
   mode: EnvironmentMode,
-  environment: typeof environment,
   spec: SpecFn
+}
+
+export interface Environment<T> extends EnvironmentContext {
+  fixture: T
 }
 
 function getContext(clause: string, mode: EnvironmentMode) {

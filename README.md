@@ -1,3 +1,7 @@
+TODO
+- env -> spec
+- expose plugin
+
 # komondor
 
 ![unstable][unstable-image]
@@ -322,68 +326,3 @@ npm run lint
 [wallaby-url]:https://wallabyjs.com
 [vscode-image]:https://img.shields.io/badge/vscode-ready-green.svg
 [vscode-url]:https://code.visualstudio.com/
-
-BA:
-
-Feature: create an order
-  Scenario: No item in shopping cart
-    Given UserA logs in
-    When goes to shopping cart
-    Then should not be able to checkout
-
-@ABC
-Feature: Refund item
-  Background:
-    Given a $100 microwave was sold on 2015-11-03
-    And today is 2015-11-18
-  Scenario: Jeff returns a faulty microwave
-    Given Jeff has bought a microwave for $100
-    And he has a receipt
-    When he returns the microwave
-    Then Jeff should be refunded $100
-
-
-Programmer:
-Let the test runner (Jest, Cucumber) to handle which test to run.
-`komondor` should concern about which mode it should run it, for each part.
-
-```ts
-test('', async () => {
-  // When running in system integration test mode,
-  // the `normal load` environment configuration should run once for all tests involved.
-  // should throw if no `onEnvironemnt('normal load', ...)` is registered
-  const env = await environment('normal load')
-  const env: MyEnvContext = await environment<MyEnvContext>('normal load')
-
-  const env = await environment('normal load', ({ mode }) => {
-    // do something after the environment is ready
-  })
-
-  onEnvironment('normal load', ({ mode }) => {
-    // check `mode !== 'simulate'` to make real call to setup environment
-    // or use `spec` which will simulate automatically for you.
-
-    // return environment context
-    return { host: 'localhost' }
-  })
-
-  // put the enviornment setup in simulate mode.
-  const env = await enviornment.simulate('normal load')
-
-  const env = await environment('normal load', async ({ mode }) => {
-    // using global `environment()` would not run with the same mode.
-    // but that would be confusing.
-    // Can use some context scoping to add the mode into implicit context.
-    const user = await environment('create user Jeffy as superuser')
-
-    // `spec()` can do the same using context passthrough technique
-
-  })
-})
-
-config.environment('normal load', 'run')
-config.environment('normal load', 'simulate')
-// RegExp version of `onEnv` will run multiple times if contain different values.
-config.environment(/normal/, 'run')
-config.spec('aa/bb/cc', 'run')
-```

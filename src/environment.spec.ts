@@ -31,27 +31,29 @@ test('using environment twice will only invoke handler once', async () => {
   onEnvironment('invoke once', () => order.once(1))
 
   await environment('invoke once')
+
+  // in another test
   await environment('invoke once')
 
   order.end()
 })
 
-test('receives environment context from the handler', async t => {
+test('resulting env.fixture contains information provided by the handler', async t => {
   onEnvironment('returning context', () => ({ a: 1 }))
 
   const actual = await environment<{ a: number }>('returning context')
-  t.deepEqual(actual, { a: 1 })
+  t.deepEqual(actual.fixture, { a: 1 })
 })
 
 test('receives async environment context from the handler', async t => {
   onEnvironment('returning context', () => Promise.resolve({ a: 1 }))
 
   const actual = await environment<{ a: number }>('returning context')
-  t.deepEqual(actual, { a: 1 })
+  t.deepEqual(actual.fixture, { a: 1 })
 })
 
-test('with listener, MissingEnvironmentHandler will not be thrown', async () => {
-  await environment('no throw with listener', () => { return })
+test('with listener, MissingEnvironmentHandler will not be thrown', () => {
+  return environment('no throw with listener', () => { return })
 })
 
 test('invoke listener after handler', async () => {
@@ -67,7 +69,7 @@ test('receive context from listener', async t => {
   onEnvironment('returning listener context', () => ({ a: 1 }))
 
   const actual = await environment('returning listener context', () => ({ b: 2 }))
-  t.deepEqual(actual, { a: 1, b: 2 })
+  t.deepEqual(actual.fixture, { a: 1, b: 2 })
 })
 
 
@@ -75,7 +77,7 @@ test('receive async context from listener', async t => {
   onEnvironment('returning async listener context', () => ({ a: 1 }))
 
   const actual = await environment<{ a: number } & { b: number }>('returning async listener context', () => Promise.resolve({ b: 2 }))
-  t.deepEqual(actual, { a: 1, b: 2 })
+  t.deepEqual(actual.fixture, { a: 1, b: 2 })
 })
 
 test('simulate model calls handler with EnvironmentContext', async t => {
@@ -103,39 +105,30 @@ test('simulate model calls listener with EnvironmentContext', async t => {
   o.end()
 })
 
-test('calling environment within simulated environment will simulate', async t => {
-  const o = new AssertOrder(5)
-  onEnvironment('simulate calling env', ({ mode, environment }) => {
-    o.once(1)
+test('simulating environment will force spec to simulate', async t => {
+  function success(_a, _cb) {
+    // callback(null, a + 1)
+    t.fail('should not reach')
+  }
+  onEnvironment('simulate calling env', async ({ mode, spec }) => {
     t.is(mode, 'simulate')
-    return environment('should simulate inside onEnvironment')
-  })
-  onEnvironment('should simulate inside onEnvironment', ({ mode }) => {
-    o.once(2)
-    t.is(mode, 'simulate')
-  })
-  onEnvironment('should simulate listener calling env', ({ mode }) => {
-    o.once(4)
-    t.is(mode, 'simulate')
+    const cbSpec = await spec('environment/simulate/spec', success)
+    cbSpec.subject(2, (_, a) => t.is(a, 3))
+
+    cbSpec.satisfy([undefined, { payload: [undefined, 3] }])
   })
 
-  await environment.simulate('simulate calling env', ({ mode, environment }) => {
-    o.once(3)
+  await environment.simulate('simulate calling env', ({ mode }) => {
     t.is(mode, 'simulate')
-    return environment('should simulate listener calling env', ({ mode }) => {
-      o.once(5)
-      t.is(mode, 'simulate')
-    })
   })
-  o.end()
 })
 
-test('envronment context contains spec', async t => {
+test('environment context contains spec', async t => {
   onEnvironment('context has spec', ({ spec }) => t.truthy(spec))
   await environment('context has spec', ({ spec }) => t.truthy(spec))
 })
 
-test('simulate envronment context contains spec', async t => {
+test('simulate environment context contains spec', async t => {
   onEnvironment('simulate context has spec', ({ spec }) => t.truthy(spec))
   await environment.simulate('simulate context has spec', ({ spec }) => t.truthy(spec))
 })
