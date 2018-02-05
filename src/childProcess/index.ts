@@ -1,4 +1,4 @@
-import { SpecContext, ReturnAction, KomondorRegistrar } from '../index'
+import { SpecContext, ReturnAction, KomondorRegistrar } from '../interfaces'
 
 export function activate(registrar: KomondorRegistrar) {
   registrar.registerGetReturnSpy(getReturnSpy)

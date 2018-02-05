@@ -1,4 +1,4 @@
-import { SpecContext, SpecPluginUtil } from '../index';
+import { SpecContext, SpecPluginUtil } from '../interfaces'
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next

@@ -3,7 +3,6 @@
     "declaration": true,
     "esModuleInterop": true,
     "lib": [
-      "dom",
       "es2015"
     ],
     "module": "commonjs",

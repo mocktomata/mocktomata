@@ -56,7 +56,6 @@ export const environment = Object.assign(
 )
 
 const liveContext = { mode: 'live', spec } as any
-
 const simSpec = Object.assign(spec.simulate, { save: spec.save, simulate: spec.simulate })
 const simulateContext = { mode: 'simulate', spec: simSpec } as any
 

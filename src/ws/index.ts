@@ -1,5 +1,5 @@
 import WebSocket = require('ws')
-import { SpecPluginUtil, SpecContext, KomondorRegistrar } from '../index'
+import { SpecPluginUtil, SpecContext, KomondorRegistrar } from '../interfaces'
 
 import { spyWebSocketClient } from './spyWebSocketClient'
 import { stubWebSocketClient } from './stubWebSocketClient'

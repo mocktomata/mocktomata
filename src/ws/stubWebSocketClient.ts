@@ -2,7 +2,7 @@ import { createSatisfier } from 'satisfier'
 import { setImmediate } from 'timers'
 import WebSocket = require('ws')
 import { ClientOptions } from 'ws'
-import { SpecContext, SpecPluginUtil } from '../index'
+import { SpecContext, SpecPluginUtil } from '../interfaces'
 
 import { createFakeClientBase } from './createFakeClientBase'
 import { spyWebSocketClient } from './spyWebSocketClient'

@@ -1,10 +1,10 @@
 import fs = require('fs')
 import path = require('path')
+import { Stream, Writable } from 'stream'
 
 import { SPECS_FOLDER } from './constants'
 import { SpecRecord } from './interfaces'
 import { log } from './log'
-import { Stream, Writable } from 'stream';
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {

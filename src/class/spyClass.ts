@@ -1,4 +1,4 @@
-import { SpecContext, SpecPluginUtil } from '../index';
+import { SpecContext, SpecPluginUtil } from '../interfaces'
 
 export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
   const spiedClass = class extends subject {
