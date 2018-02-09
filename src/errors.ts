@@ -13,3 +13,11 @@ export class MissingSpecID extends Error {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+export class DuplicateEnvironmentHandler extends Error {
+  constructor(public clause: string | RegExp) {
+    super(`Handler for '${clause}' is already defined.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
