@@ -1,56 +1,55 @@
-import merge from 'lodash.merge'
-
-import { MissingEnvironmentHandler } from './errors'
+import { DuplicateEnvironmentHandler, MissingEnvironmentHandler } from './errors'
 import { EnvironmentMode } from './interfaces'
-import { store } from './store'
 import { spec, SpecFn } from './spec'
+import { store } from './store'
 
-function getMatchingEntries(clause: string) {
-  return store.envEntries.filter(entry => {
+function findMatchingEntry(clause: string) {
+  return store.envEntries.find(entry => {
     return entry.clause instanceof RegExp && entry.clause.test(clause) ||
       entry.clause === clause
   })
 }
+const envFixtures = new WeakMap()
+async function runHandler(envContext, entry) {
+  if (envFixtures.has(entry))
+    return envFixtures.get(entry)
 
-function runHandlers(envContext, entries) {
-  const context = {}
-  entries.filter(e => !e.invoked).map(async e => {
-    e.invoked = true
-    const localContext = await e.handler(envContext)
-    if (localContext)
-      merge(context, localContext)
-  })
-  return context
+  const fixture = (await entry.handler(envContext)) || {}
+  envFixtures.set(entry, fixture)
+  return fixture
 }
 
-async function createEnvironment<T>(envContext: EnvironmentContext, clause, listener) {
-  const entries = getMatchingEntries(clause)
-  if (entries.length === 0 && !listener)
-    throw new MissingEnvironmentHandler(clause)
-
-  const fixture = runHandlers(envContext, entries)
-  if (listener) {
-    const listenerContext = await listener(envContext)
-    if (listenerContext)
-      merge(fixture, listenerContext)
+async function createEnvironment<T>(envContext: EnvironmentContext, clause, localHandler) {
+  const entry = findMatchingEntry(clause)
+  if (entry) {
+    if (localHandler)
+      throw new DuplicateEnvironmentHandler(clause)
+    const fixture = await runHandler(envContext, entry)
+    return { ...envContext, fixture } as Environment<T>
   }
+  else {
+    if (localHandler) {
+      const fixture = (await localHandler(envContext)) || {}
+      return { ...envContext, fixture } as Environment<T>
+    }
 
-  return { ...envContext, fixture } as Environment<T>
+    throw new MissingEnvironmentHandler(clause)
+  }
 }
 
 
 export const environment = Object.assign(
   async function environment<T = any>(
     clause: string,
-    listener?: (context: EnvironmentContext) => any
+    localHandler?: (context: EnvironmentContext) => any
   ): Promise<Environment<T>> {
-    return createEnvironment<T>(getContext(clause, 'live'), clause, listener)
+    return createEnvironment<T>(getContext(clause, 'live'), clause, localHandler)
   }, {
     simulate<T = any>(
       clause: string,
-      listener?: (context: EnvironmentContext) => any
+      localHandler?: (context: EnvironmentContext) => any
     ): Promise<Environment<T>> {
-      return createEnvironment<T>(getContext(clause, 'simulate'), clause, listener)
+      return createEnvironment<T>(getContext(clause, 'simulate'), clause, localHandler)
     }
   }
 )
@@ -85,5 +84,11 @@ function getContext(clause: string, mode: EnvironmentMode) {
 }
 
 export function onEnvironment(clause: string | RegExp, handler: (context: EnvironmentContext) => any) {
+  const entry = store.envEntries.find(entry => {
+    return entry.clause.toString() === clause.toString()
+  })
+  if (entry)
+    throw new DuplicateEnvironmentHandler(clause)
+
   store.envEntries.push({ clause, handler })
 }
