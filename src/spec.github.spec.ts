@@ -20,15 +20,12 @@ function getFollowers(github: GitHub, username: string) {
 test.skip('get followers (demo)', async t => {
   const github = await createGitHubTest()
   const specs = await spec('github/getFollowersForUser/success', github.users.getFollowersForUser)
-
   github.users.getFollowersForUser = specs.subject
-  specs.onAny(a => console.log(a))
-  console.log('before')
+
   await getFollowers(github, 'unional')
 
-  console.log(specs.actions)
   await specs.satisfy([
-    undefined,
+    { type: 'fn/invoke', payload: [{ username: 'unional' }] },
     { type: 'fn/return' },
     {
       type: 'fn/callback',
