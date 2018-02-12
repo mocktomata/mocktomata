@@ -77,21 +77,28 @@ async function createSpec(id, subject, mode) {
   })
 }
 
-export async function specLive(id, subject) {
-  if (typeof id !== 'string') {
-    subject = id
-    id = ''
+export function createSpecLive() {
+  return function specLive(id, subject) {
+    if (typeof id !== 'string') {
+      subject = id
+      id = ''
+    }
+    const mode = getMode(id, 'live')
+    return createSpec(id, subject, mode)
   }
-  const mode = getMode(id, 'live')
-  return createSpec(id, subject, mode)
 }
 
-export async function specSave<T>(id: string, subject: T): Promise<Spec<T>> {
-  const mode = getMode(id, 'save')
-  return createSpec(id, subject, mode)
+
+export function createSpecSave() {
+  return function specSave<T>(id: string, subject: T): Promise<Spec<T>> {
+    const mode = getMode(id, 'save')
+    return createSpec(id, subject, mode)
+  }
 }
 
-export async function specSimulate<T>(id: string, subject: T): Promise<Spec<T>> {
-  const mode = getMode(id, 'simulate')
-  return createSpec(id, subject, mode)
+export function createSpecSimulate() {
+  return function specSimulate<T>(id: string, subject: T): Promise<Spec<T>> {
+    const mode = getMode(id, 'simulate')
+    return createSpec(id, subject, mode)
+  }
 }

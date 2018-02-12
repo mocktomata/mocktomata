@@ -111,7 +111,7 @@ test('given.simulate() calls local handler with mode = simulate', async t => {
 test('given.simulate() will force spec to simulate', async t => {
   function success(_a, _cb) {
     // the original line to create the spec
-    // callback(null, a + 1)
+    // _cb(null, _a + 1)
     t.fail('should not reach')
   }
   onGiven('simulate calling env', async ({ mode, spec }) => {

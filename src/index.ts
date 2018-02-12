@@ -4,7 +4,8 @@ export * from './errors'
 export * from './interfaces'
 export * from './io'
 export * from './spec'
-
+// import { config } from './config'
+// config.spec('save')
 import { registerPlugin } from './plugin'
 export { registerPlugin }
 import * as childProcess from './childProcess'

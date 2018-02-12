@@ -3,7 +3,7 @@ import { GivenMode } from './interfaces'
 import { io } from './io'
 import { spec, SpecFn } from './spec'
 import { store } from './store'
-import { specLive, specSave, specSimulate } from './specInternal'
+import { createSpecLive, createSpecSave, createSpecSimulate } from './specInternal'
 
 function findMatchingEntry(clause: string) {
   return store.givenEntries.find(entry => {
@@ -56,6 +56,7 @@ export const given = Object.assign(
     ): Promise<Given<T>> {
       const specsCreated: string[] = []
 
+      const specSave = createSpecSave()
       const saveSpecFn = function (id, subject) {
         if (typeof id !== 'string')
           throw new GivenSaveRequireSpecId(clause)
@@ -63,6 +64,7 @@ export const given = Object.assign(
         return specSave(id, subject)
       }
 
+      const specSimulate = createSpecSimulate()
       const simSpecFn = function (id, subject) {
         specsCreated.push(id)
         return specSimulate(id, subject)
@@ -85,10 +87,10 @@ export const given = Object.assign(
   }
 )
 
-const forceLiveSpec = Object.assign(specLive, { save: specSave, simulate: specLive })
+const forceLiveSpec = Object.assign(createSpecLive(), { save: createSpecSave(), simulate: createSpecLive() })
 const forceLiveContext = { mode: 'live', spec: forceLiveSpec } as any
 const liveContext = { mode: 'live', spec } as any
-const simSpec = Object.assign(specSimulate, { save: specSave, simulate: specSimulate })
+const simSpec = Object.assign(createSpecSimulate(), { save: createSpecSave(), simulate: createSpecSimulate() })
 const simulateContext = { mode: 'simulate', spec: simSpec } as any
 
 export interface GivenContext {

@@ -1,1 +1,0 @@
-{"expectation":"[{ type: 'fn/invoke', payload: [2] }, { type: 'fn/callback', payload: [null, 3] }, { type: 'fn/return' }]","actions":[{"type":"fn/invoke","payload":[2,null]},{"type":"fn/callback","payload":[null,3]},{"type":"fn/return"}]}

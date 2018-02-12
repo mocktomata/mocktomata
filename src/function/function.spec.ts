@@ -1,6 +1,8 @@
 import { test } from 'ava'
 import { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
+import fs from 'fs'
+import path from 'path'
 
 import { spec } from '../index'
 import {
@@ -11,6 +13,7 @@ import {
   delayed,
   recursive
 } from './testSuites'
+import { SPECS_FOLDER } from '../constants';
 
 test('spec.actions contains all actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
@@ -182,6 +185,7 @@ test('replay on not saved input will spy', async t => {
     { type: 'fn/return' }
   ])
   t.is(actual, 5)
+  t.false(fs.existsSync(path.resolve(SPECS_FOLDER, 'function/simpleCallback/notSavedToSpy.json')))
 
   const failSpec = await spec.simulate('function/simpleCallback failed/notSavedToSpy', simpleCallback.fail)
   await simpleCallback.increment(failSpec.subject, 8)
@@ -193,6 +197,7 @@ test('replay on not saved input will spy', async t => {
         { type: 'fn/return' }
       ])
     })
+  t.false(fs.existsSync(path.resolve(SPECS_FOLDER, 'function/simpleCallback failed/notSavedToSpy.json')))
 })
 
 //#endregion
@@ -223,7 +228,7 @@ test('fetch save', async t => {
 })
 
 test('fetch replay', async t => {
-  const speced = await spec.simulate('fetch', fetch.success)
+  const speced = await spec('fetch', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
@@ -280,7 +285,7 @@ test('literalCallback verify', async t => {
   const actual = await literalCallback.increment(speced.subject, 2)
   await speced.satisfy([
     { type: 'fn/invoke', payload: [{ 'data': 2 }] },
-    { type: 'fn/callback', payload: [3], meta: [0, 'success'] },
+    { type: 'fn/callback', payload: [3], meta: { callbackPath: [0, 'success'] } },
     { type: 'fn/return' }
   ])
   t.is(actual, 3)
@@ -292,7 +297,7 @@ test('literalCallback save', async t => {
 
   await speced.satisfy([
     { type: 'fn/invoke', payload: [{ 'data': 2 }] },
-    { type: 'fn/callback', payload: [3], meta: [0, 'success'] },
+    { type: 'fn/callback', payload: [3], meta: { callbackPath: [0, 'success'] } },
     { type: 'fn/return' }
   ])
   t.is(actual, 3)
@@ -304,7 +309,7 @@ test('literalCallback replay', async t => {
 
   await speced.satisfy([
     { type: 'fn/invoke', payload: [{ 'data': 2 }] },
-    { type: 'fn/callback', payload: [3], meta: [0, 'success'] },
+    { type: 'fn/callback', payload: [3], meta: { callbackPath: [0, 'success'] } },
     { type: 'fn/return' }
   ])
   t.is(actual, 3)
@@ -317,7 +322,7 @@ test('literalCallback fail case verify', async t => {
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: [{ 'data': 2 }] },
-        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: { callbackPath: [0, 'error'] } },
         { type: 'fn/return' }
       ])
     })
@@ -330,7 +335,7 @@ test('literalCallback fail case save', async t => {
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: [{ 'data': 2 }] },
-        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: { callbackPath: [0, 'error'] } },
         { type: 'fn/return' }
       ])
     })
@@ -344,7 +349,7 @@ test('literalCallback fail case replay', async t => {
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: [{ 'data': 2 }] },
-        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: [0, 'error'] },
+        { type: 'fn/callback', payload: [undefined, undefined, { message: 'fail' }], meta: { callbackPath: [0, 'error'] } },
         { type: 'fn/return' }
       ])
     })
