@@ -1,5 +1,5 @@
 export * from './config'
-export * from './environment'
+export * from './given'
 export * from './errors'
 export * from './interfaces'
 export * from './io'

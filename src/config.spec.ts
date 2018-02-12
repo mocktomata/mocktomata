@@ -1,7 +1,7 @@
 // import { AssertOrder } from 'assertron'
 import { test } from 'ava'
 
-import { config, environment, onEnvironment, spec, MissingSpecID } from './index'
+import { config, given, onGiven, spec, MissingSpecID } from './index'
 import { resetStore } from './store'
 
 const simpleCallback = {
@@ -117,64 +117,51 @@ test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async
 
 test('config.environment() with no filter sets mode for all environments', async t => {
   config.environment('live')
-  onEnvironment('config all 1', ({ mode }) => {
+  onGiven('config all 1', ({ mode }) => {
     t.is(mode, 'live')
   })
-  onEnvironment('config all 2', ({ mode }) => {
+  onGiven('config all 2', ({ mode }) => {
     t.is(mode, 'live')
   })
   return Promise.all([
-    environment.simulate('config all 1'),
-    environment.simulate('config all 2')
+    given.simulate('config all 1'),
+    given.simulate('config all 2')
   ])
 })
 
 test('config.environment() can filter by string', async t => {
   config.environment('live', 'config specific yes')
-  onEnvironment('config specific yes', ({ mode }) => {
+  onGiven('config specific yes', ({ mode }) => {
     t.is(mode, 'live')
   })
-  onEnvironment('config specific no', ({ mode }) => {
+  onGiven('config specific no', ({ mode }) => {
     t.is(mode, 'simulate')
   })
   return Promise.all([
-    environment.simulate('config specific yes'),
-    environment.simulate('config specific no')
+    given.simulate('config specific yes'),
+    given.simulate('config specific no')
   ])
 })
 
 test('config.environment() can filter by regex', async t => {
   config.environment('live', /yes/)
-  onEnvironment('config regex yes', ({ mode }) => {
+  onGiven('config regex yes', ({ mode }) => {
     t.is(mode, 'live')
   })
-  onEnvironment('config regex no', ({ mode }) => {
+  onGiven('config regex no', ({ mode }) => {
     t.is(mode, 'simulate')
   })
   return Promise.all([
-    environment.simulate('config regex yes'),
-    environment.simulate('config regex no')
+    given.simulate('config regex yes'),
+    given.simulate('config regex no')
   ])
 })
 
 /*
-env -> spec:
-  this scoping is needed so the env record knows which spec is in use.
-env -> spec.save/simulate:
-  this is needed as the spec can be reused in multiple env.
 env.save:
   this will save the EnvironmentRecord
   if linked spec is in live mode, it will also save.
   if linked spec is in simulate mode, it will stay in simulate mode.
-env.simulate:
-  this will read record and
-top level env:
-  this will serve as starting point of scenario.
-  when save, it will save the ScenarioRecord
-env(): Promise<void>:
-  Since we need to scope, the promise style return does not work.
-  Need to do the work inside `listener`.
-  Return void to avoid confusion.
 */
 
 

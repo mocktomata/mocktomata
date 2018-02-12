@@ -2,13 +2,13 @@ import fs = require('fs')
 import path = require('path')
 import { Stream, Writable } from 'stream'
 
-import { SPECS_FOLDER } from './constants'
-import { SpecRecord } from './interfaces'
+import { SPECS_FOLDER, GIVENS_FOLDER } from './constants'
+import { GivenRecord, SpecRecord } from './interfaces'
 import { log } from './log'
 
 export function readSpec(id: string) {
   return new Promise<any>((a, r) => {
-    const filePath = getJsonFilePath(id)
+    const filePath = getJsonFilePath(SPECS_FOLDER, id)
     try {
       const content = fs.readFileSync(filePath, 'utf8')
       const json = JSON.parse(content)
@@ -20,32 +20,15 @@ export function readSpec(id: string) {
     }
   })
 }
-function getFilePath(id: string) {
-  return path.resolve(SPECS_FOLDER, id)
-}
 
-function getJsonFilePath(id: string) {
+function getJsonFilePath(baseDir: string, id: string) {
   const basename = path.basename(id)
   const dirname = path.dirname(id)
-  return path.resolve(SPECS_FOLDER, dirname, `${basename}.json`)
+  return path.resolve(baseDir, dirname, `${basename}.json`)
 }
 
 export function writeSpec(id: string, record: SpecRecord) {
-  return new Promise<void>((a, r) => {
-    try {
-      const filePath = getJsonFilePath(id)
-      const folder = path.dirname(filePath)
-      // istanbul ignore next
-      if (!fs.existsSync(folder))
-        createFolders(folder)
-      fs.writeFileSync(filePath, JSON.stringify(record))
-      a()
-    }
-    catch (err) {
-      // istanbul ignore next
-      r(err)
-    }
-  })
+  return writeTo(SPECS_FOLDER, id, JSON.stringify(record))
 }
 
 // istanbul ignore next
@@ -71,6 +54,28 @@ function createFolders(location: string) {
   }, initDir);
 }
 
+export function writeGiven(id: string, record: GivenRecord) {
+  return writeTo(GIVENS_FOLDER, id, JSON.stringify(record))
+}
+
+function writeTo(baseDir, id, json) {
+  return new Promise<void>((a, r) => {
+    try {
+      const filePath = getJsonFilePath(baseDir, id)
+      const folder = path.dirname(filePath)
+      // istanbul ignore next
+      if (!fs.existsSync(folder))
+        createFolders(folder)
+      fs.writeFileSync(filePath, json)
+      a()
+    }
+    catch (err) {
+      // istanbul ignore next
+      r(err)
+    }
+  })
+}
+
 export function createWriteStream(id: string): Promise<Writable> {
   const filePath = getFilePath(id)
   const folder = path.dirname(filePath)
@@ -83,4 +88,8 @@ export function createWriteStream(id: string): Promise<Writable> {
 export function createReadStream(id: string): Promise<Stream> {
   const filePath = getFilePath(id)
   return Promise.resolve(fs.createReadStream(filePath))
+}
+
+function getFilePath(id: string) {
+  return path.resolve(SPECS_FOLDER, id)
 }

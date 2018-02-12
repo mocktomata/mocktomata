@@ -1,6 +1,6 @@
 import { RemoteStoreOptions, SpecMode } from './interfaces'
 
-export interface EnvironmentHandlerEntry {
+export interface GivenHandlerEntry {
   clause: string | RegExp,
   handler: any,
   invoked?: true
@@ -8,7 +8,7 @@ export interface EnvironmentHandlerEntry {
 
 let specDefaultMode
 let specOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
-let envEntries: EnvironmentHandlerEntry[] = []
+let givenEntries: GivenHandlerEntry[] = []
 let envDefaultMode
 let envOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 let storage
@@ -16,7 +16,7 @@ let storage
 export let store = {
   specDefaultMode,
   specOverrides,
-  envEntries,
+  givenEntries,
   envDefaultMode,
   envOverrides,
   get store(): RemoteStoreOptions {
@@ -31,7 +31,7 @@ export let store = {
 export function resetStore() {
   store.specDefaultMode = undefined
   store.specOverrides = []
-  store.envEntries = []
+  store.givenEntries = []
   store.envDefaultMode = undefined
   store.envOverrides = []
 }

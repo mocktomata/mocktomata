@@ -1,8 +1,7 @@
 import { Logger } from '@unional/logging'
-import { getReturnSpy, getReturnStub } from './index';
 
 export type SpecMode = 'live' | 'save' | 'simulate'
-export type EnvironmentMode = 'live' | 'simulate'
+export type GivenMode = 'live' | 'save' | 'simulate'
 
 export interface RemoteStoreOptions {
   url: string
@@ -42,7 +41,6 @@ export interface SpecRecord {
   expectation: string,
   actions: SpecAction[]
 }
-
 
 export interface Spec<T> extends Spy<T> {
   /**
@@ -112,3 +110,6 @@ export interface WebSocketSpecRecord {
   expectation: string
 }
 
+export interface GivenRecord {
+  specs?: string[]
+}

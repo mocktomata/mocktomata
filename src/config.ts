@@ -1,8 +1,8 @@
 import { store } from './store'
-import { SpecMode, EnvironmentMode } from './interfaces'
+import { SpecMode, GivenMode } from './interfaces'
 
 export const config = {
-  environment(mode: EnvironmentMode, filter?: string | RegExp) {
+  environment(mode: GivenMode, filter?: string | RegExp) {
     if (filter) {
       store.envOverrides.push({ mode, filter })
     }

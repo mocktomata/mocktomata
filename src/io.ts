@@ -11,6 +11,7 @@ function getIO() {
   }
   return fileIO
 }
+
 /**
  * Factory for writer.
  * Depends on config, it will return different write funcitons,
@@ -22,6 +23,9 @@ export const io = {
   },
   get writeSpec(): (id: string, record: SpecRecord) => Promise<void> {
     return getIO().writeSpec
+  },
+  get writeGiven() {
+    return getIO().writeGiven
   },
   get createWriteStream(): (id: string) => Promise<Writable> {
     return getIO().createWriteStream

@@ -1,7 +1,7 @@
 import { Stream, Writable } from 'stream'
 import fetch = require('node-fetch')
 
-import { SpecRecord } from './interfaces'
+import { SpecRecord, GivenRecord } from './interfaces'
 
 async function fetchString(address: string, options?): Promise<string> {
   const response = await fetch(address, options)
@@ -33,6 +33,10 @@ export function getRemoteIO(url: string) {
       return JSON.parse(result)
     },
     writeSpec(id: string, record: SpecRecord): Promise<void> {
+      const data = JSON.stringify(record)
+      return postString(`${url}/${id}`, data)
+    },
+    writeGiven(id: string, record: GivenRecord): Promise<void> {
       const data = JSON.stringify(record)
       return postString(`${url}/${id}`, data)
     },

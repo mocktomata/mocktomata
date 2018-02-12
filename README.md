@@ -1,7 +1,3 @@
-TODO
-- env -> spec
-- expose plugin
-
 # komondor
 
 ![unstable][unstable-image]
@@ -174,6 +170,20 @@ All you need is to change the `mode` from `save` to `replay`:
 ```
 
 That's it! Now your test will be ran using the saved result and not making actual remote calls.
+
+## given
+
+`given` is a construct to declare and verify the fixture of the spec to run on.
+It is a mean to communicate between engineer, QA, and possibility IT.
+It can consist of `spec`, which is used to configure or validate if the environment is valid.
+These specs provide the necessary information for the QA and IT to re-create the fixture.
+
+Alternatively, a service can be provided to get the fixture information at real time,
+so that the fixture can be decoupled from the tests.
+
+For example, when a test ask for a "version 1, normal load" environment,
+the service can spawn up a new docker container and return the endpoint information to the test.
+That means each test can be run in its own environment.
 
 ## API
 

@@ -3,7 +3,7 @@ import path = require('path')
 const pjson = require('../package.json')
 
 export const SPECS_FOLDER = `__${pjson.name}__${path.sep}specs`
-export const SCENARIOS_FOLDER = `__${pjson.name}__${path.sep}scenarios`
+export const GIVENS_FOLDER = `__${pjson.name}__${path.sep}givens`
 
 // put this here before Scenario is implemented
 export interface ScenarioOptions {
