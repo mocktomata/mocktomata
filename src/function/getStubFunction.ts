@@ -58,21 +58,21 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
       }
       return spied.call(this, ...args)
     }
-    currentId = Math.max(currentId, inputAction.meta.funcionId)
+    currentId = Math.max(currentId, inputAction.meta.functionId)
     context.next()
     const result = processUntilReturn()
 
-    // setImmediate(() => {
-    //   let action = context.peek()
-    //   while (action && action.meta.functionId <= currentId) {
-    //     context.next()
-    //     if (action.type === 'fn/callback') {
-    //       const callback = locateCallback(action.meta, args)
-    //       callback(...action.payload)
-    //     }
-    //     action = context.peek()
-    //   }
-    // })
+    process.nextTick(() => {
+      let action = context.peek()
+      while (action && action.meta.functionId <= currentId) {
+        context.next()
+        if (action.type === 'fn/callback') {
+          const callback = locateCallback(action.meta, args)
+          callback(...action.payload)
+        }
+        action = context.peek()
+      }
+    })
     return result
     function processUntilReturn() {
       const action = context.peek()

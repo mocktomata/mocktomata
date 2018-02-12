@@ -11,7 +11,8 @@ import {
   literalCallback,
   synchronous,
   delayed,
-  recursive
+  recursive,
+  postReturn
 } from './testSuites'
 import { SPECS_FOLDER } from '../constants';
 
@@ -474,5 +475,68 @@ test('recursive (replay)', async t => {
     { type: 'fn/callback', payload: [null, 0] },
     { type: 'fn/return' },
     { type: 'fn/return' }
+  ])
+})
+
+test('postReturn style', async () => {
+  const pspec = await spec('function/postReturn/success', postReturn.fireEvent)
+
+  await new Promise(a => {
+    let called = 0
+    pspec.subject('event', 3, () => {
+      called++
+      if (called === 3)
+        a()
+    })
+  })
+
+  await pspec.satisfy([
+    { type: 'fn/invoke', payload: ['event', 3] },
+    { type: 'fn/return' },
+    { type: 'fn/callback', payload: ['event'] },
+    { type: 'fn/callback', payload: ['event'] },
+    { type: 'fn/callback', payload: ['event'] }
+  ])
+})
+
+test('postReturn style save', async () => {
+  const pspec = await spec.save('function/postReturn/success', postReturn.fireEvent)
+
+  await new Promise(a => {
+    let called = 0
+    pspec.subject('event', 3, () => {
+      called++
+      if (called === 3)
+        a()
+    })
+  })
+
+  await pspec.satisfy([
+    { type: 'fn/invoke', payload: ['event', 3] },
+    { type: 'fn/return' },
+    { type: 'fn/callback', payload: ['event'] },
+    { type: 'fn/callback', payload: ['event'] },
+    { type: 'fn/callback', payload: ['event'] }
+  ])
+})
+
+test('postReturn style simulate', async () => {
+  const pspec = await spec.simulate('function/postReturn/success', postReturn.fireEvent)
+
+  await new Promise(a => {
+    let called = 0
+    pspec.subject('event', 3, () => {
+      called++
+      if (called === 3)
+        a()
+    })
+  })
+
+  await pspec.satisfy([
+    { type: 'fn/invoke', payload: ['event', 3] },
+    { type: 'fn/return' },
+    { type: 'fn/callback', payload: ['event'] },
+    { type: 'fn/callback', payload: ['event'] },
+    { type: 'fn/callback', payload: ['event'] }
   ])
 })

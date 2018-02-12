@@ -95,3 +95,13 @@ export const recursive = {
     callback(null, a - 1)
   }
 }
+
+export const postReturn = {
+  fireEvent(name, times, callback) {
+    setImmediate(() => {
+      for (let i = 0; i < times; i++)
+        callback(name)
+    })
+    return
+  }
+}
