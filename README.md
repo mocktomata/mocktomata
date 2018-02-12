@@ -109,7 +109,7 @@ import { spec } from 'komondor'
 // test subject
 ...
 
-test('get follower of a user', t => {
+test('get follower of a user', async t => {
   const github = new GitHub()
   const getFollowersSpec = await spec(github.users.getFollowersForUser)
 
@@ -119,9 +119,7 @@ test('get follower of a user', t => {
   const followers = await getFollowers(github, 'someRealUser')
 
   // (optional) get the actual actions recorded by `komondor` for inspection
-  const actions = getFollowersSpec.actions
-
-  console.log(actions)
+  console.log(getFollowersSpec.actions)
 
   // (required) ensure the record will meet your expectation
   await getFollowersSpec.satisfy([
@@ -144,13 +142,12 @@ Please check it out to see how to define your expectation.
 Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
 you can now tell `komondor` to save the result.
 
-To do that, all you need to do is adding a option to the `spec()` call to give the spec an `id` and change the mode to `save`:
+To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide a `name` to it.:
 
 ```ts
-  const getFollowersSpec = await spec(
-    github.users.getFollowersForUser,
-    { id: 'github getFollowersForUser', mode: 'save' }
-  )
+  const getFollowersSpec = await spec.save(
+    'github getFollowersForUser',
+    github.users.getFollowersForUser)
 ```
 
 When you run the test, the result will be saved.
@@ -160,13 +157,12 @@ When you run the test, the result will be saved.
 The last step is to tell `komondor` to use the recorded data in the test.
 
 The way to do it is extremely simple.
-All you need is to change the `mode` from `save` to `replay`:
+All you need is to change the call from `spec.save()` to `spec.simulate()`:
 
 ```ts
-  const getFollowersSpec = await spec(
-    github.users.getFollowersForUser,
-    { id: 'github getFollowersForUser', mode: 'replay' }
-  )
+  const getFollowersSpec = await spec.simulate(
+    'github getFollowersForUser',
+    github.users.getFollowersForUser)
 ```
 
 That's it! Now your test will be ran using the saved result and not making actual remote calls.
@@ -187,28 +183,23 @@ That means each test can be run in its own environment.
 
 ## API
 
-### spec(fn, options)
+### spec()
 
 ```ts
-function spec<T extends Function>(fn: T, options: Partial<SpecOptions>): Spec<T>
+function spec<T extends Function>(fn: T): Promise<Spec<T>>
+function spec<T extends Function>(name: string, fn: T): Promise<Spec<T>>
+function spec.save<T extends Function>(name: string, fn: T): Promise<Spec<T>>
+function spec.simulate<T extends Function>(name: string, fn: T): Promise<Spec<T>>
+```
 
-interface SpecOptions {
-  /**
-   * A unique id of the spec.
-   * When saving to file,
-   * any '/' in the id will be used as folder separator.
-   * i.e. if a spec `id` is `github/getFollowersForUser/success`
-   * it will be saved as `<komondor_folder>/github/getFollowersForUser/success.json`
-   */
-  id: string,
-  /**
-   * Mode of the spec.
-   * `verify` (default) run real call and spy on the result.
-   * `save` run real call, spy and save the result.
-   * `replay' replay call from saved result.
-   */
-  mode: 'verify' | 'save' | 'replay'
-}
+### given()
+
+```ts
+function given<T extends Function>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+function given.save<T extends Function>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+function given.simulate<T extends Function>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+
+function onGiven(clause: string | RegExp, handler: (context: GivenContext) => any): void
 ```
 
 ## Security
