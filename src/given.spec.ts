@@ -146,10 +146,21 @@ test('lcoal context contains spec', async t => {
   await given('local context has spec', ({ spec }) => t.truthy(spec))
 })
 
+test('save() without global handler throws', async t => {
+  await t.throws(given.save('no handler with save'), MissingGivenHandler)
+})
+
+test('save() with duplicate regex handler will throws', async t => {
+  onGiven('dup handler for save', () => t.fail('should not reach'))
+
+  await t.throws(given.save('dup handler for save', () => { return }), DuplicateGivenHandler)
+})
+
 test('save() will save record', async t => {
   await given.save('save record', () => { return })
   t.true(fs.existsSync(path.resolve(GIVENS_FOLDER, 'save record.json')))
 })
+
 test('save() with no-id-spec will throw', async t => {
   function success(a, callback) {
     callback(null, a + 1)
