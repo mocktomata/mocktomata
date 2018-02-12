@@ -1,7 +1,7 @@
 import { test } from 'ava'
+import { setImmediate } from 'timers'
 
 import { spec } from '../index'
-import { setImmediate } from 'timers';
 
 class Foo {
   constructor(public x) { }

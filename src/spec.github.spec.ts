@@ -2,7 +2,7 @@ import { test } from 'ava'
 import GitHub = require('github')
 import { every } from 'satisfier'
 
-import { spec } from './spec'
+import { spec } from './index'
 import { createGitHubTest } from './testUtil'
 
 function getFollowers(github: GitHub, username: string) {
@@ -25,6 +25,7 @@ test('get followers (demo)', async t => {
 
   await specs.satisfy([
     undefined,
+    { type: 'fn/return' },
     {
       type: 'fn/callback',
       payload: [null, {

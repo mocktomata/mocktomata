@@ -2,7 +2,7 @@ import { test } from 'ava'
 import stream = require('stream')
 import { setTimeout, setImmediate } from 'timers'
 
-import { spec } from '../spec'
+import { spec } from '../index'
 
 const promise = {
   increment(remote, x) {

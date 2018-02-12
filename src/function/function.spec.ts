@@ -2,7 +2,7 @@ import { test } from 'ava'
 import { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
 
-import { spec } from '../spec'
+import { spec } from '../index'
 import {
   simpleCallback,
   fetch,
