@@ -187,7 +187,7 @@ test('save() will record specs used', async t => {
   await given.save('save record with spec', async ({ spec }) => {
     const cbSpec = await spec('given/with spec', success)
     cbSpec.subject(2, (_err, a) => t.is(a, 3))
-    await cbSpec.satisfy({})
+    await cbSpec.satisfy([])
   })
   const actual = JSON.parse(fs.readFileSync(path.resolve(GIVENS_FOLDER, 'save record with spec.json'), 'utf-8'))
   t.is(actual.specs[0], 'given/with spec')
@@ -201,7 +201,7 @@ test('save() will save spec info from global handler', async t => {
   onGiven('save record with spec in global handler', async ({ spec }) => {
     const cbSpec = await spec('given/with spec in global handler', success)
     cbSpec.subject(2, (_err, a) => t.is(a, 3))
-    await cbSpec.satisfy({})
+    await cbSpec.satisfy([])
   })
   await given.save('save record with spec in global handler')
   const actual = JSON.parse(fs.readFileSync(path.resolve(GIVENS_FOLDER, 'save record with spec in global handler.json'), 'utf-8'))
@@ -218,7 +218,7 @@ test('save() will not cause spec.simulate() to save', async t => {
   await given.save('save record with spec.simulate', async ({ spec }) => {
     const cbSpec = await spec.simulate('given/with spec.simulate', success)
     cbSpec.subject(2, (_err, a) => t.is(a, 3))
-    await cbSpec.satisfy({})
+    await cbSpec.satisfy([])
   })
   const actual = JSON.parse(fs.readFileSync(path.resolve(GIVENS_FOLDER, 'save record with spec.simulate.json'), 'utf-8'))
   t.is(actual.specs[0], 'given/with spec.simulate')

@@ -41,12 +41,17 @@ export interface SpecRecord {
   expectation: string,
   actions: SpecAction[]
 }
-
+export interface SpecExpectation {
+  type?: string,
+  payload?: any,
+  meta?: any,
+  error?: any
+}
 export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
-  satisfy(expectation: any): Promise<void>
+  satisfy(expectation: Array<SpecExpectation | undefined>): Promise<void>
 }
 
 export interface SpecRecorder {
