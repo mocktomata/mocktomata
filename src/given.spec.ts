@@ -3,9 +3,8 @@ import { test } from 'ava'
 import fs from 'fs'
 import path from 'path'
 
-import { onGiven, given } from './given'
-import { MissingGivenHandler, DuplicateGivenHandler, GivenSaveRequireSpecId } from './errors'
-import { GIVENS_FOLDER, SPECS_FOLDER } from './constants';
+import { GIVENS_FOLDER, SPECS_FOLDER } from './constants'
+import { MissingGivenHandler, DuplicateGivenHandler, GivenSaveRequireSpecId, onGiven, given } from './index'
 
 test('no handler registered throws MissingGivenHandler', async t => {
   await t.throws(given('no handler'), MissingGivenHandler)
@@ -112,7 +111,7 @@ test('given.simulate() calls local handler with mode = simulate', async t => {
 test('given.simulate() will force spec to simulate', async t => {
   function success(_a, _cb) {
     // the original line to create the spec
-    // callback(null, a + 1)
+    // _cb(null, _a + 1)
     t.fail('should not reach')
   }
   onGiven('simulate calling env', async ({ mode, spec }) => {

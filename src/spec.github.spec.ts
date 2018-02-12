@@ -2,7 +2,7 @@ import { test } from 'ava'
 import GitHub = require('github')
 import { every } from 'satisfier'
 
-import { spec } from './spec'
+import { spec } from './index'
 import { createGitHubTest } from './testUtil'
 
 function getFollowers(github: GitHub, username: string) {
@@ -10,21 +10,23 @@ function getFollowers(github: GitHub, username: string) {
     github.users.getFollowersForUser({
       username
     }, (err, res) => {
+      console.log('called')
       if (err) r(err)
       a(res)
     })
   })
 }
 
-test('get followers (demo)', async t => {
+test.skip('get followers (demo)', async t => {
   const github = await createGitHubTest()
-  const specs = await spec.simulate('github/getFollowersForUser/success', github.users.getFollowersForUser)
-
+  const specs = await spec('github/getFollowersForUser/success', github.users.getFollowersForUser)
   github.users.getFollowersForUser = specs.subject
+
   await getFollowers(github, 'unional')
 
   await specs.satisfy([
-    undefined,
+    { type: 'fn/invoke', payload: [{ username: 'unional' }] },
+    { type: 'fn/return' },
     {
       type: 'fn/callback',
       payload: [null, {

@@ -1,6 +1,6 @@
 import { test } from 'ava'
 
-import { spec } from '../spec'
+import { spec } from '../index'
 
 const childProcess = {
   increment(remote, x) {

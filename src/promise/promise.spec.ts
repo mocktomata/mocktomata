@@ -2,7 +2,7 @@ import { test } from 'ava'
 import stream = require('stream')
 import { setTimeout, setImmediate } from 'timers'
 
-import { spec } from '../spec'
+import { spec } from '../index'
 
 const promise = {
   increment(remote, x) {
@@ -16,7 +16,52 @@ const promise = {
   }
 }
 
-test('promise verify', async t => {
+const noReturn = {
+  doSomething(remote) {
+    return remote()
+  },
+  success() {
+    return Promise.resolve()
+  }
+}
+
+test('live with noReturn', async () => {
+  const noReturnSpec = await spec(noReturn.success)
+  return noReturn.doSomething(noReturnSpec.subject)
+    .then(() => {
+      return noReturnSpec.satisfy([
+        { type: 'fn/invoke' },
+        { type: 'fn/return', meta: { returnType: 'promise' } },
+        { type: 'promise', meta: { status: 'resolve' } }
+      ])
+    })
+})
+
+test('save with noReturn', async () => {
+  const noReturnSpec = await spec.save('promise/noReturn', noReturn.success)
+  return noReturn.doSomething(noReturnSpec.subject)
+    .then(() => {
+      return noReturnSpec.satisfy([
+        { type: 'fn/invoke' },
+        { type: 'fn/return', meta: { returnType: 'promise' } },
+        { type: 'promise', meta: { status: 'resolve' } }
+      ])
+    })
+})
+
+test('simulate with noReturn', async () => {
+  const noReturnSpec = await spec.simulate('promise/noReturn', noReturn.success)
+  return noReturn.doSomething(noReturnSpec.subject)
+    .then(() => {
+      return noReturnSpec.satisfy([
+        { type: 'fn/invoke' },
+        { type: 'fn/return', meta: { returnType: 'promise' } },
+        { type: 'promise', meta: { status: 'resolve' } }
+      ])
+    })
+})
+
+test('promise live', async t => {
   const speced = await spec(promise.success)
   // not using `await` to make sure the return value is a promise.
   // `await` will hide the error if the return value is not a promise.

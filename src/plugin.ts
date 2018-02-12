@@ -1,9 +1,3 @@
-import * as childProcess from './childProcess'
-import * as genericClass from './class'
-import * as genericFunction from './function'
-import * as promise from './promise'
-import * as stream from './stream'
-import * as ws from './ws'
 
 import {
   // @ts-ignore
@@ -64,16 +58,8 @@ const komondorRegistrar: KomondorRegistrar = {
   }
 }
 
-function registerPlugin(plugin) {
+export function registerPlugin(plugin) {
   if (plugin.activate) {
     plugin.activate(komondorRegistrar, komondorUtil)
   }
 }
-
-// order is important, top is generic, bottom is specific.
-registerPlugin(promise)
-registerPlugin(stream)
-registerPlugin(childProcess)
-registerPlugin(genericFunction)
-registerPlugin(genericClass)
-registerPlugin(ws)

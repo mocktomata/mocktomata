@@ -1,5 +1,5 @@
 import { Spec } from './interfaces'
-import { specSimulate, specSave, specLive } from './specInternal'
+import { createSpecSimulate, createSpecSave, createSpecLive } from './specInternal'
 
 export interface SpecFn {
   <T>(subject: T): Promise<Spec<T>>
@@ -9,8 +9,8 @@ export interface SpecFn {
 }
 
 export const spec = Object.assign(
-  specLive,
+  createSpecLive(),
   {
-    save: specSave,
-    simulate: specSimulate
+    save: createSpecSave(),
+    simulate: createSpecSimulate()
   }) as SpecFn

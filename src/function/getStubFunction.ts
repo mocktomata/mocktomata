@@ -33,17 +33,18 @@ function inputMatches(a, b: any[]) {
 }
 
 function locateCallback(meta, args) {
-  if (!meta) {
+  if (!meta.callbackPath) {
     return args.find(arg => typeof arg === 'function')
   }
-  if (Array.isArray(meta))
-    return meta.reduce((p, v) => {
-      return p[v]
-    }, args)
+
+  return meta.callbackPath.reduce((p, v) => {
+    return p[v]
+  }, args)
 }
 
 export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, subject, id: string) {
   let spied
+  let currentId = 0
   return function (...args) {
     if (spied)
       return spied.call(this, ...args)
@@ -57,13 +58,26 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, sub
       }
       return spied.call(this, ...args)
     }
+    currentId = Math.max(currentId, inputAction.meta.functionId)
     context.next()
+    const result = processUntilReturn()
 
-    return processUntilReturn()
-
+    process.nextTick(() => {
+      let action = context.peek()
+      while (action && action.meta.functionId <= currentId) {
+        context.next()
+        if (action.type === 'fn/callback') {
+          const callback = locateCallback(action.meta, args)
+          callback(...action.payload)
+        }
+        action = context.peek()
+      }
+    })
+    return result
     function processUntilReturn() {
       const action = context.peek()
       if (!action) return undefined
+      if (action.meta.functionId > currentId) return undefined
 
       if (action.type === 'fn/return') {
         const result = action.meta && komondor.getReturnStub(context, action) || action.payload

@@ -12,8 +12,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
     else
       util.log.warn(`No record for '${callSite}'. Spying instead`)
     context.prune()
-    info.spy = new (spyClass(context, util, subject) as any)(...info.ctorArgs)
-    return info.spy
+    return info.spy = new (spyClass(context, util, subject) as any)(...info.ctorArgs)
   }
 
   function emitNextActions() {
