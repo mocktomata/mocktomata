@@ -1,4 +1,4 @@
-// import { AssertOrder } from 'assertron'
+import { AssertOrder } from 'assertron'
 import { test } from 'ava'
 
 import { config, given, onGiven, spec, MissingSpecID } from './index'
@@ -157,41 +157,21 @@ test('config.environment() can filter by regex', async t => {
   ])
 })
 
-/*
-env.save:
-  this will save the EnvironmentRecord
-  if linked spec is in live mode, it will also save.
-  if linked spec is in simulate mode, it will stay in simulate mode.
-*/
+test(`config.environment('live') will force spec.sim() to spec()`, async t => {
+  config.environment('live', 'env forced live also force spec')
+  const order = new AssertOrder(1)
+  await given.simulate('env forced live also force spec', async ({ spec }) => {
+    function success(a, callback) {
+      order.once(1)
+      callback(null, a + 1)
+    }
 
-
-// test('', () => {
-//   return environment.simulate([
-//     'normal load',
-//     'admin',
-//     'login',
-//     '...'
-//   ], (context, fixture) => {
-//     context
-//   })
-// })
-// test(`config.environment('live') will `, async t => {
-//   config.environment('live', 'env forced live also force spec')
-//   const order = new AssertOrder(1)
-//   onEnvironment('env forced live also force spec', () => ({}))
-//   await environment.simulate('env forced live also force spec', async ({ spec }) => {
-//     function success(a, callback) {
-//       order.once(1)
-//       callback(null, a + 1)
-//     }
-
-//     const simpleSpec = await spec.simulate('simpleCallback', success)
-//     const actual = await simpleCallback.increment(simpleSpec.subject, 2)
-//     t.is(actual, 3)
-
-//     order.end()
-//   })
-// })
+    const simpleSpec = await spec.simulate('simpleCallback', success)
+    const actual = await simpleCallback.increment(simpleSpec.subject, 2)
+    t.is(actual, 3)
+  })
+  order.end()
+})
 
 // test.skip('config to save on remote server', async () => {
 //   config({

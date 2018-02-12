@@ -3,6 +3,7 @@ import { GivenMode } from './interfaces'
 import { io } from './io'
 import { spec, SpecFn } from './spec'
 import { store } from './store'
+import { specLive, specSave, specSimulate } from './specInternal'
 
 function findMatchingEntry(clause: string) {
   return store.givenEntries.find(entry => {
@@ -59,12 +60,12 @@ export const given = Object.assign(
         if (typeof id !== 'string')
           throw new GivenSaveRequireSpecId(clause)
         specsCreated.push(id)
-        return spec.save(id, subject)
+        return specSave(id, subject)
       }
 
       const simSpecFn = function (id, subject) {
         specsCreated.push(id)
-        return spec.simulate(id, subject)
+        return specSimulate(id, subject)
       }
       const saveSpec = Object.assign(saveSpecFn, { save: saveSpecFn, simulate: simSpecFn })
       const envContext = { mode: 'save', spec: saveSpec }
@@ -84,8 +85,10 @@ export const given = Object.assign(
   }
 )
 
+const forceLiveSpec = Object.assign(specLive, { save: specSave, simulate: specLive })
+const forceLiveContext = { mode: 'live', spec: forceLiveSpec } as any
 const liveContext = { mode: 'live', spec } as any
-const simSpec = Object.assign(spec.simulate, { save: spec.save, simulate: spec.simulate })
+const simSpec = Object.assign(specSimulate, { save: specSave, simulate: specSimulate })
 const simulateContext = { mode: 'simulate', spec: simSpec } as any
 
 export interface GivenContext {
@@ -110,9 +113,8 @@ function getEffectiveModel(clause: string, mode: GivenMode) {
 }
 function getContext(clause: string, mode: GivenMode) {
   const effectiveMode = getEffectiveModel(clause, mode)
-
   if (effectiveMode === 'live')
-    return liveContext
+    return mode !== effectiveMode ? forceLiveContext : liveContext
   if (effectiveMode === 'simulate')
     return simulateContext
 }
