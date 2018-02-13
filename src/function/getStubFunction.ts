@@ -1,4 +1,5 @@
 import { SpecContext, SpecPluginUtil } from '../interfaces'
+import { SimulationMismatch } from '..';
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -42,21 +43,12 @@ function locateCallback(meta, args) {
   }, args)
 }
 
-export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, subject, id: string) {
-  let spied
+export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, _subject, id: string) {
   let currentId = 0
   return function (...args) {
-    if (spied)
-      return spied.call(this, ...args)
-
     const inputAction = context.peek()
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
-      if (!spied) {
-        komondor.log.warn(`Calling input does not match with saved record of spec '${id}'. Spying instead.`)
-        context.prune()
-        spied = komondor.getSpy(context, subject)
-      }
-      return spied.call(this, ...args)
+      throw new SimulationMismatch(id, 'fn/invoke', inputAction)
     }
     currentId = Math.max(currentId, inputAction.meta.functionId)
     context.next()
