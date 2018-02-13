@@ -1,20 +1,9 @@
 import { createSatisfier } from 'satisfier'
-import { SpecContext, SpecPluginUtil } from '../interfaces'
 
-import { spyClass } from './spyClass'
+import { SpecContext, SpecPluginUtil } from '../interfaces'
+import { SimulationMismatch } from '..';
 
 export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, id: string) {
-  function switchToSpy(callSite, info) {
-    if (info.spy) return info.spy
-
-    if (context.peek())
-      util.log.warn(`The current action '${callSite}' does not match with saved record of ${id}. Spying instead.`)
-    else
-      util.log.warn(`No record for '${callSite}'. Spying instead`)
-    context.prune()
-    return info.spy = new (spyClass(context, util, subject) as any)(...info.ctorArgs)
-  }
-
   function emitNextActions() {
     let action = context.peek()
     if (action && action.type === 'class/return') {
@@ -42,7 +31,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
 
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        switchToSpy('constructor', this.__komondorStub)
+        throw new SimulationMismatch(id, 'constructor', action)
       }
       else {
         context.next()
@@ -60,8 +49,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
 
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        const spy = switchToSpy(p, this.__komondorStub)
-        return spy[p](...args)
+        throw new SimulationMismatch(id, p, action)
       }
       else {
         args.forEach((arg, i) => {

@@ -1,10 +1,8 @@
 import { test } from 'ava'
 import { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
-import fs from 'fs'
-import path from 'path'
 
-import { spec } from '../index'
+import { spec, SimulationMismatch } from '../index'
 import {
   simpleCallback,
   fetch,
@@ -14,7 +12,6 @@ import {
   recursive,
   postReturn
 } from './testSuites'
-import { SPECS_FOLDER } from '../constants';
 
 test('spec.actions contains all actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
@@ -176,29 +173,10 @@ test('simpleCallback fail case replay', async t => {
     })
 })
 
-test('replay on not saved input will spy', async t => {
-  const successSpec = await spec.simulate('function/simpleCallback/notSavedToSpy', simpleCallback.success)
+test('simulate without record will throw', async t => {
+  const noRecordSpec = await spec.simulate('function/simpleCallback/notExist', simpleCallback.success)
 
-  const actual = await simpleCallback.increment(successSpec.subject, 4)
-  await successSpec.satisfy([
-    { type: 'fn/invoke', payload: [4] },
-    { type: 'fn/callback', payload: [null, 5] },
-    { type: 'fn/return' }
-  ])
-  t.is(actual, 5)
-  t.false(fs.existsSync(path.resolve(SPECS_FOLDER, 'function/simpleCallback/notSavedToSpy.json')))
-
-  const failSpec = await spec.simulate('function/simpleCallback failed/notSavedToSpy', simpleCallback.fail)
-  await simpleCallback.increment(failSpec.subject, 8)
-    .then(() => t.fail())
-    .catch(() => {
-      return failSpec.satisfy([
-        { type: 'fn/invoke', payload: [8] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
-      ])
-    })
-  t.false(fs.existsSync(path.resolve(SPECS_FOLDER, 'function/simpleCallback failed/notSavedToSpy.json')))
+  await t.throws(simpleCallback.increment(noRecordSpec.subject, 4), SimulationMismatch)
 })
 
 //#endregion
@@ -426,25 +404,11 @@ test('synchronous fail replay', async t => {
 
 //#endregion
 
-test('simpleCallback call again will turn into spy mode', async t => {
-  const cbSpec = await spec.simulate('function/simpleCallback/callAgainToSpy', simpleCallback.success)
+test('missing record will throw', async t => {
+  const cbSpec = await spec.simulate('function/simpleCallback/incompleteRecords', simpleCallback.success)
   t.is(await simpleCallback.increment(cbSpec.subject, 2), 3)
 
-  t.is(await simpleCallback.increment(cbSpec.subject, 4), 5)
-
-  t.is(await simpleCallback.increment(cbSpec.subject, 5), 6)
-
-  await cbSpec.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' },
-    { type: 'fn/invoke', payload: [4] },
-    { type: 'fn/callback', payload: [null, 5] },
-    { type: 'fn/return' },
-    { type: 'fn/invoke', payload: [5] },
-    { type: 'fn/callback', payload: [null, 6] },
-    { type: 'fn/return' }
-  ])
+  await t.throws(simpleCallback.increment(cbSpec.subject, 4), SimulationMismatch)
 })
 
 

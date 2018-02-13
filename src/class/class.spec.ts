@@ -1,10 +1,7 @@
 import { test } from 'ava'
-import fs from 'fs'
-import path from 'path'
 import { setImmediate } from 'timers'
 
-import { spec } from '../index'
-import { SPECS_FOLDER } from '../constants';
+import { spec, SimulationMismatch } from '../index'
 
 class Foo {
   constructor(public x) { }
@@ -53,20 +50,9 @@ test('simple class simulate', async t => {
 })
 
 
-test('simple class simulate with different constructor will spy instead', async t => {
-  const fooSpec = await spec.simulate('class/simple-spy-constructor', Foo)
-  const foo = new fooSpec.subject(2)
-  const actual = foo.getValue()
-  t.is(actual, 2)
-
-  const json = JSON.parse(fs.readFileSync(path.resolve(SPECS_FOLDER, 'class/simple-spy-constructor.json'), 'utf-8'))
-  t.is(json.actions[0].payload[0], 1)
-
-  await fooSpec.satisfy([
-    { type: 'class/constructor', payload: [2] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getValue' } },
-    { type: 'class/return', payload: 2 }
-  ])
+test('simple class simulate with different constructor will throw', async t => {
+  const fooSpec = await spec.simulate('class/wrongConstructorCall', Foo)
+  await t.throws(() => new fooSpec.subject(2), SimulationMismatch)
 })
 
 class Boo extends Foo {
