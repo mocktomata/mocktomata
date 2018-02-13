@@ -39,8 +39,8 @@ export class GivenSaveRequireSpecId extends Error {
 
 export class SimulationMismatch extends Error {
   // istanbul ignore next
-  constructor(public id: string, public expectedActionType: string, public receivedAction?: SpecAction) {
-    super(`Recorded data for '${id}' doesn't match with simulation. Expecting action type '${expectedActionType}' but received: ${tersify(receivedAction)}`)
+  constructor(public id: string, public expectedAction: string | SpecAction, public receivedAction?: SpecAction) {
+    super(`Recorded data for '${id}' doesn't match with simulation. Expecting action type ${tersify(expectedAction)} but received: ${tersify(receivedAction)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }
