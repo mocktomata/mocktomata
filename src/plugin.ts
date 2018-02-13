@@ -1,3 +1,4 @@
+import path from 'path'
 
 import {
   // @ts-ignore
@@ -62,4 +63,28 @@ export function registerPlugin(plugin) {
   if (plugin.activate) {
     plugin.activate(komondorRegistrar, komondorUtil)
   }
+}
+
+// istanbul ignore next
+export function loadPlugins() {
+  const cwd = process.cwd()
+  const config = loadConfig(cwd)
+  if (config && config.plugins) {
+    config.plugins.forEach(p => {
+      loadPlugin(cwd, p)
+    })
+  }
+}
+
+// istanbul ignore next
+export function loadConfig(cwd) {
+  const pjson = require(path.resolve(cwd, 'package.json'))
+  return pjson.komondor
+}
+
+// istanbul ignore next
+export function loadPlugin(cwd, p) {
+  const pluginPath = path.resolve(cwd, 'node_modules', p)
+  const m = require(pluginPath)
+  registerPlugin(m)
 }
