@@ -49,7 +49,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
 
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(id, p, action)
+        throw new SimulationMismatch(id, { type: p, payload: args }, action)
       }
       else {
         args.forEach((arg, i) => {

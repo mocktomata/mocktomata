@@ -48,7 +48,7 @@ export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, _su
   return function (...args) {
     const inputAction = context.peek()
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
-      throw new SimulationMismatch(id, 'fn/invoke', inputAction)
+      throw new SimulationMismatch(id, { type: 'fn/invoke', payload: args }, inputAction)
     }
     currentId = Math.max(currentId, inputAction.meta.functionId)
     context.next()
