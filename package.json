@@ -99,7 +99,7 @@
   },
   "dependencies": {
     "@unional/logging": "^0.3.0",
-    "assertron": "^3.4.1",
+    "assertron": "^4.0.0",
     "flux-standard-action": "^2.0.1",
     "node-fetch": "^2.0.0",
     "satisfier": "^4.1.1",
