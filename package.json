@@ -89,7 +89,7 @@
     "dependency-check": "^3.0.0",
     "eslint": "^4.17.0",
     "eslint-config-unional": "^0.3.6",
-    "github": "^13.1.1",
+    "github": "^14.0.0",
     "nyc": "^11.4.1",
     "rimraf": "^2.6.2",
     "semantic-release": "^12.4.1",
