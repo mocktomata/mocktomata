@@ -98,7 +98,7 @@
     "typescript": "^2.8.0-dev.20180204"
   },
   "dependencies": {
-    "@unional/logging": "^0.3.0",
+    "@unional/logging": "^0.4.0",
     "assertron": "^4.0.0",
     "flux-standard-action": "^2.0.1",
     "node-fetch": "^2.0.0",
