@@ -92,7 +92,7 @@
     "github": "^13.1.1",
     "nyc": "^11.4.1",
     "rimraf": "^2.6.2",
-    "semantic-release": "^12.4.1",
+    "semantic-release": "^15.0.3",
     "tslint": "^5.9.1",
     "tslint-config-unional": "^0.9.0",
     "typescript": "^2.8.0-dev.20180204"
