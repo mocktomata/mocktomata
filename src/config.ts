@@ -1,21 +1,25 @@
 import { store } from './store'
-import { SpecMode } from './interfaces'
+import { SpecMode, KomondorOptions } from './interfaces'
 
-export const config = {
-  environment(mode: 'live', filter?: string | RegExp) {
-    if (filter) {
-      store.envOverrides.push({ mode, filter })
-    }
-    else {
-      store.envDefaultMode = mode
-    }
+export const config = Object.assign(
+  function config(options: KomondorOptions) {
+    store.options = options
   },
-  spec(mode: SpecMode, filter?: string | RegExp) {
-    if (filter) {
-      store.specOverrides.push({ mode, filter })
+  {
+    environment(mode: 'live', filter?: string | RegExp) {
+      if (filter) {
+        store.envOverrides.push({ mode, filter })
+      }
+      else {
+        store.envDefaultMode = mode
+      }
+    },
+    spec(mode: SpecMode, filter?: string | RegExp) {
+      if (filter) {
+        store.specOverrides.push({ mode, filter })
+      }
+      else {
+        store.specDefaultMode = mode
+      }
     }
-    else {
-      store.specDefaultMode = mode
-    }
-  }
-}
+  })

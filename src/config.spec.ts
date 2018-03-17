@@ -2,7 +2,7 @@ import { AssertOrder } from 'assertron'
 import { test } from 'ava'
 
 import { config, given, onGiven, spec, MissingSpecID } from './index'
-import { resetStore } from './store'
+import { resetStore, store } from './store'
 
 const simpleCallback = {
   increment(remote, x) {
@@ -49,19 +49,23 @@ test(`config.spec('simulate') will force all specs in simulate mode`, async t =>
 test('config.spec() can filter for specific spec', async t => {
   config.spec('simulate', 'not exist - no effect')
 
+  console.info(store.options)
   const failSpec = await spec('config/forceReplaySuccess', simpleCallback.fail)
   await simpleCallback.increment(failSpec.subject, 2)
     .then(() => t.fail())
     .catch(() => {
       // this should fail if the spec is in 'replay' mode.
       // The saved record is succeeding.
+      console.log(failSpec.actions)
       return failSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
         { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
         { type: 'fn/return' }
       ])
     })
+
   config.spec('simulate', 'config/forceReplayFail')
+  console.info(store.options)
 
   const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
   await simpleCallback.increment(sucessSpec.subject, 2)
@@ -69,6 +73,7 @@ test('config.spec() can filter for specific spec', async t => {
     .catch(() => {
       // this should fail if the spec is in 'verify' mode.
       // The save record is failing.
+      console.log(sucessSpec.actions)
       return sucessSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
         { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
@@ -173,18 +178,21 @@ test(`config.environment('live') will force spec.sim() to spec()`, async t => {
   order.end()
 })
 
-// test.skip('config to save on remote server', async () => {
-//   config({
-//     store: {
-//       url: 'http://localhost:3000'
-//     }
-//   })
+test('config source to be a remote server', async () => {
+  console.log('a')
+  config({
+    registry: {
+      type: 'remote',
+      path: 'http://localhost:3000'
+    }
+  })
+  console.log('b')
 
-//   const cbSpec = await spec(simpleCallback.success)
-//   await simpleCallback.increment(cbSpec.subject, 2)
-//   await cbSpec.satisfy([
-//     { type: 'fn/invoke', payload: [2] },
-//     { type: 'fn/callback', payload: [null, 3] },
-//     { type: 'fn/return' }
-//   ])
-// })
+  const cbSpec = await spec(simpleCallback.success)
+  await simpleCallback.increment(cbSpec.subject, 2)
+  await cbSpec.satisfy([
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
+  ])
+})

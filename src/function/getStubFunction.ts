@@ -1,5 +1,5 @@
 import { SpecContext, SpecPluginUtil } from '../interfaces'
-import { SimulationMismatch } from '..';
+import { SimulationMismatch } from '../errors'
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next

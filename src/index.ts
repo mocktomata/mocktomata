@@ -6,6 +6,7 @@ export * from './io'
 export * from './spec'
 
 import { registerPlugin, loadPlugins } from './plugin'
+import { isNode } from './isNode'
 export { registerPlugin }
 import * as childProcess from './childProcess'
 import * as genericClass from './class'
@@ -20,4 +21,5 @@ registerPlugin(childProcess)
 registerPlugin(genericFunction)
 registerPlugin(genericClass)
 
-loadPlugins()
+if (isNode)
+  loadPlugins()

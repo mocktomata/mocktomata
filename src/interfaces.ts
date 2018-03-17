@@ -3,14 +3,12 @@ import { Logger } from '@unional/logging'
 export type SpecMode = 'live' | 'save' | 'simulate'
 export type GivenMode = 'live' | 'save' | 'simulate'
 
-export interface RemoteStoreOptions {
-  url: string
-}
-
 export interface KomondorOptions {
-  mode: SpecMode,
-  spec: string | RegExp,
-  store: RemoteStoreOptions
+  plugins?: string[],
+  registry: {
+    type: 'file' | 'remote',
+    path: string
+  }
 }
 
 export interface Spy<T> {

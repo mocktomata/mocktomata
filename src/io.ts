@@ -1,15 +1,23 @@
 import { Stream, Writable } from 'stream'
 
 import { store } from './store'
-import * as fileIO from './fileIO'
-import { SpecRecord } from './interfaces'
+import { getFileIO } from './fileIO'
+import {
+  SpecRecord,
+  // @ts-ignore
+  GivenRecord
+} from './interfaces'
 import { getRemoteIO } from './remoteIO'
 
 function getIO() {
-  if (store.store && store.store.url) {
-    return getRemoteIO(store.store.url)
+  const registry = store.options.registry
+  switch (registry.type) {
+    case 'remote':
+      return getRemoteIO(registry.path)
+    case 'file':
+    default:
+      return getFileIO(registry.path)
   }
-  return fileIO
 }
 
 /**
