@@ -74,7 +74,6 @@
     "email": "homawong@gmail.com"
   },
   "devDependencies": {
-    "@octokit/rest": "^15.2.4",
     "@types/jest": "^22.2.0",
     "@types/node": "^9.4.7",
     "aurelia-logging-color": "^0.5.15",
