@@ -1,16 +1,16 @@
 import { SpecContext, ReturnAction, KomondorRegistrar } from '../interfaces'
 
 export function activate(registrar: KomondorRegistrar) {
-  registrar.registerGetReturnSpy(getReturnSpy)
-  registrar.registerGetReturnStub(getReturnStub)
+  registrar.registerGetReturnSpy(getChildProcessSpy)
+  registrar.registerGetReturnStub(getChildProcessStub)
 }
 
-function getReturnSpy(context: SpecContext, subject, action: ReturnAction) {
+function getChildProcessSpy(context: SpecContext, subject, action: ReturnAction) {
   if (!isChildProcess(subject)) return undefined
   return spyChildProcess(context, subject, action)
 }
 
-function getReturnStub(context: SpecContext, action: ReturnAction) {
+function getChildProcessStub(context: SpecContext, action: ReturnAction) {
   if (action.meta.returnType !== 'childProcess') return undefined
   return stubChildProcess(context)
 }

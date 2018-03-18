@@ -35,10 +35,10 @@ export const io = {
   get writeGiven() {
     return getIO().writeGiven
   },
-  get createWriteStream(): (id: string) => Promise<Writable> {
+  get createWriteStream(): (id: string) => Writable {
     return getIO().createWriteStream
   },
-  get createReadStream(): (id: string) => Promise<Stream> {
+  get createReadStream(): (id: string) => Stream {
     return getIO().createReadStream
   }
 }

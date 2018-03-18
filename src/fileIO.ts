@@ -30,17 +30,17 @@ export function getFileIO(baseDir: string) {
     writeGiven(id: string, record: GivenRecord) {
       return writeTo(GIVENS_FOLDER, id, JSON.stringify(record))
     },
-    createReadStream(id: string): Promise<Stream> {
+    createReadStream(id: string): Stream {
       const filePath = path.resolve(SPECS_FOLDER, id)
-      return Promise.resolve(fs.createReadStream(filePath))
+      return fs.createReadStream(filePath)
     },
-    createWriteStream(id: string): Promise<Writable> {
+    createWriteStream(id: string): Writable {
       const filePath = path.resolve(SPECS_FOLDER, id)
       const folder = path.dirname(filePath)
       // istanbul ignore next
       if (!fs.existsSync(folder))
         createFolders(folder)
-      return Promise.resolve(fs.createWriteStream(filePath))
+      return fs.createWriteStream(filePath)
     }
   }
   // istanbul ignore next

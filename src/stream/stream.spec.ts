@@ -16,8 +16,16 @@ function readStream(): stream.Stream {
   return rs
 }
 
-test.skip('read stream', async () => {
-  const streamSpec = await spec('stream/read', readStream)
+test('read stream (cycle)', async () => {
+  await testSave()
+  // Stream saving interfered loading in simulation
+  // Add a delay in to prevent that from happening
+  await new Promise(a => setImmediate(a))
+  await testSimulate()
+})
+
+async function testSave() {
+  const streamSpec = await spec.save('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
     let message = ''
@@ -32,28 +40,30 @@ test.skip('read stream', async () => {
 
   await streamSpec.satisfy([
     undefined,
-    { type: 'fn/return', meta: { returnType: 'stream', id: 1 } },
-    { type: 'stream', meta: { id: 1, length: 11 } }
+    { type: 'fn/return', meta: { returnType: 'stream', streamId: 1 } },
+    { type: 'stream', meta: { streamId: 1, length: 11 } }
   ])
-})
+}
 
-test.skip('read stream simulate', async () => {
+async function testSimulate() {
   const streamSpec = await spec.simulate('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
     let message = ''
     read.on('data', m => {
+      console.info('sim data', m)
       message += m
     })
     read.on('end', () => {
-      a(message)
+      console.info('sim end')
+      setTimeout(() => a(message), 100)
     })
   })
   t.equal(actual, 'hello world')
 
   await streamSpec.satisfy([
     undefined,
-    { type: 'fn/return', meta: { returnType: 'stream', id: 1 } },
-    { type: 'stream', meta: { id: 1, length: 11 } }
+    { type: 'fn/return', meta: { returnType: 'stream', streamId: 1 } },
+    { type: 'stream', meta: { streamId: 1, length: 11 } }
   ])
-})
+}
