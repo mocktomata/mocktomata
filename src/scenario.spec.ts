@@ -1,7 +1,7 @@
 // import { AssertOrder } from 'assertron'
-import { test } from 'ava'
+
 // import { onSetup, scenario } from './index'
-test.todo('nothing to test')
+test.skip('nothing to test')
 
 // test('.save(...) will ')
 

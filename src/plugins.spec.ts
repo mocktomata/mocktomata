@@ -1,8 +1,8 @@
-import { test } from 'ava'
+import t from 'assert'
 
 import { loadConfig } from './plugin'
 
-test('load config', t => {
+test('load config', () => {
   const config = loadConfig('./fixtures/singlePlugin')
-  t.is(config.plugins[0], 'komondor-plugin-ws')
+  t.equal(config.plugins[0], 'komondor-plugin-ws')
 })

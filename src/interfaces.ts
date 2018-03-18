@@ -5,10 +5,17 @@ export type GivenMode = 'live' | 'save' | 'simulate'
 
 export interface KomondorOptions {
   plugins?: string[],
-  registry: {
-    type: 'file' | 'remote',
-    path: string
-  }
+  registry: KomondorFileRegistry | KomondorServerRegistry
+}
+
+export interface KomondorFileRegistry {
+  type: 'file',
+  path: string
+}
+
+export interface KomondorServerRegistry {
+  type: 'server',
+  url: string
 }
 
 export interface Spy<T> {

@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import t from 'assert'
 import stream = require('stream')
 
 import { spec } from '../index'
@@ -16,9 +16,8 @@ function readStream(): stream.Stream {
   return rs
 }
 
-test.skip('read stream', async t => {
-  const streamSpec = await spec.save('stream/read', readStream)
-  console.log(streamSpec.subject)
+test.skip('read stream', async () => {
+  const streamSpec = await spec('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
     let message = ''
@@ -28,9 +27,8 @@ test.skip('read stream', async t => {
     read.on('end', () => {
       a(message)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await streamSpec.satisfy([
     undefined,
@@ -39,7 +37,7 @@ test.skip('read stream', async t => {
   ])
 })
 
-test.skip('read stream simulate', async t => {
+test.skip('read stream simulate', async () => {
   const streamSpec = await spec.simulate('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
@@ -50,9 +48,8 @@ test.skip('read stream simulate', async t => {
     read.on('end', () => {
       a(message)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await streamSpec.satisfy([
     undefined,

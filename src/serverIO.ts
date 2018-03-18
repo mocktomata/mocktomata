@@ -26,7 +26,7 @@ async function fetchStream(address: string, options?): Promise<Stream> {
   return response.body
 }
 
-export function getRemoteIO(url: string) {
+export function getServerIO(url: string) {
   return {
     async readSpec(id: string): Promise<SpecRecord> {
       const result = await fetchString(`${url}/${id}`)

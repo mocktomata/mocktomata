@@ -34,7 +34,7 @@
     "dependency-check": "dependency-check . --unused --no-dev -i flux-standard-action && dependency-check . --missing --no-dev",
     "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
     "prepublishOnly": "npm run build",
-    "test": "npm run clean && tsc && ava",
+    "test": "jest",
     "verify": "npm run lint && npm run coverage && npm run build && npm run dependency-check",
     "watch": "npm run clean && node scripts/watch.js",
     "semantic-release": "semantic-release"
@@ -56,26 +56,18 @@
     "boundary",
     "boundary-testing"
   ],
-  "ava": {
-    "failWithoutAssertions": false,
-    "files": [
-      "dist-es5/**/*.spec.js"
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "js"
     ],
-    "require": [
-      "./scripts/setup-test-env.js"
+    "roots": [
+      "<rootDir>/src"
     ],
-    "source": [
-      "scripts/*.js",
-      "dist-es5/**/*.js",
-      "*.json"
-    ]
-  },
-  "nyc": {
-    "exclude": [
-      "scripts",
-      "**/*.spec.*",
-      "**/fixtures/**/*"
-    ]
+    "testRegex": ".*\\.(test|spec).(js|ts)$",
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
   },
   "author": {
     "name": "Homa Wong",
@@ -83,26 +75,28 @@
   },
   "devDependencies": {
     "@types/github": "^7.1.0",
-    "@types/node": "^9.4.0",
+    "@types/jest": "^22.2.0",
+    "@types/node": "^9.4.7",
     "aurelia-logging-color": "^0.5.15",
-    "ava": "^0.25.0",
-    "dependency-check": "^3.0.0",
-    "eslint": "^4.17.0",
+    "dependency-check": "^3.1.0",
+    "eslint": "^4.19.0",
     "eslint-config-unional": "^0.3.6",
     "github": "^13.1.1",
-    "nyc": "^11.4.1",
+    "jest": "^22.4.2",
+    "power-assert": "^1.4.4",
     "rimraf": "^2.6.2",
     "semantic-release": "^15.0.3",
+    "ts-jest": "^22.4.1",
     "tslint": "^5.9.1",
-    "tslint-config-unional": "^0.9.0",
-    "typescript": "^2.8.0-dev.20180204"
+    "tslint-config-unional": "^0.9.2",
+    "typescript": "^2.8.0-rc"
   },
   "dependencies": {
     "@unional/logging": "^0.4.0",
-    "assertron": "^4.0.0",
+    "assertron": "^4.2.0",
     "flux-standard-action": "^2.0.1",
-    "node-fetch": "^2.0.0",
-    "satisfier": "^4.1.1",
+    "node-fetch": "^2.1.1",
+    "satisfier": "^4.2.1",
     "tersify": "^1.2.2"
   }
 }

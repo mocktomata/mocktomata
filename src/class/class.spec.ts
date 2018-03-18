@@ -1,4 +1,5 @@
-import { test } from 'ava'
+import t from 'assert'
+import a from 'assertron'
 import { setImmediate } from 'timers'
 
 import { spec, SimulationMismatch } from '../index'
@@ -10,11 +11,11 @@ class Foo {
   }
 }
 
-test('simple class verify', async t => {
+test('simple class verify', async () => {
   const fooSpec = await spec(Foo)
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
-  t.is(actual, 1)
+  t.equal(actual, 1)
 
   await fooSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
@@ -23,11 +24,11 @@ test('simple class verify', async t => {
   ])
 })
 
-test('simple class save', async t => {
+test('simple class save', async () => {
   const fooSpec = await spec.save('class/simple', Foo)
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
-  t.is(actual, 1)
+  t.equal(actual, 1)
 
   await fooSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
@@ -36,11 +37,11 @@ test('simple class save', async t => {
   ])
 })
 
-test('simple class simulate', async t => {
+test('simple class simulate', async () => {
   const fooSpec = await spec.simulate('class/simple', Foo)
   const foo = new fooSpec.subject(1)
   const actual = foo.getValue()
-  t.is(actual, 1)
+  t.equal(actual, 1)
 
   await fooSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
@@ -50,9 +51,9 @@ test('simple class simulate', async t => {
 })
 
 
-test('simple class simulate with different constructor will throw', async t => {
+test('simple class simulate with different constructor will throw', async () => {
   const fooSpec = await spec.simulate('class/wrongConstructorCall', Foo)
-  await t.throws(() => new fooSpec.subject(2), SimulationMismatch)
+  await a.throws(() => new fooSpec.subject(2), SimulationMismatch)
 })
 
 class Boo extends Foo {
@@ -61,12 +62,12 @@ class Boo extends Foo {
   }
 }
 
-test('extended class verify', async t => {
+test('extended class verify', async () => {
   const booSpec = await spec(Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
-  t.is(actual, 2)
+  t.equal(actual, 2)
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -74,12 +75,12 @@ test('extended class verify', async t => {
   ])
 })
 
-test('extended class save', async t => {
+test('extended class save', async () => {
   const booSpec = await spec.save('class/extend', Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
-  t.is(actual, 2)
+  t.equal(actual, 2)
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -87,12 +88,12 @@ test('extended class save', async t => {
   ])
 })
 
-test('extended class replay', async t => {
+test('extended class replay', async () => {
   const booSpec = await spec.simulate('class/extend', Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
-  t.is(actual, 2)
+  t.equal(actual, 2)
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -100,12 +101,12 @@ test('extended class replay', async t => {
   ])
 })
 
-test('replay on not existing spec will spy instead (check log)', async t => {
+test('replay on not existing spec will spy instead (check log)', async () => {
   const booSpec = await spec.simulate('class/notExist', Boo)
   const boo = new booSpec.subject(1)
   const actual = boo.getPlusOne()
 
-  t.is(actual, 2)
+  t.equal(actual, 2)
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [1] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -113,12 +114,12 @@ test('replay on not existing spec will spy instead (check log)', async t => {
   ])
 })
 
-test('replay on not matching spec will spy instead (check log)', async t => {
+test('replay on not matching spec will spy instead (check log)', async () => {
   const booSpec = await spec.simulate('class/extendToSpy', Boo)
   const boo = new booSpec.subject(2)
   const actual = boo.getPlusOne()
 
-  t.is(actual, 3)
+  t.equal(actual, 3)
   await booSpec.satisfy([
     { type: 'class/constructor', payload: [2] },
     { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
@@ -137,16 +138,16 @@ class WithCallback {
   }
 }
 
-test('captures callbacks verify', async t => {
+test('captures callbacks verify', async () => {
   const cbSpec = await spec(WithCallback)
   const cb = new cbSpec.subject()
   cb.justDo(1)
   await new Promise(a => {
     cb.callback(v => {
-      t.is(v, 'called')
+      t.equal(v, 'called')
     })
     cb.callback(v => {
-      t.is(v, 'called')
+      t.equal(v, 'called')
       a()
     })
   })
@@ -180,16 +181,16 @@ test('captures callbacks verify', async t => {
   ])
 })
 
-test('captures callbacks save', async t => {
+test('captures callbacks save', async () => {
   const cbSpec = await spec.save('class/withCallback', WithCallback)
   const cb = new cbSpec.subject()
   cb.justDo(1)
   await new Promise(a => {
     cb.callback(v => {
-      t.is(v, 'called')
+      t.equal(v, 'called')
     })
     cb.callback(v => {
-      t.is(v, 'called')
+      t.equal(v, 'called')
       a()
     })
   })
@@ -223,16 +224,16 @@ test('captures callbacks save', async t => {
   ])
 })
 
-test('captures callbacks replay', async t => {
+test('captures callbacks replay', async () => {
   const cbSpec = await spec.simulate('class/withCallback', WithCallback)
   const cb = new cbSpec.subject()
   cb.justDo(1)
   await new Promise(a => {
     cb.callback(v => {
-      t.is(v, 'called')
+      t.equal(v, 'called')
     })
     cb.callback(v => {
-      t.is(v, 'called')
+      t.equal(v, 'called')
       a()
     })
   })
@@ -274,12 +275,12 @@ class WithPromise {
   }
 }
 
-test('method returning promise should have result of promise saved in payload', async t => {
+test('method returning promise should have result of promise saved in payload', async () => {
   const promiseSpec = await spec('class/withPromise', WithPromise)
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
 
-  t.is(actual, 4)
+  t.equal(actual, 4)
 
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },
@@ -289,12 +290,12 @@ test('method returning promise should have result of promise saved in payload', 
   ])
 })
 
-test('method returning promise should have result of promise saved in payload (save)', async t => {
+test('method returning promise should have result of promise saved in payload (save)', async () => {
   const promiseSpec = await spec.save('class/withPromise', WithPromise)
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
 
-  t.is(actual, 4)
+  t.equal(actual, 4)
 
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },
@@ -304,12 +305,12 @@ test('method returning promise should have result of promise saved in payload (s
   ])
 })
 
-test('method returning promise should have result of promise saved in payload (replay)', async t => {
+test('method returning promise should have result of promise saved in payload (replay)', async () => {
   const promiseSpec = await spec.simulate('class/withPromise', WithPromise)
   const p = new promiseSpec.subject()
   const actual = await p.increment(3)
 
-  t.is(actual, 4)
+  t.equal(actual, 4)
 
   await promiseSpec.satisfy([
     { type: 'class/constructor', payload: [] },

@@ -1,5 +1,4 @@
-import { test } from 'ava'
-import GitHub = require('github')
+import GitHub from 'github'
 import { every } from 'satisfier'
 
 import { spec } from './index'
@@ -10,14 +9,13 @@ function getFollowers(github: GitHub, username: string) {
     github.users.getFollowersForUser({
       username
     }, (err, res) => {
-      console.log('called')
       if (err) r(err)
       a(res)
     })
   })
 }
 
-test.skip('get followers (demo)', async t => {
+test.skip('get followers (demo)', async () => {
   const github = await createGitHubTest()
   const specs = await spec('github/getFollowersForUser/success', github.users.getFollowersForUser)
   github.users.getFollowersForUser = specs.subject
@@ -34,5 +32,4 @@ test.skip('get followers (demo)', async t => {
       }]
     }
   ])
-  t.pass()
 })

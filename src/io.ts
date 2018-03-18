@@ -7,13 +7,13 @@ import {
   // @ts-ignore
   GivenRecord
 } from './interfaces'
-import { getRemoteIO } from './remoteIO'
+import { getServerIO } from './serverIO'
 
 function getIO() {
   const registry = store.options.registry
   switch (registry.type) {
-    case 'remote':
-      return getRemoteIO(registry.path)
+    case 'server':
+      return getServerIO(registry.url)
     case 'file':
     default:
       return getFileIO(registry.path)
