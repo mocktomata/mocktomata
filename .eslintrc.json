@@ -1,0 +1,7 @@
+{
+  "extends": "plugin:harmony/latest",
+  "root": true,
+  "env": {
+    "node": true
+  }
+}
