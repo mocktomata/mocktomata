@@ -20,7 +20,7 @@ test('read stream (cycle)', async () => {
   await testSave()
   // Stream saving interfered loading in simulation
   // Add a delay in to prevent that from happening
-  await new Promise(a => setImmediate(a))
+  await new Promise(a => setTimeout(a, 10))
   await testSimulate()
 })
 
