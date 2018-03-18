@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import t from 'assert'
 
 import { spec } from '../index'
 
@@ -72,7 +72,7 @@ const childProcess = {
   }
 }
 
-test('childProcess verify', async t => {
+test('childProcess verify', async () => {
   const speced = await spec(childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
@@ -90,7 +90,7 @@ test('childProcess verify', async t => {
   ])
 })
 
-test('childProcess save', async t => {
+test('childProcess save', async () => {
   const speced = await spec.save('childProcess/success', childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
@@ -108,7 +108,7 @@ test('childProcess save', async t => {
   ])
 })
 
-test('childProcess simulate', async t => {
+test('childProcess simulate', async () => {
   const speced = await spec.simulate('childProcess/success', childProcess.spawnSuccess)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
@@ -126,7 +126,7 @@ test('childProcess simulate', async t => {
   ])
 })
 
-test('childProcess fail case verify', async t => {
+test('childProcess fail case verify', async () => {
   const speced = await spec(childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
@@ -143,7 +143,7 @@ test('childProcess fail case verify', async t => {
   ])
 })
 
-test('childProcess fail case save', async t => {
+test('childProcess fail case save', async () => {
   const speced = await spec.save('childProcess/fail', childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {
@@ -160,7 +160,7 @@ test('childProcess fail case save', async t => {
   ])
 })
 
-test('childProcess fail case replay', async t => {
+test('childProcess fail case replay', async () => {
   const speced = await spec.simulate('childProcess/fail', childProcess.spawnFail)
   const actual = await childProcess.increment(speced.subject, 2)
   t.deepEqual(actual, {

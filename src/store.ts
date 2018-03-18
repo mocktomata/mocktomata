@@ -1,4 +1,5 @@
-import { RemoteStoreOptions, SpecMode } from './interfaces'
+import { KomondorOptions, SpecMode } from './interfaces'
+import { isNode } from './isNode'
 
 export interface GivenHandlerEntry {
   clause: string | RegExp,
@@ -11,7 +12,15 @@ let specOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 let givenEntries: GivenHandlerEntry[] = []
 let envDefaultMode
 let envOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
-let storage
+const defaultOptions = {
+  registry: isNode ?
+    { type: 'file', path: '__komondor__' } :
+    (() => {
+      const port = process.env.PORT || 3000
+      return { type: 'remote', path: `http://localhost:${port}` } as any
+    })()
+}
+let options: KomondorOptions = { ...defaultOptions }
 
 export let store = {
   specDefaultMode,
@@ -19,12 +28,7 @@ export let store = {
   givenEntries,
   envDefaultMode,
   envOverrides,
-  get store(): RemoteStoreOptions {
-    return storage
-  },
-  set store(value: RemoteStoreOptions) {
-    storage = value
-  }
+  options
 }
 
 // for testing only
@@ -34,4 +38,12 @@ export function resetStore() {
   store.givenEntries = []
   store.envDefaultMode = undefined
   store.envOverrides = []
+  store.options = {
+    registry: isNode ?
+      { type: 'file', path: '__komondor__' } :
+      (() => {
+        const port = process.env.PORT || 3000
+        return { type: 'remote', path: `http://localhost:${port}` } as any
+      })()
+  }
 }

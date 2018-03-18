@@ -1,24 +1,24 @@
+import t from 'assert'
 import { satisfy, AssertOrder } from 'assertron'
-import { test } from 'ava'
 
 import { createSpecStore } from './specStore'
 
-test('add action', t => {
+test('add action', () => {
   const store = createSpecStore()
   store.add({
     type: 'invoke',
     payload: []
   })
-  t.is(store.actions.length, 1)
+  t.equal(store.actions.length, 1)
 })
 
-test('load not exist file', async t => {
+test('load not exist file', async () => {
   const store = createSpecStore()
   await store.load('specStore/notExist')
-  t.is(store.actions.length, 0)
+  t.equal(store.actions.length, 0)
 })
 
-test('save then load', async t => {
+test('save then load', async () => {
   const store = createSpecStore()
   store.add({ type: 'invoke', payload: [] })
   store.expectation = `[{ type: 'invoke' }]`
@@ -27,13 +27,13 @@ test('save then load', async t => {
   const loadStore = createSpecStore()
   await loadStore.load('specStore/save')
 
-  t.is(loadStore.expectation, store.expectation)
-  t.is(loadStore.actions.length, 1)
+  t.equal(loadStore.expectation, store.expectation)
+  t.equal(loadStore.actions.length, 1)
 })
-test('peek with no action returns undefined', t => {
+test('peek with no action returns undefined', () => {
   const store = createSpecStore()
 
-  t.is(store.peek(), undefined)
+  t.equal(store.peek(), undefined)
 })
 
 test('peek with actions returns first action', async () => {
@@ -43,13 +43,13 @@ test('peek with actions returns first action', async () => {
   satisfy(store.peek()!, { type: 'action1' })
 })
 
-test('next with no action returns undefined', t => {
+test('next with no action returns undefined', () => {
   const store = createSpecStore()
 
-  t.is(store.next(), undefined)
+  t.equal(store.next(), undefined)
 })
 
-test('next moves to next action and peek gets it', async t => {
+test('next moves to next action and peek gets it', async () => {
   const store = createSpecStore()
   await store.load('specStore/twoActions')
   const a1 = store.peek()!
@@ -60,52 +60,52 @@ test('next moves to next action and peek gets it', async t => {
 
   satisfy(a1, { type: 'action1', payload: [] })
   satisfy(a2, { type: 'action2', payload: [] })
-  t.is(a3, undefined)
+  t.equal(a3, undefined)
 })
 
-test('prune with no action ends with no action', t => {
+test('prune with no action ends with no action', () => {
   const store = createSpecStore()
   store.prune()
 
-  t.is(store.actions.length, 0)
+  t.equal(store.actions.length, 0)
 })
 
-test('prune without move clears all actions', async t => {
+test('prune without move clears all actions', async () => {
   const store = createSpecStore()
   await store.load('specStore/twoActions')
   store.prune()
 
-  t.is(store.actions.length, 0)
+  t.equal(store.actions.length, 0)
 })
 
-test('prune clears remaining actions', async t => {
-  const store = createSpecStore()
-  await store.load('specStore/twoActions')
-  store.next()
-  store.prune()
-
-  t.is(store.actions.length, 1)
-})
-
-test('graft will append on empty actions', t => {
-  const store = createSpecStore()
-  store.graft({ type: 'a1', payload: [] })
-  t.is(store.actions.length, 1)
-})
-
-test('graft will replace actions after current action', async t => {
+test('prune clears remaining actions', async () => {
   const store = createSpecStore()
   await store.load('specStore/twoActions')
   store.next()
+  store.prune()
+
+  t.equal(store.actions.length, 1)
+})
+
+test('graft will append on empty actions', () => {
+  const store = createSpecStore()
+  store.graft({ type: 'a1', payload: [] })
+  t.equal(store.actions.length, 1)
+})
+
+test('graft will replace actions after current action', async () => {
+  const store = createSpecStore()
+  await store.load('specStore/twoActions')
+  store.next()
 
   store.graft({ type: 'a1', payload: [] })
 
-  t.is(store.actions.length, 2)
+  t.equal(store.actions.length, 2)
   satisfy(store.actions[0], { type: 'action1' })
   satisfy(store.actions[1], { type: 'a1' })
 })
 
-test('on() will not trigger if not adding the specific action type', t => {
+test('on() will not trigger if not adding the specific action type', () => {
   const store = createSpecStore()
   store.on('action1', t.fail)
   store.add({ type: 'something', payload: [] })

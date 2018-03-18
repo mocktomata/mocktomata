@@ -1,4 +1,4 @@
-module.exports = function (wallaby) {
+module.exports = () => {
   return {
     'files': [
       { pattern: 'package.json', instrument: false },
@@ -13,13 +13,10 @@ module.exports = function (wallaby) {
     'env': {
       'type': 'node'
     },
-    compilers: {
-      'src/**/*.ts': wallaby.compilers.typeScript({ module: 'commonjs' }),
-    },
     hints: {
       allowIgnoringCoverageInTests: true,
       ignoreCoverage: /istanbul ignore next/
     },
-    testFramework: 'ava'
+    'testFramework': 'jest'
   }
 }

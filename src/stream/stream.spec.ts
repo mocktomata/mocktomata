@@ -1,4 +1,4 @@
-import { test } from 'ava'
+import t from 'assert'
 import stream = require('stream')
 
 import { spec } from '../index'
@@ -16,9 +16,14 @@ function readStream(): stream.Stream {
   return rs
 }
 
-test.skip('read stream', async t => {
-  const streamSpec = await spec.save('stream/read', readStream)
-  console.log(streamSpec.subject)
+test('read stream (cycle)', async () => {
+  await testLive()
+  // can't test save because travis run seems to only save 'h' instead of 'hello world'
+  await testSimulate()
+})
+
+async function testLive() {
+  const streamSpec = await spec('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
     let message = ''
@@ -28,18 +33,17 @@ test.skip('read stream', async t => {
     read.on('end', () => {
       a(message)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await streamSpec.satisfy([
     undefined,
-    { type: 'fn/return', meta: { returnType: 'stream', id: 1 } },
-    { type: 'stream', meta: { id: 1, length: 11 } }
+    { type: 'fn/return', meta: { returnType: 'stream', streamId: 1 } },
+    { type: 'stream', meta: { streamId: 1, length: 11 } }
   ])
-})
+}
 
-test.skip('read stream simulate', async t => {
+async function testSimulate() {
   const streamSpec = await spec.simulate('stream/read', readStream)
   const read = streamSpec.subject()
   const actual = await new Promise(a => {
@@ -48,15 +52,14 @@ test.skip('read stream simulate', async t => {
       message += m
     })
     read.on('end', () => {
-      a(message)
+      setTimeout(() => a(message), 100)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await streamSpec.satisfy([
     undefined,
-    { type: 'fn/return', meta: { returnType: 'stream', id: 1 } },
-    { type: 'stream', meta: { id: 1, length: 11 } }
+    { type: 'fn/return', meta: { returnType: 'stream', streamId: 1 } },
+    { type: 'stream', meta: { streamId: 1, length: 11 } }
   ])
-})
+}

@@ -1,5 +1,5 @@
-import { test } from 'ava'
-import stream = require('stream')
+import t from 'assert'
+import stream from 'stream'
 import { setTimeout, setImmediate } from 'timers'
 
 import { spec } from '../index'
@@ -61,13 +61,13 @@ test('simulate with noReturn', async () => {
     })
 })
 
-test('promise live', async t => {
+test('promise live', async () => {
   const speced = await spec(promise.success)
   // not using `await` to make sure the return value is a promise.
   // `await` will hide the error if the return value is not a promise.
   return promise.increment(speced.subject, 2)
     .then(actual => {
-      t.is(actual, 3)
+      t.equal(actual, 3)
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
@@ -76,11 +76,11 @@ test('promise live', async t => {
     })
 })
 
-test('promise verify save', async t => {
+test('promise verify save', async () => {
   const speced = await spec.save('promise/resolve', promise.success)
   return promise.increment(speced.subject, 2)
     .then(actual => {
-      t.is(actual, 3)
+      t.equal(actual, 3)
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
@@ -89,11 +89,11 @@ test('promise verify save', async t => {
     })
 })
 
-test('promise verify replay', async t => {
+test('promise verify replay', async () => {
   const speced = await spec.simulate('promise/resolve', promise.success)
   return promise.increment(speced.subject, 2)
     .then(actual => {
-      t.is(actual, 3)
+      t.equal(actual, 3)
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
@@ -102,10 +102,10 @@ test('promise verify replay', async t => {
     })
 })
 
-test('promise rejected verify', async t => {
+test('promise rejected verify', async () => {
   const speced = await spec(promise.fail)
   return promise.increment(speced.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
@@ -115,10 +115,10 @@ test('promise rejected verify', async t => {
     })
 })
 
-test('promise rejected save', async t => {
+test('promise rejected save', async () => {
   const speced = await spec.save('promise/reject', promise.fail)
   return promise.increment(speced.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
@@ -128,10 +128,10 @@ test('promise rejected save', async t => {
     })
 })
 
-test('promise rejected simulate', async t => {
+test('promise rejected simulate', async () => {
   const speced = await spec.simulate('promise/reject', promise.fail)
   return promise.increment(speced.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
@@ -141,7 +141,7 @@ test('promise rejected simulate', async t => {
     })
 })
 
-test('promise with callback in between', async t => {
+test('promise with callback in between', async () => {
   function foo(x, cb) {
     return new Promise(a => {
       setTimeout(() => {
@@ -155,13 +155,13 @@ test('promise with callback in between', async t => {
   let fooing
   return new Promise(a => {
     fooing = fooSpec.subject(2, msg => {
-      t.is(msg, 'called')
+      t.equal(msg, 'called')
       a()
     })
   })
     .then(() => fooing)
     .then(actual => {
-      t.is(actual, 3)
+      t.equal(actual, 3)
       return fooSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
         { type: 'fn/return', meta: { returnType: 'promise' } },
@@ -192,7 +192,7 @@ function promiseStream() {
   })
 }
 
-test('promise returning a stream', async t => {
+test('promise returning a stream', async () => {
   const target = await spec(promiseStream)
   const read = await target.subject()
   const actual = await new Promise(a => {
@@ -203,9 +203,8 @@ test('promise returning a stream', async t => {
     read.on('end', () => {
       a(message)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await target.satisfy([
     undefined,
@@ -215,7 +214,7 @@ test('promise returning a stream', async t => {
   ])
 })
 
-test('promise returning a stream (save)', async t => {
+test('promise returning a stream (save)', async () => {
   const target = await spec.save('promise/readStream', promiseStream)
   const read = await target.subject()
   const actual = await new Promise(a => {
@@ -226,9 +225,8 @@ test('promise returning a stream (save)', async t => {
     read.on('end', () => {
       a(message)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await target.satisfy([
     undefined,
@@ -238,7 +236,7 @@ test('promise returning a stream (save)', async t => {
   ])
 })
 
-test('promise returning a stream (simulate)', async t => {
+test('promise returning a stream (simulate)', async () => {
   // this test uses `readStreamReplay` as source because it causes concurrency issue with the `save` test.
   // It doesn't happen in actual usage as there should be only one test accessing one spec file.
   const target = await spec.simulate('promise/readStreamReplay', promiseStream)
@@ -251,9 +249,8 @@ test('promise returning a stream (simulate)', async t => {
     read.on('end', () => {
       a(message)
     })
-    t.pass()
   })
-  t.is(actual, 'hello world')
+  t.equal(actual, 'hello world')
 
   await target.satisfy([
     undefined,

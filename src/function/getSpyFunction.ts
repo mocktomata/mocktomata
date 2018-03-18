@@ -54,6 +54,7 @@ export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subj
     const returnAction = { type: 'fn/return', payload: result, meta: { functionId } }
     context.add(returnAction)
 
-    return komondor.getReturnSpy(context, result, returnAction) || result
+    const out = komondor.getReturnSpy(context, result, returnAction) || result
+    return out
   }
 }

@@ -1,15 +1,23 @@
 import { Stream, Writable } from 'stream'
 
 import { store } from './store'
-import * as fileIO from './fileIO'
-import { SpecRecord } from './interfaces'
-import { getRemoteIO } from './remoteIO'
+import { getFileIO } from './fileIO'
+import {
+  SpecRecord,
+  // @ts-ignore
+  GivenRecord
+} from './interfaces'
+import { getServerIO } from './serverIO'
 
 function getIO() {
-  if (store.store && store.store.url) {
-    return getRemoteIO(store.store.url)
+  const registry = store.options.registry
+  switch (registry.type) {
+    case 'server':
+      return getServerIO(registry.url)
+    case 'file':
+    default:
+      return getFileIO(registry.path)
   }
-  return fileIO
 }
 
 /**
@@ -27,10 +35,10 @@ export const io = {
   get writeGiven() {
     return getIO().writeGiven
   },
-  get createWriteStream(): (id: string) => Promise<Writable> {
+  get createWriteStream(): (id: string) => Writable {
     return getIO().createWriteStream
   },
-  get createReadStream(): (id: string) => Promise<Stream> {
+  get createReadStream(): (id: string) => Stream {
     return getIO().createReadStream
   }
 }

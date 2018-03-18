@@ -1,5 +1,5 @@
-import { AssertOrder } from 'assertron'
-import { test } from 'ava'
+import a, { AssertOrder } from 'assertron'
+import t from 'assert'
 
 import { config, given, onGiven, spec, MissingSpecID } from './index'
 import { resetStore } from './store'
@@ -21,15 +21,16 @@ const simpleCallback = {
   }
 }
 
-test.beforeEach(() => {
+
+beforeEach(() => {
   resetStore()
 })
 
-test.afterEach(() => {
+afterEach(() => {
   resetStore()
 })
 
-test(`config.spec('simulate') will force all specs in simulate mode`, async t => {
+test(`config.spec('simulate') will force all specs in simulate mode`, async () => {
   config.spec('simulate')
 
   const speced = await spec('config/forceReplaySuccess', simpleCallback.fail)
@@ -43,15 +44,15 @@ test(`config.spec('simulate') will force all specs in simulate mode`, async t =>
     { type: 'fn/return' }
   ])
 
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('config.spec() can filter for specific spec', async t => {
+test('config.spec() can filter for specific spec', async () => {
   config.spec('simulate', 'not exist - no effect')
 
   const failSpec = await spec('config/forceReplaySuccess', simpleCallback.fail)
   await simpleCallback.increment(failSpec.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       // this should fail if the spec is in 'replay' mode.
       // The saved record is succeeding.
@@ -61,11 +62,12 @@ test('config.spec() can filter for specific spec', async t => {
         { type: 'fn/return' }
       ])
     })
+
   config.spec('simulate', 'config/forceReplayFail')
 
   const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
   await simpleCallback.increment(sucessSpec.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       // this should fail if the spec is in 'verify' mode.
       // The save record is failing.
@@ -77,11 +79,11 @@ test('config.spec() can filter for specific spec', async t => {
     })
 })
 
-test('config.spec() can filter using regex', async t => {
+test('config.spec() can filter using regex', async () => {
   config.spec('simulate', /config\/forceReplay/)
   const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
   await simpleCallback.increment(sucessSpec.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return sucessSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
@@ -91,11 +93,11 @@ test('config.spec() can filter using regex', async t => {
     })
 })
 
-test(`config.spec() can use 'live' mode to switch spec in simulation to make live call`, async t => {
+test(`config.spec() can use 'live' mode to switch spec in simulation to make live call`, async () => {
   config.spec('live')
   const sucessSpec = await spec.simulate('config/forceReplayFail', simpleCallback.success)
   const actual = await simpleCallback.increment(sucessSpec.subject, 2)
-  t.is(actual, 3)
+  t.equal(actual, 3)
 
   await sucessSpec.satisfy([
     { type: 'fn/invoke', payload: [2] },
@@ -104,24 +106,24 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
   ])
 })
 
-test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async t => {
+test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async () => {
   config.spec('save')
-  const err: MissingSpecID = await t.throws(spec(simpleCallback.success), MissingSpecID)
-  t.is(err.mode, 'save')
+  const err: MissingSpecID = await a.throws(spec(simpleCallback.success), MissingSpecID)
+  t.equal(err.mode, 'save')
 
   config.spec('simulate')
-  const err2: MissingSpecID = await t.throws(spec(simpleCallback.success), MissingSpecID)
-  t.is(err2.mode, 'simulate')
+  const err2: MissingSpecID = await a.throws(spec(simpleCallback.success), MissingSpecID)
+  t.equal(err2.mode, 'simulate')
 })
 
 
-test('config.environment() with no filter sets mode for all environments', async t => {
+test('config.environment() with no filter sets mode for all environments', async () => {
   config.environment('live')
   onGiven('config all 1', ({ mode }) => {
-    t.is(mode, 'live')
+    t.equal(mode, 'live')
   })
   onGiven('config all 2', ({ mode }) => {
-    t.is(mode, 'live')
+    t.equal(mode, 'live')
   })
   return Promise.all([
     given.simulate('config all 1'),
@@ -129,13 +131,13 @@ test('config.environment() with no filter sets mode for all environments', async
   ])
 })
 
-test('config.environment() can filter by string', async t => {
+test('config.environment() can filter by string', async () => {
   config.environment('live', 'config specific yes')
   onGiven('config specific yes', ({ mode }) => {
-    t.is(mode, 'live')
+    t.equal(mode, 'live')
   })
   onGiven('config specific no', ({ mode }) => {
-    t.is(mode, 'simulate')
+    t.equal(mode, 'simulate')
   })
   return Promise.all([
     given.simulate('config specific yes'),
@@ -143,13 +145,13 @@ test('config.environment() can filter by string', async t => {
   ])
 })
 
-test('config.environment() can filter by regex', async t => {
+test('config.environment() can filter by regex', async () => {
   config.environment('live', /yes/)
   onGiven('config regex yes', ({ mode }) => {
-    t.is(mode, 'live')
+    t.equal(mode, 'live')
   })
   onGiven('config regex no', ({ mode }) => {
-    t.is(mode, 'simulate')
+    t.equal(mode, 'simulate')
   })
   return Promise.all([
     given.simulate('config regex yes'),
@@ -157,7 +159,7 @@ test('config.environment() can filter by regex', async t => {
   ])
 })
 
-test(`config.environment('live') will force spec.sim() to spec()`, async t => {
+test(`config.environment('live') will force spec.sim() to spec()`, async () => {
   config.environment('live', 'env forced live also force spec')
   const order = new AssertOrder(1)
   await given.simulate('env forced live also force spec', async ({ spec }) => {
@@ -168,23 +170,24 @@ test(`config.environment('live') will force spec.sim() to spec()`, async t => {
 
     const simpleSpec = await spec.simulate('simpleCallback', success)
     const actual = await simpleCallback.increment(simpleSpec.subject, 2)
-    t.is(actual, 3)
+    t.equal(actual, 3)
   })
   order.end()
 })
 
-// test.skip('config to save on remote server', async () => {
-//   config({
-//     store: {
-//       url: 'http://localhost:3000'
-//     }
-//   })
+test('config source to be a remote server', async () => {
+  config({
+    registry: {
+      type: 'server',
+      url: 'http://localhost:3000'
+    }
+  })
 
-//   const cbSpec = await spec(simpleCallback.success)
-//   await simpleCallback.increment(cbSpec.subject, 2)
-//   await cbSpec.satisfy([
-//     { type: 'fn/invoke', payload: [2] },
-//     { type: 'fn/callback', payload: [null, 3] },
-//     { type: 'fn/return' }
-//   ])
-// })
+  const cbSpec = await spec(simpleCallback.success)
+  await simpleCallback.increment(cbSpec.subject, 2)
+  await cbSpec.satisfy([
+    { type: 'fn/invoke', payload: [2] },
+    { type: 'fn/callback', payload: [null, 3] },
+    { type: 'fn/return' }
+  ])
+})

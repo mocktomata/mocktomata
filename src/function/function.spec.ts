@@ -1,5 +1,5 @@
-import { test } from 'ava'
-import { satisfy, AssertOrder } from 'assertron'
+import t from 'assert'
+import a, { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
 
 import { spec, SimulationMismatch } from '../index'
@@ -63,41 +63,41 @@ test('on(event, callback) will invoke when action is simulated.', async () => {
   order.end()
 })
 
-test('onAny(callback) will invoke on any action', async t => {
+test('onAny(callback) will invoke on any action', async () => {
   const order = new AssertOrder()
   const cbSpec = await spec(simpleCallback.success)
 
   cbSpec.onAny(action => {
     order.any([1, 2, 3])
-    t.true(isFSA(action))
+    t(isFSA(action))
   })
 
   await simpleCallback.increment(cbSpec.subject, 2)
   order.end()
 })
 
-test('onAny(callback) will invoke when any action is simulated', async t => {
+test('onAny(callback) will invoke when any action is simulated', async () => {
   const order = new AssertOrder()
   const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
 
   cbSpec.onAny(action => {
     order.any([1, 2, 3])
-    t.true(isFSA(action))
+    t(isFSA(action))
   })
 
   await simpleCallback.increment(cbSpec.subject, 2)
   order.end()
 })
 
-test('function spec can be called multiple times', async t => {
+test('function spec can be called multiple times', async () => {
   const cbSpec = await spec(delayed.success)
   await delayed.increment(cbSpec.subject, 2)
   await delayed.increment(cbSpec.subject, 4)
-  t.is(cbSpec.actions.length, 6)
+  t.equal(cbSpec.actions.length, 6)
 })
 
 //#region simpleCallback
-test('simpleCallback verify', async t => {
+test('simpleCallback verify', async () => {
   const cbSpec = await spec(simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
@@ -106,11 +106,11 @@ test('simpleCallback verify', async t => {
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
 
-test('simpleCallback save', async t => {
+test('simpleCallback save', async () => {
   const cbSpec = await spec.save('simpleCallback', simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
@@ -119,10 +119,10 @@ test('simpleCallback save', async t => {
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('simpleCallback replay', async t => {
+test('simpleCallback replay', async () => {
   const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
@@ -131,13 +131,13 @@ test('simpleCallback replay', async t => {
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('simpleCallback fail case verify', async t => {
+test('simpleCallback fail case verify', async () => {
   const cbSpec = await spec(simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return cbSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
@@ -147,10 +147,10 @@ test('simpleCallback fail case verify', async t => {
     })
 })
 
-test('simpleCallback fail case save', async t => {
+test('simpleCallback fail case save', async () => {
   const cbSpec = await spec.save('simpleCallback failed', simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return cbSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
@@ -160,10 +160,10 @@ test('simpleCallback fail case save', async t => {
     })
 })
 
-test('simpleCallback fail case replay', async t => {
+test('simpleCallback fail case replay', async () => {
   const cbSpec = await spec.simulate('simpleCallback failed', simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return cbSpec.satisfy([
         { type: 'fn/invoke', payload: [2] },
@@ -173,16 +173,16 @@ test('simpleCallback fail case replay', async t => {
     })
 })
 
-test('simulate without record will throw', async t => {
+test('simulate without record will throw', async () => {
   const noRecordSpec = await spec.simulate('function/simpleCallback/notExist', simpleCallback.success)
 
-  await t.throws(simpleCallback.increment(noRecordSpec.subject, 4), SimulationMismatch)
+  await a.throws(simpleCallback.increment(noRecordSpec.subject, 4), SimulationMismatch)
 })
 
 //#endregion
 
 //#region fetch
-test('fetch verify', async t => {
+test('fetch verify', async () => {
   const speced = await spec(fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
@@ -191,10 +191,10 @@ test('fetch verify', async t => {
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('fetch save', async t => {
+test('fetch save', async () => {
   const speced = await spec.save('fetch', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
@@ -203,10 +203,10 @@ test('fetch save', async t => {
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('fetch replay', async t => {
+test('fetch replay', async () => {
   const speced = await spec('fetch', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
@@ -215,13 +215,13 @@ test('fetch replay', async t => {
     { type: 'fn/callback', payload: [null, 3] },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('fetch fail verify', async t => {
+test('fetch fail verify', async () => {
   const speced = await spec(fetch.fail)
   return fetch.add(speced.subject, 1, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
@@ -231,10 +231,10 @@ test('fetch fail verify', async t => {
     })
 })
 
-test('fetch fail save', async t => {
+test('fetch fail save', async () => {
   const speced = await spec.save('fetch fail', fetch.fail)
   return fetch.add(speced.subject, 1, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
@@ -244,10 +244,10 @@ test('fetch fail save', async t => {
     })
 })
 
-test('fetch fail verify', async t => {
+test('fetch fail verify', async () => {
   const speced = await spec('fetch fail', fetch.fail)
   return fetch.add(speced.subject, 1, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['remoteAdd', { x: 1, y: 2 }] },
@@ -259,7 +259,7 @@ test('fetch fail verify', async t => {
 //#endregion
 
 //#region literalCallback
-test('literalCallback verify', async t => {
+test('literalCallback verify', async () => {
   const speced = await spec(literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
   await speced.satisfy([
@@ -267,10 +267,10 @@ test('literalCallback verify', async t => {
     { type: 'fn/callback', payload: [3], meta: { callbackPath: [0, 'success'] } },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('literalCallback save', async t => {
+test('literalCallback save', async () => {
   const speced = await spec.save('literalCallback', literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
 
@@ -279,10 +279,10 @@ test('literalCallback save', async t => {
     { type: 'fn/callback', payload: [3], meta: { callbackPath: [0, 'success'] } },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('literalCallback replay', async t => {
+test('literalCallback replay', async () => {
   const speced = await spec.simulate('literalCallback', literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
 
@@ -291,13 +291,13 @@ test('literalCallback replay', async t => {
     { type: 'fn/callback', payload: [3], meta: { callbackPath: [0, 'success'] } },
     { type: 'fn/return' }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('literalCallback fail case verify', async t => {
+test('literalCallback fail case verify', async () => {
   const speced = await spec(literalCallback.fail)
   return literalCallback.increment(speced.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: [{ 'data': 2 }] },
@@ -307,10 +307,10 @@ test('literalCallback fail case verify', async t => {
     })
 })
 
-test('literalCallback fail case save', async t => {
+test('literalCallback fail case save', async () => {
   const speced = await spec.save('literalCallback fail', literalCallback.fail)
   await literalCallback.increment(speced.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: [{ 'data': 2 }] },
@@ -318,13 +318,12 @@ test('literalCallback fail case save', async t => {
         { type: 'fn/return' }
       ])
     })
-  t.pass()
 })
 
-test('literalCallback fail case replay', async t => {
+test('literalCallback fail case replay', async () => {
   const speced = await spec.simulate('literalCallback fail', literalCallback.fail)
   await literalCallback.increment(speced.subject, 2)
-    .then(() => t.fail())
+    .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: [{ 'data': 2 }] },
@@ -332,12 +331,11 @@ test('literalCallback fail case replay', async t => {
         { type: 'fn/return' }
       ])
     })
-  t.pass()
 })
 //#endregion
 
 //#region synchronous
-test('synchronous verify', async t => {
+test('synchronous verify', async () => {
   const speced = await spec(synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
 
@@ -345,10 +343,10 @@ test('synchronous verify', async t => {
     { type: 'fn/invoke', payload: ['increment', 2] },
     { type: 'fn/return', payload: 3 }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('synchronous save', async t => {
+test('synchronous save', async () => {
   const speced = await spec.save('synchronous', synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
 
@@ -356,23 +354,23 @@ test('synchronous save', async t => {
     { type: 'fn/invoke', payload: ['increment', 2] },
     { type: 'fn/return', payload: 3 }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('synchronous replay', async t => {
+test('synchronous replay', async () => {
   const speced = await spec.simulate('synchronous', synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
   await speced.satisfy([
     { type: 'fn/invoke', payload: ['increment', 2] },
     { type: 'fn/return', payload: 3 }
   ])
-  t.is(actual, 3)
+  t.equal(actual, 3)
 })
 
-test('synchronous fail verify', async t => {
+test('synchronous fail verify', async () => {
   const speced = await spec(synchronous.fail)
 
-  t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
+  a.throws(() => synchronous.increment(speced.subject, 2), e => e.message === 'fail')
 
   await speced.satisfy([
     { type: 'fn/invoke', payload: ['increment', 2] },
@@ -380,10 +378,10 @@ test('synchronous fail verify', async t => {
   ])
 })
 
-test('synchronous fail save', async t => {
+test('synchronous fail save', async () => {
   const speced = await spec.save('synchronous fail', synchronous.fail)
 
-  t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
+  a.throws(() => synchronous.increment(speced.subject, 2), e => e.message === 'fail')
 
   await speced.satisfy([
     { type: 'fn/invoke', payload: ['increment', 2] },
@@ -391,10 +389,10 @@ test('synchronous fail save', async t => {
   ])
 })
 
-test('synchronous fail replay', async t => {
+test('synchronous fail replay', async () => {
   const speced = await spec.simulate('synchronous fail', synchronous.fail)
 
-  t.throws(() => synchronous.increment(speced.subject, 2), 'fail')
+  a.throws(() => synchronous.increment(speced.subject, 2), e => e.message === 'fail')
 
   await speced.satisfy([
     { type: 'fn/invoke', payload: ['increment', 2] },
@@ -404,18 +402,18 @@ test('synchronous fail replay', async t => {
 
 //#endregion
 
-test('missing record will throw', async t => {
+test('missing record will throw', async () => {
   const cbSpec = await spec.simulate('function/simpleCallback/incompleteRecords', simpleCallback.success)
-  t.is(await simpleCallback.increment(cbSpec.subject, 2), 3)
+  t.equal(await simpleCallback.increment(cbSpec.subject, 2), 3)
 
-  await t.throws(simpleCallback.increment(cbSpec.subject, 4), SimulationMismatch)
+  await a.throws(simpleCallback.increment(cbSpec.subject, 4), SimulationMismatch)
 })
 
 
-test('recursive (save)', async t => {
+test('recursive (save)', async () => {
   const cbSpec = await spec.save('function/recursive/twoCalls', recursive.success)
   const actual = await recursive.decrementToZero(cbSpec.subject, 2)
-  t.is(actual, 0)
+  t.equal(actual, 0)
 
   await cbSpec.satisfy([
     { type: 'fn/invoke', payload: [2] },
@@ -427,10 +425,10 @@ test('recursive (save)', async t => {
   ])
 })
 
-test('recursive (replay)', async t => {
+test('recursive (replay)', async () => {
   const cbSpec = await spec.simulate('function/recursive/twoCalls', recursive.success)
   const actual = await recursive.decrementToZero(cbSpec.subject, 2)
-  t.is(actual, 0)
+  t.equal(actual, 0)
 
   await cbSpec.satisfy([
     { type: 'fn/invoke', payload: [2] },
