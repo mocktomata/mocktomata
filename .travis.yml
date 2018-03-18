@@ -13,11 +13,11 @@ branches:
     - master
     - /^greenkeeper.*$/
 
-before_install:
-  - ./scripts/run-on-node-version.sh 9 "npm install -g greenkeeper-lockfile@1"
+# before_install:
+#   - ./scripts/run-on-node-version.sh 9 "npm install -g greenkeeper-lockfile@1"
 
-before_script:
-  - ./scripts/run-on-node-version.sh 9 "greenkeeper-lockfile-update"
+# before_script:
+#   - ./scripts/run-on-node-version.sh 9 "greenkeeper-lockfile-update"
 
 script:
   - npm run verify
