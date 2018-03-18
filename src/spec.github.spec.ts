@@ -1,4 +1,4 @@
-import GitHub from 'github'
+import GitHub from '@octokit/rest'
 import { every } from 'satisfier'
 
 import { spec } from './index'

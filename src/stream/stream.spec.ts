@@ -51,11 +51,9 @@ async function testSimulate() {
   const actual = await new Promise(a => {
     let message = ''
     read.on('data', m => {
-      console.info('sim data', m)
       message += m
     })
     read.on('end', () => {
-      console.info('sim end')
       setTimeout(() => a(message), 100)
     })
   })

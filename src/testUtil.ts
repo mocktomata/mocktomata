@@ -1,4 +1,4 @@
-import GitHub = require('github')
+import GitHub = require('@octokit/rest')
 
 // istanbul ignore next
 export async function createGitHubTest() {

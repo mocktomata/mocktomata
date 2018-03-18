@@ -74,14 +74,13 @@
     "email": "homawong@gmail.com"
   },
   "devDependencies": {
-    "@types/github": "^7.1.0",
+    "@octokit/rest": "^15.2.4",
     "@types/jest": "^22.2.0",
     "@types/node": "^9.4.7",
     "aurelia-logging-color": "^0.5.15",
     "dependency-check": "^3.1.0",
     "eslint": "^4.19.0",
     "eslint-config-unional": "^0.3.6",
-    "github": "^13.1.1",
     "jest": "^22.4.2",
     "power-assert": "^1.4.4",
     "rimraf": "^2.6.2",
