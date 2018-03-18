@@ -14,7 +14,6 @@ if [ $1 = 'latest' ]; then
 else
   target_version=$1;
 fi
-echo "Getting NodeJS version";
 node_version=$(node -v);
 if [ ${node_version:1:1} = ${target_version:0:1} ]; then
   echo "Detected ${node_version}, satisfying ${target_version}. Executing command";
