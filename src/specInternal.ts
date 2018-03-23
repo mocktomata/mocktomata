@@ -39,13 +39,16 @@ function getMode(id: string, mode: SpecMode) {
     store.specDefaultMode || mode
 }
 
+function isRecordingMode(mode: SpecMode) {
+  return mode === 'live'
+}
 async function createSpec(id, subject, mode) {
   const store = createSpecStore()
   const context = store as any
   context.mode = mode
   context.id = id
 
-  if (!id && mode !== 'live' && mode !== 'record')
+  if (!id && !isRecordingMode(mode))
     throw new MissingSpecID(mode)
 
   if (mode === 'simulate') {
@@ -82,7 +85,7 @@ export function createSpecLive() {
       subject = id
       id = ''
     }
-    const mode = getMode(id, 'record')
+    const mode = getMode(id, 'live')
     return createSpec(id, subject, mode)
   }
 }
