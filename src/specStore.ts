@@ -1,8 +1,8 @@
+import { SpecAction, SpecPlayer, SpecRecorder } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
 import { io } from './io'
 import { log } from './log'
-import { SpecAction, SpecPlayer, SpecRecorder } from './interfaces'
 
 export interface SpecStore extends SpecPlayer, SpecRecorder {
   /**

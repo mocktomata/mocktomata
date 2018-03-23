@@ -1,15 +1,14 @@
 import { satisfy } from 'assertron'
+import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
 import { MissingSpecID } from './errors'
 import {
-  Spec,
-  SpecAction,
-  SpecMode
+  Spec
 } from './interfaces'
 import { io } from './io'
 import { createSpecStore } from './specStore'
-import { komondorUtil } from './plugin'
+import { util } from './plugin'
 import { store } from './store'
 
 export function makeErrorSerializable(actions: SpecAction[]) {
@@ -26,7 +25,7 @@ function isErrorThrowAction(action) {
 }
 
 function isRejectErrorPromiseReturnAction(action) {
-  return action.type === 'promise' && action.meta.status === 'reject' && action.payload instanceof Error
+  return action.type === 'promise/reject' && action.payload instanceof Error
 }
 
 function getMode(id: string, mode: SpecMode) {
@@ -46,15 +45,15 @@ async function createSpec(id, subject, mode) {
   context.mode = mode
   context.id = id
 
-  if (!id && mode !== 'live')
+  if (!id && mode !== 'live' && mode !== 'record')
     throw new MissingSpecID(mode)
 
   if (mode === 'simulate') {
     await store.load(id)
-    context.subject = komondorUtil.getStub(context, subject, id)
+    context.subject = util.getStub(context, subject, id)
   }
   else {
-    context.subject = komondorUtil.getSpy(context, subject)
+    context.subject = util.getSpy(context, subject)
   }
 
   return Object.assign(context, {
@@ -83,7 +82,7 @@ export function createSpecLive() {
       subject = id
       id = ''
     }
-    const mode = getMode(id, 'live')
+    const mode = getMode(id, 'record')
     return createSpec(id, subject, mode)
   }
 }

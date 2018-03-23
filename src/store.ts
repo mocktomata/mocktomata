@@ -1,4 +1,5 @@
-import { KomondorOptions, SpecMode } from './interfaces'
+import { SpecMode } from 'komondor-plugin'
+import { KomondorOptions } from './interfaces'
 import { isNode } from './isNode'
 
 export interface GivenHandlerEntry {

@@ -1,11 +1,16 @@
+import { SpecContext, SpecAction, ReturnAction, Registrar } from 'komondor-plugin'
 import { Stream, Writable } from 'stream'
 
-import { SpecContext, SpecAction, ReturnAction, KomondorRegistrar } from '../interfaces'
 import { io } from '../io'
 
-export function activate(registrar: KomondorRegistrar) {
-  registrar.registerGetReturnSpy(getStreamSpy)
-  registrar.registerGetReturnStub(getStreamStub)
+export function activate(registrar: Registrar) {
+  registrar.register(
+    'stream',
+    {
+      getReturnSpy: getStreamSpy,
+      getReturnStub: getStreamStub
+    }
+  )
 }
 
 function getStreamSpy(context: SpecContext, subject, action: ReturnAction) {
@@ -13,7 +18,7 @@ function getStreamSpy(context: SpecContext, subject, action: ReturnAction) {
   return spyStream(context, subject, action)
 }
 
-function getStreamStub(context: SpecContext, action: SpecAction) {
+function getStreamStub(context: SpecContext, action: ReturnAction) {
   if (action.meta.returnType !== 'stream') return undefined
   return stubStream(context, action)
 }

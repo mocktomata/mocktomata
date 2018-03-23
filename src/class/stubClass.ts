@@ -1,14 +1,14 @@
 import { createSatisfier } from 'satisfier'
 
-import { SpecContext, SpecPluginUtil } from '../interfaces'
-import { SimulationMismatch } from '..';
+import { SpecContext, PluginUtil } from 'komondor-plugin'
 
-export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, id: string) {
+import { SimulationMismatch } from '../errors'
+
+export function stubClass(context: SpecContext, util: PluginUtil, subject, id: string) {
   function emitNextActions() {
     let action = context.peek()
     if (action && action.type === 'class/return') {
       let returnStub = util.getReturnStub(context, action)
-
       context.next()
       return returnStub || action.payload
     }
@@ -49,7 +49,7 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
 
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(id, { type: p, payload: args }, action)
+        throw new SimulationMismatch(id, { type: 'class/invoke', payload: args, meta: { name: p } }, action)
       }
       else {
         args.forEach((arg, i) => {

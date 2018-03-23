@@ -15,11 +15,12 @@ import * as promise from './promise'
 import * as stream from './stream'
 
 // order is important, top is generic, bottom is specific.
-registerPlugin(promise)
-registerPlugin(stream)
-registerPlugin(childProcess)
 registerPlugin(genericFunction)
 registerPlugin(genericClass)
+registerPlugin(promise)
 
-if (isNode)
+if (isNode) {
+  registerPlugin(stream)
+  registerPlugin(childProcess)
   loadPlugins()
+}

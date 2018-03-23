@@ -1,5 +1,7 @@
+import { SpecMode } from 'komondor-plugin'
+
 import { store } from './store'
-import { SpecMode, KomondorOptions } from './interfaces'
+import { KomondorOptions } from './interfaces'
 
 export const config = Object.assign(
   function config(options: KomondorOptions) {

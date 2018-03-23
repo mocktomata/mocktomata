@@ -32,7 +32,7 @@ test('live with noReturn', async () => {
       return noReturnSpec.satisfy([
         { type: 'fn/invoke' },
         { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'promise', meta: { status: 'resolve' } }
+        { type: 'promise/resolve' }
       ])
     })
 })
@@ -44,7 +44,7 @@ test('save with noReturn', async () => {
       return noReturnSpec.satisfy([
         { type: 'fn/invoke' },
         { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'promise', meta: { status: 'resolve' } }
+        { type: 'promise/resolve' }
       ])
     })
 })
@@ -56,7 +56,7 @@ test('simulate with noReturn', async () => {
       return noReturnSpec.satisfy([
         { type: 'fn/invoke' },
         { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'promise', meta: { status: 'resolve' } }
+        { type: 'promise/resolve' }
       ])
     })
 })
@@ -71,7 +71,7 @@ test('promise live', async () => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
+        { type: 'promise/resolve', payload: 3 }
       ])
     })
 })
@@ -84,7 +84,7 @@ test('promise verify save', async () => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
+        { type: 'promise/resolve', payload: 3 }
       ])
     })
 })
@@ -97,7 +97,7 @@ test('promise verify replay', async () => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
+        { type: 'promise/resolve', payload: 3 }
       ])
     })
 })
@@ -110,7 +110,7 @@ test('promise rejected verify', async () => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
+        { type: 'promise/reject', payload: { message: 'fail' } }
       ])
     })
 })
@@ -123,7 +123,7 @@ test('promise rejected save', async () => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
+        { type: 'promise/reject', payload: { message: 'fail' } }
       ])
     })
 })
@@ -136,7 +136,7 @@ test('promise rejected simulate', async () => {
       return speced.satisfy([
         { type: 'fn/invoke', payload: ['increment', 2] },
         { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
+        { type: 'promise/reject', payload: { message: 'fail' } }
       ])
     })
 })
@@ -166,7 +166,7 @@ test('promise with callback in between', async () => {
         { type: 'fn/invoke', payload: [2] },
         { type: 'fn/return', meta: { returnType: 'promise' } },
         { type: 'fn/callback', payload: ['called'] },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
+        { type: 'promise/resolve', payload: 3 }
       ])
     })
 })
@@ -209,7 +209,7 @@ test('promise returning a stream', async () => {
   await target.satisfy([
     undefined,
     undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
+    { type: 'promise/resolve', meta: { returnType: 'stream' } },
     { type: 'stream', meta: { length: 11 } }
   ])
 })
@@ -231,7 +231,7 @@ test('promise returning a stream (save)', async () => {
   await target.satisfy([
     undefined,
     undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
+    { type: 'promise/resolve', meta: { returnType: 'stream' } },
     { type: 'stream', meta: { length: 11 } }
   ])
 })
@@ -255,7 +255,7 @@ test('promise returning a stream (simulate)', async () => {
   await target.satisfy([
     undefined,
     undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
+    { type: 'promise/resolve', meta: { returnType: 'stream' } },
     { type: 'stream', meta: { length: 11 } }
   ])
 })

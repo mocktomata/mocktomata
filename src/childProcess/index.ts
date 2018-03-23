@@ -1,8 +1,13 @@
-import { SpecContext, ReturnAction, KomondorRegistrar } from '../interfaces'
+import { Registrar, ReturnAction, SpecContext } from 'komondor-plugin'
 
-export function activate(registrar: KomondorRegistrar) {
-  registrar.registerGetReturnSpy(getChildProcessSpy)
-  registrar.registerGetReturnStub(getChildProcessStub)
+export function activate(registrar: Registrar) {
+  registrar.register(
+    'childProcess',
+    {
+      getReturnSpy: getChildProcessSpy,
+      getReturnStub: getChildProcessStub
+    }
+  )
 }
 
 function getChildProcessSpy(context: SpecContext, subject, action: ReturnAction) {

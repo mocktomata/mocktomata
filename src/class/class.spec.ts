@@ -286,7 +286,7 @@ test('method returning promise should have result of promise saved in payload', 
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
     { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
-    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
+    { type: 'promise/resolve', payload: 4 }
   ])
 })
 
@@ -301,7 +301,7 @@ test('method returning promise should have result of promise saved in payload (s
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
     { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
-    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
+    { type: 'promise/resolve', payload: 4 }
   ])
 })
 
@@ -316,6 +316,6 @@ test('method returning promise should have result of promise saved in payload (r
     { type: 'class/constructor', payload: [] },
     { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
     { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
-    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
+    { type: 'promise/resolve', payload: 4 }
   ])
 })

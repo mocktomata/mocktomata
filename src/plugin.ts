@@ -1,18 +1,13 @@
+import { SpecContext, getStub, getSpy, getReturnSpy, getReturnStub, SpecAction, Registrar, ReturnAction, PluginRecord } from 'komondor-plugin'
 import path from 'path'
 
-import {
-  // @ts-ignore
-  Spy,
-  SpecContext, getStub, SpecPluginUtil, getSpy, getReturnSpy, getReturnStub, ReturnActionBase, SpecAction, KomondorRegistrar
-} from './interfaces'
-import { log } from './log'
 
-const getSpyFunctions: getSpy[] = []
-const getStubFunctions: getStub[] = []
+const getSpyFunctions: getSpy<any>[] = []
+const getStubFunctions: getStub<any>[] = []
 const getReturnSpyFunctions: getReturnSpy[] = []
 const getReturnStubFunctions: getReturnStub[] = []
 
-export const komondorUtil: SpecPluginUtil = {
+export const util = {
   getSpy(context: SpecContext, subject: any) {
     for (let i = 0; i < getSpyFunctions.length; i++) {
       const spy = getSpyFunctions[i](context, subject)
@@ -27,7 +22,7 @@ export const komondorUtil: SpecPluginUtil = {
         return stub
     }
   },
-  getReturnSpy(context: SpecContext, subject: any, action: ReturnActionBase) {
+  getReturnSpy(context: SpecContext, subject: any, action: ReturnAction) {
     for (let i = 0; i < getReturnSpyFunctions.length; i++) {
       const spy = getReturnSpyFunctions[i](context, subject, action)
       if (spy)
@@ -37,31 +32,34 @@ export const komondorUtil: SpecPluginUtil = {
   getReturnStub(context: SpecContext, action: SpecAction) {
     for (let i = 0; i < getReturnStubFunctions.length; i++) {
       const stub = getReturnStubFunctions[i](context, action)
+
       if (stub)
         return stub
     }
-  },
-  log
+  }
+  // log
 }
 
-const komondorRegistrar: KomondorRegistrar = {
-  registerGetSpy(getSpy) {
-    getSpyFunctions.unshift(getSpy)
+const komondorRegistrar: Registrar = {
+  register(_type: string, pluginRecord: PluginRecord<any>) {
+    const { getSpy, getStub, getReturnSpy, getReturnStub } = pluginRecord as any
+    if (getSpy)
+      getSpyFunctions.unshift(getSpy)
+
+    if (getStub)
+      getStubFunctions.unshift(getStub)
+
+    if (getReturnSpy)
+      getReturnSpyFunctions.unshift(getReturnSpy)
+    if (getReturnStub)
+      getReturnStubFunctions.unshift(getReturnStub)
   },
-  registerGetStub(getStub) {
-    getStubFunctions.unshift(getStub)
-  },
-  registerGetReturnSpy(getReturnSpy) {
-    getReturnSpyFunctions.unshift(getReturnSpy)
-  },
-  registerGetReturnStub(getReturnStub) {
-    getReturnStubFunctions.unshift(getReturnStub)
-  }
+  util
 }
 
 export function registerPlugin(plugin) {
   if (plugin.activate) {
-    plugin.activate(komondorRegistrar, komondorUtil)
+    plugin.activate(komondorRegistrar)
   }
 }
 

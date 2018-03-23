@@ -1,14 +1,19 @@
-import { SpecContext, SpecPluginUtil, KomondorRegistrar } from '../interfaces'
+import { SpecContext, PluginUtil, Registrar } from 'komondor-plugin'
 
 import { spyClass } from './spyClass'
 import { stubClass } from './stubClass'
 
-let komondorUtil: SpecPluginUtil
+let komondorUtil: PluginUtil
 
-export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {
-  komondorUtil = util
-  registrar.registerGetSpy(getSpy)
-  registrar.registerGetStub(getStub)
+export function activate(registrar: Registrar) {
+  komondorUtil = registrar.util
+  registrar.register(
+    'class',
+    {
+      getSpy,
+      getStub
+    }
+  )
 }
 
 function getSpy<T = any>(context: SpecContext, subject: T) {

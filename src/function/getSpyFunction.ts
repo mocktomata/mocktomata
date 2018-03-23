@@ -1,4 +1,4 @@
-import { SpecPluginUtil, SpecContext } from '../interfaces'
+import { PluginUtil, SpecContext } from 'komondor-plugin'
 
 function spyOnCallback(context: SpecContext, fn, meta) {
   return (...args) => {
@@ -13,7 +13,7 @@ function spyOnCallback(context: SpecContext, fn, meta) {
 
 let counter = 0
 
-export function spyFunction(context: SpecContext, komondor: SpecPluginUtil, subject) {
+export function spyFunction(context: SpecContext, komondor: PluginUtil, subject) {
   const functionId = ++counter
   return function (...args) {
     context.add({

@@ -1,19 +1,25 @@
-import { SpecContext, ReturnAction, SpecPluginUtil, KomondorRegistrar } from '../interfaces'
+import { PluginUtil, Registrar, ReturnAction, SpecContext, createScopedCreateAction, createScopedCreateExpectation } from 'komondor-plugin'
 
-let komondor: SpecPluginUtil
-export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {
-  komondor = util
-  registrar.registerGetReturnSpy(getPromiseSpy)
-  registrar.registerGetReturnStub(getPromiseStub)
-}
-function getPromiseSpy(context: SpecContext, subject, scope) {
-  if (!isPromise(subject)) return undefined
-  return spyPromise(context, subject, scope)
-}
+const TYPE = 'promise'
+const createAction = createScopedCreateAction(TYPE)
+const createSatisfier = createScopedCreateExpectation(TYPE)
+export const resolvedWith = createSatisfier('resolve')
+export const rejectedWith = createSatisfier('reject')
 
-function getPromiseStub(context: SpecContext, action: ReturnAction) {
-  if (action.meta.returnType !== 'promise') return undefined
-  return stubPromise(context, action)
+export function activate(registrar: Registrar) {
+  registrar.register(
+    TYPE,
+    {
+      getReturnSpy: (context, subject, action) => {
+        return isPromise(subject) ?
+          getPromiseSpy(context, registrar.util, subject, action) :
+          undefined
+      },
+      getReturnStub: (context, action) => {
+        if (action.meta.returnType !== 'promise') return undefined
+        return getPromiseStub(context, registrar.util, action)
+      }
+    })
 }
 
 function isPromise(result) {
@@ -21,24 +27,16 @@ function isPromise(result) {
 }
 
 let counter = 0
-
-function spyPromise(context: SpecContext, subject, action) {
+function getPromiseSpy(context: SpecContext, util: PluginUtil, subject, action: ReturnAction) {
   const promiseId = ++counter
-  action.meta.returnType = 'promise'
+  action.meta.returnType = TYPE
   action.meta.promiseId = promiseId
   return subject.then(
     result => {
-      const action: any = {
-        type: 'promise',
-        meta: {
-          promiseId,
-          status: 'resolve'
-        }
-      }
+      const action = createAction('resolve', undefined, { promiseId })
 
       context.add(action)
-
-      const spied = komondor.getReturnSpy(context, result, action)
+      const spied = util.getReturnSpy(context, result, action)
       if (spied) {
         return spied
       }
@@ -48,37 +46,30 @@ function spyPromise(context: SpecContext, subject, action) {
       }
     },
     err => {
-      context.add({
-        type: 'promise',
-        payload: err,
-        meta: {
-          promiseId,
-          status: 'reject'
-        }
-      })
+      context.add(createAction('reject', err, { promiseId }))
       throw err
     })
 }
 
-function stubPromise(context: SpecContext, action: ReturnAction) {
+function getPromiseStub(context: SpecContext, util: PluginUtil, action: ReturnAction) {
   return new Promise((resolve, reject) => {
-    context.on('promise', a => {
+    context.on('promise/resolve', a => {
       if (a.meta.promiseId === action.meta.promiseId) {
-        if (a.meta.status === 'resolve') {
-          if (a.meta.returnType) {
-            const stub = komondor.getReturnStub(context, a)
-            context.next()
-            resolve(stub)
-          }
-          else {
-            context.next()
-            resolve(a.payload)
-          }
+        if (a.meta.returnType) {
+          const stub = util.getReturnStub(context, a)
+          context.next()
+          resolve(stub)
         }
         else {
           context.next()
-          reject(a.payload)
+          resolve(a.payload)
         }
+      }
+    })
+    context.on('promise/reject', a => {
+      if (a.meta.promiseId === action.meta.promiseId) {
+        context.next()
+        reject(a.payload)
       }
     })
   })

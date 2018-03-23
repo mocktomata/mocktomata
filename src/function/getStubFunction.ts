@@ -1,4 +1,4 @@
-import { SpecContext, SpecPluginUtil } from '../interfaces'
+import { SpecContext, PluginUtil } from 'komondor-plugin'
 import { SimulationMismatch } from '../errors'
 
 function inputMatches(a, b: any[]) {
@@ -43,12 +43,12 @@ function locateCallback(meta, args) {
   }, args)
 }
 
-export function stubFunction(context: SpecContext, komondor: SpecPluginUtil, _subject, id: string) {
+export function stubFunction(context: SpecContext, komondor: PluginUtil, _subject, id: string) {
   let currentId = 0
   return function (...args) {
     const inputAction = context.peek()
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
-      throw new SimulationMismatch(id, { type: 'fn/invoke', payload: args }, inputAction)
+      throw new SimulationMismatch(id, { type: 'fn/invoke', payload: args, meta: {} }, inputAction)
     }
     currentId = Math.max(currentId, inputAction.meta.functionId)
     context.next()

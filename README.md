@@ -319,11 +319,11 @@ npm run lint
 [codecov-url]: https://codecov.io/gh/unional/satisfier
 [coveralls-image]: https://coveralls.io/repos/github/unional/komondor/badge.svg
 [coveralls-url]: https://coveralls.io/github/unional/komondor
-[greenkeeper-image]:https://badges.greenkeeper.io/unional/komondor.svg
-[greenkeeper-url]:https://greenkeeper.io/
-[semantic-release-image]:https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
-[semantic-release-url]:https://github.com/semantic-release/semantic-release
-[wallaby-image]:https://img.shields.io/badge/wallaby.js-configured-green.svg
-[wallaby-url]:https://wallabyjs.com
-[vscode-image]:https://img.shields.io/badge/vscode-ready-green.svg
-[vscode-url]:https://code.visualstudio.com/
+[greenkeeper-image]: https://badges.greenkeeper.io/unional/komondor.svg
+[greenkeeper-url]: https://greenkeeper.io/
+[semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[semantic-release-url]: https://github.com/semantic-release/semantic-release
+[wallaby-image]: https://img.shields.io/badge/wallaby.js-configured-green.svg
+[wallaby-url]: https://wallabyjs.com
+[vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
+[vscode-url]: https://code.visualstudio.com/
