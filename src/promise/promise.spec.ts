@@ -1,6 +1,5 @@
 import t from 'assert'
-import stream from 'stream'
-import { setTimeout, setImmediate } from 'timers'
+import { setTimeout } from 'timers'
 
 import { spec } from '../index'
 
@@ -169,93 +168,4 @@ test('promise with callback in between', async () => {
         { type: 'promise/resolve', payload: 3 }
       ])
     })
-})
-
-function promiseStream() {
-  function readStream(): stream.Stream {
-    const rs = new stream.Readable()
-    const message = 'hello world'
-    let i = 0
-    rs._read = function () {
-      if (message[i])
-        rs.push(message[i++])
-      else
-        rs.push(null)
-    }
-    return rs
-  }
-  const read = readStream()
-  return new Promise<stream.Stream>(a => {
-    setImmediate(() => {
-      a(read)
-    })
-  })
-}
-
-test('promise returning a stream', async () => {
-  const target = await spec(promiseStream)
-  const read = await target.subject()
-  const actual = await new Promise(a => {
-    let message = ''
-    read.on('data', m => {
-      message += m
-    })
-    read.on('end', () => {
-      a(message)
-    })
-  })
-  t.equal(actual, 'hello world')
-
-  await target.satisfy([
-    undefined,
-    undefined,
-    { type: 'promise/resolve', meta: { returnType: 'stream' } },
-    { type: 'stream', meta: { length: 11 } }
-  ])
-})
-
-test('promise returning a stream (save)', async () => {
-  const target = await spec.save('promise/readStream', promiseStream)
-  const read = await target.subject()
-  const actual = await new Promise(a => {
-    let message = ''
-    read.on('data', m => {
-      message += m
-    })
-    read.on('end', () => {
-      a(message)
-    })
-  })
-  t.equal(actual, 'hello world')
-
-  await target.satisfy([
-    undefined,
-    undefined,
-    { type: 'promise/resolve', meta: { returnType: 'stream' } },
-    { type: 'stream', meta: { length: 11 } }
-  ])
-})
-
-test('promise returning a stream (simulate)', async () => {
-  // this test uses `readStreamReplay` as source because it causes concurrency issue with the `save` test.
-  // It doesn't happen in actual usage as there should be only one test accessing one spec file.
-  const target = await spec.simulate('promise/readStreamReplay', promiseStream)
-  const read = await target.subject()
-  const actual = await new Promise(a => {
-    let message = ''
-    read.on('data', m => {
-      message += m
-    })
-    read.on('end', () => {
-      a(message)
-    })
-  })
-  t.equal(actual, 'hello world')
-
-  await target.satisfy([
-    undefined,
-    undefined,
-    { type: 'promise/resolve', meta: { returnType: 'stream' } },
-    { type: 'stream', meta: { length: 11 } }
-  ])
 })
