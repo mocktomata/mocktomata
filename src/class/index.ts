@@ -21,9 +21,9 @@ function getSpy<T = any>(context: SpecContext, subject: T) {
   return spyClass(context, komondorUtil, subject) as any
 }
 
-function getStub(context: SpecContext, subject: any, id: string): any {
+function getStub(context: SpecContext, subject: any): any {
   if (!isClass(subject)) return undefined
-  return stubClass(context, komondorUtil, subject, id)
+  return stubClass(context, komondorUtil, subject)
 }
 
 function isClass(subject) {

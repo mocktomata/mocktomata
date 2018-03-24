@@ -15,9 +15,9 @@ export const util = {
         return spy
     }
   },
-  getStub(context: SpecContext, subject: any, id: string) {
+  getStub(context: SpecContext, subject: any) {
     for (let i = 0; i < getStubFunctions.length; i++) {
-      const stub = getStubFunctions[i](context, subject, id)
+      const stub = getStubFunctions[i](context, subject)
       if (stub)
         return stub
     }

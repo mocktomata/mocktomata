@@ -4,7 +4,7 @@ import { SpecContext, PluginUtil } from 'komondor-plugin'
 
 import { SimulationMismatch } from '../errors'
 
-export function stubClass(context: SpecContext, util: PluginUtil, subject, id: string) {
+export function stubClass(context: SpecContext, util: PluginUtil, subject) {
   function emitNextActions() {
     let action = context.peek()
     if (action && action.type === 'class/return') {
@@ -31,7 +31,7 @@ export function stubClass(context: SpecContext, util: PluginUtil, subject, id: s
 
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(id, 'constructor', action)
+        throw new SimulationMismatch(context.id, 'constructor', action)
       }
       else {
         context.next()
@@ -49,7 +49,7 @@ export function stubClass(context: SpecContext, util: PluginUtil, subject, id: s
 
       const action = context.peek()
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(id, { type: 'class/invoke', payload: args, meta: { name: p } }, action)
+        throw new SimulationMismatch(context.id, { type: 'class/invoke', payload: args, meta: { name: p } }, action)
       }
       else {
         args.forEach((arg, i) => {
