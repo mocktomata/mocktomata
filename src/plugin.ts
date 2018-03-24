@@ -1,60 +1,40 @@
-import { SpecContext, getStub, getSpy, getReturnSpy, getReturnStub, SpecAction, Registrar, ReturnAction, PluginRecord } from 'komondor-plugin'
+import { SpecContext, getStub, getSpy, Registrar, ReturnAction, PluginRecord } from 'komondor-plugin'
 import path from 'path'
 
 
 const getSpyFunctions: getSpy<any>[] = []
 const getStubFunctions: getStub<any>[] = []
-const getReturnSpyFunctions: getReturnSpy[] = []
-const getReturnStubFunctions: getReturnStub[] = []
 
 export const util = {
-  getSpy(context: SpecContext, subject: any) {
+  getSpy(context: SpecContext, subject: any, action: ReturnAction | undefined) {
     for (let i = 0; i < getSpyFunctions.length; i++) {
-      const spy = getSpyFunctions[i](context, subject)
+      const spy = getSpyFunctions[i](context, subject, action)
       if (spy)
         return spy
     }
   },
-  getStub(context: SpecContext, subject: any) {
+  getStub(context: SpecContext, subject: any, action: ReturnAction | undefined) {
     for (let i = 0; i < getStubFunctions.length; i++) {
-      const stub = getStubFunctions[i](context, subject)
-      if (stub)
-        return stub
-    }
-  },
-  getReturnSpy(context: SpecContext, subject: any, action: ReturnAction) {
-    for (let i = 0; i < getReturnSpyFunctions.length; i++) {
-      const spy = getReturnSpyFunctions[i](context, subject, action)
-      if (spy)
-        return spy
-    }
-  },
-  getReturnStub(context: SpecContext, action: SpecAction) {
-    for (let i = 0; i < getReturnStubFunctions.length; i++) {
-      const stub = getReturnStubFunctions[i](context, action)
-
+      const stub = getStubFunctions[i](context, subject, action)
       if (stub)
         return stub
     }
   }
-  // log
 }
 
 const komondorRegistrar: Registrar = {
   register(_type: string, pluginRecord: PluginRecord<any>) {
-    const { getSpy, getStub, getReturnSpy, getReturnStub } = pluginRecord as any
+    const { getSpy, getStub } = pluginRecord
     if (getSpy)
       getSpyFunctions.unshift(getSpy)
 
     if (getStub)
       getStubFunctions.unshift(getStub)
-
-    if (getReturnSpy)
-      getReturnSpyFunctions.unshift(getReturnSpy)
-    if (getReturnStub)
-      getReturnStubFunctions.unshift(getReturnStub)
   },
-  util
+  util: {
+    getSpy: util.getSpy,
+    getStub: (context, action) => util.getStub(context, undefined, action)
+  }
 }
 
 export function registerPlugin(plugin) {

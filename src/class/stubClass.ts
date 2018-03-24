@@ -8,7 +8,7 @@ export function stubClass(context: SpecContext, util: PluginUtil, subject) {
   function emitNextActions() {
     let action = context.peek()
     if (action && action.type === 'class/return') {
-      let returnStub = util.getReturnStub(context, action)
+      let returnStub = util.getStub(context, action)
       context.next()
       return returnStub || action.payload
     }

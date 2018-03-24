@@ -53,10 +53,10 @@ async function createSpec(id, subject, mode) {
 
   if (mode === 'simulate') {
     await store.load(id)
-    context.subject = util.getStub(context, subject)
+    context.subject = util.getStub(context, subject, undefined)
   }
   else {
-    context.subject = util.getSpy(context, subject)
+    context.subject = util.getSpy(context, subject, undefined)
   }
 
   return Object.assign(context, {

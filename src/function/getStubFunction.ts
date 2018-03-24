@@ -72,7 +72,7 @@ export function stubFunction(context: SpecContext, komondor: PluginUtil, _subjec
       if (action.meta.functionId > currentId) return undefined
 
       if (action.type === 'fn/return') {
-        const result = action.meta && komondor.getReturnStub(context, action) || action.payload
+        const result = action.meta && komondor.getStub(context, action) || action.payload
         context.next()
         return result
       }

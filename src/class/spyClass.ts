@@ -62,7 +62,7 @@ export function spyClass(context: SpecContext, util: PluginUtil, subject) {
           meta: { methodId }
         }
         context.add(returnAction)
-        const resultSpy = util.getReturnSpy(context, result, returnAction)
+        const resultSpy = util.getSpy(context, result, returnAction)
         invoking = false
         return resultSpy || result
       }
