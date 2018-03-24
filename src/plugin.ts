@@ -1,6 +1,7 @@
 import { Registrar, getSpy, getStub } from 'komondor-plugin'
 import path from 'path'
 
+import { DuplicatePlugin } from './errors'
 
 export const plugins: Array<{
   type: string,
@@ -11,6 +12,10 @@ export const plugins: Array<{
 
 const komondorRegistrar: Registrar = {
   register(type: string, support, getSpy, getStub) {
+    if (plugins.some(p => p.type === type)) {
+      throw new DuplicatePlugin(type)
+    }
+
     plugins.unshift({ type, support, getSpy, getStub })
   }
 }
@@ -32,7 +37,6 @@ export function loadPlugins() {
   }
 }
 
-// istanbul ignore next
 export function loadConfig(cwd) {
   const pjson = require(path.resolve(cwd, 'package.json'))
   return pjson.komondor

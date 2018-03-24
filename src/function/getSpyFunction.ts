@@ -8,7 +8,7 @@ function spyOnCallback(context: SpecContext, fn, meta) {
 }
 
 
-export function spyFunction(context: SpecContext, subject, _action?) {
+export function spyFunction(context: SpecContext, subject) {
   return function (...args) {
     const a = context.add('function/invoke', args)
     const spiedArgs = args.map((arg, index) => {

@@ -9,7 +9,7 @@ export function activate(registrar: Registrar) {
   registrar.register(
     TYPE,
     isPromise,
-    (context, subject, action) => getPromiseSpy(context, subject, action),
+    (context, subject) => getPromiseSpy(context, subject),
     // tslint:disable-next-line
     (context, _subject, action) => getPromiseStub(context, action!)
   )
@@ -19,7 +19,7 @@ function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-function getPromiseSpy(context: SpecContext, subject, _action: ReturnAction | undefined) {
+function getPromiseSpy(context: SpecContext, subject) {
   return subject.then(
     result => {
       const action = context.add('promise/resolve')

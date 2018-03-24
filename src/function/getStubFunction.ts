@@ -42,7 +42,7 @@ function locateCallback(meta, args) {
   }, args)
 }
 
-export function stubFunction(context: SpecContext, _subject) {
+export function stubFunction(context: SpecContext) {
   let currentId = 0
   return function (...args) {
     const inputAction = context.peek()

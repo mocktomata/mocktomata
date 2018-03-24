@@ -87,7 +87,7 @@ test('prune clears remaining actions', async () => {
 
 test('on() will not trigger if not adding the specific action type', async () => {
   const store = await createSpecStore('some', undefined, 'live')
-  store.on('action1', t.fail)
+  store.on('action1', a => t.fail(a.toString()))
   store.add('something')
 })
 

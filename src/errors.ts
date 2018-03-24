@@ -33,3 +33,12 @@ export class GivenSaveRequireSpecId extends Error {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+export class DuplicatePlugin extends Error {
+  // istanbul ignore next
+  constructor(public pluginName: string) {
+    super(`Plugin ${pluginName} is already loaded.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}

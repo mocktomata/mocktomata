@@ -7,11 +7,11 @@ export function activate(registrar: Registrar) {
   registrar.register(
     'function',
     subject => typeof subject === 'function',
-    (context, subject, action) => {
-      return spyFunction(context, subject, action)
+    (context, subject) => {
+      return spyFunction(context, subject)
     },
-    (context, subject, _action) => {
-      return stubFunction(context, subject)
+    (context) => {
+      return stubFunction(context)
     }
   )
 }
