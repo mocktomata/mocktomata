@@ -1,8 +1,6 @@
 import { createSatisfier } from 'satisfier'
 
-import { SpecContext, PluginUtil } from 'komondor-plugin'
-
-import { SimulationMismatch } from '../errors'
+import { SpecContext, PluginUtil, SimulationMismatch } from 'komondor-plugin'
 
 export function stubClass(context: SpecContext, util: PluginUtil, subject) {
   function emitNextActions() {
