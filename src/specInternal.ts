@@ -2,13 +2,9 @@ import { satisfy } from 'assertron'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
-import { MissingSpecID } from './errors'
-import {
-  Spec
-} from './interfaces'
+import { Spec } from './interfaces'
 import { io } from './io'
 import { createSpecStore } from './specStore'
-import { util } from './plugin'
 import { store } from './store'
 
 export function makeErrorSerializable(actions: SpecAction[]) {
@@ -39,25 +35,9 @@ function getMode(id: string, mode: SpecMode) {
     store.specDefaultMode || mode
 }
 
-function isRecordingMode(mode: SpecMode) {
-  return mode === 'live'
-}
-async function createSpec(id, subject, mode) {
-  const store = createSpecStore()
-  const context = store as any
-  context.mode = mode
-  context.id = id
-
-  if (!id && !isRecordingMode(mode))
-    throw new MissingSpecID(mode)
-
-  if (mode === 'simulate') {
-    await store.load(id)
-    context.subject = util.getStub(context, subject, undefined)
-  }
-  else {
-    context.subject = util.getSpy(context, subject, undefined)
-  }
+async function createSpec(specId, subject, mode) {
+  const store = await createSpecStore(specId, subject, mode)
+  const context: any = store
 
   return Object.assign(context, {
     satisfy(expectation) {
@@ -66,10 +46,10 @@ async function createSpec(id, subject, mode) {
         satisfy(actions, expectation)
         if (mode === 'save') {
           // istanbul ignore next
-          if (!id)
+          if (!specId)
             throw new Error('Cannot save spec without options.id.')
           makeErrorSerializable(actions)
-          return io.writeSpec(id, {
+          return io.writeSpec(specId, {
             expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
             actions
           })

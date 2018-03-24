@@ -45,8 +45,8 @@ test('live with noReturn', async () => {
   return noReturn.doSomething(noReturnSpec.subject)
     .then(() => {
       return noReturnSpec.satisfy([
-        { type: 'fn/invoke' },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
+        { type: 'function/invoke' },
+        { type: 'function/return', meta: { returnType: 'promise' } },
         { type: 'promise/resolve' }
       ])
     })
@@ -57,8 +57,8 @@ test('save with noReturn', async () => {
   return noReturn.doSomething(noReturnSpec.subject)
     .then(() => {
       return noReturnSpec.satisfy([
-        { type: 'fn/invoke' },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
+        { type: 'function/invoke' },
+        { type: 'function/return', meta: { returnType: 'promise' } },
         { type: 'promise/resolve' }
       ])
     })
@@ -69,8 +69,8 @@ test('simulate with noReturn', async () => {
   return noReturn.doSomething(noReturnSpec.subject)
     .then(() => {
       return noReturnSpec.satisfy([
-        { type: 'fn/invoke' },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
+        { type: 'function/invoke' },
+        { type: 'function/return', meta: { returnType: 'promise' } },
         { type: 'promise/resolve' }
       ])
     })
@@ -84,8 +84,8 @@ test('promise live', async () => {
     .then(actual => {
       t.equal(actual, 3)
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/resolve', payload: 3 }
       ])
     })
@@ -97,8 +97,8 @@ test('promise verify save', async () => {
     .then(actual => {
       t.equal(actual, 3)
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/resolve', payload: 3 }
       ])
     })
@@ -110,8 +110,8 @@ test('promise verify simulate', async () => {
     .then(actual => {
       t.equal(actual, 3)
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/resolve', payload: 3 }
       ])
     })
@@ -123,8 +123,8 @@ test('promise rejected verify', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/reject', payload: { message: 'fail' } }
       ])
     })
@@ -136,8 +136,8 @@ test('promise rejected save', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/reject', payload: { message: 'fail' } }
       ])
     })
@@ -149,8 +149,8 @@ test('promise rejected simulate', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/reject', payload: { message: 'fail' } }
       ])
     })
@@ -178,9 +178,9 @@ test('promise with callback in between', async () => {
     .then(actual => {
       t.equal(actual, 3)
       return fooSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'fn/callback', payload: ['called'] },
+        { type: 'function/invoke', payload: [2] },
+        { type: 'function/return', meta: { returnType: 'promise' } },
+        { type: 'function/callback', payload: ['called'] },
         { type: 'promise/resolve', payload: 3 }
       ])
     })
@@ -194,11 +194,11 @@ test('promise returns function live', async () => {
     .then(actualFn => {
       t.equal(actualFn(), 3)
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/resolve' },
-        { type: 'fn/invoke' },
-        { type: 'fn/return', payload: 3 }
+        { type: 'function/invoke' },
+        { type: 'function/return', payload: 3 }
       ])
     })
 })
@@ -211,11 +211,11 @@ test('promise returns function save', async () => {
     .then(actualFn => {
       t.equal(actualFn(), 3)
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/resolve' },
-        { type: 'fn/invoke' },
-        { type: 'fn/return', payload: 3 }
+        { type: 'function/invoke' },
+        { type: 'function/return', payload: 3 }
       ])
     })
 })
@@ -229,11 +229,11 @@ test('promise returns function simulate', async () => {
     .then(actualFn => {
       t.equal(actualFn(), 3)
       return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'function/invoke', payload: ['increment', 2] },
+        { type: 'function/return', payload: {}, meta: { returnType: 'promise' } },
         { type: 'promise/resolve' },
-        { type: 'fn/invoke' },
-        { type: 'fn/return', payload: 3 }
+        { type: 'function/invoke' },
+        { type: 'function/return', payload: 3 }
       ])
     })
 })

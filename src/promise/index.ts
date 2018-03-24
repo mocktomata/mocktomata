@@ -1,7 +1,6 @@
-import { PluginUtil, Registrar, ReturnAction, SpecContext, createScopedCreateAction, createScopedCreateExpectation } from 'komondor-plugin'
+import { Registrar, ReturnAction, SpecContext, createScopedCreateExpectation } from 'komondor-plugin'
 
 const TYPE = 'promise'
-const createAction = createScopedCreateAction(TYPE)
 const createSatisfier = createScopedCreateExpectation(TYPE)
 export const resolvedWith = createSatisfier('resolve')
 export const rejectedWith = createSatisfier('reject')
@@ -10,9 +9,9 @@ export function activate(registrar: Registrar) {
   registrar.register(
     TYPE,
     isPromise,
-    (context, subject, action) => getPromiseSpy(context, registrar.util, subject, action),
+    (context, subject, action) => getPromiseSpy(context, subject, action),
     // tslint:disable-next-line
-    (context, _subject, action) => getPromiseStub(context, registrar.util, action!)
+    (context, _subject, action) => getPromiseStub(context, action!)
   )
 }
 
@@ -20,19 +19,11 @@ function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-let counter = 0
-function getPromiseSpy(context: SpecContext, util: PluginUtil, subject, action: ReturnAction | undefined) {
-  const promiseId = ++counter
-  if (action) {
-    action.meta.returnType = TYPE
-    action.meta.promiseId = promiseId
-  }
+function getPromiseSpy(context: SpecContext, subject, _action: ReturnAction | undefined) {
   return subject.then(
     result => {
-      const action = createAction('resolve', undefined, { promiseId })
-
-      context.add(action)
-      const spied = util.getSpy(context, result, action)
+      const action = context.add('promise/resolve')
+      const spied = context.getSpy(context, result, action)
       if (spied) {
         action.payload = spied
         return spied
@@ -43,17 +34,17 @@ function getPromiseSpy(context: SpecContext, util: PluginUtil, subject, action: 
       }
     },
     err => {
-      context.add(createAction('reject', err, { promiseId }))
+      context.add('promise/reject', err)
       throw err
     })
 }
 
-function getPromiseStub(context: SpecContext, util: PluginUtil, action: ReturnAction) {
+function getPromiseStub(context: SpecContext, action: ReturnAction) {
   return new Promise((resolve, reject) => {
     context.on('promise/resolve', a => {
-      if (a.meta.promiseId === action.meta.promiseId) {
+      if (a.meta.id === action.meta.returnId) {
         if (a.meta.returnType) {
-          const stub = util.getStub(context, a)
+          const stub = context.getStub(context, a)
           context.next()
           resolve(stub)
         }
@@ -64,7 +55,7 @@ function getPromiseStub(context: SpecContext, util: PluginUtil, action: ReturnAc
       }
     })
     context.on('promise/reject', a => {
-      if (a.meta.promiseId === action.meta.promiseId) {
+      if (a.meta.id === action.meta.returnId) {
         context.next()
         reject(a.payload)
       }

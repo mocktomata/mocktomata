@@ -8,10 +8,10 @@ export function activate(registrar: Registrar) {
     'function',
     subject => typeof subject === 'function',
     (context, subject, action) => {
-      return spyFunction(context, registrar.util, subject, action)
+      return spyFunction(context, subject, action)
     },
     (context, subject, _action) => {
-      return stubFunction(context, registrar.util, subject)
+      return stubFunction(context, subject)
     }
   )
 }

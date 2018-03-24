@@ -1,1 +1,1 @@
-{"expectation":"[]","actions":[{"type":"fn/invoke","payload":[2,null],"meta":{"functionId":2}},{"type":"fn/callback","payload":[null,3],"meta":{"functionId":2}},{"type":"fn/return","meta":{"functionId":2}}]}
+{"expectation":"[]","actions":[{"type":"function/invoke","payload":[2,null],"meta":{"id":1}},{"type":"function/callback","payload":[null,3],"meta":{"id":1}},{"type":"function/return","meta":{"id":1}}]}

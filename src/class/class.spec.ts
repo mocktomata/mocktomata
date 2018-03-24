@@ -1,8 +1,9 @@
 import t from 'assert'
 import a from 'assertron'
+import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
-import { spec, SimulationMismatch } from '../index'
+import { spec } from '../index'
 
 class Foo {
   constructor(public x) { }

@@ -39,9 +39,9 @@ test(`config.spec('simulate') will force all specs in simulate mode`, async () =
   // this should have failed if the spec is running in 'live' mode.
   // The actual call is failing.
   await speced.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' }
+    { type: 'function/invoke', payload: [2] },
+    { type: 'function/callback', payload: [null, 3] },
+    { type: 'function/return' }
   ])
 
   t.equal(actual, 3)
@@ -57,9 +57,9 @@ test('config.spec() can filter for specific spec', async () => {
       // this should fail if the spec is in 'replay' mode.
       // The saved record is succeeding.
       return failSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
+        { type: 'function/invoke', payload: [2] },
+        { type: 'function/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'function/return' }
       ])
     })
 
@@ -72,9 +72,9 @@ test('config.spec() can filter for specific spec', async () => {
       // this should fail if the spec is in 'verify' mode.
       // The save record is failing.
       return sucessSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
+        { type: 'function/invoke', payload: [2] },
+        { type: 'function/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'function/return' }
       ])
     })
 })
@@ -86,9 +86,9 @@ test('config.spec() can filter using regex', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return sucessSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
+        { type: 'function/invoke', payload: [2] },
+        { type: 'function/callback', payload: [{ message: 'fail' }, null] },
+        { type: 'function/return' }
       ])
     })
 })
@@ -100,9 +100,9 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
   t.equal(actual, 3)
 
   await sucessSpec.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' }
+    { type: 'function/invoke', payload: [2] },
+    { type: 'function/callback', payload: [null, 3] },
+    { type: 'function/return' }
   ])
 })
 
@@ -186,8 +186,8 @@ test('config source to be a remote server', async () => {
   const cbSpec = await spec(simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
   await cbSpec.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' }
+    { type: 'function/invoke', payload: [2] },
+    { type: 'function/callback', payload: [null, 3] },
+    { type: 'function/return' }
   ])
 })

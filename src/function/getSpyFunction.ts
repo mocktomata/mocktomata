@@ -1,41 +1,25 @@
-import { PluginUtil, SpecContext } from 'komondor-plugin'
+import { SpecContext } from 'komondor-plugin'
 
 function spyOnCallback(context: SpecContext, fn, meta) {
   return (...args) => {
-    context.add({
-      type: 'fn/callback',
-      payload: args,
-      meta
-    })
+    context.add('function/callback', args, meta)
     fn(...args)
   }
 }
 
-let counter = 0
 
-export function spyFunction(context: SpecContext, komondor: PluginUtil, subject, action?) {
-  const functionId = ++counter
-  if (action) {
-    action.meta.functionId = functionId
-    action.meta.returnType = 'function'
-  }
+export function spyFunction(context: SpecContext, subject, _action?) {
   return function (...args) {
-    context.add({
-      type: 'fn/invoke',
-      payload: args,
-      meta: {
-        functionId
-      }
-    })
+    const a = context.add('function/invoke', args)
     const spiedArgs = args.map((arg, index) => {
       if (typeof arg === 'function') {
-        return spyOnCallback(context, arg, { functionId })
+        return spyOnCallback(context, arg, a.meta)
       }
       if (typeof arg === 'object') {
         Object.keys(arg).forEach(key => {
           if (typeof arg[key] === 'function') {
             arg[key] = spyOnCallback(context, arg[key], {
-              functionId,
+              id: a.meta.id,
               callbackPath: [index, key]
             })
           }
@@ -48,17 +32,12 @@ export function spyFunction(context: SpecContext, komondor: PluginUtil, subject,
       result = subject.apply(this, spiedArgs)
     }
     catch (err) {
-      context.add({
-        type: 'fn/throw',
-        payload: err,
-        meta: { functionId }
-      })
+      context.add('function/throw', err)
       throw err
     }
-    const returnAction = { type: 'fn/return', payload: result, meta: { functionId } }
-    context.add(returnAction)
+    const returnAction = context.add('function/return', result)
 
-    const out = komondor.getSpy(context, result, returnAction) || result
+    const out = context.getSpy(context, result, returnAction) || result
     return out
   }
 }

@@ -1,4 +1,4 @@
-import { SpecContext, PluginUtil, SimulationMismatch } from 'komondor-plugin'
+import { SpecContext, SimulationMismatch } from 'komondor-plugin'
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -42,22 +42,22 @@ function locateCallback(meta, args) {
   }, args)
 }
 
-export function stubFunction(context: SpecContext, komondor: PluginUtil, _subject) {
+export function stubFunction(context: SpecContext, _subject) {
   let currentId = 0
   return function (...args) {
     const inputAction = context.peek()
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
-      throw new SimulationMismatch(context.id, { type: 'fn/invoke', payload: args, meta: {} }, inputAction)
+      throw new SimulationMismatch(context.specId, { type: 'fn/invoke', payload: args }, inputAction)
     }
-    currentId = Math.max(currentId, inputAction.meta.functionId)
+    currentId = Math.max(currentId, inputAction.meta.id)
     context.next()
     const result = processUntilReturn()
 
     process.nextTick(() => {
       let action = context.peek()
-      while (action && action.meta.functionId <= currentId) {
+      while (action && action.meta.id <= currentId) {
         context.next()
-        if (action.type === 'fn/callback') {
+        if (action.type === 'function/callback') {
           const callback = locateCallback(action.meta, args)
           callback(...action.payload)
         }
@@ -68,21 +68,21 @@ export function stubFunction(context: SpecContext, komondor: PluginUtil, _subjec
     function processUntilReturn() {
       const action = context.peek()
       if (!action) return undefined
-      if (action.meta.functionId > currentId) return undefined
+      if (action.meta.id > currentId) return undefined
 
-      if (action.type === 'fn/return') {
-        const result = action.meta && komondor.getStub(context, action) || action.payload
+      if (action.type === 'function/return') {
+        const result = action.meta && context.getStub(context, action) || action.payload
         context.next()
         return result
       }
 
       context.next()
-      if (action.type === 'fn/callback') {
+      if (action.type === 'function/callback') {
         const callback = locateCallback(action.meta, args)
         callback(...action.payload)
       }
 
-      if (action.type === 'fn/throw') {
+      if (action.type === 'function/throw') {
         throw action.payload
       }
       return processUntilReturn()

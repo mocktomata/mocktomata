@@ -1,6 +1,6 @@
-import { SpecContext, PluginUtil } from 'komondor-plugin'
+import { SpecContext } from 'komondor-plugin'
 
-export function spyClass(context: SpecContext, util: PluginUtil, subject) {
+export function spyClass(context: SpecContext, subject) {
   const spiedClass = class extends subject {
     // @ts-ignore
     // tslint:disable-next-line
@@ -10,11 +10,7 @@ export function spyClass(context: SpecContext, util: PluginUtil, subject) {
       // @ts-ignore
       super(...args)
 
-      context.add({
-        type: 'class/constructor',
-        payload: args,
-        meta: {}
-      })
+      context.add('class/constructor', args)
     }
   }
 
@@ -29,25 +25,14 @@ export function spyClass(context: SpecContext, util: PluginUtil, subject) {
       const methodId = this.__komondorSpy.methods[p].counter
       if (!invoking) {
         invoking = true
-        context.add({
-          type: 'class/invoke',
-          payload: args,
-          meta: {
-            methodId,
-            name: p
-          }
-        })
+        context.add('class/invoke', args, { name: p, methodId })
         const spiedArgs = args.map((arg, i) => {
           if (typeof arg === 'function') {
             return function (...cbArgs) {
-              context.add({
-                type: 'class/callback',
-                payload: cbArgs,
-                meta: {
-                  name: p,
-                  methodId,
-                  callSite: i
-                }
+              context.add('class/callback', cbArgs, {
+                name: p,
+                methodId,
+                callSite: i
               })
               return arg.apply(this, cbArgs)
             }
@@ -56,13 +41,8 @@ export function spyClass(context: SpecContext, util: PluginUtil, subject) {
         })
         const result = method.apply(this, spiedArgs)
 
-        const returnAction = {
-          type: 'class/return',
-          payload: result,
-          meta: { methodId }
-        }
-        context.add(returnAction)
-        const resultSpy = util.getSpy(context, result, returnAction)
+        const returnAction = context.add('class/return', result, { methodId })
+        const resultSpy = context.getSpy(context, result, returnAction)
         invoking = false
         return resultSpy || result
       }

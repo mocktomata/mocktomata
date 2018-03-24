@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'fn/invoke', payload: ['increment', 2] }, { type: 'fn/throw', payload: { message: 'fail' } }]","actions":[{"type":"fn/invoke","payload":["increment",2],"meta":{"functionId":22}},{"type":"fn/throw","payload":{"message":"fail"},"meta":{"functionId":22}}]}
+{"expectation":"[{ type: 'function/invoke', payload: ['increment', 2] }, { type: 'function/throw', payload: { message: 'fail' } }]","actions":[{"type":"function/invoke","payload":["increment",2],"meta":{"id":1}},{"type":"function/throw","payload":{"message":"fail"},"meta":{"id":1}}]}

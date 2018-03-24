@@ -1,8 +1,10 @@
-import { SpecAction, SpecPlayer, SpecRecorder } from 'komondor-plugin'
+import { SpecAction, SpecPlayer, SpecRecorder, SpecContext, ReturnAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
+import { MissingSpecID } from './errors'
 import { io } from './io'
 import { log } from './log'
+import { plugins } from './plugin'
 
 export interface SpecStore extends SpecPlayer, SpecRecorder {
   /**
@@ -23,10 +25,15 @@ export interface SpecStore extends SpecPlayer, SpecRecorder {
   load(id: string)
 }
 
-export function createSpecStore(): SpecStore {
+function getStub(context: SpecContext, subject: any, action: ReturnAction | undefined) {
+  const plugin = plugins.find(p => (action && action.meta.returnType === p.type) || p.support(subject))
+  if (plugin)
+    return plugin.getStub(context, subject, action)
+}
+
+export async function createSpecStore(specId, subject, mode): Promise<SpecStore & SpecContext> {
   const actions: SpecAction[] = []
-  let i = 0
-  let expectation
+  let actionCounter = 0
 
   const events = {}
   const listenAll: any[] = []
@@ -38,8 +45,32 @@ export function createSpecStore(): SpecStore {
       listenAll.forEach(cb => cb(action))
     }
   }
-
-  return {
+  const typesCounter = {}
+  let expectation
+  function fillMetaId(type, action) {
+    action.meta = action.meta || {}
+    action.meta.id = getNextTypeCounter(type)
+    return action
+  }
+  function getNextTypeCounter(type) {
+    const counter = typesCounter[type] || 0
+    return typesCounter[type] = counter + 1
+  }
+  function getSpy(context: SpecContext, subject: any, action: ReturnAction | undefined) {
+    const plugin = plugins.find(p => p.support(subject))
+    if (plugin) {
+      if (action) {
+        action.meta.returnType = plugin.type
+        action.meta.returnId = getNextTypeCounter(plugin.type)
+      }
+      return plugin.getSpy(context, subject, action)
+    }
+  }
+  const store: any = {
+    mode,
+    specId,
+    getSpy,
+    getStub: (context, action) => getStub(context, undefined, action),
     get actions() {
       return actions
     },
@@ -49,9 +80,11 @@ export function createSpecStore(): SpecStore {
     set expectation(value) {
       expectation = value
     },
-    add(action: { type: string }) {
-      actions.push(action as any)
-      callListeners(action)
+    add(type: string, payload?: any, meta?: object) {
+      const a = fillMetaId(type, { type, payload, meta })
+      actions.push(a)
+      callListeners(a)
+      return a
     },
     save(id) {
       return io.writeSpec(id, { expectation, actions })
@@ -70,25 +103,22 @@ export function createSpecStore(): SpecStore {
       }
     },
     peek<A extends SpecAction>(): A | undefined {
-      return actions[i] as any
+      return actions[actionCounter] as any
     },
     next(): void {
-      const action = actions[++i]
+      const action = actions[++actionCounter]
       if (action) {
         callListeners(action)
       }
     },
     prune() {
-      actions.splice(i, actions.length - i)
-    },
-    graft(...newActions) {
-      actions.splice(i, actions.length - i, ...newActions)
+      actions.splice(actionCounter, actions.length - actionCounter)
     },
     on(actionType: string, callback) {
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[i]
+      const action = actions[actionCounter]
       if (action && action.type === actionType) {
         callback(action)
       }
@@ -97,4 +127,20 @@ export function createSpecStore(): SpecStore {
       listenAll.push(callback)
     }
   }
+  if (!specId && !isRecordingMode(mode))
+    throw new MissingSpecID(mode)
+
+  if (mode === 'simulate') {
+    await store.load(specId)
+    store.subject = getStub(store, subject, undefined)
+  }
+  else {
+    store.subject = getSpy(store, subject, undefined)
+  }
+
+  return store
+}
+
+function isRecordingMode(mode: SpecMode) {
+  return mode === 'live'
 }

@@ -1,34 +1,17 @@
-import { SpecContext, Registrar, ReturnAction, getSpy, getStub } from 'komondor-plugin'
+import { Registrar, getSpy, getStub } from 'komondor-plugin'
 import path from 'path'
 
 
-const plugins: Array<{
+export const plugins: Array<{
   type: string,
   getSpy: getSpy<any>,
   getStub: getStub<any>,
   support: (subject) => boolean
 }> = []
 
-export const util = {
-  getSpy(context: SpecContext, subject: any, action: ReturnAction | undefined) {
-    const plugin = plugins.find(p => p.support(subject))
-    if (plugin)
-      return plugin.getSpy(context, subject, action)
-  },
-  getStub(context: SpecContext, subject: any, action: ReturnAction | undefined) {
-    const plugin = plugins.find(p => (action && action.meta.returnType === p.type) || p.support(subject))
-    if (plugin)
-      return plugin.getStub(context, subject, action)
-  }
-}
-
 const komondorRegistrar: Registrar = {
   register(type: string, support, getSpy, getStub) {
     plugins.unshift({ type, support, getSpy, getStub })
-  },
-  util: {
-    getSpy: util.getSpy,
-    getStub: (context, action) => util.getStub(context, undefined, action)
   }
 }
 
