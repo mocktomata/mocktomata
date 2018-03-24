@@ -9,19 +9,11 @@ export const rejectedWith = createSatisfier('reject')
 export function activate(registrar: Registrar) {
   registrar.register(
     TYPE,
-    {
-      getSpy: (context, subject, action) => {
-        return isPromise(subject) ?
-          getPromiseSpy(context, registrar.util, subject, action) :
-          undefined
-      },
-      getStub: (context, subject, action) => {
-        if (subject && !isPromise(subject)) return undefined
-        if (action && action.meta.returnType !== 'promise') return undefined
-        // tslint:disable-next-line
-        return getPromiseStub(context, registrar.util, action!)
-      }
-    })
+    isPromise,
+    (context, subject, action) => getPromiseSpy(context, registrar.util, subject, action),
+    // tslint:disable-next-line
+    (context, _subject, action) => getPromiseStub(context, registrar.util, action!)
+  )
 }
 
 function isPromise(result) {

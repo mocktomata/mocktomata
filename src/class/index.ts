@@ -9,20 +9,17 @@ export function activate(registrar: Registrar) {
   komondorUtil = registrar.util
   registrar.register(
     'class',
-    {
-      getSpy,
-      getStub
-    }
+    isClass,
+    getSpy,
+    getStub
   )
 }
 
 function getSpy<T = any>(context: SpecContext, subject: T) {
-  if (!isClass(subject)) return undefined
   return spyClass(context, komondorUtil, subject) as any
 }
 
 function getStub(context: SpecContext, subject: any): any {
-  if (!isClass(subject)) return undefined
   return stubClass(context, komondorUtil, subject)
 }
 
