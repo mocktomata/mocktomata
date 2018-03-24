@@ -13,8 +13,12 @@ function spyOnCallback(context: SpecContext, fn, meta) {
 
 let counter = 0
 
-export function spyFunction(context: SpecContext, komondor: PluginUtil, subject) {
+export function spyFunction(context: SpecContext, komondor: PluginUtil, subject, action?) {
   const functionId = ++counter
+  if (action) {
+    action.meta.functionId = functionId
+    action.meta.returnType = 'function'
+  }
   return function (...args) {
     context.add({
       type: 'fn/invoke',

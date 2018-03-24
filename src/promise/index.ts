@@ -38,6 +38,7 @@ function getPromiseSpy(context: SpecContext, util: PluginUtil, subject, action: 
       context.add(action)
       const spied = util.getReturnSpy(context, result, action)
       if (spied) {
+        action.payload = spied
         return spied
       }
       else {

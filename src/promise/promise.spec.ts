@@ -15,6 +15,22 @@ const promise = {
   }
 }
 
+const promiseChain = {
+  increment(remote, x) {
+    return remote('increment', x)
+  },
+  success(_url, x) {
+    return new Promise(a => {
+      setTimeout(a, 1)
+    }).then(() => Promise.resolve(() => x + 1))
+  },
+  fail() {
+    return new Promise(a => {
+      setTimeout(a, 1)
+    }).then(() => Promise.reject(() => new Error('fail')))
+  }
+}
+
 const noReturn = {
   doSomething(remote) {
     return remote()
@@ -88,7 +104,7 @@ test('promise verify save', async () => {
     })
 })
 
-test('promise verify replay', async () => {
+test('promise verify simulate', async () => {
   const speced = await spec.simulate('promise/resolve', promise.success)
   return promise.increment(speced.subject, 2)
     .then(actual => {
@@ -166,6 +182,58 @@ test('promise with callback in between', async () => {
         { type: 'fn/return', meta: { returnType: 'promise' } },
         { type: 'fn/callback', payload: ['called'] },
         { type: 'promise/resolve', payload: 3 }
+      ])
+    })
+})
+
+test('promise returns function live', async () => {
+  const speced = await spec(promiseChain.success)
+  // not using `await` to make sure the return value is a promise.
+  // `await` will hide the error if the return value is not a promise.
+  return promise.increment(speced.subject, 2)
+    .then(actualFn => {
+      t.equal(actualFn(), 3)
+      return speced.satisfy([
+        { type: 'fn/invoke', payload: ['increment', 2] },
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise/resolve' },
+        { type: 'fn/invoke' },
+        { type: 'fn/return', payload: 3 }
+      ])
+    })
+})
+
+test('promise returns function save', async () => {
+  const speced = await spec.save('promise/returns/function', promiseChain.success)
+  // not using `await` to make sure the return value is a promise.
+  // `await` will hide the error if the return value is not a promise.
+  return promise.increment(speced.subject, 2)
+    .then(actualFn => {
+      t.equal(actualFn(), 3)
+      return speced.satisfy([
+        { type: 'fn/invoke', payload: ['increment', 2] },
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise/resolve' },
+        { type: 'fn/invoke' },
+        { type: 'fn/return', payload: 3 }
+      ])
+    })
+})
+
+
+test('promise returns function simulate', async () => {
+  const speced = await spec.simulate('promise/returns/function', promiseChain.success)
+  // not using `await` to make sure the return value is a promise.
+  // `await` will hide the error if the return value is not a promise.
+  return promise.increment(speced.subject, 2)
+    .then(actualFn => {
+      t.equal(actualFn(), 3)
+      return speced.satisfy([
+        { type: 'fn/invoke', payload: ['increment', 2] },
+        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
+        { type: 'promise/resolve' },
+        { type: 'fn/invoke' },
+        { type: 'fn/return', payload: 3 }
       ])
     })
 })
