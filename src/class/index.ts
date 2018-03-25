@@ -2,6 +2,7 @@ import { SpecContext, Registrar } from 'komondor-plugin'
 
 import { spyClass } from './spyClass'
 import { stubClass } from './stubClass'
+import { isClass } from './isClass'
 
 export function activate(registrar: Registrar) {
   registrar.register(
@@ -18,8 +19,4 @@ function getSpy<T = any>(context: SpecContext, subject: T) {
 
 function getStub(context: SpecContext, subject: any): any {
   return stubClass(context, subject)
-}
-
-function isClass(subject) {
-  return typeof subject === 'function' && Object.keys(subject.prototype).length !== 0;
 }

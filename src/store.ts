@@ -8,7 +8,7 @@ export interface GivenHandlerEntry {
   invoked?: true
 }
 
-let specDefaultMode
+let specDefaultMode: SpecMode | undefined
 let specOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 let givenEntries: GivenHandlerEntry[] = []
 let envDefaultMode

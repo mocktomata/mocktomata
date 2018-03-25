@@ -1,4 +1,4 @@
-import { SpecContext, SimulationMismatch } from 'komondor-plugin'
+import { SimulationMismatch, StubContext } from 'komondor-plugin'
 
 function inputMatches(a, b: any[]) {
   // istanbul ignore next
@@ -42,12 +42,12 @@ function locateCallback(meta, args) {
   }, args)
 }
 
-export function stubFunction(context: SpecContext) {
+export function stubFunction(context: StubContext) {
   let currentId = 0
   return function (...args) {
     const inputAction = context.peek()
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
-      throw new SimulationMismatch(context.specId, { type: 'fn/invoke', payload: args }, inputAction)
+      throw new SimulationMismatch(context.specId, { type: 'function/invoke', payload: args }, inputAction)
     }
     currentId = Math.max(currentId, inputAction.meta.id)
     context.next()

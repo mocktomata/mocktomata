@@ -191,3 +191,15 @@ test('config source to be a remote server', async () => {
     { type: 'function/return' }
   ])
 })
+
+test('register plugin manually', () => {
+  const o = new AssertOrder(1)
+  const fakePlugin = {
+    activate() {
+      o.once(1)
+    }
+  }
+  config.registerPlugin(fakePlugin)
+
+  o.end()
+})

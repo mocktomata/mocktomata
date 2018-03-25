@@ -1,13 +1,396 @@
 import { satisfy } from 'assertron'
-import { SpecAction, SpecMode } from 'komondor-plugin'
+import { SpecAction, SpecMode, SpyContext, StubContext, ReturnAction } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
+import { MissingSpecID, SpecNotFound } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
-import { createSpecStore } from './specStore'
+import { log } from './log'
+import { plugins } from './plugin'
 import { store } from './store'
 
-export function makeErrorSerializable(actions: SpecAction[]) {
+// need to wrap because object.assign will fail
+export function createSpeclive() {
+  return function specLive(id, subject) {
+    if (typeof id !== 'string') {
+      subject = id
+      id = ''
+    }
+    const mode = getMode(id, 'live')
+    return createSpec(id, subject, mode)
+  }
+}
+
+export function createSpecSave() {
+  return function specSave<T>(id: string, subject: T): Promise<Spec<T>> {
+    const mode = getMode(id, 'save')
+    return createSpec(id, subject, mode)
+  }
+}
+
+export function createSpecSimulate() {
+  return function specSimulate<T>(id: string, subject: T): Promise<Spec<T>> {
+    const mode = getMode(id, 'simulate')
+    return createSpec(id, subject, mode)
+  }
+}
+
+function getMode(id: string, mode: SpecMode) {
+  const override = store.specOverrides.find(s => {
+    if (typeof s.filter === 'string')
+      return s.filter === id
+    else
+      return s.filter.test(id)
+  })
+  return override ? override.mode :
+    store.specDefaultMode || mode
+}
+
+export interface SpecStore extends SpyContext, StubContext {
+  /**
+   * Collected or loaded actions.
+   */
+  readonly actions: SpecAction[],
+  /**
+   * String representation of the expectation of the Spec.
+   */
+  expectation: string,
+  /**
+   * Save the actions.
+   */
+  save(id: string),
+  /**
+   * Load the actions.
+   */
+  load(id: string)
+}
+
+async function createSpec(specId: string, subject, mode: SpecMode) {
+  switch (mode) {
+    case 'live':
+      return createSpyingSpec(specId, subject)
+    case 'save':
+      return createSavingSpec(specId, subject)
+    case 'simulate':
+      return createStubbingSpec(specId, subject)
+  }
+}
+
+async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
+  const actions: SpecAction[] = []
+  let actionCounter = 0
+  const events = {}
+  const listenAll: any[] = []
+
+  const context: SpyContext = {
+    mode: 'live',
+    specId,
+    add(type: string, payload?: any, meta: object = {}) {
+      const a = fillMetaId(type, { type, payload, meta })
+      actions.push(a)
+      callListeners(a)
+      return a
+    },
+    getSpy
+  }
+  const typesCounter = {}
+  function fillMetaId(type, action) {
+    action.meta.id = getNextTypeCounter(type)
+    return action
+  }
+  function getNextTypeCounter(type) {
+    const counter = typesCounter[type] || 0
+    return typesCounter[type] = counter + 1
+  }
+  function callListeners(action) {
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
+  }
+
+  const spied = getSpy(context, subject, undefined)
+
+  const spec: Spec<T> = {
+    actions,
+    subject: spied,
+    on(actionType: string, callback) {
+      if (!events[actionType])
+        events[actionType] = []
+      events[actionType].push(callback)
+      const action = actions[actionCounter]
+      if (action && action.type === actionType) {
+        callback(action)
+      }
+    },
+    onAny(callback) {
+      listenAll.push(callback)
+    },
+    satisfy(expectation) {
+      return Promise.resolve().then(() => {
+        const actions = spec.actions
+        satisfy(actions, expectation)
+      })
+    }
+  }
+  return spec
+  function getSpy(context: SpyContext, subject: any, action: ReturnAction | undefined) {
+    const plugin = plugins.find(p => {
+      return p.support(subject)
+    })
+    if (plugin) {
+      if (action) {
+        action.meta.returnType = plugin.type
+        action.meta.returnId = getNextTypeCounter(plugin.type)
+      }
+      return plugin.getSpy(context, subject, action)
+    }
+  }
+}
+
+async function createSavingSpec(specId: string, subject) {
+  const actions: SpecAction[] = []
+  let actionCounter = 0
+
+  const events = {}
+  const listenAll: any[] = []
+  function callListeners(action) {
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
+  }
+  const typesCounter = {}
+  let expectation
+  function fillMetaId(type, action) {
+    action.meta.id = getNextTypeCounter(type)
+    return action
+  }
+  function getNextTypeCounter(type) {
+    const counter = typesCounter[type] || 0
+    return typesCounter[type] = counter + 1
+  }
+  function getSpy(context: SpyContext, subject: any, action: ReturnAction | undefined) {
+    const plugin = plugins.find(p => {
+      return p.support(subject)
+    })
+    if (plugin) {
+      if (action) {
+        action.meta.returnType = plugin.type
+        action.meta.returnId = getNextTypeCounter(plugin.type)
+      }
+      return plugin.getSpy(context, subject, action)
+    }
+  }
+  const store: any = {
+    mode: 'save',
+    specId,
+    getSpy,
+    getStub: (context, action) => getStub(context, undefined, action),
+    get actions() {
+      return actions
+    },
+    get expectation() {
+      return expectation
+    },
+    set expectation(value) {
+      expectation = value
+    },
+    add(type: string, payload?: any, meta: object = {}) {
+      const a = fillMetaId(type, { type, payload, meta })
+      actions.push(a)
+      callListeners(a)
+      return a
+    },
+    save(id) {
+      return io.writeSpec(id, { expectation, actions })
+    },
+    async load(id) {
+      try {
+        const specRecord = await io.readSpec(id)
+        expectation = specRecord.expectation
+        actions.splice(0, actions.length, ...specRecord.actions)
+      }
+      catch (err) {
+        log.warn(`Cannot load saved record for spec '${id}'.`)
+        log.debug(tersify(err))
+        expectation = ''
+        actions.splice(0, actions.length)
+      }
+    },
+    peek<A extends SpecAction>(): A | undefined {
+      return actions[actionCounter] as any
+    },
+    next(): void {
+      const action = actions[++actionCounter]
+      if (action) {
+        callListeners(action)
+      }
+    },
+    prune() {
+      actions.splice(actionCounter, actions.length - actionCounter)
+    },
+    on(actionType: string, callback) {
+      if (!events[actionType])
+        events[actionType] = []
+      events[actionType].push(callback)
+      const action = actions[actionCounter]
+      if (action && action.type === actionType) {
+        callback(action)
+      }
+    },
+    onAny(callback) {
+      listenAll.push(callback)
+    }
+  }
+  if (!specId)
+    throw new MissingSpecID('save')
+
+  store.subject = getSpy(store, subject, undefined)
+
+  const context: any = store
+
+  return Object.assign(context, {
+    satisfy(expectation) {
+      return Promise.resolve().then(() => {
+        const actions = store.actions
+        satisfy(actions, expectation)
+        // istanbul ignore next
+        if (!specId)
+          throw new Error('Cannot save spec without options.id.')
+        makeErrorSerializable(actions)
+        return io.writeSpec(specId, {
+          expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
+          actions
+        })
+      })
+    }
+  })
+}
+
+async function createStubbingSpec(specId: string, subject) {
+  const actions: SpecAction[] = []
+  let actionCounter = 0
+
+  const events = {}
+  const listenAll: any[] = []
+  function callListeners(action) {
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
+  }
+  const typesCounter = {}
+  let expectation
+  function fillMetaId(type, action) {
+    action.meta.id = getNextTypeCounter(type)
+    return action
+  }
+  function getNextTypeCounter(type) {
+    const counter = typesCounter[type] || 0
+    return typesCounter[type] = counter + 1
+  }
+  function getSpy(context: SpyContext, subject: any, action: ReturnAction | undefined) {
+    const plugin = plugins.find(p => {
+      return p.support(subject)
+    })
+    if (plugin) {
+      if (action) {
+        action.meta.returnType = plugin.type
+        action.meta.returnId = getNextTypeCounter(plugin.type)
+      }
+      return plugin.getSpy(context, subject, action)
+    }
+  }
+  const store: any = {
+    mode: 'simulate',
+    specId,
+    getSpy,
+    getStub: (context, action) => getStub(context, undefined, action),
+    get actions() {
+      return actions
+    },
+    get expectation() {
+      return expectation
+    },
+    set expectation(value) {
+      expectation = value
+    },
+    add(type: string, payload?: any, meta: object = {}) {
+      const a = fillMetaId(type, { type, payload, meta })
+      actions.push(a)
+      callListeners(a)
+      return a
+    },
+    save(id) {
+      return io.writeSpec(id, { expectation, actions })
+    },
+    async load(id) {
+      try {
+        const specRecord = await io.readSpec(id)
+        expectation = specRecord.expectation
+        actions.splice(0, actions.length, ...specRecord.actions)
+      }
+      catch (err) {
+        throw new SpecNotFound(id, err)
+      }
+    },
+    peek<A extends SpecAction>(): A | undefined {
+      return actions[actionCounter] as any
+    },
+    next(): void {
+      const action = actions[++actionCounter]
+      if (action) {
+        callListeners(action)
+      }
+    },
+    prune() {
+      actions.splice(actionCounter, actions.length - actionCounter)
+    },
+    on(actionType: string, callback) {
+      if (!events[actionType])
+        events[actionType] = []
+      events[actionType].push(callback)
+      const action = actions[actionCounter]
+      if (action && action.type === actionType) {
+        callback(action)
+      }
+    },
+    onAny(callback) {
+      listenAll.push(callback)
+    }
+  }
+  if (!specId)
+    throw new MissingSpecID('simulate')
+
+  await store.load(specId)
+  store.subject = getStub(store, subject, undefined)
+
+  const context: any = store
+
+  return Object.assign(context, {
+    satisfy(expectation) {
+      return Promise.resolve().then(() => {
+        const actions = store.actions
+        satisfy(actions, expectation)
+      })
+    }
+  })
+}
+
+function getStub(context: StubContext, subject: any, action: ReturnAction | undefined) {
+  const plugin = plugins.find(p => (action && action.meta.returnType === p.type) || p.support(subject))
+  if (plugin)
+    return plugin.getStub(context, subject, action)
+}
+
+function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
     if (isRejectErrorPromiseReturnAction(a) ||
       isErrorThrowAction(a)) {
@@ -22,65 +405,4 @@ function isErrorThrowAction(action) {
 
 function isRejectErrorPromiseReturnAction(action) {
   return action.type === 'promise/reject' && action.payload instanceof Error
-}
-
-function getMode(id: string, mode: SpecMode) {
-  const override = store.specOverrides.find(s => {
-    if (typeof s.filter === 'string')
-      return s.filter === id
-    else
-      return s.filter.test(id)
-  })
-  return override ? override.mode :
-    store.specDefaultMode || mode
-}
-
-async function createSpec(specId, subject, mode) {
-  const store = await createSpecStore(specId, subject, mode)
-  const context: any = store
-
-  return Object.assign(context, {
-    satisfy(expectation) {
-      return Promise.resolve().then(() => {
-        const actions = store.actions
-        satisfy(actions, expectation)
-        if (mode === 'save') {
-          // istanbul ignore next
-          if (!specId)
-            throw new Error('Cannot save spec without options.id.')
-          makeErrorSerializable(actions)
-          return io.writeSpec(specId, {
-            expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
-            actions
-          })
-        }
-      })
-    }
-  })
-}
-
-export function createSpecLive() {
-  return function specLive(id, subject) {
-    if (typeof id !== 'string') {
-      subject = id
-      id = ''
-    }
-    const mode = getMode(id, 'live')
-    return createSpec(id, subject, mode)
-  }
-}
-
-
-export function createSpecSave() {
-  return function specSave<T>(id: string, subject: T): Promise<Spec<T>> {
-    const mode = getMode(id, 'save')
-    return createSpec(id, subject, mode)
-  }
-}
-
-export function createSpecSimulate() {
-  return function specSimulate<T>(id: string, subject: T): Promise<Spec<T>> {
-    const mode = getMode(id, 'simulate')
-    return createSpec(id, subject, mode)
-  }
 }

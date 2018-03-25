@@ -3,7 +3,7 @@ import a, { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { spec } from '../index'
+import { spec, SpecNotFound } from '../index'
 import {
   simpleCallback,
   fetch,
@@ -175,9 +175,7 @@ test('simpleCallback fail case replay', async () => {
 })
 
 test('simulate without record will throw', async () => {
-  const noRecordSpec = await spec.simulate('function/simpleCallback/notExist', simpleCallback.success)
-
-  await a.throws(simpleCallback.increment(noRecordSpec.subject, 4), SimulationMismatch)
+  a.throws(spec.simulate('function/simpleCallback/notExist', simpleCallback.success), SpecNotFound)
 })
 
 //#endregion

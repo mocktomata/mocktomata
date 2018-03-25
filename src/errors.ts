@@ -16,6 +16,15 @@ export class MissingSpecID extends Error {
   }
 }
 
+export class SpecNotFound extends Error {
+  // istanbul ignore next
+  constructor(public specId: string, public reason) {
+    super(`Unable to find the spec record for '${specId}' due to: ${reason}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
 export class DuplicateGivenHandler extends Error {
   // istanbul ignore next
   constructor(public clause: string | RegExp) {

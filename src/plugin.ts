@@ -44,7 +44,8 @@ export function loadConfig(cwd) {
 
 // istanbul ignore next
 export function loadPlugin(cwd, p) {
-  const pluginPath = path.resolve(cwd, 'node_modules', p)
+  // '.' is used by plugin package to test itself.
+  const pluginPath = p === '.' ? cwd : path.resolve(cwd, 'node_modules', p)
   const m = require(pluginPath)
   registerPlugin(m)
 }

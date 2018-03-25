@@ -1,6 +1,6 @@
-import { SpecContext } from 'komondor-plugin'
+import { SpyContext } from 'komondor-plugin'
 
-function spyOnCallback(context: SpecContext, fn, meta) {
+function spyOnCallback(context: SpyContext, fn, meta) {
   return (...args) => {
     context.add('function/callback', args, meta)
     fn(...args)
@@ -8,7 +8,7 @@ function spyOnCallback(context: SpecContext, fn, meta) {
 }
 
 
-export function spyFunction(context: SpecContext, subject) {
+export function spyFunction(context: SpyContext, subject) {
   return function (...args) {
     const a = context.add('function/invoke', args)
     const spiedArgs = args.map((arg, index) => {

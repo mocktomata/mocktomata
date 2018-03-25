@@ -1,6 +1,6 @@
-import { SpecContext } from 'komondor-plugin'
+import { SpyContext } from 'komondor-plugin'
 
-export function spyClass(context: SpecContext, subject) {
+export function spyClass(context: SpyContext, subject) {
   const spiedClass = class extends subject {
     // @ts-ignore
     // tslint:disable-next-line

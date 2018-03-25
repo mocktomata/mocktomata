@@ -1,8 +1,8 @@
 import { createSatisfier } from 'satisfier'
 
-import { SpecContext, SimulationMismatch } from 'komondor-plugin'
+import { SimulationMismatch, StubContext } from 'komondor-plugin'
 
-export function stubClass(context: SpecContext, subject) {
+export function stubClass(context: StubContext, subject) {
   function emitNextActions() {
     let action = context.peek()
     if (action && action.type === 'class/return') {

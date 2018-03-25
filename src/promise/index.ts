@@ -1,4 +1,4 @@
-import { Registrar, ReturnAction, SpecContext, createScopedCreateExpectation } from 'komondor-plugin'
+import { Registrar, ReturnAction, createScopedCreateExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
 const createSatisfier = createScopedCreateExpectation(TYPE)
@@ -19,19 +19,12 @@ function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-function getPromiseSpy(context: SpecContext, subject) {
+function getPromiseSpy(context: SpyContext, subject) {
   return subject.then(
     result => {
-      const action = context.add('promise/resolve')
-      const spied = context.getSpy(context, result, action)
-      if (spied) {
-        action.payload = spied
-        return spied
-      }
-      else {
-        action.payload = result
-        return result
-      }
+      // return context.processReturn('promise/resolve', result)
+      const action = context.add('promise/resolve', result)
+      return context.getSpy(context, result, action) || result
     },
     err => {
       context.add('promise/reject', err)
@@ -39,7 +32,7 @@ function getPromiseSpy(context: SpecContext, subject) {
     })
 }
 
-function getPromiseStub(context: SpecContext, action: ReturnAction) {
+function getPromiseStub(context: StubContext, action: ReturnAction) {
   return new Promise((resolve, reject) => {
     context.on('promise/resolve', a => {
       if (a.meta.id === action.meta.returnId) {
