@@ -35,9 +35,8 @@ export function spyFunction(context: SpyContext, subject) {
       context.add('function/throw', err)
       throw err
     }
-    const returnAction = context.add('function/return', result)
-
-    const out = context.getSpy(context, result, returnAction) || result
-    return out
+    return context.addReturnAction('function/return', result)
+    // const returnAction = context.add('function/return', result)
+    // return context.getSpy(context, result, returnAction) || result
   }
 }

@@ -41,8 +41,8 @@ export function spyClass(context: SpyContext, subject) {
         })
         const result = method.apply(this, spiedArgs)
 
-        const returnAction = context.add('class/return', result, { methodId })
-        const resultSpy = context.getSpy(context, result, returnAction)
+        const resultSpy = context.addReturnAction('class/return', result, { methodId })
+
         invoking = false
         return resultSpy || result
       }

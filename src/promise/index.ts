@@ -22,9 +22,9 @@ function isPromise(result) {
 function getPromiseSpy(context: SpyContext, subject) {
   return subject.then(
     result => {
-      // return context.processReturn('promise/resolve', result)
-      const action = context.add('promise/resolve', result)
-      return context.getSpy(context, result, action) || result
+      return context.addReturnAction('promise/resolve', result)
+      // const action = context.add('promise/resolve', result)
+      // return context.getSpy(context, result, action) || result
     },
     err => {
       context.add('promise/reject', err)
