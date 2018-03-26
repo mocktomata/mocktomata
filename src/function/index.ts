@@ -1,4 +1,4 @@
-import { Registrar } from 'komondor-plugin'
+import { Registrar, createScopedCreateExpectation } from 'komondor-plugin'
 
 import { spyFunction } from './getSpyFunction'
 import { stubFunction } from './getStubFunction'
@@ -15,3 +15,8 @@ export function activate(registrar: Registrar) {
     }
   )
 }
+
+const createExpectation = createScopedCreateExpectation('function')
+
+export const invokedWith = createExpectation('invoke')
+export const returnedWith = createExpectation('return')

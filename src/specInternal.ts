@@ -1,12 +1,13 @@
 import { satisfy } from 'assertron'
-import { SpecAction, SpecMode, SpyContext, StubContext, ReturnAction } from 'komondor-plugin'
+import { SpecAction, SpecMode, SpyContext, StubContext } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
-import { MissingSpecID, SpecNotFound } from './errors'
+import { MissingSpecID, SpecNotFound, NotSpecable } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
 import { plugins } from './plugin'
 import { store } from './store'
+
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -74,64 +75,32 @@ async function createSpec(specId: string, subject, mode: SpecMode) {
       return createStubbingSpec(specId, subject)
   }
 }
+interface SpyInternalContext {
+  actions: SpecAction[],
+  events: { [k: string]: ((action) => void)[] },
+  listenAll: ((action) => void)[]
+}
 
 async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
+  const plugin = plugins.find(p => p.support(subject))
+  if (!plugin) {
+    throw new NotSpecable(subject)
+  }
+
   const actions: SpecAction[] = []
-  let actionCounter = 0
-  const events = {}
-  const listenAll: any[] = []
+  const events: { [k: string]: ((action) => void)[] } = {}
+  const listenAll: ((action) => void)[] = []
 
-  const context: SpyContext = {
-    mode: 'live',
-    specId,
-    addReturnAction(type: string, result, meta = {}) {
-      const action = fillMetaId(type, { type, payload: result, meta })
-      actions.push(action)
-      callListeners(action)
-
-      const plugin = plugins.find(p => p.support(result))
-      if (plugin) {
-        action.meta.returnType = plugin.type
-        action.meta.returnId = getNextTypeCounter(plugin.type)
-        return plugin.getSpy(context, result, action) || result
-      }
-      return result
-    },
-    add(type: string, payload?: any, meta: object = {}) {
-      const a = fillMetaId(type, { type, payload, meta })
-      actions.push(a)
-      callListeners(a)
-      return a
-    }
-  }
-  const typesCounter = {}
-  function fillMetaId(type, action) {
-    action.meta.id = getNextTypeCounter(type)
-    return action
-  }
-  function getNextTypeCounter(type) {
-    const counter = typesCounter[type] || 0
-    return typesCounter[type] = counter + 1
-  }
-  function callListeners(action) {
-    if (events[action.type]) {
-      events[action.type].forEach(cb => cb(action))
-    }
-    if (listenAll.length > 0) {
-      listenAll.forEach(cb => cb(action))
-    }
-  }
-
-  const spied = getSpy(context, subject)
+  const context = createSpyContext({ actions, events, listenAll }, 'live', specId, plugin)
 
   const spec: Spec<T> = {
     actions,
-    subject: spied,
+    subject: plugin.getSpy(context, subject, undefined),
     on(actionType: string, callback) {
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[actionCounter]
+      const action = actions[actions.length - 1]
       if (action && action.type === actionType) {
         callback(action)
       }
@@ -148,76 +117,30 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   }
   return spec
 }
-function getSpy(context: SpyContext, subject: any) {
-  const plugin = plugins.find(p => {
-    return p.support(subject)
-  })
-  if (plugin) {
-    return plugin.getSpy(context, subject, undefined)
-  }
-}
 
 async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
-  const actions: SpecAction[] = []
-  let actionCounter = 0
-  const events = {}
-  const listenAll: any[] = []
-
   if (!specId)
     throw new MissingSpecID('save')
 
-  const context: SpyContext = {
-    mode: 'live',
-    specId,
-    add(type: string, payload?: any, meta: object = {}) {
-      const a = fillMetaId(type, { type, payload, meta })
-      actions.push(a)
-      callListeners(a)
-      return a
-    },
-    addReturnAction(type: string, result, meta = {}) {
-      const action = fillMetaId(type, { type, payload: result, meta })
-      actions.push(action)
-      callListeners(action)
-      const plugin = plugins.find(p => p.support(result))
-      if (plugin) {
-        action.meta.returnType = plugin.type
-        action.meta.returnId = getNextTypeCounter(plugin.type)
-        return plugin.getSpy(context, result, action) || result
-      }
-      return result
-    }
+  const plugin = plugins.find(p => p.support(subject))
+  if (!plugin) {
+    throw new NotSpecable(subject)
   }
 
-  function callListeners(action) {
-    if (events[action.type]) {
-      events[action.type].forEach(cb => cb(action))
-    }
-    if (listenAll.length > 0) {
-      listenAll.forEach(cb => cb(action))
-    }
-  }
-  const typesCounter = {}
+  const actions: SpecAction[] = []
+  const events: { [k: string]: ((action) => void)[] } = {}
+  const listenAll: ((action) => void)[] = []
 
-  function fillMetaId(type, action) {
-    action.meta.id = getNextTypeCounter(type)
-    return action
-  }
-  function getNextTypeCounter(type) {
-    const counter = typesCounter[type] || 0
-    return typesCounter[type] = counter + 1
-  }
-
-  const spied = getSpy(context, subject)
+  const context = createSpyContext({ actions, events, listenAll }, 'save', specId, plugin)
 
   const spec: Spec<T> = {
     actions,
-    subject: spied,
+    subject: plugin.getSpy(context, subject, undefined),
     on(actionType: string, callback) {
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[actionCounter]
+      const action = actions[actions.length - 1]
       if (action && action.type === actionType) {
         callback(action)
       }
@@ -246,15 +169,23 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   if (!specId)
     throw new MissingSpecID('simulate')
 
-  const actions: SpecAction[] = []
-  let actionCounter = 0
+  const plugin = plugins.find(p => p.support(subject))
+  if (!plugin) {
+    throw new NotSpecable(subject)
+  }
 
-  const events = {}
-  const listenAll: any[] = []
+  const actions: SpecAction[] = []
+  const events: { [k: string]: ((action) => void)[] } = {}
+  const listenAll: ((action) => void)[] = []
+  let actionCounter = 0
 
   const context: StubContext = {
     specId,
-    getStub: (context, action) => getStub(context, undefined, action),
+    getStub: (context, action) => {
+      const plugin = plugins.find(p => action && action.meta.returnType === p.type)
+      if (plugin)
+        return plugin.getStub(context, subject, action)
+    },
     peek<A extends SpecAction>(): A | undefined {
       return actions[actionCounter] as any
     },
@@ -287,7 +218,8 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   catch (err) {
     throw new SpecNotFound(specId, err)
   }
-  const stub = getStub(context, subject, undefined)
+
+  const stub = plugin.getStub(context, subject, undefined)
 
   const spec: Spec<T> = {
     actions,
@@ -323,12 +255,6 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   }
 }
 
-function getStub(context: StubContext, subject: any, action: ReturnAction | undefined) {
-  const plugin = plugins.find(p => (action && action.meta.returnType === p.type) || p.support(subject))
-  if (plugin)
-    return plugin.getStub(context, subject, action)
-}
-
 function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
     if (isRejectErrorPromiseReturnAction(a) ||
@@ -344,4 +270,84 @@ function isErrorThrowAction(action) {
 
 function isRejectErrorPromiseReturnAction(action) {
   return action.type === 'promise/reject' && action.payload instanceof Error
+}
+
+class TypeCounter {
+  types = {}
+  next(type) {
+    return this.types[type] = (this.types[type] || 0) + 1
+  }
+}
+
+function createSpyContext({ actions, events, listenAll }: SpyInternalContext, mode: SpecMode, specId: string, plugin): SpyContext {
+
+  const typeCounter = new TypeCounter()
+
+  const spyId = typeCounter.next(plugin.type)
+
+  const context: SpyContext = {
+    mode,
+    specId,
+    getSpy(subject, meta: any = { sourcePath: [] }) {
+      if (typeof subject === 'object') {
+        Object.keys(subject).forEach(key => {
+          subject[key] = context.getSpy(subject[key], { ...meta, sourcePath: [...meta.sourcePath, key] })
+        })
+        return subject
+      }
+      else {
+        const plugin = plugins.find(p => p.support(subject))
+        if (plugin) {
+          return plugin.getSpy(context, subject, undefined) || subject
+        }
+      }
+    },
+    addInvokeAction<T extends any[]>(type: string, args: T, meta: any = {}): T {
+      const action = { type, payload: args, meta }
+      action.meta.id = spyId
+
+      return args.map(arg => {
+        const plugin = plugins.find(p => p.support(arg))
+        if (plugin) {
+          return plugin.getSpy(context, arg, action) || arg
+        }
+
+        return arg
+      }) as T
+    },
+    addReturnAction(type: string, result, meta: any = {}) {
+      const action = { type, payload: result, meta }
+      action.meta.id = spyId
+
+      actions.push(action)
+      callListeners(action)
+
+      const plugin = plugins.find(p => p.support(result))
+      if (plugin) {
+        action.meta.returnType = plugin.type
+        action.meta.returnId = typeCounter.next(plugin.type)
+        return plugin.getSpy(context, result, action) || result
+      }
+      return result
+    },
+    add(type: string, payload?: any, meta: any = {}) {
+      const a = { type, payload, meta }
+      a.meta.id = spyId
+
+      actions.push(a)
+      callListeners(a)
+      return a
+    }
+  }
+
+  return context
+
+  function callListeners(action) {
+    if (events[action.type]) {
+      events[action.type].forEach(cb => cb(action))
+    }
+    if (listenAll.length > 0) {
+      listenAll.forEach(cb => cb(action))
+    }
+  }
 }

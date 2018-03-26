@@ -1,3 +1,5 @@
+import { tersify } from 'tersify';
+
 export class MissingGivenHandler extends Error {
   // istanbul ignore next
   constructor(public clause: string) {
@@ -20,6 +22,14 @@ export class SpecNotFound extends Error {
   // istanbul ignore next
   constructor(public specId: string, public reason) {
     super(`Unable to find the spec record for '${specId}' due to: ${reason}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class NotSpecable extends Error {
+  constructor(public subject) {
+    super(`The subject ${tersify(subject, { maxLength: 50 })} is not supported by any loaded plugins`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }

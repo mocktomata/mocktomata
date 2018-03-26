@@ -3,7 +3,7 @@ import a, { satisfy, AssertOrder } from 'assertron'
 import { isFSA } from 'flux-standard-action'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { spec, SpecNotFound } from '../index'
+import { spec, SpecNotFound, invokedWith, returnedWith } from '../index'
 import {
   simpleCallback,
   fetch,
@@ -13,6 +13,22 @@ import {
   recursive,
   postReturn
 } from './testSuites'
+import { isFunction } from 'util';
+
+
+test('get same object if nothing to spy on', async () => {
+  t.deepEqual(await testObject({}), {})
+  t.deepEqual(await testObject({ a: 1 }), { a: 1 })
+  t.deepEqual(await testObject({ a: true }), { a: true })
+  t.deepEqual(await testObject({ a: 'a' }), { a: 'a' })
+})
+
+async function testObject(expected) {
+  const objSpec = await spec(() => expected)
+  const actual = objSpec.subject()
+  t.equal(actual, expected)
+  return actual
+}
 
 test('spec.actions contains all actions recorded', async () => {
   const cbSpec = await spec(simpleCallback.success)
@@ -496,5 +512,19 @@ test('postReturn style simulate', async () => {
     { type: 'function/callback', payload: ['event'] },
     { type: 'function/callback', payload: ['event'] },
     { type: 'function/callback', payload: ['event'] }
+  ])
+})
+
+test.skip('spy on the method of the return value', async () => {
+  const fspec = await spec(() => ({ f() { return 'foo' } }))
+
+  const actual = fspec.subject()
+  t.equal(actual.f(), 'foo')
+
+  return fspec.satisfy([
+    invokedWith(),
+    returnedWith({ f: isFunction }, { returnType: 'komondor/obj', returnId: 1 }),
+    invokedWith(undefined, { sourceType: 'komondor/obj', sourceId: 1, sourcePath: ['f'], id: 2 }),
+    returnedWith('foo', { id: 2 })
   ])
 })
