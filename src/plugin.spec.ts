@@ -135,48 +135,6 @@ test('next moves to next action and peek gets it', async () => {
   o.end()
 })
 
-
-// test('prune with no action ends with no action', async () => {
-//   const o = new AssertOrder(1)
-//   registerPlugin({
-//     activate(r: Registrar) {
-//       r.register(
-//         'peek-prune-noAction',
-//         subject => subject === 'peek-prune-noAction',
-//         x => x,
-//         (context, subject) => {
-//           o.once(1)
-//           context.prune()
-//           return subject
-//         }
-//       )
-//     }
-//   })
-
-//   const s = await spec.simulate('plugin/noActions', 'peek-prune-noAction')
-//   t.equal(s.actions.length, 0)
-//   o.end()
-// })
-
-
-// test('prune without move clears all actions', async () => {
-//   const store = await createSpec('some', undefined, 'live')
-//   await store.load('specStore/twoActions')
-//   store.prune()
-
-//   t.equal(store.actions.length, 0)
-// })
-
-// test('prune clears remaining actions', async () => {
-//   const store = await createSpec('some', undefined, 'live')
-//   await store.load('specStore/twoActions')
-//   store.next()
-//   store.prune()
-
-//   t.equal(store.actions.length, 1)
-// })
-
-
 test('on() will not trigger if not adding the specific action type', async () => {
   const o = new AssertOrder(1)
   registerPlugin({
@@ -203,53 +161,104 @@ test('on() will not trigger if not adding the specific action type', async () =>
 })
 
 test('on() will trigger when the right action is added', async () => {
-  const o = new AssertOrder(2)
+  const o = new AssertOrder(1)
   registerPlugin({
     activate(r: Registrar) {
       r.register(
         'on-trigger',
         subject => tersify(subject) === `function () {return 'on-trigger';}`,
-        (context, subject) => {
-          o.once(1)
+        context => () => {
           context.add('action1')
-          return subject
         },
-        (_context, subject) => {
-          return subject
+        context => () => {
+          context.next()
         }
       )
     }
   })
 
   const s = await spec(() => 'on-trigger')
-  s.on('action1', () => o.once(2))
+  s.on('action1', () => o.once(1))
+
   s.subject()
+
+
+  await s.satisfy([{ type: 'action1' }])
   o.end()
 })
 
+test('on() will trigger when the right action is added (save)', async () => {
+  const o = new AssertOrder(1)
+  registerPlugin({
+    activate(r: Registrar) {
+      r.register(
+        'on-trigger-save',
+        subject => tersify(subject) === `function () {return 'on-trigger-save';}`,
+        context => () => {
+          context.add('action1')
+        },
+        context => () => {
+          context.next()
+        }
+      )
+    }
+  })
+
+  const s = await spec.save('plugin/on-trigger-save', () => 'on-trigger-save')
+  s.on('action1', () => o.once(1))
+  s.subject()
+
+  await s.satisfy([{ type: 'action1' }])
+  o.end()
+})
+
+test('on() will trigger when the right action is added (simulate)', async () => {
+  const o = new AssertOrder(1)
+  registerPlugin({
+    activate(r: Registrar) {
+      r.register(
+        'on-trigger-simulate',
+        subject => tersify(subject) === `function () {return 'on-trigger-simulate';}`,
+        context => () => {
+          context.add('action1')
+        },
+        context => () => {
+          context.next()
+        }
+      )
+    }
+  })
+
+  const s = await spec.simulate('plugin/on-trigger-simulate', () => 'on-trigger-simulate')
+  s.on('action1', () => o.once(1))
+
+  s.subject()
+
+  await s.satisfy([{ type: 'action1' }])
+  o.end()
+})
+
+
 test('onAny() will trigger when any aciton is added', async () => {
-  const o = new AssertOrder(3)
+  const o = new AssertOrder(2)
   registerPlugin({
     activate(r: Registrar) {
       r.register(
         'onAny',
         subject => tersify(subject) === `function () {return 'onAny';}`,
-        (context, _subject) => {
-          return () => {
-            o.once(1)
-            context.add('action1')
-            context.add('action2')
-          }
+        context => () => {
+          context.add('action1')
+          context.add('action2')
         },
-        (_context, subject) => {
-          return subject
+        context => () => {
+          context.next()
         }
       )
     }
   })
 
   const s = await spec(() => 'onAny')
-  s.onAny(() => o.any([2, 3]))
+  s.onAny(() => o.any([1, 2]))
   s.subject()
   o.end()
 

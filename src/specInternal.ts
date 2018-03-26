@@ -100,10 +100,6 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[actions.length - 1]
-      if (action && action.type === actionType) {
-        callback(action)
-      }
     },
     onAny(callback) {
       listenAll.push(callback)
@@ -140,10 +136,6 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[actions.length - 1]
-      if (action && action.type === actionType) {
-        callback(action)
-      }
     },
     onAny(callback) {
       listenAll.push(callback)
@@ -179,9 +171,17 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   const listenAll: ((action) => void)[] = []
   let actionCounter = 0
 
+  try {
+    const specRecord = await io.readSpec(specId)
+    actions.splice(0, actions.length, ...specRecord.actions)
+  }
+  catch (err) {
+    throw new SpecNotFound(specId, err)
+  }
+
   const context: StubContext = {
     specId,
-    getStub: (context, action) => {
+    getStub(context, action) {
       const plugin = plugins.find(p => action && action.meta.returnType === p.type)
       if (plugin)
         return plugin.getStub(context, subject, action)
@@ -195,28 +195,14 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
         callListeners(action)
       }
     },
-    prune() {
-      actions.splice(actionCounter, actions.length - actionCounter)
-    },
     on(actionType: string, callback) {
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[actionCounter]
-      if (action && action.type === actionType) {
-        callback(action)
-      }
     },
     onAny(callback) {
       listenAll.push(callback)
     }
-  }
-  try {
-    const specRecord = await io.readSpec(specId)
-    actions.splice(0, actions.length, ...specRecord.actions)
-  }
-  catch (err) {
-    throw new SpecNotFound(specId, err)
   }
 
   const stub = plugin.getStub(context, subject, undefined)
@@ -228,9 +214,9 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
       if (!events[actionType])
         events[actionType] = []
       events[actionType].push(callback)
-      const action = actions[actionCounter]
-      if (action && action.type === actionType) {
-        callback(action)
+
+      if (actionCounter === 0 && actions[0].type === actionType) {
+        callback(actions[0])
       }
     },
     onAny(callback) {
