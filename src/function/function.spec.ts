@@ -35,10 +35,10 @@ test('spec.actions contains all actions recorded', async () => {
   await simpleCallback.increment(cbSpec.subject, 2)
 
   satisfy(cbSpec.actions, [
-    { type: 'function/invoke', payload: [2], meta: { id: 1 } },
-    { type: 'function/invoke', payload: [null, 3], meta: { id: 2, sourceType: 'function', sourceId: 1, sourcePath: [1] } },
-    { type: 'function/return', meta: { id: 2 } },
-    { type: 'function/return', meta: { id: 1 } }])
+    { type: 'function/invoke', payload: [2], meta: { instanceId: 1 } },
+    { type: 'function/invoke', payload: [null, 3], meta: { instanceId: 2, sourceType: 'function', sourceId: 1, sourcePath: [1] } },
+    { type: 'function/return', meta: { instanceId: 2 } },
+    { type: 'function/return', meta: { instanceId: 1 } }])
 })
 
 test('on(event, callback) will invoke when action is added.', async () => {
@@ -62,11 +62,10 @@ test('on(event, callback) will invoke when action is added.', async () => {
   order.end()
 })
 
-test.only('on(event, callback) will invoke when action is simulated.', async () => {
+test('on(event, callback) will invoke when action is simulated.', async () => {
   const order = new AssertOrder(4)
   const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
 
-  console.log(cbSpec.actions)
   cbSpec.on('function/invoke', action => {
     if (order.any([1, 2]) === 1) {
       satisfy(action, { payload: [2] })
@@ -97,7 +96,7 @@ test('onAny(callback) will invoke on any action', async () => {
   order.end()
 })
 
-test.skip('onAny(callback) will invoke when any action is simulated', async () => {
+test('onAny(callback) will invoke when any action is simulated', async () => {
   const order = new AssertOrder()
   const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
 
@@ -125,20 +124,20 @@ test('simpleCallback verify', async () => {
   await cbSpec.satisfy([{
     type: 'function/invoke',
     payload: [2],
-    meta: { id: 1 }
+    meta: { instanceId: 1 }
   },
   {
     type: 'function/invoke',
     payload: [null, 3],
     meta: {
-      id: 2,
+      instanceId: 2,
       sourceType: 'function',
       sourceId: 1,
       sourcePath: [1]
     }
   },
-  { type: 'function/return', meta: { id: 2 } },
-  { type: 'function/return', meta: { id: 1 } }])
+  { type: 'function/return', meta: { instanceId: 2 } },
+  { type: 'function/return', meta: { instanceId: 1 } }])
   t.equal(actual, 3)
 })
 
@@ -150,44 +149,44 @@ test('simpleCallback save', async () => {
   await cbSpec.satisfy([{
     type: 'function/invoke',
     payload: [2],
-    meta: { id: 1 }
+    meta: { instanceId: 1 }
   },
   {
     type: 'function/invoke',
     payload: [null, 3],
     meta: {
-      id: 2,
+      instanceId: 2,
       sourceType: 'function',
       sourceId: 1,
       sourcePath: [1]
     }
   },
-  { type: 'function/return', meta: { id: 2 } },
-  { type: 'function/return', meta: { id: 1 } }])
+  { type: 'function/return', meta: { instanceId: 2 } },
+  { type: 'function/return', meta: { instanceId: 1 } }])
   t.equal(actual, 3)
 })
 
-test.skip('simpleCallback simulate', async () => {
+test('simpleCallback simulate', async () => {
   const cbSpec = await spec.simulate('simpleCallback', simpleCallback.success)
   const actual = await simpleCallback.increment(cbSpec.subject, 2)
 
   await cbSpec.satisfy([{
     type: 'function/invoke',
     payload: [2],
-    meta: { id: 1 }
+    meta: { instanceId: 1 }
   },
   {
     type: 'function/invoke',
     payload: [null, 3],
     meta: {
-      id: 2,
+      instanceId: 2,
       sourceType: 'function',
       sourceId: 1,
       sourcePath: [1]
     }
   },
-  { type: 'function/return', meta: { id: 2 } },
-  { type: 'function/return', meta: { id: 1 } }])
+  { type: 'function/return', meta: { instanceId: 2 } },
+  { type: 'function/return', meta: { instanceId: 1 } }])
   t.equal(actual, 3)
 })
 
@@ -199,20 +198,20 @@ test('simpleCallback fail case verify', async () => {
       return cbSpec.satisfy([{
         type: 'function/invoke',
         payload: [2],
-        meta: { id: 1 }
+        meta: { instanceId: 1 }
       },
       {
         type: 'function/invoke',
         payload: [{ message: 'fail' }, null],
         meta: {
-          id: 2,
+          instanceId: 2,
           sourceType: 'function',
           sourceId: 1,
           sourcePath: [1]
         }
       },
-      { type: 'function/return', meta: { id: 2 } },
-      { type: 'function/return', meta: { id: 1 } }])
+      { type: 'function/return', meta: { instanceId: 2 } },
+      { type: 'function/return', meta: { instanceId: 1 } }])
     })
 })
 
@@ -224,24 +223,24 @@ test('simpleCallback fail case save', async () => {
       return cbSpec.satisfy([{
         type: 'function/invoke',
         payload: [2],
-        meta: { id: 1 }
+        meta: { instanceId: 1 }
       },
       {
         type: 'function/invoke',
         payload: [{ message: 'fail' }, null],
         meta: {
-          id: 2,
+          instanceId: 2,
           sourceType: 'function',
           sourceId: 1,
           sourcePath: [1]
         }
       },
-      { type: 'function/return', meta: { id: 2 } },
-      { type: 'function/return', meta: { id: 1 } }])
+      { type: 'function/return', meta: { instanceId: 2 } },
+      { type: 'function/return', meta: { instanceId: 1 } }])
     })
 })
 
-test.skip('simpleCallback fail case simulate', async () => {
+test('simpleCallback fail case simulate', async () => {
   const cbSpec = await spec.simulate('simpleCallback failed', simpleCallback.fail)
   return simpleCallback.increment(cbSpec.subject, 2)
     .then(() => t.fail('should not reach'))
@@ -249,20 +248,20 @@ test.skip('simpleCallback fail case simulate', async () => {
       return cbSpec.satisfy([{
         type: 'function/invoke',
         payload: [2],
-        meta: { id: 1 }
+        meta: { instanceId: 1 }
       },
       {
         type: 'function/invoke',
         payload: [{ message: 'fail' }, null],
         meta: {
-          id: 2,
+          instanceId: 2,
           sourceType: 'function',
           sourceId: 1,
           sourcePath: [1]
         }
       },
-      { type: 'function/return', meta: { id: 2 } },
-      { type: 'function/return', meta: { id: 1 } }])
+      { type: 'function/return', meta: { instanceId: 2 } },
+      { type: 'function/return', meta: { instanceId: 1 } }])
     })
 })
 
@@ -278,18 +277,18 @@ test('fetch verify', async () => {
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
-    { type: 'function/invoke', payload: ['remoteAdd', { x: 1, y: 2 }], meta: { id: 1 } },
+    { type: 'function/invoke', payload: ['remoteAdd', { x: 1, y: 2 }], meta: { instanceId: 1 } },
     {
       type: 'function/invoke',
       payload: [null, 3],
       meta: {
-        id: 2,
+        instanceId: 2,
         sourceType: 'function',
         sourceId: 1,
         sourcePath: [2]
       }
     },
-    { type: 'function/return', meta: { id: 2 } },
+    { type: 'function/return', meta: { instanceId: 2 } },
     { type: 'function/return' }
   ])
   t.equal(actual, 3)
@@ -300,40 +299,40 @@ test('fetch save', async () => {
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
-    { type: 'function/invoke', payload: ['remoteAdd', { x: 1, y: 2 }], meta: { id: 1 } },
+    { type: 'function/invoke', payload: ['remoteAdd', { x: 1, y: 2 }], meta: { instanceId: 1 } },
     {
       type: 'function/invoke',
       payload: [null, 3],
       meta: {
-        id: 2,
+        instanceId: 2,
         sourceType: 'function',
         sourceId: 1,
         sourcePath: [2]
       }
     },
-    { type: 'function/return', meta: { id: 2 } },
+    { type: 'function/return', meta: { instanceId: 2 } },
     { type: 'function/return' }
   ])
   t.equal(actual, 3)
 })
 
-test.skip('fetch simulate', async () => {
+test('fetch simulate', async () => {
   const speced = await spec('fetch', fetch.success)
   const actual = await fetch.add(speced.subject, 1, 2)
 
   await speced.satisfy([
-    { type: 'function/invoke', payload: ['remoteAdd', { x: 1, y: 2 }], meta: { id: 1 } },
+    { type: 'function/invoke', payload: ['remoteAdd', { x: 1, y: 2 }], meta: { instanceId: 1 } },
     {
       type: 'function/invoke',
       payload: [null, 3],
       meta: {
-        id: 2,
+        instanceId: 2,
         sourceType: 'function',
         sourceId: 1,
         sourcePath: [2]
       }
     },
-    { type: 'function/return', meta: { id: 2 } },
+    { type: 'function/return', meta: { instanceId: 2 } },
     { type: 'function/return' }
   ])
   t.equal(actual, 3)
@@ -350,13 +349,13 @@ test('fetch fail verify', async () => {
           type: 'function/invoke',
           payload: [{ message: 'fail' }, null],
           meta: {
-            id: 2,
+            instanceId: 2,
             sourceType: 'function',
             sourceId: 1,
             sourcePath: [2]
           }
         },
-        { type: 'function/return', meta: { id: 2 } },
+        { type: 'function/return', meta: { instanceId: 2 } },
         { type: 'function/return' }
       ])
     })
@@ -373,19 +372,19 @@ test('fetch fail save', async () => {
           type: 'function/invoke',
           payload: [{ message: 'fail' }, null],
           meta: {
-            id: 2,
+            instanceId: 2,
             sourceType: 'function',
             sourceId: 1,
             sourcePath: [2]
           }
         },
-        { type: 'function/return', meta: { id: 2 } },
+        { type: 'function/return', meta: { instanceId: 2 } },
         { type: 'function/return' }
       ])
     })
 })
 
-test.skip('fetch fail simulate', async () => {
+test('fetch fail simulate', async () => {
   const speced = await spec.simulate('fetch fail', fetch.fail)
   return fetch.add(speced.subject, 1, 2)
     .then(() => t.fail('should not reach'))
@@ -396,13 +395,13 @@ test.skip('fetch fail simulate', async () => {
           type: 'function/invoke',
           payload: [{ message: 'fail' }, null],
           meta: {
-            id: 2,
+            instanceId: 2,
             sourceType: 'function',
             sourceId: 1,
             sourcePath: [2]
           }
         },
-        { type: 'function/return', meta: { id: 2 } },
+        { type: 'function/return', meta: { instanceId: 2 } },
         { type: 'function/return' }
       ])
     })
@@ -413,20 +412,22 @@ test.skip('fetch fail simulate', async () => {
 test('literalCallback verify', async () => {
   const speced = await spec(literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
+
+  console.log(speced.actions)
   await speced.satisfy([
-    { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { id: 1 } },
+    { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1 } },
     {
       type: 'function/invoke',
       payload: [3],
       meta: {
-        id: 3,
+        instanceId: 3,
         sourceType: 'function',
         sourceId: 1,
         sourcePath: [0, 'success']
       }
     },
-    { type: 'function/return', meta: { id: 3 } },
-    { type: 'function/return', meta: { id: 1 } }
+    { type: 'function/return', meta: { instanceId: 3 } },
+    { type: 'function/return', meta: { instanceId: 1 } }
   ])
   t.equal(actual, 3)
 })
@@ -436,41 +437,41 @@ test('literalCallback save', async () => {
   const actual = await literalCallback.increment(speced.subject, 2)
 
   await speced.satisfy([
-    { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { id: 1 } },
+    { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1 } },
     {
       type: 'function/invoke',
       payload: [3],
       meta: {
-        id: 3,
+        instanceId: 3,
         sourceType: 'function',
         sourceId: 1,
         sourcePath: [0, 'success']
       }
     },
-    { type: 'function/return', meta: { id: 3 } },
-    { type: 'function/return', meta: { id: 1 } }
+    { type: 'function/return', meta: { instanceId: 3 } },
+    { type: 'function/return', meta: { instanceId: 1 } }
   ])
   t.equal(actual, 3)
 })
 
-test.skip('literalCallback simulate', async () => {
+test('literalCallback simulate', async () => {
   const speced = await spec.simulate('literalCallback', literalCallback.success)
   const actual = await literalCallback.increment(speced.subject, 2)
 
   await speced.satisfy([
-    { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { id: 1 } },
+    { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1 } },
     {
       type: 'function/invoke',
       payload: [3],
       meta: {
-        id: 3,
+        instanceId: 3,
         sourceType: 'function',
         sourceId: 1,
         sourcePath: [0, 'success']
       }
     },
-    { type: 'function/return', meta: { id: 3 } },
-    { type: 'function/return', meta: { id: 1 } }
+    { type: 'function/return', meta: { instanceId: 3 } },
+    { type: 'function/return', meta: { instanceId: 1 } }
   ])
   t.equal(actual, 3)
 })
@@ -481,18 +482,18 @@ test('literalCallback fail case verify', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
-        { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { id: 1 } },
+        { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1 } },
         {
           type: 'function/invoke',
           payload: [undefined, undefined, { message: 'fail' }],
           meta: {
-            id: 2,
+            instanceId: 2,
             sourceType: 'function',
             sourceId: 1,
             sourcePath: [0, 'error']
           }
         },
-        { type: 'function/return', meta: { id: 2 } },
+        { type: 'function/return', meta: { instanceId: 2 } },
         { type: 'function/return' }
       ])
     })
@@ -504,41 +505,41 @@ test('literalCallback fail case save', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
-        { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { id: 1 } },
+        { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1 } },
         {
           type: 'function/invoke',
           payload: [undefined, undefined, { message: 'fail' }],
           meta: {
-            id: 2,
+            instanceId: 2,
             sourceType: 'function',
             sourceId: 1,
             sourcePath: [0, 'error']
           }
         },
-        { type: 'function/return', meta: { id: 2 } },
+        { type: 'function/return', meta: { instanceId: 2 } },
         { type: 'function/return' }
       ])
     })
 })
 
-test.skip('literalCallback fail case simulate', async () => {
+test('literalCallback fail case simulate', async () => {
   const speced = await spec.simulate('literalCallback fail', literalCallback.fail)
   await literalCallback.increment(speced.subject, 2)
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return speced.satisfy([
-        { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { id: 1 } },
+        { type: 'function/invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1 } },
         {
           type: 'function/invoke',
           payload: [undefined, undefined, { message: 'fail' }],
           meta: {
-            id: 2,
+            instanceId: 2,
             sourceType: 'function',
             sourceId: 1,
             sourcePath: [0, 'error']
           }
         },
-        { type: 'function/return', meta: { id: 2 } },
+        { type: 'function/return', meta: { instanceId: 2 } },
         { type: 'function/return' }
       ])
     })
@@ -568,7 +569,7 @@ test('synchronous save', async () => {
   t.equal(actual, 3)
 })
 
-test.skip('synchronous simulate', async () => {
+test('synchronous simulate', async () => {
   const speced = await spec.simulate('synchronous', synchronous.success)
   const actual = synchronous.increment(speced.subject, 2)
   await speced.satisfy([
@@ -600,7 +601,7 @@ test('synchronous fail save', async () => {
   ])
 })
 
-test.skip('synchronous fail simulate', async () => {
+test('synchronous fail simulate', async () => {
   const speced = await spec.simulate('synchronous fail', synchronous.fail)
 
   a.throws(() => synchronous.increment(speced.subject, 2), e => e.message === 'fail')
@@ -613,11 +614,13 @@ test.skip('synchronous fail simulate', async () => {
 
 //#endregion
 
-test('missing record will throw', async () => {
+test.only('missing record will throw', async () => {
   const cbSpec = await spec.simulate('function/simpleCallback/incompleteRecords', simpleCallback.success)
+
+  console.log(cbSpec.actions)
   t.equal(await simpleCallback.increment(cbSpec.subject, 2), 3)
 
-  await a.throws(simpleCallback.increment(cbSpec.subject, 4), SimulationMismatch)
+  return a.throws(simpleCallback.increment(cbSpec.subject, 4), SimulationMismatch)
 })
 
 
@@ -627,12 +630,12 @@ test('recursive (save)', async () => {
   t.equal(actual, 0)
 
   await cbSpec.satisfy([
-    { 'type': 'function/invoke', 'payload': [2], 'meta': { 'id': 1 } },
+    { 'type': 'function/invoke', 'payload': [2], 'meta': { 'instanceId': 1 } },
     {
       'type': 'function/invoke',
       'payload': [null, 1],
       'meta': {
-        'id': 2,
+        'instanceId': 2,
         'invokeId': 1,
         'sourceType': 'function',
         'sourceId': 1,
@@ -641,7 +644,7 @@ test('recursive (save)', async () => {
     },
     {
       'type': 'function/invoke', 'payload': [1], 'meta': {
-        'id': 1,
+        'instanceId': 1,
         'invokeId': 2
       }
     },
@@ -649,23 +652,23 @@ test('recursive (save)', async () => {
       'type': 'function/invoke',
       'payload': [null, 0],
       'meta': {
-        'id': 3,
+        'instanceId': 3,
         'sourceType': 'function',
         'sourceId': 1,
         'sourcePath': [1]
       }
     },
-    { 'type': 'function/return', 'meta': { 'id': 3 } },
+    { 'type': 'function/return', 'meta': { 'instanceId': 3 } },
     {
       'type': 'function/return', 'meta': {
-        'id': 1,
+        'instanceId': 1,
         'invokeId': 2
       }
     },
-    { 'type': 'function/return', 'meta': { 'id': 2 } },
+    { 'type': 'function/return', 'meta': { 'instanceId': 2 } },
     {
       'type': 'function/return', 'meta': {
-        'id': 1,
+        'instanceId': 1,
         'invokeId': 1
       }
     }
@@ -700,14 +703,14 @@ test('postReturn style', async () => {
   })
 
   await pspec.satisfy([
-    { type: 'function/invoke', payload: ['event', 3], meta: { id: 1, invokeId: 1 } },
-    { type: 'function/return', meta: { id: 1, invokeId: 1 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, invokeId: 1, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
-    { type: 'function/return', meta: { id: 2, invokeId: 1 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, invokeId: 2, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
-    { type: 'function/return', meta: { id: 2, invokeId: 2 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, invokeId: 3, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
-    { type: 'function/return', meta: { id: 2, invokeId: 3 } }
+    { type: 'function/invoke', payload: ['event', 3], meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function/return', meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, invokeId: 1, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
+    { type: 'function/return', meta: { instanceId: 2, invokeId: 1 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, invokeId: 2, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
+    { type: 'function/return', meta: { instanceId: 2, invokeId: 2 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, invokeId: 3, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
+    { type: 'function/return', meta: { instanceId: 2, invokeId: 3 } }
   ])
 })
 
@@ -724,14 +727,14 @@ test('postReturn style save', async () => {
   })
 
   await pspec.satisfy([
-    { type: 'function/invoke', payload: ['event', 3], meta: { id: 1, invokeId: 1 } },
-    { type: 'function/return', meta: { id: 1, invokeId: 1 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, invokeId: 1, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
-    { type: 'function/return', meta: { id: 2, invokeId: 1 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, invokeId: 2, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
-    { type: 'function/return', meta: { id: 2, invokeId: 2 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, invokeId: 3, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
-    { type: 'function/return', meta: { id: 2, invokeId: 3 } }
+    { type: 'function/invoke', payload: ['event', 3], meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function/return', meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, invokeId: 1, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
+    { type: 'function/return', meta: { instanceId: 2, invokeId: 1 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, invokeId: 2, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
+    { type: 'function/return', meta: { instanceId: 2, invokeId: 2 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, invokeId: 3, sourceType: 'function', sourceId: 1, sourcePath: [2] } },
+    { type: 'function/return', meta: { instanceId: 2, invokeId: 3 } }
   ])
 })
 
@@ -746,14 +749,14 @@ test.skip('postReturn style simulate', async () => {
     })
   })
   await pspec.satisfy([
-    { type: 'function/invoke', payload: ['event', 3], meta: { id: 1 } },
-    { type: 'function/return', meta: { id: 1 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, sourceType: 'function', sourceId: 1, sourcePath: 1 } },
-    { type: 'function/return', meta: { id: 2 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, sourceType: 'function', sourceId: 1, sourcePath: 1 } },
-    { type: 'function/return', meta: { id: 2 } },
-    { type: 'function/invoke', payload: ['event'], meta: { id: 2, sourceType: 'function', sourceId: 1, sourcePath: 1 } },
-    { type: 'function/return', meta: { id: 2 } }
+    { type: 'function/invoke', payload: ['event', 3], meta: { instanceId: 1 } },
+    { type: 'function/return', meta: { instanceId: 1 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, sourceType: 'function', sourceId: 1, sourcePath: 1 } },
+    { type: 'function/return', meta: { instanceId: 2 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, sourceType: 'function', sourceId: 1, sourcePath: 1 } },
+    { type: 'function/return', meta: { instanceId: 2 } },
+    { type: 'function/invoke', payload: ['event'], meta: { instanceId: 2, sourceType: 'function', sourceId: 1, sourcePath: 1 } },
+    { type: 'function/return', meta: { instanceId: 2 } }
   ])
 })
 

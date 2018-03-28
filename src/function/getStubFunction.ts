@@ -33,11 +33,11 @@ function inputMatches(a, b: any[]) {
 }
 
 function locateCallback(meta, args) {
-  if (!meta.callbackPath) {
+  if (!meta.sourcePath) {
     return args.find(arg => typeof arg === 'function')
   }
 
-  return meta.callbackPath.reduce((p, v) => {
+  return meta.sourcePath.reduce((p, v) => {
     return p[v]
   }, args)
 }
@@ -46,6 +46,7 @@ export function stubFunction(context: StubContext) {
   let currentId = 0
   return function (...args) {
     const inputAction = context.peek()
+    console.log('peek', inputAction)
     if (!inputAction || !inputMatches(inputAction.payload, args)) {
       throw new SimulationMismatch(context.specId, { type: 'function/invoke', payload: args }, inputAction)
     }
@@ -57,7 +58,7 @@ export function stubFunction(context: StubContext) {
       let action = context.peek()
       while (action && action.meta.id <= currentId) {
         context.next()
-        if (action.type === 'function/callback') {
+        if (action.type === 'function/invoke') {
           const callback = locateCallback(action.meta, args)
           callback(...action.payload)
         }
@@ -67,18 +68,21 @@ export function stubFunction(context: StubContext) {
     return result
     function processUntilReturn() {
       const action = context.peek()
+      console.log('action', action, args)
       if (!action) return undefined
       if (action.meta.id > currentId) return undefined
 
       if (action.type === 'function/return') {
         const result = action.meta && context.getStub(context, action) || action.payload
+        console.log('return', result)
         context.next()
         return result
       }
 
       context.next()
-      if (action.type === 'function/callback') {
+      if (action.type === 'function/invoke') {
         const callback = locateCallback(action.meta, args)
+        console.log(callback)
         callback(...action.payload)
       }
 
