@@ -77,7 +77,7 @@ export const delayed = {
   success(a, callback) {
     setTimeout(() => {
       callback(null, a + 1)
-    }, 100)
+    }, 10)
   }
 }
 

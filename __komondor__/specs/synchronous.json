@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'function/invoke', payload: ['increment', 2] }, { type: 'function/return', payload: 3 }]","actions":[{"type":"function/invoke","payload":["increment",2],"meta":{"id":1}},{"type":"function/return","payload":3,"meta":{"id":1}}]}
+{"expectation":"[{ type: 'function/invoke', payload: ['increment', 2] }, { type: 'function/return', payload: 3 }]","actions":[{"type":"function/invoke","payload":["increment",2],"meta":{"id":1,"invokeId":1}},{"type":"function/return","payload":3,"meta":{"id":1,"invokeId":1}}]}

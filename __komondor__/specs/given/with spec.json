@@ -1,1 +1,1 @@
-{"expectation":"[]","actions":[{"type":"function/invoke","payload":[2,null],"meta":{"id":1}},{"type":"function/callback","payload":[null,3],"meta":{"id":1}},{"type":"function/return","meta":{"id":1}}]}
+{"expectation":"[]","actions":[{"type":"function/invoke","payload":[2,null],"meta":{"id":1}},{"type":"function/invoke","payload":[null,3],"meta":{"id":2,"sourceType":"function","sourceId":1,"sourcePath":[1]}},{"type":"function/return","meta":{"id":2}},{"type":"function/return","meta":{"id":1}}]}

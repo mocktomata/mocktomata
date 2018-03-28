@@ -20,13 +20,13 @@ function isPromise(result) {
 }
 
 function getPromiseSpy(context: SpyContext, subject) {
+  const call = context.newCall()
   return subject.then(
     result => {
-      return context.addReturnAction('promise/resolve', result)
+      return call.return(result, 'resolve')
     },
     err => {
-      context.add('promise/reject', err)
-      throw err
+      throw call.throw(err, 'reject')
     })
 }
 

@@ -1,14 +1,9 @@
-import { Registrar, getSpy, getStub } from 'komondor-plugin'
+import { Registrar, Plugin } from 'komondor-plugin'
 import path from 'path'
 
 import { DuplicatePlugin } from './errors'
 
-export const plugins: Array<{
-  type: string,
-  getSpy: getSpy<any>,
-  getStub: getStub<any>,
-  support: (subject) => boolean
-}> = []
+export const plugins: Array<Plugin<any>> = []
 
 const komondorRegistrar: Registrar = {
   register(type: string, support, getSpy, getStub) {
