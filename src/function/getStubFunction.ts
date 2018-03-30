@@ -76,16 +76,16 @@ export function stubFunction(context: StubContext, subject) {
     //   return result
     // }
 
-    if (action.type === 'function' && action.name === 'invoke' && action.meta.sourceType === 'function' && action.meta.sourceInstanceId === context.instanceId) {
-      // run the stubs to simulate further behaviors
-      const stubCallback = locateCallback(action.meta, stubArgs)
-      stubCallback(...action.payload)
-      // run the actual callback to response to caller
-      // I have some concern that this may make actual remote
-      // calls that we try to stub.
-      const callback = locateCallback(action.meta, args)
-      callback(...action.payload)
-    }
+    // if (action.type === 'function' && action.name === 'invoke' && action.meta.sourceType === 'function' && action.meta.sourceInstanceId === context.instanceId) {
+    //   // run the stubs to simulate further behaviors
+    //   const stubCallback = locateCallback(action.meta, stubArgs)
+    //   stubCallback(...action.payload)
+    //   // run the actual callback to response to caller
+    //   // I have some concern that this may make actual remote
+    //   // calls that we try to stub.
+    //   const callback = locateCallback(action.meta, args)
+    //   callback(...action.payload)
+    // }
 
     // if (action.type === 'function/throw' && action.meta.sourceType === 'function' && action.meta.sourceInstanceId === context.instanceId) {
     //   const callback = locateCallback(action.meta, stubArgs)
