@@ -12,7 +12,7 @@ test.skip('', async () => {
   return objSpec.satisfy([
     { type: 'function/invoke' },
     { type: 'function/return', payload: { f: isFunction }, meta: { returnType: 'komondor/obj', returnId: 1 } },
-    { type: 'function/invoke', meta: { sourceType: 'komondor/obj', sourceId: 1, sourcePath: ['f'], id: 2 } },
+    { type: 'function/invoke', meta: { sourceType: 'komondor/obj', sourceInstanceId: 1, sourcePath: ['f'], id: 2 } },
     { type: 'function/return', payload: 'foo', meta: { id: 2 } }
   ])
 })

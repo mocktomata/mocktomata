@@ -1,9 +1,8 @@
-import { Registrar, ReturnAction, createScopedCreateExpectation, SpyContext, StubContext } from 'komondor-plugin'
+import { Registrar, ReturnAction, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
-const createSatisfier = createScopedCreateExpectation(TYPE)
-export const resolvedWith = createSatisfier('resolve')
-export const rejectedWith = createSatisfier('reject')
+export const resolvedWith = createExpectation(TYPE, 'resolve')
+export const rejectedWith = createExpectation(TYPE, 'reject')
 
 export function activate(registrar: Registrar) {
   registrar.register(
@@ -23,16 +22,27 @@ function getPromiseSpy(context: SpyContext, subject) {
   const call = context.newCall()
   return subject.then(
     result => {
-      return call.return(result, 'resolve')
+      return call.return(result, { name: 'resolve' })
     },
     err => {
-      throw call.throw(err, 'reject')
+      throw call.throw(err, { name: 'reject' })
     })
 }
 
 function getPromiseStub(context: StubContext, action: ReturnAction) {
+  console.log('getPromiseStub', action)
+  const call = context.newCall()
   return new Promise((resolve, reject) => {
-    context.on('promise/resolve', a => {
+    console.log('peek', context.peek())
+    console.log('inside promise', call.succeed({ name: 'resolve' }), call.failed({ name: 'reject' }))
+    if (call.succeed({ name: 'resolve' })) {
+      resolve(call.result())
+    }
+    else {
+      reject(call.thrown())
+    }
+
+    context.on('promise', 'resolve', a => {
       if (a.meta.id === action.meta.returnId) {
         if (a.meta.returnType) {
           const stub = context.getStub(context, a)
@@ -45,7 +55,7 @@ function getPromiseStub(context: StubContext, action: ReturnAction) {
         }
       }
     })
-    context.on('promise/reject', a => {
+    context.on('promise', 'reject', a => {
       if (a.meta.id === action.meta.returnId) {
         context.next()
         reject(a.payload)

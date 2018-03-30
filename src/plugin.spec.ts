@@ -144,7 +144,7 @@ test('on() will not trigger if not adding the specific action type', async () =>
         subject => tersify(subject) === `function () {return 'on-not-trigger';}`,
         (context, subject) => {
           o.once(1)
-          context.add('otherAction')
+          context.add('on-not-trigger', 'otherAction')
           return subject
         },
         (_context, subject) => {
@@ -155,7 +155,7 @@ test('on() will not trigger if not adding the specific action type', async () =>
   })
 
   const s = await spec(() => 'on-not-trigger')
-  s.on('action1', a => t.fail(a.toString()))
+  s.on('on-not-trigger', 'action1', a => t.fail(a.toString()))
   s.subject()
   o.end()
 })
@@ -168,22 +168,23 @@ test('on() will trigger when the right action is added', async () => {
         'on-trigger',
         subject => tersify(subject) === `function () {return 'on-trigger';}`,
         context => () => {
-          context.add('action1')
+          context.add('on-trigger', 'action1')
         },
         context => () => {
-          context.next()
+          const call = context.newCall()
+          return call.result()
         }
       )
     }
   })
 
   const s = await spec(() => 'on-trigger')
-  s.on('action1', () => o.once(1))
+  s.on('on-trigger', 'action1', () => o.once(1))
 
   s.subject()
 
 
-  await s.satisfy([{ type: 'action1' }])
+  await s.satisfy([{ type: 'on-trigger', name: 'action1' }])
   o.end()
 })
 
@@ -195,24 +196,25 @@ test('on() will trigger when the right action is added (save)', async () => {
         'on-trigger-save',
         subject => tersify(subject) === `function () {return 'on-trigger-save';}`,
         context => () => {
-          context.add('action1')
+          context.add('on-trigger-save', 'action1')
         },
         context => () => {
-          context.next()
+          const call = context.newCall()
+          return call.result()
         }
       )
     }
   })
 
   const s = await spec.save('plugin/on-trigger-save', () => 'on-trigger-save')
-  s.on('action1', () => o.once(1))
+  s.on('on-trigger-save', 'action1', () => o.once(1))
   s.subject()
 
-  await s.satisfy([{ type: 'action1' }])
+  await s.satisfy([{ type: 'on-trigger-save', name: 'action1' }])
   o.end()
 })
 
-test('on() will trigger when the right action is added (simulate)', async () => {
+test.only('on() will trigger when the right action is added (simulate)', async () => {
   const o = new AssertOrder(1)
   registerPlugin({
     activate(r: Registrar) {
@@ -220,21 +222,22 @@ test('on() will trigger when the right action is added (simulate)', async () => 
         'on-trigger-simulate',
         subject => tersify(subject) === `function () {return 'on-trigger-simulate';}`,
         context => () => {
-          context.add('action1')
+          context.add('on-trigger-simulate', 'action1')
         },
         context => () => {
-          context.next()
+          const call = context.newCall()
+          return call.result()
         }
       )
     }
   })
 
   const s = await spec.simulate('plugin/on-trigger-simulate', () => 'on-trigger-simulate')
-  s.on('action1', () => o.once(1))
+  s.on('on-trigger-simulate', 'action1', () => o.once(1))
 
   s.subject()
 
-  await s.satisfy([{ type: 'action1' }])
+  await s.satisfy([{ type: 'on-trigger-simulate', name: 'action1' }])
   o.end()
 })
 
@@ -247,8 +250,8 @@ test('onAny() will trigger when any aciton is added', async () => {
         'onAny',
         subject => tersify(subject) === `function () {return 'onAny';}`,
         context => () => {
-          context.add('action1')
-          context.add('action2')
+          context.add('onAny', 'action1')
+          context.add('onAny', 'action2')
         },
         context => () => {
           context.next()

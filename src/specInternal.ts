@@ -1,5 +1,5 @@
 import { satisfy } from 'assertron'
-import { SpecAction, SpecMode, StubContext } from 'komondor-plugin'
+import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
 import { MissingSpecID, SpecNotFound, NotSpecable } from './errors'
@@ -8,7 +8,7 @@ import { IdTracker, InternalSpyContext } from './InternalSpyContext'
 import { io } from './io'
 import { plugins } from './plugin'
 import { store } from './store'
-import { InternalStubContext } from './InternalStubContext';
+import { InternalStubContext, ActionTracker } from './InternalStubContext';
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -67,7 +67,7 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
 
   const idTracker = new IdTracker()
   const actions: SpecAction[] = []
-  const events: { [k: string]: ((action) => void)[] } = {}
+  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   const listenAll: ((action) => void)[] = []
 
   const spyContext = new InternalSpyContext({ idTracker, actions, events, listenAll }, 'live', specId, plugin)
@@ -75,10 +75,12 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   const spec: Spec<T> = {
     actions,
     subject: plugin.getSpy(spyContext, subject, undefined),
-    on(actionType: string, callback) {
+    on(actionType: string, name: string, callback) {
       if (!events[actionType])
-        events[actionType] = []
-      events[actionType].push(callback)
+        events[actionType] = {}
+      if (!events[actionType][name])
+        events[actionType][name] = []
+      events[actionType][name].push(callback)
     },
     onAny(callback) {
       listenAll.push(callback)
@@ -104,7 +106,7 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
 
   const idTracker = new IdTracker()
   const actions: SpecAction[] = []
-  const events: { [k: string]: ((action) => void)[] } = {}
+  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   const listenAll: ((action) => void)[] = []
 
   const spyContext = new InternalSpyContext({ idTracker, actions, events, listenAll }, 'save', specId, plugin)
@@ -112,10 +114,12 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   const spec: Spec<T> = {
     actions,
     subject: plugin.getSpy(spyContext, subject, undefined),
-    on(actionType: string, callback) {
+    on(actionType: string, name: string, callback) {
       if (!events[actionType])
-        events[actionType] = []
-      events[actionType].push(callback)
+        events[actionType] = {}
+      if (!events[actionType][name])
+        events[actionType][name] = []
+      events[actionType][name].push(callback)
     },
     onAny(callback) {
       listenAll.push(callback)
@@ -147,23 +151,27 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   }
 
   const actions = await loadActions(specId)
-  const events: { [k: string]: ((action) => void)[] } = {}
+  const actionTracker = new ActionTracker(actions)
+  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   const listenAll: ((action) => void)[] = []
+  const contexts = []
   // let actionCounter = 0
 
-  const context = new InternalStubContext({ actions, events, listenAll }, specId, plugin, subject)
+  const context = new InternalStubContext({ contexts, actionTracker, events, listenAll }, specId, plugin, subject)
 
   const spec: Spec<T> = {
     actions,
     subject: plugin.getStub(context, subject, undefined),
-    on(actionType: string, callback) {
+    on(actionType: string, name: string, callback) {
       if (!events[actionType])
-        events[actionType] = []
-      events[actionType].push(callback)
+        events[actionType] = {}
+      if (!events[actionType][name])
+        events[actionType][name] = []
+      events[actionType][name].push(callback)
 
-      if (context.actionCounter === 0 && actions[0].type === actionType) {
-        callback(actions[0])
-      }
+      // if (context.actionCounter === 0 && actions[0].type === actionType && actions[0].name === name) {
+      //   callback(actions[0])
+      // }
     },
     onAny(callback) {
       listenAll.push(callback)
@@ -188,11 +196,13 @@ function makeErrorSerializable(actions: SpecAction[]) {
 }
 
 function isErrorThrowAction(action) {
-  return /\/throw/.test(action.type) && action.payload instanceof Error
+  return action.payload instanceof Error
+  // return /throw/.test(action.name) && action.payload instanceof Error
 }
 
 function isRejectErrorPromiseReturnAction(action) {
-  return action.type === 'promise/reject' && action.payload instanceof Error
+  return action.payload instanceof Error
+  // return action.type === 'promise' && action.name === 'reject' && action.payload instanceof Error
 }
 
 async function loadActions(specId: string) {

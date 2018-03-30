@@ -10,8 +10,9 @@ export function spyFunction(context: SpyContext, subject) {
       result = subject.apply(this, spiedArgs)
     }
     catch (err) {
-      context.add('function/throw', err)
-      throw err
+      throw call.throw(err)
+      // context.add('function/throw', err)
+      // throw err
     }
     return call.return(result)
   }

@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'action1' }]","actions":[{"type":"action1","meta":{"id":1}}]}
+{"expectation":"[{ type: 'on-trigger-save', name: 'action1' }]","actions":[{"type":"on-trigger-save","name":"action1","meta":{"instanceId":1}}]}

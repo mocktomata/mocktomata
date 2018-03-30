@@ -18,7 +18,7 @@ export interface KomondorServerRegistry {
 }
 
 export interface Spy<T> {
-  on(event: string, callback: (action: SpecAction) => void),
+  on(type: string, name: string, callback: (action: SpecAction) => void),
   onAny(callback: (action: SpecAction) => void),
   actions: SpecAction[],
   subject: T
@@ -33,7 +33,7 @@ export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
-  satisfy(expectation: Array<{ type?: string, payload?: any, meta?: object } | undefined>): Promise<void>
+  satisfy(expectation: Array<{ type?: string, name?: string, payload?: any, meta?: object } | undefined>): Promise<void>
 }
 
 export interface GivenRecord {

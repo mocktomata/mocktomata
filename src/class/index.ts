@@ -1,4 +1,4 @@
-import { Registrar, SpyContext, StubContext, createScopedCreateExpectation } from 'komondor-plugin'
+import { Registrar, SpyContext, StubContext, createExpectation } from 'komondor-plugin'
 
 import { spyClass } from './spyClass'
 import { stubClass } from './stubClass'
@@ -21,7 +21,5 @@ function getStub(context: StubContext, subject: any): any {
   return stubClass(context, subject)
 }
 
-const createExpectation = createScopedCreateExpectation('class')
-
-export const constructedWith = createExpectation('constructor')
-export const methodInvokedWith = createExpectation('invoke')
+export const constructedWith = createExpectation('class', 'constructor')
+export const methodInvokedWith = createExpectation('class', 'invoke')
