@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'invoke' }]","actions":[{"type":"invoke","payload":[]}]}
+{"expectation":"[{ type: 'invoke' }]","actions":[{"type":"invoke","meta":{"id":1}}]}

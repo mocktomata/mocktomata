@@ -3,7 +3,7 @@ import { GivenMode } from './interfaces'
 import { io } from './io'
 import { spec, SpecFn } from './spec'
 import { store } from './store'
-import { createSpecLive, createSpecSave, createSpecSimulate } from './specInternal'
+import { createSpeclive, createSpecSave, createSpecSimulate } from './specInternal'
 
 function findMatchingEntry(clause: string) {
   return store.givenEntries.find(entry => {
@@ -87,7 +87,7 @@ export const given = Object.assign(
   }
 )
 
-const forceLiveSpec = Object.assign(createSpecLive(), { save: createSpecSave(), simulate: createSpecLive() })
+const forceLiveSpec = Object.assign(createSpeclive(), { save: createSpecSave(), simulate: createSpeclive() })
 const forceLiveContext = { mode: 'live', spec: forceLiveSpec } as any
 const liveContext = { mode: 'live', spec } as any
 const simSpec = Object.assign(createSpecSimulate(), { save: createSpecSave(), simulate: createSpecSimulate() })

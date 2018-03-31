@@ -1,19 +1,8 @@
 import { createSatisfier } from 'satisfier'
 
-import { SpecContext, SpecPluginUtil } from '../interfaces'
-import { SimulationMismatch } from '..';
+import { SimulationMismatch, StubContext } from 'komondor-plugin'
 
-export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, id: string) {
-  function emitNextActions() {
-    let action = context.peek()
-    if (action && action.type === 'class/return') {
-      let returnStub = util.getReturnStub(context, action)
-
-      context.next()
-      return returnStub || action.payload
-    }
-  }
-
+export function stubClass(context: StubContext, subject) {
   const stubClass = class extends subject {
     // tslint:disable-next-line:variable-name
     __komondorStub: any = { methods: {} }
@@ -22,44 +11,25 @@ export function stubClass(context: SpecContext, util: SpecPluginUtil, subject, i
       super(...args)
       this.__komondorStub.ctorArgs = args
 
-      context.on('class/callback', action => {
-        const invokeInfo = this.__komondorStub.methods[action.meta.name][action.meta.methodId]
-        const callback = invokeInfo.callbacks[action.meta.callSite]
-        callback(...action.payload)
-        context.next()
-      })
-
       const action = context.peek()
+      console.log('class constructor', action, args)
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(id, 'constructor', action)
+        throw new SimulationMismatch(context.specId, 'class/constructor', action)
       }
-      else {
-        context.next()
-        emitNextActions()
-      }
+      context.next()
     }
   }
 
   for (let p in stubClass.prototype) {
     stubClass.prototype[p] = function (...args) {
-      if (!this.__komondorStub.methods[p])
-        this.__komondorStub.methods[p] = []
-      const invokeInfo = { callbacks: {} }
-      this.__komondorStub.methods[p].push(invokeInfo)
+      const call = context.newCall()
+      call.invoked(args, { methodName: p })
 
-      const action = context.peek()
-      if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(id, { type: p, payload: args }, action)
+      if (call.succeed()) {
+        return call.result()
       }
-      else {
-        args.forEach((arg, i) => {
-          if (typeof arg === 'function') {
-            arg.bind(this)
-            invokeInfo.callbacks[i] = arg
-          }
-        })
-        context.next()
-        return emitNextActions()
+      if (call.failed()) {
+        throw call.thrown()
       }
     }
   }

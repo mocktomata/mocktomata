@@ -1,84 +1,61 @@
-import { SpecContext, ReturnAction, SpecPluginUtil, KomondorRegistrar } from '../interfaces'
+import { Registrar, ReturnAction, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
-let komondor: SpecPluginUtil
-export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {
-  komondor = util
-  registrar.registerGetReturnSpy(getPromiseSpy)
-  registrar.registerGetReturnStub(getPromiseStub)
-}
-function getPromiseSpy(context: SpecContext, subject, scope) {
-  if (!isPromise(subject)) return undefined
-  return spyPromise(context, subject, scope)
-}
+const TYPE = 'promise'
+export const resolvedWith = createExpectation(TYPE, 'resolve')
+export const rejectedWith = createExpectation(TYPE, 'reject')
 
-function getPromiseStub(context: SpecContext, action: ReturnAction) {
-  if (action.meta.returnType !== 'promise') return undefined
-  return stubPromise(context, action)
+export function activate(registrar: Registrar) {
+  registrar.register(
+    TYPE,
+    isPromise,
+    (context, subject) => getPromiseSpy(context, subject),
+    // tslint:disable-next-line
+    (context, _subject, action) => getPromiseStub(context, action!)
+  )
 }
 
 function isPromise(result) {
   return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
-let counter = 0
-
-function spyPromise(context: SpecContext, subject, action) {
-  const promiseId = ++counter
-  action.meta.returnType = 'promise'
-  action.meta.promiseId = promiseId
+function getPromiseSpy(context: SpyContext, subject) {
+  const call = context.newCall()
   return subject.then(
     result => {
-      const action: any = {
-        type: 'promise',
-        meta: {
-          promiseId,
-          status: 'resolve'
-        }
-      }
-
-      context.add(action)
-
-      const spied = komondor.getReturnSpy(context, result, action)
-      if (spied) {
-        return spied
-      }
-      else {
-        action.payload = result
-        return result
-      }
+      return call.return(result, { name: 'resolve' })
     },
     err => {
-      context.add({
-        type: 'promise',
-        payload: err,
-        meta: {
-          promiseId,
-          status: 'reject'
-        }
-      })
-      throw err
+      throw call.throw(err, { name: 'reject' })
     })
 }
 
-function stubPromise(context: SpecContext, action: ReturnAction) {
+function getPromiseStub(context: StubContext, action: ReturnAction) {
+  const call = context.newCall()
   return new Promise((resolve, reject) => {
-    context.on('promise', a => {
-      if (a.meta.promiseId === action.meta.promiseId) {
-        if (a.meta.status === 'resolve') {
-          if (a.meta.returnType) {
-            const stub = komondor.getReturnStub(context, a)
-            context.next()
-            resolve(stub)
-          }
-          else {
-            context.next()
-            resolve(a.payload)
-          }
+    if (call.succeed({ name: 'resolve' })) {
+      resolve(call.result())
+    }
+    else {
+      reject(call.thrown())
+    }
+
+    context.on('promise', 'resolve', a => {
+      if (a.meta.instancId === action.meta.returnInstanceId) {
+        if (a.meta.returnType) {
+          const stub = context.getStub(context, a)
+          context.next()
+          resolve(stub)
         }
         else {
           context.next()
-          reject(a.payload)
+          resolve(a.payload)
         }
+      }
+    })
+    context.on('promise', 'reject', a => {
+      if (a.meta.instanceId === action.meta.returnInstanceId) {
+        context.next()
+        reject(a.payload)
       }
     })
   })

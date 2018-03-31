@@ -1,26 +1,25 @@
-import { SpecContext, SpecPluginUtil, KomondorRegistrar } from '../interfaces'
+import { Registrar, SpyContext, StubContext, createExpectation } from 'komondor-plugin'
 
 import { spyClass } from './spyClass'
 import { stubClass } from './stubClass'
+import { isClass } from './isClass'
 
-let komondorUtil: SpecPluginUtil
-
-export function activate(registrar: KomondorRegistrar, util: SpecPluginUtil) {
-  komondorUtil = util
-  registrar.registerGetSpy(getSpy)
-  registrar.registerGetStub(getStub)
+export function activate(registrar: Registrar) {
+  registrar.register(
+    'class',
+    isClass,
+    getSpy,
+    getStub
+  )
 }
 
-function getSpy<T = any>(context: SpecContext, subject: T) {
-  if (!isClass(subject)) return undefined
-  return spyClass(context, komondorUtil, subject) as any
+function getSpy<T = any>(context: SpyContext, subject: T) {
+  return spyClass(context, subject) as any
 }
 
-function getStub(context: SpecContext, subject: any, id: string): any {
-  if (!isClass(subject)) return undefined
-  return stubClass(context, komondorUtil, subject, id)
+function getStub(context: StubContext, subject: any): any {
+  return stubClass(context, subject)
 }
 
-function isClass(subject) {
-  return typeof subject === 'function' && Object.keys(subject.prototype).length !== 0;
-}
+export const constructedWith = createExpectation('class', 'constructor')
+export const methodInvokedWith = createExpectation('class', 'invoke')

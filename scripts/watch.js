@@ -14,12 +14,12 @@ cp.spawn('tsc', ['-w'], { shell: true })
           shell: true
         })
       }
-      let lint = cp.spawnSync('npm', ['run', 'lint'], {
-        stdio: 'inherit',
-        shell: true
-      })
-      if (lint.status === 0) {
-        cp.spawnSync('npm', ['run', 'build-commonjs'])
-      }
+      // let lint = cp.spawnSync('npm', ['run', 'lint'], {
+      //   stdio: 'inherit',
+      //   shell: true
+      // })
+      // if (lint.status === 0) {
+      //   cp.spawnSync('npm', ['run', 'build-commonjs'])
+      // }
     }
   })

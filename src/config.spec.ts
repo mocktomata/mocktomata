@@ -21,7 +21,6 @@ const simpleCallback = {
   }
 }
 
-
 beforeEach(() => {
   resetStore()
 })
@@ -33,15 +32,27 @@ afterEach(() => {
 test(`config.spec('simulate') will force all specs in simulate mode`, async () => {
   config.spec('simulate')
 
-  const speced = await spec('config/forceReplaySuccess', simpleCallback.fail)
-  const actual = await simpleCallback.increment(speced.subject, 2)
+  // const s = await spec.save('config/forceReplaySuccess', simpleCallback.success)
+  const s = await spec('config/forceReplaySuccess', simpleCallback.fail)
+  const actual = await simpleCallback.increment(s.subject, 2)
 
+  console.log(s.actions)
   // this should have failed if the spec is running in 'live' mode.
   // The actual call is failing.
-  await speced.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' }
+  await s.satisfy([
+    { 'type': 'function', 'name': 'invoke', 'payload': [2], 'meta': { 'instanceId': 1, 'invokeId': 1 } },
+    {
+      'type': 'komondor',
+      'name': 'callback',
+      'payload': [null, 3],
+      'meta': {
+        'sourceType': 'function',
+        'sourceInstanceId': 1,
+        'sourceInvokeId': 1,
+        'sourcePath': [1]
+      }
+    },
+    { 'type': 'function', 'name': 'return', 'meta': { 'instanceId': 1, 'invokeId': 1 } }
   ])
 
   t.equal(actual, 3)
@@ -57,24 +68,63 @@ test('config.spec() can filter for specific spec', async () => {
       // this should fail if the spec is in 'replay' mode.
       // The saved record is succeeding.
       return failSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
+        {
+          'type': 'function',
+          'name': 'invoke',
+          'payload': [2],
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
+        },
+        {
+          'type': 'komondor',
+          'name': 'callback',
+          'payload': [{ 'message': 'fail' }],
+          'meta': {
+            'sourceType': 'function',
+            'sourceInstanceId': 1,
+            'sourceInvokeId': 1,
+            'sourcePath': [1]
+          }
+        },
+        {
+          'type': 'function',
+          'name': 'return',
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
+        }
       ])
     })
 
   config.spec('simulate', 'config/forceReplayFail')
 
-  const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
-  await simpleCallback.increment(sucessSpec.subject, 2)
+  // const successSpec = await spec.save('config/forceReplayFail', simpleCallback.fail)
+  const successSpec = await spec('config/forceReplayFail', simpleCallback.success)
+  await simpleCallback.increment(successSpec.subject, 2)
     .then(() => t.fail('should not reach'))
     .catch(() => {
       // this should fail if the spec is in 'verify' mode.
       // The save record is failing.
-      return sucessSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
+      return successSpec.satisfy([
+        {
+          'type': 'function',
+          'name': 'invoke',
+          'payload': [2],
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
+        },
+        {
+          'type': 'komondor',
+          'name': 'callback',
+          'payload': [{ 'message': 'fail' }],
+          'meta': {
+            'sourceType': 'function',
+            'sourceInstanceId': 1,
+            'sourceInvokeId': 1,
+            'sourcePath': [1]
+          }
+        },
+        {
+          'type': 'function',
+          'name': 'return',
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
+        }
       ])
     })
 })
@@ -86,9 +136,29 @@ test('config.spec() can filter using regex', async () => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return sucessSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/callback', payload: [{ message: 'fail' }, null] },
-        { type: 'fn/return' }
+        {
+          'type': 'function',
+          'name': 'invoke',
+          'payload': [2],
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
+        },
+        {
+          'type': 'komondor',
+          'name': 'callback',
+          'payload': [{ 'message': 'fail' }
+          ],
+          'meta': {
+            'sourceType': 'function',
+            'sourceInstanceId': 1,
+            'sourceInvokeId': 1,
+            'sourcePath': [1]
+          }
+        },
+        {
+          'type': 'function',
+          'name': 'return',
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
+        }
       ])
     })
 })
@@ -100,9 +170,28 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
   t.equal(actual, 3)
 
   await sucessSpec.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' }
+    {
+      'type': 'function',
+      'name': 'invoke',
+      'payload': [2],
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
+    },
+    {
+      'type': 'komondor',
+      'name': 'callback',
+      'payload': [null, 3],
+      'meta': {
+        'sourceType': 'function',
+        'sourceInstanceId': 1,
+        'sourceInvokeId': 1,
+        'sourcePath': [1]
+      }
+    },
+    {
+      'type': 'function',
+      'name': 'return',
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
+    }
   ])
 })
 
@@ -186,8 +275,39 @@ test('config source to be a remote server', async () => {
   const cbSpec = await spec(simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
   await cbSpec.satisfy([
-    { type: 'fn/invoke', payload: [2] },
-    { type: 'fn/callback', payload: [null, 3] },
-    { type: 'fn/return' }
+    {
+      'type': 'function',
+      'name': 'invoke',
+      'payload': [2],
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
+    },
+    {
+      'type': 'komondor',
+      'name': 'callback',
+      'payload': [null, 3],
+      'meta': {
+        'sourceType': 'function',
+        'sourceInstanceId': 1,
+        'sourceInvokeId': 1,
+        'sourcePath': [1]
+      }
+    },
+    {
+      'type': 'function',
+      'name': 'return',
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
+    }
   ])
+})
+
+test('register plugin manually', () => {
+  const o = new AssertOrder(1)
+  const fakePlugin = {
+    activate() {
+      o.once(1)
+    }
+  }
+  config.registerPlugin(fakePlugin)
+
+  o.end()
 })

@@ -1,69 +1,39 @@
-import { SpecContext, SpecPluginUtil } from '../interfaces'
+import { SpyContext } from 'komondor-plugin'
 
-export function spyClass(context: SpecContext, util: SpecPluginUtil, subject) {
+export function spyClass(context: SpyContext, subject) {
   const spiedClass = class extends subject {
     // @ts-ignore
     // tslint:disable-next-line
-    __komondorSpy = { methods: {} }
+    __komondor = {}
 
     constructor(...args) {
       // @ts-ignore
       super(...args)
 
-      context.add({
-        type: 'class/constructor',
-        payload: args
-      })
+      context.add('class', 'constructor', args)
     }
   }
 
-  let invoking = false
   for (let p in spiedClass.prototype) {
     const method = spiedClass.prototype[p]
     spiedClass.prototype[p] = function (...args) {
-      if (!this.__komondorSpy.methods[p])
-        this.__komondorSpy.methods[p] = { counter: 0 }
-      else
-        this.__komondorSpy.methods[p].counter++
-      const methodId = this.__komondorSpy.methods[p].counter
+      const invoking = this.__komondor.invoking
       if (!invoking) {
-        invoking = true
-        context.add({
-          type: 'class/invoke',
-          payload: args,
-          meta: {
-            methodId,
-            name: p
-          }
-        })
-        const spiedArgs = args.map((arg, i) => {
-          if (typeof arg === 'function') {
-            return function (...cbArgs) {
-              context.add({
-                type: 'class/callback',
-                payload: cbArgs,
-                meta: {
-                  name: p,
-                  methodId,
-                  callSite: i
-                }
-              })
-              return arg.apply(this, cbArgs)
-            }
-          }
-          return arg
-        })
-        const result = method.apply(this, spiedArgs)
-
-        const returnAction = {
-          type: 'class/return',
-          payload: result,
-          meta: { methodId }
+        this.__komondor.invoking = true
+        const call = context.newCall()
+        const spiedArgs = call.invoke(args, { methodName: p })
+        let result
+        try {
+          result = method.apply(this, spiedArgs)
         }
-        context.add(returnAction)
-        const resultSpy = util.getReturnSpy(context, result, returnAction)
-        invoking = false
-        return resultSpy || result
+        catch (err) {
+          const thrown = call.throw(err, { methodName: p })
+          this.__komondor.invoking = false
+          throw thrown
+        }
+        const returnValue = call.return(result, { methodName: p })
+        this.__komondor.invoking = false
+        return returnValue
       }
       else {
         return method.apply(this, args)

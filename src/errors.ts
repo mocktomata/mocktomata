@@ -1,7 +1,7 @@
-import { SpecAction } from './interfaces'
-import { tersify } from 'tersify';
+import { BaseError } from 'make-error'
+import { tersify } from 'tersify'
 
-export class MissingGivenHandler extends Error {
+export class MissingGivenHandler extends BaseError {
   // istanbul ignore next
   constructor(public clause: string) {
     super(`Handler for '${clause}' not found.`)
@@ -10,7 +10,7 @@ export class MissingGivenHandler extends Error {
   }
 }
 
-export class MissingSpecID extends Error {
+export class MissingSpecID extends BaseError {
   // istanbul ignore next
   constructor(public mode: string) {
     super(`Spec running in '${mode}' mode must have id defined.`)
@@ -19,7 +19,24 @@ export class MissingSpecID extends Error {
   }
 }
 
-export class DuplicateGivenHandler extends Error {
+export class SpecNotFound extends BaseError {
+  // istanbul ignore next
+  constructor(public specId: string, public reason) {
+    super(`Unable to find the spec record for '${specId}' due to: ${reason}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class NotSpecable extends BaseError {
+  constructor(public subject) {
+    super(`The subject ${tersify(subject, { maxLength: 50 })} is not supported by any loaded plugins`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class DuplicateGivenHandler extends BaseError {
   // istanbul ignore next
   constructor(public clause: string | RegExp) {
     super(`Handler for '${clause}' is already defined.`)
@@ -28,7 +45,7 @@ export class DuplicateGivenHandler extends Error {
   }
 }
 
-export class GivenSaveRequireSpecId extends Error {
+export class GivenSaveRequireSpecId extends BaseError {
   // istanbul ignore next
   constructor(public clause: string) {
     super(`given.save('${clause}', ...) requires spec to have id defined`)
@@ -37,10 +54,19 @@ export class GivenSaveRequireSpecId extends Error {
   }
 }
 
-export class SimulationMismatch extends Error {
+export class DuplicatePlugin extends BaseError {
   // istanbul ignore next
-  constructor(public id: string, public expectedAction: string | SpecAction, public receivedAction?: SpecAction) {
-    super(`Recorded data for '${id}' doesn't match with simulation. Expecting action type ${tersify(expectedAction)} but received: ${tersify(receivedAction)}`)
+  constructor(public pluginName: string) {
+    super(`Plugin ${pluginName} is already loaded.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class MissingReturnRecord extends BaseError {
+  // istanbul ignore next
+  constructor() {
+    super(`No return record found. Corrupted spec?`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }

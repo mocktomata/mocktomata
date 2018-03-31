@@ -8,18 +8,22 @@ export * from './spec'
 import { registerPlugin, loadPlugins } from './plugin'
 import { isNode } from './isNode'
 export { registerPlugin }
-import * as childProcess from './childProcess'
 import * as genericClass from './class'
 import * as genericFunction from './function'
+// import * as genericObject from './object'
 import * as promise from './promise'
-import * as stream from './stream'
+
+const { constructedWith, methodInvokedWith } = genericClass
+const { invokedWith, returnedWith } = genericFunction
+const { rejectedWith, resolvedWith } = promise
+export { invokedWith, returnedWith, constructedWith, methodInvokedWith, rejectedWith, resolvedWith }
 
 // order is important, top is generic, bottom is specific.
-registerPlugin(promise)
-registerPlugin(stream)
-registerPlugin(childProcess)
+// registerPlugin(genericObject)
 registerPlugin(genericFunction)
 registerPlugin(genericClass)
+registerPlugin(promise)
 
-if (isNode)
+if (isNode) {
   loadPlugins()
+}

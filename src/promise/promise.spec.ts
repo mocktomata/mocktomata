@@ -1,8 +1,7 @@
 import t from 'assert'
-import stream from 'stream'
-import { setTimeout, setImmediate } from 'timers'
+import { setTimeout } from 'timers'
 
-import { spec } from '../index'
+import { testTrio } from '../testUtil'
 
 const promise = {
   increment(remote, x) {
@@ -16,6 +15,22 @@ const promise = {
   }
 }
 
+const promiseChain = {
+  increment(remote, x) {
+    return remote('increment', x)
+  },
+  success(_url, x) {
+    return new Promise(a => {
+      setTimeout(a, 1)
+    }).then(() => Promise.resolve(() => x + 1))
+  },
+  fail() {
+    return new Promise(a => {
+      setTimeout(a, 1)
+    }).then(() => Promise.reject(() => new Error('fail')))
+  }
+}
+
 const noReturn = {
   doSomething(remote) {
     return remote()
@@ -25,123 +40,47 @@ const noReturn = {
   }
 }
 
-test('live with noReturn', async () => {
-  const noReturnSpec = await spec(noReturn.success)
-  return noReturn.doSomething(noReturnSpec.subject)
+testTrio('promise/noReturn', async spec => {
+  const s = await spec(noReturn.success)
+  return noReturn.doSomething(s.subject)
     .then(() => {
-      return noReturnSpec.satisfy([
-        { type: 'fn/invoke' },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'promise', meta: { status: 'resolve' } }
+      return s.satisfy([
+        { type: 'function', name: 'invoke', meta: { instanceId: 1, invokeId: 1 } },
+        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
+        { type: 'promise', name: 'resolve', meta: { instanceId: 1, invokeId: 1 } }
       ])
     })
 })
 
-test('save with noReturn', async () => {
-  const noReturnSpec = await spec.save('promise/noReturn', noReturn.success)
-  return noReturn.doSomething(noReturnSpec.subject)
-    .then(() => {
-      return noReturnSpec.satisfy([
-        { type: 'fn/invoke' },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'promise', meta: { status: 'resolve' } }
-      ])
-    })
-})
-
-test('simulate with noReturn', async () => {
-  const noReturnSpec = await spec.simulate('promise/noReturn', noReturn.success)
-  return noReturn.doSomething(noReturnSpec.subject)
-    .then(() => {
-      return noReturnSpec.satisfy([
-        { type: 'fn/invoke' },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'promise', meta: { status: 'resolve' } }
-      ])
-    })
-})
-
-test('promise live', async () => {
-  const speced = await spec(promise.success)
+testTrio('promise/resolve', async spec => {
+  const s = await spec(promise.success)
   // not using `await` to make sure the return value is a promise.
   // `await` will hide the error if the return value is not a promise.
-  return promise.increment(speced.subject, 2)
+  return promise.increment(s.subject, 2)
     .then(actual => {
       t.equal(actual, 3)
-      return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
+      return s.satisfy([
+        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
+        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
+        { type: 'promise', name: 'resolve', payload: 3, meta: { instanceId: 1, invokeId: 1 } }
       ])
     })
 })
 
-test('promise verify save', async () => {
-  const speced = await spec.save('promise/resolve', promise.success)
-  return promise.increment(speced.subject, 2)
-    .then(actual => {
-      t.equal(actual, 3)
-      return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
-      ])
-    })
-})
-
-test('promise verify replay', async () => {
-  const speced = await spec.simulate('promise/resolve', promise.success)
-  return promise.increment(speced.subject, 2)
-    .then(actual => {
-      t.equal(actual, 3)
-      return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
-      ])
-    })
-})
-
-test('promise rejected verify', async () => {
-  const speced = await spec(promise.fail)
-  return promise.increment(speced.subject, 2)
+testTrio('promise/reject', async spec => {
+  const s = await spec(promise.fail)
+  return promise.increment(s.subject, 2)
     .then(() => t.fail('should not reach'))
     .catch(() => {
-      return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
+      return s.satisfy([
+        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
+        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
+        { type: 'promise', name: 'reject', payload: { message: 'fail' }, meta: { instanceId: 1, invokeId: 1 } }
       ])
     })
 })
 
-test('promise rejected save', async () => {
-  const speced = await spec.save('promise/reject', promise.fail)
-  return promise.increment(speced.subject, 2)
-    .then(() => t.fail('should not reach'))
-    .catch(() => {
-      return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
-      ])
-    })
-})
-
-test('promise rejected simulate', async () => {
-  const speced = await spec.simulate('promise/reject', promise.fail)
-  return promise.increment(speced.subject, 2)
-    .then(() => t.fail('should not reach'))
-    .catch(() => {
-      return speced.satisfy([
-        { type: 'fn/invoke', payload: ['increment', 2] },
-        { type: 'fn/return', payload: {}, meta: { returnType: 'promise' } },
-        { type: 'promise', payload: { message: 'fail' }, meta: { status: 'reject' } }
-      ])
-    })
-})
-
-test('promise with callback in between', async () => {
+testTrio('promise with callback in between', 'promise/inBetween', async spec => {
   function foo(x, cb) {
     return new Promise(a => {
       setTimeout(() => {
@@ -150,11 +89,11 @@ test('promise with callback in between', async () => {
       }, 10)
     })
   }
-  const fooSpec = await spec(foo);
+  const s = await spec(foo);
 
   let fooing
   return new Promise(a => {
-    fooing = fooSpec.subject(2, msg => {
+    fooing = s.subject(2, msg => {
       t.equal(msg, 'called')
       a()
     })
@@ -162,100 +101,46 @@ test('promise with callback in between', async () => {
     .then(() => fooing)
     .then(actual => {
       t.equal(actual, 3)
-      return fooSpec.satisfy([
-        { type: 'fn/invoke', payload: [2] },
-        { type: 'fn/return', meta: { returnType: 'promise' } },
-        { type: 'fn/callback', payload: ['called'] },
-        { type: 'promise', payload: 3, meta: { status: 'resolve' } }
+      return s.satisfy([
+        { type: 'function', name: 'invoke', payload: [2], meta: { instanceId: 1, invokeId: 1 } },
+        { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
+        {
+          type: 'komondor',
+          name: 'callback',
+          payload: ['called'],
+          meta: { sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] }
+        },
+        { type: 'promise', name: 'resolve', payload: 3, meta: { instanceId: 1, invokeId: 1 } }
       ])
     })
 })
 
-function promiseStream() {
-  function readStream(): stream.Stream {
-    const rs = new stream.Readable()
-    const message = 'hello world'
-    let i = 0
-    rs._read = function () {
-      if (message[i])
-        rs.push(message[i++])
-      else
-        rs.push(null)
-    }
-    return rs
-  }
-  const read = readStream()
-  return new Promise<stream.Stream>(a => {
-    setImmediate(() => {
-      a(read)
-    })
-  })
-}
+testTrio('promise/returns/function', async spec => {
+  const s = await spec(promiseChain.success)
 
-test('promise returning a stream', async () => {
-  const target = await spec(promiseStream)
-  const read = await target.subject()
-  const actual = await new Promise(a => {
-    let message = ''
-    read.on('data', m => {
-      message += m
+  // not using `await` to make sure the return value is a promise.
+  // `await` will hide the error if the return value is not a promise.
+  return promise.increment(s.subject, 2)
+    .then(actualFn => {
+      t.equal(actualFn(), 3)
+      return s.satisfy([
+        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
+        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
+        { type: 'promise', name: 'resolve', meta: { instanceId: 1, invokeId: 1, returnType: 'function', returnInstanceId: 2 } },
+        {
+          type: 'function',
+          name: 'invoke',
+          meta: {
+            instanceId: 2,
+            invokeId: 1,
+            sourceType: 'promise',
+            sourceInstanceId: 1,
+            sourceInvokeId: 1,
+            // TODO: empty path to indicate return can be confusing
+            sourcePath: []
+          }
+        },
+        { type: 'function', name: 'return', payload: 3, meta: { instanceId: 2, invokeId: 1 } }
+      ])
     })
-    read.on('end', () => {
-      a(message)
-    })
-  })
-  t.equal(actual, 'hello world')
-
-  await target.satisfy([
-    undefined,
-    undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
-    { type: 'stream', meta: { length: 11 } }
-  ])
-})
-
-test('promise returning a stream (save)', async () => {
-  const target = await spec.save('promise/readStream', promiseStream)
-  const read = await target.subject()
-  const actual = await new Promise(a => {
-    let message = ''
-    read.on('data', m => {
-      message += m
-    })
-    read.on('end', () => {
-      a(message)
-    })
-  })
-  t.equal(actual, 'hello world')
-
-  await target.satisfy([
-    undefined,
-    undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
-    { type: 'stream', meta: { length: 11 } }
-  ])
-})
-
-test('promise returning a stream (simulate)', async () => {
-  // this test uses `readStreamReplay` as source because it causes concurrency issue with the `save` test.
-  // It doesn't happen in actual usage as there should be only one test accessing one spec file.
-  const target = await spec.simulate('promise/readStreamReplay', promiseStream)
-  const read = await target.subject()
-  const actual = await new Promise(a => {
-    let message = ''
-    read.on('data', m => {
-      message += m
-    })
-    read.on('end', () => {
-      a(message)
-    })
-  })
-  t.equal(actual, 'hello world')
-
-  await target.satisfy([
-    undefined,
-    undefined,
-    { type: 'promise', meta: { returnType: 'stream', status: 'resolve' } },
-    { type: 'stream', meta: { length: 11 } }
-  ])
 })

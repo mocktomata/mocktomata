@@ -1,8 +1,11 @@
 import t from 'assert'
 import a from 'assertron'
+import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
-import { spec, SimulationMismatch } from '../index'
+import { spec, SpecNotFound } from '..'
+import { testTrio } from '../testUtil'
+
 
 class Foo {
   constructor(public x) { }
@@ -11,44 +14,11 @@ class Foo {
   }
 }
 
-test('simple class verify', async () => {
-  const fooSpec = await spec(Foo)
-  const foo = new fooSpec.subject(1)
-  const actual = foo.getValue()
-  t.equal(actual, 1)
-
-  await fooSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getValue' } },
-    { type: 'class/return', payload: 1 }
-  ])
-})
-
-test('simple class save', async () => {
-  const fooSpec = await spec.save('class/simple', Foo)
-  const foo = new fooSpec.subject(1)
-  const actual = foo.getValue()
-  t.equal(actual, 1)
-
-  await fooSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getValue' } },
-    { type: 'class/return', payload: 1 }
-  ])
-})
-
-test('simple class simulate', async () => {
-  const fooSpec = await spec.simulate('class/simple', Foo)
-  const foo = new fooSpec.subject(1)
-  const actual = foo.getValue()
-  t.equal(actual, 1)
-
-  await fooSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getValue' } },
-    { type: 'class/return', payload: 1 }
-  ])
-})
+class Boo extends Foo {
+  getPlusOne() {
+    return this.getValue() + 1
+  }
+}
 
 
 test('simple class simulate with different constructor will throw', async () => {
@@ -56,91 +26,54 @@ test('simple class simulate with different constructor will throw', async () => 
   await a.throws(() => new fooSpec.subject(2), SimulationMismatch)
 })
 
-class Boo extends Foo {
-  getPlusOne() {
-    return this.getValue() + 1
-  }
-}
 
-test('extended class verify', async () => {
-  const booSpec = await spec(Boo)
-  const boo = new booSpec.subject(1)
-  const actual = boo.getPlusOne()
+test('simulate on not existing spec will throw', async () => {
+  return a.throws(spec.simulate('class/notExist', Boo), SpecNotFound)
+})
 
-  t.equal(actual, 2)
-  await booSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
-    { type: 'class/return', payload: 2 }
+testTrio('class/simple', async spec => {
+  const s = await spec(Foo)
+  const foo = new s.subject(1)
+  const actual = foo.getValue()
+  t.equal(actual, 1)
+
+  await s.satisfy([
+    { type: 'class', name: 'constructor', payload: [1], meta: { instanceId: 1 } },
+    { type: 'class', name: 'invoke', payload: [], meta: { instanceId: 1, invokeId: 1, methodName: 'getValue' } },
+    { type: 'class', name: 'return', payload: 1, meta: { instanceId: 1, invokeId: 1, methodName: 'getValue' } }
   ])
 })
 
-test('extended class save', async () => {
-  const booSpec = await spec.save('class/extend', Boo)
-  const boo = new booSpec.subject(1)
+testTrio('class/extend', async spec => {
+  const s = await spec(Boo)
+  const boo = new s.subject(1)
   const actual = boo.getPlusOne()
 
   t.equal(actual, 2)
-  await booSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
-    { type: 'class/return', payload: 2 }
-  ])
-})
-
-test('extended class replay', async () => {
-  const booSpec = await spec.simulate('class/extend', Boo)
-  const boo = new booSpec.subject(1)
-  const actual = boo.getPlusOne()
-
-  t.equal(actual, 2)
-  await booSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
-    { type: 'class/return', payload: 2 }
-  ])
-})
-
-test('replay on not existing spec will spy instead (check log)', async () => {
-  const booSpec = await spec.simulate('class/notExist', Boo)
-  const boo = new booSpec.subject(1)
-  const actual = boo.getPlusOne()
-
-  t.equal(actual, 2)
-  await booSpec.satisfy([
-    { type: 'class/constructor', payload: [1] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
-    { type: 'class/return', payload: 2 }
-  ])
-})
-
-test('replay on not matching spec will spy instead (check log)', async () => {
-  const booSpec = await spec.simulate('class/extendToSpy', Boo)
-  const boo = new booSpec.subject(2)
-  const actual = boo.getPlusOne()
-
-  t.equal(actual, 3)
-  await booSpec.satisfy([
-    { type: 'class/constructor', payload: [2] },
-    { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } },
-    { type: 'class/return', payload: 3 }
+  await s.satisfy([
+    { type: 'class', name: 'constructor', payload: [1], meta: { instanceId: 1 } },
+    { type: 'class', name: 'invoke', payload: [], meta: { instanceId: 1, invokeId: 1, methodName: 'getPlusOne' } },
+    { type: 'class', name: 'return', payload: 2, meta: { instanceId: 1, invokeId: 1, methodName: 'getPlusOne' } }
   ])
 })
 
 class WithCallback {
   callback(cb) {
+    console.log('callback invoked with', cb)
     setImmediate(() => {
       cb('called')
     })
   }
   justDo(x) {
+    console.log('justDo invoked with', x)
     return x
   }
 }
 
-test('captures callbacks verify', async () => {
-  const cbSpec = await spec(WithCallback)
-  const cb = new cbSpec.subject()
+testTrio('class/withCallback', async spec => {
+  const s = await spec(WithCallback)
+  const cb = new s.subject()
+
   cb.justDo(1)
   await new Promise(a => {
     cb.callback(v => {
@@ -152,116 +85,65 @@ test('captures callbacks verify', async () => {
     })
   })
 
-  await cbSpec.satisfy([
-    { type: 'class/constructor', payload: [] },
-    { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
-    { type: 'class/return', payload: 1 },
-    { type: 'class/invoke', meta: { name: 'callback' } },
-    { type: 'class/return' },
-    { type: 'class/invoke', meta: { name: 'callback' } },
-    { type: 'class/return' },
+  await s.satisfy([
     {
-      type: 'class/callback',
+      type: 'class',
+      name: 'constructor',
+      payload: [],
+      meta: { instanceId: 1 }
+    },
+    {
+      type: 'class',
+      name: 'invoke',
+      payload: [1],
+      meta: { instanceId: 1, invokeId: 1, methodName: 'justDo' }
+    },
+    {
+      type: 'class',
+      name: 'return',
+      payload: 1,
+      meta: { instanceId: 1, invokeId: 1, methodName: 'justDo' }
+    },
+    {
+      type: 'class',
+      name: 'invoke',
+      meta: { instanceId: 1, invokeId: 2, methodName: 'callback' }
+    },
+    {
+      type: 'class',
+      name: 'return',
+      meta: { instanceId: 1, invokeId: 2, methodName: 'callback' }
+    },
+    {
+      type: 'class',
+      name: 'invoke',
+      meta: { instanceId: 1, invokeId: 3, methodName: 'callback' }
+    },
+    {
+      type: 'class',
+      name: 'return',
+      meta: { instanceId: 1, invokeId: 3, methodName: 'callback' }
+    },
+    {
+      type: 'komondor',
+      name: 'callback',
       payload: ['called'],
       meta: {
-        name: 'callback',
-        methodId: 0,
-        callSite: 0
+        sourceType: 'class',
+        sourceInstanceId: 1,
+        sourceInvokeId: 2,
+        sourcePath: [0]
       }
     },
     {
-      type: 'class/callback',
+      type: 'komondor',
+      name: 'callback',
       payload: ['called'],
       meta: {
-        name: 'callback',
-        methodId: 1,
-        callSite: 0
-      }
-    }
-  ])
-})
-
-test('captures callbacks save', async () => {
-  const cbSpec = await spec.save('class/withCallback', WithCallback)
-  const cb = new cbSpec.subject()
-  cb.justDo(1)
-  await new Promise(a => {
-    cb.callback(v => {
-      t.equal(v, 'called')
-    })
-    cb.callback(v => {
-      t.equal(v, 'called')
-      a()
-    })
-  })
-
-  await cbSpec.satisfy([
-    { type: 'class/constructor', payload: [] },
-    { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
-    { type: 'class/return', payload: 1 },
-    { type: 'class/invoke', meta: { name: 'callback' } },
-    { type: 'class/return' },
-    { type: 'class/invoke', meta: { name: 'callback' } },
-    { type: 'class/return' },
-    {
-      type: 'class/callback',
-      payload: ['called'],
-      meta: {
-        name: 'callback',
-        methodId: 0,
-        callSite: 0
-      }
-    },
-    {
-      type: 'class/callback',
-      payload: ['called'],
-      meta: {
-        name: 'callback',
-        methodId: 1,
-        callSite: 0
-      }
-    }
-  ])
-})
-
-test('captures callbacks replay', async () => {
-  const cbSpec = await spec.simulate('class/withCallback', WithCallback)
-  const cb = new cbSpec.subject()
-  cb.justDo(1)
-  await new Promise(a => {
-    cb.callback(v => {
-      t.equal(v, 'called')
-    })
-    cb.callback(v => {
-      t.equal(v, 'called')
-      a()
-    })
-  })
-
-  await cbSpec.satisfy([
-    { type: 'class/constructor', payload: [] },
-    { type: 'class/invoke', payload: [1], meta: { name: 'justDo' } },
-    { type: 'class/return', payload: 1 },
-    { type: 'class/invoke', meta: { name: 'callback' } },
-    { type: 'class/return' },
-    { type: 'class/invoke', meta: { name: 'callback' } },
-    { type: 'class/return' },
-    {
-      type: 'class/callback',
-      payload: ['called'],
-      meta: {
-        name: 'callback',
-        methodId: 0,
-        callSite: 0
-      }
-    },
-    {
-      type: 'class/callback',
-      payload: ['called'],
-      meta: {
-        name: 'callback',
-        methodId: 1,
-        callSite: 0
+        sourceType: 'class',
+        sourceInstanceId: 1,
+        sourceInvokeId: 3,
+        sourcePath: [0]
       }
     }
   ])
@@ -275,47 +157,18 @@ class WithPromise {
   }
 }
 
-test('method returning promise should have result of promise saved in payload', async () => {
-  const promiseSpec = await spec('class/withPromise', WithPromise)
-  const p = new promiseSpec.subject()
-  const actual = await p.increment(3)
+testTrio('method returning promise should have result of promise saved in payload',
+  'class/withPromise',
+  async spec => {
+    const s = await spec(WithPromise)
+    const p = new s.subject()
+    const actual = await p.increment(3)
 
-  t.equal(actual, 4)
-
-  await promiseSpec.satisfy([
-    { type: 'class/constructor', payload: [] },
-    { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
-    { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
-    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
-  ])
-})
-
-test('method returning promise should have result of promise saved in payload (save)', async () => {
-  const promiseSpec = await spec.save('class/withPromise', WithPromise)
-  const p = new promiseSpec.subject()
-  const actual = await p.increment(3)
-
-  t.equal(actual, 4)
-
-  await promiseSpec.satisfy([
-    { type: 'class/constructor', payload: [] },
-    { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
-    { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
-    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
-  ])
-})
-
-test('method returning promise should have result of promise saved in payload (replay)', async () => {
-  const promiseSpec = await spec.simulate('class/withPromise', WithPromise)
-  const p = new promiseSpec.subject()
-  const actual = await p.increment(3)
-
-  t.equal(actual, 4)
-
-  await promiseSpec.satisfy([
-    { type: 'class/constructor', payload: [] },
-    { type: 'class/invoke', payload: [3], meta: { name: 'increment' } },
-    { type: 'class/return', payload: {}, meta: { returnType: 'promise' } },
-    { type: 'promise', payload: 4, meta: { status: 'resolve' } }
-  ])
-})
+    t.equal(actual, 4)
+    await s.satisfy([
+      { type: 'class', name: 'constructor', payload: [], meta: { instanceId: 1 } },
+      { type: 'class', name: 'invoke', payload: [3], meta: { instanceId: 1, invokeId: 1, methodName: 'increment' } },
+      { type: 'class', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } }, // TODO: returnInstanceId + returnInvokeId?
+      { type: 'promise', name: 'resolve', payload: 4, meta: { instanceId: 1, invokeId: 1 } }
+    ])
+  })
