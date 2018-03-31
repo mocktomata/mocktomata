@@ -38,9 +38,9 @@ testTrio('class/simple', async spec => {
   t.equal(actual, 1)
 
   await s.satisfy([
-    { type: 'class', name: 'constructor', payload: [1], instanceId: 1, meta: {} },
-    { type: 'class', name: 'invoke', payload: [], instanceId: 1, meta: { invokeId: 1, methodName: 'getValue' } },
-    { type: 'class', name: 'return', payload: 1, instanceId: 1, meta: { invokeId: 1, methodName: 'getValue' } }
+    { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
+    { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 },
+    { type: 'class', name: 'return', payload: 1, meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 }
   ])
 })
 
@@ -51,9 +51,9 @@ testTrio('class/extend', async spec => {
 
   t.equal(actual, 2)
   await s.satisfy([
-    { type: 'class', name: 'constructor', payload: [1], instanceId: 1, meta: {} },
-    { type: 'class', name: 'invoke', payload: [], instanceId: 1, meta: { invokeId: 1, methodName: 'getPlusOne' } },
-    { type: 'class', name: 'return', payload: 2, instanceId: 1, meta: { invokeId: 1, methodName: 'getPlusOne' } }
+    { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
+    { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 },
+    { type: 'class', name: 'return', payload: 2, meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 }
   ])
 })
 
@@ -90,65 +90,69 @@ testTrio('class/withCallback', async spec => {
       type: 'class',
       name: 'constructor',
       payload: [],
-      instanceId: 1,
-      meta: {}
+      instanceId: 1
     },
     {
       type: 'class',
       name: 'invoke',
       payload: [1],
+      meta: { methodName: 'justDo' },
       instanceId: 1,
-      meta: {
-        invokeId: 1, methodName: 'justDo'
-      }
+      invokeId: 1
     },
     {
       type: 'class',
       name: 'return',
       payload: 1,
-      instanceId: 1, meta: { invokeId: 1, methodName: 'justDo' }
+      meta: { methodName: 'justDo' },
+      instanceId: 1,
+      invokeId: 1
     },
     {
       type: 'class',
       name: 'invoke',
-      instanceId: 1, meta: { invokeId: 2, methodName: 'callback' }
+      meta: { methodName: 'callback' },
+      instanceId: 1,
+      invokeId: 2
     },
     {
       type: 'class',
       name: 'return',
-      instanceId: 1, meta: { invokeId: 2, methodName: 'callback' }
+      meta: { methodName: 'callback' },
+      instanceId: 1,
+      invokeId: 2
     },
     {
       type: 'class',
       name: 'invoke',
-      instanceId: 1, meta: { invokeId: 3, methodName: 'callback' }
+      meta: { methodName: 'callback' },
+      instanceId: 1,
+      invokeId: 3
     },
     {
       type: 'class',
       name: 'return',
-      instanceId: 1, meta: { invokeId: 3, methodName: 'callback' }
+      meta: { methodName: 'callback' },
+      instanceId: 1,
+      invokeId: 3
     },
     {
       type: 'komondor',
       name: 'callback',
       payload: ['called'],
-      meta: {
-        sourceType: 'class',
-        sourceInstanceId: 1,
-        sourceInvokeId: 2,
-        sourcePath: [0]
-      }
+      sourceType: 'class',
+      sourceInstanceId: 1,
+      sourceInvokeId: 2,
+      sourcePath: [0]
     },
     {
       type: 'komondor',
       name: 'callback',
       payload: ['called'],
-      meta: {
-        sourceType: 'class',
-        sourceInstanceId: 1,
-        sourceInvokeId: 3,
-        sourcePath: [0]
-      }
+      sourceType: 'class',
+      sourceInstanceId: 1,
+      sourceInvokeId: 3,
+      sourcePath: [0]
     }
   ])
 })
@@ -170,9 +174,9 @@ testTrio('method returning promise should have result of promise saved in payloa
 
     t.equal(actual, 4)
     await s.satisfy([
-      { type: 'class', name: 'constructor', payload: [], instanceId: 1, meta: {} },
-      { type: 'class', name: 'invoke', payload: [3], instanceId: 1, meta: { invokeId: 1, methodName: 'increment' } },
-      { type: 'class', name: 'return', payload: {}, instanceId: 1, meta: { invokeId: 1, returnType: 'promise', returnInstanceId: 1 } }, // TODO: returnInstanceId + returnInvokeId?
-      { type: 'promise', name: 'resolve', payload: 4, instanceId: 1, meta: { invokeId: 1 } }
+      { type: 'class', name: 'constructor', payload: [], instanceId: 1 },
+      { type: 'class', name: 'invoke', payload: [3], meta: { methodName: 'increment' }, instanceId: 1, invokeId: 1 },
+      { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
+      { type: 'promise', name: 'resolve', payload: 4, instanceId: 1, invokeId: 1 }
     ])
   })

@@ -51,16 +51,16 @@ class CallPlayer implements StubCall {
     return action.type === this.context.plugin.type &&
       action.name === 'return' &&
       action.instanceId === this.context.instanceId &&
-      action.meta.invokeId === this.invokeId
+      action.invokeId === this.invokeId
   }
   isThrowAction(action: SpecAction): boolean {
     return action.type === this.context.plugin.type &&
       action.name === 'throw' &&
       action.instanceId === this.context.instanceId &&
-      action.meta.invokeId === this.invokeId
+      action.invokeId === this.invokeId
   }
   getSourceCall(sourceContext: InternalStubContext, action: SpecAction) {
-    return sourceContext.calls.find((c: CallPlayer) => c.invokeId === action.meta.sourceInvokeId) as CallPlayer
+    return sourceContext.calls.find((c: CallPlayer) => c.invokeId === action.sourceInvokeId) as CallPlayer
   }
   processUntilReturn() {
     let action = this.context.peek()
@@ -68,7 +68,7 @@ class CallPlayer implements StubCall {
     while (action && !this.isReturnAction(action) && !this.isThrowAction(action)) {
       log.onDebug(() => `processing ${tersify(action, { maxLength: Infinity })} by (${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId})`)
       if (isCallbackAction(action)) {
-        const subject = locateCallback(action.meta, this.args)
+        const subject = locateCallback(action, this.args)
         this.context.next()
         this.context.callListeners(action)
         subject(...action.payload)
@@ -87,10 +87,10 @@ class CallPlayer implements StubCall {
 
     log.onDebug(() => `processUntilReturn exiting with ${tersify(action)}`)
   }
-  getSourceContext(meta) {
+  getSourceContext(action) {
     const entry = this.context.contexts.find(c =>
-      c.type === meta.sourceType &&
-      c.instanceId === meta.sourceInstanceId)
+      c.type === action.sourceType &&
+      c.instanceId === action.sourceInstanceId)
 
     return entry && entry.instance
   }
@@ -100,7 +100,7 @@ class CallPlayer implements StubCall {
     delete meta.name
 
     const action = this.context.peek()
-    // TODO: compate meta
+    // TODO: compare meta
     return !!action &&
       action.type === this.context.plugin.type &&
       action.name === name &&
@@ -122,15 +122,15 @@ class CallPlayer implements StubCall {
     const action = this.context.peek()!
     this.context.callListeners(action)
     this.context.next()
-    const { returnType, returnInstanceId } = action.meta
+    const { returnType, returnInstanceId } = action
     let nextAction = this.context.peek()
 
     let result
     if (returnType && returnInstanceId) {
       while (nextAction && isCallbackAction(nextAction)) {
-        const sourceContext = this.getSourceContext(nextAction.meta)!
+        const sourceContext = this.getSourceContext(nextAction)!
         const sourceCall = this.getSourceCall(sourceContext, nextAction)
-        const subject = locateCallback(nextAction.meta, sourceCall.args)
+        const subject = locateCallback(nextAction, sourceCall.args)
         this.context.next()
         this.context.callListeners(nextAction)
         subject(...nextAction.payload)
@@ -138,15 +138,16 @@ class CallPlayer implements StubCall {
       }
 
       if (nextAction && nextAction.type === returnType && nextAction.instanceId === returnInstanceId) {
-        log.debug(`nextaction: ${tersify(nextAction)}`)
+        log.debug(`next action: ${tersify(nextAction)}`)
         const plugin = plugins.find(p => p.type === nextAction!.type)
         if (plugin) {
+          console.log('plugin', plugin)
           const childContext = this.context.createChildContext(plugin, undefined)
-          result = plugin.getStub(childContext, undefined, nextAction)
+          result = plugin.getStub(childContext, undefined)
         }
       }
       else {
-        // log.debug(`return result does not match with next action ${tersify(nextAction)}`)
+        log.debug(`return result does not match with next action ${tersify(nextAction)}`)
       }
     }
     else {
@@ -156,9 +157,9 @@ class CallPlayer implements StubCall {
     setImmediate(() => {
       let action = this.context.peek()
       while (action && isCallbackAction(action)) {
-        const sourceContext = this.getSourceContext(action.meta)!
+        const sourceContext = this.getSourceContext(action)!
         const sourceCall = this.getSourceCall(sourceContext, action)
-        const subject = locateCallback(action.meta, sourceCall.args)
+        const subject = locateCallback(action, sourceCall.args)
         this.context.next()
         this.context.callListeners(action)
         subject(...action.payload)
@@ -277,12 +278,12 @@ export class InternalStubContext implements StubContext {
   }
 }
 
-function locateCallback(meta, args) {
-  if (!meta.sourcePath) {
+function locateCallback(action, args) {
+  if (!action.sourcePath) {
     return args.find(arg => typeof arg === 'function')
   }
 
-  return meta.sourcePath.reduce((p, v) => {
+  return action.sourcePath.reduce((p, v) => {
     return p[v]
   }, args)
 }

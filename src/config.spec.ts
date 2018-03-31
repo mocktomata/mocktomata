@@ -26,41 +26,42 @@ const forceReplaySuccessExpectation = [
     type: 'function',
     name: 'invoke',
     payload: [2],
-    meta: { invokeId: 1 },
-    instanceId: 1
+    instanceId: 1,
+    invokeId: 1
   },
   {
     type: 'komondor',
     name: 'callback',
     payload: [null, 3],
-    meta: {
-      sourceType: 'function',
-      sourceInstanceId: 1,
-      sourceInvokeId: 1,
-      sourcePath: [1]
-    },
-    instanceId: 1
+    instanceId: 1,
+    sourceType: 'function',
+    sourceInstanceId: 1,
+    sourceInvokeId: 1,
+    sourcePath: [1]
   },
   {
     type: 'function',
     name: 'return',
-    meta: { invokeId: 1 },
-    instanceId: 1
+    instanceId: 1,
+    invokeId: 1
   }]
 
 
 const forceReplayFailExpectation = [
   {
-    type: 'function', name: 'invoke', payload: [2], meta: { invokeId: 1 }, instanceId: 1
+    type: 'function', name: 'invoke', payload: [2], instanceId: 1, invokeId: 1
   },
   {
     type: 'komondor',
     name: 'callback',
     payload: [{ message: 'fail' }],
-    meta: { sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
-    instanceId: 1
+    instanceId: 1,
+    sourceType: 'function',
+    sourceInstanceId: 1,
+    sourceInvokeId: 1,
+    sourcePath: [1]
   },
-  { type: 'function', name: 'return', meta: { invokeId: 1 }, instanceId: 1 }]
+  { type: 'function', name: 'return', instanceId: 1, invokeId: 1 }]
 
 beforeEach(() => {
   resetStore()
