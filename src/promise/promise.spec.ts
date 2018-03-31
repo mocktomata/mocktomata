@@ -1,8 +1,7 @@
 import t from 'assert'
 import { setTimeout } from 'timers'
 
-import { spec } from '..'
-import { testLiveOnly, testTrio, testSimulateOnly, testSave, testLive } from '../testUtil';
+import { testTrio } from '../testUtil'
 
 const promise = {
   increment(remote, x) {

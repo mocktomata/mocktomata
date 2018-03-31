@@ -30,11 +30,8 @@ function getPromiseSpy(context: SpyContext, subject) {
 }
 
 function getPromiseStub(context: StubContext, action: ReturnAction) {
-  console.log('getPromiseStub', action)
   const call = context.newCall()
   return new Promise((resolve, reject) => {
-    console.log('peek', context.peek())
-    console.log('inside promise', call.succeed({ name: 'resolve' }), call.failed({ name: 'reject' }))
     if (call.succeed({ name: 'resolve' })) {
       resolve(call.result())
     }

@@ -1,6 +1,7 @@
 {
   "extends": "tslint-config-unional/semi-standard",
   "rules": {
-    "no-console": false
+    "no-console": false,
+    "no-unnecessary-type-assertion": false
   }
 }

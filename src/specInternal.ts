@@ -12,7 +12,7 @@ import { InternalStubContext, ActionTracker } from './InternalStubContext';
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
-  return function specLive(id, subject) {
+  return function specLive(id, subject?) {
     if (typeof id !== 'string') {
       subject = id
       id = ''
@@ -155,7 +155,6 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   const listenAll: ((action) => void)[] = []
   const contexts = []
-  // let actionCounter = 0
 
   const context = new InternalStubContext({ contexts, actionTracker, events, listenAll }, specId, plugin, subject)
 
@@ -168,10 +167,6 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
       if (!events[actionType][name])
         events[actionType][name] = []
       events[actionType][name].push(callback)
-
-      // if (context.actionCounter === 0 && actions[0].type === actionType && actions[0].name === name) {
-      //   callback(actions[0])
-      // }
     },
     onAny(callback) {
       listenAll.push(callback)

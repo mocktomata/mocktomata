@@ -71,7 +71,7 @@ testTrio('function/simpleCallback/success', async spec => {
 
   await simpleCallback.increment(s.subject, 2)
 
-  s.satisfy([
+  await s.satisfy([
     { type: 'function', name: 'invoke', payload: [2], meta: { instanceId: 1, invokeId: 1 } },
     {
       type: 'komondor',

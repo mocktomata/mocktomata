@@ -10,8 +10,8 @@ export function activate(registrar: Registrar) {
     (context, subject) => {
       return spyFunction(context, subject)
     },
-    (context, subject) => {
-      return stubFunction(context, subject)
+    (context) => {
+      return stubFunction(context)
     }
   )
 }

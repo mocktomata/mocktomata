@@ -4,7 +4,22 @@ import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
 import { spec, SpecNotFound } from '..'
-import { testTrio, testLiveOnly } from '../testUtil'
+import { testTrio } from '../testUtil'
+
+
+class Foo {
+  constructor(public x) { }
+  getValue() {
+    return this.x
+  }
+}
+
+class Boo extends Foo {
+  getPlusOne() {
+    return this.getValue() + 1
+  }
+}
+
 
 test('simple class simulate with different constructor will throw', async () => {
   const fooSpec = await spec.simulate('class/wrongConstructorCall', Foo)
@@ -15,13 +30,6 @@ test('simple class simulate with different constructor will throw', async () => 
 test('simulate on not existing spec will throw', async () => {
   return a.throws(spec.simulate('class/notExist', Boo), SpecNotFound)
 })
-
-class Foo {
-  constructor(public x) { }
-  getValue() {
-    return this.x
-  }
-}
 
 testTrio('class/simple', async spec => {
   const s = await spec(Foo)
@@ -35,12 +43,6 @@ testTrio('class/simple', async spec => {
     { type: 'class', name: 'return', payload: 1, meta: { instanceId: 1, invokeId: 1, methodName: 'getValue' } }
   ])
 })
-
-class Boo extends Foo {
-  getPlusOne() {
-    return this.getValue() + 1
-  }
-}
 
 testTrio('class/extend', async spec => {
   const s = await spec(Boo)

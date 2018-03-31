@@ -8,9 +8,9 @@ export interface SpecFn {
   simulate<T>(id: string, subject: T): Promise<Spec<T>>
 }
 
-export const spec = Object.assign(
+export const spec: SpecFn = Object.assign(
   createSpeclive(),
   {
     save: createSpecSave(),
     simulate: createSpecSimulate()
-  }) as SpecFn
+  })

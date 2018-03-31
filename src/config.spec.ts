@@ -21,7 +21,6 @@ const simpleCallback = {
   }
 }
 
-
 beforeEach(() => {
   resetStore()
 })

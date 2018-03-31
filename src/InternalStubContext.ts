@@ -2,7 +2,7 @@ import { StubContext, SpecAction, ReturnAction, Plugin, StubCall, SimulationMism
 import { tersify } from 'tersify'
 import { unpartial } from 'unpartial'
 
-import { MissingReturnRecord, SpecNotFound } from './errors'
+import { MissingReturnRecord } from './errors'
 import { log } from './log';
 import { plugins } from './plugin'
 
@@ -35,56 +35,11 @@ class CallPlayer implements StubCall {
       throw new SimulationMismatch(this.context.specId, { type: this.context.plugin.type, name, payload: args }, action)
     }
 
-    // const stubArgs = args.map((arg, i) => {
-
-    //   const plugin = plugins.find(p => p.support(arg))
-    //   if (plugin) {
-    //     const childContext = this.context.createChildContext(plugin, arg, i)
-    //     return plugin.getStub(childContext, arg, action) || arg
-    //   }
-    //   if (typeof arg === 'object' && arg !== null) {
-    //     const result = {}
-    //     Object.keys(arg).forEach(key => {
-    //       const prop = arg[key]
-    //       const plugin = plugins.find(p => p.support(prop))
-    //       if (plugin) {
-    //         const childContext = this.context.createChildContext(plugin, i, key)
-    //         result[key] = plugin.getStub(childContext, prop, action) || arg
-    //       }
-    //       else
-    //         result[key] = prop
-    //     })
-    //     return result
-    //   }
-    //   return arg
-    // })
-    // this.stubArgs = stubArgs
-
     this.context.callListeners(action)
     this.context.next()
     this.processUntilReturn()
 
-    return args as T
-    // const nextAction = this.context.peek()
-    // if (!nextAction) {
-    //   // this call didn't return?
-    //   return
-    // }
-
-    // if (nextAction.meta.sourceType === this.context.plugin.type && nextAction.meta.sourceInstanceId === this.context.instanceId) {
-    //   const subject = locateSubject(args, nextAction.meta.sourcePath)
-    //   const plugin = plugins.find(p => p.support(arg))
-    //   if (plugin) {
-    //     const childContext = this.context.createChildContext(plugin, nextAction.meta.sourcePath[0])
-    //     plugin.getStub(childContext, subject, nextAction)
-    //   }
-
-    // }
-    // console.log(action)
-    // console.log('invoked', args)
-    // const plugin = plugins.find(p => p.support(args))
-
-    // this.context.processNext()
+    return args
   }
   isReturnAction(action: SpecAction): boolean {
     return action.type === this.context.plugin.type &&
