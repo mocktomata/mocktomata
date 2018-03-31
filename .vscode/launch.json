@@ -5,12 +5,28 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeArgs": [
+        "--inspect-brk",
+        "${workspaceRoot}/node_modules/jest/bin/jest",
+        "--runInBand",
+        "--coverage",
+        "false"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Jest All",
       "program": "${workspaceRoot}/node_modules/jest/bin/jest",
       "args": [
-        "--runInBand"
+        "--runInBand",
+        "--coverage",
+        "false"
       ],
       "sourceMaps": true,
       "console": "integratedTerminal",
@@ -20,13 +36,17 @@
       "type": "node",
       "request": "launch",
       "name": "Jest Current File",
+      // "preLaunchTask": "build",
       "program": "${workspaceRoot}/node_modules/jest/bin/jest",
       "args": [
         "${file}"
       ],
       "sourceMaps": true,
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      // "outFiles": [
+      //   "${workspaceRoot}/dist-es5/**/*"
+      // ]
     }
   ]
 }

@@ -11,8 +11,6 @@ export function spyFunction(context: SpyContext, subject) {
     }
     catch (err) {
       throw call.throw(err)
-      // context.add('function/throw', err)
-      // throw err
     }
     return call.return(result)
   }

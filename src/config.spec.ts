@@ -33,58 +33,27 @@ afterEach(() => {
 test(`config.spec('simulate') will force all specs in simulate mode`, async () => {
   config.spec('simulate')
 
-  // const speced = await spec.('config/forceReplaySuccess', simpleCallback.success)
-  const speced = await spec('config/forceReplaySuccess', simpleCallback.fail)
-  const actual = await simpleCallback.increment(speced.subject, 2)
+  // const s = await spec.save('config/forceReplaySuccess', simpleCallback.success)
+  const s = await spec('config/forceReplaySuccess', simpleCallback.fail)
+  const actual = await simpleCallback.increment(s.subject, 2)
 
+  console.log(s.actions)
   // this should have failed if the spec is running in 'live' mode.
   // The actual call is failing.
-  await speced.satisfy([
+  await s.satisfy([
+    { 'type': 'function', 'name': 'invoke', 'payload': [2], 'meta': { 'instanceId': 1, 'invokeId': 1 } },
     {
-      'type': 'function',
-      'name': 'invoke',
-      'payload': [
-        2
-      ],
+      'type': 'komondor',
+      'name': 'callback',
+      'payload': [null, 3],
       'meta': {
-        'instanceId': 1,
-        'invokeId': 1
-      }
-    },
-    {
-      'type': 'function',
-      'name': 'invoke',
-      'payload': [
-        null,
-        3
-      ],
-      'meta': {
-        'instanceId': 2,
-        'invokeId': 1,
         'sourceType': 'function',
         'sourceInstanceId': 1,
         'sourceInvokeId': 1,
-        'sourcePath': [
-          1
-        ]
+        'sourcePath': [1]
       }
     },
-    {
-      'type': 'function',
-      'name': 'return',
-      'meta': {
-        'instanceId': 2,
-        'invokeId': 1
-      }
-    },
-    {
-      'type': 'function',
-      'name': 'return',
-      'meta': {
-        'instanceId': 1,
-        'invokeId': 1
-      }
-    }
+    { 'type': 'function', 'name': 'return', 'meta': { 'instanceId': 1, 'invokeId': 1 } }
   ])
 
   t.equal(actual, 3)
@@ -103,54 +72,31 @@ test('config.spec() can filter for specific spec', async () => {
         {
           'type': 'function',
           'name': 'invoke',
-          'payload': [
-            2
-          ],
-          'meta': {
-            'instanceId': 1,
-            'invokeId': 1
-          }
+          'payload': [2],
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
         },
         {
-          'type': 'function',
-          'name': 'invoke',
-          'payload': [
-            {
-              'message': 'fail'
-            }
-          ],
+          'type': 'komondor',
+          'name': 'callback',
+          'payload': [{ 'message': 'fail' }],
           'meta': {
-            'instanceId': 2,
-            'invokeId': 1,
             'sourceType': 'function',
             'sourceInstanceId': 1,
             'sourceInvokeId': 1,
-            'sourcePath': [
-              1
-            ]
+            'sourcePath': [1]
           }
         },
         {
           'type': 'function',
           'name': 'return',
-          'meta': {
-            'instanceId': 2,
-            'invokeId': 1
-          }
-        },
-        {
-          'type': 'function',
-          'name': 'return',
-          'meta': {
-            'instanceId': 1,
-            'invokeId': 1
-          }
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
         }
       ])
     })
 
   config.spec('simulate', 'config/forceReplayFail')
 
+  // const successSpec = await spec.save('config/forceReplayFail', simpleCallback.fail)
   const successSpec = await spec('config/forceReplayFail', simpleCallback.success)
   await simpleCallback.increment(successSpec.subject, 2)
     .then(() => t.fail('should not reach'))
@@ -161,48 +107,24 @@ test('config.spec() can filter for specific spec', async () => {
         {
           'type': 'function',
           'name': 'invoke',
-          'payload': [
-            2
-          ],
-          'meta': {
-            'instanceId': 1,
-            'invokeId': 1
-          }
+          'payload': [2],
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
         },
         {
-          'type': 'function',
-          'name': 'invoke',
-          'payload': [
-            {
-              'message': 'fail'
-            }
-          ],
+          'type': 'komondor',
+          'name': 'callback',
+          'payload': [{ 'message': 'fail' }],
           'meta': {
-            'instanceId': 2,
-            'invokeId': 1,
             'sourceType': 'function',
             'sourceInstanceId': 1,
             'sourceInvokeId': 1,
-            'sourcePath': [
-              1
-            ]
+            'sourcePath': [1]
           }
         },
         {
           'type': 'function',
           'name': 'return',
-          'meta': {
-            'instanceId': 2,
-            'invokeId': 1
-          }
-        },
-        {
-          'type': 'function',
-          'name': 'return',
-          'meta': {
-            'instanceId': 1,
-            'invokeId': 1
-          }
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
         }
       ])
     })
@@ -218,48 +140,25 @@ test('config.spec() can filter using regex', async () => {
         {
           'type': 'function',
           'name': 'invoke',
-          'payload': [
-            2
-          ],
-          'meta': {
-            'instanceId': 1,
-            'invokeId': 1
-          }
+          'payload': [2],
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
         },
         {
-          'type': 'function',
-          'name': 'invoke',
-          'payload': [
-            {
-              'message': 'fail'
-            }
+          'type': 'komondor',
+          'name': 'callback',
+          'payload': [{ 'message': 'fail' }
           ],
           'meta': {
-            'instanceId': 2,
-            'invokeId': 1,
             'sourceType': 'function',
             'sourceInstanceId': 1,
             'sourceInvokeId': 1,
-            'sourcePath': [
-              1
-            ]
+            'sourcePath': [1]
           }
         },
         {
           'type': 'function',
           'name': 'return',
-          'meta': {
-            'instanceId': 2,
-            'invokeId': 1
-          }
-        },
-        {
-          'type': 'function',
-          'name': 'return',
-          'meta': {
-            'instanceId': 1,
-            'invokeId': 1
-          }
+          'meta': { 'instanceId': 1, 'invokeId': 1 }
         }
       ])
     })
@@ -275,47 +174,24 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
     {
       'type': 'function',
       'name': 'invoke',
-      'payload': [
-        2
-      ],
-      'meta': {
-        'instanceId': 1,
-        'invokeId': 1
-      }
+      'payload': [2],
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
     },
     {
-      'type': 'function',
-      'name': 'invoke',
-      'payload': [
-        null,
-        3
-      ],
+      'type': 'komondor',
+      'name': 'callback',
+      'payload': [null, 3],
       'meta': {
-        'instanceId': 2,
-        'invokeId': 1,
         'sourceType': 'function',
         'sourceInstanceId': 1,
         'sourceInvokeId': 1,
-        'sourcePath': [
-          1
-        ]
+        'sourcePath': [1]
       }
     },
     {
       'type': 'function',
       'name': 'return',
-      'meta': {
-        'instanceId': 2,
-        'invokeId': 1
-      }
-    },
-    {
-      'type': 'function',
-      'name': 'return',
-      'meta': {
-        'instanceId': 1,
-        'invokeId': 1
-      }
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
     }
   ])
 })
@@ -403,47 +279,24 @@ test('config source to be a remote server', async () => {
     {
       'type': 'function',
       'name': 'invoke',
-      'payload': [
-        2
-      ],
-      'meta': {
-        'instanceId': 1,
-        'invokeId': 1
-      }
+      'payload': [2],
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
     },
     {
-      'type': 'function',
-      'name': 'invoke',
-      'payload': [
-        null,
-        3
-      ],
+      'type': 'komondor',
+      'name': 'callback',
+      'payload': [null, 3],
       'meta': {
-        'instanceId': 2,
-        'invokeId': 1,
         'sourceType': 'function',
         'sourceInstanceId': 1,
         'sourceInvokeId': 1,
-        'sourcePath': [
-          1
-        ]
+        'sourcePath': [1]
       }
     },
     {
       'type': 'function',
       'name': 'return',
-      'meta': {
-        'instanceId': 2,
-        'invokeId': 1
-      }
-    },
-    {
-      'type': 'function',
-      'name': 'return',
-      'meta': {
-        'instanceId': 1,
-        'invokeId': 1
-      }
+      'meta': { 'instanceId': 1, 'invokeId': 1 }
     }
   ])
 })

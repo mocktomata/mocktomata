@@ -214,7 +214,7 @@ test('on() will trigger when the right action is added (save)', async () => {
   o.end()
 })
 
-test.only('on() will trigger when the right action is added (simulate)', async () => {
+test('on() will trigger when the right action is added (simulate)', async () => {
   const o = new AssertOrder(1)
   registerPlugin({
     activate(r: Registrar) {

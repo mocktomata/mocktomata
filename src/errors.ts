@@ -62,3 +62,12 @@ export class DuplicatePlugin extends BaseError {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+export class MissingReturnRecord extends BaseError {
+  // istanbul ignore next
+  constructor() {
+    super(`No return record found. Corrupted spec?`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}

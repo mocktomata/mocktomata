@@ -3,14 +3,14 @@ import { createSatisfier } from 'satisfier'
 import { SimulationMismatch, StubContext } from 'komondor-plugin'
 
 export function stubClass(context: StubContext, subject) {
-  function emitNextActions() {
-    let action = context.peek()
-    if (action && action.type === 'class/return') {
-      let returnStub = context.getStub(context, action)
-      context.next()
-      return returnStub || action.payload
-    }
-  }
+  // function emitNextActions() {
+  //   let action = context.peek()
+  //   if (action && action.type === 'class/return') {
+  //     let returnStub = context.getStub(context, action)
+  //     context.next()
+  //     return returnStub || action.payload
+  //   }
+  // }
 
   const stubClass = class extends subject {
     // tslint:disable-next-line:variable-name
@@ -41,7 +41,7 @@ export function stubClass(context: StubContext, subject) {
   for (let p in stubClass.prototype) {
     stubClass.prototype[p] = function (...args) {
       const call = context.newCall()
-      const stubArgs = call.invoked(args, { methodName: p })
+      call.invoked(args, { methodName: p })
       // if (!this.__komondorStub.methods[p])
       //   this.__komondorStub.methods[p] = []
       // const invokeInfo = { callbacks: {} }

@@ -32,28 +32,29 @@ import { StubContext } from 'komondor-plugin'
 //   return match
 // }
 
-function locateCallback(meta, args) {
-  if (!meta.sourcePath) {
-    return args.find(arg => typeof arg === 'function')
-  }
+// function locateCallback(meta, args) {
+//   if (!meta.sourcePath) {
+//     return args.find(arg => typeof arg === 'function')
+//   }
 
-  return meta.sourcePath.reduce((p, v) => {
-    return p[v]
-  }, args)
-}
+//   return meta.sourcePath.reduce((p, v) => {
+//     return p[v]
+//   }, args)
+// }
 
 export function stubFunction(context: StubContext, subject) {
-  console.log('new stub', context.instanceId)
 
   // let currentId = 0
-  const call = context.newCall()
   return function (...args) {
-    console.log('calling', context.instanceId, args)
-    const stubArgs = call.invoked(args)
-    const action = context.peek()
-    if (!action) {
-      throw new Error('missing return action')
-    }
+    const call = context.newCall()
+    console.log('new stub function', context.instanceId, (call as any).invokeId)
+    console.log('stub invoked with', args)
+    call.invoked(args)
+    // if (context.invokeSubject) {
+    //   console.log('stubFunction calling subject')
+    //   subject(...args)
+    // }
+
     // console.log('next action', context.instanceId, action, call.succeed(), call.failed())
     // if (call.succeed()) {
     //   const result = call.result()
@@ -75,15 +76,16 @@ export function stubFunction(context: StubContext, subject) {
     //   context.next()
     //   return result
     // }
-
     // if (action.type === 'function' && action.name === 'invoke' && action.meta.sourceType === 'function' && action.meta.sourceInstanceId === context.instanceId) {
     //   // run the stubs to simulate further behaviors
-    //   const stubCallback = locateCallback(action.meta, stubArgs)
-    //   stubCallback(...action.payload)
+    //   // const stubCallback = locateCallback(action.meta, stubArgs)
+    //   // stubCallback(...action.payload)
     //   // run the actual callback to response to caller
     //   // I have some concern that this may make actual remote
     //   // calls that we try to stub.
     //   const callback = locateCallback(action.meta, args)
+    //   context.next()
+    //   console.log(callback)
     //   callback(...action.payload)
     // }
 
@@ -91,6 +93,10 @@ export function stubFunction(context: StubContext, subject) {
     //   const callback = locateCallback(action.meta, stubArgs)
     //   console.log(callback)
     //   callback(...action.payload)
+    // }
+    // if (context.invokeSubject) {
+    //   // context.next()
+    //   return subject(...args)
     // }
 
     const a = context.peek()

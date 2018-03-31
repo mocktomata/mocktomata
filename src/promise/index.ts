@@ -43,7 +43,7 @@ function getPromiseStub(context: StubContext, action: ReturnAction) {
     }
 
     context.on('promise', 'resolve', a => {
-      if (a.meta.id === action.meta.returnId) {
+      if (a.meta.instancId === action.meta.returnInstanceId) {
         if (a.meta.returnType) {
           const stub = context.getStub(context, a)
           context.next()
@@ -56,7 +56,7 @@ function getPromiseStub(context: StubContext, action: ReturnAction) {
       }
     })
     context.on('promise', 'reject', a => {
-      if (a.meta.id === action.meta.returnId) {
+      if (a.meta.instanceId === action.meta.returnInstanceId) {
         context.next()
         reject(a.payload)
       }
