@@ -16,9 +16,6 @@ function spyOnCallback(call: SpyCallRecorder, fn, sourcePath) {
       type: 'komondor',
       name: 'callback',
       payload: args,
-      meta: {},
-      // TODO: likely not needed
-      instanceId: call.context.instanceId,
       sourceType: call.context.plugin.type,
       sourceInstanceId: call.context.instanceId,
       sourceInvokeId: call.invokeId,

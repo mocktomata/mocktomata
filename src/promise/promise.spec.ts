@@ -108,8 +108,9 @@ testTrio('promise with callback in between', 'promise/inBetween', async spec => 
           type: 'komondor',
           name: 'callback',
           payload: ['called'],
-          sourceType: 'function', sourceInvokeId: 1, sourcePath: [1],
-          instanceId: 1
+          sourceType: 'function',
+          sourceInvokeId: 1,
+          sourcePath: [1]
         },
         { type: 'promise', name: 'resolve', payload: 3, invokeId: 1, instanceId: 1 }
       ])
