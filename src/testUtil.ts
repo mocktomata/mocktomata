@@ -1,4 +1,5 @@
-import { Spec, spec } from '.';
+// istanbul ignore file
+import { Spec, spec } from '.'
 
 export function testTrio(specName: string, handler: ((spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>))
 export function testTrio(description: string, specName, handler: ((spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>))

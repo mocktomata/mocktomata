@@ -4,12 +4,13 @@ import { SimulationMismatch } from 'komondor-plugin'
 
 import { spec, SpecNotFound, NotSpecable, MissingReturnRecord } from '.'
 import { simpleCallback } from './function/testSuites'
+import { testTrio } from './testUtil'
 
 test('simulate but file does not exists', async () => {
   a.throws(spec.simulate('not exist', x => x), SpecNotFound)
 })
 
-test('subject not specable will throw', async () => {
+testTrio('subject not specable will throw', 'spec/notSpecable', async spec => {
   await a.throws(spec(true), NotSpecable)
 })
 

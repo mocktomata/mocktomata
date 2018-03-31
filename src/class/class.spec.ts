@@ -4,7 +4,7 @@ import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
 import { spec, SpecNotFound } from '..'
-import { testTrio } from '../testUtil'
+import { testTrio, testLiveOnly } from '../testUtil'
 
 
 class Foo {
@@ -179,4 +179,37 @@ testTrio('method returning promise should have result of promise saved in payloa
       { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
       { type: 'promise', name: 'resolve', payload: 4, instanceId: 1, invokeId: 1 }
     ])
-  })
+  }
+)
+
+class Throwing {
+  doThrow() {
+    throw new Error('thrown')
+  }
+}
+
+testTrio('class/throwing', async spec => {
+  const s = await spec(Throwing)
+  const o = new s.subject()
+  await a.throws(() => o.doThrow())
+
+  console.log(s.actions)
+  await s.satisfy([
+    { type: 'class', name: 'constructor', instanceId: 1 },
+    {
+      type: 'class',
+      name: 'invoke',
+      meta: { methodName: 'doThrow' },
+      instanceId: 1,
+      invokeId: 1
+    },
+    {
+      type: 'class',
+      name: 'throw',
+      payload: { message: 'thrown' },
+      meta: { methodName: 'doThrow' },
+      instanceId: 1,
+      invokeId: 1
+    }
+  ])
+})

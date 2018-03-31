@@ -106,18 +106,6 @@ class CallPlayer implements StubCall {
       action.name === name &&
       action.instanceId === this.context.instanceId
   }
-  failed(options?: CallOptions): boolean {
-    const meta = unpartial({ name: 'throw' }, options)
-    const name = meta.name
-    delete meta.name
-
-    const action = this.context.peek()
-    // TODO: compare meta
-    return !!action &&
-      action.type === this.context.plugin.type &&
-      action.name === name &&
-      action.instanceId === this.context.instanceId
-  }
   result(): boolean {
     const action = this.context.peek()!
     this.context.callListeners(action)
@@ -141,7 +129,6 @@ class CallPlayer implements StubCall {
         log.debug(`next action: ${tersify(nextAction)}`)
         const plugin = plugins.find(p => p.type === nextAction!.type)
         if (plugin) {
-          console.log('plugin', plugin)
           const childContext = this.context.createChildContext(plugin, undefined)
           result = plugin.getStub(childContext, undefined)
         }
@@ -239,23 +226,8 @@ export class InternalStubContext implements StubContext {
   next(): void {
     this.actionTracker.next()
   }
-  processNext() {
-    this.next()
-    const action = this.peek()
-    if (!action) return
-  }
   peek(): SpecAction | undefined {
     return this.actionTracker.peek()
-  }
-  on(actionType: string, name: string, callback: (action: SpecAction) => void) {
-    if (!this.events[actionType])
-      this.events[actionType] = {}
-    if (!this.events[actionType][name])
-      this.events[actionType][name] = []
-    this.events[actionType][name].push(callback)
-  }
-  onAny(callback: (action: SpecAction) => void) {
-    this.listenAll.push(callback)
   }
   callListeners(action) {
     if (this.events[action.type]) {

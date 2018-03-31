@@ -27,9 +27,8 @@ export function stubClass(context: StubContext, subject) {
       if (call.succeed()) {
         return call.result()
       }
-      if (call.failed()) {
-        throw call.thrown()
-      }
+
+      throw call.thrown()
     }
   }
   return stubClass
