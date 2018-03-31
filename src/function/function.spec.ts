@@ -32,7 +32,7 @@ test('simulate with not existing record will throw', async () => {
   return a.throws(spec.simulate('function/simpleCallback/notExist', simpleCallback.success), SpecNotFound)
 })
 
-testTrio('onAny(callback) will invoke on any action', 'simpleCallback', async spec => {
+testTrio('onAny(callback) will invoke on any action', 'function/simpleCallback/success', async spec => {
   const o = new AssertOrder(3)
   const s = await spec(simpleCallback.success)
 
@@ -51,7 +51,7 @@ testTrio('function/simpleCallback/success', async spec => {
 
   s.on('function', 'invoke', action => {
     o.once(1)
-    satisfy(action, { type: 'function', name: 'invoke', payload: [2], meta: { instanceId: 1, invokeId: 1 } })
+    satisfy(action, { type: 'function', name: 'invoke', payload: [2], instanceId: 1, meta: { invokeId: 1 } })
   })
 
   s.on('komondor', 'callback', action => {
@@ -66,20 +66,20 @@ testTrio('function/simpleCallback/success', async spec => {
 
   s.on('function', 'return', action => {
     o.once(3)
-    satisfy(action, { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } })
+    satisfy(action, { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } })
   })
 
   await simpleCallback.increment(s.subject, 2)
 
   await s.satisfy([
-    { type: 'function', name: 'invoke', payload: [2], meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function', name: 'invoke', payload: [2], instanceId: 1, meta: { invokeId: 1 } },
     {
       type: 'komondor',
       name: 'callback',
       payload: [null, 3],
       meta: { sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] }
     },
-    { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } }
+    { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } }
   ])
   o.end()
 })
@@ -90,7 +90,7 @@ testTrio('function/simpleCallback/fail', async spec => {
 
   s.on('function', 'invoke', action => {
     o.once(1)
-    satisfy(action, { type: 'function', name: 'invoke', payload: [2], meta: { instanceId: 1, invokeId: 1 } })
+    satisfy(action, { type: 'function', name: 'invoke', payload: [2], instanceId: 1, meta: { invokeId: 1 } })
   })
 
   s.on('komondor', 'callback', action => {
@@ -105,7 +105,7 @@ testTrio('function/simpleCallback/fail', async spec => {
 
   s.on('function', 'return', action => {
     o.once(3)
-    satisfy(action, { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } })
+    satisfy(action, { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } })
   })
 
   return simpleCallback.increment(s.subject, 2)
@@ -114,7 +114,8 @@ testTrio('function/simpleCallback/fail', async spec => {
       await s.satisfy([{
         type: 'function', name: 'invoke',
         payload: [2],
-        meta: { instanceId: 1, invokeId: 1 }
+        instanceId: 1,
+        meta: { invokeId: 1 }
       },
       {
         type: 'komondor', name: 'callback',
@@ -126,7 +127,7 @@ testTrio('function/simpleCallback/fail', async spec => {
           sourcePath: [1]
         }
       },
-      { type: 'function', name: 'return', meta: { instanceId: 1 } }])
+      { type: 'function', name: 'return', instanceId: 1 }])
       o.end()
     })
 })
@@ -140,12 +141,12 @@ testTrio('function spec can be called multiple times', 'spec/delayed/multiple', 
     type: 'function',
     name: 'invoke',
     payload: [2],
-    meta: { instanceId: 1, invokeId: 1 }
+    instanceId: 1, meta: { invokeId: 1 }
   },
   {
     type: 'function',
     name: 'return',
-    meta: { instanceId: 1, invokeId: 1 }
+    instanceId: 1, meta: { invokeId: 1 }
   },
   {
     type: 'komondor',
@@ -162,12 +163,12 @@ testTrio('function spec can be called multiple times', 'spec/delayed/multiple', 
     type: 'function',
     name: 'invoke',
     payload: [4],
-    meta: { instanceId: 1, invokeId: 2 }
+    instanceId: 1, meta: { invokeId: 2 }
   },
   {
     type: 'function',
     name: 'return',
-    meta: { instanceId: 1, invokeId: 2 }
+    instanceId: 1, meta: { invokeId: 2 }
   },
   {
     type: 'komondor',
@@ -192,7 +193,7 @@ testTrio('function/fetch/success', async spec => {
       type: 'function',
       name: 'invoke',
       payload: ['remoteAdd', { x: 1, y: 2 }],
-      meta: { instanceId: 1, invokeId: 1 }
+      instanceId: 1, meta: { invokeId: 1 }
     },
     {
       type: 'komondor', name: 'callback',
@@ -204,7 +205,7 @@ testTrio('function/fetch/success', async spec => {
         sourcePath: [2]
       }
     },
-    { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } }
+    { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } }
   ])
   t.equal(actual, 3)
 })
@@ -219,7 +220,7 @@ testTrio('function/fetch/fail', async spec => {
           type: 'function',
           name: 'invoke',
           payload: ['remoteAdd', { x: 1, y: 2 }],
-          meta: { instanceId: 1, invokeId: 1 }
+          instanceId: 1, meta: { invokeId: 1 }
         },
         {
           type: 'komondor',
@@ -232,7 +233,7 @@ testTrio('function/fetch/fail', async spec => {
             sourcePath: [2]
           }
         },
-        { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } }
+        { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } }
       ])
     })
 })
@@ -243,7 +244,7 @@ testTrio('function/literalCallback/success', async spec => {
 
   t.equal(actual, 3)
   await s.satisfy([
-    { type: 'function', name: 'invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function', name: 'invoke', payload: [{ 'data': 2 }], instanceId: 1, meta: { invokeId: 1 } },
     {
       type: 'komondor', name: 'callback',
       payload: [3],
@@ -254,7 +255,7 @@ testTrio('function/literalCallback/success', async spec => {
         sourcePath: [0, 'success']
       }
     },
-    { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } }
+    { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } }
   ])
 })
 
@@ -264,7 +265,7 @@ testTrio('function/literalCallback/fail', async spec => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return s.satisfy([
-        { type: 'function', name: 'invoke', payload: [{ 'data': 2 }], meta: { instanceId: 1, invokeId: 1 } },
+        { type: 'function', name: 'invoke', payload: [{ 'data': 2 }], instanceId: 1, meta: { invokeId: 1 } },
         {
           type: 'komondor', name: 'callback',
           payload: [undefined, undefined, { message: 'fail' }],
@@ -275,7 +276,7 @@ testTrio('function/literalCallback/fail', async spec => {
             sourcePath: [0, 'error']
           }
         },
-        { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } }
+        { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } }
       ])
     })
 })
@@ -286,8 +287,8 @@ testTrio('function/synchronous/success', async spec => {
 
   t.equal(actual, 3)
   await speced.satisfy([
-    { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
-    { type: 'function', name: 'return', payload: 3, meta: { instanceId: 1, invokeId: 1 } }
+    { type: 'function', name: 'invoke', payload: ['increment', 2], instanceId: 1, meta: { invokeId: 1 } },
+    { type: 'function', name: 'return', payload: 3, instanceId: 1, meta: { invokeId: 1 } }
   ])
 })
 
@@ -297,8 +298,8 @@ testTrio('function/synchronous/fail', async spec => {
   a.throws(() => synchronous.increment(s.subject, 2), e => e.message === 'fail')
 
   await s.satisfy([
-    { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
-    { type: 'function', name: 'throw', payload: { message: 'fail' }, meta: { instanceId: 1, invokeId: 1 } }
+    { type: 'function', name: 'invoke', payload: ['increment', 2], instanceId: 1, meta: { invokeId: 1 } },
+    { type: 'function', name: 'throw', payload: { message: 'fail' }, instanceId: 1, meta: { invokeId: 1 } }
   ])
 })
 
@@ -311,7 +312,7 @@ testTrio('function/recursive/twoCalls', async spec => {
     type: 'function',
     name: 'invoke',
     payload: [2],
-    meta: { instanceId: 1, invokeId: 1 }
+    instanceId: 1, meta: { invokeId: 1 }
   },
   {
     type: 'komondor',
@@ -328,7 +329,7 @@ testTrio('function/recursive/twoCalls', async spec => {
     type: 'function',
     name: 'invoke',
     payload: [1],
-    meta: { instanceId: 1, invokeId: 2 }
+    instanceId: 1, meta: { invokeId: 2 }
   },
   {
     type: 'komondor',
@@ -345,13 +346,13 @@ testTrio('function/recursive/twoCalls', async spec => {
     type: 'function',
     name: 'return',
     payload: undefined,
-    meta: { instanceId: 1, invokeId: 2 }
+    instanceId: 1, meta: { invokeId: 2 }
   },
   {
     type: 'function',
     name: 'return',
     payload: undefined,
-    meta: { instanceId: 1, invokeId: 1 }
+    instanceId: 1, meta: { invokeId: 1 }
   }])
 })
 
@@ -369,8 +370,8 @@ testTrio('function/postReturn/success', async spec => {
   })
 
   await s.satisfy([
-    { type: 'function', name: 'invoke', payload: ['event', 3], meta: { instanceId: 1, invokeId: 1 } },
-    { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1 } },
+    { type: 'function', name: 'invoke', payload: ['event', 3], instanceId: 1, meta: { invokeId: 1 } },
+    { type: 'function', name: 'return', instanceId: 1, meta: { invokeId: 1 } },
     {
       type: 'komondor',
       name: 'callback',

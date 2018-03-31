@@ -16,7 +16,8 @@ function spyOnCallback(context: InternalSpyContext, fn, meta) {
       type: 'komondor',
       name: 'callback',
       payload: args,
-      meta
+      meta,
+      instanceId: context.instanceId
     }
     context.actions.push(action)
     context.callListeners(action)
@@ -29,20 +30,13 @@ class SpyCallRecorder implements SpyCall {
   }
   invoke<T extends any[]>(args: T, options?: CallOptions): T {
     const meta = unpartial(
-      { name: 'invoke', instanceId: this.context.instanceId, invokeId: this.invokeId },
+      { name: 'invoke', invokeId: this.invokeId },
       options)
     const name = meta.name
     delete meta.name
 
     const type = this.context.plugin.type
-    const action: SpecAction = { type, name, payload: args, meta }
-
-    if (this.context.sourceType) {
-      action.meta.sourceType = this.context.sourceType
-      action.meta.sourceInstanceId = this.context.sourceInstanceId
-      action.meta.sourceInvokeId = this.context.sourceInvokeId
-      action.meta.sourcePath = this.context.sourcePath
-    }
+    const action: SpecAction = { type, name, payload: args, meta, instanceId: this.context.instanceId }
 
     this.context.actions.push(action)
     this.context.callListeners(action)
@@ -87,13 +81,13 @@ class SpyCallRecorder implements SpyCall {
   }
   return<T>(result: T, options?: CallOptions): T {
     const meta = unpartial(
-      { name: 'return', instanceId: this.context.instanceId, invokeId: this.invokeId },
+      { name: 'return', invokeId: this.invokeId },
       options)
     const name = meta.name
     delete meta.name
 
     const type = this.context.plugin.type
-    const action: SpecAction = { type, name, payload: result, meta }
+    const action: SpecAction = { type, name, payload: result, meta, instanceId: this.context.instanceId }
 
     this.context.actions.push(action)
     this.context.callListeners(action)
@@ -103,31 +97,23 @@ class SpyCallRecorder implements SpyCall {
       const childContext = this.context.createChildContext(plugin)
       action.meta.returnType = plugin.type
       action.meta.returnInstanceId = childContext.instanceId
-      return plugin.getSpy(childContext, result, action) || result
+      return plugin.getSpy(childContext, result) || result
     }
 
     return result
   }
   throw<T>(err: T, options?: CallOptions): T {
     const meta = unpartial(
-      { name: 'throw', instanceId: this.context.instanceId, invokeId: this.invokeId },
+      { name: 'throw', invokeId: this.invokeId },
       options)
     const name = meta.name
     delete meta.name
 
     const type = this.context.plugin.type
-    const action: SpecAction = { type, name, payload: err, meta }
+    const action: SpecAction = { type, name, payload: err, meta, instanceId: this.context.instanceId }
 
     this.context.actions.push(action)
     this.context.callListeners(action)
-
-    // const plugin = plugins.find(p => p.support(err))
-    // if (plugin) {
-    //   const childContext = this.context.createChildContext(plugin)
-    //   action.meta.returnType = plugin.type
-    //   action.meta.returnInstanceId = childContext.instanceId
-    //   return plugin.getSpy(childContext, err, action) || err
-    // }
 
     return err
   }
@@ -164,12 +150,12 @@ export class InternalSpyContext implements SpyContext {
     const plugin = plugins.find(p => p.support(subject))
     if (plugin) {
       const childContext = this.createChildContext(plugin, key)
-      return plugin.getSpy(childContext, subject, undefined)
+      return plugin.getSpy(childContext, subject)
     }
   }
   addInvokeAction<T extends any[]>(type: string, name: string, args: T, meta: any = {}): T {
     const action = {
-      type, name, payload: args, meta: { ...meta, instanceId: this.instanceId }
+      type, name, payload: args, meta, instanceId: this.instanceId
     }
 
     if (this.sourceType) {
@@ -185,7 +171,7 @@ export class InternalSpyContext implements SpyContext {
       const plugin = plugins.find(p => p.support(arg))
       if (plugin) {
         const childContext = this.createChildContext(plugin, i)
-        return plugin.getSpy(childContext, arg, action) || arg
+        return plugin.getSpy(childContext, arg) || arg
       }
 
       return arg
@@ -193,7 +179,7 @@ export class InternalSpyContext implements SpyContext {
   }
   addReturnAction(type: string, name: string, result, meta: any = {}) {
     const action = {
-      type, name, payload: result, meta: { ...meta, instanceId: this.instanceId }
+      type, name, payload: result, meta, instanceId: this.instanceId
     }
 
     this.actions.push(action)
@@ -204,13 +190,13 @@ export class InternalSpyContext implements SpyContext {
       const childContext = this.createChildContext(plugin)
       action.meta.returnType = plugin.type
       action.meta.returnInstanceId = childContext.instanceId
-      return plugin.getSpy(childContext, result, action) || result
+      return plugin.getSpy(childContext, result) || result
     }
 
     return result
   }
   add(type: string, name: string, payload?: any, meta: any = {}) {
-    const a = { type, name, payload, meta: { ...meta, instanceId: this.instanceId } }
+    const a = { type, name, payload, meta, instanceId: this.instanceId }
 
     this.actions.push(a)
     this.callListeners(a)

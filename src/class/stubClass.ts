@@ -5,16 +5,15 @@ import { SimulationMismatch, StubContext } from 'komondor-plugin'
 export function stubClass(context: StubContext, subject) {
   const stubClass = class extends subject {
     // tslint:disable-next-line:variable-name
-    __komondorStub: any = { methods: {} }
+    __komondorStub: any = {}
     constructor(...args) {
       // @ts-ignore
       super(...args)
       this.__komondorStub.ctorArgs = args
 
       const action = context.peek()
-      console.log('class constructor', action, args)
       if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(context.specId, 'class/constructor', action)
+        throw new SimulationMismatch(context.specId, { type: 'class', name: 'constructor', payload: args }, action)
       }
       context.next()
     }

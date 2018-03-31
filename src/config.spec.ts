@@ -21,6 +21,47 @@ const simpleCallback = {
   }
 }
 
+const forceReplaySuccessExpectation = [
+  {
+    type: 'function',
+    name: 'invoke',
+    payload: [2],
+    meta: { invokeId: 1 },
+    instanceId: 1
+  },
+  {
+    type: 'komondor',
+    name: 'callback',
+    payload: [null, 3],
+    meta: {
+      sourceType: 'function',
+      sourceInstanceId: 1,
+      sourceInvokeId: 1,
+      sourcePath: [1]
+    },
+    instanceId: 1
+  },
+  {
+    type: 'function',
+    name: 'return',
+    meta: { invokeId: 1 },
+    instanceId: 1
+  }]
+
+
+const forceReplayFailExpectation = [
+  {
+    type: 'function', name: 'invoke', payload: [2], meta: { invokeId: 1 }, instanceId: 1
+  },
+  {
+    type: 'komondor',
+    name: 'callback',
+    payload: [{ message: 'fail' }],
+    meta: { sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+    instanceId: 1
+  },
+  { type: 'function', name: 'return', meta: { invokeId: 1 }, instanceId: 1 }]
+
 beforeEach(() => {
   resetStore()
 })
@@ -36,62 +77,14 @@ test(`config.spec('simulate') will force all specs in simulate mode`, async () =
   const s = await spec('config/forceReplaySuccess', simpleCallback.fail)
   const actual = await simpleCallback.increment(s.subject, 2)
 
-  console.log(s.actions)
   // this should have failed if the spec is running in 'live' mode.
   // The actual call is failing.
-  await s.satisfy([
-    { 'type': 'function', 'name': 'invoke', 'payload': [2], 'meta': { 'instanceId': 1, 'invokeId': 1 } },
-    {
-      'type': 'komondor',
-      'name': 'callback',
-      'payload': [null, 3],
-      'meta': {
-        'sourceType': 'function',
-        'sourceInstanceId': 1,
-        'sourceInvokeId': 1,
-        'sourcePath': [1]
-      }
-    },
-    { 'type': 'function', 'name': 'return', 'meta': { 'instanceId': 1, 'invokeId': 1 } }
-  ])
+  await s.satisfy(forceReplaySuccessExpectation)
 
   t.equal(actual, 3)
 })
 
 test('config.spec() can filter for specific spec', async () => {
-  config.spec('simulate', 'not exist - no effect')
-
-  const failSpec = await spec('config/forceReplaySuccess', simpleCallback.fail)
-  await simpleCallback.increment(failSpec.subject, 2)
-    .then(() => t.fail('should not reach'))
-    .catch(() => {
-      // this should fail if the spec is in 'replay' mode.
-      // The saved record is succeeding.
-      return failSpec.satisfy([
-        {
-          'type': 'function',
-          'name': 'invoke',
-          'payload': [2],
-          'meta': { 'instanceId': 1, 'invokeId': 1 }
-        },
-        {
-          'type': 'komondor',
-          'name': 'callback',
-          'payload': [{ 'message': 'fail' }],
-          'meta': {
-            'sourceType': 'function',
-            'sourceInstanceId': 1,
-            'sourceInvokeId': 1,
-            'sourcePath': [1]
-          }
-        },
-        {
-          'type': 'function',
-          'name': 'return',
-          'meta': { 'instanceId': 1, 'invokeId': 1 }
-        }
-      ])
-    })
 
   config.spec('simulate', 'config/forceReplayFail')
 
@@ -102,64 +95,27 @@ test('config.spec() can filter for specific spec', async () => {
     .catch(() => {
       // this should fail if the spec is in 'verify' mode.
       // The save record is failing.
-      return successSpec.satisfy([
-        {
-          'type': 'function',
-          'name': 'invoke',
-          'payload': [2],
-          'meta': { 'instanceId': 1, 'invokeId': 1 }
-        },
-        {
-          'type': 'komondor',
-          'name': 'callback',
-          'payload': [{ 'message': 'fail' }],
-          'meta': {
-            'sourceType': 'function',
-            'sourceInstanceId': 1,
-            'sourceInvokeId': 1,
-            'sourcePath': [1]
-          }
-        },
-        {
-          'type': 'function',
-          'name': 'return',
-          'meta': { 'instanceId': 1, 'invokeId': 1 }
-        }
-      ])
+      return successSpec.satisfy(forceReplayFailExpectation)
+    })
+  config.spec('simulate', 'not exist - no effect')
+
+  const failSpec = await spec('config/forceReplaySuccess', simpleCallback.fail)
+  await simpleCallback.increment(failSpec.subject, 2)
+    .then(() => t.fail('should not reach'))
+    .catch(() => {
+      // this should fail if the spec is in 'replay' mode.
+      // The saved record is succeeding.
+      return failSpec.satisfy(forceReplayFailExpectation)
     })
 })
 
 test('config.spec() can filter using regex', async () => {
   config.spec('simulate', /config\/forceReplay/)
-  const sucessSpec = await spec('config/forceReplayFail', simpleCallback.success)
-  await simpleCallback.increment(sucessSpec.subject, 2)
+  const successSpec = await spec('config/forceReplayFail', simpleCallback.success)
+  await simpleCallback.increment(successSpec.subject, 2)
     .then(() => t.fail('should not reach'))
     .catch(() => {
-      return sucessSpec.satisfy([
-        {
-          'type': 'function',
-          'name': 'invoke',
-          'payload': [2],
-          'meta': { 'instanceId': 1, 'invokeId': 1 }
-        },
-        {
-          'type': 'komondor',
-          'name': 'callback',
-          'payload': [{ 'message': 'fail' }
-          ],
-          'meta': {
-            'sourceType': 'function',
-            'sourceInstanceId': 1,
-            'sourceInvokeId': 1,
-            'sourcePath': [1]
-          }
-        },
-        {
-          'type': 'function',
-          'name': 'return',
-          'meta': { 'instanceId': 1, 'invokeId': 1 }
-        }
-      ])
+      return successSpec.satisfy(forceReplayFailExpectation)
     })
 })
 
@@ -169,30 +125,7 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
   const actual = await simpleCallback.increment(sucessSpec.subject, 2)
   t.equal(actual, 3)
 
-  await sucessSpec.satisfy([
-    {
-      'type': 'function',
-      'name': 'invoke',
-      'payload': [2],
-      'meta': { 'instanceId': 1, 'invokeId': 1 }
-    },
-    {
-      'type': 'komondor',
-      'name': 'callback',
-      'payload': [null, 3],
-      'meta': {
-        'sourceType': 'function',
-        'sourceInstanceId': 1,
-        'sourceInvokeId': 1,
-        'sourcePath': [1]
-      }
-    },
-    {
-      'type': 'function',
-      'name': 'return',
-      'meta': { 'instanceId': 1, 'invokeId': 1 }
-    }
-  ])
+  await sucessSpec.satisfy(forceReplaySuccessExpectation)
 })
 
 test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async () => {
@@ -274,30 +207,7 @@ test('config source to be a remote server', async () => {
 
   const cbSpec = await spec(simpleCallback.success)
   await simpleCallback.increment(cbSpec.subject, 2)
-  await cbSpec.satisfy([
-    {
-      'type': 'function',
-      'name': 'invoke',
-      'payload': [2],
-      'meta': { 'instanceId': 1, 'invokeId': 1 }
-    },
-    {
-      'type': 'komondor',
-      'name': 'callback',
-      'payload': [null, 3],
-      'meta': {
-        'sourceType': 'function',
-        'sourceInstanceId': 1,
-        'sourceInvokeId': 1,
-        'sourcePath': [1]
-      }
-    },
-    {
-      'type': 'function',
-      'name': 'return',
-      'meta': { 'instanceId': 1, 'invokeId': 1 }
-    }
-  ])
+  await cbSpec.satisfy(forceReplaySuccessExpectation)
 })
 
 test('register plugin manually', () => {

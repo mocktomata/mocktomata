@@ -1,4 +1,4 @@
-import { Registrar, ReturnAction, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
+import { Registrar, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
 export const resolvedWith = createExpectation(TYPE, 'resolve')
@@ -8,9 +8,8 @@ export function activate(registrar: Registrar) {
   registrar.register(
     TYPE,
     isPromise,
-    (context, subject) => getPromiseSpy(context, subject),
-    // tslint:disable-next-line
-    (context, _subject, action) => getPromiseStub(context, action!)
+    getPromiseSpy,
+    getPromiseStub
   )
 }
 
@@ -29,7 +28,7 @@ function getPromiseSpy(context: SpyContext, subject) {
     })
 }
 
-function getPromiseStub(context: StubContext, action: ReturnAction) {
+function getPromiseStub(context: StubContext) {
   const call = context.newCall()
   return new Promise((resolve, reject) => {
     if (call.succeed({ name: 'resolve' })) {
@@ -38,25 +37,5 @@ function getPromiseStub(context: StubContext, action: ReturnAction) {
     else {
       reject(call.thrown())
     }
-
-    context.on('promise', 'resolve', a => {
-      if (a.meta.instancId === action.meta.returnInstanceId) {
-        if (a.meta.returnType) {
-          const stub = context.getStub(context, a)
-          context.next()
-          resolve(stub)
-        }
-        else {
-          context.next()
-          resolve(a.payload)
-        }
-      }
-    })
-    context.on('promise', 'reject', a => {
-      if (a.meta.instanceId === action.meta.returnInstanceId) {
-        context.next()
-        reject(a.payload)
-      }
-    })
   })
 }

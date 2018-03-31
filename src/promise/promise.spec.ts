@@ -45,9 +45,9 @@ testTrio('promise/noReturn', async spec => {
   return noReturn.doSomething(s.subject)
     .then(() => {
       return s.satisfy([
-        { type: 'function', name: 'invoke', meta: { instanceId: 1, invokeId: 1 } },
-        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
-        { type: 'promise', name: 'resolve', meta: { instanceId: 1, invokeId: 1 } }
+        { type: 'function', name: 'invoke', meta: { invokeId: 1 }, instanceId: 1 },
+        { type: 'function', name: 'return', payload: {}, meta: { invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, instanceId: 1 },
+        { type: 'promise', name: 'resolve', meta: { invokeId: 1 }, instanceId: 1 }
       ])
     })
 })
@@ -60,9 +60,9 @@ testTrio('promise/resolve', async spec => {
     .then(actual => {
       t.equal(actual, 3)
       return s.satisfy([
-        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
-        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
-        { type: 'promise', name: 'resolve', payload: 3, meta: { instanceId: 1, invokeId: 1 } }
+        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { invokeId: 1 }, instanceId: 1 },
+        { type: 'function', name: 'return', payload: {}, meta: { invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, instanceId: 1 },
+        { type: 'promise', name: 'resolve', payload: 3, meta: { invokeId: 1 }, instanceId: 1 }
       ])
     })
 })
@@ -73,9 +73,9 @@ testTrio('promise/reject', async spec => {
     .then(() => t.fail('should not reach'))
     .catch(() => {
       return s.satisfy([
-        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
-        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
-        { type: 'promise', name: 'reject', payload: { message: 'fail' }, meta: { instanceId: 1, invokeId: 1 } }
+        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { invokeId: 1 }, instanceId: 1 },
+        { type: 'function', name: 'return', payload: {}, meta: { invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, instanceId: 1 },
+        { type: 'promise', name: 'reject', payload: { message: 'fail' }, meta: { invokeId: 1 }, instanceId: 1 }
       ])
     })
 })
@@ -101,16 +101,18 @@ testTrio('promise with callback in between', 'promise/inBetween', async spec => 
     .then(() => fooing)
     .then(actual => {
       t.equal(actual, 3)
+      console.log(s.actions)
       return s.satisfy([
-        { type: 'function', name: 'invoke', payload: [2], meta: { instanceId: 1, invokeId: 1 } },
-        { type: 'function', name: 'return', meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
+        { type: 'function', name: 'invoke', payload: [2], meta: { invokeId: 1 }, instanceId: 1 },
+        { type: 'function', name: 'return', meta: { invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, instanceId: 1 },
         {
           type: 'komondor',
           name: 'callback',
           payload: ['called'],
-          meta: { sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] }
+          meta: { sourceType: 'function', sourceInvokeId: 1, sourcePath: [1] },
+          instanceId: 1
         },
-        { type: 'promise', name: 'resolve', payload: 3, meta: { instanceId: 1, invokeId: 1 } }
+        { type: 'promise', name: 'resolve', payload: 3, meta: { invokeId: 1 }, instanceId: 1 }
       ])
     })
 })
@@ -124,23 +126,16 @@ testTrio('promise/returns/function', async spec => {
     .then(actualFn => {
       t.equal(actualFn(), 3)
       return s.satisfy([
-        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { instanceId: 1, invokeId: 1 } },
-        { type: 'function', name: 'return', payload: {}, meta: { instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 } },
-        { type: 'promise', name: 'resolve', meta: { instanceId: 1, invokeId: 1, returnType: 'function', returnInstanceId: 2 } },
+        { type: 'function', name: 'invoke', payload: ['increment', 2], meta: { invokeId: 1 }, instanceId: 1 },
+        { type: 'function', name: 'return', payload: {}, meta: { invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, instanceId: 1 },
+        { type: 'promise', name: 'resolve', meta: { invokeId: 1, returnType: 'function', returnInstanceId: 2 }, instanceId: 1 },
         {
           type: 'function',
           name: 'invoke',
-          meta: {
-            instanceId: 2,
-            invokeId: 1,
-            sourceType: 'promise',
-            sourceInstanceId: 1,
-            sourceInvokeId: 1,
-            // TODO: empty path to indicate return can be confusing
-            sourcePath: []
-          }
+          meta: { invokeId: 1 },
+          instanceId: 2
         },
-        { type: 'function', name: 'return', payload: 3, meta: { instanceId: 2, invokeId: 1 } }
+        { type: 'function', name: 'return', payload: 3, meta: { invokeId: 1 }, instanceId: 2 }
       ])
     })
 })
