@@ -80,7 +80,7 @@ class SpyCallRecorder implements SpyCall {
       const childContext = this.context.createChildContext(plugin)
       action.returnType = plugin.type
       action.returnInstanceId = childContext.instanceId
-      return plugin.getSpy(childContext, result) || result
+      return plugin.getSpy(childContext, result)
     }
 
     return result

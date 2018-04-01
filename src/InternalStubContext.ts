@@ -40,9 +40,11 @@ class CallPlayer implements StubCall {
 
     return args
   }
+  // istanbul ignore next
   peek() {
     return this.context.peek()
   }
+  // istanbul ignore next
   next() {
     return this.context.next()
   }
@@ -82,7 +84,7 @@ class CallPlayer implements StubCall {
         }
       }
       else {
-        log.debug(`return result does not match with next action ${tersify(nextAction)}`)
+        log.warn(`return result does not match with next action ${tersify(nextAction)}`)
       }
     }
 
@@ -132,7 +134,6 @@ class CallPlayer implements StubCall {
         this.context.callListeners(action)
         subject(...action.payload)
       }
-      // istanbul ignore next
       else {
         log.onWarn(() => `skipping over: don't know how to handle ${tersify(action)}`)
         this.context.next()
@@ -178,6 +179,7 @@ class CallPlayer implements StubCall {
         if (!match)
           break;
       }
+      // istanbul ignore next
       else if (expected[i] !== actual[i]) {
         match = false
         break;
