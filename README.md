@@ -206,8 +206,8 @@ function onGiven(clause: string | RegExp, handler: (context: GivenContext) => an
 
 `komondor` supports plugins to spec on subjects other than basic function, class, and promise.
 
-- [`komondor-plugin-node`](https://github.com/unional/komonodor-plugin-node)
-- [`komondor-plugin-ws`](https://github.com/unional/komnondor-plugin-ws)
+- [`komondor-plugin-node`](https://github.com/unional/komondor-plugin-node)
+- [`komondor-plugin-ws`](https://github.com/unional/komondor-plugin-ws)
 
 To create a plugin, please check [`komondor-plugin`](https://github.com/unional/komondor-plugin)
 
