@@ -1,6 +1,6 @@
-import { StubContext, SpecAction, Plugin, StubCall, SimulationMismatch, CallOptions } from 'komondor-plugin'
+import { StubContext, SpecAction, Plugin, StubCall, SimulationMismatch } from 'komondor-plugin'
+import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
-import { unpartial } from 'unpartial'
 
 import { MissingReturnRecord } from './errors'
 import { log } from './log';
@@ -19,21 +19,20 @@ export class ActionTracker {
 
 class CallPlayer implements StubCall {
   args: any[]
-  stubArgs: any[]
   constructor(public context: InternalStubContext, public invokeId: number) { }
-  invoked<T extends any[]>(args: T, options?: CallOptions): T {
-    const meta = unpartial({ name: 'invoke' }, options)
-    const name = meta.name
-    delete meta.name
+  invoked<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
+    const name = 'invoke'
     this.args = args
 
     const action = this.context.peek()
     log.onDebug(() => `invoked (${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId}) with ${tersify(args)}, for ${tersify(action, { maxLength: Infinity })}`)
 
-    // TODO: check for meta matching
-    if (!action || action.type !== this.context.plugin.type || action.name !== name || !this.argsMatch(action.payload, args)) {
-      throw new SimulationMismatch(this.context.specId, { type: this.context.plugin.type, name, payload: args }, action)
-    }
+    this.ensureMatching(action, {
+      type: this.context.plugin.type,
+      name,
+      payload: args,
+      meta
+    })
 
     this.context.callListeners(action)
     this.context.next()
@@ -46,6 +45,66 @@ class CallPlayer implements StubCall {
   }
   next() {
     return this.context.next()
+  }
+  succeed(meta?: { [k: string]: any }): boolean {
+    const action = this.context.peek()
+    return !!action &&
+      action.type === this.context.plugin.type &&
+      action.name === 'return' &&
+      action.instanceId === this.context.instanceId &&
+      (meta === undefined || createSatisfier(meta).test(action.meta))
+  }
+  result(): boolean {
+    const action = this.context.peek()!
+    this.context.callListeners(action)
+    this.context.next()
+    const { returnType, returnInstanceId } = action
+    let nextAction = this.context.peek()
+
+    let result
+    if (returnType && returnInstanceId) {
+      while (nextAction && isCallbackAction(nextAction)) {
+        const sourceContext = this.getSourceContext(nextAction)!
+        const sourceCall = this.getSourceCall(sourceContext, nextAction)
+        const subject = locateCallback(nextAction, sourceCall.args)
+        this.context.next()
+        this.context.callListeners(nextAction)
+        subject(...nextAction.payload)
+        nextAction = this.context.peek()
+      }
+
+      if (nextAction && nextAction.type === returnType && nextAction.instanceId === returnInstanceId) {
+        log.debug(`next action: ${tersify(nextAction)}`)
+        const plugin = plugins.find(p => p.type === nextAction!.type)
+        if (plugin) {
+          const childContext = this.context.createChildContext(plugin)
+          result = plugin.getStub(childContext, undefined)
+        }
+      }
+      else {
+        log.debug(`return result does not match with next action ${tersify(nextAction)}`)
+      }
+    }
+
+    setImmediate(() => {
+      let action = this.context.peek()
+      while (action && isCallbackAction(action)) {
+        const sourceContext = this.getSourceContext(action)!
+        const sourceCall = this.getSourceCall(sourceContext, action)
+        const subject = locateCallback(action, sourceCall.args)
+        this.context.next()
+        this.context.callListeners(action)
+        subject(...action.payload)
+        action = this.context.peek()
+      }
+    })
+    return result !== undefined ? result : action.payload
+  }
+  thrown(): boolean {
+    const action = this.context.peek()!
+    this.context.callListeners(action)
+    this.context.next()
+    return action.payload
   }
   isReturnAction(action: SpecAction): boolean {
     return action.type === this.context.plugin.type &&
@@ -73,8 +132,9 @@ class CallPlayer implements StubCall {
         this.context.callListeners(action)
         subject(...action.payload)
       }
+      // istanbul ignore next
       else {
-        log.debug('skipping??')
+        log.onWarn(() => `skipping over: don't know how to handle ${tersify(action)}`)
         this.context.next()
       }
 
@@ -85,7 +145,7 @@ class CallPlayer implements StubCall {
       throw new MissingReturnRecord()
     }
 
-    log.onDebug(() => `processUntilReturn exiting with ${tersify(action)}`)
+    log.onDebug(() => `processing exits with ${tersify(action)}`)
   }
   getSourceContext(action) {
     const entry = this.context.contexts.find(c =>
@@ -93,73 +153,6 @@ class CallPlayer implements StubCall {
       c.instanceId === action.sourceInstanceId)
 
     return entry && entry.instance
-  }
-  succeed(options?: CallOptions): boolean {
-    const meta = unpartial({ name: 'return' }, options)
-    const name = meta.name
-    delete meta.name
-
-    const action = this.context.peek()
-    // TODO: compare meta
-    return !!action &&
-      action.type === this.context.plugin.type &&
-      action.name === name &&
-      action.instanceId === this.context.instanceId
-  }
-  result(): boolean {
-    const action = this.context.peek()!
-    this.context.callListeners(action)
-    this.context.next()
-    const { returnType, returnInstanceId } = action
-    let nextAction = this.context.peek()
-
-    let result
-    if (returnType && returnInstanceId) {
-      while (nextAction && isCallbackAction(nextAction)) {
-        const sourceContext = this.getSourceContext(nextAction)!
-        const sourceCall = this.getSourceCall(sourceContext, nextAction)
-        const subject = locateCallback(nextAction, sourceCall.args)
-        this.context.next()
-        this.context.callListeners(nextAction)
-        subject(...nextAction.payload)
-        nextAction = this.context.peek()
-      }
-
-      if (nextAction && nextAction.type === returnType && nextAction.instanceId === returnInstanceId) {
-        log.debug(`next action: ${tersify(nextAction)}`)
-        const plugin = plugins.find(p => p.type === nextAction!.type)
-        if (plugin) {
-          const childContext = this.context.createChildContext(plugin, undefined)
-          result = plugin.getStub(childContext, undefined)
-        }
-      }
-      else {
-        log.debug(`return result does not match with next action ${tersify(nextAction)}`)
-      }
-    }
-    else {
-      log.onDebug(() => `returning result: ${result} from action ${tersify(action)}`)
-    }
-
-    setImmediate(() => {
-      let action = this.context.peek()
-      while (action && isCallbackAction(action)) {
-        const sourceContext = this.getSourceContext(action)!
-        const sourceCall = this.getSourceCall(sourceContext, action)
-        const subject = locateCallback(action, sourceCall.args)
-        this.context.next()
-        this.context.callListeners(action)
-        subject(...action.payload)
-        action = this.context.peek()
-      }
-    })
-    return result !== undefined ? result : action.payload
-  }
-  thrown(): boolean {
-    const action = this.context.peek()!
-    this.context.callListeners(action)
-    this.context.next()
-    return action.payload
   }
   argsMatch(actual, expected: any[]) {
     // istanbul ignore next
@@ -192,6 +185,16 @@ class CallPlayer implements StubCall {
     }
     return match
   }
+  ensureMatching(action, expected) {
+    if (!action ||
+      action.type !== expected.type ||
+      action.name !== expected.name ||
+      !this.argsMatch(action.payload, expected.payload) ||
+      (expected.meta !== undefined && !createSatisfier(expected.meta).test(action.meta))
+    ) {
+      throw new SimulationMismatch(this.context.specId, expected, action)
+    }
+  }
 }
 
 export class InternalStubContext implements StubContext {
@@ -200,10 +203,7 @@ export class InternalStubContext implements StubContext {
   listenAll: ((action) => void)[] = []
   instanceId: number
   invokeCount = 0
-  invokeSubject: boolean
-  actionCounter = 0
   contexts: { type: string, instanceId: number, instance: InternalStubContext }[]
-  pluginMap: { [k: string]: number }
   calls: StubCall[] = []
   constructor(
     context,
@@ -238,14 +238,13 @@ export class InternalStubContext implements StubContext {
       this.listenAll.forEach(cb => cb(action))
     }
   }
-  createChildContext(plugin, subject, _key?) {
+  createChildContext(plugin) {
     const childContext = new InternalStubContext(
       this,
       this.specId,
       plugin,
-      subject
+      undefined
     )
-    childContext.invokeSubject = true
     return childContext
   }
 }

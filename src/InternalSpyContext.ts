@@ -1,5 +1,4 @@
-import { SpyContext, SpecAction, SpecMode, Plugin, SpyCall, CallOptions } from 'komondor-plugin'
-import { unpartial } from 'unpartial'
+import { SpyContext, SpecAction, SpecMode, Plugin, SpyCall } from 'komondor-plugin'
 
 import { plugins } from './plugin'
 
@@ -30,12 +29,8 @@ function spyOnCallback(call: SpyCallRecorder, fn, sourcePath) {
 class SpyCallRecorder implements SpyCall {
   constructor(public context: InternalSpyContext, public invokeId: number) {
   }
-  invoke<T extends any[]>(args: T, options?: CallOptions): T {
-    const meta = unpartial(
-      { name: 'invoke' },
-      options)
-    const name = meta.name
-    delete meta.name
+  invoke<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
+    const name = 'invoke'
 
     const type = this.context.plugin.type
     const action: SpecAction = { type, name, payload: args, meta, instanceId: this.context.instanceId, invokeId: this.invokeId }
@@ -71,12 +66,8 @@ class SpyCallRecorder implements SpyCall {
       return arg
     }) as T
   }
-  return<T>(result: T, options?: CallOptions): T {
-    const meta = unpartial(
-      { name: 'return' },
-      options)
-    const name = meta.name
-    delete meta.name
+  return<T>(result: T, meta?: { [k: string]: any }): T {
+    const name = 'return'
 
     const type = this.context.plugin.type
     const action: SpecAction = { type, name, payload: result, meta, instanceId: this.context.instanceId, invokeId: this.invokeId }
@@ -94,12 +85,8 @@ class SpyCallRecorder implements SpyCall {
 
     return result
   }
-  throw<T>(err: T, options?: CallOptions): T {
-    const meta = unpartial(
-      { name: 'throw' },
-      options)
-    const name = meta.name
-    delete meta.name
+  throw<T>(err: T, meta?: { [k: string]: any }): T {
+    const name = 'throw'
 
     const type = this.context.plugin.type
     const action: SpecAction = { type, name, payload: err, meta, instanceId: this.context.instanceId, invokeId: this.invokeId }
@@ -116,11 +103,6 @@ export class InternalSpyContext implements SpyContext {
   actions: SpecAction[] = []
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
-  types = {}
-  sourceType: string
-  sourceInstanceId: number
-  sourceInvokeId: number
-  sourcePath: (string | number)[] = []
   idTracker: IdTracker
   invokeCount = 0
   constructor(
@@ -154,17 +136,13 @@ export class InternalSpyContext implements SpyContext {
       this.listenAll.forEach(cb => cb(action))
     }
   }
-  createChildContext(plugin, ...keys) {
+  createChildContext(plugin) {
     const childContext = new InternalSpyContext(
       this,
       this.mode,
       this.specId,
       plugin
     )
-    childContext.sourceInstanceId = this.instanceId
-    childContext.sourceInvokeId = this.invokeCount
-    childContext.sourceType = this.plugin.type
-    childContext.sourcePath = keys.length > 0 ? [...this.sourcePath, ...keys] : this.sourcePath
     return childContext
   }
 }

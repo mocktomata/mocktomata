@@ -4,7 +4,7 @@ import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
 import { spec, SpecNotFound } from '..'
-import { testTrio, testLiveOnly } from '../testUtil'
+import { testTrio } from '../testUtil'
 
 
 class Foo {
@@ -31,130 +31,134 @@ test('simulate on not existing spec will throw', async () => {
   return a.throws(spec.simulate('class/notExist', Boo), SpecNotFound)
 })
 
-testTrio('class/simple', async spec => {
-  const s = await spec(Foo)
-  const foo = new s.subject(1)
-  const actual = foo.getValue()
-  t.equal(actual, 1)
+testTrio('class/simple', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(Foo)
+    const foo = new s.subject(1)
+    const actual = foo.getValue()
+    t.equal(actual, 1)
 
-  await s.satisfy([
-    { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
-    { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 },
-    { type: 'class', name: 'return', payload: 1, meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 }
-  ])
+    await s.satisfy([
+      { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
+      { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 },
+      { type: 'class', name: 'return', payload: 1, meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 }
+    ])
+  })
 })
 
-testTrio('class/extend', async spec => {
-  const s = await spec(Boo)
-  const boo = new s.subject(1)
-  const actual = boo.getPlusOne()
+testTrio('class/extend', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(Boo)
+    const boo = new s.subject(1)
+    const actual = boo.getPlusOne()
 
-  t.equal(actual, 2)
-  await s.satisfy([
-    { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
-    { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 },
-    { type: 'class', name: 'return', payload: 2, meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 }
-  ])
+    t.equal(actual, 2)
+    await s.satisfy([
+      { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
+      { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 },
+      { type: 'class', name: 'return', payload: 2, meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 }
+    ])
+  })
 })
 
 class WithCallback {
   callback(cb) {
-    console.log('callback invoked with', cb)
     setImmediate(() => {
       cb('called')
     })
   }
   justDo(x) {
-    console.log('justDo invoked with', x)
     return x
   }
 }
 
-testTrio('class/withCallback', async spec => {
-  const s = await spec(WithCallback)
-  const cb = new s.subject()
+testTrio('class/withCallback', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(WithCallback)
+    const cb = new s.subject()
 
-  cb.justDo(1)
-  await new Promise(a => {
-    cb.callback(v => {
-      t.equal(v, 'called')
+    cb.justDo(1)
+    await new Promise(a => {
+      cb.callback(v => {
+        t.equal(v, 'called')
+      })
+      cb.callback(v => {
+        t.equal(v, 'called')
+        a()
+      })
     })
-    cb.callback(v => {
-      t.equal(v, 'called')
-      a()
-    })
+
+    await s.satisfy([
+      {
+        type: 'class',
+        name: 'constructor',
+        payload: [],
+        instanceId: 1
+      },
+      {
+        type: 'class',
+        name: 'invoke',
+        payload: [1],
+        meta: { methodName: 'justDo' },
+        instanceId: 1,
+        invokeId: 1
+      },
+      {
+        type: 'class',
+        name: 'return',
+        payload: 1,
+        meta: { methodName: 'justDo' },
+        instanceId: 1,
+        invokeId: 1
+      },
+      {
+        type: 'class',
+        name: 'invoke',
+        meta: { methodName: 'callback' },
+        instanceId: 1,
+        invokeId: 2
+      },
+      {
+        type: 'class',
+        name: 'return',
+        meta: { methodName: 'callback' },
+        instanceId: 1,
+        invokeId: 2
+      },
+      {
+        type: 'class',
+        name: 'invoke',
+        meta: { methodName: 'callback' },
+        instanceId: 1,
+        invokeId: 3
+      },
+      {
+        type: 'class',
+        name: 'return',
+        meta: { methodName: 'callback' },
+        instanceId: 1,
+        invokeId: 3
+      },
+      {
+        type: 'komondor',
+        name: 'callback',
+        payload: ['called'],
+        sourceType: 'class',
+        sourceInstanceId: 1,
+        sourceInvokeId: 2,
+        sourcePath: [0]
+      },
+      {
+        type: 'komondor',
+        name: 'callback',
+        payload: ['called'],
+        sourceType: 'class',
+        sourceInstanceId: 1,
+        sourceInvokeId: 3,
+        sourcePath: [0]
+      }
+    ])
   })
-
-  await s.satisfy([
-    {
-      type: 'class',
-      name: 'constructor',
-      payload: [],
-      instanceId: 1
-    },
-    {
-      type: 'class',
-      name: 'invoke',
-      payload: [1],
-      meta: { methodName: 'justDo' },
-      instanceId: 1,
-      invokeId: 1
-    },
-    {
-      type: 'class',
-      name: 'return',
-      payload: 1,
-      meta: { methodName: 'justDo' },
-      instanceId: 1,
-      invokeId: 1
-    },
-    {
-      type: 'class',
-      name: 'invoke',
-      meta: { methodName: 'callback' },
-      instanceId: 1,
-      invokeId: 2
-    },
-    {
-      type: 'class',
-      name: 'return',
-      meta: { methodName: 'callback' },
-      instanceId: 1,
-      invokeId: 2
-    },
-    {
-      type: 'class',
-      name: 'invoke',
-      meta: { methodName: 'callback' },
-      instanceId: 1,
-      invokeId: 3
-    },
-    {
-      type: 'class',
-      name: 'return',
-      meta: { methodName: 'callback' },
-      instanceId: 1,
-      invokeId: 3
-    },
-    {
-      type: 'komondor',
-      name: 'callback',
-      payload: ['called'],
-      sourceType: 'class',
-      sourceInstanceId: 1,
-      sourceInvokeId: 2,
-      sourcePath: [0]
-    },
-    {
-      type: 'komondor',
-      name: 'callback',
-      payload: ['called'],
-      sourceType: 'class',
-      sourceInstanceId: 1,
-      sourceInvokeId: 3,
-      sourcePath: [0]
-    }
-  ])
 })
 
 class WithPromise {
@@ -167,20 +171,21 @@ class WithPromise {
 
 testTrio('method returning promise should have result of promise saved in payload',
   'class/withPromise',
-  async spec => {
-    const s = await spec(WithPromise)
-    const p = new s.subject()
-    const actual = await p.increment(3)
+  (title, spec) => {
+    test(title, async () => {
+      const s = await spec(WithPromise)
+      const p = new s.subject()
+      const actual = await p.increment(3)
 
-    t.equal(actual, 4)
-    await s.satisfy([
-      { type: 'class', name: 'constructor', payload: [], instanceId: 1 },
-      { type: 'class', name: 'invoke', payload: [3], meta: { methodName: 'increment' }, instanceId: 1, invokeId: 1 },
-      { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
-      { type: 'promise', name: 'resolve', payload: 4, instanceId: 1, invokeId: 1 }
-    ])
-  }
-)
+      t.equal(actual, 4)
+      await s.satisfy([
+        { type: 'class', name: 'constructor', payload: [], instanceId: 1 },
+        { type: 'class', name: 'invoke', payload: [3], meta: { methodName: 'increment' }, instanceId: 1, invokeId: 1 },
+        { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
+        { type: 'promise', name: 'return', payload: 4, meta: { status: 'resolve' }, instanceId: 1, invokeId: 1 }
+      ])
+    })
+  })
 
 class Throwing {
   doThrow() {
@@ -188,28 +193,29 @@ class Throwing {
   }
 }
 
-testTrio('class/throwing', async spec => {
-  const s = await spec(Throwing)
-  const o = new s.subject()
-  await a.throws(() => o.doThrow())
+testTrio('class/throwing', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(Throwing)
+    const o = new s.subject()
+    await a.throws(() => o.doThrow())
 
-  console.log(s.actions)
-  await s.satisfy([
-    { type: 'class', name: 'constructor', instanceId: 1 },
-    {
-      type: 'class',
-      name: 'invoke',
-      meta: { methodName: 'doThrow' },
-      instanceId: 1,
-      invokeId: 1
-    },
-    {
-      type: 'class',
-      name: 'throw',
-      payload: { message: 'thrown' },
-      meta: { methodName: 'doThrow' },
-      instanceId: 1,
-      invokeId: 1
-    }
-  ])
+    await s.satisfy([
+      { type: 'class', name: 'constructor', instanceId: 1 },
+      {
+        type: 'class',
+        name: 'invoke',
+        meta: { methodName: 'doThrow' },
+        instanceId: 1,
+        invokeId: 1
+      },
+      {
+        type: 'class',
+        name: 'throw',
+        payload: { message: 'thrown' },
+        meta: { methodName: 'doThrow' },
+        instanceId: 1,
+        invokeId: 1
+      }
+    ])
+  })
 })

@@ -10,8 +10,10 @@ test('simulate but file does not exists', async () => {
   a.throws(spec.simulate('not exist', x => x), SpecNotFound)
 })
 
-testTrio('subject not specable will throw', 'spec/notSpecable', async spec => {
-  await a.throws(spec(true), NotSpecable)
+testTrio('subject not specable will throw', 'spec/notSpecable', (title, spec) => {
+  test(title, async () => {
+    await a.throws(spec(true), NotSpecable)
+  })
 })
 
 test('missing return record will throw', async () => {
