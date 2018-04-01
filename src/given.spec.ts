@@ -117,7 +117,7 @@ test('given.simulate() will force spec to simulate', async () => {
   }
   onGiven('simulate calling env', async ({ mode, spec }) => {
     t.equal(mode, 'simulate')
-    const cbSpec = await spec('environment/simulate/spec', success)
+    const cbSpec = await spec('given/simulate/spec', success)
     cbSpec.subject(2, (_, a) => t.equal(a, 3))
 
     return cbSpec.satisfy([undefined, { payload: [undefined, 3] }])
@@ -135,7 +135,7 @@ test('given.simulate() will force spec in localHandler to simulate', async () =>
 
   await given.simulate('simulate calling env with localHandler', async ({ mode, spec }) => {
     t.equal(mode, 'simulate')
-    const cbSpec = await spec('environment/simulate/spec', success)
+    const cbSpec = await spec('given/simulate/spec', success)
     cbSpec.subject(2, (_, a) => t.equal(a, 3))
 
     return cbSpec.satisfy([undefined, { payload: [undefined, 3] }])

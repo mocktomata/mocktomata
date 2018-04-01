@@ -74,7 +74,7 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
 
   const spec: Spec<T> = {
     actions,
-    subject: plugin.getSpy(spyContext, subject, undefined),
+    subject: plugin.getSpy(spyContext, subject),
     on(actionType: string, name: string, callback) {
       if (!events[actionType])
         events[actionType] = {}
@@ -113,7 +113,7 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
 
   const spec: Spec<T> = {
     actions,
-    subject: plugin.getSpy(spyContext, subject, undefined),
+    subject: plugin.getSpy(spyContext, subject),
     on(actionType: string, name: string, callback) {
       if (!events[actionType])
         events[actionType] = {}
@@ -160,7 +160,7 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
 
   const spec: Spec<T> = {
     actions,
-    subject: plugin.getStub(context, subject, undefined),
+    subject: plugin.getStub(context, subject),
     on(actionType: string, name: string, callback) {
       if (!events[actionType])
         events[actionType] = {}

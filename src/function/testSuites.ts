@@ -84,9 +84,7 @@ export const delayed = {
 export const recursive = {
   decrementToZero(remote, x) {
     return new Promise(a => {
-      console.log('before calling remote')
       remote(x, (_, response) => {
-        console.log('callback inside decrementToZero')
         a(response > 0 ?
           recursive.decrementToZero(remote, x - 1) :
           response)
@@ -94,7 +92,6 @@ export const recursive = {
     })
   },
   success(a, callback) {
-    console.log('remote success should not be called')
     callback(null, a - 1)
   }
 }

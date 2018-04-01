@@ -1,5 +1,4 @@
 import path = require('path')
-import { Stream, Writable } from 'stream'
 
 import { GivenRecord, SpecRecord } from './interfaces'
 import { log } from './log'
@@ -29,18 +28,6 @@ export function getFileIO(baseDir: string) {
     },
     writeGiven(id: string, record: GivenRecord) {
       return writeTo(GIVENS_FOLDER, id, JSON.stringify(record))
-    },
-    createReadStream(id: string): Stream {
-      const filePath = path.resolve(SPECS_FOLDER, id)
-      return fs.createReadStream(filePath)
-    },
-    createWriteStream(id: string): Writable {
-      const filePath = path.resolve(SPECS_FOLDER, id)
-      const folder = path.dirname(filePath)
-      // istanbul ignore next
-      if (!fs.existsSync(folder))
-        createFolders(folder)
-      return fs.createWriteStream(filePath)
     }
   }
   // istanbul ignore next
