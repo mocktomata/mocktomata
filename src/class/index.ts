@@ -21,5 +21,7 @@ function getStub(context: StubContext, subject: any): any {
   return stubClass(context, subject)
 }
 
-export const constructedWith = createExpectation('class', 'constructor')
-export const methodInvokedWith = createExpectation('class', 'invoke')
+export const classConstructedWith = createExpectation('class', 'constructor')
+export const classMethodInvokedWith = createExpectation('class', 'invoke')
+export const classMethodReturnedWith = createExpectation('class', 'return')
+export const classMethodThrownWith = createExpectation('class', 'throw')
