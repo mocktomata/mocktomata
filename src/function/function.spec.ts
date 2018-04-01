@@ -1,7 +1,7 @@
 import t from 'assert'
 import a, { satisfy, AssertOrder } from 'assertron'
 
-import { spec, SpecNotFound } from '..'
+import { spec, SpecNotFound, functionInvoked, functionReturned, functionThrown } from '..'
 import {
   simpleCallback,
   fetch,
@@ -13,6 +13,30 @@ import {
 } from './testSuites'
 import { testTrio } from '../testUtil'
 
+function increment(x) {
+  return x + 1
+}
+function doThrow() {
+  throw new Error('throwing')
+}
+
+test('acceptance', async () => {
+  const inc = await spec(increment)
+  inc.subject(1)
+
+  await inc.satisfy([
+    functionInvoked(1),
+    functionReturned(2)
+  ])
+
+  const s = await spec(doThrow)
+  await a.throws(() => s.subject())
+
+  await s.satisfy([
+    functionInvoked(),
+    functionThrown({ message: 'throwing' })
+  ])
+})
 
 test('get same object if nothing to spy on', async () => {
   t.deepEqual(await testObject({}), {})

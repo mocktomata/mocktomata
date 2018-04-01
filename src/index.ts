@@ -14,31 +14,31 @@ import * as genericFunction from './function'
 import * as promise from './promise'
 
 const {
-  classConstructedWith,
-  classMethodInvokedWith,
-  classMethodReturnedWith,
-  classMethodThrownWith
+  classConstructed,
+  classMethodInvoked,
+  classMethodReturned,
+  classMethodThrown
 } = genericClass
 
 const {
-  functionInvokedWith,
-  functionReturnedWith,
-  functionThrownWith
+  functionInvoked,
+  functionReturned,
+  functionThrown
 } = genericFunction
 const {
-  promiseResolvedWith,
-  promiseRejectedWith
+  promiseResolved,
+  promiseRejected
 } = promise
 export {
-  classConstructedWith,
-  classMethodInvokedWith,
-  classMethodReturnedWith,
-  classMethodThrownWith,
-  functionInvokedWith,
-  functionReturnedWith,
-  functionThrownWith,
-  promiseResolvedWith,
-  promiseRejectedWith
+  classConstructed,
+  classMethodInvoked,
+  classMethodReturned,
+  classMethodThrown,
+  functionInvoked,
+  functionReturned,
+  functionThrown,
+  promiseResolved,
+  promiseRejected
 }
 
 // order is important, top is generic, bottom is specific.

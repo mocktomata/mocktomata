@@ -9,7 +9,7 @@ export function spyClass(context: SpyContext, subject) {
       // @ts-ignore
       super(...args)
 
-      context.add('class', 'constructor', args)
+      context.add('class', 'constructor', args, { className: subject.name })
     }
   }
 

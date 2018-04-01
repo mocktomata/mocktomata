@@ -1,8 +1,8 @@
 import { Registrar, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
-export const promiseResolvedWith = createExpectation(TYPE, 'return', { status: 'resolve' })
-export const promiseRejectedWith = createExpectation(TYPE, 'throw', { status: 'reject' })
+export const promiseResolved = createExpectation(TYPE, 'return', { status: 'resolve' })
+export const promiseRejected = createExpectation(TYPE, 'return', { status: 'reject' })
 
 export function activate(registrar: Registrar) {
   registrar.register(

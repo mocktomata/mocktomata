@@ -1,4 +1,4 @@
-import { Registrar, SpyContext, StubContext, createExpectation } from 'komondor-plugin'
+import { Registrar, SpyContext, StubContext } from 'komondor-plugin'
 
 import { spyClass } from './spyClass'
 import { stubClass } from './stubClass'
@@ -21,7 +21,15 @@ function getStub(context: StubContext, subject: any): any {
   return stubClass(context, subject)
 }
 
-export const classConstructedWith = createExpectation('class', 'constructor')
-export const classMethodInvokedWith = createExpectation('class', 'invoke')
-export const classMethodReturnedWith = createExpectation('class', 'return')
-export const classMethodThrownWith = createExpectation('class', 'throw')
+export function classConstructed(className: string, ...args: any[]) {
+  return { type: 'class', name: 'constructor', payload: args, meta: { className } }
+}
+export function classMethodInvoked(methodName: string, ...args: any[]) {
+  return { type: 'class', name: 'invoke', payload: args, meta: { methodName } }
+}
+export function classMethodReturned(methodName: string, result: any) {
+  return { type: 'class', name: 'return', payload: result, meta: { methodName } }
+}
+export function classMethodThrown(methodName: string, err: any) {
+  return { type: 'class', name: 'throw', payload: err, meta: { methodName } }
+}
