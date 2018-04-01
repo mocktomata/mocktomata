@@ -16,6 +16,8 @@ export function activate(registrar: Registrar) {
   )
 }
 
-export const functionInvokedWith = createExpectation('function', 'invoke')
-export const functionReturnedWith = createExpectation('function', 'return')
-export const functionThrownWith = createExpectation('function', 'throw')
+export function functionInvoked(...args: any[]) {
+  return { type: 'function', name: 'invoke', payload: args }
+}
+export const functionReturned = createExpectation('function', 'return')
+export const functionThrown = createExpectation('function', 'throw')

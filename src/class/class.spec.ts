@@ -3,7 +3,7 @@ import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
-import { spec, SpecNotFound } from '..'
+import { spec, SpecNotFound, classConstructed, classMethodThrown, classMethodInvoked, classMethodReturned } from '..'
 import { testTrio } from '../testUtil'
 
 
@@ -11,6 +11,9 @@ class Foo {
   constructor(public x) { }
   getValue() {
     return this.x
+  }
+  doThrow() {
+    throw new Error('throwing')
   }
 }
 
@@ -20,6 +23,20 @@ class Boo extends Foo {
   }
 }
 
+test('acceptance test', async () => {
+  const s = await spec(Foo)
+  const foo = new s.subject(1)
+  foo.getValue()
+  t.throws(() => foo.doThrow())
+
+  await s.satisfy([
+    classConstructed('Foo', 1),
+    classMethodInvoked('getValue'),
+    classMethodReturned('getValue', 1),
+    classMethodInvoked('doThrow'),
+    classMethodThrown('doThrow', { message: 'throwing' })
+  ])
+})
 
 test('simple class simulate with different constructor will throw', async () => {
   const fooSpec = await spec.simulate('class/wrongConstructorCall', Foo)

@@ -1,7 +1,9 @@
 import t from 'assert'
+import a from 'assertron'
 import { setTimeout } from 'timers'
 
 import { testTrio } from '../testUtil'
+import { spec, promiseResolved, promiseRejected } from '..'
 
 const promise = {
   increment(remote, x) {
@@ -39,6 +41,33 @@ const noReturn = {
     return Promise.resolve()
   }
 }
+
+function resolving(x) {
+  return Promise.resolve(x)
+}
+
+function rejecting(y) {
+  return Promise.reject(y)
+}
+
+test('acceptance', async () => {
+  const res = await spec(resolving)
+  await res.subject(1)
+
+  await res.satisfy([
+    undefined,
+    undefined,
+    promiseResolved(1)
+  ])
+
+  const rej = await spec(rejecting)
+  await a.throws(rej.subject(2))
+  await rej.satisfy([
+    undefined,
+    undefined,
+    promiseRejected(2)
+  ])
+})
 
 testTrio('promise/noReturn', (title, spec) => {
   test(title, async () => {
