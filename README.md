@@ -186,21 +186,30 @@ That means each test can be run in its own environment.
 ### spec()
 
 ```ts
-function spec<T extends Function>(fn: T): Promise<Spec<T>>
-function spec<T extends Function>(name: string, fn: T): Promise<Spec<T>>
-function spec.save<T extends Function>(name: string, fn: T): Promise<Spec<T>>
-function spec.simulate<T extends Function>(name: string, fn: T): Promise<Spec<T>>
+function spec<T>(subject: T): Promise<Spec<T>>
+function spec<T>(name: string, subject: T): Promise<Spec<T>>
+function spec.save<T>(name: string, subject: T): Promise<Spec<T>>
+function spec.simulate<T>(name: string, subject: T): Promise<Spec<T>>
 ```
 
 ### given()
 
 ```ts
-function given<T extends Function>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-function given.save<T extends Function>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-function given.simulate<T extends Function>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+function given<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+function given.save<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+function given.simulate<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
 
 function onGiven(clause: string | RegExp, handler: (context: GivenContext) => any): void
 ```
+
+## Plugins
+
+`komondor` supports plugins to spec on subjects other than basic function, class, and promise.
+
+- [`komondor-plugin-node`](https://github.com/unional/komonodor-plugin-node)
+- [`komondor-plugin-ws`](https://github.com/unional/komnondor-plugin-ws)
+
+To create a plugin, please check [`komondor-plugin`](https://github.com/unional/komondor-plugin)
 
 ## Security
 
