@@ -19,7 +19,7 @@ function spyOnCallback(call: SpyCallRecorder, fn, sourcePath) {
       sourceInstanceId: call.context.instanceId,
       sourceInvokeId: call.invokeId,
       sourcePath
-    }
+    } as SpecAction
     call.context.actions.push(action)
     call.context.callListeners(action)
     fn(...args)
@@ -33,7 +33,7 @@ class SpyCallRecorder implements SpyCall {
     const name = 'invoke'
 
     const type = this.context.plugin.type
-    const action: SpecAction = { type, name, payload: args, meta, instanceId: this.context.instanceId, invokeId: this.invokeId }
+    const action = { type, name, payload: args, meta, instanceId: this.context.instanceId, invokeId: this.invokeId } as SpecAction
 
     this.context.actions.push(action)
     this.context.callListeners(action)
@@ -70,7 +70,7 @@ class SpyCallRecorder implements SpyCall {
     const name = 'return'
 
     const type = this.context.plugin.type
-    const action: SpecAction = { type, name, payload: result, meta, instanceId: this.context.instanceId, invokeId: this.invokeId }
+    const action = { type, name, payload: result, meta, instanceId: this.context.instanceId, invokeId: this.invokeId } as SpecAction
 
     this.context.actions.push(action)
     this.context.callListeners(action)
@@ -89,7 +89,7 @@ class SpyCallRecorder implements SpyCall {
     const name = 'throw'
 
     const type = this.context.plugin.type
-    const action: SpecAction = { type, name, payload: err, meta, instanceId: this.context.instanceId, invokeId: this.invokeId }
+    const action = { type, name, payload: err, meta, instanceId: this.context.instanceId, invokeId: this.invokeId } as SpecAction
 
     this.context.actions.push(action)
     this.context.callListeners(action)
