@@ -13,10 +13,33 @@ import * as genericFunction from './function'
 // import * as genericObject from './object'
 import * as promise from './promise'
 
-const { constructedWith, methodInvokedWith } = genericClass
-const { invokedWith, returnedWith } = genericFunction
-const { rejectedWith, resolvedWith } = promise
-export { invokedWith, returnedWith, constructedWith, methodInvokedWith, rejectedWith, resolvedWith }
+const {
+  classConstructedWith,
+  classMethodInvokedWith,
+  classMethodReturnedWith,
+  classMethodThrownWith
+} = genericClass
+
+const {
+  functionInvokedWith,
+  functionReturnedWith,
+  functionThrownWith
+} = genericFunction
+const {
+  promiseResolvedWith,
+  promiseRejectedWith
+} = promise
+export {
+  classConstructedWith,
+  classMethodInvokedWith,
+  classMethodReturnedWith,
+  classMethodThrownWith,
+  functionInvokedWith,
+  functionReturnedWith,
+  functionThrownWith,
+  promiseResolvedWith,
+  promiseRejectedWith
+}
 
 // order is important, top is generic, bottom is specific.
 // registerPlugin(genericObject)
