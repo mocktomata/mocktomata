@@ -274,6 +274,44 @@ meaning it does not know the information comes from the network.
 
 (yes, for that you should give it a more netural name and remove the HTTP specific options)
 
+## Wallaby config
+
+Since `komondor` will write files to the file system, if you use wallaby you need configure it as follow so that the changed files will be written correctly:
+
+```js
+module.exports = () => {
+  return {
+    'files': [
+      // load spec records
+      { pattern: '__komondor__/**/*', instrument: false },
+      ...
+    ],
+    setup(wallaby) {
+      const fs = require('fs');
+      if (fs.patched) return;
+      const path = require('path');
+
+      const writeFile = fs.writeFileSync;
+      fs.writeFileSync = function(file, content) {
+        if (/__komondor__/.test(file)) {
+          writeFile(path.join(wallaby.localProjectDir, file.replace(wallaby.projectCacheDir, '')), content);
+        }
+        return writeFile.apply(this, arguments);
+      }
+      const mkdirSync = fs.mkdirSync;
+      fs.mkdirSync = function (dir, mode) {
+        if (/__komondor__/.test(dir)) {
+          mkdirSync(path.join(wallaby.localProjectDir, dir.replace(wallaby.projectCacheDir, '')), mode);
+        }
+        return mkdirSync.apply(this, arguments);
+      }
+      fs.patched = true;
+    },
+    ...
+  }
+}
+```
+
 ## Contribute
 
 ```sh
