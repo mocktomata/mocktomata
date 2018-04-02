@@ -36,17 +36,13 @@
       "type": "node",
       "request": "launch",
       "name": "Jest Current File",
-      // "preLaunchTask": "build",
       "program": "${workspaceRoot}/node_modules/jest/bin/jest",
       "args": [
         "${file}"
       ],
       "sourceMaps": true,
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      // "outFiles": [
-      //   "${workspaceRoot}/dist-es5/**/*"
-      // ]
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }

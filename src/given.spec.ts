@@ -7,6 +7,12 @@ import path from 'path'
 import { GIVENS_FOLDER, SPECS_FOLDER } from './constants'
 import { MissingGivenHandler, DuplicateGivenHandler, GivenSaveRequireSpecId, onGiven, given } from './index'
 
+// describe('acceptance tests', () => {
+//   test(`use given() to describe the environment needed and onGiven() to create`, async () => {
+
+//   })
+// })
+
 test('no handler registered throws MissingGivenHandler', async () => {
   await a.throws(given('no handler'), MissingGivenHandler)
 })
@@ -80,7 +86,6 @@ test('receive context from localHandler', async () => {
   t.deepEqual(actual.fixture, { b: 2 })
 })
 
-
 test('receive async context from localHandler', async () => {
   const actual = await given<{ b: number }>(
     'returning async localHandler context',
@@ -142,7 +147,7 @@ test('given.simulate() will force spec in localHandler to simulate', async () =>
   })
 })
 
-test('lcoal context contains spec', async () => {
+test('local context contains spec', async () => {
   await given('local context has spec', ({ spec }) => t(spec))
 })
 
