@@ -18,6 +18,12 @@ export class ActionTracker {
 }
 
 class CallPlayer implements StubCall {
+  wait(_meta?: { [k: string]: any; } | undefined): Promise<SpecAction> {
+    throw new Error('Method not implemented.');
+  }
+  waitSync(): void {
+    throw new Error('Method not implemented.');
+  }
   args: any[]
   constructor(public context: InternalStubContext, public invokeId: number) { }
   invoked<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
@@ -214,8 +220,6 @@ export class InternalStubContext implements StubContext {
     public subject
   ) {
     this.actionTracker = context.actionTracker
-    this.events = context.events
-    this.listenAll = context.listenAll
     this.contexts = context.contexts
     this.instanceId = this.contexts.filter(c => c.type === plugin.type).length + 1
     this.contexts.push({ type: plugin.type, instanceId: this.instanceId, instance: this })
@@ -248,6 +252,16 @@ export class InternalStubContext implements StubContext {
       undefined
     )
     return childContext
+  }
+  on(actionType: string, name: string, callback) {
+    if (!this.events[actionType])
+      this.events[actionType] = {}
+    if (!this.events[actionType][name])
+      this.events[actionType][name] = []
+    this.events[actionType][name].push(callback)
+  }
+  onAny(callback) {
+    this.listenAll.push(callback)
   }
 }
 

@@ -27,6 +27,9 @@ function spyOnCallback(call: SpyCallRecorder, fn, sourcePath) {
 }
 
 class SpyCallRecorder implements SpyCall {
+  trigger<T>(_err: T, _meta?: { [k: string]: any; } | undefined): T {
+    throw new Error('Method not implemented.');
+  }
   constructor(public context: InternalSpyContext, public invokeId: number) {
   }
   invoke<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
@@ -112,8 +115,6 @@ export class InternalSpyContext implements SpyContext {
     public plugin: Plugin<any>
   ) {
     this.actions = context.actions
-    this.events = context.events
-    this.listenAll = context.listenAll
     this.idTracker = context.idTracker
     this.instanceId = this.idTracker.getNextId(plugin.type)
   }
@@ -144,5 +145,15 @@ export class InternalSpyContext implements SpyContext {
       plugin
     )
     return childContext
+  }
+  on(actionType: string, name: string, callback) {
+    if (!this.events[actionType])
+      this.events[actionType] = {}
+    if (!this.events[actionType][name])
+      this.events[actionType][name] = []
+    this.events[actionType][name].push(callback)
+  }
+  onAny(callback) {
+    this.listenAll.push(callback)
   }
 }

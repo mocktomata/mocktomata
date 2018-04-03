@@ -67,23 +67,17 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
 
   const idTracker = new IdTracker()
   const actions: SpecAction[] = []
-  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  const listenAll: ((action) => void)[] = []
 
-  const spyContext = new InternalSpyContext({ idTracker, actions, events, listenAll }, 'live', specId, plugin)
+  const spyContext = new InternalSpyContext({ idTracker, actions }, 'live', specId, plugin)
 
   const spec: Spec<T> = {
     actions,
     subject: plugin.getSpy(spyContext, subject),
     on(actionType: string, name: string, callback) {
-      if (!events[actionType])
-        events[actionType] = {}
-      if (!events[actionType][name])
-        events[actionType][name] = []
-      events[actionType][name].push(callback)
+      spyContext.on(actionType, name, callback)
     },
     onAny(callback) {
-      listenAll.push(callback)
+      spyContext.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
@@ -106,23 +100,17 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
 
   const idTracker = new IdTracker()
   const actions: SpecAction[] = []
-  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  const listenAll: ((action) => void)[] = []
 
-  const spyContext = new InternalSpyContext({ idTracker, actions, events, listenAll }, 'save', specId, plugin)
+  const spyContext = new InternalSpyContext({ idTracker, actions }, 'save', specId, plugin)
 
   const spec: Spec<T> = {
     actions,
     subject: plugin.getSpy(spyContext, subject),
     on(actionType: string, name: string, callback) {
-      if (!events[actionType])
-        events[actionType] = {}
-      if (!events[actionType][name])
-        events[actionType][name] = []
-      events[actionType][name].push(callback)
+      spyContext.on(actionType, name, callback)
     },
     onAny(callback) {
-      listenAll.push(callback)
+      spyContext.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
@@ -152,24 +140,18 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
 
   const actions = await loadActions(specId)
   const actionTracker = new ActionTracker(actions)
-  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  const listenAll: ((action) => void)[] = []
   const contexts = []
 
-  const context = new InternalStubContext({ contexts, actionTracker, events, listenAll }, specId, plugin, subject)
+  const context = new InternalStubContext({ contexts, actionTracker }, specId, plugin, subject)
 
   const spec: Spec<T> = {
     actions,
     subject: plugin.getStub(context, subject),
     on(actionType: string, name: string, callback) {
-      if (!events[actionType])
-        events[actionType] = {}
-      if (!events[actionType][name])
-        events[actionType][name] = []
-      events[actionType][name].push(callback)
+      context.on(actionType, name, callback)
     },
     onAny(callback) {
-      listenAll.push(callback)
+      context.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
