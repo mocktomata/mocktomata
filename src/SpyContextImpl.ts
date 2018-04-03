@@ -1,6 +1,7 @@
 import { SpyContext, SpecAction, SpecMode, Plugin, SpyCall } from 'komondor-plugin'
 
 import { plugins } from './plugin'
+import { SpyInstanceImpl } from './SpyInstanceImpl';
 
 export class IdTracker {
   pluginTypes: string[] = []
@@ -30,7 +31,7 @@ class SpyCallRecorder implements SpyCall {
   trigger<T>(_err: T, _meta?: { [k: string]: any; } | undefined): T {
     throw new Error('Method not implemented.');
   }
-  constructor(public context: InternalSpyContext, public invokeId: number) {
+  constructor(public context: SpyContextImpl, public invokeId: number) {
   }
   invoke<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
     const name = 'invoke'
@@ -101,7 +102,7 @@ class SpyCallRecorder implements SpyCall {
   }
 }
 
-export class InternalSpyContext implements SpyContext {
+export class SpyContextImpl implements SpyContext {
   instanceId: number
   actions: SpecAction[] = []
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
@@ -117,6 +118,9 @@ export class InternalSpyContext implements SpyContext {
     this.actions = context.actions
     this.idTracker = context.idTracker
     this.instanceId = this.idTracker.getNextId(plugin.type)
+  }
+  newInstance() {
+    return new SpyInstanceImpl()
   }
   newCall(): SpyCall {
     return new SpyCallRecorder(this, ++this.invokeCount)
@@ -138,7 +142,7 @@ export class InternalSpyContext implements SpyContext {
     }
   }
   createChildContext(plugin) {
-    const childContext = new InternalSpyContext(
+    const childContext = new SpyContextImpl(
       this,
       this.mode,
       this.specId,

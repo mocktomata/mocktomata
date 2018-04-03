@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { setTimeout } from 'timers'
 
-import { testTrio, testSimulate } from '../testUtil'
+import { testTrio } from '../testUtil'
 import { spec, promiseResolved, promiseRejected } from '..'
 
 const promise = {

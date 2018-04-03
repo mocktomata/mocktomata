@@ -23,19 +23,29 @@ class Boo extends Foo {
   }
 }
 
-test('acceptance test', async () => {
+test.skip('creating two instances of class', async () => {
   const s = await spec(Foo)
-  const foo = new s.subject(1)
-  foo.getValue()
-  t.throws(() => foo.doThrow())
+  const f1 = new s.subject(1)
+  const f2 = new s.subject(2)
+  f1.getValue()
+  f2.getValue()
+})
 
-  await s.satisfy([
-    classConstructed('Foo', 1),
-    classMethodInvoked('getValue'),
-    classMethodReturned('getValue', 1),
-    classMethodInvoked('doThrow'),
-    classMethodThrown('doThrow', { message: 'throwing' })
-  ])
+describe('use cases', () => {
+  test('acceptance test', async () => {
+    const s = await spec(Foo)
+    const foo = new s.subject(1)
+    foo.getValue()
+    t.throws(() => foo.doThrow())
+
+    await s.satisfy([
+      classConstructed('Foo', 1),
+      classMethodInvoked('getValue'),
+      classMethodReturned('getValue', 1),
+      classMethodInvoked('doThrow'),
+      classMethodThrown('doThrow', { message: 'throwing' })
+    ])
+  })
 })
 
 test('simple class simulate with different constructor will throw', async () => {
@@ -248,7 +258,7 @@ class Promising {
 test.skip('', async () => {
   const s = await spec.simulate('class/promising', Promising)
   const p = new s.subject()
-  console.log(s.actions.filter(a => a.name !== 'constructor').map(a => {
+  console.info(s.actions.filter(a => a.name !== 'constructor').map(a => {
     return (a.type === 'class' ? 'c' : 'a') + a.name[0] + a.instanceId + a.invokeId
   }))
 

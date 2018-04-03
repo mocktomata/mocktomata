@@ -4,7 +4,7 @@ import { tersify } from 'tersify'
 
 import { MissingSpecID, SpecNotFound, NotSpecable } from './errors'
 import { Spec } from './interfaces'
-import { IdTracker, InternalSpyContext } from './InternalSpyContext'
+import { IdTracker, SpyContextImpl } from './SpyContextImpl'
 import { io } from './io'
 import { plugins } from './plugin'
 import { store } from './store'
@@ -68,7 +68,7 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   const idTracker = new IdTracker()
   const actions: SpecAction[] = []
 
-  const spyContext = new InternalSpyContext({ idTracker, actions }, 'live', specId, plugin)
+  const spyContext = new SpyContextImpl({ idTracker, actions }, 'live', specId, plugin)
 
   const spec: Spec<T> = {
     actions,
@@ -101,7 +101,7 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   const idTracker = new IdTracker()
   const actions: SpecAction[] = []
 
-  const spyContext = new InternalSpyContext({ idTracker, actions }, 'save', specId, plugin)
+  const spyContext = new SpyContextImpl({ idTracker, actions }, 'save', specId, plugin)
 
   const spec: Spec<T> = {
     actions,

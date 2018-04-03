@@ -51,7 +51,6 @@ class CallPlayer implements StubCall {
     return this.context.next()
   }
   wait(meta?: { [k: string]: any; } | undefined): Promise<SpecAction> {
-    console.log('wait??')
     return new Promise((a, r) => {
       let processed = false
       this.context.onAny(action => {
@@ -60,7 +59,6 @@ class CallPlayer implements StubCall {
             action.name === 'trigger' || 'return' &&
             action.instanceId === this.context.instanceId &&
             action.invokeId === this.invokeId) {
-            console.log('action...', processed, action)
             if (!meta || createSatisfier(meta).test(action.meta)) {
               processed = true
               a(this.result())
@@ -152,9 +150,6 @@ class CallPlayer implements StubCall {
       action.instanceId === this.context.instanceId &&
       action.invokeId === this.invokeId
   }
-  getSourceCall(sourceContext: InternalStubContext, action: SpecAction) {
-    return sourceContext.calls.find((c: CallPlayer) => c.invokeId === action.sourceInvokeId) as CallPlayer
-  }
   processUntilReturn() {
     let action = this.context.peek()
 
@@ -187,6 +182,9 @@ class CallPlayer implements StubCall {
       c.instanceId === action.sourceInstanceId)
 
     return entry && entry.instance
+  }
+  getSourceCall(sourceContext: InternalStubContext, action: SpecAction) {
+    return sourceContext.calls.find((c: CallPlayer) => c.invokeId === action.sourceInvokeId) as CallPlayer
   }
   argsMatch(actual, expected: any[]) {
     // istanbul ignore next
@@ -259,6 +257,20 @@ export class InternalStubContext implements StubContext {
     this.calls.push(call)
     return call
   }
+  on(actionType: string, name: string, callback) {
+    if (!this.events[actionType])
+      this.events[actionType] = {}
+    if (!this.events[actionType][name])
+      this.events[actionType][name] = []
+    this.events[actionType][name].push(callback)
+  }
+  onAny(callback: (action: SpecAction) => void) {
+    this.listenAll.push(callback)
+    const action = this.peek()
+    if (action) {
+      callback(action)
+    }
+  }
   next(): void {
     this.actionTracker.next()
   }
@@ -282,20 +294,6 @@ export class InternalStubContext implements StubContext {
       undefined
     )
     return childContext
-  }
-  on(actionType: string, name: string, callback) {
-    if (!this.events[actionType])
-      this.events[actionType] = {}
-    if (!this.events[actionType][name])
-      this.events[actionType][name] = []
-    this.events[actionType][name].push(callback)
-  }
-  onAny(callback: (action: SpecAction) => void) {
-    this.listenAll.push(callback)
-    const action = this.peek()
-    if (action) {
-      callback(action)
-    }
   }
 }
 
