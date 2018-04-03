@@ -1,26 +1,16 @@
-import { StubContext, SpecAction, Plugin, StubCall, SimulationMismatch } from 'komondor-plugin'
+import { StubCall, SpecAction, SimulationMismatch } from 'komondor-plugin'
 import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
 
 import { MissingReturnRecord } from './errors'
-import { log } from './log';
+import { StubContextImpl } from './StubContextImpl'
+import { log } from './log'
 import { plugins } from './plugin'
 
-export class ActionTracker {
-  currentIndex = 0
-  constructor(public actions: SpecAction[]) { }
-  peek() {
-    return this.actions[this.currentIndex]
-  }
-  next() {
-    this.currentIndex++
-  }
-}
-
-class CallPlayer implements StubCall {
+export class StubCallImpl implements StubCall {
   args: any[]
   original: any
-  constructor(public context: InternalStubContext, public invokeId: number) {
+  constructor(public context: StubContextImpl, public invokeId: number) {
     log.onDebug(() => `${this.debugId()}: created`)
   }
   invoked<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
@@ -183,8 +173,8 @@ class CallPlayer implements StubCall {
 
     return entry && entry.instance
   }
-  getSourceCall(sourceContext: InternalStubContext, action: SpecAction) {
-    return sourceContext.calls.find((c: CallPlayer) => c.invokeId === action.sourceInvokeId) as CallPlayer
+  getSourceCall(sourceContext: StubContextImpl, action: SpecAction) {
+    return sourceContext.calls.find((c: StubCallImpl) => c.invokeId === action.sourceInvokeId) as StubCallImpl
   }
   argsMatch(actual, expected: any[]) {
     // istanbul ignore next
@@ -230,70 +220,6 @@ class CallPlayer implements StubCall {
   }
   private debugId() {
     return `(${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId})`
-  }
-}
-
-export class InternalStubContext implements StubContext {
-  actionTracker: ActionTracker
-  events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  listenAll: ((action) => void)[] = []
-  instanceId: number
-  invokeCount = 0
-  contexts: { type: string, instanceId: number, instance: InternalStubContext }[]
-  calls: StubCall[] = []
-  constructor(
-    context,
-    public specId: string,
-    public plugin: Plugin<any>,
-    public subject
-  ) {
-    this.actionTracker = context.actionTracker
-    this.contexts = context.contexts
-    this.instanceId = this.contexts.filter(c => c.type === plugin.type).length + 1
-    this.contexts.push({ type: plugin.type, instanceId: this.instanceId, instance: this })
-  }
-  newCall(): StubCall {
-    const call = new CallPlayer(this, ++this.invokeCount)
-    this.calls.push(call)
-    return call
-  }
-  on(actionType: string, name: string, callback) {
-    if (!this.events[actionType])
-      this.events[actionType] = {}
-    if (!this.events[actionType][name])
-      this.events[actionType][name] = []
-    this.events[actionType][name].push(callback)
-  }
-  onAny(callback: (action: SpecAction) => void) {
-    this.listenAll.push(callback)
-    const action = this.peek()
-    if (action) {
-      callback(action)
-    }
-  }
-  next(): void {
-    this.actionTracker.next()
-  }
-  peek(): SpecAction | undefined {
-    return this.actionTracker.peek()
-  }
-  callListeners(action) {
-    if (this.events[action.type]) {
-      if (this.events[action.type][action.name])
-        this.events[action.type][action.name].forEach(cb => cb(action))
-    }
-    if (this.listenAll.length > 0) {
-      this.listenAll.forEach(cb => cb(action))
-    }
-  }
-  createChildContext(plugin) {
-    const childContext = new InternalStubContext(
-      this,
-      this.specId,
-      plugin,
-      undefined
-    )
-    return childContext
   }
 }
 

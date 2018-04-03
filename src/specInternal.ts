@@ -4,11 +4,11 @@ import { tersify } from 'tersify'
 
 import { MissingSpecID, SpecNotFound, NotSpecable } from './errors'
 import { Spec } from './interfaces'
-import { IdTracker, SpyContextImpl } from './SpyContextImpl'
 import { io } from './io'
 import { plugins } from './plugin'
+import { IdTracker, SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
-import { InternalStubContext, ActionTracker } from './InternalStubContext';
+import { StubContextImpl, ActionTracker } from './StubContextImpl'
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -142,7 +142,7 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   const actionTracker = new ActionTracker(actions)
   const contexts = []
 
-  const context = new InternalStubContext({ contexts, actionTracker }, specId, plugin, subject)
+  const context = new StubContextImpl({ contexts, actionTracker }, specId, plugin, subject)
 
   const spec: Spec<T> = {
     actions,
