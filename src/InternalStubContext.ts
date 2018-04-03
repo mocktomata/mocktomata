@@ -23,9 +23,6 @@ class CallPlayer implements StubCall {
   constructor(public context: InternalStubContext, public invokeId: number) {
     log.onDebug(() => `${this.debugId()}: created`)
   }
-  private debugId() {
-    return `(${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId})`
-  }
   invoked<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
     const name = 'invoke'
     this.args = args
@@ -52,6 +49,34 @@ class CallPlayer implements StubCall {
   // istanbul ignore next
   next() {
     return this.context.next()
+  }
+  wait(meta?: { [k: string]: any; } | undefined): Promise<SpecAction> {
+    console.log('wait??')
+    return new Promise((a, r) => {
+      let processed = false
+      this.context.onAny(action => {
+        if (!processed) {
+          if (action.type === this.context.plugin.type &&
+            action.name === 'trigger' || 'return' &&
+            action.instanceId === this.context.instanceId &&
+            action.invokeId === this.invokeId) {
+            console.log('action...', processed, action)
+            if (!meta || createSatisfier(meta).test(action.meta)) {
+              processed = true
+              a(this.result())
+            }
+            else {
+              processed = true
+              r(this.thrown())
+            }
+          }
+        }
+      })
+      this.waitSync()
+    })
+  }
+  waitSync(): void {
+    this.processUntilReturn()
   }
   succeed(meta?: { [k: string]: any }): boolean {
     const action = this.context.peek()
@@ -114,34 +139,6 @@ class CallPlayer implements StubCall {
     this.context.callListeners(action)
     this.context.next()
     return action.payload
-  }
-  wait(meta?: { [k: string]: any; } | undefined): Promise<SpecAction> {
-    console.log('wait??')
-    return new Promise((a, r) => {
-      let processed = false
-      this.context.onAny(action => {
-        if (!processed) {
-          if (action.type === this.context.plugin.type &&
-            action.name === 'trigger' || 'return' &&
-            action.instanceId === this.context.instanceId &&
-            action.invokeId === this.invokeId) {
-            console.log('action...', processed, action)
-            if (!meta || createSatisfier(meta).test(action.meta)) {
-              processed = true
-              a(this.result())
-            }
-            else {
-              processed = true
-              r(this.thrown())
-            }
-          }
-        }
-      })
-      this.waitSync()
-    })
-  }
-  waitSync(): void {
-    this.processUntilReturn()
   }
   isReturnAction(action: SpecAction): boolean {
     return action.type === this.context.plugin.type &&
@@ -232,6 +229,9 @@ class CallPlayer implements StubCall {
     ) {
       throw new SimulationMismatch(this.context.specId, expected, action)
     }
+  }
+  private debugId() {
+    return `(${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId})`
   }
 }
 
