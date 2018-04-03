@@ -7,12 +7,6 @@ import path from 'path'
 import { GIVENS_FOLDER, SPECS_FOLDER } from './constants'
 import { MissingGivenHandler, DuplicateGivenHandler, GivenSaveRequireSpecId, onGiven, given } from './index'
 
-// describe('acceptance tests', () => {
-//   test(`use given() to describe the environment needed and onGiven() to create`, async () => {
-
-//   })
-// })
-
 test('no handler registered throws MissingGivenHandler', async () => {
   await a.throws(given('no handler'), MissingGivenHandler)
 })
@@ -47,12 +41,15 @@ test('duplicate regex handler will throws', async () => {
 
 test('using given twice will only invoke handler once', async () => {
   const order = new AssertOrder(1)
-  onGiven('invoke once', () => order.once(1))
+  onGiven('invoke once', () => {
+    order.once(1)
+    return { a: 1 }
+  })
 
-  await given('invoke once')
+  t.deepEqual((await given('invoke once')).fixture, { a: 1 })
 
   // in another test
-  await given('invoke once')
+  t.deepEqual((await given('invoke once')).fixture, { a: 1 })
 
   order.end()
 })
