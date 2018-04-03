@@ -1,8 +1,8 @@
 import { Registrar, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
-export const promiseResolved = createExpectation(TYPE, 'return', { status: 'resolve' })
-export const promiseRejected = createExpectation(TYPE, 'return', { status: 'reject' })
+export const promiseResolved = createExpectation(TYPE, 'return', { state: 'fulfilled' })
+export const promiseRejected = createExpectation(TYPE, 'return', { state: 'rejected' })
 
 export function activate(registrar: Registrar) {
   registrar.register(
@@ -21,17 +21,18 @@ function getPromiseSpy(context: SpyContext, subject) {
   const call = context.newCall()
   return subject.then(
     result => {
-      return call.return(result, { status: 'resolve' })
+      return call.return(result, { state: 'fulfilled' })
     },
     err => {
-      throw call.return(err, { status: 'reject' })
+      throw call.return(err, { state: 'rejected' })
     })
 }
 
 function getPromiseStub(context: StubContext) {
   const call = context.newCall()
+  // return call.wait({ state: 'fulfilled' })
   return new Promise((resolve, reject) => {
-    if (call.succeed({ status: 'resolve' })) {
+    if (call.succeed({ state: 'fulfilled' })) {
       resolve(call.result())
     }
     else {

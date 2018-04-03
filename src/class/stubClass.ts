@@ -23,7 +23,7 @@ export function stubClass(context: StubContext, subject) {
     stubClass.prototype[p] = function (...args) {
       const call = context.newCall()
       call.invoked(args, { methodName: p })
-
+      call.waitSync()
       if (call.succeed()) {
         return call.result()
       }

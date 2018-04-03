@@ -18,20 +18,20 @@ export class ActionTracker {
 }
 
 class CallPlayer implements StubCall {
-  wait(_meta?: { [k: string]: any; } | undefined): Promise<SpecAction> {
-    throw new Error('Method not implemented.');
-  }
-  waitSync(): void {
-    throw new Error('Method not implemented.');
-  }
   args: any[]
-  constructor(public context: InternalStubContext, public invokeId: number) { }
+  original: any
+  constructor(public context: InternalStubContext, public invokeId: number) {
+    log.onDebug(() => `${this.debugId()}: created`)
+  }
+  private debugId() {
+    return `(${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId})`
+  }
   invoked<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
     const name = 'invoke'
     this.args = args
 
     const action = this.context.peek()
-    log.onDebug(() => `invoked (${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId}) with ${tersify(args)}, for ${tersify(action, { maxLength: Infinity })}`)
+    log.onDebug(() => `${this.debugId()}: invoked(${tersify(args)}), for ${tersify(action, { maxLength: Infinity })}`)
 
     this.ensureMatching(action, {
       type: this.context.plugin.type,
@@ -42,7 +42,6 @@ class CallPlayer implements StubCall {
 
     this.context.callListeners(action)
     this.context.next()
-    this.processUntilReturn()
 
     return args
   }
@@ -62,7 +61,7 @@ class CallPlayer implements StubCall {
       action.instanceId === this.context.instanceId &&
       (meta === undefined || createSatisfier(meta).test(action.meta))
   }
-  result(): boolean {
+  result(): any {
     const action = this.context.peek()!
     this.context.callListeners(action)
     this.context.next()
@@ -72,6 +71,8 @@ class CallPlayer implements StubCall {
     let result
     if (returnType && returnInstanceId) {
       while (nextAction && isCallbackAction(nextAction)) {
+        log.debug(`${this.debugId()}: next callback ${tersify(nextAction)}`)
+
         const sourceContext = this.getSourceContext(nextAction)!
         const sourceCall = this.getSourceCall(sourceContext, nextAction)
         const subject = locateCallback(nextAction, sourceCall.args)
@@ -82,7 +83,7 @@ class CallPlayer implements StubCall {
       }
 
       if (nextAction && nextAction.type === returnType && nextAction.instanceId === returnInstanceId) {
-        log.debug(`next action: ${tersify(nextAction)}`)
+        log.debug(`${this.debugId()}: next action ${tersify(nextAction)}`)
         const plugin = plugins.find(p => p.type === nextAction!.type)
         if (plugin) {
           const childContext = this.context.createChildContext(plugin)
@@ -90,7 +91,7 @@ class CallPlayer implements StubCall {
         }
       }
       else {
-        log.warn(`return result does not match with next action ${tersify(nextAction)}`)
+        log.warn(`${this.debugId()}: next action not match ${tersify(nextAction)}`)
       }
     }
 
@@ -114,6 +115,34 @@ class CallPlayer implements StubCall {
     this.context.next()
     return action.payload
   }
+  wait(meta?: { [k: string]: any; } | undefined): Promise<SpecAction> {
+    console.log('wait??')
+    return new Promise((a, r) => {
+      let processed = false
+      this.context.onAny(action => {
+        if (!processed) {
+          if (action.type === this.context.plugin.type &&
+            action.name === 'trigger' || 'return' &&
+            action.instanceId === this.context.instanceId &&
+            action.invokeId === this.invokeId) {
+            console.log('action...', processed, action)
+            if (!meta || createSatisfier(meta).test(action.meta)) {
+              processed = true
+              a(this.result())
+            }
+            else {
+              processed = true
+              r(this.thrown())
+            }
+          }
+        }
+      })
+      this.waitSync()
+    })
+  }
+  waitSync(): void {
+    this.processUntilReturn()
+  }
   isReturnAction(action: SpecAction): boolean {
     return action.type === this.context.plugin.type &&
       action.name === 'return' &&
@@ -133,7 +162,7 @@ class CallPlayer implements StubCall {
     let action = this.context.peek()
 
     while (action && !this.isReturnAction(action) && !this.isThrowAction(action)) {
-      log.onDebug(() => `processing ${tersify(action, { maxLength: Infinity })} by (${this.context.plugin.type}, ${this.context.instanceId}, ${this.invokeId})`)
+      log.onDebug(() => `${this.debugId()}: processing ${tersify(action, { maxLength: Infinity })}`)
       if (isCallbackAction(action)) {
         const subject = locateCallback(action, this.args)
         this.context.next()
@@ -141,7 +170,7 @@ class CallPlayer implements StubCall {
         subject(...action.payload)
       }
       else {
-        log.onWarn(() => `skipping over: don't know how to handle ${tersify(action)}`)
+        log.onWarn(() => `${this.debugId()}: skipping over: don't know how to handle ${tersify(action)}`)
         this.context.next()
       }
 
@@ -152,7 +181,8 @@ class CallPlayer implements StubCall {
       throw new MissingReturnRecord()
     }
 
-    log.onDebug(() => `processing exits with ${tersify(action)}`)
+    log.onDebug(() => `${this.debugId()}: processing exits with ${tersify(action)}`)
+    this.context.callListeners(action)
   }
   getSourceContext(action) {
     const entry = this.context.contexts.find(c =>
@@ -260,8 +290,12 @@ export class InternalStubContext implements StubContext {
       this.events[actionType][name] = []
     this.events[actionType][name].push(callback)
   }
-  onAny(callback) {
+  onAny(callback: (action: SpecAction) => void) {
     this.listenAll.push(callback)
+    const action = this.peek()
+    if (action) {
+      callback(action)
+    }
   }
 }
 

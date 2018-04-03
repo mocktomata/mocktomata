@@ -199,7 +199,7 @@ testTrio('method returning promise should have result of promise saved in payloa
         { type: 'class', name: 'constructor', payload: [], instanceId: 1 },
         { type: 'class', name: 'invoke', payload: [3], meta: { methodName: 'increment' }, instanceId: 1, invokeId: 1 },
         { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
-        { type: 'promise', name: 'return', payload: 4, meta: { status: 'resolve' }, instanceId: 1, invokeId: 1 }
+        { type: 'promise', name: 'return', payload: 4, meta: { state: 'fulfilled' }, instanceId: 1, invokeId: 1 }
       ])
     })
   })
@@ -235,4 +235,25 @@ testTrio('class/throwing', (title, spec) => {
       }
     ])
   })
+})
+
+class Promising {
+  do(x) {
+    return new Promise(a => {
+      setImmediate(() => a(x))
+    })
+  }
+}
+
+test.skip('', async () => {
+  const s = await spec.simulate('class/promising', Promising)
+  const p = new s.subject()
+  console.log(s.actions.filter(a => a.name !== 'constructor').map(a => {
+    return (a.type === 'class' ? 'c' : 'a') + a.name[0] + a.instanceId + a.invokeId
+  }))
+
+  await Promise.all([1, 2].map(x => p.do(x)))
+  await p.do(3)
+
+  await s.satisfy([])
 })

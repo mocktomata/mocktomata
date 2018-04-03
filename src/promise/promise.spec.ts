@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { setTimeout } from 'timers'
 
-import { testTrio } from '../testUtil'
+import { testTrio, testSimulate } from '../testUtil'
 import { spec, promiseResolved, promiseRejected } from '..'
 
 const promise = {
@@ -77,7 +77,7 @@ testTrio('promise/noReturn', (title, spec) => {
         return s.satisfy([
           { type: 'function', name: 'invoke', invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
-          { type: 'promise', name: 'return', meta: { status: 'resolve' }, invokeId: 1, instanceId: 1 }
+          { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
         ])
       })
   })
@@ -94,7 +94,7 @@ testTrio('promise/resolve', (title, spec) => {
         return s.satisfy([
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
-          { type: 'promise', name: 'return', payload: 3, meta: { status: 'resolve' }, invokeId: 1, instanceId: 1 }
+          { type: 'promise', name: 'return', payload: 3, meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
         ])
       })
   })
@@ -109,7 +109,7 @@ testTrio('promise/reject', (title, spec) => {
         return s.satisfy([
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
-          { type: 'promise', name: 'return', payload: { message: 'fail' }, meta: { status: 'reject' }, invokeId: 1, instanceId: 1 }
+          { type: 'promise', name: 'return', payload: { message: 'fail' }, meta: { state: 'rejected' }, invokeId: 1, instanceId: 1 }
         ])
       })
   })
@@ -148,7 +148,7 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
             sourceInvokeId: 1,
             sourcePath: [1]
           },
-          { type: 'promise', name: 'return', meta: { status: 'resolve' }, payload: 3, invokeId: 1, instanceId: 1 }
+          { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, payload: 3, invokeId: 1, instanceId: 1 }
         ])
       })
   })
@@ -157,7 +157,6 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
 testTrio('promise/returns/function', (title, spec) => {
   test(title, async () => {
     const s = await spec(promiseChain.success)
-
     // not using `await` to make sure the return value is a promise.
     // `await` will hide the error if the return value is not a promise.
     return promise.increment(s.subject, 2)
@@ -166,7 +165,7 @@ testTrio('promise/returns/function', (title, spec) => {
         return s.satisfy([
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
-          { type: 'promise', name: 'return', meta: { status: 'resolve' }, invokeId: 1, returnType: 'function', returnInstanceId: 2, instanceId: 1 },
+          { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, returnType: 'function', returnInstanceId: 2, instanceId: 1 },
           {
             type: 'function',
             name: 'invoke',
