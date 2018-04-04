@@ -18,7 +18,8 @@ function isPromise(result) {
 }
 
 function getPromiseSpy(context: SpyContext, subject) {
-  const call = context.newCall()
+  const instance = context.newInstance()
+  const call = instance.newCall()
   return subject.then(
     result => {
       return call.return(result, { state: 'fulfilled' })

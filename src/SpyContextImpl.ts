@@ -23,12 +23,12 @@ export class SpyContextImpl implements SpyContext {
     public specId: string,
     public plugin: Plugin<any>
   ) {
-    this.actions = context.actions
     this.idTracker = context.idTracker
+    this.actions = context.actions || []
     this.instanceId = this.idTracker.getNextId(plugin.type)
   }
   newInstance() {
-    return new SpyInstanceImpl()
+    return new SpyInstanceImpl(this)
   }
   newCall(): SpyCall {
     return new SpyCallImpl(this, ++this.invokeCount)

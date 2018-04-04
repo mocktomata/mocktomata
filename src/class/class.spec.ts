@@ -199,11 +199,12 @@ class WithPromise {
 testTrio('method returning promise should have result of promise saved in payload',
   'class/withPromise',
   (title, spec) => {
-    test(title, async () => {
+    test.only(title, async () => {
       const s = await spec(WithPromise)
       const p = new s.subject()
       const actual = await p.increment(3)
 
+      console.log(s.actions)
       t.equal(actual, 4)
       await s.satisfy([
         { type: 'class', name: 'constructor', payload: [], instanceId: 1 },

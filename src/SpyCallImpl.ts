@@ -19,22 +19,14 @@ export class SpyCallImpl implements SpyCall {
     this.context.callListeners(action)
     return args.map((arg, i) => {
       if (typeof arg === 'function') {
-        return spyOnCallback(
-          this,
-          arg,
-          [i]
-        )
+        return spyOnCallback(this, arg, [i])
       }
       if (typeof arg === 'object' && arg !== null) {
         const result = {}
         Object.keys(arg).forEach(key => {
           const prop = arg[key]
           if (typeof prop === 'function') {
-            result[key] = spyOnCallback(
-              this,
-              prop,
-              [i, key]
-            )
+            result[key] = spyOnCallback(this, prop, [i, key])
           }
           else {
             result[key] = prop
