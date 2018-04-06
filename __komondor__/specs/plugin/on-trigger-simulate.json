@@ -1,1 +1,1 @@
-{"expectation":"[{ type: 'on-trigger-simulate', name: 'action1' }]","actions":[{"type":"on-trigger-simulate","name":"action1","meta":{"instanceId":1}}]}
+{"expectation":"[{ type: 'on-trigger-simulate', name: 'invoke' }]","actions":[{"type":"on-trigger-simulate","name":"invoke","meta":{"instanceId":1}}]}

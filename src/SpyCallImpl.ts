@@ -1,32 +1,31 @@
 import { SpyCall, SpecAction } from 'komondor-plugin'
 
-import { plugins } from './plugin'
-import { SpyContextImpl } from './SpyContextImpl'
+import { SpyInstanceImpl } from './SpyInstanceImpl'
 
 export class SpyCallImpl implements SpyCall {
   trigger<T>(_err: T, _meta?: { [k: string]: any; } | undefined): T {
     throw new Error('Method not implemented.');
   }
-  constructor(public context: SpyContextImpl, public invokeId: number) {
+  constructor(public instance: SpyInstanceImpl, public invokeId: number) {
   }
   invoke<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
-    const name = 'invoke'
+    this.instance.addAction({
+      name: 'invoke',
+      payload: args,
+      meta,
+      invokeId: this.invokeId
+    })
 
-    const type = this.context.plugin.type
-    const action = { type, name, payload: args, meta, instanceId: this.context.instanceId, invokeId: this.invokeId } as SpecAction
-
-    this.context.actions.push(action)
-    this.context.callListeners(action)
     return args.map((arg, i) => {
       if (typeof arg === 'function') {
-        return spyOnCallback(this, arg, [i])
+        return this.spyOnCallback(arg, [i])
       }
       if (typeof arg === 'object' && arg !== null) {
         const result = {}
         Object.keys(arg).forEach(key => {
           const prop = arg[key]
           if (typeof prop === 'function') {
-            result[key] = spyOnCallback(this, prop, [i, key])
+            result[key] = this.spyOnCallback(prop, [i, key])
           }
           else {
             result[key] = prop
@@ -39,50 +38,33 @@ export class SpyCallImpl implements SpyCall {
     }) as T
   }
   return<T>(result: T, meta?: { [k: string]: any }): T {
-    const name = 'return'
+    const action = this.instance.addAction({
+      name: 'return',
+      payload: result,
+      meta,
+      invokeId: this.invokeId
+    })
 
-    const type = this.context.plugin.type
-    const action = { type, name, payload: result, meta, instanceId: this.context.instanceId, invokeId: this.invokeId } as SpecAction
-
-    this.context.actions.push(action)
-    this.context.callListeners(action)
-
-    const plugin = plugins.find(p => p.support(result))
-    if (plugin) {
-      const childContext = this.context.createChildContext(plugin)
-      action.returnType = plugin.type
-      action.returnInstanceId = childContext.instanceId
-      return plugin.getSpy(childContext, result)
-    }
-
-    return result
+    return this.instance.addReturnAction(action) || result
   }
   throw<T>(err: T, meta?: { [k: string]: any }): T {
-    const name = 'throw'
-
-    const type = this.context.plugin.type
-    const action = { type, name, payload: err, meta, instanceId: this.context.instanceId, invokeId: this.invokeId } as SpecAction
-
-    this.context.actions.push(action)
-    this.context.callListeners(action)
-
+    this.instance.addAction({
+      name: 'throw',
+      payload: err,
+      meta,
+      invokeId: this.invokeId
+    })
     return err
   }
-}
-
-function spyOnCallback(call: SpyCallImpl, fn, sourcePath) {
-  return (...args) => {
-    const action = {
-      type: 'komondor',
-      name: 'callback',
-      payload: args,
-      sourceType: call.context.plugin.type,
-      sourceInstanceId: call.context.instanceId,
-      sourceInvokeId: call.invokeId,
-      sourcePath
-    } as SpecAction
-    call.context.actions.push(action)
-    call.context.callListeners(action)
-    fn(...args)
+  spyOnCallback(fn, sourcePath) {
+    return (...args) => {
+      const action = {
+        payload: args,
+        sourceInvokeId: this.invokeId,
+        sourcePath
+      } as SpecAction
+      this.instance.addCallbackAction(action)
+      fn(...args)
+    }
   }
 }

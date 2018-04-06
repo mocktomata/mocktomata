@@ -1,7 +1,8 @@
-import { SpyContext, SpecAction, SpecMode, Plugin, SpyCall } from 'komondor-plugin'
+import { SpyContext, SpecAction, SpecMode, Plugin, SpyInstance } from 'komondor-plugin'
+import { unpartial } from 'unpartial'
 
 import { SpyInstanceImpl } from './SpyInstanceImpl'
-import { SpyCallImpl } from './SpyCallImpl'
+import { plugins } from './plugin';
 
 export class IdTracker {
   pluginTypes: string[] = []
@@ -11,12 +12,11 @@ export class IdTracker {
 }
 
 export class SpyContextImpl implements SpyContext {
-  instanceId: number
   actions: SpecAction[]
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
   idTracker: IdTracker
-  invokeCount = 0
+  instanceIds: { [k: string]: number }
   constructor(
     context,
     public mode: SpecMode,
@@ -25,20 +25,38 @@ export class SpyContextImpl implements SpyContext {
   ) {
     this.idTracker = context.idTracker
     this.actions = context.actions || []
-    this.instanceId = this.idTracker.getNextId(plugin.type)
+    this.instanceIds = context.instanceIds || {}
   }
-  newInstance() {
+  getNextId(pluginType: string) {
+    return this.instanceIds[pluginType] = (this.instanceIds[pluginType] || 0) + 1
+  }
+  newInstance(): SpyInstance {
     return new SpyInstanceImpl(this)
   }
-  newCall(): SpyCall {
-    return new SpyCallImpl(this, ++this.invokeCount)
-  }
-  add(type: string, name: string, payload?: any, meta: any = {}) {
-    const a = { type, name, payload, meta, instanceId: this.instanceId }
-
+  addAction(action: Partial<SpecAction>) {
+    const a = unpartial({
+      type: this.plugin.type
+    } as SpecAction, action)
     this.actions.push(a)
     this.callListeners(a)
     return a
+  }
+  addReturnAction(action: Partial<SpecAction>) {
+    const plugin = plugins.find(p => p.support(action.payload))
+    if (plugin) {
+      const childContext = this.createChildContext(plugin, action)
+      action.returnType = plugin.type
+      // action.returnInstanceId = childContext.instanceId
+      return plugin.getSpy(childContext, action.payload)
+    }
+  }
+  addCallbackAction(action: Partial<SpecAction>) {
+    const a = unpartial({
+      type: 'komondor',
+      name: 'callback',
+      sourceType: this.plugin.type
+    } as SpecAction, action)
+    this.addAction(a)
   }
   callListeners(action) {
     if (this.events[action.type]) {
@@ -49,13 +67,21 @@ export class SpyContextImpl implements SpyContext {
       this.listenAll.forEach(cb => cb(action))
     }
   }
-  createChildContext(plugin) {
+  createChildContext(plugin, returnAction) {
     const childContext = new SpyContextImpl(
       this,
       this.mode,
       this.specId,
       plugin
     )
+
+    childContext.newInstance = function () {
+      const instance = new SpyInstanceImpl(this)
+      returnAction.returnInstanceId = instance.instanceId
+      return instance
+    }
+    // on new instance?, add the returnInstanceId.
+    // childContext.returnAction = returnAction
     return childContext
   }
   on(actionType: string, name: string, callback) {

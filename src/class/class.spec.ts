@@ -66,7 +66,7 @@ testTrio('class/simple', (title, spec) => {
     t.equal(actual, 1)
 
     await s.satisfy([
-      { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
+      { type: 'class', name: 'construct', payload: [1], instanceId: 1 },
       { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 },
       { type: 'class', name: 'return', payload: 1, meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 }
     ])
@@ -81,7 +81,7 @@ testTrio('class/extend', (title, spec) => {
 
     t.equal(actual, 2)
     await s.satisfy([
-      { type: 'class', name: 'constructor', payload: [1], instanceId: 1 },
+      { type: 'class', name: 'construct', payload: [1], instanceId: 1 },
       { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 },
       { type: 'class', name: 'return', payload: 2, meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 }
     ])
@@ -118,7 +118,7 @@ testTrio('class/withCallback', (title, spec) => {
     await s.satisfy([
       {
         type: 'class',
-        name: 'constructor',
+        name: 'construct',
         payload: [],
         instanceId: 1
       },
@@ -204,10 +204,9 @@ testTrio('method returning promise should have result of promise saved in payloa
       const p = new s.subject()
       const actual = await p.increment(3)
 
-      console.log(s.actions)
       t.equal(actual, 4)
       await s.satisfy([
-        { type: 'class', name: 'constructor', payload: [], instanceId: 1 },
+        { type: 'class', name: 'construct', payload: [], instanceId: 1 },
         { type: 'class', name: 'invoke', payload: [3], meta: { methodName: 'increment' }, instanceId: 1, invokeId: 1 },
         { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
         { type: 'promise', name: 'return', payload: 4, meta: { state: 'fulfilled' }, instanceId: 1, invokeId: 1 }
@@ -228,7 +227,7 @@ testTrio('class/throwing', (title, spec) => {
     await a.throws(() => o.doThrow())
 
     await s.satisfy([
-      { type: 'class', name: 'constructor', instanceId: 1 },
+      { type: 'class', name: 'construct', instanceId: 1 },
       {
         type: 'class',
         name: 'invoke',
@@ -259,7 +258,7 @@ class Promising {
 test.skip('', async () => {
   const s = await spec.simulate('class/promising', Promising)
   const p = new s.subject()
-  console.info(s.actions.filter(a => a.name !== 'constructor').map(a => {
+  console.info(s.actions.filter(a => a.name !== 'construct').map(a => {
     return (a.type === 'class' ? 'c' : 'a') + a.name[0] + a.instanceId + a.invokeId
   }))
 

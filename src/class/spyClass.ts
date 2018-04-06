@@ -1,16 +1,18 @@
-import { SpyContext, SpyCall } from 'komondor-plugin'
+import { SpyContext, SpyCall, SpyInstance } from 'komondor-plugin'
 
 export function spyClass(context: SpyContext, subject) {
   const spiedClass = class extends subject {
     // tslint:disable-next-line:variable-name
     __komondor: {
+      instance: SpyInstance,
       call: SpyCall
     } = {} as any
 
     constructor(...args) {
       // @ts-ignore
       super(...args)
-      context.add('class', 'constructor', args, { className: subject.name })
+      const instance = this.__komondor.instance = context.newInstance()
+      instance.construct(args, { className: subject.name })
     }
   }
 
@@ -18,9 +20,10 @@ export function spyClass(context: SpyContext, subject) {
     const method = spiedClass.prototype[p]
     spiedClass.prototype[p] = function (...args) {
       const invoking = this.__komondor.invoking
+      const instance = this.__komondor.instance
       if (!invoking) {
         this.__komondor.invoking = true
-        const call = context.newCall()
+        const call = instance.newCall()
         const spiedArgs = call.invoke(args, { methodName: p })
         let result
         try {
