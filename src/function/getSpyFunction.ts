@@ -1,9 +1,8 @@
 import { SpyContext } from 'komondor-plugin'
 
 export function spyFunction(context: SpyContext, subject) {
-  const instance = context.newInstance()
   return function (...args) {
-    const call = instance.newCall()
+    const call = context.newCall()
     const spiedArgs = call.invoke(args)
 
     let result

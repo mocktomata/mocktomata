@@ -12,7 +12,7 @@ export class IdTracker {
 
 export class SpyContextImpl implements SpyContext {
   instanceId: number
-  actions: SpecAction[] = []
+  actions: SpecAction[]
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
   idTracker: IdTracker
