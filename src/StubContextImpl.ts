@@ -1,5 +1,9 @@
-import { StubContext, SpecAction, Plugin, StubCall } from 'komondor-plugin'
-import { StubCallImpl } from './StubCallImpl'
+import { StubContext, SpecAction, Plugin, StubInstance } from 'komondor-plugin'
+import { StubInstanceImpl } from './StubInstanceImpl'
+
+export class Tracker {
+  constructor(public actions: SpecAction[]) { }
+}
 
 export class ActionTracker {
   currentIndex = 0
@@ -16,10 +20,7 @@ export class StubContextImpl implements StubContext {
   actionTracker: ActionTracker
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
-  instanceId: number
-  invokeCount = 0
-  contexts: { type: string, instanceId: number, instance: StubContextImpl }[]
-  calls: StubCall[] = []
+  instances: { type: string, instanceId: number, instance: StubInstanceImpl }[]
   constructor(
     context,
     public specId: string,
@@ -27,14 +28,10 @@ export class StubContextImpl implements StubContext {
     public subject
   ) {
     this.actionTracker = context.actionTracker
-    this.contexts = context.contexts
-    this.instanceId = this.contexts.filter(c => c.type === plugin.type).length + 1
-    this.contexts.push({ type: plugin.type, instanceId: this.instanceId, instance: this })
+    this.instances = context.instances || []
   }
-  newCall(): StubCall {
-    const call = new StubCallImpl(this, ++this.invokeCount)
-    this.calls.push(call)
-    return call
+  newInstance(): StubInstance {
+    return new StubInstanceImpl(this)
   }
   on(actionType: string, name: string, callback) {
     if (!this.events[actionType])

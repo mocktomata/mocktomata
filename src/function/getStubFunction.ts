@@ -1,8 +1,9 @@
 import { StubContext } from 'komondor-plugin'
 
 export function stubFunction(context: StubContext) {
+  const instance = context.newInstance()
   return function (...args) {
-    const call = context.newCall()
+    const call = instance.newCall()
     call.invoked(args)
     call.waitSync()
     if (call.succeed())

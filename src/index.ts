@@ -2,7 +2,6 @@ export * from './config'
 export * from './given'
 export * from './errors'
 export * from './interfaces'
-export * from './io'
 export * from './spec'
 
 import { registerPlugin, loadPlugins } from './plugin'

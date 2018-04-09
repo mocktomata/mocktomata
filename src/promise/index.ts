@@ -30,9 +30,17 @@ function getPromiseSpy(context: SpyContext, subject) {
 }
 
 function getPromiseStub(context: StubContext) {
-  const call = context.newCall()
-  // return call.wait({ state: 'fulfilled' })
+  const instance = context.newInstance()
+  const call = instance.newCall()
   return new Promise((resolve, reject) => {
+    // call.on({ state: 'fulfilled' }, () => {
+    //   if (call.succeed({ state: 'fulfilled' })) {
+    //     resolve(call.result())
+    //   }
+    //   else {
+    //     reject(call.thrown())
+    //   }
+    // })
     if (call.succeed({ state: 'fulfilled' })) {
       resolve(call.result())
     }

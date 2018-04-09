@@ -3,7 +3,7 @@ import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
-import { spec, SpecNotFound, classConstructed, classMethodThrown, classMethodInvoked, classMethodReturned } from '..'
+import { spec, SpecNotFound, classConstructed, classMethodThrown, classMethodInvoked, classMethodReturned, promiseResolved } from '..'
 import { testTrio } from '../testUtil'
 
 
@@ -23,14 +23,6 @@ class Boo extends Foo {
   }
 }
 
-test.skip('creating two instances of class', async () => {
-  const s = await spec(Foo)
-  const f1 = new s.subject(1)
-  const f2 = new s.subject(2)
-  f1.getValue()
-  f2.getValue()
-})
-
 describe('use cases', () => {
   test('acceptance test', async () => {
     const s = await spec(Foo)
@@ -44,6 +36,25 @@ describe('use cases', () => {
       classMethodReturned('getValue', 1),
       classMethodInvoked('doThrow'),
       classMethodThrown('doThrow', { message: 'throwing' })
+    ])
+  })
+})
+
+
+testTrio('each instance of class will get its own instanceId', 'class/multipleInstance', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(Foo)
+    const f1 = new s.subject(1)
+    const f2 = new s.subject(2)
+    f1.getValue()
+    f2.getValue()
+    await s.satisfy([
+      { ...classConstructed('Foo', 1), instanceId: 1 },
+      { ...classConstructed('Foo', 2), instanceId: 2 },
+      { ...classMethodInvoked('getValue'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('getValue', 1), instanceId: 1, invokeId: 1 },
+      { ...classMethodInvoked('getValue'), instanceId: 2, invokeId: 1 },
+      { ...classMethodReturned('getValue', 2), instanceId: 2, invokeId: 1 }
     ])
   })
 })
@@ -66,9 +77,9 @@ testTrio('class/simple', (title, spec) => {
     t.equal(actual, 1)
 
     await s.satisfy([
-      { type: 'class', name: 'construct', payload: [1], instanceId: 1 },
-      { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 },
-      { type: 'class', name: 'return', payload: 1, meta: { methodName: 'getValue' }, instanceId: 1, invokeId: 1 }
+      { ...classConstructed('Foo', 1), instanceId: 1 },
+      { ...classMethodInvoked('getValue'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('getValue', 1), instanceId: 1, invokeId: 1 }
     ])
   })
 })
@@ -81,9 +92,9 @@ testTrio('class/extend', (title, spec) => {
 
     t.equal(actual, 2)
     await s.satisfy([
-      { type: 'class', name: 'construct', payload: [1], instanceId: 1 },
-      { type: 'class', name: 'invoke', payload: [], meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 },
-      { type: 'class', name: 'return', payload: 2, meta: { methodName: 'getPlusOne' }, instanceId: 1, invokeId: 1 }
+      { ...classConstructed('Boo', 1), instanceId: 1 },
+      { ...classMethodInvoked('getPlusOne'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('getPlusOne', 2), instanceId: 1, invokeId: 1 }
     ])
   })
 })
@@ -116,56 +127,13 @@ testTrio('class/withCallback', (title, spec) => {
     })
 
     await s.satisfy([
-      {
-        type: 'class',
-        name: 'construct',
-        payload: [],
-        instanceId: 1
-      },
-      {
-        type: 'class',
-        name: 'invoke',
-        payload: [1],
-        meta: { methodName: 'justDo' },
-        instanceId: 1,
-        invokeId: 1
-      },
-      {
-        type: 'class',
-        name: 'return',
-        payload: 1,
-        meta: { methodName: 'justDo' },
-        instanceId: 1,
-        invokeId: 1
-      },
-      {
-        type: 'class',
-        name: 'invoke',
-        meta: { methodName: 'callback' },
-        instanceId: 1,
-        invokeId: 2
-      },
-      {
-        type: 'class',
-        name: 'return',
-        meta: { methodName: 'callback' },
-        instanceId: 1,
-        invokeId: 2
-      },
-      {
-        type: 'class',
-        name: 'invoke',
-        meta: { methodName: 'callback' },
-        instanceId: 1,
-        invokeId: 3
-      },
-      {
-        type: 'class',
-        name: 'return',
-        meta: { methodName: 'callback' },
-        instanceId: 1,
-        invokeId: 3
-      },
+      { ...classConstructed('WithCallback'), instanceId: 1 },
+      { ...classMethodInvoked('justDo', 1), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('justDo', 1), instanceId: 1, invokeId: 1 },
+      { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 2 },
+      { ...classMethodReturned('callback'), instanceId: 1, invokeId: 2 },
+      { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 3 },
+      { ...classMethodReturned('callback'), instanceId: 1, invokeId: 3 },
       {
         type: 'komondor',
         name: 'callback',
@@ -199,17 +167,17 @@ class WithPromise {
 testTrio('method returning promise should have result of promise saved in payload',
   'class/withPromise',
   (title, spec) => {
-    test.only(title, async () => {
+    test(title, async () => {
       const s = await spec(WithPromise)
       const p = new s.subject()
       const actual = await p.increment(3)
 
       t.equal(actual, 4)
       await s.satisfy([
-        { type: 'class', name: 'construct', payload: [], instanceId: 1 },
-        { type: 'class', name: 'invoke', payload: [3], meta: { methodName: 'increment' }, instanceId: 1, invokeId: 1 },
-        { type: 'class', name: 'return', payload: {}, instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 }, // TODO: returnInstanceId + returnInvokeId?
-        { type: 'promise', name: 'return', payload: 4, meta: { state: 'fulfilled' }, instanceId: 1, invokeId: 1 }
+        { ...classConstructed('WithPromise'), instanceId: 1 },
+        { ...classMethodInvoked('increment', 3), instanceId: 1, invokeId: 1 },
+        { ...classMethodReturned('increment'), instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 },
+        { ...promiseResolved(4), instanceId: 1, invokeId: 1 }
       ])
     })
   })
@@ -227,22 +195,9 @@ testTrio('class/throwing', (title, spec) => {
     await a.throws(() => o.doThrow())
 
     await s.satisfy([
-      { type: 'class', name: 'construct', instanceId: 1 },
-      {
-        type: 'class',
-        name: 'invoke',
-        meta: { methodName: 'doThrow' },
-        instanceId: 1,
-        invokeId: 1
-      },
-      {
-        type: 'class',
-        name: 'throw',
-        payload: { message: 'thrown' },
-        meta: { methodName: 'doThrow' },
-        instanceId: 1,
-        invokeId: 1
-      }
+      { ...classConstructed('Throwing'), instanceId: 1 },
+      { ...classMethodInvoked('doThrow'), instanceId: 1, invokeId: 1 },
+      { ...classMethodThrown('doThrow', { message: 'thrown' }), instanceId: 1, invokeId: 1 }
     ])
   })
 })
@@ -256,10 +211,23 @@ class Promising {
 }
 
 test.skip('', async () => {
+  // ci11: do(1) invoked
+  // cr11: do(1) return Promise
+  // ai11: Promise
+  // ci11: do(1) invoked
+  // cr11: do(1) return Promise 1
+  // ci12: do(2) invoked
+  // cr12: do(2) return Promise 2
+  // ar11: Promise 1 return
+  // ar21: Promise 2 return
+  // ci13: do(3) invoked
+  // cr13: do(3) return
+  // ar31: Promise 3
+
   const s = await spec.simulate('class/promising', Promising)
   const p = new s.subject()
   console.info(s.actions.filter(a => a.name !== 'construct').map(a => {
-    return (a.type === 'class' ? 'c' : 'a') + a.name[0] + a.instanceId + a.invokeId
+    return (a.type === 'class' ? 'c' : 'a') + a.name[0] + a.instanceId + (a.invokeId || 0)
   }))
 
   await Promise.all([1, 2].map(x => p.do(x)))

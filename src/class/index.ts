@@ -22,13 +22,15 @@ function getStub(context: StubContext, subject: any): any {
 }
 
 export function classConstructed(className: string, ...args: any[]) {
-  return { type: 'class', name: 'constructor', payload: args, meta: { className } }
+  return { type: 'class', name: 'construct', payload: args, meta: { className } }
 }
 export function classMethodInvoked(methodName: string, ...args: any[]) {
   return { type: 'class', name: 'invoke', payload: args, meta: { methodName } }
 }
-export function classMethodReturned(methodName: string, result: any) {
-  return { type: 'class', name: 'return', payload: result, meta: { methodName } }
+export function classMethodReturned(methodName: string, result?: any) {
+  if (result !== undefined)
+    return { type: 'class', name: 'return', payload: result, meta: { methodName } }
+  return { type: 'class', name: 'return', meta: { methodName } }
 }
 export function classMethodThrown(methodName: string, err: any) {
   return { type: 'class', name: 'throw', payload: err, meta: { methodName } }

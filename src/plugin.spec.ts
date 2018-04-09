@@ -168,7 +168,7 @@ test('on() will trigger when the right action is added', async () => {
         'on-trigger',
         subject => tersify(subject) === `function () {return 'on-trigger';}`,
         context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newCall().result()
+        context => () => context.newInstance().newCall().result()
       )
     }
   })
@@ -191,7 +191,7 @@ test('on() will trigger when the right action is added (save)', async () => {
         'on-trigger-save',
         subject => tersify(subject) === `function () {return 'on-trigger-save';}`,
         context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newCall().result()
+        context => () => context.newInstance().newCall().result()
       )
     }
   })
@@ -212,7 +212,7 @@ test('on() will trigger when the right action is added (simulate)', async () => 
         'on-trigger-simulate',
         subject => tersify(subject) === `function () {return 'on-trigger-simulate';}`,
         context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newCall().result()
+        context => () => context.newInstance().newCall().result()
       )
     }
   })
@@ -235,7 +235,7 @@ test('onAny() will trigger when any aciton is added', async () => {
         'onAny',
         subject => tersify(subject) === `function () {return 'onAny';}`,
         context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newCall().result()
+        context => () => context.newInstance().newCall().result()
       )
     }
   })

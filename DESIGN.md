@@ -46,7 +46,7 @@ plugin.getSpy(context, subject)
   }
 }
 
-plubin.getSpy(context, subject) {
+plugin.getSpy(context, subject) {
   // promise can be listened to multiple time,
   // but yields the same result.
 }

@@ -1,6 +1,4 @@
-import { createSatisfier } from 'satisfier'
-
-import { SimulationMismatch, StubContext } from 'komondor-plugin'
+import { StubContext } from 'komondor-plugin'
 
 export function stubClass(context: StubContext, subject) {
   const stubClass = class extends subject {
@@ -9,19 +7,17 @@ export function stubClass(context: StubContext, subject) {
     constructor(...args) {
       // @ts-ignore
       super(...args)
+      const instance = this.__komondorStub.instance = context.newInstance()
       this.__komondorStub.ctorArgs = args
 
-      const action = context.peek()
-      if (!action || !createSatisfier(action.payload).test(JSON.parse(JSON.stringify(args)))) {
-        throw new SimulationMismatch(context.specId, { type: 'class', name: 'constructor', payload: args }, action)
-      }
-      context.next()
+      instance.constructed(args, { className: subject.name })
     }
   }
 
   for (let p in stubClass.prototype) {
     stubClass.prototype[p] = function (...args) {
-      const call = context.newCall()
+      const instance = this.__komondorStub.instance
+      const call = instance.newCall()
       call.invoked(args, { methodName: p })
       call.waitSync()
       if (call.succeed()) {
