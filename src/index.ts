@@ -20,11 +20,13 @@ const {
 } = genericClass
 
 const {
+  functionConstructed,
   functionInvoked,
   functionReturned,
   functionThrown
 } = genericFunction
 const {
+  promiseConstructed,
   promiseResolved,
   promiseRejected
 } = promise
@@ -33,9 +35,11 @@ export {
   classMethodInvoked,
   classMethodReturned,
   classMethodThrown,
+  functionConstructed,
   functionInvoked,
   functionReturned,
   functionThrown,
+  promiseConstructed,
   promiseResolved,
   promiseRejected
 }
