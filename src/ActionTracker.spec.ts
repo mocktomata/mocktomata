@@ -2,48 +2,39 @@ import t from 'assert'
 import a, { AssertOrder } from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { SpecNotFound } from '.'
+import { SpecNotFound, functionInvoked } from '.'
 import { ActionTracker } from './ActionTracker'
 import { io } from './io'
 import { createSpecAction } from './testUtil'
+import { functionConstructed } from './function';
 
 test('Wrong action throws mismatch', async () => {
   const tracker = await setupTrackerTest('function/simpleCallback/success')
 
-  await a.throws(() => tracker.nextAction({
-    type: 'function',
-    name: 'invoke',
+  tracker.nextAction({ ...functionConstructed({ functionName: 'success' }), instanceId: 1 })
+  await a.throws(() => tracker.nextAction(
     // should be [2, ...]
-    payload: [1, () => ({})],
-    instanceId: 1,
-    invokeId: 1
-  }), SimulationMismatch)
+    { ...functionInvoked(1, () => ({})), instanceId: 1, invokeId: 1 }),
+    SimulationMismatch)
 })
 
 test('will invoke callback in arguments', async () => {
   const tracker = await setupTrackerTest('function/simpleCallback/success')
-  console.info(tracker.actions)
   const o = new AssertOrder(1)
-  tracker.nextAction({
-    type: 'function',
-    name: 'invoke',
-    payload: [2, () => o.once(1)],
-    instanceId: 1,
-    invokeId: 1
-  })
+  tracker.nextAction({ ...functionConstructed({ functionName: 'success' }), instanceId: 1 })
+  tracker.nextAction({ ...functionInvoked(2, () => o.once(1)), instanceId: 1, invokeId: 1 })
   o.end()
 })
 
 test('will invoke callback in arguments with error', async () => {
   const tracker = await setupTrackerTest('function/simpleCallback/fail')
   const o = new AssertOrder(1)
+  tracker.nextAction({ ...functionConstructed({ functionName: 'fail' }), instanceId: 1 })
   tracker.nextAction({
-    type: 'function',
-    name: 'invoke',
-    payload: [2, err => {
+    ...functionInvoked(2, err => {
       o.once(1)
       t.equal(err.message, 'fail')
-    }],
+    }),
     instanceId: 1,
     invokeId: 1
   })
@@ -53,15 +44,14 @@ test('will invoke callback in arguments with error', async () => {
 test('invoke callback in literal inside arguments', async () => {
   const tracker = await setupTrackerTest('function/literalCallback/success')
   const o = new AssertOrder(1)
+  tracker.nextAction({ ...functionConstructed({ functionName: 'success' }), instanceId: 1 })
   tracker.nextAction({
-    type: 'function',
-    name: 'invoke',
-    payload: [{
+    ...functionInvoked({
       data: 2, success(value) {
         o.once(1)
         t.equal(value, 3)
       }
-    }],
+    }),
     instanceId: 1,
     invokeId: 1
   })
@@ -72,13 +62,12 @@ test('invoke callback post return', async () => {
   const tracker = await setupTrackerTest('function/postReturn/success')
   const o = new AssertOrder(3)
   await new Promise(a => {
+    tracker.nextAction({ ...functionConstructed({ functionName: 'fireEvent' }), instanceId: 1 })
     tracker.nextAction({
-      type: 'function',
-      name: 'invoke',
-      payload: ['event', 3, () => {
+      ...functionInvoked('event', 3, () => {
         if (o.any([1, 2, 3]) === 3)
           a()
-      }],
+      }),
       instanceId: 1,
       invokeId: 1
     })
@@ -107,13 +96,7 @@ test.skip('resolving promise', async () => {
   const o = new AssertOrder(3)
   console.info(tracker.actions)
   await new Promise(a => {
-    tracker.nextAction({
-      type: 'function',
-      name: 'invoke',
-      payload: ['increment', 2],
-      instanceId: 1,
-      invokeId: 1
-    })
+    tracker.nextAction({ ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 })
     t(tracker.succeed())
     tracker.result().then(() => a())
   })

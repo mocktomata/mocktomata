@@ -1,1 +1,1 @@
-{"expectation":"[]","actions":[{"type":"function","name":"invoke","payload":[],"meta":{"instanceId":1,"invokeId":1}}]}
+{"expectation":"[]","actions":[{"type":"function","name":"construct","meta":{"functionName":"subject"},"instanceId":1},{"type":"function","name":"invoke","payload":[],"invokeId":1,"instanceId":1}]}

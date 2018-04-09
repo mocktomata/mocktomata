@@ -20,6 +20,8 @@ test('missing return record will throw', async () => {
   const subject = () => 3
   const s = await spec.simulate('spec/missedReturn', subject)
 
+  // s.subject()
+  // await s.satisfy([])
   const err = await a.throws(() => s.subject(), MissingReturnRecord)
   t.equal(err.message, 'No return record found. Corrupted spec?')
 })

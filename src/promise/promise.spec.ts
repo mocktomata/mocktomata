@@ -4,6 +4,7 @@ import { setTimeout } from 'timers'
 
 import { testTrio } from '../testUtil'
 import { spec, promiseResolved, promiseRejected } from '..'
+import { functionConstructed } from '../function';
 
 const promise = {
   increment(remote, x) {
@@ -57,12 +58,14 @@ test('acceptance', async () => {
   await res.satisfy([
     undefined,
     undefined,
+    undefined,
     promiseResolved(1)
   ])
 
   const rej = await spec(rejecting)
   await a.throws(rej.subject(2))
   await rej.satisfy([
+    undefined,
     undefined,
     undefined,
     promiseRejected(2)
@@ -75,6 +78,7 @@ testTrio('promise/noReturn', (title, spec) => {
     return noReturn.doSomething(s.subject)
       .then(() => {
         return s.satisfy([
+          { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { type: 'function', name: 'invoke', invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
@@ -92,6 +96,7 @@ testTrio('promise/resolve', (title, spec) => {
       .then(actual => {
         t.equal(actual, 3)
         return s.satisfy([
+          { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { type: 'promise', name: 'return', payload: 3, meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
@@ -107,6 +112,7 @@ testTrio('promise/reject', (title, spec) => {
       .then(() => t.fail('should not reach'))
       .catch(() => {
         return s.satisfy([
+          { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { type: 'promise', name: 'return', payload: { message: 'fail' }, meta: { state: 'rejected' }, invokeId: 1, instanceId: 1 }
@@ -138,6 +144,7 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
       .then(actual => {
         t.equal(actual, 3)
         return s.satisfy([
+          { ...functionConstructed({ functionName: 'foo' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: [2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           {
@@ -163,9 +170,11 @@ testTrio('promise/returns/function', (title, spec) => {
       .then(actualFn => {
         t.equal(actualFn(), 3)
         return s.satisfy([
+          { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, returnType: 'function', returnInstanceId: 2, instanceId: 1 },
+          { ...functionConstructed(), instanceId: 2 },
           {
             type: 'function',
             name: 'invoke',

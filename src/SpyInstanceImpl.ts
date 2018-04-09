@@ -8,7 +8,7 @@ export class SpyInstanceImpl implements SpyInstance {
   constructor(public context: SpyContextImpl) {
     this.instanceId = context.getNextId(context.plugin.type)
   }
-  construct(args: any[], meta: any) {
+  construct(args?: any[], meta?: any) {
     const action = {
       name: 'construct',
       payload: args,

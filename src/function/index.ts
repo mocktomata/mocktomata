@@ -10,12 +10,17 @@ export function activate(registrar: Registrar) {
     (context, subject) => {
       return spyFunction(context, subject)
     },
-    (context) => {
-      return stubFunction(context)
+    (context, subject) => {
+      return stubFunction(context, subject)
     }
   )
 }
 
+export function functionConstructed(meta?) {
+  if (meta !== undefined)
+    return { type: 'function', name: 'construct', meta }
+  return { type: 'function', name: 'construct' }
+}
 export function functionInvoked(...args: any[]) {
   return { type: 'function', name: 'invoke', payload: args }
 }
