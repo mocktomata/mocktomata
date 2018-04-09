@@ -7,10 +7,7 @@ export function stubClass(context: StubContext, subject) {
     constructor(...args) {
       // @ts-ignore
       super(...args)
-      const instance = this.__komondorStub.instance = context.newInstance()
-      this.__komondorStub.ctorArgs = args
-
-      instance.constructed(args, { className: subject.name })
+      this.__komondorStub.instance = context.newInstance(args, { className: subject.name })
     }
   }
 

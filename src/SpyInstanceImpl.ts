@@ -5,17 +5,15 @@ import { SpyCallImpl } from './SpyCallImpl'
 export class SpyInstanceImpl implements SpyInstance {
   instanceId: number
   invokeCount = 0
-  constructor(public context: SpyContextImpl) {
+  constructor(public context: SpyContextImpl, args, meta) {
     this.instanceId = context.getNextId(context.plugin.type)
-  }
-  construct(args?: any[], meta?: any) {
     const action = {
       name: 'construct',
       payload: args,
       meta,
       instanceId: this.instanceId
     }
-    return this.context.addAction(action)
+    this.context.addAction(action)
   }
   newCall(): SpyCall {
     return new SpyCallImpl(this, ++this.invokeCount)

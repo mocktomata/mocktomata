@@ -9,11 +9,9 @@ export class StubInstanceImpl implements StubInstance {
   instanceId: number;
   invokeCount = 0
   calls: StubCall[] = []
-  constructor(public context: StubContextImpl) {
+  constructor(public context: StubContextImpl, args, meta) {
     this.instanceId = context.instances.filter(c => c.type === context.plugin.type).length + 1
     context.instances.push({ type: context.plugin.type, instanceId: this.instanceId, instance: this })
-  }
-  constructed(args: any[], meta?: any): void {
     const action = this.context.peek()
     log.onDebug(() => `${this.debugId()}: invoked(${tersify(args)}), for ${tersify(action, { maxLength: Infinity })}`)
 

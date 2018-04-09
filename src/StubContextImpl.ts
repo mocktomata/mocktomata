@@ -30,8 +30,8 @@ export class StubContextImpl implements StubContext {
     this.actionTracker = context.actionTracker
     this.instances = context.instances || []
   }
-  newInstance(): StubInstance {
-    return new StubInstanceImpl(this)
+  newInstance(args, meta): StubInstance {
+    return new StubInstanceImpl(this, args, meta)
   }
   on(actionType: string, name: string, callback) {
     if (!this.events[actionType])

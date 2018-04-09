@@ -179,7 +179,9 @@ test('on() will trigger when the right action is added', async () => {
   s.subject()
 
 
-  await s.satisfy([{ type: 'on-trigger', name: 'invoke' }])
+  await s.satisfy([
+    { type: 'on-trigger', name: 'construct' },
+    { type: 'on-trigger', name: 'invoke' }])
   o.end()
 })
 
@@ -200,7 +202,9 @@ test('on() will trigger when the right action is added (save)', async () => {
   s.on('on-trigger-save', 'invoke', () => o.once(1))
   s.subject()
 
-  await s.satisfy([{ type: 'on-trigger-save', name: 'invoke' }])
+  await s.satisfy([
+    { type: 'on-trigger-save', name: 'construct' },
+    { type: 'on-trigger-save', name: 'invoke' }])
   o.end()
 })
 
@@ -222,7 +226,9 @@ test('on() will trigger when the right action is added (simulate)', async () => 
 
   s.subject()
 
-  await s.satisfy([{ type: 'on-trigger-simulate', name: 'invoke' }])
+  await s.satisfy([
+    { type: 'on-trigger-simulate', name: 'construct' },
+    { type: 'on-trigger-simulate', name: 'invoke' }])
   o.end()
 })
 
@@ -241,7 +247,7 @@ test('onAny() will trigger when any aciton is added', async () => {
   })
 
   const s = await spec(() => 'onAny')
-  s.onAny(() => o.once(1))
+  s.onAny(() => o.any([1, 2]))
   s.subject()
   o.end()
 

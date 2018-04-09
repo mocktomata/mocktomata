@@ -23,7 +23,6 @@ function isPromise(result) {
 
 function getPromiseSpy(context: SpyContext, subject) {
   const instance = context.newInstance()
-  instance.construct()
   const call = instance.newCall()
   return subject.then(
     result => {
@@ -36,7 +35,6 @@ function getPromiseSpy(context: SpyContext, subject) {
 
 function getPromiseStub(context: StubContext) {
   const instance = context.newInstance()
-  instance.constructed()
   const call = instance.newCall()
   return new Promise((resolve, reject) => {
     // call.on({ state: 'fulfilled' }, () => {

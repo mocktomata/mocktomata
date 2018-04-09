@@ -11,8 +11,7 @@ export function spyClass(context: SpyContext, subject) {
     constructor(...args) {
       // @ts-ignore
       super(...args)
-      const instance = this.__komondor.instance = context.newInstance()
-      instance.construct(args, { className: subject.name })
+      this.__komondor.instance = context.newInstance(args, { className: subject.name })
     }
   }
 
