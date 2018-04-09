@@ -17,9 +17,7 @@ export function activate(registrar: Registrar) {
 }
 
 export function functionConstructed(meta?) {
-  if (meta !== undefined)
-    return { type: 'function', name: 'construct', meta }
-  return { type: 'function', name: 'construct' }
+  return { type: 'function', name: 'construct', meta }
 }
 export function functionInvoked(...args: any[]) {
   return { type: 'function', name: 'invoke', payload: args }

@@ -5,6 +5,7 @@ import { setImmediate } from 'timers'
 
 import { spec, SpecNotFound, classConstructed, classMethodThrown, classMethodInvoked, classMethodReturned, promiseResolved } from '..'
 import { testTrio } from '../testUtil'
+import { promiseConstructed } from '../promise';
 
 
 class Foo {
@@ -177,6 +178,7 @@ testTrio('method returning promise should have result of promise saved in payloa
         { ...classConstructed('WithPromise'), instanceId: 1 },
         { ...classMethodInvoked('increment', 3), instanceId: 1, invokeId: 1 },
         { ...classMethodReturned('increment'), instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 },
+        { ...promiseConstructed(), instanceId: 1 },
         { ...promiseResolved(4), instanceId: 1, invokeId: 1 }
       ])
     })

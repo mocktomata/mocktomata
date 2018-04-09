@@ -1,6 +1,10 @@
 import { Registrar, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
+
+export function promiseConstructed() {
+  return { type: TYPE, name: 'construct' }
+}
 export const promiseResolved = createExpectation(TYPE, 'return', { state: 'fulfilled' })
 export const promiseRejected = createExpectation(TYPE, 'return', { state: 'rejected' })
 
@@ -19,6 +23,7 @@ function isPromise(result) {
 
 function getPromiseSpy(context: SpyContext, subject) {
   const instance = context.newInstance()
+  instance.construct()
   const call = instance.newCall()
   return subject.then(
     result => {
@@ -31,6 +36,7 @@ function getPromiseSpy(context: SpyContext, subject) {
 
 function getPromiseStub(context: StubContext) {
   const instance = context.newInstance()
+  instance.constructed()
   const call = instance.newCall()
   return new Promise((resolve, reject) => {
     // call.on({ state: 'fulfilled' }, () => {
