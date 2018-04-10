@@ -14,8 +14,8 @@ export function stubClass(context: StubContext, subject) {
   for (let p in stubClass.prototype) {
     stubClass.prototype[p] = function (...args) {
       const instance = this.__komondorStub.instance
-      const call = instance.newCall()
-      call.invoked(args, { methodName: p })
+      const call = instance.newCall({ methodName: p })
+      call.invoked(args)
       call.blockUntilReturn()
       if (call.succeed()) {
         return call.result()

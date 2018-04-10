@@ -5,6 +5,7 @@ import { tersify } from 'tersify'
 import { NotSpecable } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
+import { unpartial } from 'unpartial';
 
 export class ActionTracker {
   callbacks: { action: SpecAction, callback: Function }[] = []
@@ -168,7 +169,7 @@ function isReturnAction(action, nextAction) {
     action.invokeId === nextAction.invokeId
 }
 function isCallbackAction(action): action is SpecCallbackAction {
-  return action.type === 'komondor' && action.name === 'callback'
+  return action.type === 'callback' && action.name === 'invoke'
 }
 
 
@@ -193,13 +194,13 @@ function createStubInstance(actionTracker, type, args, meta) {
   })
   return {
     instanceId,
-    newCall() {
-      return createStubCall(actionTracker, type, instanceId, ++invokeId)
+    newCall(callMeta?: { [k: string]: any }) {
+      return createStubCall(actionTracker, type, instanceId, ++invokeId, callMeta)
     }
   }
 }
 
-function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId) {
+function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId, callMeta) {
   return {
     invokeId,
     invoked(args: any[], meta?: { [k: string]: any }) {
@@ -207,7 +208,7 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
         type,
         name: 'invoke',
         payload: args,
-        meta,
+        meta: callMeta ? unpartial(callMeta, meta) : meta,
         instanceId,
         invokeId
       })
@@ -231,6 +232,9 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
       })
     },
     onAny(callback) {
+      actionTracker.onAny(callback)
+    },
+    onEmit(callback) {
       actionTracker.onAny(callback)
     },
     succeed(meta?: { [k: string]: any }) {

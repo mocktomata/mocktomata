@@ -15,8 +15,8 @@ export class SpyInstanceImpl implements SpyInstance {
     }
     this.context.addAction(action)
   }
-  newCall(): SpyCall {
-    return new SpyCallImpl(this, ++this.invokeCount)
+  newCall(callMeta?: { [k: string]: any }): SpyCall {
+    return new SpyCallImpl(this, ++this.invokeCount, callMeta)
   }
   addAction(action: Partial<SpecAction>) {
     action.instanceId = this.instanceId
