@@ -30,6 +30,11 @@ const {
   promiseResolved,
   promiseRejected
 } = promise
+
+export function callbackInvoked(...args: any[]) {
+  return { type: 'callback', name: 'invoke', payload: args }
+}
+
 export {
   classConstructed,
   classMethodInvoked,

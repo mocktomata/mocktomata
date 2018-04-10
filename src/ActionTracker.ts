@@ -1,6 +1,7 @@
 import { SpecAction, SimulationMismatch, SpecCallbackAction, StubContext } from 'komondor-plugin'
 import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
+import { unpartial } from 'unpartial'
 
 import { NotSpecable } from './errors'
 import { log } from './log'
@@ -75,11 +76,6 @@ export class ActionTracker {
     if (!returnAction.returnType) return returnAction.payload
 
     let nextAction = this.peek()
-    while (nextAction && !isResultOf(returnAction, nextAction)) {
-      this.process()
-      nextAction = this.peek()
-    }
-
     if (!nextAction) throw new SimulationMismatch(this.specId, {
       type: returnAction.returnType,
       instanceId: returnAction.returnInstanceId
@@ -155,11 +151,7 @@ export class ActionTracker {
     }
   }
 }
-function isResultOf(returnAction: SpecAction, nextAction: SpecAction) {
-  return returnAction.returnType === nextAction.type &&
-    returnAction.returnInstanceId === nextAction.instanceId
-  // and invokeId
-}
+
 function isReturnAction(action, nextAction) {
   // may need to compare meta too.
   return action.type === nextAction.type &&
@@ -168,7 +160,7 @@ function isReturnAction(action, nextAction) {
     action.invokeId === nextAction.invokeId
 }
 function isCallbackAction(action): action is SpecCallbackAction {
-  return action.type === 'komondor' && action.name === 'callback'
+  return action.type === 'callback' && action.name === 'invoke'
 }
 
 
@@ -193,13 +185,13 @@ function createStubInstance(actionTracker, type, args, meta) {
   })
   return {
     instanceId,
-    newCall() {
-      return createStubCall(actionTracker, type, instanceId, ++invokeId)
+    newCall(callMeta?: { [k: string]: any }) {
+      return createStubCall(actionTracker, type, instanceId, ++invokeId, callMeta)
     }
   }
 }
 
-function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId) {
+function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId, callMeta) {
   return {
     invokeId,
     invoked(args: any[], meta?: { [k: string]: any }) {
@@ -207,7 +199,7 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
         type,
         name: 'invoke',
         payload: args,
-        meta,
+        meta: callMeta ? unpartial(callMeta, meta) : meta,
         instanceId,
         invokeId
       })

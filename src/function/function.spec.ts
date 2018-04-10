@@ -1,7 +1,7 @@
 import t from 'assert'
 import a, { satisfy, AssertOrder } from 'assertron'
 
-import { spec, SpecNotFound, functionConstructed, functionInvoked, functionReturned, functionThrown } from '..'
+import { spec, SpecNotFound, functionConstructed, functionInvoked, functionReturned, functionThrown, callbackInvoked } from '..'
 import {
   simpleCallback,
   fetch,
@@ -83,14 +83,11 @@ testTrio('function/simpleCallback/success', (title, spec) => {
       satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 })
     })
 
-    s.on('komondor', 'callback', action => {
+    s.on('callback', 'invoke', action => {
       o.once(2)
-      satisfy(action, {
-        type: 'komondor',
-        name: 'callback',
-        payload: [null, 3],
-        sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1]
-      })
+      satisfy(
+        action,
+        { ...callbackInvoked(null, 3), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] })
     })
 
     s.on('function', 'return', action => {
@@ -103,12 +100,7 @@ testTrio('function/simpleCallback/success', (title, spec) => {
     await s.satisfy([
       functionConstructed({ functionName: 'success' }),
       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: [null, 3],
-        sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1]
-      },
+      { ...callbackInvoked(null, 3), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
     ])
     o.end()
@@ -125,14 +117,12 @@ testTrio('function/simpleCallback/fail', (title, spec) => {
       satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 })
     })
 
-    s.on('komondor', 'callback', action => {
+    s.on('callback', 'invoke', action => {
       o.once(2)
-      satisfy(action, {
-        type: 'komondor',
-        name: 'callback',
-        payload: [{ message: 'fail' }],
-        sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1]
-      })
+      satisfy(
+        action,
+        { ...callbackInvoked({ message: 'fail' }), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] }
+      )
     })
 
     s.on('function', 'return', action => {
@@ -146,14 +136,7 @@ testTrio('function/simpleCallback/fail', (title, spec) => {
         await s.satisfy([
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-          {
-            type: 'komondor', name: 'callback',
-            payload: [{ message: 'fail' }, null],
-            sourceType: 'function',
-            sourceInstanceId: 1,
-            sourceInvokeId: 1,
-            sourcePath: [1]
-          },
+          { ...callbackInvoked({ message: 'fail' }), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
           { ...functionReturned(), instanceId: 1 }])
         o.end()
       })
@@ -170,26 +153,11 @@ testTrio('function spec can be called multiple times', 'spec/delayed/multiple', 
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: [null, 3],
-        sourceType: 'function',
-        sourceInstanceId: 1,
-        sourceInvokeId: 1,
-        sourcePath: [1]
-      },
+      { ...callbackInvoked(null, 3), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
       { ...functionInvoked(4), instanceId: 1, invokeId: 2 },
       { ...functionReturned(), instanceId: 1, invokeId: 2 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: [null, 5],
-        sourceType: 'function',
-        sourceInstanceId: 1,
-        sourceInvokeId: 2,
-        sourcePath: [1]
-      }])
+      { ...callbackInvoked(null, 5), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [1] }
+    ])
   })
 })
 
@@ -202,14 +170,7 @@ testTrio('function/fetch/success', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
-      {
-        type: 'komondor', name: 'callback',
-        payload: [null, 3],
-        sourceType: 'function',
-        sourceInstanceId: 1,
-        sourceInvokeId: 1,
-        sourcePath: [2]
-      },
+      { ...callbackInvoked(null, 3), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
     ])
     t.equal(actual, 3)
@@ -225,15 +186,7 @@ testTrio('function/fetch/fail', (title, spec) => {
         return s.satisfy([
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
-          {
-            type: 'komondor',
-            name: 'callback',
-            payload: [{ message: 'fail' }, null],
-            sourceType: 'function',
-            sourceInstanceId: 1,
-            sourceInvokeId: 1,
-            sourcePath: [2]
-          },
+          { ...callbackInvoked({ message: 'fail' }), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
           { ...functionReturned(), instanceId: 1, invokeId: 1 }
         ])
       })
@@ -249,14 +202,7 @@ testTrio('function/literalCallback/success', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
-      {
-        type: 'komondor', name: 'callback',
-        payload: [3],
-        sourceType: 'function',
-        sourceInstanceId: 1,
-        sourceInvokeId: 1,
-        sourcePath: [0, 'success']
-      },
+      { ...callbackInvoked(3), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [0, 'success'] },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
     ])
   })
@@ -272,8 +218,7 @@ testTrio('function/literalCallback/fail', (title, spec) => {
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
           {
-            type: 'komondor', name: 'callback',
-            payload: [undefined, undefined, { message: 'fail' }],
+            ...callbackInvoked(undefined, undefined, { message: 'fail' }),
             sourceType: 'function',
             sourceInstanceId: 1,
             sourceInvokeId: 1,
@@ -322,25 +267,9 @@ testTrio('function/recursive/twoCalls', (title, spec) => {
     await cbSpec.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: [null, 1],
-        sourceType: 'function',
-        sourceInstanceId: 1,
-        sourceInvokeId: 1,
-        sourcePath: [1]
-      },
+      { ...callbackInvoked(null, 1), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
       { ...functionInvoked(1), instanceId: 1, invokeId: 2 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: [null, 0],
-        sourceType: 'function',
-        sourceInstanceId: 1,
-        sourceInvokeId: 2,
-        sourcePath: [1]
-      },
+      { ...callbackInvoked(null, 0), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [1] },
       { ...functionReturned(), instanceId: 1, invokeId: 2 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
     ])
@@ -365,24 +294,9 @@ testTrio('function/postReturn/success', (title, spec) => {
       { ...functionConstructed({ functionName: 'fireEvent' }), instanceId: 1 },
       { ...functionInvoked('event', 3), instanceId: 1, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: ['event'],
-        sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2]
-      },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: ['event'],
-        sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2]
-      },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: ['event'],
-        sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2]
-      }
+      { ...callbackInvoked('event'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
+      { ...callbackInvoked('event'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
+      { ...callbackInvoked('event'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] }
     ])
   })
 })

@@ -11,7 +11,8 @@ import {
   classMethodInvoked,
   classMethodReturned,
   promiseConstructed,
-  promiseResolved
+  promiseResolved,
+  callbackInvoked
 } from '..'
 import { testTrio } from '../testUtil'
 
@@ -143,24 +144,8 @@ testTrio('class/withCallback', (title, spec) => {
       { ...classMethodReturned('callback'), instanceId: 1, invokeId: 2 },
       { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 3 },
       { ...classMethodReturned('callback'), instanceId: 1, invokeId: 3 },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: ['called'],
-        sourceType: 'class',
-        sourceInstanceId: 1,
-        sourceInvokeId: 2,
-        sourcePath: [0]
-      },
-      {
-        type: 'komondor',
-        name: 'callback',
-        payload: ['called'],
-        sourceType: 'class',
-        sourceInstanceId: 1,
-        sourceInvokeId: 3,
-        sourcePath: [0]
-      }
+      { ...callbackInvoked('called'), sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [0] },
+      { ...callbackInvoked('called'), sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 3, sourcePath: [0] }
     ])
   })
 })

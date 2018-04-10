@@ -10,7 +10,8 @@ import {
   promiseConstructed,
   promiseResolved,
   promiseRejected,
-  functionReturned
+  functionReturned,
+  callbackInvoked
 } from '..'
 
 const promise = {
@@ -160,14 +161,7 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
           { ...functionInvoked(2), invokeId: 1, instanceId: 1 },
           { ...functionReturned(), invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
-          {
-            type: 'komondor',
-            name: 'callback',
-            payload: ['called'],
-            sourceType: 'function',
-            sourceInvokeId: 1,
-            sourcePath: [1]
-          },
+          { ...callbackInvoked('called'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
           { ...promiseResolved(3), invokeId: 1, instanceId: 1 }
         ])
       })
@@ -184,18 +178,13 @@ testTrio('promise/returns/function', (title, spec) => {
         t.equal(actualFn(), 3)
         return s.satisfy([
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-          { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
-          { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
+          { ...functionReturned(), instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
-          { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, returnType: 'function', returnInstanceId: 2, instanceId: 1 },
+          { ...promiseResolved(), instanceId: 1, invokeId: 1, returnType: 'function', returnInstanceId: 2 },
           { ...functionConstructed(), instanceId: 2 },
-          {
-            type: 'function',
-            name: 'invoke',
-            invokeId: 1,
-            instanceId: 2
-          },
-          { type: 'function', name: 'return', payload: 3, invokeId: 1, instanceId: 2 }
+          { ...functionInvoked(), instanceId: 2, invokeId: 1 },
+          { ...functionReturned(3), instanceId: 2, invokeId: 1 }
         ])
       })
   })

@@ -45,11 +45,5 @@ function getPromiseStub(context: StubContext) {
         reject(call.thrown())
       }
     })
-    // if (call.succeed({ state: 'fulfilled' })) {
-    //   resolve(call.result())
-    // }
-    // else {
-    //   reject(call.thrown())
-    // }
   })
 }

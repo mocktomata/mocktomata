@@ -1,4 +1,5 @@
 import { SpyCall, SpecAction } from 'komondor-plugin'
+import { unpartial } from 'unpartial'
 
 import { SpyInstanceImpl } from './SpyInstanceImpl'
 
@@ -6,13 +7,13 @@ export class SpyCallImpl implements SpyCall {
   trigger<T>(_err: T, _meta?: { [k: string]: any; } | undefined): T {
     throw new Error('Method not implemented.');
   }
-  constructor(public instance: SpyInstanceImpl, public invokeId: number) {
+  constructor(public instance: SpyInstanceImpl, public invokeId: number, public callMeta?: { [k: string]: any }) {
   }
   invoke<T extends any[]>(args: T, meta?: { [k: string]: any }): T {
     this.instance.addAction({
       name: 'invoke',
       payload: args,
-      meta,
+      meta: this.callMeta ? unpartial(this.callMeta, meta) : meta,
       invokeId: this.invokeId
     })
 
@@ -41,7 +42,7 @@ export class SpyCallImpl implements SpyCall {
     const action = this.instance.addAction({
       name: 'return',
       payload: result,
-      meta,
+      meta: this.callMeta ? unpartial(this.callMeta, meta) : meta,
       invokeId: this.invokeId
     })
 
@@ -51,7 +52,7 @@ export class SpyCallImpl implements SpyCall {
     this.instance.addAction({
       name: 'throw',
       payload: err,
-      meta,
+      meta: this.callMeta ? unpartial(this.callMeta, meta) : meta,
       invokeId: this.invokeId
     })
     return err

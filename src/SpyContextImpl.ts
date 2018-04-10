@@ -52,8 +52,8 @@ export class SpyContextImpl implements SpyContext {
   }
   addCallbackAction(action: Partial<SpecAction>) {
     const a = unpartial({
-      type: 'komondor',
-      name: 'callback',
+      type: 'callback',
+      name: 'invoke',
       sourceType: this.plugin.type
     } as SpecAction, action)
     this.addAction(a)
