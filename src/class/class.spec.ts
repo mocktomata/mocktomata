@@ -3,9 +3,17 @@ import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 import { setImmediate } from 'timers'
 
-import { spec, SpecNotFound, classConstructed, classMethodThrown, classMethodInvoked, classMethodReturned, promiseResolved } from '..'
+import {
+  spec,
+  SpecNotFound,
+  classConstructed,
+  classMethodThrown,
+  classMethodInvoked,
+  classMethodReturned,
+  promiseConstructed,
+  promiseResolved
+} from '..'
 import { testTrio } from '../testUtil'
-import { promiseConstructed } from '../promise';
 
 
 class Foo {
@@ -212,24 +220,25 @@ class Promising {
   }
 }
 
-test.skip('', async () => {
-  // ci11: do(1) invoked
-  // cr11: do(1) return Promise
-  // ai11: Promise
-  // ci11: do(1) invoked
-  // cr11: do(1) return Promise 1
-  // ci12: do(2) invoked
-  // cr12: do(2) return Promise 2
-  // ar11: Promise 1 return
-  // ar21: Promise 2 return
-  // ci13: do(3) invoked
-  // cr13: do(3) return
-  // ar31: Promise 3
+test('async promise call', async () => {
+  // 'classc10',
+  // 'classi11',
+  // 'classr11',
+  // 'promisec10',
+  // 'classi12',
+  // 'classr12',
+  // 'promisec20',
+  // 'promiser11',
+  // 'promiser21',
+  // 'classi13',
+  // 'classr13',
+  // 'promisec30',
+  // 'promiser31'
 
   const s = await spec.simulate('class/promising', Promising)
   const p = new s.subject()
-  console.info(s.actions.filter(a => a.name !== 'construct').map(a => {
-    return (a.type === 'class' ? 'c' : 'a') + a.name[0] + a.instanceId + (a.invokeId || 0)
+  console.info(s.actions.map(a => {
+    return a.type + a.name[0] + a.instanceId + (a.invokeId || 0)
   }))
 
   await Promise.all([1, 2].map(x => p.do(x)))

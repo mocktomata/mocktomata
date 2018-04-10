@@ -1,9 +1,8 @@
 import a, { AssertOrder } from 'assertron'
 import t from 'assert'
 
-import { config, given, onGiven, spec, MissingSpecID, functionReturned } from './index'
+import { config, given, onGiven, spec, MissingSpecID, functionConstructed, functionInvoked, functionReturned } from '.'
 import { resetStore } from './store'
-import { functionConstructed, functionInvoked } from './function';
 
 const simpleCallback = {
   increment(remote, x) {

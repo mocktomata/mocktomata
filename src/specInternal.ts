@@ -8,7 +8,7 @@ import { io } from './io'
 import { plugins } from './plugin'
 import { IdTracker, SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
-import { StubContextImpl, ActionTracker } from './StubContextImpl'
+import { ActionTracker, createStubContext } from './ActionTracker'
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -135,19 +135,17 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   }
 
   const actions = await loadActions(specId)
-  const actionTracker = new ActionTracker(actions)
-  const contexts = []
-
-  const context = new StubContextImpl({ contexts, actionTracker }, specId, plugin, subject)
+  const actionTracker = new ActionTracker(specId, actions)
+  const context = createStubContext(actionTracker, plugin.type)
 
   const spec: Spec<T> = {
     actions,
     subject: plugin.getStub(context, subject),
     on(actionType: string, name: string, callback) {
-      context.on(actionType, name, callback)
+      actionTracker.on(actionType, name, callback)
     },
     onAny(callback) {
-      context.onAny(callback)
+      actionTracker.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {

@@ -37,19 +37,19 @@ function getPromiseStub(context: StubContext) {
   const instance = context.newInstance()
   const call = instance.newCall()
   return new Promise((resolve, reject) => {
-    // call.on({ state: 'fulfilled' }, () => {
-    //   if (call.succeed({ state: 'fulfilled' })) {
-    //     resolve(call.result())
-    //   }
-    //   else {
-    //     reject(call.thrown())
-    //   }
-    // })
-    if (call.succeed({ state: 'fulfilled' })) {
-      resolve(call.result())
-    }
-    else {
-      reject(call.thrown())
-    }
+    call.waitUntilReturn(() => {
+      if (call.succeed({ state: 'fulfilled' })) {
+        resolve(call.result())
+      }
+      else {
+        reject(call.thrown())
+      }
+    })
+    // if (call.succeed({ state: 'fulfilled' })) {
+    //   resolve(call.result())
+    // }
+    // else {
+    //   reject(call.thrown())
+    // }
   })
 }

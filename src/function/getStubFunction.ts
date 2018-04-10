@@ -7,7 +7,7 @@ export function stubFunction(context: StubContext, subject) {
   return function (...args) {
     const call = instance.newCall()
     call.invoked(args)
-    call.waitSync()
+    call.blockUntilReturn()
     if (call.succeed())
       return call.result()
     else

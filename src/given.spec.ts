@@ -5,8 +5,15 @@ import fs from 'fs'
 import path from 'path'
 
 import { GIVENS_FOLDER, SPECS_FOLDER } from './constants'
-import { MissingGivenHandler, DuplicateGivenHandler, GivenSaveRequireSpecId, onGiven, given } from './index'
-import { functionConstructed, functionInvoked } from './function';
+import {
+  MissingGivenHandler,
+  DuplicateGivenHandler,
+  GivenSaveRequireSpecId,
+  onGiven,
+  given,
+  functionConstructed,
+  functionInvoked
+} from '.'
 
 test('no handler registered throws MissingGivenHandler', async () => {
   await a.throws(given('no handler'), MissingGivenHandler)

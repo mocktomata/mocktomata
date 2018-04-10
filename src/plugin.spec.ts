@@ -1,10 +1,10 @@
 import t from 'assert'
-import a, { AssertOrder, satisfy } from 'assertron'
-import { Registrar } from 'komondor-plugin'
+import a, { AssertOrder } from 'assertron'
+import { Registrar, SimulationMismatch } from 'komondor-plugin'
+import { tersify } from 'tersify'
 
 import { DuplicatePlugin, spec } from '.'
 import { loadConfig, registerPlugin } from './plugin'
-import { tersify } from 'tersify';
 
 
 describe('loadConfig()', () => {
@@ -41,7 +41,7 @@ describe('registerPlugin()', () => {
 })
 
 
-test('peek with no action returns undefined', async () => {
+test('no action throws SimulationMismatch', async () => {
   const o = new AssertOrder(1)
   registerPlugin({
     activate(r: Registrar) {
@@ -51,7 +51,8 @@ test('peek with no action returns undefined', async () => {
         x => x,
         (context, subject) => {
           o.once(1)
-          t.equal(context.peek(), undefined)
+          a.throws(() => context.newInstance(), SimulationMismatch)
+
           return subject
         }
       )
@@ -59,79 +60,6 @@ test('peek with no action returns undefined', async () => {
   })
 
   await spec.simulate('plugin/noActions', 'peek-noAction')
-  o.end()
-})
-
-
-test('peek with actions returns first action', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'peek-first-action',
-        subject => subject === 'peek-first-action',
-        x => x,
-        (context, subject) => {
-          o.once(1)
-          satisfy(context.peek(), { type: 'action1' })
-          return subject
-        }
-      )
-    }
-  })
-
-  await spec.simulate('plugin/twoActions', 'peek-first-action')
-  o.end()
-})
-
-test('next with no action returns undefined', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'next-noActions',
-        subject => subject === 'next-noActions',
-        x => x,
-        (context, subject) => {
-          o.once(1)
-          t.equal(context.next(), undefined)
-          return subject
-        }
-      )
-    }
-  })
-
-  await spec.simulate('plugin/noActions', 'next-noActions')
-  o.end()
-})
-
-
-test('next moves to next action and peek gets it', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'next-and-peek',
-        subject => subject === 'next-and-peek',
-        x => x,
-        (context, subject) => {
-          o.once(1)
-          const a1 = context.peek()
-          context.next()
-          const a2 = context.peek()
-          context.next()
-          const a3 = context.peek()
-
-          satisfy(a1, { type: 'action1', payload: [] })
-          satisfy(a2, { type: 'action2', payload: [] })
-          t.equal(a3, undefined)
-          return subject
-        }
-      )
-    }
-  })
-
-  await spec.simulate('plugin/twoActions', 'next-and-peek')
   o.end()
 })
 

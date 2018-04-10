@@ -1,7 +1,7 @@
 import t from 'assert'
 import a, { satisfy, AssertOrder } from 'assertron'
 
-import { spec, SpecNotFound, functionInvoked, functionReturned, functionThrown } from '..'
+import { spec, SpecNotFound, functionConstructed, functionInvoked, functionReturned, functionThrown } from '..'
 import {
   simpleCallback,
   fetch,
@@ -12,7 +12,6 @@ import {
   postReturn
 } from './testSuites'
 import { testTrio } from '../testUtil'
-import { functionConstructed } from '.';
 
 function increment(x) {
   return x + 1

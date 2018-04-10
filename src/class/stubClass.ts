@@ -16,7 +16,7 @@ export function stubClass(context: StubContext, subject) {
       const instance = this.__komondorStub.instance
       const call = instance.newCall()
       call.invoked(args, { methodName: p })
-      call.waitSync()
+      call.blockUntilReturn()
       if (call.succeed()) {
         return call.result()
       }

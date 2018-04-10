@@ -3,9 +3,15 @@ import a from 'assertron'
 import { setTimeout } from 'timers'
 
 import { testTrio } from '../testUtil'
-import { spec, promiseResolved, promiseRejected, functionReturned } from '..'
-import { functionConstructed, functionInvoked } from '../function';
-import { promiseConstructed } from '.';
+import {
+  spec,
+  functionConstructed,
+  functionInvoked,
+  promiseConstructed,
+  promiseResolved,
+  promiseRejected,
+  functionReturned
+} from '..'
 
 const promise = {
   increment(remote, x) {
@@ -52,7 +58,7 @@ function rejecting(y) {
   return Promise.reject(y)
 }
 
-test.only('acceptance', async () => {
+test('acceptance', async () => {
   const res = await spec(resolving)
   await res.subject(1)
 
@@ -84,6 +90,7 @@ testTrio('promise/noReturn', (title, spec) => {
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { type: 'function', name: 'invoke', invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...promiseConstructed(), instanceId: 1 },
           { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
         ])
       })
@@ -102,6 +109,7 @@ testTrio('promise/resolve', (title, spec) => {
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...promiseConstructed(), instanceId: 1 },
           { type: 'promise', name: 'return', payload: 3, meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
         ])
       })
@@ -118,6 +126,7 @@ testTrio('promise/reject', (title, spec) => {
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...promiseConstructed(), instanceId: 1 },
           { type: 'promise', name: 'return', payload: { message: 'fail' }, meta: { state: 'rejected' }, invokeId: 1, instanceId: 1 }
         ])
       })
@@ -148,8 +157,9 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
         t.equal(actual, 3)
         return s.satisfy([
           { ...functionConstructed({ functionName: 'foo' }), instanceId: 1 },
-          { type: 'function', name: 'invoke', payload: [2], invokeId: 1, instanceId: 1 },
-          { type: 'function', name: 'return', invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...functionInvoked(2), invokeId: 1, instanceId: 1 },
+          { ...functionReturned(), invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...promiseConstructed(), instanceId: 1 },
           {
             type: 'komondor',
             name: 'callback',
@@ -158,7 +168,7 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
             sourceInvokeId: 1,
             sourcePath: [1]
           },
-          { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, payload: 3, invokeId: 1, instanceId: 1 }
+          { ...promiseResolved(3), invokeId: 1, instanceId: 1 }
         ])
       })
   })
@@ -176,6 +186,7 @@ testTrio('promise/returns/function', (title, spec) => {
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
           { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...promiseConstructed(), instanceId: 1 },
           { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, returnType: 'function', returnInstanceId: 2, instanceId: 1 },
           { ...functionConstructed(), instanceId: 2 },
           {
