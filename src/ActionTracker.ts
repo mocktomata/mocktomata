@@ -1,11 +1,11 @@
 import { SpecAction, SimulationMismatch, SpecCallbackAction, StubContext } from 'komondor-plugin'
 import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
+import { unpartial } from 'unpartial'
 
 import { NotSpecable } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
-import { unpartial } from 'unpartial';
 
 export class ActionTracker {
   callbacks: { action: SpecAction, callback: Function }[] = []
