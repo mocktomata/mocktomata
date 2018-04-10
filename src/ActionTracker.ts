@@ -76,11 +76,6 @@ export class ActionTracker {
     if (!returnAction.returnType) return returnAction.payload
 
     let nextAction = this.peek()
-    while (nextAction && !isResultOf(returnAction, nextAction)) {
-      this.process()
-      nextAction = this.peek()
-    }
-
     if (!nextAction) throw new SimulationMismatch(this.specId, {
       type: returnAction.returnType,
       instanceId: returnAction.returnInstanceId
