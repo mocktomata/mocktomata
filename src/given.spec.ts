@@ -5,7 +5,15 @@ import fs from 'fs'
 import path from 'path'
 
 import { GIVENS_FOLDER, SPECS_FOLDER } from './constants'
-import { MissingGivenHandler, DuplicateGivenHandler, GivenSaveRequireSpecId, onGiven, given } from './index'
+import {
+  MissingGivenHandler,
+  DuplicateGivenHandler,
+  GivenSaveRequireSpecId,
+  onGiven,
+  given,
+  functionConstructed,
+  functionInvoked
+} from '.'
 
 test('no handler registered throws MissingGivenHandler', async () => {
   await a.throws(given('no handler'), MissingGivenHandler)
@@ -122,7 +130,10 @@ test('given.simulate() will force spec to simulate', async () => {
     const cbSpec = await spec('given/simulate/spec', success)
     cbSpec.subject(2, (_, a) => t.equal(a, 3))
 
-    return cbSpec.satisfy([undefined, { payload: [undefined, 3] }])
+    return cbSpec.satisfy([
+      functionConstructed(),
+      functionInvoked(2),
+      { payload: [undefined, 3] }])
   })
 
   await given.simulate('simulate calling env')
@@ -131,7 +142,7 @@ test('given.simulate() will force spec to simulate', async () => {
 test('given.simulate() will force spec in localHandler to simulate', async () => {
   function success(_a, _cb) {
     // the original line to create the spec
-    // callback(null, a + 1)
+    // _cb(null, _a + 1)
     t.fail('should not reach')
   }
 
@@ -140,7 +151,10 @@ test('given.simulate() will force spec in localHandler to simulate', async () =>
     const cbSpec = await spec('given/simulate/spec', success)
     cbSpec.subject(2, (_, a) => t.equal(a, 3))
 
-    return cbSpec.satisfy([undefined, { payload: [undefined, 3] }])
+    return cbSpec.satisfy([
+      functionConstructed(),
+      functionInvoked(),
+      { payload: [undefined, 3] }])
   })
 })
 

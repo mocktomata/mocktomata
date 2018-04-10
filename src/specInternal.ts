@@ -4,11 +4,11 @@ import { tersify } from 'tersify'
 
 import { MissingSpecID, SpecNotFound, NotSpecable } from './errors'
 import { Spec } from './interfaces'
-import { IdTracker, InternalSpyContext } from './InternalSpyContext'
 import { io } from './io'
 import { plugins } from './plugin'
+import { IdTracker, SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
-import { InternalStubContext, ActionTracker } from './InternalStubContext';
+import { ActionTracker, createStubContext } from './ActionTracker'
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -58,7 +58,6 @@ async function createSpec(specId: string, subject, mode: SpecMode) {
   }
 }
 
-
 async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
   const plugin = plugins.find(p => p.support(subject))
   if (!plugin) {
@@ -66,29 +65,21 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   }
 
   const idTracker = new IdTracker()
-  const actions: SpecAction[] = []
-  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  const listenAll: ((action) => void)[] = []
 
-  const spyContext = new InternalSpyContext({ idTracker, actions, events, listenAll }, 'live', specId, plugin)
+  const context = new SpyContextImpl({ idTracker }, 'live', specId, plugin)
 
   const spec: Spec<T> = {
-    actions,
-    subject: plugin.getSpy(spyContext, subject),
+    actions: context.actions,
+    subject: plugin.getSpy(context, subject),
     on(actionType: string, name: string, callback) {
-      if (!events[actionType])
-        events[actionType] = {}
-      if (!events[actionType][name])
-        events[actionType][name] = []
-      events[actionType][name].push(callback)
+      context.on(actionType, name, callback)
     },
     onAny(callback) {
-      listenAll.push(callback)
+      context.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        const actions = spec.actions
-        satisfy(actions, expectation)
+        satisfy(spec.actions, expectation)
       })
     }
   }
@@ -105,35 +96,28 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   }
 
   const idTracker = new IdTracker()
-  const actions: SpecAction[] = []
-  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  const listenAll: ((action) => void)[] = []
 
-  const spyContext = new InternalSpyContext({ idTracker, actions, events, listenAll }, 'save', specId, plugin)
+  const context = new SpyContextImpl({ idTracker }, 'save', specId, plugin)
 
   const spec: Spec<T> = {
-    actions,
-    subject: plugin.getSpy(spyContext, subject),
+    actions: context.actions,
+    subject: plugin.getSpy(context, subject),
     on(actionType: string, name: string, callback) {
-      if (!events[actionType])
-        events[actionType] = {}
-      if (!events[actionType][name])
-        events[actionType][name] = []
-      events[actionType][name].push(callback)
+      context.on(actionType, name, callback)
     },
     onAny(callback) {
-      listenAll.push(callback)
+      context.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        satisfy(actions, expectation)
+        satisfy(context.actions, expectation)
         // istanbul ignore next
         if (!specId)
           throw new Error('Cannot save spec without options.id.')
-        makeErrorSerializable(actions)
+        makeErrorSerializable(this.actions)
         return io.writeSpec(specId, {
           expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
-          actions
+          actions: this.actions
         })
       })
     }
@@ -151,30 +135,21 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   }
 
   const actions = await loadActions(specId)
-  const actionTracker = new ActionTracker(actions)
-  const events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  const listenAll: ((action) => void)[] = []
-  const contexts = []
-
-  const context = new InternalStubContext({ contexts, actionTracker, events, listenAll }, specId, plugin, subject)
+  const actionTracker = new ActionTracker(specId, actions)
+  const context = createStubContext(actionTracker, plugin.type)
 
   const spec: Spec<T> = {
     actions,
     subject: plugin.getStub(context, subject),
     on(actionType: string, name: string, callback) {
-      if (!events[actionType])
-        events[actionType] = {}
-      if (!events[actionType][name])
-        events[actionType][name] = []
-      events[actionType][name].push(callback)
+      actionTracker.on(actionType, name, callback)
     },
     onAny(callback) {
-      listenAll.push(callback)
+      actionTracker.onAny(callback)
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        const actions = spec.actions
-        satisfy(actions, expectation)
+        satisfy(spec.actions, expectation)
       })
     }
   }

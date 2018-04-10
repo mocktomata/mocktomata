@@ -30,7 +30,7 @@ export class SpecNotFound extends BaseError {
 
 export class NotSpecable extends BaseError {
   constructor(public subject) {
-    super(`The subject ${tersify(subject, { maxLength: 50 })} is not supported by any loaded plugins`)
+    super(`The ${typeof subject === 'string' ? subject : `subject ${tersify(subject, { maxLength: 50 })}`} is not supported by any loaded plugins`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }

@@ -1,8 +1,12 @@
 import { Registrar, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
 const TYPE = 'promise'
-export const promiseResolved = createExpectation(TYPE, 'return', { status: 'resolve' })
-export const promiseRejected = createExpectation(TYPE, 'return', { status: 'reject' })
+
+export function promiseConstructed() {
+  return { type: TYPE, name: 'construct' }
+}
+export const promiseResolved = createExpectation(TYPE, 'return', { state: 'fulfilled' })
+export const promiseRejected = createExpectation(TYPE, 'return', { state: 'rejected' })
 
 export function activate(registrar: Registrar) {
   registrar.register(
@@ -18,24 +22,34 @@ function isPromise(result) {
 }
 
 function getPromiseSpy(context: SpyContext, subject) {
-  const call = context.newCall()
+  const instance = context.newInstance()
+  const call = instance.newCall()
   return subject.then(
     result => {
-      return call.return(result, { status: 'resolve' })
+      return call.return(result, { state: 'fulfilled' })
     },
     err => {
-      throw call.return(err, { status: 'reject' })
+      throw call.return(err, { state: 'rejected' })
     })
 }
 
 function getPromiseStub(context: StubContext) {
-  const call = context.newCall()
+  const instance = context.newInstance()
+  const call = instance.newCall()
   return new Promise((resolve, reject) => {
-    if (call.succeed({ status: 'resolve' })) {
-      resolve(call.result())
-    }
-    else {
-      reject(call.thrown())
-    }
+    call.waitUntilReturn(() => {
+      if (call.succeed({ state: 'fulfilled' })) {
+        resolve(call.result())
+      }
+      else {
+        reject(call.thrown())
+      }
+    })
+    // if (call.succeed({ state: 'fulfilled' })) {
+    //   resolve(call.result())
+    // }
+    // else {
+    //   reject(call.thrown())
+    // }
   })
 }

@@ -1,7 +1,7 @@
 import a, { AssertOrder } from 'assertron'
 import t from 'assert'
 
-import { config, given, onGiven, spec, MissingSpecID } from './index'
+import { config, given, onGiven, spec, MissingSpecID, functionConstructed, functionInvoked, functionReturned } from '.'
 import { resetStore } from './store'
 
 const simpleCallback = {
@@ -21,14 +21,18 @@ const simpleCallback = {
   }
 }
 
-const forceReplaySuccessExpectation = [
-  {
-    type: 'function',
-    name: 'invoke',
-    payload: [2],
-    instanceId: 1,
-    invokeId: 1
+const fake = {
+  success(_a, _callback) {
+    throw new Error('should not reach')
   },
+  fail(_a, _callback) {
+    throw new Error('should not reach')
+  }
+}
+
+const forceReplaySuccessExpectation = [
+  { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+  { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
   {
     type: 'komondor',
     name: 'callback',
@@ -38,18 +42,12 @@ const forceReplaySuccessExpectation = [
     sourceInvokeId: 1,
     sourcePath: [1]
   },
-  {
-    type: 'function',
-    name: 'return',
-    instanceId: 1,
-    invokeId: 1
-  }]
+  { ...functionReturned(), instanceId: 1, invokeId: 1 }]
 
 
 const forceReplayFailExpectation = [
-  {
-    type: 'function', name: 'invoke', payload: [2], instanceId: 1, invokeId: 1
-  },
+  { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
+  { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
   {
     type: 'komondor',
     name: 'callback',
@@ -59,7 +57,7 @@ const forceReplayFailExpectation = [
     sourceInvokeId: 1,
     sourcePath: [1]
   },
-  { type: 'function', name: 'return', instanceId: 1, invokeId: 1 }]
+  { ...functionReturned(), instanceId: 1, invokeId: 1 }]
 
 beforeEach(() => {
   resetStore()
@@ -70,10 +68,10 @@ afterEach(() => {
 })
 
 test(`config.spec('simulate') will force all specs in simulate mode`, async () => {
+  // const s = await spec.save('config/forceReplaySuccess', simpleCallback.success)
   config.spec('simulate')
 
-  // const s = await spec.save('config/forceReplaySuccess', simpleCallback.success)
-  const s = await spec('config/forceReplaySuccess', simpleCallback.fail)
+  const s = await spec('config/forceReplaySuccess', fake.success)
   const actual = await simpleCallback.increment(s.subject, 2)
 
   // this should have failed if the spec is running in 'live' mode.
@@ -88,7 +86,7 @@ test('config.spec() can filter for specific spec', async () => {
   config.spec('simulate', 'config/forceReplayFail')
 
   // const successSpec = await spec.save('config/forceReplayFail', simpleCallback.fail)
-  const successSpec = await spec('config/forceReplayFail', simpleCallback.success)
+  const successSpec = await spec('config/forceReplayFail', fake.fail)
   await simpleCallback.increment(successSpec.subject, 2)
     .then(() => t.fail('should not reach'))
     .catch(() => {
@@ -110,7 +108,7 @@ test('config.spec() can filter for specific spec', async () => {
 
 test('config.spec() can filter using regex', async () => {
   config.spec('simulate', /config\/forceReplay/)
-  const successSpec = await spec('config/forceReplayFail', simpleCallback.success)
+  const successSpec = await spec('config/forceReplayFail', fake.fail)
   await simpleCallback.increment(successSpec.subject, 2)
     .then(() => t.fail('should not reach'))
     .catch(() => {

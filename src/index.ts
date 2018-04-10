@@ -2,7 +2,6 @@ export * from './config'
 export * from './given'
 export * from './errors'
 export * from './interfaces'
-export * from './io'
 export * from './spec'
 
 import { registerPlugin, loadPlugins } from './plugin'
@@ -21,11 +20,13 @@ const {
 } = genericClass
 
 const {
+  functionConstructed,
   functionInvoked,
   functionReturned,
   functionThrown
 } = genericFunction
 const {
+  promiseConstructed,
   promiseResolved,
   promiseRejected
 } = promise
@@ -34,9 +35,11 @@ export {
   classMethodInvoked,
   classMethodReturned,
   classMethodThrown,
+  functionConstructed,
   functionInvoked,
   functionReturned,
   functionThrown,
+  promiseConstructed,
   promiseResolved,
   promiseRejected
 }

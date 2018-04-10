@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { spec, SpecNotFound, NotSpecable, MissingReturnRecord } from '.'
+import { spec, SpecNotFound, NotSpecable } from '.'
 import { simpleCallback } from './function/testSuites'
 import { testTrio } from './testUtil'
 
@@ -20,8 +20,9 @@ test('missing return record will throw', async () => {
   const subject = () => 3
   const s = await spec.simulate('spec/missedReturn', subject)
 
-  const err = await a.throws(() => s.subject(), MissingReturnRecord)
-  t.equal(err.message, 'No return record found. Corrupted spec?')
+  // s.subject()
+  // await s.satisfy([])
+  await a.throws(() => s.subject(), SimulationMismatch)
 })
 
 test('missing record will throw', async () => {
