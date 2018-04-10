@@ -46,6 +46,7 @@ export class ActionTracker {
       const next = this.peek()
       if (next === expected) {
         // infinite loop
+        // istanbul ignore next
         log.error(`blockUntil: can't move forward with ${tersify(next, { maxLength: Infinity })}`)
         break
       }
@@ -234,9 +235,6 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
     },
     succeed(meta?: { [k: string]: any }) {
       return actionTracker.succeed(meta)
-    },
-    peek() {
-      return actionTracker.peek()
     },
     result() {
       return actionTracker.result()
