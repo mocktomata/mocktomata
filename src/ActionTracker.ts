@@ -151,11 +151,6 @@ export class ActionTracker {
     }
   }
 }
-function isResultOf(returnAction: SpecAction, nextAction: SpecAction) {
-  return returnAction.returnType === nextAction.type &&
-    returnAction.returnInstanceId === nextAction.instanceId
-  // and invokeId
-}
 function isReturnAction(action, nextAction) {
   // may need to compare meta too.
   return action.type === nextAction.type &&
