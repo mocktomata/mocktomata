@@ -151,6 +151,7 @@ export class ActionTracker {
     }
   }
 }
+
 function isReturnAction(action, nextAction) {
   // may need to compare meta too.
   return action.type === nextAction.type &&
@@ -222,9 +223,6 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
       })
     },
     onAny(callback) {
-      actionTracker.onAny(callback)
-    },
-    onEmit(callback) {
       actionTracker.onAny(callback)
     },
     succeed(meta?: { [k: string]: any }) {
