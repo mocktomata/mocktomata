@@ -34,7 +34,6 @@ export class ActionTracker {
     log.onDebug(() => `result: ${tersify(expected)}`)
 
     const result = this.getResultOf(expected)
-    this.process()
     setImmediate(() => this.process())
     return result
   }

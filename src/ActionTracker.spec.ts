@@ -3,7 +3,7 @@ import a, { AssertOrder } from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
 import { SpecNotFound, functionConstructed, functionInvoked } from '.'
-import { ActionTracker, createStubContext } from './ActionTracker'
+import { ActionTracker } from './ActionTracker'
 import { io } from './io'
 import { createSpecAction } from './testUtil'
 
@@ -114,25 +114,6 @@ test('promise/inBetween', async () => {
     tracker.result().then(v => a(v))
   })
   t.equal(actual, 3)
-})
-
-test('spec/delayed/multiple', async () => {
-  const tracker = await setupTrackerTest('spec/delayed/multiple')
-  const o = new AssertOrder(2)
-  const context = createStubContext(tracker, 'function')
-  const instance = context.newInstance(undefined, { functionName: 'success' })
-  const call1 = instance.newCall()
-  call1.invoked([2, (_err, v) => {
-    o.once(1)
-    t.equal(v, 3)
-  }])
-  call1.result()
-  const call2 = instance.newCall()
-  call2.invoked([4, (_err, v) => {
-    o.once(2)
-    t.equal(v, 5)
-  }])
-  call2.result()
 })
 
 async function setupTrackerTest(specId: string) {
