@@ -121,16 +121,8 @@ test('get follower of a user', async t => {
   // (optional) get the actual actions recorded by `komondor` for inspection
   console.log(getFollowersSpec.actions)
 
-  // (required) ensure the record will meet your expectation
-  await getFollowersSpec.satisfy([
-    undefined,
-    {
-      type: 'fn/callback',
-      payload: [null, {
-        data: e => e.login && e.id
-      }]
-    }
-  ])
+  // (required) tells spec that it is ready to save the record (in save mode).
+  await getFollowersSpec.done()
 })
 ```
 
@@ -215,19 +207,26 @@ To create a plugin, please check [`komondor-plugin`](https://github.com/unional/
 
 Since `komondor` will record the calls,
 if they contain sensitive information you don't want to keep in the record,
-you can remove them in the `spec.actions` before you make the `spec.satisfy()` call.
+you can remove them in the `spec.actions` before you make the `spec.done()` call.
+
+## speced.satisfy(expectations)
+
+You can use this method instead of `speced.done()` if you want to validate the call has been performed correctly.
+
+It is generally better than `speced.done()`;
+however, since there are still come changes need to be made to the spec record before it is stable,
+using `speced.done()` saves you some tendious work in updating the expectations before that happens.
 
 ## FAQ
 
 ### Nothing happen when I change to save mode
 
-Check if you have wait for `spec.satisfy()`.
+Check if you have wait for `speced.done()`.
 
-i.e., you should have `await yourSpec.satisfy(...)` in your test.
+i.e., you should have `await yourSpec.done(...)` in your test.
 
-The record will be save once the `satisfy()` call is passed.
+The record will be save when `done()` resolves.
 
-This prevent bad information overriding saved good information.
 
 ### Using komondor with node-fetch
 
