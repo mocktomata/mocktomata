@@ -1,4 +1,5 @@
 import { SpecAction } from 'komondor-plugin'
+import { ArrayEntryExpectation } from 'satisfier'
 
 export type GivenMode = 'live' | 'save' | 'simulate'
 
@@ -33,7 +34,7 @@ export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
-  satisfy(expectation: Array<Partial<SpecAction> | undefined>): Promise<void>
+  satisfy(expectation: Array<Partial<SpecAction> | ArrayEntryExpectation | undefined>): Promise<void>
 }
 
 export interface GivenRecord {
