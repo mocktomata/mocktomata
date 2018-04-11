@@ -21,6 +21,10 @@ export class SpyCallImpl implements SpyCall {
       if (typeof arg === 'function') {
         return this.spyOnCallback(arg, [i])
       }
+      if (Array.isArray(arg)) {
+        // assuming there will be no callbacks in array parameters
+        return arg
+      }
       if (typeof arg === 'object' && arg !== null) {
         const result = {}
         Object.keys(arg).forEach(key => {

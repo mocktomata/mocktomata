@@ -11,7 +11,7 @@ import {
   recursive,
   postReturn
 } from './testSuites'
-import { testTrio } from '../testUtil'
+import { testTrio, testLive } from '../testUtil'
 
 function increment(x) {
   return x + 1
@@ -298,5 +298,17 @@ testTrio('function/postReturn/success', (title, spec) => {
       { ...callbackInvoked('event'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
       { ...callbackInvoked('event'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] }
     ])
+  })
+})
+
+testLive('function/arrayArgs/success', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(function takeArray(name, args) { return { name, args } })
+    const actual = s.subject('node', ['--version'])
+
+    t.equal(actual.name, 'node')
+    t(Array.isArray(actual.args))
+    t.equal(actual.args[0], '--version')
+    await s.satisfy([])
   })
 })

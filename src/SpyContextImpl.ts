@@ -46,7 +46,6 @@ export class SpyContextImpl implements SpyContext {
     if (plugin) {
       const childContext = this.createChildContext(plugin, action)
       action.returnType = plugin.type
-      // action.returnInstanceId = childContext.instanceId
       return plugin.getSpy(childContext, action.payload)
     }
   }
@@ -80,8 +79,6 @@ export class SpyContextImpl implements SpyContext {
       returnAction.returnInstanceId = instance.instanceId
       return instance
     }
-    // on new instance?, add the returnInstanceId.
-    // childContext.returnAction = returnAction
     return childContext
   }
   on(actionType: string, name: string, callback) {
