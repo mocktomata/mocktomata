@@ -18,7 +18,7 @@ export class ActionTracker {
     if (SimulationMismatch.mismatch(actual, expected)) {
       throw new SimulationMismatch(this.specId, expected, actual)
     }
-    log.onDebug(() => `received: ${tersify(actual)}`)
+    log.onDebug(() => `received: ${tersify(actual, { maxLength: Infinity })}`)
 
     this.push(actual)
     this.process(actual)
@@ -31,14 +31,14 @@ export class ActionTracker {
     const expected = this.peek()
     this.push(expected)
 
-    log.onDebug(() => `result: ${tersify(expected)}`)
+    log.onDebug(() => `result: ${tersify(expected, { maxLength: Infinity })}`)
 
     const result = this.getResultOf(expected)
     setImmediate(() => this.process())
     return result
   }
   blockUntil(action) {
-    log.onDebug(() => `blockUntil: ${tersify(action)}`)
+    log.onDebug(() => `blockUntil: ${tersify(action, { maxLength: Infinity })}`)
 
     let expected = this.peek()
     while (expected && SimulationMismatch.mismatch(expected, action)) {
@@ -54,7 +54,7 @@ export class ActionTracker {
     }
   }
   waitUntil(action, callback) {
-    log.onDebug(() => `waitUntil: ${tersify(action)}`)
+    log.onDebug(() => `waitUntil: ${tersify(action, { maxLength: Infinity })}`)
     this.callbacks.push({ action, callback })
   }
   on(actionType: string, name: string, callback) {
@@ -72,6 +72,7 @@ export class ActionTracker {
     }
   }
   private getResultOf(returnAction: SpecAction) {
+    // console.log('resultof', returnAction)
     if (!returnAction.returnType) return returnAction.payload
 
     let nextAction = this.peek()
@@ -105,7 +106,7 @@ export class ActionTracker {
       }
     }
 
-    log.onDebug(() => `process: ${tersify(expected)}`)
+    log.onDebug(() => `process: ${tersify(expected, { maxLength: Infinity })}`)
 
     if (this.callbacks.length > 0) {
       const cb = this.callbacks.filter(c => !SimulationMismatch.mismatch(expected, c.action))
