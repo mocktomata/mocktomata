@@ -34,7 +34,8 @@ export interface Spec<T> extends Spy<T> {
   /**
    * @param expectation Must be pure.
    */
-  satisfy(expectation: Array<Partial<SpecAction> | ArrayEntryExpectation | undefined>): Promise<void>
+  satisfy(expectation: Array<Partial<SpecAction> | ArrayEntryExpectation | undefined>): Promise<void>,
+  done(): Promise<void>
 }
 
 export interface GivenRecord {

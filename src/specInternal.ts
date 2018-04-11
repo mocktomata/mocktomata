@@ -81,6 +81,9 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
       return Promise.resolve().then(() => {
         satisfy(spec.actions, expectation)
       })
+    },
+    done() {
+      return this.satisfy([])
     }
   }
   return spec
@@ -120,6 +123,9 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
           actions: this.actions
         })
       })
+    },
+    done() {
+      return this.satisfy([])
     }
   }
   return spec
@@ -151,6 +157,9 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
       return Promise.resolve().then(() => {
         satisfy(spec.actions, expectation)
       })
+    },
+    done() {
+      return this.satisfy([])
     }
   }
   return spec

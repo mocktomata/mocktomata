@@ -31,3 +31,12 @@ test('missing record will throw', async () => {
   t.equal(await simpleCallback.increment(s.subject, 2), 3)
   return a.throws(simpleCallback.increment(s.subject, 4), SimulationMismatch)
 })
+
+testTrio('done() same as satisfy', 'spec/done', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(x => x)
+    t.equal(s.subject(1), 1)
+
+    await s.done()
+  })
+})
