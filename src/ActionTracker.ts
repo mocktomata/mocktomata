@@ -18,7 +18,7 @@ export class ActionTracker {
     if (SimulationMismatch.mismatch(actual, expected)) {
       throw new SimulationMismatch(this.specId, expected, actual)
     }
-    log.onDebug(() => `received: ${tersify(actual, { maxLength: Infinity })}`)
+    log.onDebug(() => `received: ${tersifyAction(actual)}`)
 
     this.push(actual)
     this.process(actual)
@@ -31,7 +31,7 @@ export class ActionTracker {
     const expected = this.peek()
     this.push(expected)
 
-    log.onDebug(() => `result: ${tersify(expected, { maxLength: Infinity })}`)
+    log.onDebug(() => `result: ${tersifyAction(expected)}`)
 
     const result = this.getResultOf(expected)
     setImmediate(() => this.process())
@@ -47,14 +47,14 @@ export class ActionTracker {
       if (next === expected) {
         // infinite loop
         // istanbul ignore next
-        log.error(`blockUntil: can't move forward with ${tersify(next, { maxLength: Infinity })}`)
+        log.error(`blockUntil: can't move forward with ${tersifyAction(next)}`)
         break
       }
       expected = next
     }
   }
   waitUntil(action, callback) {
-    log.onDebug(() => `waitUntil: ${tersify(action, { maxLength: Infinity })}`)
+    log.onDebug(() => `waitUntil: ${tersifyAction(action)}`)
     this.callbacks.push({ action, callback })
   }
   on(actionType: string, name: string, callback) {
@@ -106,7 +106,7 @@ export class ActionTracker {
       }
     }
 
-    log.onDebug(() => `process: ${tersify(expected, { maxLength: Infinity })}`)
+    log.onDebug(() => `process: ${tersifyAction(expected)}`)
 
     if (this.callbacks.length > 0) {
       const cb = this.callbacks.filter(c => !SimulationMismatch.mismatch(expected, c.action))
@@ -235,4 +235,16 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
       return actionTracker.result()
     }
   }
+}
+
+function tersifyAction(action) {
+  return tersify(Object.keys(action).reduce((p, k) => {
+    if (k === 'payload') {
+      p[k] = tersify(action[k])
+    }
+    else {
+      p[k] = action[k]
+    }
+    return p
+  }, {}), { maxLength: Infinity })
 }
