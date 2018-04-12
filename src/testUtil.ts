@@ -52,3 +52,12 @@ export function testSimulate(description, specName, handler?) {
 export function createSpecAction(partial: Partial<SpecAction>) {
   return partial as SpecAction
 }
+
+const komondorTest = {
+  live: testLive,
+  save: testSave,
+  simulate: testSimulate,
+  trio: testTrio
+}
+
+export default komondorTest

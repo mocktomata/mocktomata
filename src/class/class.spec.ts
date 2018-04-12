@@ -14,7 +14,7 @@ import {
   promiseResolved,
   callbackInvoked
 } from '..'
-import { testTrio } from '../testUtil'
+import k from '../testUtil'
 
 
 class Foo {
@@ -51,7 +51,7 @@ describe('use cases', () => {
 })
 
 
-testTrio('each instance of class will get its own instanceId', 'class/multipleInstance', (title, spec) => {
+k.trio('each instance of class will get its own instanceId', 'class/multipleInstance', (title, spec) => {
   test(title, async () => {
     const s = await spec(Foo)
     const f1 = new s.subject(1)
@@ -79,7 +79,7 @@ test('simulate on not existing spec will throw', async () => {
   return a.throws(spec.simulate('class/notExist', Boo), SpecNotFound)
 })
 
-testTrio('class/simple', (title, spec) => {
+k.trio('class/simple', (title, spec) => {
   test(title, async () => {
     const s = await spec(Foo)
     const foo = new s.subject(1)
@@ -94,7 +94,7 @@ testTrio('class/simple', (title, spec) => {
   })
 })
 
-testTrio('class/extend', (title, spec) => {
+k.trio('class/extend', (title, spec) => {
   test(title, async () => {
     const s = await spec(Boo)
     const boo = new s.subject(1)
@@ -120,7 +120,7 @@ class WithCallback {
   }
 }
 
-testTrio('class/withCallback', (title, spec) => {
+k.trio('class/withCallback', (title, spec) => {
   test(title, async () => {
     const s = await spec(WithCallback)
     const cb = new s.subject()
@@ -158,7 +158,7 @@ class WithPromise {
   }
 }
 
-testTrio('method returning promise should have result of promise saved in payload',
+k.trio('method returning promise should have result of promise saved in payload',
   'class/withPromise',
   (title, spec) => {
     test(title, async () => {
@@ -183,7 +183,7 @@ class Throwing {
   }
 }
 
-testTrio('class/throwing', (title, spec) => {
+k.trio('class/throwing', (title, spec) => {
   test(title, async () => {
     const s = await spec(Throwing)
     const o = new s.subject()

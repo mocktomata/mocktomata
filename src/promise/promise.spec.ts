@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { setTimeout } from 'timers'
 
-import { testTrio } from '../testUtil'
+import k from '../testUtil'
 import {
   spec,
   functionConstructed,
@@ -82,7 +82,7 @@ test('acceptance', async () => {
   ])
 })
 
-testTrio('promise/noReturn', (title, spec) => {
+k.trio('promise/noReturn', (title, spec) => {
   test(title, async () => {
     const s = await spec(noReturn.success)
     return noReturn.doSomething(s.subject)
@@ -98,7 +98,7 @@ testTrio('promise/noReturn', (title, spec) => {
   })
 })
 
-testTrio('promise/resolve', (title, spec) => {
+k.trio('promise/resolve', (title, spec) => {
   test(title, async () => {
     const s = await spec(promise.success)
     // not using `await` to make sure the return value is a promise.
@@ -117,7 +117,7 @@ testTrio('promise/resolve', (title, spec) => {
   })
 })
 
-testTrio('promise/reject', (title, spec) => {
+k.trio('promise/reject', (title, spec) => {
   test(title, async () => {
     const s = await spec(promise.fail)
     return promise.increment(s.subject, 2)
@@ -134,7 +134,7 @@ testTrio('promise/reject', (title, spec) => {
   })
 })
 
-testTrio('promise with callback in between', 'promise/inBetween', (title, spec) => {
+k.trio('promise with callback in between', 'promise/inBetween', (title, spec) => {
   test(title, async () => {
     function foo(x, cb) {
       return new Promise(a => {
@@ -168,7 +168,7 @@ testTrio('promise with callback in between', 'promise/inBetween', (title, spec) 
   })
 })
 
-testTrio('promise/returns/function', (title, spec) => {
+k.trio('promise/returns/function', (title, spec) => {
   test(title, async () => {
     const s = await spec(promiseChain.success)
     // not using `await` to make sure the return value is a promise.

@@ -4,13 +4,13 @@ import { SimulationMismatch } from 'komondor-plugin'
 
 import { spec, SpecNotFound, NotSpecable } from '.'
 import { simpleCallback } from './function/testSuites'
-import { testTrio } from './testUtil'
+import k from './testUtil'
 
 test('simulate but file does not exists', async () => {
   a.throws(spec.simulate('not exist', x => x), SpecNotFound)
 })
 
-testTrio('subject not specable will throw', 'spec/notSpecable', (title, spec) => {
+k.trio('subject not specable will throw', 'spec/notSpecable', (title, spec) => {
   test(title, async () => {
     await a.throws(spec(true), NotSpecable)
   })
@@ -32,7 +32,7 @@ test('missing record will throw', async () => {
   return a.throws(simpleCallback.increment(s.subject, 4), SimulationMismatch)
 })
 
-testTrio('done() same as satisfy', 'spec/done', (title, spec) => {
+k.trio('done() same as satisfy', 'spec/done', (title, spec) => {
   test(title, async () => {
     const s = await spec(x => x)
     t.equal(s.subject(1), 1)

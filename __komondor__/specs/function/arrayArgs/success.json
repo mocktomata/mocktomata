@@ -1,0 +1,1 @@
+{"expectation":"[]","actions":[{"type":"function","name":"construct","meta":{"functionName":"takeArray"},"instanceId":1},{"type":"function","name":"invoke","payload":["node",["--version"]],"invokeId":1,"instanceId":1},{"type":"function","name":"return","payload":{"name":"node","args":["--version"]},"invokeId":1,"instanceId":1}]}

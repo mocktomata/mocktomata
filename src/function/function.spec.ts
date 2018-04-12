@@ -11,7 +11,7 @@ import {
   recursive,
   postReturn
 } from './testSuites'
-import { testTrio, testLive } from '../testUtil'
+import k from '../testUtil'
 
 function increment(x) {
   return x + 1
@@ -58,7 +58,7 @@ test('simulate with not existing record will throw', async () => {
   return a.throws(spec.simulate('function/simpleCallback/notExist', simpleCallback.success), SpecNotFound)
 })
 
-testTrio('onAny(callback) will invoke on any action', 'function/simpleCallback/success', (title, spec) => {
+k.trio('onAny(callback) will invoke on any action', 'function/simpleCallback/success', (title, spec) => {
   test(title, async () => {
     const o = new AssertOrder(3)
     const s = await spec(simpleCallback.success)
@@ -73,7 +73,7 @@ testTrio('onAny(callback) will invoke on any action', 'function/simpleCallback/s
   })
 })
 
-testTrio('function/simpleCallback/success', (title, spec) => {
+k.trio('function/simpleCallback/success', (title, spec) => {
   test(title, async () => {
     const o = new AssertOrder(3)
     const s = await spec(simpleCallback.success)
@@ -107,7 +107,7 @@ testTrio('function/simpleCallback/success', (title, spec) => {
   })
 })
 
-testTrio('function/simpleCallback/fail', (title, spec) => {
+k.trio('function/simpleCallback/fail', (title, spec) => {
   test(title, async () => {
     const o = new AssertOrder(3)
     const s = await spec(simpleCallback.fail)
@@ -143,7 +143,7 @@ testTrio('function/simpleCallback/fail', (title, spec) => {
   })
 })
 
-testTrio('function spec can be called multiple times', 'spec/delayed/multiple', (title, spec) => {
+k.trio('function spec can be called multiple times', 'spec/delayed/multiple', (title, spec) => {
   test(title, async () => {
     const s = await spec(delayed.success)
     await delayed.increment(s.subject, 2)
@@ -161,7 +161,7 @@ testTrio('function spec can be called multiple times', 'spec/delayed/multiple', 
   })
 })
 
-testTrio('function/fetch/success', (title, spec) => {
+k.trio('function/fetch/success', (title, spec) => {
   test(title, async () => {
     const s = await spec(fetch.success)
 
@@ -177,7 +177,7 @@ testTrio('function/fetch/success', (title, spec) => {
   })
 })
 
-testTrio('function/fetch/fail', (title, spec) => {
+k.trio('function/fetch/fail', (title, spec) => {
   test(title, async () => {
     const s = await spec(fetch.fail)
     return fetch.add(s.subject, 1, 2)
@@ -193,7 +193,7 @@ testTrio('function/fetch/fail', (title, spec) => {
   })
 })
 
-testTrio('function/literalCallback/success', (title, spec) => {
+k.trio('function/literalCallback/success', (title, spec) => {
   test(title, async () => {
     const s = await spec(literalCallback.success)
     const actual = await literalCallback.increment(s.subject, 2)
@@ -208,7 +208,7 @@ testTrio('function/literalCallback/success', (title, spec) => {
   })
 })
 
-testTrio('function/literalCallback/fail', (title, spec) => {
+k.trio('function/literalCallback/fail', (title, spec) => {
   test(title, async () => {
     const s = await spec(literalCallback.fail)
     await literalCallback.increment(s.subject, 2)
@@ -230,7 +230,7 @@ testTrio('function/literalCallback/fail', (title, spec) => {
   })
 })
 
-testTrio('function/synchronous/success', (title, spec) => {
+k.trio('function/synchronous/success', (title, spec) => {
   test(title, async () => {
     const speced = await spec(synchronous.success)
     const actual = synchronous.increment(speced.subject, 2)
@@ -244,7 +244,7 @@ testTrio('function/synchronous/success', (title, spec) => {
   })
 })
 
-testTrio('function/synchronous/fail', (title, spec) => {
+k.trio('function/synchronous/fail', (title, spec) => {
   test(title, async () => {
     const s = await spec(synchronous.fail)
 
@@ -258,7 +258,7 @@ testTrio('function/synchronous/fail', (title, spec) => {
   })
 })
 
-testTrio('function/recursive/twoCalls', (title, spec) => {
+k.trio('function/recursive/twoCalls', (title, spec) => {
   test(title, async () => {
     const cbSpec = await spec(recursive.success)
     const actual = await recursive.decrementToZero(cbSpec.subject, 2)
@@ -276,7 +276,7 @@ testTrio('function/recursive/twoCalls', (title, spec) => {
   })
 })
 
-testTrio('function/postReturn/success', (title, spec) => {
+k.trio('function/postReturn/success', (title, spec) => {
   test(title, async () => {
     const s = await spec(postReturn.fireEvent)
     // console.log(s.actions)
@@ -301,7 +301,7 @@ testTrio('function/postReturn/success', (title, spec) => {
   })
 })
 
-testLive('function/arrayArgs/success', (title, spec) => {
+k.trio('function/arrayArgs/success', (title, spec) => {
   test(title, async () => {
     const s = await spec(function takeArray(name, args) { return { name, args } })
     const actual = s.subject('node', ['--version'])
