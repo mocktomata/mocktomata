@@ -6,7 +6,7 @@ import { registerPlugin } from './plugin'
 
 export interface Config {
   (options: KomondorOptions): void,
-  environment(mode: 'live', filter?: string | RegExp): void,
+  given(mode: 'live', filter?: string | RegExp): void,
   spec(mode: SpecMode, filter?: string | RegExp): void,
   /**
    * Manually register a plugin.
@@ -20,7 +20,7 @@ export const config: Config = Object.assign(
     store.options = options
   },
   {
-    environment(mode: 'live', filter?: string | RegExp) {
+    given(mode: 'live', filter?: string | RegExp) {
       if (filter) {
         store.envOverrides.push({ mode, filter })
       }

@@ -121,7 +121,7 @@ test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async
 
 
 test('config.environment() with no filter sets mode for all environments', async () => {
-  config.environment('live')
+  config.given('live')
   onGiven('config all 1', ({ mode }) => {
     t.equal(mode, 'live')
   })
@@ -135,7 +135,7 @@ test('config.environment() with no filter sets mode for all environments', async
 })
 
 test('config.environment() can filter by string', async () => {
-  config.environment('live', 'config specific yes')
+  config.given('live', 'config specific yes')
   onGiven('config specific yes', ({ mode }) => {
     t.equal(mode, 'live')
   })
@@ -149,7 +149,7 @@ test('config.environment() can filter by string', async () => {
 })
 
 test('config.environment() can filter by regex', async () => {
-  config.environment('live', /yes/)
+  config.given('live', /yes/)
   onGiven('config regex yes', ({ mode }) => {
     t.equal(mode, 'live')
   })
@@ -163,7 +163,7 @@ test('config.environment() can filter by regex', async () => {
 })
 
 test(`config.environment('live') will force spec.sim() to spec()`, async () => {
-  config.environment('live', 'env forced live also force spec')
+  config.given('live', 'env forced live also force spec')
   const order = new AssertOrder(1)
   await given.simulate('env forced live also force spec', async ({ spec }) => {
     function success(a, callback) {
