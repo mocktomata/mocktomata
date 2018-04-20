@@ -85,7 +85,6 @@ k.trio('class/simple', (title, spec) => {
     const foo = new s.subject(1)
     const actual = foo.getValue()
     t.equal(actual, 1)
-
     await s.satisfy([
       { ...classConstructed('Foo', 1), instanceId: 1 },
       { ...classMethodInvoked('getValue'), instanceId: 1, invokeId: 1 },
@@ -230,4 +229,27 @@ test('async promise call', async () => {
   await p.do(3)
 
   await s.satisfy([])
+})
+
+class InvokeInternal {
+  do() {
+    return this.internal()
+  }
+  internal() {
+    return 'do'
+  }
+}
+
+k.trio('internal method invocation will not be recorded', 'class/internal', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(InvokeInternal)
+    const a = new s.subject()
+    t.equal(a.do(), 'do')
+
+    await s.satisfy([
+      { ...classConstructed('InvokeInternal'), instanceId: 1 },
+      { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
+    ])
+  })
 })
