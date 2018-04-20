@@ -227,6 +227,23 @@ i.e., you should have `await yourSpec.done(...)` in your test.
 
 The record will be save when `done()` resolves.
 
+### Enable komondor log
+
+`komondor` provides some logs for debugging purpose.
+Since they are chatty, they are turned off by default.
+
+To enable them, do the following:
+
+```ts
+import { addAppender, getLogger, logLevel } from '@unional/logging'
+import { ColorAppender } from 'aurelia-logging-color'
+
+// Skip if you have already done this for other purpose, or
+// you are already using a different appender.
+addAppender(new ColorAppender())
+
+getLogger('komondor').setLevel(logLevel.debug)
+```
 
 ### Using komondor with node-fetch
 
