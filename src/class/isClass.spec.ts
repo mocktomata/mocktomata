@@ -1,12 +1,11 @@
 import t from 'assert'
+import a from 'assertron'
 
-// import isClass from 'isclass'
 import { isClass } from './isClass'
 
-
 test('false for simple function', () => {
-  t(!isClass(x => x))
-  t(!isClass(function () { return }))
+  a.false(isClass(x => x))
+  a.false(isClass(function () { return }))
 })
 
 test('false for object', () => {
@@ -14,17 +13,23 @@ test('false for object', () => {
     f() { return }
   }
 
-  t(!isClass(obj))
+  a.false(isClass(obj))
 })
 
 test('false for method in object', () => {
   const obj = {
     f() { return }
   }
-  t(!isClass(obj.f))
+  a.false(isClass(obj.f))
 })
 
 test('true for class with at lease one method', () => {
   class F { f() { return } }
   t(isClass(F))
+})
+
+test('child class is true', () => {
+  class Parent { do() { return 'do' } }
+  class Child extends Parent { }
+  t(isClass(Child))
 })

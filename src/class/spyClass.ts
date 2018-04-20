@@ -1,4 +1,6 @@
 import { SpyContext, SpyInstance } from 'komondor-plugin'
+import { uniq } from 'ramda'
+
 
 export function spyClass(context: SpyContext, subject) {
   const spiedClass = class extends subject {
@@ -11,8 +13,8 @@ export function spyClass(context: SpyContext, subject) {
       this.__komondor.instance = context.newInstance(args, { className: subject.name })
     }
   }
-
-  Object.getOwnPropertyNames(Object.getPrototypeOf(spiedClass).prototype).filter(x => x !== 'constructor').forEach(p => {
+  const propertyNames = getPropertyNames(spiedClass)
+  propertyNames.forEach(p => {
     const method = spiedClass.prototype[p]
     spiedClass.prototype[p] = function (...args) {
       const invoking = this.__komondor.invoking
@@ -40,4 +42,14 @@ export function spyClass(context: SpyContext, subject) {
     }
   })
   return spiedClass
+}
+
+function getPropertyNames(target, names: string[] = []) {
+  const proto = Object.getPrototypeOf(target)
+  if (proto.prototype === undefined)
+    return names
+  return getPropertyNames(proto, uniq([
+    ...names,
+    ...Object.getOwnPropertyNames(proto.prototype).filter(x => x !== 'constructor')
+  ]))
 }

@@ -1,6 +1,8 @@
 module.exports = () => {
   return {
     'files': [
+      { pattern: 'fixtures/**/*', instrument: false },
+      { pattern: 'scripts/*', instrument: false },
       { pattern: 'package.json', instrument: false },
       { pattern: 'tsconfig.*', instrument: false },
       { pattern: '__komondor__/**/*', instrument: false },
