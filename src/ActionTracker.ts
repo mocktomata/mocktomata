@@ -92,7 +92,7 @@ export class ActionTracker {
     let expected = this.peek()
 
     if (!expected) {
-      if (invokeAction) {
+      if (invokeAction && invokeAction.name !== 'construct') {
         throw new SimulationMismatch(this.specId,
           {
             type: invokeAction.type,

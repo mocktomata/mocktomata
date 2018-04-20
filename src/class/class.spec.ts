@@ -17,7 +17,6 @@ import {
 import { log } from '../log'
 import k from '../testUtil'
 
-
 class Foo {
   constructor(public x) { }
   getValue() {
@@ -323,4 +322,20 @@ test('promise should not invoke actual code', async () => {
     { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
     { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
   ])
+})
+
+k.trio('not using spec', 'class/notUsedSpec', (title, spec) => {
+  test(title, async () => {
+    class Foo { foo() { return 'foo' } }
+    function call(_foo) {
+      return 'called'
+    }
+    const s = await spec(Foo)
+    const foo = new s.subject()
+    t.equal(call(foo), 'called')
+
+    await s.satisfy([
+      { ...classConstructed('Foo'), instanceId: 1 }
+    ])
+  })
 })
