@@ -1,7 +1,7 @@
 import { SpyContext, SpyInstance } from 'komondor-plugin'
-import { uniq } from 'ramda'
 
 import { isPromise } from '../promise/isPromise'
+import { getPropertyNames } from './getPropertyNames'
 
 export function spyClass(context: SpyContext, subject) {
   const spiedClass = class extends subject {
@@ -50,14 +50,4 @@ export function spyClass(context: SpyContext, subject) {
     }
   })
   return spiedClass
-}
-
-function getPropertyNames(target, names: string[] = []) {
-  const proto = Object.getPrototypeOf(target)
-  if (proto.prototype === undefined)
-    return names
-  return getPropertyNames(proto, uniq([
-    ...names,
-    ...Object.getOwnPropertyNames(proto.prototype).filter(x => x !== 'constructor')
-  ]))
 }

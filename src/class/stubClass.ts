@@ -1,4 +1,5 @@
 import { StubContext } from 'komondor-plugin'
+import { getPropertyNames } from './getPropertyNames';
 
 export function stubClass(context: StubContext, subject) {
   const stubClass = class extends subject {
@@ -10,8 +11,7 @@ export function stubClass(context: StubContext, subject) {
       this.__komondorStub.instance = context.newInstance(args, { className: subject.name })
     }
   }
-
-  for (let p in stubClass.prototype) {
+  getPropertyNames(stubClass).forEach(p => {
     stubClass.prototype[p] = function (...args) {
       const instance = this.__komondorStub.instance
       const call = instance.newCall({ methodName: p })
@@ -23,6 +23,6 @@ export function stubClass(context: StubContext, subject) {
 
       throw call.thrown()
     }
-  }
+  })
   return stubClass
 }
