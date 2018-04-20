@@ -1,5 +1,7 @@
 import { Registrar, createExpectation, SpyContext, StubContext } from 'komondor-plugin'
 
+import { isPromise } from './isPromise'
+
 const TYPE = 'promise'
 
 export function promiseConstructed() {
@@ -15,10 +17,6 @@ export function activate(registrar: Registrar) {
     getPromiseSpy,
     getPromiseStub
   )
-}
-
-function isPromise(result) {
-  return result && typeof result.then === 'function' && typeof result.catch === 'function'
 }
 
 function getPromiseSpy(context: SpyContext, subject) {

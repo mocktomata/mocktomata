@@ -1,6 +1,7 @@
 import { SpyContext, SpyInstance } from 'komondor-plugin'
 import { uniq } from 'ramda'
 
+import { isPromise } from '../promise/isPromise'
 
 export function spyClass(context: SpyContext, subject) {
   const spiedClass = class extends subject {
@@ -33,7 +34,14 @@ export function spyClass(context: SpyContext, subject) {
           throw thrown
         }
         const returnValue = call.return(result)
-        this.__komondor.invoking = false
+
+        // TODO: rethink SpyCall implmentation to avoid mixing promise and class logic together
+        // This is not ideal as it mixes concerns.
+        if (isPromise(returnValue)) {
+          returnValue.then(() => this.__komondor.invoking = false)
+        }
+        else
+          this.__komondor.invoking = false
         return returnValue
       }
       else {
