@@ -14,6 +14,7 @@ import {
   promiseResolved,
   callbackInvoked
 } from '..'
+import { log } from '../log'
 import k from '../testUtil'
 
 
@@ -221,7 +222,7 @@ test('async promise call', async () => {
 
   const s = await spec.simulate('class/promising', Promising)
   const p = new s.subject()
-  console.info(s.actions.map(a => {
+  log.info(s.actions.map(a => {
     return a.type + a.name[0] + a.instanceId + (a.invokeId || 0)
   }))
 
@@ -295,4 +296,31 @@ k.trio('should not record inner call when using Promise', 'class/promisWithInner
       { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
     ])
   })
+})
+
+test('promise should not invoke actual code', async () => {
+  class PromiseInner {
+    do() {
+      throw new Error('should not call')
+      // return new Promise(a => {
+      //   setImmediate(() => {
+      //     a(this.inner() as any)
+      //   })
+      // })
+    }
+    inner() {
+      return 'inner'
+    }
+  }
+  const s = await spec.simulate('class/simulateNotInvokeInner', PromiseInner)
+  const a = new s.subject()
+  // tslint:disable-next-line
+  t.equal(await a.do(), 'inner')
+
+  t.equal(s.actions.length, 5)
+  await s.satisfy([
+    { ...classConstructed('PromiseInner'), instanceId: 1 },
+    { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
+    { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
+  ])
 })
