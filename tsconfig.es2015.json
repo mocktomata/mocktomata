@@ -2,7 +2,7 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "dist-esnext",
-    "target": "esnext"
+    "outDir": "dist-es2015",
+    "target": "es2015"
   }
 }
