@@ -253,3 +253,19 @@ k.trio('internal method invocation will not be recorded', 'class/internal', (tit
     ])
   })
 })
+
+k.trio('capture parent class call', 'class/parentCall', (title, spec) => {
+  test(title, async () => {
+    class Parent { do() { return 'do' } }
+    class Child extends Parent { }
+    const s = await spec(Child)
+    const a = new s.subject()
+    t.equal(a.do(), 'do')
+
+    await s.satisfy([
+      { ...classConstructed('Child'), instanceId: 1 },
+      { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
+    ])
+  })
+})
