@@ -19,7 +19,7 @@ cp.spawn('tsc', ['-w'], { shell: true })
         shell: true
       })
       if (lint.status === 0) {
-        cp.spawnSync('npm', ['run', 'build-es5'])
+        cp.spawnSync('npm', ['run', 'build-es2015'])
       }
     }
   })

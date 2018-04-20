@@ -12,7 +12,7 @@ export function spyClass(context: SpyContext, subject) {
     }
   }
 
-  for (let p in spiedClass.prototype) {
+  Object.getOwnPropertyNames(Object.getPrototypeOf(spiedClass).prototype).filter(x => x !== 'constructor').forEach(p => {
     const method = spiedClass.prototype[p]
     spiedClass.prototype[p] = function (...args) {
       const invoking = this.__komondor.invoking
@@ -38,6 +38,6 @@ export function spyClass(context: SpyContext, subject) {
         return method.apply(this, args)
       }
     }
-  }
+  })
   return spiedClass
 }

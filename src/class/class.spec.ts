@@ -85,7 +85,6 @@ k.trio('class/simple', (title, spec) => {
     const foo = new s.subject(1)
     const actual = foo.getValue()
     t.equal(actual, 1)
-
     await s.satisfy([
       { ...classConstructed('Foo', 1), instanceId: 1 },
       { ...classMethodInvoked('getValue'), instanceId: 1, invokeId: 1 },

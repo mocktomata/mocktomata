@@ -1,7 +1,6 @@
 import t from 'assert'
 import a, { AssertOrder } from 'assertron'
 import { Registrar, SimulationMismatch } from 'komondor-plugin'
-import { tersify } from 'tersify'
 
 import { DuplicatePlugin, spec } from '.'
 import { loadConfig, registerPlugin } from './plugin'
@@ -69,7 +68,7 @@ test('on() will not trigger if not adding the specific action type', async () =>
     activate(r: Registrar) {
       r.register(
         'on-not-trigger',
-        subject => tersify(subject) === `function () {return 'on-not-trigger';}`,
+        subject => subject.name === 'onNotTrigger',
         (context, subject) => {
           o.once(1)
           context.newInstance().newCall().invoke([])
@@ -82,7 +81,7 @@ test('on() will not trigger if not adding the specific action type', async () =>
     }
   })
 
-  const s = await spec(() => 'on-not-trigger')
+  const s = await spec(function onNotTrigger() { return 'on-not-trigger' })
   s.on('on-not-trigger', 'action1', a => t.fail(a.toString()))
   s.subject()
   o.end()
@@ -94,18 +93,17 @@ test('on() will trigger when the right action is added', async () => {
     activate(r: Registrar) {
       r.register(
         'on-trigger',
-        subject => tersify(subject) === `function () {return 'on-trigger';}`,
+        subject => subject.name === 'onTrigger',
         context => () => context.newInstance().newCall().invoke([]),
         context => () => context.newInstance().newCall().result()
       )
     }
   })
 
-  const s = await spec(() => 'on-trigger')
+  const s = await spec(function onTrigger() { return 'on-trigger' })
   s.on('on-trigger', 'invoke', () => o.once(1))
 
   s.subject()
-
 
   await s.satisfy([
     { type: 'on-trigger', name: 'construct' },
@@ -119,14 +117,14 @@ test('on() will trigger when the right action is added (save)', async () => {
     activate(r: Registrar) {
       r.register(
         'on-trigger-save',
-        subject => tersify(subject) === `function () {return 'on-trigger-save';}`,
+        subject => subject.name === 'onTriggerSave',
         context => () => context.newInstance().newCall().invoke([]),
         context => () => context.newInstance().newCall().result()
       )
     }
   })
 
-  const s = await spec.save('plugin/on-trigger-save', () => 'on-trigger-save')
+  const s = await spec.save('plugin/on-trigger-save', function onTriggerSave() { return 'on-trigger-save' })
   s.on('on-trigger-save', 'invoke', () => o.once(1))
   s.subject()
 
@@ -142,14 +140,14 @@ test('on() will trigger when the right action is added (simulate)', async () => 
     activate(r: Registrar) {
       r.register(
         'on-trigger-simulate',
-        subject => tersify(subject) === `function () {return 'on-trigger-simulate';}`,
+        subject => subject.name === 'onTriggerSimulate',
         context => () => context.newInstance().newCall().invoke([]),
         context => () => context.newInstance().newCall().result()
       )
     }
   })
 
-  const s = await spec.simulate('plugin/on-trigger-simulate', () => 'on-trigger-simulate')
+  const s = await spec.simulate('plugin/on-trigger-simulate', function onTriggerSimulate() { return 'on-trigger-simulate' })
   s.on('on-trigger-simulate', 'invoke', () => o.once(1))
 
   s.subject()
@@ -167,23 +165,15 @@ test('onAny() will trigger when any aciton is added', async () => {
     activate(r: Registrar) {
       r.register(
         'onAny',
-        subject => tersify(subject) === `function () {return 'onAny';}`,
+        subject => subject.name === 'onAny',
         context => () => context.newInstance().newCall().invoke([]),
         context => () => context.newInstance().newCall().result()
       )
     }
   })
 
-  const s = await spec(() => 'onAny')
+  const s = await spec(function onAny() { return 'onAny' })
   s.onAny(() => o.any([1, 2]))
   s.subject()
   o.end()
-
-  // const store = await createSpec('some', undefined, 'live')
-  // const order = new AssertOrder(2)
-  // store.onAny(() => order.any([1, 2]))
-  // store.add('a1')
-  // store.add('a2')
-
-  // order.end()
 })
