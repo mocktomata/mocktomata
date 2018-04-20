@@ -230,3 +230,26 @@ test('async promise call', async () => {
 
   await s.satisfy([])
 })
+
+class InvokeInternal {
+  do() {
+    return this.internal()
+  }
+  internal() {
+    return 'do'
+  }
+}
+
+k.trio('internal method invocation will not be recorded', 'class/internal', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(InvokeInternal)
+    const a = new s.subject()
+    t.equal(a.do(), 'do')
+
+    await s.satisfy([
+      { ...classConstructed('InvokeInternal'), instanceId: 1 },
+      { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
+    ])
+  })
+})
