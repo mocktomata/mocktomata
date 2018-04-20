@@ -2,18 +2,16 @@
   "name": "komondor",
   "description": "Your friendly guard dog for writing tests across boundaries",
   "version": "0.0.0-development",
-  "main": "dist-es5/index.js",
-  "module": "dist-esnext/index.js",
-  "typings": "dist-es5/index.d.ts",
+  "main": "dist-es2015/index.js",
+  "typings": "dist-es2015/index.d.ts",
   "files": [
-    "dist-es5",
-    "dist-esnext"
+    "dist-es2015"
   ],
   "scripts": {
-    "build": "npm run clean && npm run build-es5 && npm run build-esnext",
+    "build": "npm run clean && npm run build-es2015",
     "build-es5": "tsc -p tsconfig.es5.json",
-    "build-esnext": "tsc -p tsconfig.esnext.json",
-    "clean": "rimraf dist dist-es5 && rimraf dist-esnext",
+    "build-es2015": "tsc -p tsconfig.es2015.json",
+    "clean": "rimraf dist dist-es5 && rimraf dist-es2015",
     "codecov": "codecov",
     "coverage": "jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
