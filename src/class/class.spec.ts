@@ -269,3 +269,30 @@ k.trio('capture parent class call', 'class/parentCall', (title, spec) => {
     ])
   })
 })
+
+k.trio('should not record inner call when using Promise', 'class/promisWithInner', (title, spec) => {
+  test(title, async () => {
+    class PromiseInner {
+      do() {
+        return new Promise(a => {
+          setImmediate(() => {
+            a(this.inner())
+          })
+        })
+      }
+      inner() {
+        return 'inner'
+      }
+    }
+    const s = await spec(PromiseInner)
+    const a = new s.subject()
+    t.equal(await a.do(), 'inner')
+
+    t.equal(s.actions.length, 5)
+    await s.satisfy([
+      { ...classConstructed('PromiseInner'), instanceId: 1 },
+      { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
+      { ...classMethodReturned('do'), instanceId: 1, invokeId: 1 }
+    ])
+  })
+})
