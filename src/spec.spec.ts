@@ -40,3 +40,13 @@ k.trio('done() same as satisfy', 'spec/done', (title, spec) => {
     await s.done()
   })
 })
+
+k.trio('Error payload will pass instanceof', 'spec/errorPassInstanceof', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(() => { throw new Error('err') })
+    const err = await a.throws(() => s.subject())
+
+    t(err instanceof Error)
+    await s.done()
+  })
+})
