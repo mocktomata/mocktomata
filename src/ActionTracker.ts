@@ -222,9 +222,6 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
         invokeId
       })
     },
-    onAny(callback) {
-      actionTracker.onAny(callback)
-    },
     succeed(meta?: { [k: string]: any }) {
       return actionTracker.succeed(meta)
     },

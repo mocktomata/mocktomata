@@ -4,18 +4,10 @@ import { unpartial } from 'unpartial'
 import { SpyInstanceImpl } from './SpyInstanceImpl'
 import { plugins } from './plugin';
 
-export class IdTracker {
-  pluginTypes: string[] = []
-  getNextId(pluginType: string) {
-    return this.pluginTypes[pluginType] = (this.pluginTypes[pluginType] || 0) + 1
-  }
-}
-
 export class SpyContextImpl implements SpyContext {
   actions: SpecAction[]
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
-  idTracker: IdTracker
   instanceIds: { [k: string]: number }
   constructor(
     context,
@@ -23,7 +15,6 @@ export class SpyContextImpl implements SpyContext {
     public specId: string,
     public plugin: Plugin<any>
   ) {
-    this.idTracker = context.idTracker
     this.actions = context.actions || []
     this.instanceIds = context.instanceIds || {}
   }
