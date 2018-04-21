@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { spec, SpecNotFound, NotSpecable, InvalidSpecID } from '.'
+import { spec, SpecNotFound, NotSpecable, InvalidID } from '.'
 import { simpleCallback } from './function/testSuites'
 import k from './testUtil'
 
@@ -74,9 +74,9 @@ test('spec id containing invalid path character should still work', () => {
     'new: some-condition'
   ].map(p => {
     return Promise.all([
-      a.throws(() => spec(p, () => ({})), InvalidSpecID),
-      a.throws(() => spec.save(p, () => ({})), InvalidSpecID),
-      a.throws(() => spec.simulate(p, () => ({})), InvalidSpecID)
+      a.throws(() => spec(p, () => ({})), InvalidID),
+      a.throws(() => spec.save(p, () => ({})), InvalidID),
+      a.throws(() => spec.simulate(p, () => ({})), InvalidID)
     ])
   }))
 })

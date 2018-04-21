@@ -3,7 +3,7 @@ import isInvalidPath from 'is-invalid-path'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
-import { MissingSpecID, SpecNotFound, NotSpecable, InvalidSpecID } from './errors'
+import { MissingSpecID, SpecNotFound, NotSpecable, InvalidID } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
 import { plugins } from './plugin'
@@ -50,7 +50,7 @@ function getMode(id: string, mode: SpecMode) {
 
 async function createSpec(specId: string, subject, mode: SpecMode) {
   if (specId && isInvalidPath(specId)) {
-    throw new InvalidSpecID(specId)
+    throw new InvalidID(specId)
   }
   switch (mode) {
     case 'live':

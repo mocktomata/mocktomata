@@ -19,7 +19,7 @@ export class MissingSpecID extends BaseError {
   }
 }
 
-export class InvalidSpecID extends BaseError {
+export class InvalidID extends BaseError {
   // istanbul ignore next
   constructor(public specId: string) {
     super(`The spec id '${specId}' contains invalid characters. It must be file path valid characters.`)

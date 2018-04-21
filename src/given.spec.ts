@@ -11,7 +11,7 @@ import {
   functionInvoked,
   given,
   GivenSaveRequireSpecId,
-  InvalidSpecID,
+  InvalidID,
   MissingGivenHandler,
   onGiven
 } from '.'
@@ -263,9 +263,9 @@ test('given id containing invalid path character should throw', () => {
     'new: some-condition'
   ].map(p => {
     return Promise.all([
-      a.throws(() => given(p, () => ({})), InvalidSpecID),
-      a.throws(() => given.save(p, () => ({})), InvalidSpecID),
-      a.throws(() => given.simulate(p, () => ({})), InvalidSpecID)
+      a.throws(() => given(p, () => ({})), InvalidID),
+      a.throws(() => given.save(p, () => ({})), InvalidID),
+      a.throws(() => given.simulate(p, () => ({})), InvalidID)
     ])
   }))
 })

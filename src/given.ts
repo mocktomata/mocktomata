@@ -1,6 +1,6 @@
 import isInvalidPath from 'is-invalid-path'
 
-import { GivenSaveRequireSpecId, DuplicateGivenHandler, MissingGivenHandler, InvalidSpecID } from './errors'
+import { GivenSaveRequireSpecId, DuplicateGivenHandler, MissingGivenHandler, InvalidID } from './errors'
 import { GivenMode } from './interfaces'
 import { io } from './io'
 import { spec, SpecFn } from './spec'
@@ -28,7 +28,7 @@ async function runHandler(envContext, entry) {
 
 async function createGiven<T>(envContext: GivenContext, clause, localHandler) {
   if (clause && isInvalidPath(clause)) {
-    throw new InvalidSpecID(clause)
+    throw new InvalidID(clause)
   }
   let entry = findMatchingEntry(clause)
   if (entry && localHandler)
@@ -60,7 +60,7 @@ export const given = Object.assign(
       localHandler?: (context: GivenContext) => any
     ): Promise<Given<T>> {
       if (clause && isInvalidPath(clause)) {
-        throw new InvalidSpecID(clause)
+        throw new InvalidID(clause)
       }
 
       const specsCreated: string[] = []
