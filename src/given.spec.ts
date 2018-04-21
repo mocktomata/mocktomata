@@ -6,13 +6,14 @@ import path from 'path'
 
 import { GIVENS_FOLDER, SPECS_FOLDER } from './constants'
 import {
-  MissingGivenHandler,
   DuplicateGivenHandler,
-  GivenSaveRequireSpecId,
-  onGiven,
-  given,
   functionConstructed,
-  functionInvoked
+  functionInvoked,
+  given,
+  GivenSaveRequireSpecId,
+  InvalidID,
+  MissingGivenHandler,
+  onGiven
 } from '.'
 
 test('no handler registered throws MissingGivenHandler', async () => {
@@ -254,4 +255,17 @@ test('calling live after simulate should invoke handler', async () => {
   await given('live after sim')
 
   o.end()
+})
+
+test('given id containing invalid path character should throw', () => {
+  return Promise.all([
+    'a > b',
+    'new: some-condition'
+  ].map(p => {
+    return Promise.all([
+      a.throws(() => given(p, () => ({})), InvalidID),
+      a.throws(() => given.save(p, () => ({})), InvalidID),
+      a.throws(() => given.simulate(p, () => ({})), InvalidID)
+    ])
+  }))
 })

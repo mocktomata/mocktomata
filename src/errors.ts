@@ -19,6 +19,16 @@ export class MissingSpecID extends BaseError {
   }
 }
 
+export class InvalidID extends BaseError {
+  // istanbul ignore next
+  constructor(public specId: string) {
+    super(`The spec id '${specId}' contains invalid characters. It must be file path valid characters.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+
 export class SpecNotFound extends BaseError {
   // istanbul ignore next
   constructor(public specId: string, public reason) {

@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { spec, SpecNotFound, NotSpecable } from '.'
+import { spec, SpecNotFound, NotSpecable, InvalidID } from '.'
 import { simpleCallback } from './function/testSuites'
 import k from './testUtil'
 
@@ -66,4 +66,17 @@ k.trio('CustomError properties are kept', 'spec/errorCustomProperty', (title, sp
     t.equal(err.one, 1)
     await s.done()
   })
+})
+
+test('spec id containing invalid path character should still work', () => {
+  return Promise.all([
+    'a > b',
+    'new: some-condition'
+  ].map(p => {
+    return Promise.all([
+      a.throws(() => spec(p, () => ({})), InvalidID),
+      a.throws(() => spec.save(p, () => ({})), InvalidID),
+      a.throws(() => spec.simulate(p, () => ({})), InvalidID)
+    ])
+  }))
 })
