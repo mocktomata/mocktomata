@@ -22,7 +22,16 @@ export class SpyContextImpl implements SpyContext {
     return this.instanceIds[pluginType] = (this.instanceIds[pluginType] || 0) + 1
   }
   newInstance(args, meta): SpyInstance {
-    return new SpyInstanceImpl(this, args, meta)
+    const instanceId = this.getNextId(this.plugin.type)
+    const action = {
+      name: 'construct',
+      payload: args,
+      meta,
+      instanceId
+    }
+    this.addAction(action)
+
+    return new SpyInstanceImpl(this, instanceId)
   }
   addAction(action: Partial<SpecAction>) {
     const a = unpartial({
@@ -65,8 +74,9 @@ export class SpyContextImpl implements SpyContext {
       plugin
     )
 
+    const newInstance = childContext.newInstance
     childContext.newInstance = function (args, meta) {
-      const instance = new SpyInstanceImpl(this, args, meta)
+      const instance: SpyInstanceImpl = newInstance.call(childContext, args, meta)
       returnAction.returnInstanceId = instance.instanceId
       return instance
     }
