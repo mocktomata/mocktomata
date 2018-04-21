@@ -35,6 +35,13 @@ export class ActionTracker {
 
     const result = this.getResultOf(expected)
     setImmediate(() => this.process())
+    if (result && result.prototype === 'Error') {
+      const err = new Error(result.message)
+      Object.keys(result)
+        .filter(p => p !== 'prototype' && p !== 'message')
+        .forEach(p => err[p] = result[p])
+      return err
+    }
     return result
   }
   blockUntil(action) {

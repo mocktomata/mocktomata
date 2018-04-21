@@ -166,7 +166,7 @@ function makeErrorSerializable(actions: SpecAction[]) {
   actions.forEach(a => {
     if (isRejectErrorPromiseReturnAction(a) ||
       isErrorThrowAction(a)) {
-      a.payload = { message: a.payload.message, ...a.payload }
+      a.payload = { message: a.payload.message, ...a.payload, prototype: 'Error' }
     }
   })
 }
