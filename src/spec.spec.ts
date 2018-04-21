@@ -50,3 +50,20 @@ k.trio('Error payload will pass instanceof', 'spec/errorPassInstanceof', (title,
     await s.done()
   })
 })
+
+k.trio('CustomError properties are kept', 'spec/errorCustomProperty', (title, spec) => {
+  test(title, async () => {
+    class CustomError extends Error {
+      x = 'x'
+      one = 1
+    }
+    const s = await spec(() => { throw new CustomError('err') })
+    const err = await a.throws(() => s.subject())
+
+    t(err instanceof Error)
+    t.equal(err.message, 'err')
+    t.equal(err.x, 'x')
+    t.equal(err.one, 1)
+    await s.done()
+  })
+})
