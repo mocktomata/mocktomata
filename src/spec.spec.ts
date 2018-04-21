@@ -1,5 +1,5 @@
 import t from 'assert'
-import a, { AssertOrder } from 'assertron'
+import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
 import { spec, SpecNotFound, NotSpecable } from '.'
