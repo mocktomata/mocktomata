@@ -6,7 +6,7 @@ import { MissingSpecID, SpecNotFound, NotSpecable } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
 import { plugins } from './plugin'
-import { IdTracker, SpyContextImpl } from './SpyContextImpl'
+import { SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
 import { ActionTracker, createStubContext } from './ActionTracker'
 
@@ -64,9 +64,8 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
     throw new NotSpecable(subject)
   }
 
-  const idTracker = new IdTracker()
 
-  const context = new SpyContextImpl({ idTracker }, 'live', specId, plugin)
+  const context = new SpyContextImpl({ }, 'live', specId, plugin)
 
   const spec: Spec<T> = {
     actions: context.actions,
@@ -98,9 +97,7 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
     throw new NotSpecable(subject)
   }
 
-  const idTracker = new IdTracker()
-
-  const context = new SpyContextImpl({ idTracker }, 'save', specId, plugin)
+  const context = new SpyContextImpl({ }, 'save', specId, plugin)
 
   const spec: Spec<T> = {
     actions: context.actions,

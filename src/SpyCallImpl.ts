@@ -4,9 +4,6 @@ import { unpartial } from 'unpartial'
 import { SpyInstanceImpl } from './SpyInstanceImpl'
 
 export class SpyCallImpl implements SpyCall {
-  trigger<T>(_err: T, _meta?: { [k: string]: any; } | undefined): T {
-    throw new Error('Method not implemented.');
-  }
   constructor(public instance: SpyInstanceImpl, public invokeId: number, public callMeta?: { [k: string]: any }) {
   }
   invoke<T extends any[]>(args: T, meta?: { [k: string]: any }): T {

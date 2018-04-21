@@ -1,6 +1,6 @@
 import t from 'assert'
 import a, { AssertOrder } from 'assertron'
-import { Registrar, SimulationMismatch } from 'komondor-plugin'
+import { Registrar } from 'komondor-plugin'
 
 import { DuplicatePlugin, spec } from '.'
 import { loadConfig, registerPlugin } from './plugin'
@@ -37,29 +37,6 @@ describe('registerPlugin()', () => {
       }
     })
   })
-})
-
-
-test('no action throws SimulationMismatch', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'peek-noAction',
-        subject => subject === 'peek-noAction',
-        x => x,
-        (context, subject) => {
-          o.once(1)
-          a.throws(() => context.newInstance(), SimulationMismatch)
-
-          return subject
-        }
-      )
-    }
-  })
-
-  await spec.simulate('plugin/noActions', 'peek-noAction')
-  o.end()
 })
 
 test('on() will not trigger if not adding the specific action type', async () => {

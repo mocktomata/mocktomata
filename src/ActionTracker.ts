@@ -92,7 +92,7 @@ export class ActionTracker {
     let expected = this.peek()
 
     if (!expected) {
-      if (invokeAction) {
+      if (invokeAction && invokeAction.name !== 'construct') {
         throw new SimulationMismatch(this.specId,
           {
             type: invokeAction.type,
@@ -221,9 +221,6 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
         instanceId,
         invokeId
       })
-    },
-    onAny(callback) {
-      actionTracker.onAny(callback)
     },
     succeed(meta?: { [k: string]: any }) {
       return actionTracker.succeed(meta)
