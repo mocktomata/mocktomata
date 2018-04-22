@@ -2,6 +2,7 @@ import { SpyCall, SpecAction } from 'komondor-plugin'
 import { unpartial } from 'unpartial'
 
 import { SpyInstanceImpl } from './SpyInstanceImpl'
+import { plugins } from './plugin';
 
 export class SpyCallImpl implements SpyCall {
   constructor(public instance: SpyInstanceImpl, public invokeId: number, public callMeta?: { [k: string]: any }) {
@@ -15,25 +16,38 @@ export class SpyCallImpl implements SpyCall {
     })
 
     return args.map((arg, i) => {
-      if (typeof arg === 'function') {
-        return this.spyOnCallback(arg, [i])
-      }
       if (Array.isArray(arg)) {
         // assuming there will be no callbacks in array parameters
         return arg
       }
+
+      const plugin = plugins.find(p => p.support(arg))
+      if (plugin) {
+        const context = this.instance.context.createCallbackContext(plugin, this, [i])
+        return plugin.getSpy(context, arg)
+      }
+
       if (typeof arg === 'object' && arg !== null) {
         const result = {}
         Object.keys(arg).forEach(key => {
           const prop = arg[key]
           if (typeof prop === 'function') {
-            result[key] = this.spyOnCallback(prop, [i, key])
+            const plugin = plugins.find(p => p.support(prop))!
+            // if (plugin) {
+            const context = this.instance.context.createCallbackContext(plugin, this, [i, key])
+            result[key] = plugin.getSpy(context, prop)
+            // }
+            // result[key] = this.spyOnCallback(prop, [i, key])
           }
           else {
             result[key] = prop
           }
         })
         return result
+      }
+
+      if (typeof arg === 'function') {
+        return this.spyOnCallback(arg, [i])
       }
 
       return arg

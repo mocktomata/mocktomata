@@ -29,7 +29,9 @@ test('missing record will throw', async () => {
   const s = await spec.simulate('spec/incompleteRecords', simpleCallback.success)
 
   t.equal(await simpleCallback.increment(s.subject, 2), 3)
-  return a.throws(simpleCallback.increment(s.subject, 4), SimulationMismatch)
+  // simpleCallback.increment(s.subject, 4)
+  await a.throws(simpleCallback.increment(s.subject, 4), SimulationMismatch)
+  await s.done()
 })
 
 k.trio('done() same as satisfy', 'spec/done', (title, spec) => {

@@ -12,6 +12,7 @@ export class ActionTracker {
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
   actualActions: SpecAction[] = []
+  stubs: { action: SpecCallbackAction, stub, subject }[] = []
   constructor(public specId: string, public actions: SpecAction[]) { }
   received(actual) {
     const expected = this.peek()
@@ -79,7 +80,6 @@ export class ActionTracker {
     }
   }
   private getResultOf(returnAction: SpecAction) {
-    // console.log('resultof', returnAction)
     if (!returnAction.returnType) return returnAction.payload
 
     let nextAction = this.peek()
@@ -90,10 +90,10 @@ export class ActionTracker {
 
     return this.getStub(nextAction)
   }
-  private getStub(action: SpecAction) {
+  private getStub(action: SpecAction, subject?) {
     const plugin = plugins.find(p => p.type === action.type)
     if (!plugin) throw new NotSpecable(action.type)
-    return plugin.getStub(createStubContext(this, plugin.type), undefined)
+    return plugin.getStub(createStubContext(this, plugin.type), subject)
   }
   private process(invokeAction?: SpecAction) {
     let expected = this.peek()
@@ -113,7 +113,7 @@ export class ActionTracker {
       }
     }
 
-    log.onDebug(() => `process: ${tersifyAction(expected)}`)
+    log.onDebug(() => `processing: ${tersifyAction(expected)}`)
 
     if (this.callbacks.length > 0) {
       const cb = this.callbacks.filter(c => !SimulationMismatch.mismatch(expected, c.action))
@@ -123,30 +123,35 @@ export class ActionTracker {
       })
     }
 
+    if (hasSource(expected)) {
+      if (expected.name === 'construct') {
+        const subject = this.getSourceSubject(expected)
+        // the stub will consume the `construct` action
+        const stub = this.getSourceStub(expected, subject)
+        this.stubs.push({ action: expected, stub, subject })
+        this.process()
+      }
+    }
     if (invokeAction && isReturnAction(invokeAction, expected)) return
 
-    if (isCallbackAction(expected)) {
-      const callback = this.getCallback(expected)
-      this.push(expected)
-      callback(...expected.payload)
-
-      this.process()
+    if (expected.name === 'invoke') {
+      const entry = this.stubs.find(e =>
+        e.action.type === expected.type &&
+        e.action.instanceId === expected.instanceId
+      )
+      if (entry) {
+        entry.stub(...expected.payload)
+        // console.log(entry.subject, expected)
+        // entry.subject(...expected.payload)
+      }
     }
   }
-  peek() {
+  private peek() {
     return this.actions[this.actualActions.length]
   }
   private push(action) {
     this.actualActions.push(action)
     this.callListeners(action)
-  }
-  private getCallback({ sourceType, sourceInstanceId, sourceInvokeId, sourcePath }: SpecCallbackAction) {
-    const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
-    if (source) {
-      return sourcePath.reduce((p, v) => {
-        return p[v]
-      }, source.payload)
-    }
   }
   private callListeners(action) {
     if (this.events[action.type]) {
@@ -157,6 +162,19 @@ export class ActionTracker {
       this.listenAll.forEach(cb => cb(action))
     }
   }
+  private getSourceSubject({ sourceType, sourceInstanceId, sourceInvokeId, sourcePath }: SpecCallbackAction) {
+    const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
+    if (source) {
+      return sourcePath.reduce((p, v) => {
+        return p[v]
+      }, source.payload)
+    }
+  }
+  private getSourceStub(action: SpecCallbackAction, subject?) {
+    const plugin = plugins.find(p => p.type === action.type)
+    if (!plugin) throw new NotSpecable(action.type)
+    return plugin.getStub(createSourceStubContext(this, action, subject), subject)
+  }
 }
 
 function isReturnAction(action, nextAction) {
@@ -166,10 +184,9 @@ function isReturnAction(action, nextAction) {
     action.instanceId === nextAction.instanceId &&
     action.invokeId === nextAction.invokeId
 }
-function isCallbackAction(action): action is SpecCallbackAction {
-  return action.type === 'callback' && action.name === 'invoke'
+function hasSource(action): action is SpecCallbackAction {
+  return !!action.sourceType
 }
-
 
 export function createStubContext(actionTracker: ActionTracker, pluginType: string) {
   return {
@@ -224,7 +241,6 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
     blockUntilReturn() {
       actionTracker.blockUntil({
         type,
-        name: 'return',
         instanceId,
         invokeId
       })
@@ -251,4 +267,78 @@ function tersifyAction(action) {
     }
     return p
   }, {}), { maxLength: Infinity })
+}
+
+function createSourceStubContext(actionTracker: ActionTracker, action: SpecCallbackAction, subject) {
+  return {
+    specId: actionTracker.specId,
+    newInstance(args, meta) {
+      return createSourceStubInstance(actionTracker, action, subject, args, meta)
+    }
+  } as StubContext
+}
+
+function createSourceStubInstance(actionTracker, action: SpecCallbackAction, subject, args, meta) {
+  const instanceId = actionTracker.actualActions.filter(a => a.type === action.type && a.name === 'construct').length + 1
+  let invokeId = 0
+  actionTracker.received({
+    type: action.type,
+    name: 'construct',
+    payload: args,
+    meta,
+    instanceId,
+    sourceType: action.sourceType,
+    sourceInstanceId: action.sourceInstanceId,
+    sourceInvokeId: action.sourceInvokeId,
+    sourcePath: action.sourcePath
+  })
+  return {
+    instanceId,
+    newCall(callMeta?: { [k: string]: any }) {
+      return createSourceStubCall(actionTracker, action.type, subject, instanceId, ++invokeId, callMeta)
+    }
+  }
+}
+
+function createSourceStubCall(actionTracker: ActionTracker, type, subject, instanceId, invokeId, callMeta) {
+  return {
+    invokeId,
+    invoked(args: any[], meta?: { [k: string]: any }) {
+      actionTracker.received({
+        type,
+        name: 'invoke',
+        payload: args,
+        meta: callMeta ? unpartial(callMeta, meta) : meta,
+        instanceId,
+        invokeId
+      })
+      subject(...args)
+    },
+    waitUntilReturn(callback) {
+      const expected = {
+        type,
+        name: 'return',
+        payload: undefined,
+        instanceId,
+        invokeId
+      }
+      actionTracker.waitUntil(expected, callback)
+    },
+    blockUntilReturn() {
+      actionTracker.blockUntil({
+        type,
+        instanceId,
+        invokeId
+      })
+    },
+    succeed(meta?: { [k: string]: any }) {
+      return actionTracker.succeed(meta)
+    },
+    result() {
+      return actionTracker.result()
+    },
+    thrown() {
+      return actionTracker.result()
+    }
+  }
 }

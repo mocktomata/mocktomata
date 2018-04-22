@@ -46,7 +46,9 @@ test('invoke callback in literal inside arguments', async () => {
   tracker.received({ ...functionConstructed({ functionName: 'success' }), instanceId: 1 })
   tracker.received({
     ...functionInvoked({
-      data: 2, success(value) {
+      data: 2,
+      error() { return },
+      success(value) {
         o.once(1)
         t.equal(value, 3)
       }

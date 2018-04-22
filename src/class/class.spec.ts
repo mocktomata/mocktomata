@@ -12,7 +12,9 @@ import {
   classMethodReturned,
   promiseConstructed,
   promiseResolved,
-  callbackInvoked
+  functionConstructed,
+  functionInvoked,
+  functionReturned
 } from '..'
 import { log } from '../log'
 import k from '../testUtil'
@@ -140,11 +142,15 @@ k.trio('class/withCallback', (title, spec) => {
       { ...classMethodInvoked('justDo', 1), instanceId: 1, invokeId: 1 },
       { ...classMethodReturned('justDo', 1), instanceId: 1, invokeId: 1 },
       { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 2 },
+      { ...functionConstructed(), instanceId: 1, sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [0] },
       { ...classMethodReturned('callback'), instanceId: 1, invokeId: 2 },
       { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 3 },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 3, sourcePath: [0] },
       { ...classMethodReturned('callback'), instanceId: 1, invokeId: 3 },
-      { ...callbackInvoked('called'), sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [0] },
-      { ...callbackInvoked('called'), sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 3, sourcePath: [0] }
+      { ...functionInvoked('called'), instanceId: 1, invokeId: 1 },
+      { ...functionReturned(), instanceId: 1, invokeId: 1 },
+      { ...functionInvoked('called'), instanceId: 2, invokeId: 1 },
+      { ...functionReturned(), instanceId: 2, invokeId: 1 }
     ])
   })
 })

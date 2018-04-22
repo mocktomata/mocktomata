@@ -1,7 +1,7 @@
 import a, { AssertOrder } from 'assertron'
 import t from 'assert'
 
-import { config, given, onGiven, spec, MissingSpecID, functionConstructed, functionInvoked, functionReturned, callbackInvoked } from '.'
+import { config, given, onGiven, spec, MissingSpecID, functionConstructed, functionInvoked, functionReturned } from '.'
 import { resetStore } from './store'
 
 const simpleCallback = {
@@ -33,14 +33,18 @@ const fake = {
 const forceReplaySuccessExpectation = [
   { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
   { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-  { ...callbackInvoked(null, 3), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+  { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+  { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
+  { ...functionReturned(), instanceId: 2, invokeId: 1 },
   { ...functionReturned(), instanceId: 1, invokeId: 1 }]
 
 
 const forceReplayFailExpectation = [
   { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
   { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-  { ...callbackInvoked({ message: 'fail' }), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+  { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+  { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
+  { ...functionReturned(), instanceId: 2, invokeId: 1 },
   { ...functionReturned(), instanceId: 1, invokeId: 1 }]
 
 beforeEach(() => {
