@@ -6,16 +6,16 @@ import { DuplicatePlugin } from './errors'
 export const plugins: Array<Plugin<any>> = []
 
 const komondorRegistrar: Registrar = {
-  register(type: string, support, getSpy, getStub) {
+  register(type: string, support, getSpy, getStub, serialize) {
     if (plugins.some(p => p.type === type)) {
       throw new DuplicatePlugin(type)
     }
 
-    plugins.unshift({ type, support, getSpy, getStub })
+    plugins.unshift({ type, support, getSpy, getStub, serialize })
   }
 }
 
-export function registerPlugin(plugin) {
+export function registerPlugin(plugin: { activate: (registrar: Registrar) => void }) {
   if (plugin.activate) {
     plugin.activate(komondorRegistrar)
   }

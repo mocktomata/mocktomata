@@ -123,16 +123,15 @@ export class ActionTracker {
       })
     }
 
-    if (hasSource(expected)) {
-      if (expected.name === 'construct') {
-        const subject = this.getSourceSubject(expected)
-        // the stub will consume the `construct` action
-        const stub = this.getSourceStub(expected, subject)
-        this.stubs.push({ action: expected, stub, subject })
-        this.process()
-      }
-    }
     if (invokeAction && isReturnAction(invokeAction, expected)) return
+
+    if (hasSource(expected) && expected.name === 'construct') {
+      const subject = this.getSourceSubject(expected)
+      // the stub will consume the `construct` action
+      const stub = this.getSourceStub(expected, subject)
+      this.stubs.push({ action: expected, stub, subject })
+      this.process()
+    }
 
     if (expected.name === 'invoke') {
       const entry = this.stubs.find(e =>
@@ -141,8 +140,6 @@ export class ActionTracker {
       )
       if (entry) {
         entry.stub(...expected.payload)
-        // console.log(entry.subject, expected)
-        // entry.subject(...expected.payload)
       }
     }
   }
@@ -184,6 +181,7 @@ function isReturnAction(action, nextAction) {
     action.instanceId === nextAction.instanceId &&
     action.invokeId === nextAction.invokeId
 }
+
 function hasSource(action): action is SpecCallbackAction {
   return !!action.sourceType
 }

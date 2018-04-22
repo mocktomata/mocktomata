@@ -69,7 +69,7 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   }
 
 
-  const context = new SpyContextImpl({ }, 'live', specId, plugin)
+  const context = new SpyContextImpl({}, 'live', specId, plugin)
 
   const spec: Spec<T> = {
     actions: context.actions,
@@ -101,7 +101,7 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
     throw new NotSpecable(subject)
   }
 
-  const context = new SpyContextImpl({ }, 'save', specId, plugin)
+  const context = new SpyContextImpl({}, 'save', specId, plugin)
 
   const spec: Spec<T> = {
     actions: context.actions,
@@ -118,10 +118,10 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
         // istanbul ignore next
         if (!specId)
           throw new Error('Cannot save spec without options.id.')
-        makeErrorSerializable(this.actions)
+        // makeErrorSerializable(this.actions)
         return io.writeSpec(specId, {
           expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
-          actions: this.actions
+          actions: serialize(this.actions)
         })
       })
     },
@@ -166,13 +166,47 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   return spec
 }
 
-function makeErrorSerializable(actions: SpecAction[]) {
-  actions.forEach(a => {
-    if (isRejectErrorPromiseReturnAction(a) ||
-      isErrorThrowAction(a)) {
-      a.payload = { message: a.payload.message, ...a.payload, prototype: 'Error' }
+function serialize(actions: SpecAction[]) {
+  return actions.map(a => {
+    if (a.payload) {
+      if (isRejectErrorPromiseReturnAction(a) ||
+        isErrorThrowAction(a)) {
+        return {
+          ...a, payload: {
+            message: a.payload.message,
+            ...a.payload,
+            prototype: 'Error'
+          }
+        }
+      }
+      else if (a.name === 'invoke') {
+        const args: any[] = a.payload
+        return {
+          ...a,
+          payload: args.map(serializeEntry)
+        }
+      }
     }
+    return a
   })
+}
+
+function serializeEntry(value) {
+  if (value === undefined) return value
+  if (value === null) return value
+  if (Array.isArray(value)) return value
+
+  const plugin = plugins.find(p => p.support(value))
+  if (plugin && plugin.serialize) {
+    return plugin.serialize(value)
+  }
+  if (typeof value === 'object') {
+    return Object.keys(value).reduce((p, key) => {
+      p[key] = serializeEntry(value[key])
+      return p
+    }, {})
+  }
+  return value
 }
 
 function isErrorThrowAction(action) {
