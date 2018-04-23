@@ -82,7 +82,6 @@
   "dependencies": {
     "@unional/logging": "^0.5.0",
     "assertron": "^4.3.1",
-    "is-invalid-path": "^1.0.2",
     "komondor-plugin": "^1.7.2",
     "make-error": "^1.3.4",
     "node-fetch": "^2.1.2",

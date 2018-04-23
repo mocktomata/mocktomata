@@ -70,7 +70,7 @@ k.trio('CustomError properties are kept', 'spec/errorCustomProperty', (title, sp
   })
 })
 
-test('spec id containing invalid path character should still work', () => {
+test('spec id containing invalid path character should throws InvalidID', () => {
   return Promise.all([
     'a > b',
     'new: some-condition'
@@ -80,5 +80,14 @@ test('spec id containing invalid path character should still work', () => {
       a.throws(() => spec.save(p, () => ({})), InvalidID),
       a.throws(() => spec.simulate(p, () => ({})), InvalidID)
     ])
+  }))
+})
+
+test('spec id containing path should work', () => {
+  return Promise.all([
+    'spec/done',
+    'spec\\done'
+  ].map(p => {
+    return spec(p, () => ({}))
   }))
 })
