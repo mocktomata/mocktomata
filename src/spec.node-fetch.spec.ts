@@ -24,7 +24,7 @@ registerPlugin({
   }
 })
 
-k.simulate('file upload stream', 'spec/node-fetch/input-stream', (title, spec) => {
+k.trio('file upload stream', 'spec/node-fetch/input-stream', (title, spec) => {
   test(title, async () => {
     const s = await spec(fetch)
     const size = fs.statSync('fixtures/node-fetch/file.txt').size

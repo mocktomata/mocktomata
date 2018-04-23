@@ -52,14 +52,6 @@ export class SpyContextImpl implements SpyContext {
       return plugin.getSpy(childContext, action.payload)
     }
   }
-  addCallbackAction(action: Partial<SpecAction>) {
-    const a = unpartial({
-      type: 'callback',
-      name: 'invoke',
-      sourceType: this.plugin.type
-    } as SpecAction, action)
-    this.addAction(a)
-  }
   callListeners(action) {
     if (this.events[action.type]) {
       if (this.events[action.type][action.name])

@@ -192,7 +192,6 @@ function serialize(actions: SpecAction[]) {
 }
 
 function serializeEntry(value) {
-  if (value === undefined) return value
   if (value === null) return value
   if (Array.isArray(value)) return value
 

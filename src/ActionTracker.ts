@@ -3,12 +3,12 @@ import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
 import { unpartial } from 'unpartial'
 
-import { NotSpecable } from './errors'
+import { NotSpecable, SourceNotFound } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
 
 export class ActionTracker {
-  callbacks: { action: SpecAction, callback: Function }[] = []
+  waitings: { action: SpecAction, callback: Function }[] = []
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
   actualActions: SpecAction[] = []
@@ -45,25 +45,28 @@ export class ActionTracker {
     }
     return result
   }
-  blockUntil(action) {
-    log.onDebug(() => `blockUntil: ${tersify(action, { maxLength: Infinity })}`)
+  blockUntil(_action) {
+    // TODO: Post 6.0 remove blockUntil?
+    // Seems like I don't need this.
+    // Will remove in 6.1 if real world usage proves this.
+    // log.onDebug(() => `blockUntil: ${tersify(action, { maxLength: Infinity })}`)
 
-    let expected = this.peek()
-    while (expected && SimulationMismatch.mismatch(expected, action)) {
-      this.process()
-      const next = this.peek()
-      if (next === expected) {
-        // infinite loop
-        // istanbul ignore next
-        log.error(`blockUntil: can't move forward with ${tersifyAction(next)}`)
-        break
-      }
-      expected = next
-    }
+    // let expected = this.peek()
+    // while (expected && SimulationMismatch.mismatch(expected, action)) {
+    //   this.process()
+    //   const next = this.peek()
+    //   if (next === expected) {
+    //     // infinite loop
+    //     // istanbul ignore next
+    //     log.error(`blockUntil: can't move forward with ${tersifyAction(next)}`)
+    //     break
+    //   }
+    //   expected = next
+    // }
   }
   waitUntil(action, callback) {
     log.onDebug(() => `waitUntil: ${tersifyAction(action)}`)
-    this.callbacks.push({ action, callback })
+    this.waitings.push({ action, callback })
   }
   on(actionType: string, name: string, callback) {
     if (!this.events[actionType])
@@ -75,14 +78,13 @@ export class ActionTracker {
   onAny(callback: (action: SpecAction) => void) {
     this.listenAll.push(callback)
     const action = this.peek()
-    if (action) {
-      callback(action)
-    }
+    callback(action)
   }
   private getResultOf(returnAction: SpecAction) {
     if (!returnAction.returnType) return returnAction.payload
 
     let nextAction = this.peek()
+    // istanbul ignore next
     if (!nextAction) throw new SimulationMismatch(this.specId, {
       type: returnAction.returnType,
       instanceId: returnAction.returnInstanceId
@@ -92,6 +94,7 @@ export class ActionTracker {
   }
   private getStub(action: SpecAction, subject?) {
     const plugin = plugins.find(p => p.type === action.type)
+    // istanbul ignore next
     if (!plugin) throw new NotSpecable(action.type)
     return plugin.getStub(createStubContext(this, plugin.type), subject)
   }
@@ -115,17 +118,21 @@ export class ActionTracker {
 
     log.onDebug(() => `processing: ${tersifyAction(expected)}`)
 
-    if (this.callbacks.length > 0) {
-      const cb = this.callbacks.filter(c => !SimulationMismatch.mismatch(expected, c.action))
+    if (this.waitings.length > 0) {
+      const cb = this.waitings.filter(c => !SimulationMismatch.mismatch(expected, c.action))
       cb.forEach(c => {
-        this.callbacks.splice(this.callbacks.indexOf(c), 1)
+        this.waitings.splice(this.waitings.indexOf(c), 1)
         c.callback(expected)
       })
     }
 
-    if (invokeAction && isReturnAction(invokeAction, expected)) return
+    if (invokeAction && isReturnAction(invokeAction, expected)) {
+      log.debug('wait for return action')
+      return
+    }
 
-    if (hasSource(expected) && expected.name === 'construct') {
+    if (isActionWithSource(expected)) {
+      log.onDebug(() => `create stub: ${tersifyAction(expected)}`)
       const subject = this.getSourceSubject(expected)
       // the stub will consume the `construct` action
       const stub = this.getSourceStub(expected, subject)
@@ -139,6 +146,7 @@ export class ActionTracker {
         e.action.instanceId === expected.instanceId
       )
       if (entry) {
+        log.onDebug(() => `auto invoke: ${tersifyAction(expected)}`)
         entry.stub(...expected.payload)
       }
     }
@@ -159,16 +167,20 @@ export class ActionTracker {
       this.listenAll.forEach(cb => cb(action))
     }
   }
-  private getSourceSubject({ sourceType, sourceInstanceId, sourceInvokeId, sourcePath }: SpecActionWithSource) {
+  private getSourceSubject(action: SpecActionWithSource) {
+    const { sourceType, sourceInstanceId, sourceInvokeId, sourcePath } = action
     const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
-    if (source) {
-      return sourcePath.reduce((p, v) => {
-        return p[v]
-      }, source.payload)
-    }
+
+    // istanbul ignore next
+    if (!source) throw new SourceNotFound(action)
+
+    return sourcePath.reduce((p, v) => {
+      return p[v]
+    }, source.payload)
   }
   private getSourceStub(action: SpecActionWithSource, subject?) {
     const plugin = plugins.find(p => p.type === action.type)
+    // istanbul ignore next
     if (!plugin) throw new NotSpecable(action.type)
     return plugin.getStub(createSourceStubContext(this, action, subject), subject)
   }
@@ -182,7 +194,7 @@ function isReturnAction(action, nextAction) {
     action.invokeId === nextAction.invokeId
 }
 
-function hasSource(action): action is SpecActionWithSource {
+function isActionWithSource(action): action is SpecActionWithSource {
   return !!action.sourceType
 }
 
@@ -255,6 +267,7 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
   }
 }
 
+// istanbul ignore next
 function tersifyAction(action) {
   return tersify(Object.keys(action).reduce((p, k) => {
     if (k === 'payload') {
@@ -299,44 +312,11 @@ function createSourceStubInstance(actionTracker, action: SpecActionWithSource, s
 }
 
 function createSourceStubCall(actionTracker: ActionTracker, type, subject, instanceId, invokeId, callMeta) {
-  return {
-    invokeId,
-    invoked(args: any[], meta?: { [k: string]: any }) {
-      actionTracker.received({
-        type,
-        name: 'invoke',
-        payload: args,
-        meta: callMeta ? unpartial(callMeta, meta) : meta,
-        instanceId,
-        invokeId
-      })
-      subject(...args)
-    },
-    waitUntilReturn(callback) {
-      const expected = {
-        type,
-        name: 'return',
-        payload: undefined,
-        instanceId,
-        invokeId
-      }
-      actionTracker.waitUntil(expected, callback)
-    },
-    blockUntilReturn() {
-      actionTracker.blockUntil({
-        type,
-        instanceId,
-        invokeId
-      })
-    },
-    succeed(meta?: { [k: string]: any }) {
-      return actionTracker.succeed(meta)
-    },
-    result() {
-      return actionTracker.result()
-    },
-    thrown() {
-      return actionTracker.result()
-    }
+  const stubCall = createStubCall(actionTracker, type, instanceId, invokeId, callMeta)
+  const invoked = stubCall.invoked
+  stubCall.invoked = (args: any[], meta?: { [k: string]: any }) => {
+    invoked(args, meta)
+    subject(...args)
   }
+  return stubCall
 }

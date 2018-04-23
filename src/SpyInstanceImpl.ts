@@ -16,8 +16,4 @@ export class SpyInstanceImpl implements SpyInstance {
   addReturnAction(action: Partial<SpecAction>) {
     return this.context.addReturnAction(action)
   }
-  addCallbackAction(action: Partial<SpecAction>) {
-    action.sourceInstanceId = this.instanceId
-    return this.context.addCallbackAction(action)
-  }
 }

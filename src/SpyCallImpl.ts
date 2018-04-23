@@ -1,4 +1,4 @@
-import { SpyCall, SpecAction } from 'komondor-plugin'
+import { SpyCall } from 'komondor-plugin'
 import { unpartial } from 'unpartial'
 
 import { SpyInstanceImpl } from './SpyInstanceImpl'
@@ -33,21 +33,14 @@ export class SpyCallImpl implements SpyCall {
           const prop = arg[key]
           if (typeof prop === 'function') {
             const plugin = plugins.find(p => p.support(prop))!
-            // if (plugin) {
             const context = this.instance.context.createCallbackContext(plugin, this, [i, key])
             result[key] = plugin.getSpy(context, prop)
-            // }
-            // result[key] = this.spyOnCallback(prop, [i, key])
           }
           else {
             result[key] = prop
           }
         })
         return result
-      }
-
-      if (typeof arg === 'function') {
-        return this.spyOnCallback(arg, [i])
       }
 
       return arg
@@ -71,16 +64,5 @@ export class SpyCallImpl implements SpyCall {
       invokeId: this.invokeId
     })
     return err
-  }
-  spyOnCallback(fn, sourcePath) {
-    return (...args) => {
-      const action = {
-        payload: args,
-        sourceInvokeId: this.invokeId,
-        sourcePath
-      } as SpecAction
-      this.instance.addCallbackAction(action)
-      fn(...args)
-    }
   }
 }
