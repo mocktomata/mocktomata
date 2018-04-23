@@ -109,7 +109,6 @@ export class SpyContextImpl implements SpyContext {
             meta: this.callMeta ? unpartial(this.callMeta, meta) : meta,
             invokeId: this.invokeId
           })
-
           return args
         }
         return call
