@@ -1,5 +1,6 @@
 import { BaseError } from 'make-error'
 import { tersify } from 'tersify'
+import { SpecActionWithSource } from 'komondor-plugin';
 
 export class MissingGivenHandler extends BaseError {
   // istanbul ignore next
@@ -28,6 +29,15 @@ export class InvalidID extends BaseError {
   }
 }
 
+
+export class SourceNotFound extends BaseError {
+  // istanbul ignore next
+  constructor(public action: SpecActionWithSource) {
+    super(`Unable to locate source action for ${tersify(action, { maxLength: Infinity })}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
 
 export class SpecNotFound extends BaseError {
   // istanbul ignore next

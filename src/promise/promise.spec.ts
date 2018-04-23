@@ -10,8 +10,7 @@ import {
   promiseConstructed,
   promiseResolved,
   promiseRejected,
-  functionReturned,
-  callbackInvoked
+  functionReturned
 } from '..'
 
 const promise = {
@@ -89,10 +88,10 @@ k.trio('promise/noReturn', (title, spec) => {
       .then(() => {
         return s.satisfy([
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-          { type: 'function', name: 'invoke', invokeId: 1, instanceId: 1 },
-          { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...functionInvoked(), instanceId: 1, invokeId: 1 },
+          { ...functionReturned(), instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
-          { type: 'promise', name: 'return', meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
+          { ...promiseResolved(), instanceId: 1, invokeId: 1 }
         ])
       })
   })
@@ -108,10 +107,10 @@ k.trio('promise/resolve', (title, spec) => {
         t.equal(actual, 3)
         return s.satisfy([
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-          { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
-          { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
+          { ...functionReturned(), instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
-          { type: 'promise', name: 'return', payload: 3, meta: { state: 'fulfilled' }, invokeId: 1, instanceId: 1 }
+          { ...promiseResolved(3), instanceId: 1, invokeId: 1 }
         ])
       })
   })
@@ -125,10 +124,10 @@ k.trio('promise/reject', (title, spec) => {
       .catch(() => {
         return s.satisfy([
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
-          { type: 'function', name: 'invoke', payload: ['increment', 2], invokeId: 1, instanceId: 1 },
-          { type: 'function', name: 'return', payload: {}, invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
+          { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
+          { ...functionReturned(), instanceId: 1, invokeId: 1, returnType: 'promise', returnInstanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
-          { type: 'promise', name: 'return', payload: { message: 'fail' }, meta: { state: 'rejected' }, invokeId: 1, instanceId: 1 }
+          { ...promiseRejected({ message: 'fail' }), instanceId: 1, invokeId: 1 }
         ])
       })
   })
@@ -159,9 +158,11 @@ k.trio('promise with callback in between', 'promise/inBetween', (title, spec) =>
         return s.satisfy([
           { ...functionConstructed({ functionName: 'foo' }), instanceId: 1 },
           { ...functionInvoked(2), invokeId: 1, instanceId: 1 },
+          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
           { ...functionReturned(), invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
-          { ...callbackInvoked('called'), sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+          { ...functionInvoked('called'), instanceId: 2, invokeId: 1 },
+          { ...functionReturned(), instanceId: 2, invokeId: 1 },
           { ...promiseResolved(3), invokeId: 1, instanceId: 1 }
         ])
       })

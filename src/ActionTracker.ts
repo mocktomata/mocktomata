@@ -1,17 +1,18 @@
-import { SpecAction, SimulationMismatch, SpecCallbackAction, StubContext } from 'komondor-plugin'
+import { SpecAction, SimulationMismatch, SpecActionWithSource, StubContext } from 'komondor-plugin'
 import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
 import { unpartial } from 'unpartial'
 
-import { NotSpecable } from './errors'
+import { NotSpecable, SourceNotFound } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
 
 export class ActionTracker {
-  callbacks: { action: SpecAction, callback: Function }[] = []
+  waitings: { action: SpecAction, callback: Function }[] = []
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
   actualActions: SpecAction[] = []
+  stubs: { action: SpecActionWithSource, stub, subject }[] = []
   constructor(public specId: string, public actions: SpecAction[]) { }
   received(actual) {
     const expected = this.peek()
@@ -44,25 +45,28 @@ export class ActionTracker {
     }
     return result
   }
-  blockUntil(action) {
-    log.onDebug(() => `blockUntil: ${tersify(action, { maxLength: Infinity })}`)
+  blockUntil(_action) {
+    // TODO: Post 6.0 remove blockUntil?
+    // Seems like I don't need this.
+    // Will remove in 6.1 if real world usage proves this.
+    // log.onDebug(() => `blockUntil: ${tersify(action, { maxLength: Infinity })}`)
 
-    let expected = this.peek()
-    while (expected && SimulationMismatch.mismatch(expected, action)) {
-      this.process()
-      const next = this.peek()
-      if (next === expected) {
-        // infinite loop
-        // istanbul ignore next
-        log.error(`blockUntil: can't move forward with ${tersifyAction(next)}`)
-        break
-      }
-      expected = next
-    }
+    // let expected = this.peek()
+    // while (expected && SimulationMismatch.mismatch(expected, action)) {
+    //   this.process()
+    //   const next = this.peek()
+    //   if (next === expected) {
+    //     // infinite loop
+    //     // istanbul ignore next
+    //     log.error(`blockUntil: can't move forward with ${tersifyAction(next)}`)
+    //     break
+    //   }
+    //   expected = next
+    // }
   }
   waitUntil(action, callback) {
     log.onDebug(() => `waitUntil: ${tersifyAction(action)}`)
-    this.callbacks.push({ action, callback })
+    this.waitings.push({ action, callback })
   }
   on(actionType: string, name: string, callback) {
     if (!this.events[actionType])
@@ -74,15 +78,13 @@ export class ActionTracker {
   onAny(callback: (action: SpecAction) => void) {
     this.listenAll.push(callback)
     const action = this.peek()
-    if (action) {
-      callback(action)
-    }
+    callback(action)
   }
   private getResultOf(returnAction: SpecAction) {
-    // console.log('resultof', returnAction)
     if (!returnAction.returnType) return returnAction.payload
 
     let nextAction = this.peek()
+    // istanbul ignore next
     if (!nextAction) throw new SimulationMismatch(this.specId, {
       type: returnAction.returnType,
       instanceId: returnAction.returnInstanceId
@@ -90,10 +92,11 @@ export class ActionTracker {
 
     return this.getStub(nextAction)
   }
-  private getStub(action: SpecAction) {
+  private getStub(action: SpecAction, subject?) {
     const plugin = plugins.find(p => p.type === action.type)
+    // istanbul ignore next
     if (!plugin) throw new NotSpecable(action.type)
-    return plugin.getStub(createStubContext(this, plugin.type), undefined)
+    return plugin.getStub(createStubContext(this, plugin.type), subject)
   }
   private process(invokeAction?: SpecAction) {
     let expected = this.peek()
@@ -113,40 +116,47 @@ export class ActionTracker {
       }
     }
 
-    log.onDebug(() => `process: ${tersifyAction(expected)}`)
+    log.onDebug(() => `processing: ${tersifyAction(expected)}`)
 
-    if (this.callbacks.length > 0) {
-      const cb = this.callbacks.filter(c => !SimulationMismatch.mismatch(expected, c.action))
+    if (this.waitings.length > 0) {
+      const cb = this.waitings.filter(c => !SimulationMismatch.mismatch(expected, c.action))
       cb.forEach(c => {
-        this.callbacks.splice(this.callbacks.indexOf(c), 1)
+        this.waitings.splice(this.waitings.indexOf(c), 1)
         c.callback(expected)
       })
     }
 
-    if (invokeAction && isReturnAction(invokeAction, expected)) return
+    if (invokeAction && isReturnAction(invokeAction, expected)) {
+      log.debug('wait for return action')
+      return
+    }
 
-    if (isCallbackAction(expected)) {
-      const callback = this.getCallback(expected)
-      this.push(expected)
-      callback(...expected.payload)
-
+    if (isActionWithSource(expected)) {
+      log.onDebug(() => `create stub: ${tersifyAction(expected)}`)
+      const subject = this.getSourceSubject(expected)
+      // the stub will consume the `construct` action
+      const stub = this.getSourceStub(expected, subject)
+      this.stubs.push({ action: expected, stub, subject })
       this.process()
     }
+
+    if (expected.name === 'invoke') {
+      const entry = this.stubs.find(e =>
+        e.action.type === expected.type &&
+        e.action.instanceId === expected.instanceId
+      )
+      if (entry) {
+        log.onDebug(() => `auto invoke: ${tersifyAction(expected)}`)
+        entry.stub(...expected.payload)
+      }
+    }
   }
-  peek() {
+  private peek() {
     return this.actions[this.actualActions.length]
   }
   private push(action) {
     this.actualActions.push(action)
     this.callListeners(action)
-  }
-  private getCallback({ sourceType, sourceInstanceId, sourceInvokeId, sourcePath }: SpecCallbackAction) {
-    const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
-    if (source) {
-      return sourcePath.reduce((p, v) => {
-        return p[v]
-      }, source.payload)
-    }
   }
   private callListeners(action) {
     if (this.events[action.type]) {
@@ -157,6 +167,23 @@ export class ActionTracker {
       this.listenAll.forEach(cb => cb(action))
     }
   }
+  private getSourceSubject(action: SpecActionWithSource) {
+    const { sourceType, sourceInstanceId, sourceInvokeId, sourcePath } = action
+    const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
+
+    // istanbul ignore next
+    if (!source) throw new SourceNotFound(action)
+
+    return sourcePath.reduce((p, v) => {
+      return p[v]
+    }, source.payload)
+  }
+  private getSourceStub(action: SpecActionWithSource, subject?) {
+    const plugin = plugins.find(p => p.type === action.type)
+    // istanbul ignore next
+    if (!plugin) throw new NotSpecable(action.type)
+    return plugin.getStub(createSourceStubContext(this, action, subject), subject)
+  }
 }
 
 function isReturnAction(action, nextAction) {
@@ -166,10 +193,10 @@ function isReturnAction(action, nextAction) {
     action.instanceId === nextAction.instanceId &&
     action.invokeId === nextAction.invokeId
 }
-function isCallbackAction(action): action is SpecCallbackAction {
-  return action.type === 'callback' && action.name === 'invoke'
-}
 
+function isActionWithSource(action): action is SpecActionWithSource {
+  return !!action.sourceType
+}
 
 export function createStubContext(actionTracker: ActionTracker, pluginType: string) {
   return {
@@ -224,7 +251,6 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
     blockUntilReturn() {
       actionTracker.blockUntil({
         type,
-        name: 'return',
         instanceId,
         invokeId
       })
@@ -241,6 +267,7 @@ function createStubCall(actionTracker: ActionTracker, type, instanceId, invokeId
   }
 }
 
+// istanbul ignore next
 function tersifyAction(action) {
   return tersify(Object.keys(action).reduce((p, k) => {
     if (k === 'payload') {
@@ -251,4 +278,45 @@ function tersifyAction(action) {
     }
     return p
   }, {}), { maxLength: Infinity })
+}
+
+function createSourceStubContext(actionTracker: ActionTracker, action: SpecActionWithSource, subject) {
+  return {
+    specId: actionTracker.specId,
+    newInstance(args, meta) {
+      return createSourceStubInstance(actionTracker, action, subject, args, meta)
+    }
+  } as StubContext
+}
+
+function createSourceStubInstance(actionTracker, action: SpecActionWithSource, subject, args, meta) {
+  const instanceId = actionTracker.actualActions.filter(a => a.type === action.type && a.name === 'construct').length + 1
+  let invokeId = 0
+  actionTracker.received({
+    type: action.type,
+    name: 'construct',
+    payload: args,
+    meta,
+    instanceId,
+    sourceType: action.sourceType,
+    sourceInstanceId: action.sourceInstanceId,
+    sourceInvokeId: action.sourceInvokeId,
+    sourcePath: action.sourcePath
+  })
+  return {
+    instanceId,
+    newCall(callMeta?: { [k: string]: any }) {
+      return createSourceStubCall(actionTracker, action.type, subject, instanceId, ++invokeId, callMeta)
+    }
+  }
+}
+
+function createSourceStubCall(actionTracker: ActionTracker, type, subject, instanceId, invokeId, callMeta) {
+  const stubCall = createStubCall(actionTracker, type, instanceId, invokeId, callMeta)
+  const invoked = stubCall.invoked
+  stubCall.invoked = (args: any[], meta?: { [k: string]: any }) => {
+    invoked(args, meta)
+    subject(...args)
+  }
+  return stubCall
 }

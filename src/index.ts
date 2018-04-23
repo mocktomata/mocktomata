@@ -31,10 +31,6 @@ const {
   promiseRejected
 } = promise
 
-export function callbackInvoked(...args: any[]) {
-  return { type: 'callback', name: 'invoke', payload: args }
-}
-
 export {
   classConstructed,
   classMethodInvoked,
@@ -55,6 +51,7 @@ registerPlugin(genericFunction)
 registerPlugin(genericClass)
 registerPlugin(promise)
 
+// istanbul ignore next
 if (isNode) {
   loadPlugins()
 }

@@ -3,11 +3,12 @@ import { unpartial } from 'unpartial'
 
 import { SpyInstanceImpl } from './SpyInstanceImpl'
 import { plugins } from './plugin';
+import { SpyCallImpl } from './SpyCallImpl';
 
 export class SpyContextImpl implements SpyContext {
   actions: SpecAction[]
-  events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
-  listenAll: ((action) => void)[] = []
+  events: { [type: string]: { [name: string]: ((action) => void)[] } }
+  listenAll: ((action) => void)[]
   instanceIds: { [k: string]: number }
   constructor(
     context,
@@ -16,13 +17,24 @@ export class SpyContextImpl implements SpyContext {
     public plugin: Plugin<any>
   ) {
     this.actions = context.actions || []
+    this.events = context.events || {}
     this.instanceIds = context.instanceIds || {}
+    this.listenAll = context.listenAll || []
   }
   getNextId(pluginType: string) {
     return this.instanceIds[pluginType] = (this.instanceIds[pluginType] || 0) + 1
   }
   newInstance(args, meta): SpyInstance {
-    return new SpyInstanceImpl(this, args, meta)
+    const instanceId = this.getNextId(this.plugin.type)
+    const action = {
+      name: 'construct',
+      payload: args,
+      meta,
+      instanceId
+    }
+    this.addAction(action)
+
+    return new SpyInstanceImpl(this, instanceId)
   }
   addAction(action: Partial<SpecAction>) {
     const a = unpartial({
@@ -35,18 +47,10 @@ export class SpyContextImpl implements SpyContext {
   addReturnAction(action: Partial<SpecAction>) {
     const plugin = plugins.find(p => p.support(action.payload))
     if (plugin) {
-      const childContext = this.createChildContext(plugin, action)
+      const childContext = this.createReturnContext(plugin, action)
       action.returnType = plugin.type
       return plugin.getSpy(childContext, action.payload)
     }
-  }
-  addCallbackAction(action: Partial<SpecAction>) {
-    const a = unpartial({
-      type: 'callback',
-      name: 'invoke',
-      sourceType: this.plugin.type
-    } as SpecAction, action)
-    this.addAction(a)
   }
   callListeners(action) {
     if (this.events[action.type]) {
@@ -57,20 +61,62 @@ export class SpyContextImpl implements SpyContext {
       this.listenAll.forEach(cb => cb(action))
     }
   }
-  createChildContext(plugin, returnAction) {
-    const childContext = new SpyContextImpl(
+  createReturnContext(plugin, returnAction) {
+    const returnContext = new SpyContextImpl(
       this,
       this.mode,
       this.specId,
       plugin
     )
 
-    childContext.newInstance = function (args, meta) {
-      const instance = new SpyInstanceImpl(this, args, meta)
+    const newInstance = returnContext.newInstance
+    returnContext.newInstance = function (args, meta) {
+      const instance: SpyInstanceImpl = newInstance.call(returnContext, args, meta)
       returnAction.returnInstanceId = instance.instanceId
       return instance
     }
-    return childContext
+    return returnContext
+  }
+  createCallbackContext(plugin, spyCall: SpyCallImpl, sourcePath) {
+    const callbackContext = new SpyContextImpl(
+      this,
+      this.mode,
+      this.specId,
+      plugin
+    )
+    callbackContext.newInstance = function (args, meta) {
+      const instanceId = this.getNextId(this.plugin.type)
+      const action = {
+        name: 'construct',
+        payload: args,
+        meta,
+        instanceId,
+        sourceType: spyCall.instance.context.plugin.type,
+        sourceInstanceId: spyCall.instance.instanceId,
+        sourceInvokeId: spyCall.invokeId,
+        sourcePath
+      }
+      this.addAction(action)
+
+      const instance = new SpyInstanceImpl(this, instanceId)
+      const newCall = instance.newCall
+      instance.newCall = function (...args) {
+        const call: SpyCallImpl = newCall.call(instance, ...args)
+        call.invoke = function (args, meta) {
+          instance.addAction({
+            name: 'invoke',
+            payload: args,
+            meta: this.callMeta ? unpartial(this.callMeta, meta) : meta,
+            invokeId: this.invokeId
+          })
+
+          return args
+        }
+        return call
+      }
+      return instance
+    }
+    return callbackContext
   }
   on(actionType: string, name: string, callback) {
     if (!this.events[actionType])

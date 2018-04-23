@@ -1,5 +1,8 @@
 # Design note
 
+The SpecAction is the syntax of the finite state machine.
+The SpecActions recorded is the finite state machine.
+
 ## Instance ID
 
 What is an instance?
