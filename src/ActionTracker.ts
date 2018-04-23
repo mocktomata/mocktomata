@@ -147,7 +147,7 @@ export class ActionTracker {
       )
       if (entry) {
         log.onDebug(() => `auto invoke: ${tersifyAction(expected)}`)
-        entry.stub(...expected.payload)
+        invokeSubjectAtSite(entry.stub, expected.meta, expected.payload)
       }
     }
   }
@@ -315,8 +315,25 @@ function createSourceStubCall(actionTracker: ActionTracker, type, subject, insta
   const stubCall = createStubCall(actionTracker, type, instanceId, invokeId, callMeta)
   const invoked = stubCall.invoked
   stubCall.invoked = (args: any[], meta?: { [k: string]: any }) => {
+    const mergedMeta = callMeta ? unpartial(callMeta, meta) : meta
     invoked(args, meta)
-    subject(...args)
+    invokeSubjectAtSite(subject, mergedMeta, args)
   }
   return stubCall
+}
+
+// Ignore this at the moment because it needs to serialize/deserialize function in the action.payload (args).
+// istanbul ignore next
+function invokeSubjectAtSite(subject, meta, args) {
+  if (!meta || !meta.site) {
+    subject(...args)
+    return
+  }
+
+  let parent = subject
+  const fn = meta.site.reduce((p, v) => {
+    parent = p
+    return p[v]
+  }, subject)
+  fn.call(parent, ...args)
 }
