@@ -1,4 +1,4 @@
-import { SpecAction, SimulationMismatch, SpecCallbackAction, StubContext } from 'komondor-plugin'
+import { SpecAction, SimulationMismatch, SpecActionWithSource, StubContext } from 'komondor-plugin'
 import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
 import { unpartial } from 'unpartial'
@@ -12,7 +12,7 @@ export class ActionTracker {
   events: { [type: string]: { [name: string]: ((action) => void)[] } } = {}
   listenAll: ((action) => void)[] = []
   actualActions: SpecAction[] = []
-  stubs: { action: SpecCallbackAction, stub, subject }[] = []
+  stubs: { action: SpecActionWithSource, stub, subject }[] = []
   constructor(public specId: string, public actions: SpecAction[]) { }
   received(actual) {
     const expected = this.peek()
@@ -159,7 +159,7 @@ export class ActionTracker {
       this.listenAll.forEach(cb => cb(action))
     }
   }
-  private getSourceSubject({ sourceType, sourceInstanceId, sourceInvokeId, sourcePath }: SpecCallbackAction) {
+  private getSourceSubject({ sourceType, sourceInstanceId, sourceInvokeId, sourcePath }: SpecActionWithSource) {
     const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
     if (source) {
       return sourcePath.reduce((p, v) => {
@@ -167,7 +167,7 @@ export class ActionTracker {
       }, source.payload)
     }
   }
-  private getSourceStub(action: SpecCallbackAction, subject?) {
+  private getSourceStub(action: SpecActionWithSource, subject?) {
     const plugin = plugins.find(p => p.type === action.type)
     if (!plugin) throw new NotSpecable(action.type)
     return plugin.getStub(createSourceStubContext(this, action, subject), subject)
@@ -182,7 +182,7 @@ function isReturnAction(action, nextAction) {
     action.invokeId === nextAction.invokeId
 }
 
-function hasSource(action): action is SpecCallbackAction {
+function hasSource(action): action is SpecActionWithSource {
   return !!action.sourceType
 }
 
@@ -267,7 +267,7 @@ function tersifyAction(action) {
   }, {}), { maxLength: Infinity })
 }
 
-function createSourceStubContext(actionTracker: ActionTracker, action: SpecCallbackAction, subject) {
+function createSourceStubContext(actionTracker: ActionTracker, action: SpecActionWithSource, subject) {
   return {
     specId: actionTracker.specId,
     newInstance(args, meta) {
@@ -276,7 +276,7 @@ function createSourceStubContext(actionTracker: ActionTracker, action: SpecCallb
   } as StubContext
 }
 
-function createSourceStubInstance(actionTracker, action: SpecCallbackAction, subject, args, meta) {
+function createSourceStubInstance(actionTracker, action: SpecActionWithSource, subject, args, meta) {
   const instanceId = actionTracker.actualActions.filter(a => a.type === action.type && a.name === 'construct').length + 1
   let invokeId = 0
   actionTracker.received({

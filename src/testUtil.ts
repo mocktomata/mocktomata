@@ -1,6 +1,7 @@
+import { SpecAction } from 'komondor-plugin'
+
 // istanbul ignore file
 import { Spec, spec } from '.'
-import { SpecAction } from 'komondor-plugin';
 
 export function testTrio(specName: string, handler: ((title: string, spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>))
 export function testTrio(description: string, specName, handler: ((title: string, spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>))
