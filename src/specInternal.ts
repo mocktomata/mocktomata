@@ -1,5 +1,4 @@
 import { satisfy } from 'assertron'
-import isInvalidPath from 'is-invalid-path'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
@@ -49,7 +48,7 @@ function getMode(id: string, mode: SpecMode) {
 }
 
 async function createSpec(specId: string, subject, mode: SpecMode) {
-  if (specId && isInvalidPath(specId)) {
+  if (InvalidID.isInvalidID(specId)) {
     throw new InvalidID(specId)
   }
   switch (mode) {
