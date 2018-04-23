@@ -87,7 +87,7 @@
     "node-fetch": "^2.1.2",
     "ramda": "^0.25.0",
     "satisfier": "^4.4.1",
-    "tersify": "^1.2.4",
+    "tersify": "^1.2.5",
     "unpartial": "^0.4.1"
   }
 }
