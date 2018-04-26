@@ -38,7 +38,10 @@ export function spyClass(context: SpyContext, subject) {
         // TODO: rethink SpyCall implmentation to avoid mixing promise and class logic together
         // This is not ideal as it mixes concerns.
         if (isPromise(returnValue)) {
-          returnValue.then(() => this.__komondor.invoking = false)
+          return returnValue.then(result => {
+            this.__komondor.invoking = false
+            return result
+          })
         }
         else
           this.__komondor.invoking = false

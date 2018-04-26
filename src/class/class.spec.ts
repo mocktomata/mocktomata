@@ -345,3 +345,30 @@ k.trio('not using spec', 'class/notUsedSpec', (title, spec) => {
     ])
   })
 })
+
+class Echo {
+  echo(x) {
+    return new Promise((_, r) => {
+      setImmediate(() => r(x))
+      // setTimeout(() => {
+      //   if (x > 200) {
+      //     r(x)
+      //   }
+      //   else {
+      //     a(x)
+      //   }
+      // }, x)
+    })
+  }
+}
+
+describe('prevent runaway promise', () => {
+  test('setup runaway', async () => {
+    const s = await spec(Echo)
+    const e = new s.subject()
+    return a.throws(e.echo(300), v => v === 300)
+  })
+  test('no runaway promise to break this test', () => {
+    return new Promise(a => setImmediate(() => a()))
+  })
+})
