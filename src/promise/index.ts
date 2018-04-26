@@ -23,12 +23,8 @@ function getPromiseSpy(context: SpyContext, subject) {
   const instance = context.newInstance()
   const call = instance.newCall()
   return subject.then(
-    result => {
-      return call.return(result, { state: 'fulfilled' })
-    },
-    err => {
-      throw call.return(err, { state: 'rejected' })
-    })
+    result => call.return(result, { state: 'fulfilled' }),
+    err => { throw call.return(err, { state: 'rejected' }) })
 }
 
 function getPromiseStub(context: StubContext) {
