@@ -99,6 +99,8 @@ const forceLiveContext = { mode: 'live', spec: forceLiveSpec } as any
 const liveContext = { mode: 'live', spec } as any
 const simSpec = Object.assign(createSpecSimulate(), { save: createSpecSave(), simulate: createSpecSimulate() })
 const simulateContext = { mode: 'simulate', spec: simSpec } as any
+const forceSaveSpec = Object.assign(createSpecSave(), { save: createSpecSave(), simulate: createSpecSave() })
+const forceSaveContext = { mode: 'save', spec: forceSaveSpec } as any
 
 export interface GivenContext {
   mode: GivenMode,
@@ -126,6 +128,8 @@ function getContext(clause: string, mode: GivenMode) {
     return mode !== effectiveMode ? forceLiveContext : liveContext
   if (effectiveMode === 'simulate')
     return simulateContext
+  else
+    return forceSaveContext
 }
 
 export function onGiven(clause: string | RegExp, handler: (context: GivenContext) => any) {

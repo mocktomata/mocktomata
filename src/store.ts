@@ -1,5 +1,5 @@
 import { SpecMode } from 'komondor-plugin'
-import { KomondorOptions } from './interfaces'
+import { KomondorOptions, GivenMode } from './interfaces'
 import { isNode } from './isNode'
 
 export interface GivenHandlerEntry {
@@ -11,7 +11,7 @@ export interface GivenHandlerEntry {
 let specDefaultMode: SpecMode | undefined
 let specOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 let givenEntries: GivenHandlerEntry[] = []
-let envDefaultMode
+let envDefaultMode: GivenMode | undefined
 let envOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 const defaultOptions = {
   registry: isNode ?

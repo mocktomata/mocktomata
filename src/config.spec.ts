@@ -124,7 +124,7 @@ test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async
 })
 
 
-test('config.environment() with no filter sets mode for all environments', async () => {
+test('config.given() with no filter sets mode for all environments', async () => {
   config.given('live')
   onGiven('config all 1', ({ mode }) => {
     t.equal(mode, 'live')
@@ -138,7 +138,7 @@ test('config.environment() with no filter sets mode for all environments', async
   ])
 })
 
-test('config.environment() can filter by string', async () => {
+test('config.given() can filter by string', async () => {
   config.given('live', 'config specific yes')
   onGiven('config specific yes', ({ mode }) => {
     t.equal(mode, 'live')
@@ -152,7 +152,7 @@ test('config.environment() can filter by string', async () => {
   ])
 })
 
-test('config.environment() can filter by regex', async () => {
+test('config.given() can filter by regex', async () => {
   config.given('live', /yes/)
   onGiven('config regex yes', ({ mode }) => {
     t.equal(mode, 'live')
@@ -166,10 +166,10 @@ test('config.environment() can filter by regex', async () => {
   ])
 })
 
-test(`config.environment('live') will force spec.sim() to spec()`, async () => {
-  config.given('live', 'env forced live also force spec')
+test(`config.given('live') will force spec.sim() to spec()`, async () => {
+  config.given('live', 'force spec.simulate to live')
   const order = new AssertOrder(1)
-  await given.simulate('env forced live also force spec', async ({ spec }) => {
+  await given.simulate('force spec.simulate to live', async ({ spec }) => {
     function success(a, callback) {
       order.once(1)
       callback(null, a + 1)
@@ -180,6 +180,18 @@ test(`config.environment('live') will force spec.sim() to spec()`, async () => {
     t.equal(actual, 3)
   })
   order.end()
+})
+
+test(`config.given('save') to force live to save`, async () => {
+  config.given('save', 'live to save')
+
+  await given('live to save', async ({ spec }) => t.equal(spec.name, 'specSave'))
+})
+
+test(`config.given('save') to force simulate to save`, async () => {
+  config.given('save', 'simulate to save')
+
+  await given.simulate('simulate to save', async ({ spec }) => t.equal(spec.name, 'specSave'))
 })
 
 test('config source to be a remote server', async () => {
