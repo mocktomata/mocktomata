@@ -20,17 +20,17 @@ export const config: Config = Object.assign(
     store.options = options
   },
   {
-    given(mode: GivenMode, filter?: string | RegExp) {
-      if (filter) {
-        store.envOverrides.push({ mode, filter })
+    given(mode: GivenMode, ...filters: (string | RegExp)[]) {
+      if (filters.length > 0) {
+        store.envOverrides.push(...filters.map(filter => ({ mode, filter })))
       }
       else {
         store.envDefaultMode = mode
       }
     },
-    spec(mode: SpecMode, filter?: string | RegExp) {
-      if (filter) {
-        store.specOverrides.push({ mode, filter })
+    spec(mode: SpecMode, ...filters: (string | RegExp)[]) {
+      if (filters.length > 0) {
+        store.specOverrides.push(...filters.map(filter => ({ mode, filter })))
       }
       else {
         store.specDefaultMode = mode
