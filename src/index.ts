@@ -1,16 +1,30 @@
+import * as genericClass from './class'
+import {
+  config,
+  // @ts-ignore
+  Config
+} from './config'
+import * as genericFunction from './function'
+import {
+  given,
+  // @ts-ignore
+  GivenFn
+} from './given'
+import { isNode } from './isNode'
+import { registerPlugin, loadPlugins } from './plugin'
+import * as promise from './promise'
+import {
+  spec,
+  // @ts-ignore
+  SpecFn
+} from './spec'
+
 export * from './config'
-export * from './given'
 export * from './errors'
+export * from './given'
 export * from './interfaces'
 export * from './spec'
-
-import { registerPlugin, loadPlugins } from './plugin'
-import { isNode } from './isNode'
 export { registerPlugin }
-import * as genericClass from './class'
-import * as genericFunction from './function'
-// import * as genericObject from './object'
-import * as promise from './promise'
 
 const {
   classConstructed,
@@ -44,6 +58,25 @@ export {
   promiseResolved,
   promiseRejected
 }
+
+const komondor = {
+  config,
+  given,
+  spec,
+  classConstructed,
+  classMethodInvoked,
+  classMethodReturned,
+  classMethodThrown,
+  functionConstructed,
+  functionInvoked,
+  functionReturned,
+  functionThrown,
+  promiseConstructed,
+  promiseResolved,
+  promiseRejected
+}
+
+export default komondor
 
 // order is important, top is generic, bottom is specific.
 // registerPlugin(genericObject)
