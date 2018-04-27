@@ -1,9 +1,12 @@
+import chalk from 'chalk'
+
 import { GivenSaveRequireSpecId, DuplicateGivenHandler, MissingGivenHandler, InvalidID } from './errors'
 import { GivenMode } from './interfaces'
 import { io } from './io'
+import { log } from './log'
 import { spec, SpecFn } from './spec'
-import { store } from './store'
 import { createSpeclive, createSpecSave, createSpecSimulate } from './specInternal'
+import { store } from './store'
 
 function findMatchingEntry(clause: string) {
   return store.givenEntries.find(entry => {
@@ -19,6 +22,7 @@ async function runHandler(envContext, entry) {
   if (fixtures.has(entry))
     return fixtures.get(entry)
 
+  log.info(chalk.green(`given(${envContext.mode})`), entry.clause)
   const fixture = (await entry.handler(envContext)) || {}
   fixtures.set(entry, fixture)
   return fixture
@@ -39,7 +43,13 @@ async function createGiven<T>(envContext: GivenContext, clause, localHandler) {
   return { ...envContext, fixture } as Given<T>
 }
 
-export const given = Object.assign(
+export interface GivenFn {
+  <T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+  save<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+  simulate<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+}
+
+export const given: GivenFn = Object.assign(
   async function given<T = any>(
     clause: string,
     localHandler?: (context: GivenContext) => any
@@ -111,7 +121,7 @@ export interface Given<T> extends GivenContext {
   fixture: T
 }
 
-function getEffectiveModel(clause: string, mode: GivenMode) {
+function getEffectiveMode(clause: string, mode: GivenMode) {
   const override = store.envOverrides.find(s => {
     if (typeof s.filter === 'string')
       return s.filter === clause
@@ -123,7 +133,7 @@ function getEffectiveModel(clause: string, mode: GivenMode) {
 
 }
 function getContext(clause: string, mode: GivenMode) {
-  const effectiveMode = getEffectiveModel(clause, mode)
+  const effectiveMode = getEffectiveMode(clause, mode)
   if (effectiveMode === 'live')
     return mode !== effectiveMode ? forceLiveContext : liveContext
   if (effectiveMode === 'simulate')
