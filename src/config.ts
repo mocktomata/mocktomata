@@ -1,12 +1,12 @@
 import { SpecMode, Registrar } from 'komondor-plugin'
 
 import { store } from './store'
-import { KomondorOptions } from './interfaces'
+import { KomondorOptions, GivenMode } from './interfaces'
 import { registerPlugin } from './plugin'
 
 export interface Config {
   (options: KomondorOptions): void,
-  given(mode: 'live', filter?: string | RegExp): void,
+  given(mode: GivenMode, filter?: string | RegExp): void,
   spec(mode: SpecMode, filter?: string | RegExp): void,
   /**
    * Manually register a plugin.
@@ -20,7 +20,7 @@ export const config: Config = Object.assign(
     store.options = options
   },
   {
-    given(mode: 'live', filter?: string | RegExp) {
+    given(mode: GivenMode, filter?: string | RegExp) {
       if (filter) {
         store.envOverrides.push({ mode, filter })
       }
