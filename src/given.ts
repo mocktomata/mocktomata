@@ -14,6 +14,7 @@ function findMatchingEntry(clause: string) {
       entry.clause === clause
   })
 }
+
 const simFixtures = new WeakMap()
 const liveFixtures = new WeakMap()
 
@@ -44,9 +45,9 @@ async function createGiven<T>(envContext: GivenContext, clause, localHandler) {
 }
 
 export interface GivenFn {
-  <T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-  save<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-  simulate<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+  <T = any>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+  save<T = any>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
+  simulate<T = any>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
 }
 
 export const given: GivenFn = Object.assign(
