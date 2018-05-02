@@ -16,6 +16,28 @@ import {
   onGiven
 } from '.'
 
+// test(`
+// Given Cavern 1 connects to Cavern 2 going West
+// Given the player is in Cavern 1
+// When the player goes West
+// Then the player is in Cavern 2
+// `, async () => {
+//     onGiven('cavern {number}', ({}, cavernId) => {
+//       return { id: cavernId }
+//     })
+//     const cavern1 = await given('cavern 1')
+//     const cavern2 = await given('cavern 2')
+//     cavern1.west = cavern2
+
+//     const player = await given('player')
+//     cavern1.objects = [player]
+
+//     const game = new Game([cavern1, cavern2], player)
+//     game.playerMove('west')
+//     t.equal(cavern1.objects.length, 0)
+//     t.equal(cavern2.objects[0], player)
+//   })
+
 test('no handler registered throws MissingGivenHandler', async () => {
   await a.throws(given('no handler'), MissingGivenHandler)
 })
