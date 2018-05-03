@@ -32,7 +32,6 @@ export class SpyCallImpl implements SpyCall {
       }
 
       if (typeof arg === 'object' && arg !== null) {
-        console.log(arg, plugin)
         const result = {}
         Object.keys(arg).forEach(key => {
           const prop = arg[key]
