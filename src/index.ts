@@ -19,6 +19,7 @@ import {
   SpecFn
 } from './spec'
 
+export * from './artifact'
 export * from './config'
 export * from './errors'
 export * from './given'
