@@ -24,6 +24,7 @@ const defaultOptions = {
 let options: KomondorOptions = { ...defaultOptions }
 
 export let store = {
+  artifacts: {},
   specDefaultMode,
   specOverrides,
   givenEntries,
@@ -34,6 +35,7 @@ export let store = {
 
 // for testing only
 export function resetStore() {
+  store.artifacts = {}
   store.specDefaultMode = undefined
   store.specOverrides = []
   store.givenEntries = []

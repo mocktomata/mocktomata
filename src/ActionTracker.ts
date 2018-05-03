@@ -3,6 +3,7 @@ import { createSatisfier } from 'satisfier'
 import { tersify } from 'tersify'
 import { unpartial } from 'unpartial'
 
+import { artifactKey } from './constants'
 import { NotSpecable, SourceNotFound } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
@@ -16,6 +17,15 @@ export class ActionTracker {
   constructor(public specId: string, public actions: SpecAction[]) { }
   received(actual) {
     const expected = this.peek()
+
+    if (actual.payload) {
+      // set expected payload to undefined for artifact,
+      // so that it is ignored during mismatch check
+      actual.payload.forEach((v, i) => {
+        if (v !== undefined && v !== null && v[artifactKey] && expected.payload[i])
+          expected.payload[i] = undefined
+      })
+    }
     if (SimulationMismatch.mismatch(actual, expected)) {
       throw new SimulationMismatch(this.specId, expected, actual)
     }

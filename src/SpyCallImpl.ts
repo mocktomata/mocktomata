@@ -1,8 +1,9 @@
 import { SpyCall } from 'komondor-plugin'
 import { unpartial } from 'unpartial'
 
-import { SpyInstanceImpl } from './SpyInstanceImpl'
+import { artifactKey } from './constants'
 import { plugins } from './plugin';
+import { SpyInstanceImpl } from './SpyInstanceImpl'
 
 export class SpyCallImpl implements SpyCall {
   constructor(public instance: SpyInstanceImpl, public invokeId: number, public callMeta?: { [k: string]: any }) {
@@ -16,6 +17,9 @@ export class SpyCallImpl implements SpyCall {
     })
 
     return args.map((arg, i) => {
+      if (arg[artifactKey])
+        return arg
+
       if (Array.isArray(arg)) {
         // assuming there will be no callbacks in array parameters
         return arg

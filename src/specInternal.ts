@@ -2,6 +2,7 @@ import { satisfy } from 'assertron'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
+import { artifactKey } from './constants'
 import { MissingSpecID, SpecNotFound, NotSpecable, InvalidID } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
@@ -192,6 +193,7 @@ function serialize(actions: SpecAction[]) {
 
 function serializeEntry(value) {
   if (value === null) return value
+  if (value[artifactKey]) return value
   if (Array.isArray(value)) return value
 
   const plugin = plugins.find(p => p.support(value))
