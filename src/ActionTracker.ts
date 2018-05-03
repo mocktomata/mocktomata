@@ -22,7 +22,7 @@ export class ActionTracker {
       // set expected payload to undefined for artifact,
       // so that it is ignored during mismatch check
       actual.payload.forEach((v, i) => {
-        if (v[artifactKey] && expected.payload[i])
+        if (v !== undefined && v !== null && v[artifactKey] && expected.payload[i])
           expected.payload[i] = undefined
       })
     }
