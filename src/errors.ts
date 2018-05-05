@@ -94,3 +94,12 @@ export class MissingReturnRecord extends BaseError {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+export class MissingArtifact extends BaseError {
+  // istanbul ignore next
+  constructor(id: string) {
+    super(`Missing artifact: ${id}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}

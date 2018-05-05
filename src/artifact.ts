@@ -2,6 +2,7 @@ import { isPrimitive } from 'util'
 
 import { artifactKey } from './constants'
 import { store } from './store'
+import { MissingArtifact } from '.';
 
 /**
  * create an artifact out of the original value.
@@ -9,7 +10,10 @@ import { store } from './store'
  * such as `t.deepEqual()`.
  * @param original original value. It should be simple object (think struct)
  */
-export function artifact<T>(id: string, original: T): T {
+export function artifact<T = any>(id: string, original?: T): T {
+  if (original === undefined && store.artifacts[id] === undefined) {
+    throw new MissingArtifact(id)
+  }
   return store.artifacts[id] = store.artifacts[id] || createArtifact(original)
 }
 

@@ -1,6 +1,6 @@
 import t from 'assert'
 
-import { artifact, overrideArtifact, spec } from '.'
+import { artifact, overrideArtifact, spec, MissingArtifact } from '.'
 import { artifactKey } from './constants'
 
 test('string', () => {
@@ -94,4 +94,21 @@ test('changes in artifact value is ignored in simulation', async () => {
   const s2 = await spec.simulate('artifact/echo', echo)
   s2.subject(server2.host, host => actualHost = host)
   t.equal(actualHost, server.host)
+})
+
+test('no original will throw', () => {
+  t.throws(() => artifact('no defined'), MissingArtifact)
+})
+
+test('id only will get defined artifact', () => {
+  const expected = artifact('defining', { a: 1 })
+  const actual = artifact('defining')
+  t.equal(actual, expected)
+})
+
+test('redefined artifact is ignored', () => {
+  const expected = artifact('redefine', { a: 2 })
+  artifact('redefine', { b: 1 })
+  const actual = artifact('redefine')
+  t.equal(actual, expected)
 })
