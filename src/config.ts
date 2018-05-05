@@ -6,8 +6,8 @@ import { registerPlugin } from './plugin'
 
 export interface Config {
   (options: KomondorOptions): void,
-  given(mode: GivenMode, filter?: string | RegExp): void,
-  spec(mode: SpecMode, filter?: string | RegExp): void,
+  given(mode: GivenMode, ...filters: (string | RegExp)[]): void,
+  spec(mode: SpecMode, ...filters: (string | RegExp)[]): void,
   /**
    * Manually register a plugin.
    * This should be used only for plugin development.
