@@ -25,6 +25,7 @@ let options: KomondorOptions = { ...defaultOptions }
 
 export let store = {
   artifacts: {},
+  defaultArtifacts: {},
   specDefaultMode,
   specOverrides,
   givenEntries,
