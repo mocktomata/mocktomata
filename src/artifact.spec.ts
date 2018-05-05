@@ -1,6 +1,6 @@
 import t from 'assert'
 
-import { artifact, overruleArtifact, spec, MissingArtifact } from '.'
+import { artifact, overruleArtifact, MissingArtifact } from '.'
 import { artifactKey } from './constants'
 
 test('string', () => {
@@ -102,22 +102,4 @@ test('overruleArtifact() will cause artifact() to get its value', () => {
   const expected = overruleArtifact('overrule', { a: 1 })
   const actual = artifact('overrule', { a: 2 })
   t.equal(actual, expected)
-})
-
-export function echo(a, callback) {
-  callback(a)
-}
-
-test('changes in artifact value is ignored in simulation', async () => {
-  const server = artifact('server', { host: '127.0.0.1' })
-  const s = await spec.save('artifact/echo', echo)
-  let actualHost
-  s.subject(server.host, host => actualHost = host)
-  t.equal(actualHost, server.host)
-  await s.done()
-
-  const server2 = artifact('server', { host: '10.3.1.1' })
-  const s2 = await spec.simulate('artifact/echo', echo)
-  s2.subject(server2.host, host => actualHost = host)
-  t.equal(actualHost, server.host)
 })

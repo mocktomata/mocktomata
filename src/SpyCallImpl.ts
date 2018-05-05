@@ -17,6 +17,7 @@ export class SpyCallImpl implements SpyCall {
     })
 
     return args.map((arg, i) => {
+      if (arg === undefined || arg === null) return arg
       if (arg[artifactKey])
         return arg
 
@@ -31,7 +32,7 @@ export class SpyCallImpl implements SpyCall {
         return plugin.getSpy(context, arg)
       }
 
-      if (typeof arg === 'object' && arg !== null) {
+      if (typeof arg === 'object') {
         const result = {}
         Object.keys(arg).forEach(key => {
           const prop = arg[key]

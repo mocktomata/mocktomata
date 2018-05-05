@@ -2,7 +2,7 @@ import t from 'assert'
 import a from 'assertron'
 import { SimulationMismatch } from 'komondor-plugin'
 
-import { spec, SpecNotFound, NotSpecable, InvalidID } from '.'
+import { spec, SpecNotFound, NotSpecable, InvalidID, artifact } from '.'
 import { simpleCallback } from './function/testSuites'
 import k from './testUtil'
 
@@ -90,4 +90,46 @@ test('spec id containing path should work', () => {
   ].map(p => {
     return spec(p, () => ({}))
   }))
+})
+
+export function echo(a, callback) {
+  callback(a)
+}
+
+test('changes in artifact value is ignored in simulation', async () => {
+  const server = artifact('server', { host: '127.0.0.1' })
+  const s = await spec.save('spec/artifact/echo', echo)
+  let actualHost
+  s.subject(server.host, host => actualHost = host)
+  t.equal(actualHost, server.host)
+  await s.done()
+
+  const server2 = artifact('server', { host: '10.3.1.1' })
+  const s2 = await spec.simulate('spec/artifact/echo', echo)
+  s2.subject(server2.host, host => actualHost = host)
+  t.equal(actualHost, server.host)
+})
+
+k.trio('spec/undefined', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(echo)
+    let actual = 1
+    s.subject(undefined, a => actual = a)
+
+    t.equal(actual, undefined)
+
+    await s.done()
+  })
+})
+
+k.trio('spec/null', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(echo)
+    let actual = 1
+    s.subject(null, a => actual = a)
+
+    t.equal(actual, null)
+
+    await s.done()
+  })
 })
