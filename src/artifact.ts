@@ -11,14 +11,21 @@ import { MissingArtifact } from '.';
  * @param original original value. It should be simple object (think struct)
  */
 export function artifact<T = any>(id: string, original?: T): T {
-  if (original === undefined && store.artifacts[id] === undefined) {
-    throw new MissingArtifact(id)
+  const defaultArtifact = store.defaultArtifacts[id]
+  if (defaultArtifact !== undefined)
+    return defaultArtifact
+
+  if (original === undefined) {
+    const a = store.artifacts[id]
+    if (a === undefined)
+      throw new MissingArtifact(id)
+    return a
   }
-  return store.artifacts[id] = store.artifacts[id] || createArtifact(original)
+  return store.artifacts[id] = createArtifact(original)
 }
 
-export function overrideArtifact<T>(id: string, override: T): T {
-  return store.artifacts[id] = createArtifact(override)
+export function overruleArtifact<T>(id: string, override: T): T {
+  return store.defaultArtifacts[id] = createArtifact(override)
 }
 
 function createArtifact(original) {

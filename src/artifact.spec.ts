@@ -1,6 +1,6 @@
 import t from 'assert'
 
-import { artifact, overrideArtifact, spec, MissingArtifact } from '.'
+import { artifact, overruleArtifact, spec, MissingArtifact } from '.'
 import { artifactKey } from './constants'
 
 test('string', () => {
@@ -78,6 +78,32 @@ test('every property of an object is an artifact', () => {
   t.equal(a.array[2][artifactKey], 'boolean')
 })
 
+test('no original will throw', () => {
+  t.throws(() => artifact('not defined'), MissingArtifact)
+})
+
+test('id only will get defined artifact', () => {
+  const expected = artifact('defining', { a: 1 })
+  const actual = artifact('defining')
+  t.equal(actual, expected)
+})
+
+// When running tests in watch mode,
+// changing artifact should take effect.
+test('call artifact() again will override', () => {
+  artifact('override', { a: 1 })
+  const expected = artifact('override', { a: 2 })
+  const actual = artifact('override')
+  t.equal(expected.a, 2)
+  t.equal(actual, expected)
+})
+
+test('overruleArtifact() will cause artifact() to get its value', () => {
+  const expected = overruleArtifact('overrule', { a: 1 })
+  const actual = artifact('overrule', { a: 2 })
+  t.equal(actual, expected)
+})
+
 export function echo(a, callback) {
   callback(a)
 }
@@ -90,25 +116,8 @@ test('changes in artifact value is ignored in simulation', async () => {
   t.equal(actualHost, server.host)
   await s.done()
 
-  const server2 = overrideArtifact('server', { host: '10.3.1.1' })
+  const server2 = artifact('server', { host: '10.3.1.1' })
   const s2 = await spec.simulate('artifact/echo', echo)
   s2.subject(server2.host, host => actualHost = host)
   t.equal(actualHost, server.host)
-})
-
-test('no original will throw', () => {
-  t.throws(() => artifact('no defined'), MissingArtifact)
-})
-
-test('id only will get defined artifact', () => {
-  const expected = artifact('defining', { a: 1 })
-  const actual = artifact('defining')
-  t.equal(actual, expected)
-})
-
-test('redefined artifact is ignored', () => {
-  const expected = artifact('redefine', { a: 2 })
-  artifact('redefine', { b: 1 })
-  const actual = artifact('redefine')
-  t.equal(actual, expected)
 })
