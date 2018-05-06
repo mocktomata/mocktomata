@@ -7,6 +7,7 @@ import { artifactKey } from './constants'
 import { NotSpecable, SourceNotFound } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
+import { isMismatchAction } from './specAction';
 
 export class ActionTracker {
   waitings: { action: SpecAction, callback: Function }[] = []
@@ -26,7 +27,7 @@ export class ActionTracker {
           expected.payload[i] = undefined
       })
     }
-    if (SimulationMismatch.mismatch(actual, expected)) {
+    if (isMismatchAction(actual, expected)) {
       throw new SimulationMismatch(this.specId, expected, actual)
     }
     log.onDebug(() => `received: ${tersifyAction(actual)}`)
@@ -62,7 +63,7 @@ export class ActionTracker {
     // log.onDebug(() => `blockUntil: ${tersify(action, { maxLength: Infinity })}`)
 
     // let expected = this.peek()
-    // while (expected && SimulationMismatch.mismatch(expected, action)) {
+    // while (expected && isMismatchAction(expected, action)) {
     //   this.process()
     //   const next = this.peek()
     //   if (next === expected) {
@@ -129,7 +130,7 @@ export class ActionTracker {
     log.onDebug(() => `processing: ${tersifyAction(expected)}`)
 
     if (this.waitings.length > 0) {
-      const cb = this.waitings.filter(c => !SimulationMismatch.mismatch(expected, c.action))
+      const cb = this.waitings.filter(c => !isMismatchAction(expected, c.action))
       cb.forEach(c => {
         this.waitings.splice(this.waitings.indexOf(c), 1)
         c.callback(expected)

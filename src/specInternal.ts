@@ -2,14 +2,14 @@ import { satisfy } from 'assertron'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
-import { artifactKey } from './constants'
+import { ActionTracker, createStubContext } from './ActionTracker'
 import { MissingSpecID, SpecNotFound, NotSpecable, InvalidID } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
 import { plugins } from './plugin'
 import { SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
-import { ActionTracker, createStubContext } from './ActionTracker'
+import { makeSerializableActions } from './specAction'
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -121,7 +121,7 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
         // makeErrorSerializable(this.actions)
         return io.writeSpec(specId, {
           expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
-          actions: serialize(this.actions)
+          actions: makeSerializableActions(this.actions)
         })
       })
     },
@@ -166,65 +166,41 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
   return spec
 }
 
-function serialize(actions: SpecAction[]) {
-  return actions.map(a => {
-    if (a.payload) {
-      if (isRejectErrorPromiseReturnAction(a) ||
-        isErrorThrowAction(a)) {
-        return {
-          ...a, payload: {
-            message: a.payload.message,
-            ...a.payload,
-            prototype: 'Error'
-          }
-        }
-      }
-      else if (a.name === 'invoke') {
-        const args: any[] = a.payload
-        return {
-          ...a,
-          payload: args.map(serializeEntry)
-        }
-      }
-    }
-    return a
-  })
-}
-
-function serializeEntry(value) {
-  if (value === undefined || value === null) return value
-  if (value[artifactKey]) return value
-  if (Array.isArray(value)) return value
-
-  const plugin = plugins.find(p => p.support(value))
-  if (plugin && plugin.serialize) {
-    return plugin.serialize(value)
-  }
-  if (typeof value === 'object') {
-    return Object.keys(value).reduce((p, key) => {
-      p[key] = serializeEntry(value[key])
-      return p
-    }, {})
-  }
-  return value
-}
-
-function isErrorThrowAction(action) {
-  return action.payload instanceof Error
-  // return /throw/.test(action.name) && action.payload instanceof Error
-}
-
-function isRejectErrorPromiseReturnAction(action) {
-  return action.payload instanceof Error
-  // return action.type === 'promise' && action.name === 'reject' && action.payload instanceof Error
-}
-
 async function loadActions(specId: string) {
   try {
     const specRecord = await io.readSpec(specId)
-    return specRecord.actions
+    return fixCircularRefs(specRecord.actions)
   }
   catch (err) {
     throw new SpecNotFound(specId, err)
   }
+}
+
+function fixCircularRefs(actions: SpecAction[]) {
+  const objRefs = []
+  return actions.map(action => {
+    return { ...action, payload: fixCirRefValue(action.payload, objRefs) }
+  })
+}
+
+function fixCirRefValue(value, objRefs: object[]) {
+  if (Array.isArray(value)) {
+    return value.map(p => fixCirRefValue(p, objRefs))
+  }
+  if (value === undefined || value === null) return value
+
+  const type = typeof value
+  if (type === 'object') {
+    objRefs.push(value)
+    Object.keys(value).forEach(k => value[k] = fixCirRefValue(value[k], objRefs))
+    return value
+  }
+  if (typeof value !== 'string') return value
+
+  const matches = /\[circular:(\d+)\]/.exec(value)
+  if (matches) {
+    const cirId = parseInt(matches[1], 10)
+    return objRefs[cirId]
+  }
+  return value
 }
