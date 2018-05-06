@@ -372,3 +372,94 @@ describe('prevent runaway promise', () => {
     return new Promise(a => setImmediate(() => a()))
   })
 })
+
+class WithCircular {
+  value: any
+  cirRef
+  constructor() {
+    this.cirRef = this
+  }
+}
+
+class ClassWithCircular {
+  channel: WithCircular
+  constructor() {
+    this.channel = new WithCircular()
+  }
+  exec(cmd, cb) {
+    this.channel.value = cmd
+    cb(this.channel)
+  }
+}
+
+k.trio('class with circular reference', 'class/circular', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(ClassWithCircular)
+    const f = new s.subject()
+
+    let actual
+    f.exec('echo', data => {
+      actual = data.value
+    })
+
+    t.equal(actual, 'echo')
+    await s.done()
+  })
+})
+
+k.trio('class with circular reference accessing', 'class/circularAccess', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(ClassWithCircular)
+    const f = new s.subject()
+
+    let actual
+    f.exec('echo', data => {
+      actual = data.cirRef.value
+    })
+
+    t.equal(actual, 'echo')
+    await s.done()
+  })
+})
+
+class Channel {
+  listeners: any[] = []
+  stdio
+  constructor() {
+    this.stdio = this
+  }
+  on(listener) {
+    this.listeners.push(listener)
+  }
+  emit(data) {
+    this.listeners.forEach(l => l(data))
+  }
+}
+
+class Ssh {
+  channel: Channel
+  constructor() {
+    this.channel = new Channel()
+  }
+  exec(cmd, cb) {
+    cb(this.channel)
+    this.channel.stdio.emit(cmd)
+  }
+}
+
+// TODO: throws NotSupported error for callback with complex object.
+// This gives indication to the user that a plugin is need to support this subject
+k.trio('callback with', 'class/callbackWithComplexObject', (title, spec) => {
+  test.skip(title, async () => {
+    const s = await spec(Ssh)
+    const f = new s.subject()
+
+    let actual
+    f.exec('echo', channel => {
+      channel.stdio.on(data => actual = data)
+    })
+
+    t.equal(actual, 'echo')
+    await s.done()
+  })
+})

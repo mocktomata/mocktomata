@@ -54,6 +54,10 @@ export function createSpecAction(partial: Partial<SpecAction>) {
   return partial as SpecAction
 }
 
+export function specAction(action: Partial<SpecAction>) {
+  return action as SpecAction
+}
+
 const komondorTest = {
   live: testLive,
   save: testSave,
