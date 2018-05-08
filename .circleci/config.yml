@@ -1,0 +1,69 @@
+version: 2
+workflows:
+  version: 2
+  all:
+    jobs:
+      - node-latest
+      - node8
+      - node6
+jobs:
+  node-latest:
+    docker:
+      - image: 'circleci/node:latest'
+    steps:
+      - checkout
+      - run:
+          name: install
+          command: npm install
+      - run:
+          name: verify
+          command: npm run verify
+      - run:
+          name: release
+          command: npm run semantic-release || true
+      - run:
+          name: coveralls
+          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
+      - run:
+          name: codecov
+          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
+  node8:
+    docker:
+      - image: 'circleci/node:8'
+    steps:
+      - checkout
+      - run:
+          name: install
+          command: npm install
+      - run:
+          name: verify
+          command: npm run verify
+      - run:
+          name: release
+          command: npm run semantic-release || true
+      - run:
+          name: coveralls
+          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
+      - run:
+          name: codecov
+          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
+  node6:
+    docker:
+      - image: 'circleci/node:6'
+    steps:
+      - checkout
+      - run:
+          name: install
+          command: npm install
+      - run:
+          name: verify
+          command: npm run verify
+      - run:
+          name: release
+          command: npm run semantic-release || true
+      - run:
+          name: coveralls
+          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
+      - run:
+          name: codecov
+          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
