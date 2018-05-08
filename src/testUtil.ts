@@ -1,4 +1,6 @@
+import fs from 'fs'
 import { SpecAction } from 'komondor-plugin'
+import rimraf from 'rimraf'
 
 // istanbul ignore file
 import { Spec, spec } from '.'
@@ -66,3 +68,15 @@ const komondorTest = {
 }
 
 export default komondorTest
+
+export function ensureFileNotExists(filepath: string) {
+  if (fs.existsSync(filepath)) {
+    fs.unlinkSync(filepath)
+  }
+}
+
+export function ensureDirNotExists(dirpath: string) {
+  if (fs.existsSync(dirpath)) {
+    rimraf(dirpath)
+  }
+}

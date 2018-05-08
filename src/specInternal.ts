@@ -62,16 +62,18 @@ async function createSpec(specId: string, subject, mode: SpecMode) {
   }
 }
 
-async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
+async function createSpyingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   const plugin = plugins.find(p => p.support(subject))
   if (!plugin) {
     throw new NotSpecable(subject)
   }
 
 
-  const context = new SpyContextImpl({}, 'live', specId, plugin)
+  const context = new SpyContextImpl({}, 'live', id, plugin)
 
   const spec: Spec<T> = {
+    id,
+    mode: context.mode,
     actions: context.actions,
     subject: plugin.getSpy(context, subject),
     on(actionType: string, name: string, callback) {
@@ -92,8 +94,8 @@ async function createSpyingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   return spec
 }
 
-async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
-  if (!specId)
+async function createSavingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
+  if (!id)
     throw new MissingSpecID('save')
 
   const plugin = plugins.find(p => p.support(subject))
@@ -101,9 +103,11 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
     throw new NotSpecable(subject)
   }
 
-  const context = new SpyContextImpl({}, 'save', specId, plugin)
+  const context = new SpyContextImpl({}, 'save', id, plugin)
 
   const spec: Spec<T> = {
+    id,
+    mode: context.mode,
     actions: context.actions,
     subject: plugin.getSpy(context, subject),
     on(actionType: string, name: string, callback) {
@@ -116,10 +120,10 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
       return Promise.resolve().then(() => {
         satisfy(context.actions, expectation)
         // istanbul ignore next
-        if (!specId)
+        if (!id)
           throw new Error('Cannot save spec without options.id.')
         // makeErrorSerializable(this.actions)
-        return io.writeSpec(specId, {
+        return io.writeSpec(id, {
           expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
           actions: makeSerializableActions(this.actions)
         })
@@ -132,8 +136,8 @@ async function createSavingSpec<T>(specId: string, subject: T): Promise<Spec<T>>
   return spec
 }
 
-async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T>> {
-  if (!specId)
+async function createStubbingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
+  if (!id)
     throw new MissingSpecID('simulate')
 
   const plugin = plugins.find(p => p.support(subject))
@@ -141,11 +145,13 @@ async function createStubbingSpec<T>(specId: string, subject: T): Promise<Spec<T
     throw new NotSpecable(subject)
   }
 
-  const actions = await loadActions(specId)
-  const actionTracker = new ActionTracker(specId, actions)
+  const actions = await loadActions(id)
+  const actionTracker = new ActionTracker(id, actions)
   const context = createStubContext(actionTracker, plugin.type)
 
   const spec: Spec<T> = {
+    id,
+    mode: 'simulate',
     actions,
     subject: plugin.getStub(context, subject),
     on(actionType: string, name: string, callback) {

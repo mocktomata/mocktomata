@@ -11,6 +11,15 @@ export class MissingGivenHandler extends BaseError {
   }
 }
 
+export class MissingHandler extends BaseError {
+  // istanbul ignore next
+  constructor(public clause: string) {
+    super(`Handler for '${clause}' not found.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
 export class MissingSpecID extends BaseError {
   // istanbul ignore next
   constructor(public mode: string) {
@@ -60,6 +69,15 @@ export class NotSpecable extends BaseError {
 }
 
 export class DuplicateGivenHandler extends BaseError {
+  // istanbul ignore next
+  constructor(public clause: string | RegExp) {
+    super(`Handler for '${clause}' is already defined.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class DuplicateHandler extends BaseError {
   // istanbul ignore next
   constructor(public clause: string | RegExp) {
     super(`Handler for '${clause}' is already defined.`)

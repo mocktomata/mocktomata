@@ -6,6 +6,7 @@ import { log } from './log'
 export function getFileIO(baseDir: string) {
   const SPECS_FOLDER = `${baseDir}${path.sep}specs`
   const GIVENS_FOLDER = `${baseDir}${path.sep}givens`
+  const SCENARIOS_FOLDER = `${baseDir}${path.sep}scenarios`
   const fs = require('fs')
 
   return {
@@ -28,6 +29,9 @@ export function getFileIO(baseDir: string) {
     },
     writeGiven(id: string, record: GivenRecord) {
       return writeTo(GIVENS_FOLDER, id, JSON.stringify(record))
+    },
+    writeScenario(id: string, record) {
+      return writeTo(SCENARIOS_FOLDER, id, JSON.stringify(record))
     }
   }
   // istanbul ignore next

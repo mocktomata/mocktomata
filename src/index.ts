@@ -24,6 +24,7 @@ export * from './config'
 export * from './errors'
 export * from './given'
 export * from './interfaces'
+export * from './scenario'
 export * from './spec'
 export { registerPlugin }
 

@@ -1,4 +1,4 @@
-import { Stream, Writable } from 'stream'
+import { InvalidUsage } from 'assertron'
 
 import { store } from './store'
 
@@ -8,7 +8,6 @@ import {
   GivenRecord
 } from './interfaces'
 import { getServerIO } from './serverIO'
-import { InvalidUsage } from 'assertron';
 
 function getIO() {
   const registry = store.options.registry
@@ -33,11 +32,5 @@ export const io = {
   },
   get writeGiven() {
     return getIO().writeGiven
-  },
-  get createWriteStream(): (id: string) => Writable {
-    return getIO().createWriteStream
-  },
-  get createReadStream(): (id: string) => Stream {
-    return getIO().createReadStream
   }
 }

@@ -50,6 +50,9 @@ export interface GivenFn {
   simulate<T = any>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
 }
 
+/**
+ * @deprecated use `scenario()`
+ */
 export const given: GivenFn = Object.assign(
   async function given<T = any>(
     clause: string,
@@ -143,6 +146,9 @@ function getContext(clause: string, mode: GivenMode) {
     return forceSaveContext
 }
 
+/**
+ * @deprecated use `onFixture()`
+ */
 export function onGiven(clause: string | RegExp, handler: (context: GivenContext) => any) {
   const entry = store.givenEntries.find(entry => {
     return entry.clause.toString() === clause.toString()
