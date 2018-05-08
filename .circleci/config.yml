@@ -9,7 +9,7 @@ workflows:
 jobs:
   node-latest:
     docker:
-      - image: 'circleci/node:latest'
+      - image: 'circleci/node:9'
     steps:
       - checkout
       - run:
