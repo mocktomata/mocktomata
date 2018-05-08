@@ -80,20 +80,19 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
     // but may need to make this explicit and confirm.
     const spec = createSetupSpec(`${id}/${clause}`, mode)
     if (entry.regex) {
-      const matches = entry.regex.exec(clause)
-      if (matches) {
-        const values = entry.valueTypes ? matches.slice(1, matches.length).map((v, i) => {
-          const valueType = entry.valueTypes![i]
-          if (valueType === 'number')
-            return parseInt(v, 10)
-          if (valueType === 'boolean')
-            return v === 'true'
-          if (valueType === 'float')
-            return parseFloat(v)
-          return v
-        }) : matches.slice(1, matches.length)
-        return entry.handler({ inputs, spec }, ...values)
-      }
+      // regex must pass as it is tested above
+      const matches = entry.regex.exec(clause)!
+      const values = entry.valueTypes ? matches.slice(1, matches.length).map((v, i) => {
+        const valueType = entry.valueTypes![i]
+        if (valueType === 'number')
+          return parseInt(v, 10)
+        if (valueType === 'boolean')
+          return v === 'true'
+        if (valueType === 'float')
+          return parseFloat(v)
+        return v
+      }) : matches.slice(1, matches.length)
+      return entry.handler({ inputs, spec }, ...values)
     }
     return entry.handler({ inputs, spec })
   }
