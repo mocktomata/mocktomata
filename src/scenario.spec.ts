@@ -745,3 +745,87 @@ describe('config.scenario()', () => {
     t.equal(s.mode, 'save')
   })
 })
+
+describe('defineStep()', () => {
+  test('runSubStep (live)', async () => {
+    let subStepCalled = false
+    defineStep('subStep live 1', async ({ spec }) => {
+      const s = await spec(() => Promise.resolve())
+      await s.subject()
+      await s.done()
+      subStepCalled = true
+    })
+    defineStep('runSubStep live', async ({ runSubStep }) => {
+      await runSubStep('subStep live 1')
+    })
+
+    const s = scenario('runSubStep live scenario')
+    await s.run('runSubStep live')
+    await s.done()
+
+    t(subStepCalled)
+  })
+  test('runSubStep saves scenario with specs containing step chain', async () => {
+    const files = [
+      `__komondor__/scenarios/runSubStep save scenario.json`,
+      `__komondor__/specs/runSubStep save scenario/runSubStep save/subStep save 1/subStep save 2.json`
+    ]
+    files.forEach(ensureFileNotExists)
+
+    let subStepCalled = false
+    defineStep('subStep save 2', async ({ spec }) => {
+      const s = await spec(() => Promise.resolve())
+      await s.subject()
+      await s.done()
+      subStepCalled = true
+    })
+
+    defineStep('subStep save 1', async ({ runSubStep }) => {
+      await runSubStep('subStep save 2')
+    })
+    defineStep('runSubStep save', async ({ runSubStep }) => {
+      await runSubStep('subStep save 1')
+    })
+
+    const s = scenario.save('runSubStep save scenario')
+    await s.run('runSubStep save')
+    await s.done()
+
+    t(subStepCalled)
+    files.forEach(f => t(fs.existsSync(f)))
+
+    const scenarioJson = JSON.parse(fs.readFileSync(files[0], 'utf-8'))
+    t.equal(scenarioJson.specs[0], 'runSubStep save')
+    t.equal(scenarioJson.specs[1], 'runSubStep save/subStep save 1')
+    t.equal(scenarioJson.specs[2], 'runSubStep save/subStep save 1/subStep save 2')
+  })
+
+  test('runSubStep (simulate)', async () => {
+    const files = [
+      `__komondor__/scenarios/runSubStep simulate scenario.json`,
+      `__komondor__/specs/runSubStep simulate scenario/runSubStep simulate/subStep simulate 1.json`
+    ]
+    files.forEach(ensureFileNotExists)
+    defineStep('subStep simulate 1', async ({ spec }) => {
+      const s = await spec(() => Promise.resolve())
+      await s.subject()
+      await s.done()
+    })
+    defineStep('runSubStep simulate', async ({ runSubStep }) => {
+      await runSubStep('subStep simulate 1')
+    })
+
+    async function prepare() {
+      const s = scenario.save('runSubStep simulate scenario')
+      await s.run('runSubStep simulate')
+      await s.done()
+
+      files.forEach(f => t(fs.existsSync(f)))
+    }
+    await prepare()
+
+    const s = scenario.simulate('runSubStep simulate scenario')
+    await s.run('runSubStep simulate')
+    await s.done()
+  })
+})

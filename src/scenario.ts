@@ -11,7 +11,8 @@ import { io } from './io';
 
 export interface SetupContext {
   spec<T>(subject: T): Promise<Spec<T>>,
-  inputs: any[]
+  inputs: any[],
+  runSubStep(clause: string, ...inputs: any[]): Promise<any>
 }
 
 export const scenario = Object.assign(
@@ -73,6 +74,8 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
       throw new MissingHandler(clause)
     }
 
+    const runSubStep = createStepCaller(`${id}/${clause}`, mode, subId => creationListener(`${clause}/${subId}`))
+
     // TODO: different inputs should not affect SpecRecord.
     // This currently creates conflict if different input is used in the
     // same scenario with the same clause.
@@ -92,9 +95,9 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
           return parseFloat(v)
         return v
       }) : matches.slice(1, matches.length)
-      return entry.handler({ inputs, spec }, ...values)
+      return entry.handler({ inputs, spec, runSubStep }, ...values)
     }
-    return entry.handler({ inputs, spec })
+    return entry.handler({ inputs, spec, runSubStep })
   }
 }
 
