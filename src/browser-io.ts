@@ -1,3 +1,5 @@
+import { InvalidUsage } from 'assertron'
+
 import { store } from './store'
 
 import {
@@ -6,7 +8,6 @@ import {
   GivenRecord
 } from './interfaces'
 import { getServerIO } from './serverIO'
-import { InvalidUsage } from 'assertron';
 
 function getIO() {
   const registry = store.options.registry
