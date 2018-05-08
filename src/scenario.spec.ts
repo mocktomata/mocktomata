@@ -2,7 +2,7 @@ import t from 'assert'
 import a, { AssertOrder } from 'assertron'
 import fs from 'fs'
 
-import { artifact, MissingHandler, DuplicateHandler, config, scenario, onFixture } from '.'
+import { artifact, MissingHandler, DuplicateHandler, config, scenario, defineStep } from '.'
 import { resetStore } from './store'
 import { ensureFileNotExists } from './testUtil'
 
@@ -52,7 +52,7 @@ class ApiGateway {
 
 describe('acceptance', () => {
   test('basic', async () => {
-    onFixture('create user {username}', async ({ spec, inputs }, username) => {
+    defineStep('create user {username}', async ({ spec, inputs }, username) => {
       const server = inputs[0]
       const s = await spec(ApiGateway)
       const api = new s.subject(server.host)
@@ -60,7 +60,7 @@ describe('acceptance', () => {
       await s.done()
       return user
     })
-    onFixture('delete user {username}', async ({ spec, inputs }, username) => {
+    defineStep('delete user {username}', async ({ spec, inputs }, username) => {
       const server = inputs[0]
       const s = await spec(ApiGateway)
       const api = new s.subject(server.host)
@@ -98,7 +98,7 @@ describe('setup()', () => {
   test('arguments are passed to setup handler as inputs', async () => {
     const { setup } = scenario('')
     const actual: any[] = []
-    onFixture('passing setup arguments', ({ inputs }) => {
+    defineStep('passing setup arguments', ({ inputs }) => {
       actual.push(...inputs)
     })
     await setup('passing setup arguments', 1, 2, 3)
@@ -106,14 +106,14 @@ describe('setup()', () => {
   })
 
   test('duplicate handler throws DuplicateHandler', async () => {
-    onFixture('duplicate setup', () => { return })
-    const err = await a.throws(() => onFixture('duplicate setup', () => { return }), DuplicateHandler)
+    defineStep('duplicate setup', () => { return })
+    const err = await a.throws(() => defineStep('duplicate setup', () => { return }), DuplicateHandler)
     t.equal(err.message, `Handler for 'duplicate setup' is already defined.`)
   })
 
   test('regex matches handler', async () => {
     let input
-    onFixture(/setup regexNoGroup \w*/, ({ inputs }) => {
+    defineStep(/setup regexNoGroup \w*/, ({ inputs }) => {
       input = inputs[0]
     })
     const { setup } = scenario('setup with regex')
@@ -124,7 +124,7 @@ describe('setup()', () => {
   test('regex group result is passed to handler after input', async () => {
     let actual
     let input
-    onFixture(/setup regex (\d+)/, ({ inputs }, value) => {
+    defineStep(/setup regex (\d+)/, ({ inputs }, value) => {
       input = inputs[0]
       actual = value
     })
@@ -135,7 +135,7 @@ describe('setup()', () => {
   })
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
-    onFixture('setup template {id} {code}', ({ inputs }, id, code) => {
+    defineStep('setup template {id} {code}', ({ inputs }, id, code) => {
       values.push(...inputs, id, code)
     })
     const { setup } = scenario('setup with template')
@@ -144,7 +144,7 @@ describe('setup()', () => {
   })
   test('template can specify type', async () => {
     let values: any[] = []
-    onFixture('setup templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+    defineStep('setup templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
       values.push(...inputs, id, enable, pi)
     })
     const { setup } = scenario('setup with template')
@@ -158,7 +158,7 @@ describe('setup()', () => {
   test('spec id in setup is predefined to `scenario/setup` and not configurable', async () => {
     let result
     let id
-    onFixture('setup spec - ensure server is up', async ({ spec, inputs }) => {
+    defineStep('setup spec - ensure server is up', async ({ spec, inputs }) => {
       const host = inputs[0]
 
       // spec() has no overload of spec(id, subject)
@@ -179,7 +179,7 @@ describe('setup()', () => {
   test('scenario.save() will cause spec in onSetup to save', async () => {
     const specPath = `__komondor__/specs/save spec scenario/simple saving setup.json`
     ensureFileNotExists(specPath)
-    onFixture('simple saving setup', async ({ spec }) => {
+    defineStep('simple saving setup', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
@@ -191,28 +191,28 @@ describe('setup()', () => {
   })
 
   test('scenario.save() will cause spec in template onSetup to save', async () => {
-    const specPath = `__komondor__/specs/save spec scenario/save template saving setup 1.json`
+    const specPath = `__komondor__/specs/save setup spec template scenario/save template saving setup 1.json`
     ensureFileNotExists(specPath)
-    onFixture('save template saving setup {id}', async ({ spec }) => {
+    defineStep('save template saving setup {id}', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { setup } = scenario.save('save spec scenario')
+    const { setup } = scenario.save('save setup spec template scenario')
     await setup('save template saving setup 1')
 
     t(fs.existsSync(specPath))
   })
 
   test('scenario.save() will cause spec in regex onSetup to save', async () => {
-    const specPath = `__komondor__/specs/save spec scenario/regex saving setup 1.json`
+    const specPath = `__komondor__/specs/save setup spec regex scenario/regex saving setup 1.json`
     ensureFileNotExists(specPath)
-    onFixture(/regex saving setup \d+/, async ({ spec }) => {
+    defineStep(/regex saving setup \d+/, async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { setup } = scenario.save('save spec scenario')
+    const { setup } = scenario.save('save setup spec regex scenario')
     await setup('regex saving setup 1')
 
     t(fs.existsSync(specPath))
@@ -221,7 +221,7 @@ describe('setup()', () => {
     const specPath = `__komondor__/specs/simulate spec scenario/simulate setup.json`
     ensureFileNotExists(specPath)
     const o = new AssertOrder(2)
-    onFixture('simulate setup', async ({ spec }) => {
+    defineStep('simulate setup', async ({ spec }) => {
 
       const s = await spec(_ => Promise.resolve(true))
       o.on(1, () => t.equal(s.mode, 'save'))
@@ -237,6 +237,160 @@ describe('setup()', () => {
 
     const { setup } = scenario.simulate('simulate spec scenario')
     await setup('simulate setup')
+
+    o.end()
+  })
+})
+
+describe('run()', () => {
+  test('throws MissingHandler if no handler is defined', async () => {
+    const { run } = scenario('no handler')
+    const err = await a.throws(() => run('no run handler'), MissingHandler)
+    t.equal(err.message, `Handler for 'no run handler' not found.`)
+  })
+
+  test('arguments are passed to run handler as inputs', async () => {
+    const { run } = scenario('')
+    const actual: any[] = []
+    defineStep('passing run arguments', ({ inputs }) => {
+      actual.push(...inputs)
+    })
+    await run('passing run arguments', 1, 2, 3)
+    t.deepEqual(actual, [1, 2, 3])
+  })
+
+  test('duplicate handler throws DuplicateHandler', async () => {
+    defineStep('duplicate run', () => { return })
+    const err = await a.throws(() => defineStep('duplicate run', () => { return }), DuplicateHandler)
+    t.equal(err.message, `Handler for 'duplicate run' is already defined.`)
+  })
+
+  test('regex matches handler', async () => {
+    let input
+    defineStep(/run regexNoGroup \w*/, ({ inputs }) => {
+      input = inputs[0]
+    })
+    const { run } = scenario('run with regex')
+    await run('run regexNoGroup asurada-11', 'x')
+    t.equal(input, 'x')
+  })
+
+  test('regex group result is passed to handler after input', async () => {
+    let actual
+    let input
+    defineStep(/run regex (\d+)/, ({ inputs }, value) => {
+      input = inputs[0]
+      actual = value
+    })
+    const { run } = scenario('run with regex')
+    await run('run regex 123', 'x')
+    t.equal(input, 'x')
+    t.equal(actual, 123)
+  })
+  test('template match result is passed to handler after input', async () => {
+    let values: any[] = []
+    defineStep('run template {id} {code}', ({ inputs }, id, code) => {
+      values.push(...inputs, id, code)
+    })
+    const { run } = scenario('run with template')
+    await run('run template 123 abc', 'x')
+    t.deepEqual(values, ['x', '123', 'abc'])
+  })
+  test('template can specify type', async () => {
+    let values: any[] = []
+    defineStep('run templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+      values.push(...inputs, id, enable, pi)
+    })
+    const { run } = scenario('run with template')
+    await run('run templateWithType 123 true 3.14', 'x')
+    t.equal(values[0], 'x')
+    t.strictEqual(values[1], 123)
+    t.strictEqual(values[2], true)
+    t.strictEqual(values[3], 3.14)
+  })
+
+  test('spec id in run is predefined to `scenario/run` and not configurable', async () => {
+    let result
+    let id
+    defineStep('run spec - ensure server is up', async ({ spec, inputs }) => {
+      const host = inputs[0]
+
+      // spec() has no overload of spec(id, subject)
+      const s = await spec(_ => Promise.resolve(true))
+      id = s.id
+      result = await s.subject(host)
+      await s.done()
+      return result
+    })
+
+    const { run } = scenario('run spec')
+    const host = artifact('run host', '10.0.0.1')
+    const actual = await run('run spec - ensure server is up', host)
+    t.equal(result, true)
+    t.equal(actual, true)
+    t.equal(id, 'run spec/run spec - ensure server is up')
+  })
+  test('scenario.save() will cause spec in onrun to save', async () => {
+    const specPath = `__komondor__/specs/save spec scenario/simple saving run.json`
+    ensureFileNotExists(specPath)
+    defineStep('simple saving run', async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    const { run } = scenario.save('save spec scenario')
+    await run('simple saving run')
+
+    t(fs.existsSync(specPath))
+  })
+
+  test('scenario.save() will cause spec in template onrun to save', async () => {
+    const specPath = `__komondor__/specs/save run spec template scenario/save template saving run 1.json`
+    ensureFileNotExists(specPath)
+    defineStep('save template saving run {id}', async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    const { run } = scenario.save('save run spec template scenario')
+    await run('save template saving run 1')
+
+    t(fs.existsSync(specPath))
+  })
+
+  test('scenario.save() will cause spec in regex onrun to save', async () => {
+    const specPath = `__komondor__/specs/save run spec regex scenario/regex saving run 1.json`
+    ensureFileNotExists(specPath)
+    defineStep(/regex saving run \d+/, async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    const { run } = scenario.save('save run spec regex scenario')
+    await run('regex saving run 1')
+
+    t(fs.existsSync(specPath))
+  })
+  test('scenario.simulate() will cause spec in onrun to simulate', async () => {
+    const specPath = `__komondor__/specs/simulate run spec scenario/simulate run.json`
+    ensureFileNotExists(specPath)
+    const o = new AssertOrder(2)
+    defineStep('simulate run', async ({ spec }) => {
+
+      const s = await spec(_ => Promise.resolve(true))
+      o.on(1, () => t.equal(s.mode, 'save'))
+      o.on(2, () => t.equal(s.mode, 'simulate'))
+      o.any([1, 2])
+      await s.subject(0)
+      await s.done()
+    })
+    const prepare = scenario.save('simulate run spec scenario')
+
+    await prepare.run('simulate run')
+    t(fs.existsSync(specPath))
+
+    const { run } = scenario.simulate('simulate run spec scenario')
+    await run('simulate run')
 
     o.end()
   })
@@ -298,7 +452,7 @@ describe('teardown()', () => {
   test('arguments are passed to teardown handler as inputs', async () => {
     const { teardown } = scenario('')
     const actual: any[] = []
-    onFixture('passing teardown arguments', ({ inputs }) => {
+    defineStep('passing teardown arguments', ({ inputs }) => {
       actual.push(...inputs)
     })
     await teardown('passing teardown arguments', 1, 2, 3)
@@ -306,14 +460,14 @@ describe('teardown()', () => {
   })
 
   test('duplicate handler throws DuplicateHandler', async () => {
-    onFixture('duplicate teardown', () => { return })
-    const err = await a.throws(() => onFixture('duplicate teardown', () => { return }), DuplicateHandler)
+    defineStep('duplicate teardown', () => { return })
+    const err = await a.throws(() => defineStep('duplicate teardown', () => { return }), DuplicateHandler)
     t.equal(err.message, `Handler for 'duplicate teardown' is already defined.`)
   })
 
   test('regex matches handler', async () => {
     let input
-    onFixture(/teardown regexNoGroup \w*/, ({ inputs }) => {
+    defineStep(/teardown regexNoGroup \w*/, ({ inputs }) => {
       input = inputs[0]
     })
     const { teardown } = scenario('teardown with regex')
@@ -324,7 +478,7 @@ describe('teardown()', () => {
   test('regex group result is passed to handler after input', async () => {
     let actual
     let input
-    onFixture(/teardown regex (\d+)/, ({ inputs }, value) => {
+    defineStep(/teardown regex (\d+)/, ({ inputs }, value) => {
       input = inputs[0]
       actual = value
     })
@@ -336,7 +490,7 @@ describe('teardown()', () => {
 
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
-    onFixture('teardown template {id} {code}', ({ inputs }, id, code) => {
+    defineStep('teardown template {id} {code}', ({ inputs }, id, code) => {
       values.push(...inputs, id, code)
     })
     const { teardown } = scenario('teardown with template')
@@ -346,7 +500,7 @@ describe('teardown()', () => {
 
   test('template can specify type', async () => {
     let values: any[] = []
-    onFixture('teardown templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+    defineStep('teardown templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
       values.push(...inputs, id, enable, pi)
     })
     const { teardown } = scenario('teardown with template')
@@ -360,7 +514,7 @@ describe('teardown()', () => {
   test('spec id in teardown is predefined to `scenarioId/teardownId` and not configurable', async () => {
     let result
     let id
-    onFixture('teardown spec - ensure server is up', async ({ spec, inputs }) => {
+    defineStep('teardown spec - ensure server is up', async ({ spec, inputs }) => {
       const host = inputs[0]
 
       // spec() has no overload of spec(id, subject)
@@ -381,7 +535,7 @@ describe('teardown()', () => {
   test('scenario.save() will cause teardown spec in handle() to save', async () => {
     const specPath = `__komondor__/specs/save teardown spec scenario/simple saving teardown.json`
     ensureFileNotExists(specPath)
-    onFixture('simple saving teardown', async ({ spec }) => {
+    defineStep('simple saving teardown', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
@@ -395,7 +549,7 @@ describe('teardown()', () => {
   test('scenario.save() will cause teardown spec in template handle() to save', async () => {
     const specPath = `__komondor__/specs/save teardown spec scenario/save template saving teardown 1.json`
     ensureFileNotExists(specPath)
-    onFixture('save template saving teardown {id}', async ({ spec }) => {
+    defineStep('save template saving teardown {id}', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
@@ -409,7 +563,7 @@ describe('teardown()', () => {
   test('scenario.save() will cause teardown spec in regex handle() to save', async () => {
     const specPath = `__komondor__/specs/save teardown spec scenario/teardown regex saving 1.json`
     ensureFileNotExists(specPath)
-    onFixture(/teardown regex saving \d+/, async ({ spec }) => {
+    defineStep(/teardown regex saving \d+/, async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
@@ -424,7 +578,7 @@ describe('teardown()', () => {
     const specPath = `__komondor__/specs/simulate teardown spec scenario/simulate teardown.json`
     ensureFileNotExists(specPath)
     const o = new AssertOrder(2)
-    onFixture('simulate teardown', async ({ spec }) => {
+    defineStep('simulate teardown', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       o.on(1, () => t.equal(s.mode, 'save'))
       o.on(2, () => t.equal(s.mode, 'simulate'))
@@ -452,12 +606,12 @@ describe('done()', () => {
     ensureFileNotExists(`__komondor__/specs/done live/teardown done.json`)
 
     const { setup, spec, teardown, done } = scenario('done live')
-    onFixture('setup done', async ({ spec }) => {
+    defineStep('setup done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
       await s.done()
     })
-    onFixture('teardown done', async ({ spec }) => {
+    defineStep('teardown done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
       await s.done()
@@ -485,12 +639,12 @@ describe('done()', () => {
     ensureFileNotExists(`__komondor__/specs/done save/teardown save done.json`)
 
     const { setup, spec, teardown, done } = scenario.save('done save')
-    onFixture('setup save done', async ({ spec }) => {
+    defineStep('setup save done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
       await s.done()
     })
-    onFixture('teardown save done', async ({ spec }) => {
+    defineStep('teardown save done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
       await s.done()
@@ -521,12 +675,12 @@ describe('done()', () => {
     ensureFileNotExists(specPath)
     ensureFileNotExists(teardownPath)
 
-    onFixture('setup simulate done', async ({ spec }) => {
+    defineStep('setup simulate done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
       await s.done()
     })
-    onFixture('teardown simulate done', async ({ spec }) => {
+    defineStep('teardown simulate done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
       await s.done()
