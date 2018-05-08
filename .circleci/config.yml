@@ -46,6 +46,6 @@ jobs:
           command: npm install
       - run:
           name: verify
-          command: npm run verify
+          command: npm run ci-verify
           post:
             - bash <(curl -s https://codecov.io/bash)

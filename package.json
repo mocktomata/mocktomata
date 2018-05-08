@@ -19,6 +19,7 @@
     "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
     "prepublishOnly": "npm run build",
     "test": "jest",
+    "ci-verify": "npm run build && npm run lint && npm run coverage -- --maxWorkers=4 && npm run dependency-check",
     "verify": "npm run build && npm run lint && npm run coverage && npm run dependency-check",
     "watch": "npm run clean && node scripts/watch.js",
     "semantic-release": "semantic-release"
