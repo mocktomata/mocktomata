@@ -79,15 +79,15 @@ k.trio('function/simpleCallback/success', (title, spec) => {
     const s = await spec(simpleCallback.success)
 
     s.on('function', 'invoke', action => {
-      o.any([1, 2])
       o.on(1, () => satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 }))
       o.on(2, () => satisfy(action, { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 }))
+      o.any([1, 2])
     })
 
     s.on('function', 'return', action => {
-      o.any([3, 4])
       o.on(3, () => satisfy(action, { ...functionReturned(), instanceId: 2, invokeId: 1 }))
       o.on(4, () => satisfy(action, { ...functionReturned(), instanceId: 1, invokeId: 1 }))
+      o.any([3, 4])
     })
 
     await simpleCallback.increment(s.subject, 2)
@@ -110,15 +110,15 @@ k.trio('function/simpleCallback/fail', (title, spec) => {
     const s = await spec(simpleCallback.fail)
 
     s.on('function', 'invoke', action => {
-      o.any([1, 2])
       o.on(1, () => satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 }))
       o.on(2, () => satisfy(action, { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 }))
+      o.any([1, 2])
     })
 
     s.on('function', 'return', action => {
-      o.any([3, 4])
       o.on(3, () => satisfy(action, { ...functionReturned(), instanceId: 2, invokeId: 1 }))
       o.on(4, () => satisfy(action, { ...functionReturned(), instanceId: 1, invokeId: 1 }))
+      o.any([3, 4])
     })
 
     return simpleCallback.increment(s.subject, 2)

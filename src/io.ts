@@ -32,5 +32,8 @@ export const io = {
   },
   get writeGiven() {
     return getIO().writeGiven
+  },
+  get writeScenario() {
+    return getIO().writeScenario
   }
 }

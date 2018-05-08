@@ -1,4 +1,4 @@
-import { SpecAction } from 'komondor-plugin'
+import { SpecAction, SpecMode } from 'komondor-plugin'
 import { ArrayEntryExpectation } from 'satisfier'
 
 export type GivenMode = 'live' | 'save' | 'simulate'
@@ -19,6 +19,7 @@ export interface KomondorServerRegistry {
 }
 
 export interface Spy<T> {
+  mode: SpecMode,
   on(type: string, name: string, callback: (action: SpecAction) => void),
   onAny(callback: (action: SpecAction) => void),
   actions: SpecAction[],
@@ -31,6 +32,7 @@ export interface SpecRecord {
 }
 
 export interface Spec<T> extends Spy<T> {
+  id: string,
   /**
    * @param expectation Must be pure.
    */

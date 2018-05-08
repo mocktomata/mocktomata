@@ -6,6 +6,7 @@ import { registerPlugin } from './plugin'
 
 export interface Config {
   (options: KomondorOptions): void,
+  scenario(mode: SpecMode, ...filters: (string | RegExp)[]): void,
   given(mode: GivenMode, ...filters: (string | RegExp)[]): void,
   spec(mode: SpecMode, ...filters: (string | RegExp)[]): void,
   /**
@@ -20,6 +21,14 @@ export const config: Config = Object.assign(
     store.options = options
   },
   {
+    scenario(mode: SpecMode, ...filters: (string | RegExp)[]) {
+      if (filters.length > 0) {
+        store.scenarioOverrides.push(...filters.map(filter => ({ mode, filter })))
+      }
+      else {
+        store.defaultMode = mode
+      }
+    },
     given(mode: GivenMode, ...filters: (string | RegExp)[]) {
       if (filters.length > 0) {
         store.envOverrides.push(...filters.map(filter => ({ mode, filter })))

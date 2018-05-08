@@ -26,9 +26,17 @@ let options: KomondorOptions = { ...defaultOptions }
 export let store = {
   artifacts: {},
   defaultArtifacts: {},
+  defaultMode: undefined as SpecMode | undefined,
+  scenarioOverrides: [] as { mode: SpecMode, filter: string | RegExp }[],
   specDefaultMode,
   specOverrides,
   givenEntries,
+  setupEntries: [] as {
+    clause: string,
+    handler: Function,
+    regex?: RegExp,
+    valueTypes?: string[]
+  }[],
   envDefaultMode,
   envOverrides,
   options
@@ -37,9 +45,13 @@ export let store = {
 // for testing only
 export function resetStore() {
   store.artifacts = {}
+  store.defaultArtifacts = {}
+  store.defaultMode = undefined
+  store.scenarioOverrides = []
   store.specDefaultMode = undefined
   store.specOverrides = []
   store.givenEntries = []
+  store.setupEntries = []
   store.envDefaultMode = undefined
   store.envOverrides = []
   store.options = {

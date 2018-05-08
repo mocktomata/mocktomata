@@ -1,5 +1,3 @@
-import { Stream, Writable } from 'stream'
-
 import { store } from './store'
 
 import {
@@ -33,11 +31,5 @@ export const io = {
   },
   get writeGiven() {
     return getIO().writeGiven
-  },
-  get createWriteStream(): (id: string) => Writable {
-    return getIO().createWriteStream
-  },
-  get createReadStream(): (id: string) => Stream {
-    return getIO().createReadStream
   }
 }
