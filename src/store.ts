@@ -30,13 +30,13 @@ export let store = {
   scenarioOverrides: [] as { mode: SpecMode, filter: string | RegExp }[],
   specDefaultMode,
   specOverrides,
-  givenEntries,
-  setupEntries: [] as {
+  steps: [] as {
     clause: string,
     handler: Function,
     regex?: RegExp,
     valueTypes?: string[]
   }[],
+  givenEntries,
   envDefaultMode,
   envOverrides,
   options
@@ -51,7 +51,7 @@ export function resetStore() {
   store.specDefaultMode = undefined
   store.specOverrides = []
   store.givenEntries = []
-  store.setupEntries = []
+  store.steps = []
   store.envDefaultMode = undefined
   store.envOverrides = []
   store.options = {

@@ -47,22 +47,23 @@ function createScenario(id: string, mode: SpecMode) {
     specs: [] as string[],
     teardowns: [] as string[]
   }
-  const setup = createSetup(id, mode, id => scenarioRecord.setups.push(id))
+  const setup = createStepCaller(id, mode, id => scenarioRecord.setups.push(id))
   const spec = createSpec(id, mode, id => scenarioRecord.specs.push(id))
-  const teardown = createSetup(id, mode, id => scenarioRecord.teardowns.push(id))
+  const run = createStepCaller(id, mode, id => scenarioRecord.specs.push(id))
+  const teardown = createStepCaller(id, mode, id => scenarioRecord.teardowns.push(id))
   function done() {
     if (mode === 'save')
       return io.writeScenario(id, scenarioRecord)
     else
       return Promise.resolve()
   }
-  return { setup, spec, teardown, done, mode }
+  return { setup, run, spec, teardown, done, mode }
 }
 
-function createSetup(id: string, mode: SpecMode, creationListener: (id: string) => void) {
+function createStepCaller(id: string, mode: SpecMode, creationListener: (id: string) => void) {
   return async function setup(clause: string, ...inputs: any[]) {
     creationListener(clause)
-    const entry = store.setupEntries.find(e => {
+    const entry = store.steps.find(e => {
       if (e.regex) {
         return e.regex.test(clause)
       }
@@ -153,14 +154,14 @@ function createSpec(id: string, mode: SpecMode, creationListener: (id: string) =
   }
 }
 
-export function onFixture(clause: string | RegExp, handler: (context: SetupContext, ...args: any[]) => any) {
-  const entry = store.setupEntries.find(entry => {
+export function defineStep(clause: string | RegExp, handler: (context: SetupContext, ...args: any[]) => any) {
+  const entry = store.steps.find(entry => {
     return entry.clause.toString() === clause.toString()
   })
   if (entry)
     throw new DuplicateHandler(clause)
   if (clause instanceof RegExp) {
-    store.setupEntries.push({ clause: clause.toString(), handler, regex: clause })
+    store.steps.push({ clause: clause.toString(), handler, regex: clause })
   }
   else if (isTemplate(clause)) {
     const valueTypes: string[] = []
@@ -169,10 +170,10 @@ export function onFixture(clause: string | RegExp, handler: (context: SetupConte
       valueTypes.push(m ? m[1].trim() : 'string')
       return '([\\w\.:]*)'
     }))
-    store.setupEntries.push({ clause, handler, regex, valueTypes })
+    store.steps.push({ clause, handler, regex, valueTypes })
   }
   else {
-    store.setupEntries.push({ clause, handler })
+    store.steps.push({ clause, handler })
   }
 }
 
