@@ -111,28 +111,6 @@ describe('setup()', () => {
     t.equal(err.message, `Handler for 'duplicate setup' is already defined.`)
   })
 
-  test('regex matches handler', async () => {
-    let input
-    defineStep(/setup regexNoGroup \w*/, ({ inputs }) => {
-      input = inputs[0]
-    })
-    const { setup } = scenario('setup with regex')
-    await setup('setup regexNoGroup asurada-11', 'x')
-    t.equal(input, 'x')
-  })
-
-  test('regex group result is passed to handler after input', async () => {
-    let actual
-    let input
-    defineStep(/setup regex (\d+)/, ({ inputs }, value) => {
-      input = inputs[0]
-      actual = value
-    })
-    const { setup } = scenario('setup with regex')
-    await setup('setup regex 123', 'x')
-    t.equal(input, 'x')
-    t.equal(actual, 123)
-  })
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
     defineStep('setup template {id} {code}', ({ inputs }, id, code) => {
@@ -204,19 +182,6 @@ describe('setup()', () => {
     t(fs.existsSync(specPath))
   })
 
-  test('scenario.save() will cause spec in regex onSetup to save', async () => {
-    const specPath = `__komondor__/specs/save setup spec regex scenario/regex saving setup 1.json`
-    ensureFileNotExists(specPath)
-    defineStep(/regex saving setup \d+/, async ({ spec }) => {
-      const s = await spec(_ => Promise.resolve(true))
-      await s.subject(0)
-      await s.done()
-    })
-    const { setup } = scenario.save('save setup spec regex scenario')
-    await setup('regex saving setup 1')
-
-    t(fs.existsSync(specPath))
-  })
   test('scenario.simulate() will cause spec in onSetup to simulate', async () => {
     const specPath = `__komondor__/specs/simulate spec scenario/simulate setup.json`
     ensureFileNotExists(specPath)
@@ -265,28 +230,6 @@ describe('run()', () => {
     t.equal(err.message, `Handler for 'duplicate run' is already defined.`)
   })
 
-  test('regex matches handler', async () => {
-    let input
-    defineStep(/run regexNoGroup \w*/, ({ inputs }) => {
-      input = inputs[0]
-    })
-    const { run } = scenario('run with regex')
-    await run('run regexNoGroup asurada-11', 'x')
-    t.equal(input, 'x')
-  })
-
-  test('regex group result is passed to handler after input', async () => {
-    let actual
-    let input
-    defineStep(/run regex (\d+)/, ({ inputs }, value) => {
-      input = inputs[0]
-      actual = value
-    })
-    const { run } = scenario('run with regex')
-    await run('run regex 123', 'x')
-    t.equal(input, 'x')
-    t.equal(actual, 123)
-  })
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
     defineStep('run template {id} {code}', ({ inputs }, id, code) => {
@@ -358,19 +301,6 @@ describe('run()', () => {
     t(fs.existsSync(specPath))
   })
 
-  test('scenario.save() will cause spec in regex onrun to save', async () => {
-    const specPath = `__komondor__/specs/save run spec regex scenario/regex saving run 1.json`
-    ensureFileNotExists(specPath)
-    defineStep(/regex saving run \d+/, async ({ spec }) => {
-      const s = await spec(_ => Promise.resolve(true))
-      await s.subject(0)
-      await s.done()
-    })
-    const { run } = scenario.save('save run spec regex scenario')
-    await run('regex saving run 1')
-
-    t(fs.existsSync(specPath))
-  })
   test('scenario.simulate() will cause spec in onrun to simulate', async () => {
     const specPath = `__komondor__/specs/simulate run spec scenario/simulate run.json`
     ensureFileNotExists(specPath)
@@ -465,29 +395,6 @@ describe('teardown()', () => {
     t.equal(err.message, `Handler for 'duplicate teardown' is already defined.`)
   })
 
-  test('regex matches handler', async () => {
-    let input
-    defineStep(/teardown regexNoGroup \w*/, ({ inputs }) => {
-      input = inputs[0]
-    })
-    const { teardown } = scenario('teardown with regex')
-    await teardown('teardown regexNoGroup asurada-11', 'x')
-    t.equal(input, 'x')
-  })
-
-  test('regex group result is passed to handler after input', async () => {
-    let actual
-    let input
-    defineStep(/teardown regex (\d+)/, ({ inputs }, value) => {
-      input = inputs[0]
-      actual = value
-    })
-    const { teardown } = scenario('teardown with regex')
-    await teardown('teardown regex 123', 'x')
-    t.equal(input, 'x')
-    t.equal(actual, 123)
-  })
-
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
     defineStep('teardown template {id} {code}', ({ inputs }, id, code) => {
@@ -556,20 +463,6 @@ describe('teardown()', () => {
     })
     const { setup } = scenario.save('save teardown spec scenario')
     await setup('save template saving teardown 1')
-
-    t(fs.existsSync(specPath))
-  })
-
-  test('scenario.save() will cause teardown spec in regex handle() to save', async () => {
-    const specPath = `__komondor__/specs/save teardown spec scenario/teardown regex saving 1.json`
-    ensureFileNotExists(specPath)
-    defineStep(/teardown regex saving \d+/, async ({ spec }) => {
-      const s = await spec(_ => Promise.resolve(true))
-      await s.subject(0)
-      await s.done()
-    })
-    const { setup } = scenario.save('save teardown spec scenario')
-    await setup('teardown regex saving 1')
 
     t(fs.existsSync(specPath))
   })
@@ -827,5 +720,17 @@ describe('defineStep()', () => {
     const s = scenario.simulate('runSubStep simulate scenario')
     await s.run('runSubStep simulate')
     await s.done()
+  })
+
+  test(`supports '-' in template`, async () => {
+    let actual
+    defineStep('templateWithDash {id}', (_, id) => {
+      actual = id
+    })
+
+    const { setup } = scenario('template with dash')
+    await setup('templateWithDash a-b-c')
+
+    t.equal(actual, 'a-b-c')
   })
 })

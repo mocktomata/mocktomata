@@ -85,7 +85,7 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
     if (entry.regex) {
       // regex must pass as it is tested above
       const matches = entry.regex.exec(clause)!
-      const values = entry.valueTypes ? matches.slice(1, matches.length).map((v, i) => {
+      const values = matches.slice(1, matches.length).map((v, i) => {
         const valueType = entry.valueTypes![i]
         if (valueType === 'number')
           return parseInt(v, 10)
@@ -94,7 +94,7 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
         if (valueType === 'float')
           return parseFloat(v)
         return v
-      }) : matches.slice(1, matches.length)
+      })
       return entry.handler({ inputs, spec, runSubStep }, ...values)
     }
     return entry.handler({ inputs, spec, runSubStep })
@@ -156,21 +156,18 @@ function createSpec(id: string, mode: SpecMode, creationListener: (id: string) =
   }
 }
 
-export function defineStep(clause: string | RegExp, handler: (context: SetupContext, ...args: any[]) => any) {
+export function defineStep(clause: string, handler: (context: SetupContext, ...args: any[]) => any) {
   const entry = store.steps.find(entry => {
     return entry.clause.toString() === clause.toString()
   })
   if (entry)
     throw new DuplicateHandler(clause)
-  if (clause instanceof RegExp) {
-    store.steps.push({ clause: clause.toString(), handler, regex: clause })
-  }
   else if (isTemplate(clause)) {
     const valueTypes: string[] = []
     const regex = new RegExp('^' + clause.replace(/{([\w:]*)}/g, (_, value) => {
-      const m = /\w*:(\w*)/.exec(value)
+      const m = /[\w]*:(\w*)/.exec(value)
       valueTypes.push(m ? m[1].trim() : 'string')
-      return '([\\w\.:]*)'
+      return '([\\w\\.\\-]*)'
     }))
     store.steps.push({ clause, handler, regex, valueTypes })
   }
