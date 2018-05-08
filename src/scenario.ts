@@ -85,7 +85,7 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
     if (entry.regex) {
       // regex must pass as it is tested above
       const matches = entry.regex.exec(clause)!
-      const values = entry.valueTypes ? matches.slice(1, matches.length).map((v, i) => {
+      const values = matches.slice(1, matches.length).map((v, i) => {
         const valueType = entry.valueTypes![i]
         if (valueType === 'number')
           return parseInt(v, 10)
@@ -94,7 +94,7 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
         if (valueType === 'float')
           return parseFloat(v)
         return v
-      }) : matches.slice(1, matches.length)
+      })
       return entry.handler({ inputs, spec, runSubStep }, ...values)
     }
     return entry.handler({ inputs, spec, runSubStep })
