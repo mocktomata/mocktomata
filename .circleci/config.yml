@@ -18,18 +18,11 @@ jobs:
       - run:
           name: verify
           command: npm run verify
+          post:
+            - bash <(curl -s https://codecov.io/bash)
       - run:
           name: release
           command: npm run semantic-release || true
-      - run:
-          name: install coveralls and codecov
-          command: npm install --no-save coveralls codecov
-      - run:
-          name: coveralls
-          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
-      - run:
-          name: codecov
-          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
   node8:
     docker:
       - image: 'circleci/node:8'
@@ -41,18 +34,8 @@ jobs:
       - run:
           name: verify
           command: npm run verify
-      - run:
-          name: release
-          command: npm run semantic-release || true
-      - run:
-          name: install coveralls and codecov
-          command: npm install --no-save coveralls codecov
-      - run:
-          name: coveralls
-          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
-      - run:
-          name: codecov
-          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
+          post:
+            - bash <(curl -s https://codecov.io/bash)
   node6:
     docker:
       - image: 'circleci/node:6'
@@ -64,15 +47,5 @@ jobs:
       - run:
           name: verify
           command: npm run verify
-      - run:
-          name: release
-          command: npm run semantic-release || true
-      - run:
-          name: install coveralls and codecov
-          command: npm install --no-save coveralls codecov
-      - run:
-          name: coveralls
-          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
-      - run:
-          name: codecov
-          command: ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
+          post:
+            - bash <(curl -s https://codecov.io/bash)
