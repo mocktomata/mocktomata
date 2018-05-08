@@ -828,4 +828,16 @@ describe('defineStep()', () => {
     await s.run('runSubStep simulate')
     await s.done()
   })
+
+  test(`supports '-' in template`, async () => {
+    let actual
+    defineStep('templateWithDash {id}', (_, id) => {
+      actual = id
+    })
+
+    const { setup } = scenario('template with dash')
+    await setup('templateWithDash a-b-c')
+
+    t.equal(actual, 'a-b-c')
+  })
 })

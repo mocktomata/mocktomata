@@ -168,9 +168,9 @@ export function defineStep(clause: string | RegExp, handler: (context: SetupCont
   else if (isTemplate(clause)) {
     const valueTypes: string[] = []
     const regex = new RegExp('^' + clause.replace(/{([\w:]*)}/g, (_, value) => {
-      const m = /\w*:(\w*)/.exec(value)
+      const m = /[\w]*:(\w*)/.exec(value)
       valueTypes.push(m ? m[1].trim() : 'string')
-      return '([\\w\.:]*)'
+      return '([\\w\\.\\-]*)'
     }))
     store.steps.push({ clause, handler, regex, valueTypes })
   }
