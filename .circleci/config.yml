@@ -23,7 +23,7 @@ jobs:
           command: npm run semantic-release || true
       - run:
           name: install coveralls and codecov
-          commmand: npm install --no-save coveralls codecov
+          command: npm install --no-save coveralls codecov
       - run:
           name: coveralls
           command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
@@ -46,7 +46,7 @@ jobs:
           command: npm run semantic-release || true
       - run:
           name: install coveralls and codecov
-          commmand: npm install --no-save coveralls codecov
+          command: npm install --no-save coveralls codecov
       - run:
           name: coveralls
           command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
@@ -69,7 +69,7 @@ jobs:
           command: npm run semantic-release || true
       - run:
           name: install coveralls and codecov
-          commmand: npm install --no-save coveralls codecov
+          command: npm install --no-save coveralls codecov
       - run:
           name: coveralls
           command: ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
