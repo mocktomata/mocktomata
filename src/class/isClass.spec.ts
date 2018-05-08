@@ -1,5 +1,6 @@
 import t from 'assert'
 import a from 'assertron'
+import cp from 'child_process'
 
 import { isClass } from './isClass'
 
@@ -32,4 +33,8 @@ test('child class is true', () => {
   class Parent { do() { return 'do' } }
   class Child extends Parent { }
   t(isClass(Child))
+})
+
+test('spawn is not a class', () => {
+  a.false(isClass(cp.spawn))
 })
