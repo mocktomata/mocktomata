@@ -156,15 +156,12 @@ function createSpec(id: string, mode: SpecMode, creationListener: (id: string) =
   }
 }
 
-export function defineStep(clause: string | RegExp, handler: (context: SetupContext, ...args: any[]) => any) {
+export function defineStep(clause: string, handler: (context: SetupContext, ...args: any[]) => any) {
   const entry = store.steps.find(entry => {
     return entry.clause.toString() === clause.toString()
   })
   if (entry)
     throw new DuplicateHandler(clause)
-  if (clause instanceof RegExp) {
-    store.steps.push({ clause: clause.toString(), handler, regex: clause })
-  }
   else if (isTemplate(clause)) {
     const valueTypes: string[] = []
     const regex = new RegExp('^' + clause.replace(/{([\w:]*)}/g, (_, value) => {
