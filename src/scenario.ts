@@ -68,7 +68,7 @@ class ScenarioRecorder {
 }
 
 function createScenario(id: string, mode: SpecMode) {
-  // TODO: delete old specs if in save mode.
+  // TODO: delete old scenario and its specs if in save mode.
   const recorder = new ScenarioRecorder(id)
   const setup = createStepCaller(id, mode, id => recorder.createSetupSpecId(id))
   const spec = createSpec(id, mode, id => recorder.createRunSpecId(id))
