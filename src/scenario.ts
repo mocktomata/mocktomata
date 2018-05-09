@@ -42,28 +42,49 @@ function getEffectiveMode(clause: string, mode: SpecMode) {
     store.defaultMode || mode
 }
 
-function createScenario(id: string, mode: SpecMode) {
-  const scenarioRecord = {
+class ScenarioRecorder {
+  record = {
     setups: [] as string[],
     specs: [] as string[],
     teardowns: [] as string[]
   }
-  const setup = createStepCaller(id, mode, id => scenarioRecord.setups.push(id))
-  const spec = createSpec(id, mode, id => scenarioRecord.specs.push(id))
-  const run = createStepCaller(id, mode, id => scenarioRecord.specs.push(id))
-  const teardown = createStepCaller(id, mode, id => scenarioRecord.teardowns.push(id))
+  counter = 0
+  constructor(public scenarioId: string) { }
+  createSetupSpecId(specId: string) {
+    const id = `${++this.counter}-${specId}`
+    this.record.setups.push(id)
+    return `${this.scenarioId}/${id}`
+  }
+  createRunSpecId(specId: string) {
+    const id = `${++this.counter}-${specId}`
+    this.record.specs.push(id)
+    return `${this.scenarioId}/${id}`
+  }
+  createTeardownSpecId(specId: string) {
+    const id = `${++this.counter}-${specId}`
+    this.record.teardowns.push(id)
+    return `${this.scenarioId}/${id}`
+  }
+}
+
+function createScenario(id: string, mode: SpecMode) {
+  // TODO: delete old scenario and its specs if in save mode.
+  const recorder = new ScenarioRecorder(id)
+  const setup = createStepCaller(mode, id => recorder.createSetupSpecId(id))
+  const spec = createSpec(mode, id => recorder.createRunSpecId(id))
+  const run = createStepCaller(mode, id => recorder.createRunSpecId(id))
+  const teardown = createStepCaller(mode, id => recorder.createTeardownSpecId(id))
   function done() {
     if (mode === 'save')
-      return io.writeScenario(id, scenarioRecord)
+      return io.writeScenario(id, recorder.record)
     else
       return Promise.resolve()
   }
   return { setup, run, spec, teardown, done, mode }
 }
 
-function createStepCaller(id: string, mode: SpecMode, creationListener: (id: string) => void) {
+function createStepCaller(mode: SpecMode, generateSpecId: (id: string) => string) {
   return async function setup(clause: string, ...inputs: any[]) {
-    creationListener(clause)
     const entry = store.steps.find(e => {
       if (e.regex) {
         return e.regex.test(clause)
@@ -74,14 +95,14 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
       throw new MissingHandler(clause)
     }
 
-    const runSubStep = createStepCaller(`${id}/${clause}`, mode, subId => creationListener(`${clause}/${subId}`))
+    const runSubStep = createStepCaller(mode, subId => generateSpecId(subId))
 
     // TODO: different inputs should not affect SpecRecord.
     // This currently creates conflict if different input is used in the
     // same scenario with the same clause.
     // This shouldn't happen as inputs should be artifacts only,
     // but may need to make this explicit and confirm.
-    const spec = createSetupSpec(`${id}/${clause}`, mode)
+    const spec = createSetupSpec(mode, specId => generateSpecId(specId ? `${clause}/${specId}` : clause))
     if (entry.regex) {
       // regex must pass as it is tested above
       const matches = entry.regex.exec(clause)!
@@ -101,19 +122,22 @@ function createStepCaller(id: string, mode: SpecMode, creationListener: (id: str
   }
 }
 
-function createSetupSpec(id: string, mode: SpecMode) {
+// TODO: support custom specId inside setup/run/teardown
+// Current code only support single spec.
+// Multiple specs within one step needs to be able to provide a different specId for each spec.
+function createSetupSpec(mode: SpecMode, generateSpecId: (id?: string) => string) {
   switch (mode) {
     case 'live':
       return function <T>(subject: T) {
-        return spec(id, subject)
+        return spec(generateSpecId(), subject)
       }
     case 'save':
       return function <T>(subject: T) {
-        return spec.save(id, subject)
+        return spec.save(generateSpecId(), subject)
       }
     case 'simulate':
       return function <T>(subject: T) {
-        return spec.simulate(id, subject)
+        return spec.simulate(generateSpecId(), subject)
       }
   }
 }
@@ -123,8 +147,7 @@ export interface ScenarioSpec {
   <T>(id: string, subject: T): Promise<Spec<T>>
 }
 
-function createSpec(id: string, mode: SpecMode, creationListener: (id: string) => void): ScenarioSpec {
-  const scenarioId = id
+function createSpec(mode: SpecMode, generateSpecId: (id: string) => string): ScenarioSpec {
   switch (mode) {
     case 'live':
       return function (id, subject?) {
@@ -132,8 +155,7 @@ function createSpec(id: string, mode: SpecMode, creationListener: (id: string) =
           subject = id
           id = 'default'
         }
-        creationListener(id)
-        return spec(`${scenarioId}/${id}`, subject)
+        return spec(generateSpecId(id), subject)
       }
     case 'save':
       return function (id, subject?) {
@@ -141,8 +163,7 @@ function createSpec(id: string, mode: SpecMode, creationListener: (id: string) =
           subject = id
           id = 'default'
         }
-        creationListener(id)
-        return spec.save(`${scenarioId}/${id}`, subject)
+        return spec.save(generateSpecId(id), subject)
       }
     case 'simulate':
       return function (id, subject?) {
@@ -150,8 +171,7 @@ function createSpec(id: string, mode: SpecMode, creationListener: (id: string) =
           subject = id
           id = 'default'
         }
-        creationListener(id)
-        return spec.simulate(`${scenarioId}/${id}`, subject)
+        return spec.simulate(generateSpecId(id), subject)
       }
   }
 }
