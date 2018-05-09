@@ -1,13 +1,10 @@
-import { MissingHandler, DuplicateHandler } from './errors'
-import { Spec } from './interfaces'
-import {
-  spec,
-  // @ts-ignore
-  SpecFn
-} from './spec';
-import { store } from './store';
 import { SpecMode } from 'komondor-plugin';
+
+import { DuplicateHandler, MissingHandler } from './errors';
+import { Spec } from './interfaces';
 import { io } from './io';
+import { createSpec } from './specInternal';
+import { store } from './store';
 
 export interface SetupContext {
   spec<T>(subject: T): Promise<Spec<T>>,
@@ -70,10 +67,10 @@ class ScenarioRecorder {
 function createScenario(id: string, mode: SpecMode) {
   // TODO: delete old scenario and its specs if in save mode.
   const recorder = new ScenarioRecorder(id)
-  const setup = createStepCaller(mode, id => recorder.createSetupSpecId(id))
-  const spec = createSpec(mode, id => recorder.createRunSpecId(id))
-  const run = createStepCaller(mode, id => recorder.createRunSpecId(id))
-  const teardown = createStepCaller(mode, id => recorder.createTeardownSpecId(id))
+  const setup = createStepCaller('setup', mode, id => recorder.createSetupSpecId(id))
+  const spec = createScenarioSpec('spec', mode, id => recorder.createRunSpecId(id))
+  const run = createStepCaller('run', mode, id => recorder.createRunSpecId(id))
+  const teardown = createStepCaller('teardown', mode, id => recorder.createTeardownSpecId(id))
   function done() {
     if (mode === 'save')
       return io.writeScenario(id, recorder.record)
@@ -83,7 +80,7 @@ function createScenario(id: string, mode: SpecMode) {
   return { setup, run, spec, teardown, done, mode }
 }
 
-function createStepCaller(mode: SpecMode, generateSpecId: (id: string) => string) {
+function createStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string) {
   return async function setup(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
@@ -95,14 +92,9 @@ function createStepCaller(mode: SpecMode, generateSpecId: (id: string) => string
       throw new MissingHandler(clause)
     }
 
-    const runSubStep = createStepCaller(mode, subId => generateSpecId(subId))
+    const runSubStep = createStepCaller(defaultId, mode, generateSpecId)
 
-    // TODO: different inputs should not affect SpecRecord.
-    // This currently creates conflict if different input is used in the
-    // same scenario with the same clause.
-    // This shouldn't happen as inputs should be artifacts only,
-    // but may need to make this explicit and confirm.
-    const spec = createSetupSpec(mode, specId => generateSpecId(specId ? `${clause}/${specId}` : clause))
+    const spec = createScenarioSpec(clause, mode, generateSpecId)
     if (entry.regex) {
       // regex must pass as it is tested above
       const matches = entry.regex.exec(clause)!
@@ -122,57 +114,18 @@ function createStepCaller(mode: SpecMode, generateSpecId: (id: string) => string
   }
 }
 
-// TODO: support custom specId inside setup/run/teardown
-// Current code only support single spec.
-// Multiple specs within one step needs to be able to provide a different specId for each spec.
-function createSetupSpec(mode: SpecMode, generateSpecId: (id?: string) => string) {
-  switch (mode) {
-    case 'live':
-      return function <T>(subject: T) {
-        return spec(generateSpecId(), subject)
-      }
-    case 'save':
-      return function <T>(subject: T) {
-        return spec.save(generateSpecId(), subject)
-      }
-    case 'simulate':
-      return function <T>(subject: T) {
-        return spec.simulate(generateSpecId(), subject)
-      }
-  }
-}
-
 export interface ScenarioSpec {
   <T>(subject: T): Promise<Spec<T>>
   <T>(id: string, subject: T): Promise<Spec<T>>
 }
 
-function createSpec(mode: SpecMode, generateSpecId: (id: string) => string): ScenarioSpec {
-  switch (mode) {
-    case 'live':
-      return function (id, subject?) {
-        if (!subject) {
-          subject = id
-          id = 'default'
-        }
-        return spec(generateSpecId(id), subject)
-      }
-    case 'save':
-      return function (id, subject?) {
-        if (!subject) {
-          subject = id
-          id = 'default'
-        }
-        return spec.save(generateSpecId(id), subject)
-      }
-    case 'simulate':
-      return function (id, subject?) {
-        if (!subject) {
-          subject = id
-          id = 'default'
-        }
-        return spec.simulate(generateSpecId(id), subject)
-      }
+function createScenarioSpec(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string): ScenarioSpec {
+  return function (id, subject?) {
+    if (!subject) {
+      subject = id
+      id = defaultId
+    }
+    return createSpec(generateSpecId(id), subject, mode)
   }
 }
 

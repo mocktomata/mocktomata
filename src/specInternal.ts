@@ -48,7 +48,7 @@ function getMode(id: string, mode: SpecMode) {
     store.specDefaultMode || mode
 }
 
-async function createSpec(specId: string, subject, mode: SpecMode) {
+export async function createSpec(specId: string, subject, mode: SpecMode) {
   if (InvalidID.isInvalidID(specId)) {
     throw new InvalidID(specId)
   }

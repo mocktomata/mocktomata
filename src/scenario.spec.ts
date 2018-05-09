@@ -359,7 +359,7 @@ describe('spec()', () => {
   test('spec id is optional', async () => {
     const { spec } = scenario('optional-spec-id')
     const s = await spec(() => Promise.resolve(true))
-    t.equal(s.id, 'optional-spec-id/1-default')
+    t.equal(s.id, 'optional-spec-id/1-spec')
   })
 
   test('actual spec id is `scenarioId/1-specId`', async () => {
@@ -550,7 +550,7 @@ describe('done()', () => {
   test('resolves after scenario saved', async () => {
     const files = [`__komondor__/scenarios/done save.json`,
       `__komondor__/specs/done save/1-setup save done.json`,
-      `__komondor__/specs/done save/2-default.json`,
+      `__komondor__/specs/done save/2-spec.json`,
       `__komondor__/specs/done save/3-teardown save done.json`]
 
     files.forEach(ensureFileNotExists)
@@ -582,7 +582,7 @@ describe('done()', () => {
   test('resolves after scenario simulated', async () => {
     const scenarioPath = `__komondor__/scenarios/done simulate.json`
     const setupPath = `__komondor__/specs/done simulate/1-setup simulate done.json`
-    const specPath = `__komondor__/specs/done simulate/2-default.json`
+    const specPath = `__komondor__/specs/done simulate/2-spec.json`
     const teardownPath = `__komondor__/specs/done simulate/3-teardown simulate done.json`
     ensureFileNotExists(scenarioPath)
     ensureFileNotExists(setupPath)
