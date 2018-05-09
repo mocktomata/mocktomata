@@ -70,10 +70,10 @@ class ScenarioRecorder {
 function createScenario(id: string, mode: SpecMode) {
   // TODO: delete old scenario and its specs if in save mode.
   const recorder = new ScenarioRecorder(id)
-  const setup = createStepCaller(id, mode, id => recorder.createSetupSpecId(id))
-  const spec = createSpec(id, mode, id => recorder.createRunSpecId(id))
-  const run = createStepCaller(id, mode, id => recorder.createRunSpecId(id))
-  const teardown = createStepCaller(id, mode, id => recorder.createTeardownSpecId(id))
+  const setup = createStepCaller(mode, id => recorder.createSetupSpecId(id))
+  const spec = createSpec(mode, id => recorder.createRunSpecId(id))
+  const run = createStepCaller(mode, id => recorder.createRunSpecId(id))
+  const teardown = createStepCaller(mode, id => recorder.createTeardownSpecId(id))
   function done() {
     if (mode === 'save')
       return io.writeScenario(id, recorder.record)
@@ -83,7 +83,7 @@ function createScenario(id: string, mode: SpecMode) {
   return { setup, run, spec, teardown, done, mode }
 }
 
-function createStepCaller(id: string, mode: SpecMode, generateSpecId: (id: string) => string) {
+function createStepCaller(mode: SpecMode, generateSpecId: (id: string) => string) {
   return async function setup(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
@@ -95,14 +95,14 @@ function createStepCaller(id: string, mode: SpecMode, generateSpecId: (id: strin
       throw new MissingHandler(clause)
     }
 
-    const runSubStep = createStepCaller(`${id}/${clause}`, mode, subId => generateSpecId(subId))
+    const runSubStep = createStepCaller(mode, subId => generateSpecId(subId))
 
     // TODO: different inputs should not affect SpecRecord.
     // This currently creates conflict if different input is used in the
     // same scenario with the same clause.
     // This shouldn't happen as inputs should be artifacts only,
     // but may need to make this explicit and confirm.
-    const spec = createSetupSpec(mode, specId => `${generateSpecId(specId ? `${clause}/${specId}` : clause)}`)
+    const spec = createSetupSpec(mode, specId => generateSpecId(specId ? `${clause}/${specId}` : clause))
     if (entry.regex) {
       // regex must pass as it is tested above
       const matches = entry.regex.exec(clause)!
@@ -122,6 +122,9 @@ function createStepCaller(id: string, mode: SpecMode, generateSpecId: (id: strin
   }
 }
 
+// TODO: support custom specId inside setup/run/teardown
+// Current code only support single spec.
+// Multiple specs within one step needs to be able to provide a different specId for each spec.
 function createSetupSpec(mode: SpecMode, generateSpecId: (id?: string) => string) {
   switch (mode) {
     case 'live':
@@ -144,7 +147,7 @@ export interface ScenarioSpec {
   <T>(id: string, subject: T): Promise<Spec<T>>
 }
 
-function createSpec(_id: string, mode: SpecMode, generateSpecId: (id: string) => string): ScenarioSpec {
+function createSpec(mode: SpecMode, generateSpecId: (id: string) => string): ScenarioSpec {
   switch (mode) {
     case 'live':
       return function (id, subject?) {
@@ -152,7 +155,7 @@ function createSpec(_id: string, mode: SpecMode, generateSpecId: (id: string) =>
           subject = id
           id = 'default'
         }
-        return spec(`${generateSpecId(id)}`, subject)
+        return spec(generateSpecId(id), subject)
       }
     case 'save':
       return function (id, subject?) {
@@ -160,7 +163,7 @@ function createSpec(_id: string, mode: SpecMode, generateSpecId: (id: string) =>
           subject = id
           id = 'default'
         }
-        return spec.save(`${generateSpecId(id)}`, subject)
+        return spec.save(generateSpecId(id), subject)
       }
     case 'simulate':
       return function (id, subject?) {
@@ -168,7 +171,7 @@ function createSpec(_id: string, mode: SpecMode, generateSpecId: (id: string) =>
           subject = id
           id = 'default'
         }
-        return spec.simulate(`${generateSpecId(id)}`, subject)
+        return spec.simulate(generateSpecId(id), subject)
       }
   }
 }
