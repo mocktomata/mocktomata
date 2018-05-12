@@ -1,3 +1,4 @@
+import r from 'ramda'
 import { isPrimitive } from 'util'
 
 import { artifactKey } from './constants'
@@ -38,8 +39,10 @@ function createArtifact(original) {
       value: typeof original
     })
   }
+
   const type = Array.isArray(original) ? 'array' : 'object'
-  return new Proxy(original as any, {
+  const clone = r.clone(original)
+  return new Proxy(clone as any, {
     get(obj, prop) {
       if (prop === artifactKey) return type
       const result = obj[prop]
