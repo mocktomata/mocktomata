@@ -26,6 +26,7 @@ export const config: Config = Object.assign(
         store.scenarioOverrides.push(...filters.map(filter => ({ mode, filter })))
       }
       else {
+        // istanbul ignore next
         store.defaultMode = mode
       }
     },

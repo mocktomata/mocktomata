@@ -1,21 +1,13 @@
-import { store } from './store'
 import { getFileIO } from './fileIO'
 import {
   SpecRecord,
   // @ts-ignore
   GivenRecord
 } from './interfaces'
-import { getServerIO } from './serverIO'
+import { KOMONDOR_FOLDER } from './constants';
 
 function getIO() {
-  const registry = store.options.registry
-  switch (registry.type) {
-    case 'server':
-      return getServerIO(registry.url)
-    case 'file':
-    default:
-      return getFileIO(registry.path)
-  }
+  return getFileIO(KOMONDOR_FOLDER)
 }
 
 /**

@@ -194,19 +194,6 @@ test(`config.given('save') to force simulate to save`, async () => {
   await given.simulate('simulate to save', async ({ spec }) => t.equal(spec.name, 'specSave'))
 })
 
-test('config source to be a remote server', async () => {
-  config({
-    registry: {
-      type: 'server',
-      url: 'http://localhost:3000'
-    }
-  })
-
-  const cbSpec = await spec(simpleCallback.success)
-  await simpleCallback.increment(cbSpec.subject, 2)
-  await cbSpec.satisfy(forceReplaySuccessExpectation)
-})
-
 test('register plugin manually', () => {
   const o = new AssertOrder(1)
   const fakePlugin = {

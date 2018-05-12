@@ -3,8 +3,7 @@ import r from 'ramda'
 import { artifactKey } from './constants';
 
 export function unartifact(value) {
-  const type = value[artifactKey]
-  switch (type) {
+  switch (value[artifactKey]) {
     case 'string':
       return String(value)
     case 'boolean':
@@ -17,6 +16,7 @@ export function unartifact(value) {
     case 'object':
       return r.map(unartifact, value)
     default:
+      // istanbul ignore next
       return value
   }
 }
