@@ -4,18 +4,7 @@ import { ArrayEntryExpectation } from 'satisfier'
 export type GivenMode = 'live' | 'save' | 'simulate'
 
 export interface KomondorOptions {
-  plugins?: string[],
-  registry: KomondorFileRegistry | KomondorServerRegistry
-}
-
-export interface KomondorFileRegistry {
-  type: 'file',
-  path: string
-}
-
-export interface KomondorServerRegistry {
-  type: 'server',
-  url: string
+  plugins?: string[]
 }
 
 export interface Spy<T> {

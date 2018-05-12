@@ -1,6 +1,6 @@
 import t from 'assert'
 
-import { artifact, overruleArtifact, MissingArtifact } from '.'
+import { artifact, overruleArtifact, MissingArtifact, spec } from '.'
 import { artifactKey } from './constants'
 
 test('string', () => {
@@ -102,4 +102,24 @@ test('overruleArtifact() will cause artifact() to get its value', () => {
   const expected = overruleArtifact('overrule', { a: 1 })
   const actual = artifact('overrule', { a: 2 })
   t.equal(actual, expected)
+})
+
+test('pass to subject as original type', async () => {
+  async function retainType(value) {
+    const type = typeof value
+    const a = artifact(`retain type (${type})`, value)
+    const s = await spec(input => {
+      t.equal(typeof input, type)
+      t.deepEqual(input, value)
+    })
+
+    s.subject(a)
+  }
+
+  await retainType('10.0.0.1')
+  await retainType(123)
+  await retainType(false)
+  await retainType(true)
+  await retainType([1, 2, 'b'])
+  await retainType({ a: 1, b: { c: 3 } })
 })
