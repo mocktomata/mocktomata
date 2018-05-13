@@ -456,10 +456,35 @@ k.trio('callback with', 'class/callbackWithComplexObject', (title, spec) => {
 
     let actual
     f.exec('echo', channel => {
+      // can't create channel with stdio.on() from data
+      // unless start doing new Function(...)
       channel.stdio.on(data => actual = data)
     })
 
     t.equal(actual, 'echo')
+    await s.done()
+  })
+})
+
+k.trio('class/callbackWithComposite', (title, spec) => {
+  test(title, async () => {
+    class Foo {
+      on(compositeFn) {
+        this.internal(compositeFn)
+      }
+      internal(input) {
+        t.equal(input.value, 'xyz')
+      }
+    }
+    const fn = Object.assign(
+      function () { return },
+      {
+        value: 'xyz'
+      }
+    )
+    const s = await spec(Foo)
+    const f = new s.subject()
+    f.on(fn)
     await s.done()
   })
 })

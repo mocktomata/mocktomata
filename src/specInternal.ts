@@ -2,16 +2,16 @@ import { satisfy } from 'assertron'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
-import { unartifactify } from './artifactify'
 import { ActionTracker, createStubContext } from './ActionTracker'
-import { isClass } from './class/isClass'
 import { MissingSpecID, SpecNotFound, NotSpecable, InvalidID } from './errors'
+import { getSpy } from './getSpy'
 import { Spec } from './interfaces'
 import { io } from './io'
 import { plugins } from './plugin'
 import { SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
 import { makeSerializableActions } from './specAction'
+import { getStub } from './getStub';
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -76,7 +76,7 @@ async function createSpyingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     id,
     mode: context.mode,
     actions: context.actions,
-    subject: createSpyingSubject(context, plugin, subject),
+    subject: getSpy(context, plugin, subject),
     on(actionType: string, name: string, callback) {
       context.on(actionType, name, callback)
     },
@@ -110,7 +110,7 @@ async function createSavingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     id,
     mode: context.mode,
     actions: context.actions,
-    subject: createSpyingSubject(context, plugin, subject),
+    subject: getSpy(context, plugin, subject),
     on(actionType: string, name: string, callback) {
       context.on(actionType, name, callback)
     },
@@ -154,7 +154,7 @@ async function createStubbingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     id,
     mode: 'simulate',
     actions,
-    subject: plugin.getStub(context, subject),
+    subject: getStub(context, plugin, subject),
     on(actionType: string, name: string, callback) {
       actionTracker.on(actionType, name, callback)
     },
@@ -181,27 +181,6 @@ async function loadActions(specId: string) {
   catch (err) {
     throw new SpecNotFound(specId, err)
   }
-}
-
-function createSpyingSubject<T>(context, plugin, subject: T): T {
-  const spy = plugin.getSpy(context, subject)
-  const adjustedSpy = isClass(subject) ?
-    function (...args) {
-      return new spy(...unartifactify(args))
-    } :
-    function (...args) {
-      return spy(...unartifactify(args))
-    }
-
-  const otherPropertyNames = Object.keys(subject)
-  if (otherPropertyNames.length === 0) return adjustedSpy as any
-
-  const others = otherPropertyNames.reduce((p, k) => {
-    p[k] = subject[k]
-    return p
-  }, {})
-
-  return Object.assign(adjustedSpy, others) as any
 }
 
 function fixCircularRefs(actions: SpecAction[]) {

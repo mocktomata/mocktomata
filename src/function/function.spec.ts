@@ -324,7 +324,7 @@ k.trio('function/arrayArgs/success', (title, spec) => {
   })
 })
 
-k.live('function/composite', (title, spec) => {
+k.trio('function/composite', (title, spec) => {
   test(title, async () => {
     const subject = Object.assign(
       function (x) { return x },
@@ -335,5 +335,6 @@ k.live('function/composite', (title, spec) => {
     const s = await spec(subject)
     t.equal(s.subject(3), 3)
     t.equal(s.subject.type, 'func')
+    await s.done()
   })
 })
