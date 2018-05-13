@@ -123,3 +123,37 @@ test('pass to subject as original type', async () => {
   await retainType([1, 2, 'b'])
   await retainType({ a: 1, b: { c: 3 } })
 })
+
+test('pass to subject constructor as original', async () => {
+  class Foo {
+    constructor(public host: string) {
+      t.equal(typeof host, 'string')
+    }
+
+    connect() {
+      return new Promise(a => {
+        setTimeout(() => a(this.host), 10)
+      })
+    }
+  }
+
+  const a = artifact('retain type for class', { host: '1.2.3.4' })
+  const s = await spec(Foo)
+  const f = new s.subject(a.host)
+  t.equal(await f.connect(), '1.2.3.4')
+})
+
+test('pass to class method as original', async () => {
+  class Foo {
+    connect(host: string) {
+      return new Promise(a => {
+        setTimeout(() => a(host), 10)
+      })
+    }
+  }
+
+  const a = artifact('retain type for class method', { host: '1.2.3.4' })
+  const s = await spec(Foo)
+  const f = new s.subject()
+  t.equal(await f.connect(a.host), '1.2.3.4')
+})
