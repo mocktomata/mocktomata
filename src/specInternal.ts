@@ -185,16 +185,23 @@ async function loadActions(specId: string) {
 
 function createSpyingSubject<T>(context, plugin, subject: T): T {
   const spy = plugin.getSpy(context, subject)
-  if (isClass(subject)) {
-    return function (...args) {
+  const adjustedSpy = isClass(subject) ?
+    function (...args) {
       return new spy(...unartifactify(args))
-    } as any
-  }
-  else {
-    return function (...args) {
+    } :
+    function (...args) {
       return spy(...unartifactify(args))
-    } as any
-  }
+    }
+
+  const otherPropertyNames = Object.keys(subject)
+  if (otherPropertyNames.length === 0) return adjustedSpy as any
+
+  const others = otherPropertyNames.reduce((p, k) => {
+    p[k] = subject[k]
+    return p
+  }, {})
+
+  return Object.assign(adjustedSpy, others) as any
 }
 
 function fixCircularRefs(actions: SpecAction[]) {
