@@ -2,7 +2,9 @@ import { satisfy } from 'assertron'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
+import { unartifactify } from './artifactify'
 import { ActionTracker, createStubContext } from './ActionTracker'
+import { isClass } from './class/isClass'
 import { MissingSpecID, SpecNotFound, NotSpecable, InvalidID } from './errors'
 import { Spec } from './interfaces'
 import { io } from './io'
@@ -68,14 +70,13 @@ async function createSpyingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     throw new NotSpecable(subject)
   }
 
-
   const context = new SpyContextImpl({}, 'live', id, plugin)
 
   const spec: Spec<T> = {
     id,
     mode: context.mode,
     actions: context.actions,
-    subject: plugin.getSpy(context, subject),
+    subject: createSpyingSubject(context, plugin, subject),
     on(actionType: string, name: string, callback) {
       context.on(actionType, name, callback)
     },
@@ -109,7 +110,7 @@ async function createSavingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     id,
     mode: context.mode,
     actions: context.actions,
-    subject: plugin.getSpy(context, subject),
+    subject: createSpyingSubject(context, plugin, subject),
     on(actionType: string, name: string, callback) {
       context.on(actionType, name, callback)
     },
@@ -179,6 +180,20 @@ async function loadActions(specId: string) {
   }
   catch (err) {
     throw new SpecNotFound(specId, err)
+  }
+}
+
+function createSpyingSubject<T>(context, plugin, subject: T): T {
+  const spy = plugin.getSpy(context, subject)
+  if (isClass(subject)) {
+    return ((...args) => {
+      return new spy(...unartifactify(args))
+    }) as any
+  }
+  else {
+    return ((...args) => {
+      return spy(...unartifactify(args))
+    }) as any
   }
 }
 
