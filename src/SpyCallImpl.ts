@@ -3,7 +3,8 @@ import { unpartial } from 'unpartial'
 
 import { unartifactify } from './artifactify'
 import { artifactKey } from './constants'
-import { plugins } from './plugin';
+import { getSpy } from './getSpy'
+import { plugins } from './plugin'
 import { SpyInstanceImpl } from './SpyInstanceImpl'
 
 export class SpyCallImpl implements SpyCall {
@@ -30,7 +31,7 @@ export class SpyCallImpl implements SpyCall {
       const plugin = plugins.find(p => p.support(arg))
       if (plugin) {
         const context = this.instance.context.createCallbackContext(plugin, this, [i])
-        return plugin.getSpy(context, arg)
+        return getSpy(context, plugin, arg)
       }
 
       if (typeof arg === 'object') {
