@@ -186,14 +186,14 @@ async function loadActions(specId: string) {
 function createSpyingSubject<T>(context, plugin, subject: T): T {
   const spy = plugin.getSpy(context, subject)
   if (isClass(subject)) {
-    return ((...args) => {
+    return function (...args) {
       return new spy(...unartifactify(args))
-    }) as any
+    } as any
   }
   else {
-    return ((...args) => {
+    return function (...args) {
       return spy(...unartifactify(args))
-    }) as any
+    } as any
   }
 }
 
