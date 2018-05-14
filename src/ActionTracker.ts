@@ -7,7 +7,7 @@ import { artifactKey } from './constants'
 import { NotSpecable, SourceNotFound } from './errors'
 import { log } from './log'
 import { plugins } from './plugin'
-import { isMismatchAction } from './specAction';
+import { isMismatchAction } from './specAction'
 
 export class ActionTracker {
   waitings: { action: SpecAction, callback: Function }[] = []
@@ -107,7 +107,7 @@ export class ActionTracker {
     const plugin = plugins.find(p => p.type === action.type)
     // istanbul ignore next
     if (!plugin) throw new NotSpecable(action.type)
-    return plugin.getStub(createStubContext(this, plugin.type), subject)
+    return plugin.getStub(createStubContext(this, plugin.type), subject, action)
   }
   private process(invokeAction?: SpecAction) {
     let expected = this.peek()
@@ -193,7 +193,7 @@ export class ActionTracker {
     const plugin = plugins.find(p => p.type === action.type)
     // istanbul ignore next
     if (!plugin) throw new NotSpecable(action.type)
-    return plugin.getStub(createSourceStubContext(this, action, subject), subject)
+    return plugin.getStub(createSourceStubContext(this, action, subject), subject, action)
   }
 }
 
