@@ -133,3 +133,18 @@ k.trio('spec/null', (title, spec) => {
     await s.done()
   })
 })
+
+describe('on()', () => {
+  k.trio('listen twice', 'spec/on/twice', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(() => Promise.resolve())
+      let count = 0
+      s.on('function', 'invoke', () => count++)
+      s.on('function', 'invoke', () => count++)
+      await s.subject()
+
+      t.equal(count, 2)
+      await s.done()
+    })
+  })
+})
