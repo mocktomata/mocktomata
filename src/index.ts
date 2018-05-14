@@ -5,6 +5,8 @@ import {
   Config
 } from './config'
 import * as genericFunction from './function'
+import * as instance from './instance'
+
 import {
   given,
   // @ts-ignore
@@ -84,6 +86,7 @@ export default komondor
 // registerPlugin(genericObject)
 registerPlugin(genericFunction)
 registerPlugin(genericClass)
+registerPlugin(instance)
 registerPlugin(promise)
 
 // istanbul ignore next
