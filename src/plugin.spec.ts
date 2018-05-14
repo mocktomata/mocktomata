@@ -2,9 +2,8 @@ import t from 'assert'
 import a, { AssertOrder } from 'assertron'
 import { Registrar } from 'komondor-plugin'
 
-import { DuplicatePlugin, spec } from '.'
-import { loadConfig, registerPlugin } from './plugin'
-
+import { DuplicatePlugin, spec, InvalidPlugin } from '.'
+import { loadConfig, registerPlugin, loadPlugin } from './plugin'
 
 describe('loadConfig()', () => {
   test('load config', () => {
@@ -153,4 +152,11 @@ test('onAny() will trigger when any aciton is added', async () => {
   s.onAny(() => o.any([1, 2]))
   s.subject()
   o.end()
+})
+
+describe('loadPlugin()', () => {
+  test('load a plugin without activate() will throw', async () => {
+    const err = await a.throws(() => loadPlugin('fixtures/no-activate', 'no-activate-plugin'), InvalidPlugin)
+    t.equal(err.pluginName, 'no-activate-plugin')
+  })
 })
