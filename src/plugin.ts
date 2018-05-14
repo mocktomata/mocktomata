@@ -35,9 +35,9 @@ export function loadConfig(cwd) {
   return pjson.komondor
 }
 
-export function loadPlugin(cwd, p) {
-  // '.' is used by plugin package to test itself.
-  const pluginPath = p === '.' ? cwd : path.resolve(cwd, 'node_modules', p)
+export function loadPlugin(cwd, p?) {
+  // istanbul ignore next
+  const pluginPath = p ? path.resolve(cwd, 'node_modules', p) : cwd
   const m = require(pluginPath)
   if (typeof m.activate !== 'function') {
     throw new InvalidPlugin(p)

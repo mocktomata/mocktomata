@@ -3,12 +3,12 @@ import a, { AssertOrder } from 'assertron'
 import { Registrar } from 'komondor-plugin'
 
 import { DuplicatePlugin, spec, InvalidPlugin } from '.'
-import { loadConfig, registerPlugin, loadPlugin } from './plugin'
+import { loadConfig, registerPlugin, loadPlugin, plugins } from './plugin'
 
 describe('loadConfig()', () => {
   test('load config', () => {
-    const config = loadConfig('./fixtures/singlePlugin')
-    t.equal(config.plugins[0], 'komondor-plugin-ws')
+    const config = loadConfig('./fixtures/single-plugin')
+    t.equal(config.plugins[0], 'komondor-plugin-single')
   })
 })
 
@@ -158,5 +158,11 @@ describe('loadPlugin()', () => {
   test('load a plugin without activate() will throw', async () => {
     const err = await a.throws(() => loadPlugin('fixtures/no-activate', 'no-activate-plugin'), InvalidPlugin)
     t.equal(err.pluginName, 'no-activate-plugin')
+  })
+  test('load a plugin', async () => {
+    loadPlugin('fixtures/single-plugin', 'komondor-plugin-single')
+    const actual = plugins[0]
+    t.equal(actual.type, 'single')
+    plugins.splice(0, 1)
   })
 })
