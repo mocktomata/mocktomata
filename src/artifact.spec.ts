@@ -124,7 +124,7 @@ test('pass to subject as original type', async () => {
   await retainType({ a: 1, b: { c: 3 } })
 })
 
-test.only('pass to subject constructor as original', async () => {
+test('pass to subject constructor as original', async () => {
   class Foo {
     constructor(public host: string) {
       t.equal(typeof host, 'string')
