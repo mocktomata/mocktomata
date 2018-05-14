@@ -11,7 +11,6 @@ import { plugins } from './plugin'
 import { SpyContextImpl } from './SpyContextImpl'
 import { store } from './store'
 import { makeSerializableActions } from './specAction'
-import { getStub } from './getStub';
 
 // need to wrap because object.assign will fail
 export function createSpeclive() {
@@ -154,7 +153,7 @@ async function createStubbingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     id,
     mode: 'simulate',
     actions,
-    subject: getStub(context, plugin, subject),
+    subject: plugin.getStub(context, subject),
     on(actionType: string, name: string, callback) {
       actionTracker.on(actionType, name, callback)
     },

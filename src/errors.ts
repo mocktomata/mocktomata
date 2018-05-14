@@ -105,6 +105,15 @@ export class DuplicatePlugin extends BaseError {
   }
 }
 
+export class InvalidPlugin extends BaseError {
+  // istanbul ignore next
+  constructor(public pluginName: string) {
+    super(`${pluginName} is not a plugin.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
 export class MissingReturnRecord extends BaseError {
   // istanbul ignore next
   constructor() {

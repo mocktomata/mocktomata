@@ -470,10 +470,11 @@ k.trio('class/callbackWithComposite', (title, spec) => {
   test(title, async () => {
     class Foo {
       on(compositeFn) {
-        this.internal(compositeFn)
+        return this.internal(compositeFn)
       }
       internal(input) {
         t.equal(input.value, 'xyz')
+        return input
       }
     }
     const fn = Object.assign(
@@ -484,7 +485,9 @@ k.trio('class/callbackWithComposite', (title, spec) => {
     )
     const s = await spec(Foo)
     const f = new s.subject()
-    f.on(fn)
+    const actual = f.on(fn)
+    t.equal(actual.value, 'xyz')
+
     await s.done()
   })
 })

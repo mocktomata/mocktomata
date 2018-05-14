@@ -1,0 +1,10 @@
+{
+  "name": "singleplugin",
+  "version": "1.0.0",
+  "description": "",
+  "komondor": {
+    "plugins": [
+      "komondor-plugin-single"
+    ]
+  }
+}

@@ -1,7 +1,7 @@
 import { Registrar, Plugin } from 'komondor-plugin'
 import path from 'path'
 
-import { DuplicatePlugin } from './errors'
+import { DuplicatePlugin, InvalidPlugin } from './errors'
 
 export const plugins: Array<Plugin<any>> = []
 
@@ -16,9 +16,7 @@ const komondorRegistrar: Registrar = {
 }
 
 export function registerPlugin(plugin: { activate: (registrar: Registrar) => void }) {
-  if (plugin.activate) {
-    plugin.activate(komondorRegistrar)
-  }
+  plugin.activate(komondorRegistrar)
 }
 
 // istanbul ignore next
@@ -37,10 +35,12 @@ export function loadConfig(cwd) {
   return pjson.komondor
 }
 
-// istanbul ignore next
-export function loadPlugin(cwd, p) {
-  // '.' is used by plugin package to test itself.
-  const pluginPath = p === '.' ? cwd : path.resolve(cwd, 'node_modules', p)
+export function loadPlugin(cwd, p?) {
+  // istanbul ignore next
+  const pluginPath = p ? path.resolve(cwd, 'node_modules', p) : cwd
   const m = require(pluginPath)
+  if (typeof m.activate !== 'function') {
+    throw new InvalidPlugin(p)
+  }
   registerPlugin(m)
 }

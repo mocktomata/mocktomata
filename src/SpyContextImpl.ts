@@ -4,6 +4,7 @@ import { unpartial } from 'unpartial'
 import { SpyInstanceImpl } from './SpyInstanceImpl'
 import { plugins } from './plugin';
 import { SpyCallImpl } from './SpyCallImpl';
+import { getSpy } from './getSpy';
 
 export class SpyContextImpl implements SpyContext {
   actions: SpecAction[]
@@ -49,7 +50,8 @@ export class SpyContextImpl implements SpyContext {
     if (plugin) {
       const childContext = this.createReturnContext(plugin, action)
       action.returnType = plugin.type
-      return plugin.getSpy(childContext, action.payload)
+      // return plugin.getSpy(childContext, action.payload)
+      return getSpy(childContext, plugin, action.payload)
     }
   }
   callListeners(action) {
