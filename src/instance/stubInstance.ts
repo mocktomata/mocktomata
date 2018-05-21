@@ -10,7 +10,7 @@ export function stubInstance(context: StubContext, subject, action: SpecAction) 
       const original = subject[p]
       if (typeof original === 'function') {
         subject[p] = function (...args) {
-          const call = instance.newCall({ methodName: p })
+          const call = instance.newCall({ site: [p] })
           call.invoked(args)
           call.blockUntilReturn()
           if (call.succeed()) {

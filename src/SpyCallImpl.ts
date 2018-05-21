@@ -37,8 +37,8 @@ export class SpyCallImpl implements SpyCall {
         const result = {}
         Object.keys(arg).forEach(key => {
           const prop = arg[key]
-          if (typeof prop === 'function') {
-            const plugin = plugins.find(p => p.support(prop))!
+          const plugin = plugins.find(p => p.support(prop))
+          if (plugin) {
             const context = this.instance.context.createCallbackContext(plugin, this, [i, key])
             result[key] = plugin.getSpy(context, prop)
           }

@@ -14,7 +14,7 @@ export function spyInstance(context: SpyContext, subject) {
         const invoking = this.__komondor.invoking
         if (!invoking) {
           subject.__komondor.invoking = true
-          const call = instance.newCall({ methodName: p })
+          const call = instance.newCall({ site: [p] })
           const spiedArgs = call.invoke(args)
           let result
           try {

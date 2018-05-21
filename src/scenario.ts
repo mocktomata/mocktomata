@@ -81,7 +81,7 @@ function createScenario(id: string, mode: SpecMode) {
 }
 
 function createStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string) {
-  return async function setup(clause: string, ...inputs: any[]) {
+  return async function step(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
         return e.regex.test(clause)
@@ -129,11 +129,11 @@ function createScenarioSpec(defaultId: string, mode: SpecMode, generateSpecId: (
   }
 }
 
-export function defineStep(clause: string, handler: (context: SetupContext, ...args: any[]) => any) {
+export function defineStep<C extends string>(clause: C, handler: (context: SetupContext, ...args: any[]) => any) {
   const entry = store.steps.find(entry => {
     return entry.clause.toString() === clause.toString()
   })
-  if (entry)
+  if (entry && entry.handler !== handler)
     throw new DuplicateHandler(clause)
   else if (isTemplate(clause)) {
     const valueTypes: string[] = []
