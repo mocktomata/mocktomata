@@ -105,12 +105,6 @@ describe('setup()', () => {
     t.deepEqual(actual, [1, 2, 3])
   })
 
-  test('duplicate handler throws DuplicateHandler', async () => {
-    defineStep('duplicate setup', () => { return })
-    const err = await a.throws(() => defineStep('duplicate setup', () => { return }), DuplicateHandler)
-    t.equal(err.message, `Handler for 'duplicate setup' is already defined.`)
-  })
-
   test('can call same setup step twice', async () => {
     defineStep('setupTwice', async ({ spec, inputs }) => {
       const expected = inputs[0]
@@ -661,6 +655,18 @@ describe('config.scenario()', () => {
 })
 
 describe('defineStep()', () => {
+  test('duplicate handler throws DuplicateHandler', async () => {
+    defineStep('duplicate setup', () => { return })
+    const err = await a.throws(() => defineStep('duplicate setup', () => { return }), DuplicateHandler)
+    t.equal(err.message, `Handler for 'duplicate setup' is already defined.`)
+  })
+
+  test('calling multiple times with same handler is ok', async () => {
+    const handler = () => { return }
+    defineStep('same handler', handler)
+    defineStep('same handler', handler)
+  })
+
   test('runSubStep (live)', async () => {
     let subStepCalled = false
     defineStep('subStep live 1', async ({ spec }) => {
@@ -685,7 +691,6 @@ describe('defineStep()', () => {
       `__komondor__/specs/runSubStep save scenario/1-subStep save 2.json`
     ]
     files.forEach(ensureFileNotExists)
-
     let subStepCalled = false
     defineStep('subStep save 2', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
