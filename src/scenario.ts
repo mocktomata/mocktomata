@@ -147,9 +147,6 @@ export function defineStep<C extends string>(clause: C, handler: (context: Setup
   else {
     store.steps.push({ clause, handler })
   }
-  return function <T extends C>(clause: T, ...inputs) {
-    return () => ({ clause, inputs })
-  }
 }
 
 function isTemplate(clause: string) {

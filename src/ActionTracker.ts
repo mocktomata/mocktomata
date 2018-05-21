@@ -157,7 +157,6 @@ export class ActionTracker {
         e.action.instanceId === expected.instanceId
       )
       if (entry) {
-        console.log(entry, expected)
         log.onDebug(() => `auto invoke: ${tersifyAction(expected)}`)
         invokeSubjectAtSite(entry.stub, expected.meta, expected.payload)
       }
