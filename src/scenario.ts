@@ -5,6 +5,7 @@ import { Spec } from './interfaces';
 import { io } from './io';
 import { createSpec } from './specInternal';
 import { store } from './store';
+import { log } from './log';
 
 export interface SetupContext {
   spec<T>(subject: T): Promise<Spec<T>>,
@@ -67,10 +68,10 @@ class ScenarioRecorder {
 function createScenario(id: string, mode: SpecMode) {
   // TODO: delete old scenario and its specs if in save mode.
   const recorder = new ScenarioRecorder(id)
-  const setup = createStepCaller('setup', mode, id => recorder.createSetupSpecId(id))
+  const setup = createInertStepCaller('setup', mode, id => recorder.createSetupSpecId(id))
   const spec = createScenarioSpec('spec', mode, id => recorder.createRunSpecId(id))
   const run = createStepCaller('run', mode, id => recorder.createRunSpecId(id))
-  const teardown = createStepCaller('teardown', mode, id => recorder.createTeardownSpecId(id))
+  const teardown = createInertStepCaller('teardown', mode, id => recorder.createTeardownSpecId(id))
   function done() {
     if (mode === 'save')
       return io.writeScenario(id, recorder.record)
@@ -80,6 +81,26 @@ function createScenario(id: string, mode: SpecMode) {
   return { setup, run, spec, teardown, done, mode }
 }
 
+function createInertStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string) {
+  return async function inertStep(clause: string, ...inputs: any[]) {
+    const entry = store.steps.find(e => {
+      if (e.regex) {
+        return e.regex.test(clause)
+      }
+      return e.clause === clause
+    })
+    if (!entry) {
+      throw new MissingHandler(clause)
+    }
+
+    try {
+      return await invokeHandler({ defaultId, mode, generateSpecId, entry }, clause, inputs)
+    }
+    catch (err) {
+      log.warn(`${defaultId}('${clause}') throws '${err}', is it safe to ignore?`)
+    }
+  }
+}
 function createStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string) {
   return async function step(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
@@ -92,26 +113,30 @@ function createStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id
       throw new MissingHandler(clause)
     }
 
-    const runSubStep = createStepCaller(defaultId, mode, generateSpecId)
-
-    const spec = createScenarioSpec(clause, mode, generateSpecId)
-    if (entry.regex) {
-      // regex must pass as it is tested above
-      const matches = entry.regex.exec(clause)!
-      const values = matches.slice(1, matches.length).map((v, i) => {
-        const valueType = entry.valueTypes![i]
-        if (valueType === 'number')
-          return parseInt(v, 10)
-        if (valueType === 'boolean')
-          return v === 'true'
-        if (valueType === 'float')
-          return parseFloat(v)
-        return v
-      })
-      return entry.handler({ inputs, spec, runSubStep }, ...values)
-    }
-    return entry.handler({ inputs, spec, runSubStep })
+    return invokeHandler({ defaultId, mode, generateSpecId, entry }, clause, inputs)
   }
+}
+
+function invokeHandler({ defaultId, mode, generateSpecId, entry }, clause, inputs) {
+  const runSubStep = createStepCaller(defaultId, mode, generateSpecId)
+
+  const spec = createScenarioSpec(clause, mode, generateSpecId)
+  if (entry.regex) {
+    // regex must pass as it is tested above
+    const matches = entry.regex.exec(clause)!
+    const values = matches.slice(1, matches.length).map((v, i) => {
+      const valueType = entry.valueTypes![i]
+      if (valueType === 'number')
+        return parseInt(v, 10)
+      if (valueType === 'boolean')
+        return v === 'true'
+      if (valueType === 'float')
+        return parseFloat(v)
+      return v
+    })
+    return entry.handler({ inputs, spec, runSubStep }, ...values)
+  }
+  return entry.handler({ inputs, spec, runSubStep })
 }
 
 export interface ScenarioSpec {

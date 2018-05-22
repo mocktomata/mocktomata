@@ -1,10 +1,13 @@
+import { addAppender, logLevel, removeAppender } from '@unional/logging'
 import t from 'assert'
 import a, { AssertOrder } from 'assertron'
+import { MemoryAppender } from 'aurelia-logging-memory'
 import fs from 'fs'
 
 import { artifact, MissingHandler, DuplicateHandler, config, scenario, defineStep } from '.'
 import { resetStore } from './store'
 import { ensureFileNotExists } from './testUtil'
+import { log } from './log';
 
 const users: any[] = []
 class ApiGateway {
@@ -221,6 +224,24 @@ describe('setup()', () => {
     await setup('simulate setup')
 
     o.end()
+  })
+
+  test('thrown setup will pass and emit warning', async () => {
+    defineStep('throw step', () => { throw new Error('foo') })
+    const { setup } = scenario.save('throwing setup will pass and emit warning')
+    log.warn('ignore next message, it is testing setup throwing error')
+    const m = new MemoryAppender()
+    addAppender(m)
+
+    await setup('throw step')
+
+    const actual = m.logs[0]
+    t.deepEqual(actual, {
+      id: 'komondor', level: logLevel.warn, messages: [
+        `setup('throw step') throws 'Error: foo', is it safe to ignore?`
+      ]
+    })
+    removeAppender(m)
   })
 })
 
@@ -505,6 +526,24 @@ describe('teardown()', () => {
     await teardown('simulate teardown')
 
     o.end()
+  })
+
+  test('thrown teardown will pass and emit warning', async () => {
+    defineStep('throw step2', () => { throw new Error('foo') })
+    const { teardown } = scenario.save('throwing teardown will pass and emit warning')
+    log.warn('ignore next message, it is testing teardown throwing error')
+    const m = new MemoryAppender()
+    addAppender(m)
+
+    await teardown('throw step2')
+
+    const actual = m.logs[0]
+    t.deepEqual(actual, {
+      id: 'komondor', level: logLevel.warn, messages: [
+        `teardown('throw step2') throws 'Error: foo', is it safe to ignore?`
+      ]
+    })
+    removeAppender(m)
   })
 })
 
