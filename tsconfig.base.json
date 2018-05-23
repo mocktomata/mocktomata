@@ -16,6 +16,8 @@
     "strictNullChecks": true
   },
   "files": [
-    "src/index.ts"
+    "src/index",
+    "src/RecordService",
+    "src/RecordClient"
   ]
 }

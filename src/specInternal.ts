@@ -122,7 +122,7 @@ async function createSavingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
         // istanbul ignore next
         if (!id)
           throw new Error('Cannot save spec without options.id.')
-        // makeErrorSerializable(this.actions)
+
         return io.writeSpec(id, {
           expectation: tersify(expectation, { maxLength: Infinity, raw: true }),
           actions: makeSerializableActions(this.actions)

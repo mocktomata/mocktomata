@@ -362,6 +362,49 @@ describe('run()', () => {
 
     o.end()
   })
+
+  test('sub step', async () => {
+    const filepaths = [
+      `__komondor__/scenarios/sub step.json`,
+      `__komondor__/specs/sub step/1-run leaf step 1.json`,
+      `__komondor__/specs/sub step/2-run substep 1.json`,
+      `__komondor__/specs/sub step/3-run with substep 1.json`,
+      `__komondor__/specs/sub step/4-run leaf step 2.json`,
+      `__komondor__/specs/sub step/5-run substep 2.json`,
+      `__komondor__/specs/sub step/6-run with substep 2.json`
+    ]
+    filepaths.forEach(ensureFileNotExists)
+
+    defineStep('run leaf step {step}', async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+
+    defineStep('run substep {step}', async ({ spec, runSubStep }, step) => {
+      await runSubStep(`run leaf step ${step}`)
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    defineStep('run with substep {step}', async ({ spec, runSubStep }, step) => {
+      await runSubStep(`run substep ${step}`)
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    const saveScenario = scenario.save('sub step')
+    await saveScenario.run('run with substep 1')
+    await saveScenario.teardown('run with substep 2')
+    await saveScenario.done()
+
+    const simScenario = scenario.simulate('sub step')
+    await simScenario.run('run with substep 1')
+    await simScenario.teardown('run with substep 2')
+    await simScenario.done()
+
+    filepaths.forEach(p => t(fs.existsSync(p)))
+  })
 })
 
 describe('spec()', () => {
@@ -536,7 +579,6 @@ describe('teardown()', () => {
     addAppender(m)
 
     await teardown('throw step2')
-
     const actual = m.logs[0]
     t.deepEqual(actual, {
       id: 'komondor', level: logLevel.warn, messages: [

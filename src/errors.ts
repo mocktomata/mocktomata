@@ -41,7 +41,6 @@ export class InvalidID extends BaseError {
   }
 }
 
-
 export class SourceNotFound extends BaseError {
   // istanbul ignore next
   constructor(public action: SpecActionWithSource) {
@@ -53,8 +52,20 @@ export class SourceNotFound extends BaseError {
 
 export class SpecNotFound extends BaseError {
   // istanbul ignore next
-  constructor(public specId: string, public reason) {
-    super(`Unable to find the spec record for '${specId}' due to: ${reason}`)
+  constructor(public specId: string, public reason?) {
+    super(reason ?
+      `Unable to find the spec record for '${specId}' due to: ${reason}` :
+      `Unable to find the spec record for '${specId}'`
+    )
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class ScenarioNotFound extends BaseError {
+  // istanbul ignore next
+  constructor(public scenarioId: string) {
+    super(`Unable to find the scenario record for '${scenarioId}'`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }
