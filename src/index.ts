@@ -16,6 +16,11 @@ import { isNode } from './isNode'
 import { registerPlugin, loadPlugins } from './plugin'
 import * as promise from './promise'
 import {
+  scenario,
+  // @ts-ignore
+  ScenarioSpec
+} from './scenario'
+import {
   spec,
   // @ts-ignore
   SpecFn
@@ -66,6 +71,7 @@ export {
 const komondor = {
   config,
   given,
+  scenario,
   spec,
   classConstructed,
   classMethodInvoked,
