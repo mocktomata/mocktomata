@@ -15,6 +15,9 @@
     "removeComments": false,
     "strictNullChecks": true
   },
+  "exclude": [
+    "src/instance"
+  ],
   "files": [
     "src/index",
     "src/RecordService",
