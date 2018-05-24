@@ -290,6 +290,30 @@ meaning it does not know the information comes from the network.
 
 (yes, for that you should give it a more netural name and remove the HTTP specific options)
 
+### Test fails after upgrade
+
+Since the libary is still in unstable stage,
+when you upgrade to a version,
+your test may break even if there is no breaking change.
+
+It is due to the under lying record change and features being added.
+
+You should able to get them pass again by running the `spec` and `scenario` in `save` mode to update the record.
+After you do that the test should pass again.
+
+The easiest way to do that is using `config`:
+
+```ts
+import { config } from 'komondor'
+
+config.spec('save')
+config.scenario('save')
+```
+
+Depends on your test environment,
+you may use the filter to run only a subset of test in `save` mode,
+fitting the actual environment you can configure at a particular time.
+
 ## Wallaby config
 
 Since `komondor` will write files to the file system, if you use wallaby you need configure it as follow so that the changed files will be written correctly:
