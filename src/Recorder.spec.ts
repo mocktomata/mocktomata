@@ -26,7 +26,7 @@ test('record is saved to disk after some delay', async () => {
   await service.load(`fixtures/record-service/spec-record`)
 
   await service.setSpec('simple spec', { expectation: '[]', actions: [] })
-  await delay(10)
+  await delay(100)
 
   t(fs.existsSync(`fixtures/record-service/spec-record/records.json`))
 })
