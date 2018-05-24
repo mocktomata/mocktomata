@@ -1,10 +1,11 @@
 import { SpyContext } from 'komondor-plugin'
 
 import { isPromise } from '../promise/isPromise'
-import { getPropertyNames } from './getPropertyNames'
+import { getPropertyNames, getProperties } from './getPropertyNames'
 
 export function spyInstance(context: SpyContext, subject) {
-  const instance = context.newInstance(undefined, { className: subject.constructor.name })
+  const properties = getProperties(subject)
+  const instance = context.newInstance(undefined, { className: subject.constructor.name, properties })
   subject.__komondor = {}
   const propertyNames = getPropertyNames(subject)
   propertyNames.forEach(p => {

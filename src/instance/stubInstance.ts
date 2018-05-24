@@ -1,10 +1,11 @@
 import { StubContext, SpecAction } from 'komondor-plugin'
-import { getPropertyNames } from './getPropertyNames'
+import { getPropertyNames, getProperties } from './getPropertyNames'
 
 export function stubInstance(context: StubContext, subject, action: SpecAction) {
-  const className = subject && subject.constructor.name || action.meta!.className
-  const instance = context.newInstance(undefined, { className })
   if (subject) {
+    const properties = getProperties(subject)
+    const className = subject.constructor.name
+    const instance = context.newInstance(undefined, { className, properties })
     const propertyNames = getPropertyNames(subject)
     propertyNames.forEach(p => {
       const original = subject[p]
@@ -21,6 +22,21 @@ export function stubInstance(context: StubContext, subject, action: SpecAction) 
         }
       }
     })
+    return subject
   }
-  return subject
+  else {
+    const properties = action.meta!.properties
+    // TODO: expand proxy support
+    const proxy = new Proxy({}, {
+      getPrototypeOf() {
+        // tslint:disable-next-line
+        return eval(`${action.meta!.className}.prototype`)
+      },
+      get(_, key) {
+        const prop = properties[key]
+        return prop && prop.descriptor && prop.descriptor.value
+      }
+    })
+    return proxy
+  }
 }

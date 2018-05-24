@@ -33,17 +33,18 @@ k.trio('instance/throw', (title, spec) => {
 k.trio('instance/rejectPromise', (title, spec) => {
   test(title, async () => {
     class Foo {
-      do(x) {
+      do() {
         return new Promise((_, r) => {
-          setImmediate(() => r(x))
+          setImmediate(() => r(new Error('foo')))
         })
       }
     }
     const foo = new Foo()
     const s = await spec(foo)
     let actual
-    await s.subject.do(1).catch(a => actual = a)
-    t.equal(actual, 1)
+    await s.subject.do().catch(a => actual = a)
+    t(actual instanceof Error)
+    t.equal(actual.message, 'foo')
 
     await s.done()
   })
