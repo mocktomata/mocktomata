@@ -838,4 +838,13 @@ describe('defineStep()', () => {
 
     t.equal(actual, 'a-b-c')
   })
+
+  test('do not invoke step with missing words', async () => {
+    defineStep('create car {name} in {location}', async () => {
+      return
+    })
+
+    const { run } = scenario('do not invoke step with missing words')
+    await a.throws(run('create car model-3 in fremont street'), MissingHandler)
+  })
 })
