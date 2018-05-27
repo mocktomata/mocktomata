@@ -16,7 +16,6 @@ import {
   functionInvoked,
   functionReturned
 } from '..'
-import { log } from '../log'
 import k from '../testUtil'
 
 class Foo {
@@ -218,7 +217,7 @@ k.trio('async promise call', 'class/promising', (title, spec) => {
   test(title, async () => {
     const s = await spec(Promising)
     // s.onAny(a => {
-    //   log.warn(`${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`)
+    //   console.info(`${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`)
     // })
     const p = new s.subject()
 
