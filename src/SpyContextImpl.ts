@@ -79,7 +79,7 @@ export class SpyContextImpl implements SpyContext {
     }
     return returnContext
   }
-  createCallbackContext(plugin, spyCall: SpyCallImpl, sourcePath) {
+  createCallbackContext(plugin, spyCall: SpyCallImpl, sourceSite) {
     const callbackContext = new SpyContextImpl(
       this,
       this.mode,
@@ -96,7 +96,7 @@ export class SpyContextImpl implements SpyContext {
         sourceType: spyCall.instance.context.plugin.type,
         sourceInstanceId: spyCall.instance.instanceId,
         sourceInvokeId: spyCall.invokeId,
-        sourcePath
+        sourceSite
       }
       this.addAction(action)
 

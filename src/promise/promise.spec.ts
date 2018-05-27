@@ -158,7 +158,7 @@ k.trio('promise with callback in between', 'promise/inBetween', (title, spec) =>
         return s.satisfy([
           { ...functionConstructed({ functionName: 'foo' }), instanceId: 1 },
           { ...functionInvoked(2), invokeId: 1, instanceId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
           { ...functionReturned(), invokeId: 1, returnType: 'promise', returnInstanceId: 1, instanceId: 1 },
           { ...promiseConstructed(), instanceId: 1 },
           { ...functionInvoked('called'), instanceId: 2, invokeId: 1 },

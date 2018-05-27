@@ -95,7 +95,7 @@ k.trio('function/simpleCallback/success', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
       { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
@@ -127,7 +127,7 @@ k.trio('function/simpleCallback/fail', (title, spec) => {
         await s.satisfy([
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
           { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
           { ...functionReturned(), instanceId: 2, invokeId: 1 },
           { ...functionReturned(), instanceId: 1, invokeId: 1 }])
@@ -145,12 +145,12 @@ k.trio('function spec can be called multiple times', 'spec/delayed/multiple', (t
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
       { ...functionReturned(), instanceId: 1, invokeId: 1 },
       { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 2, invokeId: 1 },
       { ...functionInvoked(4), instanceId: 1, invokeId: 2 },
-      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [1] },
+      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [1] },
       { ...functionReturned(), instanceId: 1, invokeId: 2 },
       { ...functionInvoked(null, 5), instanceId: 3, invokeId: 1 },
       { ...functionReturned(), instanceId: 3, invokeId: 1 }
@@ -167,7 +167,7 @@ k.trio('function/fetch/success', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
       { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
@@ -185,7 +185,7 @@ k.trio('function/fetch/fail', (title, spec) => {
         return s.satisfy([
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
+          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
           { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
           { ...functionReturned(), instanceId: 2, invokeId: 1 },
           { ...functionReturned(), instanceId: 1, invokeId: 1 }
@@ -204,8 +204,8 @@ k.trio('function/literalCallback/success', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [0, 'error'] },
-      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [0, 'success'] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'error'] },
+      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'success'] },
       { ...functionInvoked(3), instanceId: 3, invokeId: 1 },
       { ...functionReturned(), instanceId: 3, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
@@ -222,8 +222,8 @@ k.trio('function/literalCallback/fail', (title, spec) => {
         return s.satisfy([
           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
           { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [0, 'error'] },
-          { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [0, 'success'] },
+          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'error'] },
+          { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'success'] },
           { ...functionInvoked(undefined, undefined, { message: 'fail' }), instanceId: 2, invokeId: 1 },
           { ...functionReturned(), instanceId: 2, invokeId: 1 },
           { ...functionReturned(), instanceId: 1, invokeId: 1 }
@@ -269,11 +269,11 @@ k.trio('function/recursive/twoCalls', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [1] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
       { ...functionInvoked(null, 1), instanceId: 2, invokeId: 1 },
 
       { ...functionInvoked(1), instanceId: 1, invokeId: 2 },
-      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [1] },
+      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [1] },
       { ...functionInvoked(null, 0), instanceId: 3, invokeId: 1 },
       { ...functionReturned(), instanceId: 3, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 2 },
@@ -300,7 +300,7 @@ k.trio('function/postReturn/success', (title, spec) => {
     await s.satisfy([
       { ...functionConstructed({ functionName: 'fireEvent' }), instanceId: 1 },
       { ...functionInvoked('event', 3), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourcePath: [2] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
       { ...functionReturned(), instanceId: 1, invokeId: 1 },
       { ...functionInvoked('event'), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 2, invokeId: 1 },
