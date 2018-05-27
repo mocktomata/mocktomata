@@ -16,7 +16,7 @@
     "coverage": "jest --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "dc": "npm run dependency-check",
-    "dependency-check": "dependency-check . --entry ./dist-es2015/RecordService.js --entry ./dist-es2015/RecordClient.js --unused --no-dev && dependency-check . --missing --no-dev",
+    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
     "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
     "prepublishOnly": "npm run build",
     "test": "npm run build && jest",
