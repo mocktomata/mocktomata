@@ -1,5 +1,38 @@
 import { SpyContext } from 'komondor-plugin'
 
+// export function spyInstance(context: SpyContext, subject) {
+//   const recorder = context.newInstance(undefined, { className: subject.constructor.name })
+//   const spyMethods = {}
+//   const proxy = new Proxy(subject, {
+//     get(target, key) {
+//       if (!spyMethods[key]) {
+//         if (typeof target[key] === 'function')
+//           spyMethods[key] = function (...args) {
+//             const call = recorder.newCall({ methodName: key })
+//             const spiedArgs = call.invoke(args)
+//             let result
+//             try {
+//               result = target[key](...spiedArgs)
+//             }
+//             catch (err) {
+//               const thrown = call.throw(err)
+//               throw thrown
+//             }
+
+//             return call.return(result)
+//           }.bind(target)
+//       }
+
+//       return spyMethods[key] || target[key]
+//     },
+//     set(target, key, value) {
+//       // todo create property set action for method
+//       return target[key] = value
+//     }
+//   })
+//   return proxy
+// }
+
 import { isPromise } from '../promise/isPromise'
 import { getPropertyNames, getProperties } from './getPropertyNames'
 

@@ -51,7 +51,6 @@ describe('use cases', () => {
   })
 })
 
-
 k.trio('each instance of class will get its own instanceId', 'class/multipleInstance', (title, spec) => {
   test(title, async () => {
     const s = await spec(Foo)
@@ -78,7 +77,6 @@ test('simple class simulate with different constructor will throw', async () => 
   const s = await spec.simulate('class/wrongConstructorCall', Foo)
   await a.throws(() => new s.subject(2), SimulationMismatch)
 })
-
 
 test('simulate on not existing spec will throw', async () => {
   return a.throws(spec.simulate('class/notExist', Boo), SpecNotFound)
@@ -480,6 +478,22 @@ k.trio('class/callbackWithComposite', (title, spec) => {
     const actual = f.on(fn)
     t.equal(actual.value, 'xyz')
 
+    await s.done()
+  })
+})
+
+k.trio('class/withProperty', (title, spec) => {
+  class WithProperty {
+    y = 1
+    do(x) { return x }
+  }
+  test(title, async () => {
+    const s = await spec(WithProperty)
+    const p = new s.subject()
+    t.equal(p.do(2), 2)
+    t.equal(p.y, 1)
+    p.y = 3
+    t.equal(p.y, 3)
     await s.done()
   })
 })
