@@ -12,10 +12,6 @@ export function spyClass(context: SpyContext, subject) {
       // todo create invoke spy for static methods
       return target[key]
     },
-    set(target, key, value) {
-      // todo create property set action for static method
-      return target[key] = value
-    },
     apply(target, that, args) {
       target.apply(that, args)
     }
