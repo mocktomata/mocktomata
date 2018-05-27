@@ -57,23 +57,33 @@ afterEach(() => {
 
 test(`config.spec('simulate') will force all specs in simulate mode`, async () => {
   // const s = await spec.save('config/forceReplaySuccess', simpleCallback.success)
+  // const actual = await simpleCallback.increment(s.subject, 2)
+  // await s.satisfy(forceReplaySuccessExpectation)
+
+  // t.equal(actual, 3)
+
   config.spec('simulate')
 
   const s = await spec('config/forceReplaySuccess', fake.success)
   const actual = await simpleCallback.increment(s.subject, 2)
 
-  // this should have failed if the spec is running in 'live' mode.
-  // The actual call is failing.
   await s.satisfy(forceReplaySuccessExpectation)
 
   t.equal(actual, 3)
 })
 
 test('config.spec() can filter for specific spec', async () => {
+  // const successSpec = await spec.save('config/forceReplayFail', simpleCallback.fail)
+  // await simpleCallback.increment(successSpec.subject, 2)
+  //   .then(() => t.fail('should not reach'))
+  //   .catch(() => {
+  //     // this should fail if the spec is in 'verify' mode.
+  //     // The save record is failing.
+  //     return successSpec.satisfy(forceReplayFailExpectation)
+  //   })
 
   config.spec('simulate', 'config/forceReplayFail')
 
-  // const successSpec = await spec.save('config/forceReplayFail', simpleCallback.fail)
   const successSpec = await spec('config/forceReplayFail', fake.fail)
   await simpleCallback.increment(successSpec.subject, 2)
     .then(() => t.fail('should not reach'))

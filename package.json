@@ -19,10 +19,10 @@
     "dependency-check": "dependency-check . --entry ./dist-es2015/RecordService.js --entry ./dist-es2015/RecordClient.js --unused --no-dev && dependency-check . --missing --no-dev",
     "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
     "prepublishOnly": "npm run build",
-    "test": "jest",
+    "test": "npm run build && jest",
     "ci-verify": "npm run build && npm run lint && npm run coverage -- --maxWorkers=4 && npm run dependency-check",
     "verify": "npm run build && npm run lint && npm run coverage && npm run dependency-check",
-    "watch": "jest --watch",
+    "watch": "npm run build && jest --watch",
     "semantic-release": "semantic-release"
   },
   "author": {
@@ -97,6 +97,7 @@
     "satisfier": "^4.4.1",
     "serialize-error": "^2.1.0",
     "tersify": "^1.2.5",
+    "timeout": "^0.2.1",
     "unpartial": "^0.4.1"
   }
 }

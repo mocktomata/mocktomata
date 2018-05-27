@@ -72,8 +72,12 @@ k.trio('each instance of class will get its own instanceId', 'class/multipleInst
 })
 
 test('simple class simulate with different constructor will throw', async () => {
-  const fooSpec = await spec.simulate('class/wrongConstructorCall', Foo)
-  await a.throws(() => new fooSpec.subject(2), SimulationMismatch)
+  // const s = await spec.save('class/wrongConstructorCall', Boo)
+  // const boo = new s.subject(2)
+  // t(boo)
+  // await s.done()
+  const s = await spec.simulate('class/wrongConstructorCall', Foo)
+  await a.throws(() => new s.subject(2), SimulationMismatch)
 })
 
 
@@ -210,7 +214,7 @@ class Promising {
   }
 }
 
-test('async promise call', async () => {
+test.skip('async promise call', async () => {
   // 'classc10',
   // 'classi11',
   // 'classr11',
@@ -226,15 +230,18 @@ test('async promise call', async () => {
   // 'promiser31'
 
   const s = await spec.simulate('class/promising', Promising)
+  s.onAny(a => {
+    log.warn(`${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`)
+  })
   const p = new s.subject()
-  log.info(s.actions.map(a => {
-    return a.type + a.name[0] + a.instanceId + (a.invokeId || 0)
-  }))
+  // log.warn(s.actions.map(a => {
+  //   return `${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`
+  // }))
 
   await Promise.all([1, 2].map(x => p.do(x)))
   await p.do(3)
 
-  await s.satisfy([])
+  await s.done()
 })
 
 class InvokeInternal {
