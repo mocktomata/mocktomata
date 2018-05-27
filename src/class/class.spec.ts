@@ -214,34 +214,20 @@ class Promising {
   }
 }
 
-test.skip('async promise call', async () => {
-  // 'classc10',
-  // 'classi11',
-  // 'classr11',
-  // 'promisec10',
-  // 'classi12',
-  // 'classr12',
-  // 'promisec20',
-  // 'promiser11',
-  // 'promiser21',
-  // 'classi13',
-  // 'classr13',
-  // 'promisec30',
-  // 'promiser31'
+k.trio('async promise call', 'class/promising', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(Promising)
+    // s.onAny(a => {
+    //   log.warn(`${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`)
+    // })
+    const p = new s.subject()
 
-  const s = await spec.simulate('class/promising', Promising)
-  s.onAny(a => {
-    log.warn(`${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`)
+    const calls = [1, 2].map(x => p.do(x))
+    await Promise.all(calls)
+    await p.do(3)
+
+    await s.done()
   })
-  const p = new s.subject()
-  // log.warn(s.actions.map(a => {
-  //   return `${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`
-  // }))
-
-  await Promise.all([1, 2].map(x => p.do(x)))
-  await p.do(3)
-
-  await s.done()
 })
 
 class InvokeInternal {
