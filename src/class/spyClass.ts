@@ -8,10 +8,6 @@ export function spyClass(context: SpyContext, subject) {
       const spyInstanceRecorder = context.newInstance(args, { className: subject.name })
       return spyInstance(spyInstanceRecorder, obj)
     },
-    get(target, key) {
-      // todo create invoke spy for static methods
-      return target[key]
-    },
     apply(target, that, args) {
       target.apply(that, args)
     }
