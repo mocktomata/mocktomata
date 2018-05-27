@@ -1,9 +1,7 @@
 import t from 'assert'
 import a from 'assertron'
-import { SimulationMismatch } from 'komondor-plugin'
 
 import { spec, SpecNotFound, NotSpecable, InvalidID, artifact } from '.'
-import { simpleCallback } from './function/testSuites'
 import k from './testUtil'
 
 test('simulate but file does not exists', async () => {
