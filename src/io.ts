@@ -25,6 +25,9 @@ export const io = {
   get writeGiven() {
     return getIO().writeGiven
   },
+  get readScenario(): (id: string) => Promise<any> {
+    return getIO().readScenario
+  },
   get writeScenario() {
     return getIO().writeScenario
   }

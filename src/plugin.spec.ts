@@ -4,6 +4,7 @@ import { Registrar } from 'komondor-plugin'
 
 import { DuplicatePlugin, spec, InvalidPlugin } from '.'
 import { loadConfig, registerPlugin, loadPlugin, plugins } from './plugin'
+import k from './testUtil'
 
 describe('loadConfig()', () => {
   test('load config', () => {
@@ -63,77 +64,31 @@ test('on() will not trigger if not adding the specific action type', async () =>
   o.end()
 })
 
-test('on() will trigger when the right action is added', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'on-trigger',
-        subject => subject.name === 'onTrigger',
-        context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newInstance().newCall().result()
-      )
-    }
-  })
-
-  const s = await spec(function onTrigger() { return 'on-trigger' })
-  s.on('on-trigger', 'invoke', () => o.once(1))
-
-  s.subject()
-
-  await s.satisfy([
-    { type: 'on-trigger', name: 'construct' },
-    { type: 'on-trigger', name: 'invoke' }])
-  o.end()
+registerPlugin({
+  activate(r: Registrar) {
+    r.register(
+      'on-trigger',
+      subject => subject.name === 'onTrigger',
+      context => () => context.newInstance().newCall().invoke([]),
+      context => () => context.newInstance().newCall().result()
+    )
+  }
 })
 
-test('on() will trigger when the right action is added (save)', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'on-trigger-save',
-        subject => subject.name === 'onTriggerSave',
-        context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newInstance().newCall().result()
-      )
-    }
+k.trio('on() will trigger when the right action is added', 'plugin/on-trigger', (title, spec) => {
+  test(title, async () => {
+    const o = new AssertOrder(1)
+    const s = await spec(function onTrigger() { return 'on-trigger' })
+    s.on('on-trigger', 'invoke', () => o.once(1))
+
+    s.subject()
+
+    await s.satisfy([
+      { type: 'on-trigger', name: 'construct' },
+      { type: 'on-trigger', name: 'invoke' }])
+    o.end()
   })
-
-  const s = await spec.save('plugin/on-trigger-save', function onTriggerSave() { return 'on-trigger-save' })
-  s.on('on-trigger-save', 'invoke', () => o.once(1))
-  s.subject()
-
-  await s.satisfy([
-    { type: 'on-trigger-save', name: 'construct' },
-    { type: 'on-trigger-save', name: 'invoke' }])
-  o.end()
 })
-
-test('on() will trigger when the right action is added (simulate)', async () => {
-  const o = new AssertOrder(1)
-  registerPlugin({
-    activate(r: Registrar) {
-      r.register(
-        'on-trigger-simulate',
-        subject => subject.name === 'onTriggerSimulate',
-        context => () => context.newInstance().newCall().invoke([]),
-        context => () => context.newInstance().newCall().result()
-      )
-    }
-  })
-
-  const s = await spec.simulate('plugin/on-trigger-simulate', function onTriggerSimulate() { return 'on-trigger-simulate' })
-  s.on('on-trigger-simulate', 'invoke', () => o.once(1))
-
-  s.subject()
-
-  await s.satisfy([
-    { type: 'on-trigger-simulate', name: 'construct' },
-    { type: 'on-trigger-simulate', name: 'invoke' }])
-  o.end()
-})
-
 
 test('onAny() will trigger when any aciton is added', async () => {
   const o = new AssertOrder(1)

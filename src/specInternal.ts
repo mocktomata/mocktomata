@@ -20,21 +20,21 @@ export function createSpeclive() {
       id = ''
     }
     const mode = getMode(id, 'live')
-    return createSpec(id, subject, mode)
+    return createSpec({ io }, id, subject, mode)
   }
 }
 
 export function createSpecSave() {
   return function specSave<T>(id: string, subject: T): Promise<Spec<T>> {
     const mode = getMode(id, 'save')
-    return createSpec(id, subject, mode)
+    return createSpec({ io }, id, subject, mode)
   }
 }
 
 export function createSpecSimulate() {
   return function specSimulate<T>(id: string, subject: T): Promise<Spec<T>> {
     const mode = getMode(id, 'simulate')
-    return createSpec(id, subject, mode)
+    return createSpec({ io }, id, subject, mode)
   }
 }
 
@@ -49,7 +49,7 @@ function getMode(id: string, mode: SpecMode) {
     store.specDefaultMode || mode
 }
 
-export async function createSpec(specId: string, subject, mode: SpecMode) {
+export async function createSpec({ io }, specId: string, subject, mode: SpecMode) {
   if (InvalidID.isInvalidID(specId)) {
     throw new InvalidID(specId)
   }
@@ -57,9 +57,9 @@ export async function createSpec(specId: string, subject, mode: SpecMode) {
     case 'live':
       return createSpyingSpec(specId, subject)
     case 'save':
-      return createSavingSpec(specId, subject)
+      return createSavingSpec({ io }, specId, subject)
     case 'simulate':
-      return createStubbingSpec(specId, subject)
+      return createStubbingSpec({ io }, specId, subject)
   }
 }
 
@@ -94,7 +94,7 @@ async function createSpyingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   return spec
 }
 
-async function createSavingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
+async function createSavingSpec<T>({ io }, id: string, subject: T): Promise<Spec<T>> {
   if (!id)
     throw new MissingSpecID('save')
 
@@ -136,7 +136,7 @@ async function createSavingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   return spec
 }
 
-async function createStubbingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
+async function createStubbingSpec<T>({ io }, id: string, subject: T): Promise<Spec<T>> {
   if (!id)
     throw new MissingSpecID('simulate')
 
@@ -145,7 +145,7 @@ async function createStubbingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     throw new NotSpecable(subject)
   }
 
-  const actions = await loadActions(id)
+  const actions = await loadActions({ io }, id)
   const actionTracker = new ActionTracker(id, actions)
   const context = createStubContext(actionTracker, plugin.type)
 
@@ -172,7 +172,7 @@ async function createStubbingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   return spec
 }
 
-async function loadActions(specId: string) {
+async function loadActions({ io }, specId: string) {
   try {
     const specRecord = await io.readSpec(specId)
     return fixCircularRefs(specRecord.actions)

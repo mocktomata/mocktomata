@@ -8,21 +8,9 @@ export function getFileIO(baseDir: string) {
   const GIVENS_FOLDER = `${baseDir}${path.sep}givens`
   const SCENARIOS_FOLDER = `${baseDir}${path.sep}scenarios`
   const fs = require('fs')
-
   return {
     readSpec(id: string) {
-      return new Promise<any>((a, r) => {
-        const filePath = getJsonFilePath(SPECS_FOLDER, id)
-        try {
-          const content = fs.readFileSync(filePath, 'utf8')
-          const json = JSON.parse(content)
-          a(json)
-        }
-        catch (err) {
-          // istanbul ignore next
-          r(err)
-        }
-      })
+      return readFrom<SpecRecord>(SPECS_FOLDER, id)
     },
     writeSpec(id: string, record: SpecRecord) {
       return writeTo(SPECS_FOLDER, id, JSON.stringify(record))
@@ -30,10 +18,29 @@ export function getFileIO(baseDir: string) {
     writeGiven(id: string, record: GivenRecord) {
       return writeTo(GIVENS_FOLDER, id, JSON.stringify(record))
     },
+    readScenario(id: string) {
+      return readFrom<any>(SCENARIOS_FOLDER, id)
+    },
     writeScenario(id: string, record) {
       return writeTo(SCENARIOS_FOLDER, id, JSON.stringify(record))
     }
   }
+
+  function readFrom<T>(baseDir: string, id: string) {
+    return new Promise<T>((a, r) => {
+      const filePath = getJsonFilePath(baseDir, id)
+      try {
+        const content = fs.readFileSync(filePath, 'utf8')
+        const json = JSON.parse(content)
+        a(json)
+      }
+      catch (err) {
+        // istanbul ignore next
+        r(err)
+      }
+    })
+  }
+
   // istanbul ignore next
   function createFolders(location: string) {
     const sep = path.sep;

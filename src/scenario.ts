@@ -1,7 +1,7 @@
 import { SpecMode } from 'komondor-plugin';
 
-import { DuplicateHandler, MissingHandler } from './errors';
-import { Spec } from './interfaces';
+import { DuplicateHandler, MissingHandler, SpecNotFound } from './errors';
+import { Spec, SpecRecord } from './interfaces';
 import { io } from './io';
 import { createSpec } from './specInternal';
 import { store } from './store';
@@ -40,48 +40,56 @@ function getEffectiveMode(clause: string, mode: SpecMode) {
     store.defaultMode || mode
 }
 
-class ScenarioRecorder {
+class RecordIO {
   record = {
-    setups: [] as string[],
-    specs: [] as string[],
-    teardowns: [] as string[]
+    setups: [] as { id: string, spec: SpecRecord }[],
+    runs: [] as { id: string, spec: SpecRecord }[],
+    teardowns: [] as { id: string, spec: SpecRecord }[]
   }
-  counter = 0
-  constructor(public scenarioId: string) { }
-  createSetupSpecId(specId: string) {
-    const id = `${++this.counter}-${specId}`
-    this.record.setups.push(id)
-    return `${this.scenarioId}/${id}`
+  loadingScenario: Promise<any>
+  constructor(public id: string) { }
+  getAccessor(type: string) {
+    const me = this
+    return {
+      pop(id: string) {
+        return me.popSpec(type, id)
+      },
+      push(id: string, spec: SpecRecord) {
+        me.record[type].push({ id, spec })
+      }
+    }
   }
-  createRunSpecId(specId: string) {
-    const id = `${++this.counter}-${specId}`
-    this.record.specs.push(id)
-    return `${this.scenarioId}/${id}`
+  save() {
+    return io.writeScenario(this.id, this.record)
   }
-  createTeardownSpecId(specId: string) {
-    const id = `${++this.counter}-${specId}`
-    this.record.teardowns.push(id)
-    return `${this.scenarioId}/${id}`
+  private async popSpec(type: string, specId: string) {
+    if (!this.loadingScenario) {
+      this.loadingScenario = io.readScenario(this.id)
+        .then(s => this.record = s)
+    }
+    await this.loadingScenario
+    const i = this.record[type].findIndex(spec => spec.id === specId)
+    if (i === -1) throw new SpecNotFound(specId);
+    return this.record[type].splice(i, 1)[0].spec
   }
 }
 
 function createScenario(id: string, mode: SpecMode) {
-  // TODO: delete old scenario and its specs if in save mode.
-  const recorder = new ScenarioRecorder(id)
-  const setup = createInertStepCaller('setup', mode, id => recorder.createSetupSpecId(id))
-  const spec = createScenarioSpec('spec', mode, id => recorder.createRunSpecId(id))
-  const run = createStepCaller('run', mode, id => recorder.createRunSpecId(id))
-  const teardown = createInertStepCaller('teardown', mode, id => recorder.createTeardownSpecId(id))
+  const io = new RecordIO(id)
+  const setup = createInertStepCaller(io.getAccessor('setups'), 'setup', mode)
+  const spec = createScenarioSpec(io.getAccessor('runs'), 'spec', mode)
+  const run = createStepCaller(io.getAccessor('runs'), 'run', mode)
+  const teardown = createInertStepCaller(io.getAccessor('teardowns'), 'teardown', mode)
   function done() {
     if (mode === 'save')
-      return io.writeScenario(id, recorder.record)
+      return io.save()
     else
       return Promise.resolve()
   }
   return { setup, run, spec, teardown, done, mode }
 }
 
-function createInertStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string) {
+function createInertStepCaller(record, defaultId: string, mode: SpecMode) {
   return async function inertStep(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
@@ -94,14 +102,14 @@ function createInertStepCaller(defaultId: string, mode: SpecMode, generateSpecId
     }
 
     try {
-      return await invokeHandler({ defaultId, mode, generateSpecId, entry }, clause, inputs)
+      return await invokeHandler({ defaultId, mode, entry, record }, clause, inputs)
     }
     catch (err) {
       log.warn(`${defaultId}('${clause}') throws '${err}', is it safe to ignore?`)
     }
   }
 }
-function createStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string) {
+function createStepCaller(record, defaultId: string, mode: SpecMode) {
   return async function step(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
@@ -113,14 +121,14 @@ function createStepCaller(defaultId: string, mode: SpecMode, generateSpecId: (id
       throw new MissingHandler(clause)
     }
 
-    return invokeHandler({ defaultId, mode, generateSpecId, entry }, clause, inputs)
+    return invokeHandler({ defaultId, mode, entry, record }, clause, inputs)
   }
 }
 
-function invokeHandler({ defaultId, mode, generateSpecId, entry }, clause, inputs) {
-  const runSubStep = createStepCaller(defaultId, mode, generateSpecId)
+function invokeHandler({ defaultId, mode, entry, record }, clause, inputs) {
+  const runSubStep = createStepCaller(record, defaultId, mode)
 
-  const spec = createScenarioSpec(clause, mode, generateSpecId)
+  const spec = createScenarioSpec(record, clause, mode)
   if (entry.regex) {
     // regex must pass as it is tested above
     const matches = entry.regex.exec(clause)!
@@ -144,13 +152,21 @@ export interface ScenarioSpec {
   <T>(id: string, subject: T): Promise<Spec<T>>
 }
 
-function createScenarioSpec(defaultId: string, mode: SpecMode, generateSpecId: (id: string) => string): ScenarioSpec {
+function createScenarioSpec(record, defaultId: string, mode: SpecMode): ScenarioSpec {
   return function (id, subject?) {
     if (!subject) {
       subject = id
       id = defaultId
     }
-    return createSpec(generateSpecId(id), subject, mode)
+    const io = {
+      readSpec(id: string) {
+        return record.pop(id)
+      },
+      writeSpec(id: string, specRecord: SpecRecord) {
+        record.push(id, specRecord)
+      }
+    }
+    return createSpec({ io }, id, subject, mode)
   }
 }
 

@@ -179,13 +179,13 @@ export class ActionTracker {
     }
   }
   private getSourceSubject(action: SpecActionWithSource) {
-    const { sourceType, sourceInstanceId, sourceInvokeId, sourcePath } = action
+    const { sourceType, sourceInstanceId, sourceInvokeId, sourceSite } = action
     const source = this.actualActions.find(a => a.type === sourceType && a.instanceId === sourceInstanceId && a.invokeId === sourceInvokeId)
 
     // istanbul ignore next
     if (!source) throw new SourceNotFound(action)
 
-    return sourcePath.reduce((p, v) => {
+    return sourceSite.reduce((p, v) => {
       return p[v]
     }, source.payload)
   }
@@ -312,7 +312,7 @@ function createSourceStubInstance(actionTracker, action: SpecActionWithSource, s
     sourceType: action.sourceType,
     sourceInstanceId: action.sourceInstanceId,
     sourceInvokeId: action.sourceInvokeId,
-    sourcePath: action.sourcePath
+    sourceSite: action.sourceSite
   })
   return {
     instanceId,

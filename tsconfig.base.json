@@ -19,8 +19,6 @@
     "src/instance"
   ],
   "files": [
-    "src/index",
-    "src/RecordService",
-    "src/RecordClient"
+    "src/index"
   ]
 }

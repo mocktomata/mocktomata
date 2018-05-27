@@ -16,7 +16,6 @@ import {
   functionInvoked,
   functionReturned
 } from '..'
-import { log } from '../log'
 import k from '../testUtil'
 
 class Foo {
@@ -52,7 +51,6 @@ describe('use cases', () => {
   })
 })
 
-
 k.trio('each instance of class will get its own instanceId', 'class/multipleInstance', (title, spec) => {
   test(title, async () => {
     const s = await spec(Foo)
@@ -72,10 +70,13 @@ k.trio('each instance of class will get its own instanceId', 'class/multipleInst
 })
 
 test('simple class simulate with different constructor will throw', async () => {
-  const fooSpec = await spec.simulate('class/wrongConstructorCall', Foo)
-  await a.throws(() => new fooSpec.subject(2), SimulationMismatch)
+  // const s = await spec.save('class/wrongConstructorCall', Boo)
+  // const boo = new s.subject(2)
+  // t(boo)
+  // await s.done()
+  const s = await spec.simulate('class/wrongConstructorCall', Foo)
+  await a.throws(() => new s.subject(2), SimulationMismatch)
 })
-
 
 test('simulate on not existing spec will throw', async () => {
   return a.throws(spec.simulate('class/notExist', Boo), SpecNotFound)
@@ -142,10 +143,10 @@ k.trio('class/withCallback', (title, spec) => {
       { ...classMethodInvoked('justDo', 1), instanceId: 1, invokeId: 1 },
       { ...classMethodReturned('justDo', 1), instanceId: 1, invokeId: 1 },
       { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 2 },
-      { ...functionConstructed(), instanceId: 1, sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 2, sourcePath: [0] },
+      { ...functionConstructed(), instanceId: 1, sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [0] },
       { ...classMethodReturned('callback'), instanceId: 1, invokeId: 2 },
       { ...classMethodInvoked('callback'), instanceId: 1, invokeId: 3 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 3, sourcePath: [0] },
+      { ...functionConstructed(), instanceId: 2, sourceType: 'class', sourceInstanceId: 1, sourceInvokeId: 3, sourceSite: [0] },
       { ...classMethodReturned('callback'), instanceId: 1, invokeId: 3 },
       { ...functionInvoked('called'), instanceId: 1, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 },
@@ -210,31 +211,20 @@ class Promising {
   }
 }
 
-test('async promise call', async () => {
-  // 'classc10',
-  // 'classi11',
-  // 'classr11',
-  // 'promisec10',
-  // 'classi12',
-  // 'classr12',
-  // 'promisec20',
-  // 'promiser11',
-  // 'promiser21',
-  // 'classi13',
-  // 'classr13',
-  // 'promisec30',
-  // 'promiser31'
+k.trio('async promise call', 'class/promising', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(Promising)
+    // s.onAny(a => {
+    //   console.info(`${a.type} ${a.name} ${a.instanceId} ${a.invokeId || ''}`)
+    // })
+    const p = new s.subject()
 
-  const s = await spec.simulate('class/promising', Promising)
-  const p = new s.subject()
-  log.info(s.actions.map(a => {
-    return a.type + a.name[0] + a.instanceId + (a.invokeId || 0)
-  }))
+    const calls = [1, 2].map(x => p.do(x))
+    await Promise.all(calls)
+    await p.do(3)
 
-  await Promise.all([1, 2].map(x => p.do(x)))
-  await p.do(3)
-
-  await s.satisfy([])
+    await s.done()
+  })
 })
 
 class InvokeInternal {
@@ -488,6 +478,22 @@ k.trio('class/callbackWithComposite', (title, spec) => {
     const actual = f.on(fn)
     t.equal(actual.value, 'xyz')
 
+    await s.done()
+  })
+})
+
+k.trio('class/withProperty', (title, spec) => {
+  class WithProperty {
+    y = 1
+    do(x) { return x }
+  }
+  test(title, async () => {
+    const s = await spec(WithProperty)
+    const p = new s.subject()
+    t.equal(p.do(2), 2)
+    t.equal(p.y, 1)
+    p.y = 3
+    t.equal(p.y, 3)
     await s.done()
   })
 })

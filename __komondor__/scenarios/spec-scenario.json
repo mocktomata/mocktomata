@@ -1,0 +1,1 @@
+{"setups":[],"runs":[{"id":"spec","spec":{"expectation":"[]","actions":[{"type":"function","name":"construct","instanceId":1}]}}],"teardowns":[]}

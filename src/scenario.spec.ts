@@ -5,9 +5,12 @@ import { MemoryAppender } from 'aurelia-logging-memory'
 import fs from 'fs'
 
 import { artifact, MissingHandler, DuplicateHandler, config, scenario, defineStep } from '.'
+
 import { resetStore } from './store'
 import { ensureFileNotExists } from './testUtil'
 import { log } from './log';
+import { io } from './io';
+import { KOMONDOR_FOLDER } from './constants';
 
 const users: any[] = []
 class ApiGateway {
@@ -153,7 +156,7 @@ describe('setup()', () => {
     t.strictEqual(values[3], 3.14)
   })
 
-  test('spec id in setup is predefined to `scenario/setup` and not configurable', async () => {
+  test('setup id is used as spec id', async () => {
     let result
     let id
     defineStep('setup spec - ensure server is up', async ({ spec, inputs }) => {
@@ -172,42 +175,42 @@ describe('setup()', () => {
     const actual = await setup('setup spec - ensure server is up', host)
     t.equal(result, true)
     t.equal(actual, true)
-    t.equal(id, 'setup spec/1-setup spec - ensure server is up')
+    t.equal(id, 'setup spec - ensure server is up')
   })
+
   test('scenario.save() will cause spec in onSetup to save', async () => {
-    const specPath = `__komondor__/specs/save spec scenario/1-simple saving setup.json`
-    ensureFileNotExists(specPath)
     defineStep('simple saving setup', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { setup } = scenario.save('save spec scenario')
+    const { setup, done } = scenario.save('save spec scenario')
     await setup('simple saving setup')
+    await done()
 
-    t(fs.existsSync(specPath))
+    const record = await io.readScenario('save spec scenario')
+    t(record.setups.find(s => s.id === 'simple saving setup'))
   })
 
-  test('scenario.save() will cause spec in template onSetup to save', async () => {
-    const specPath = `__komondor__/specs/save setup spec template scenario/1-save template saving setup 1.json`
+  test('scenario.save() will cause spec in setup template step to save', async () => {
+    const specPath = `${KOMONDOR_FOLDER}/specs/save setup spec template scenario/1-save template saving setup 1.json`
     ensureFileNotExists(specPath)
     defineStep('save template saving setup {id}', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { setup } = scenario.save('save setup spec template scenario')
+    const { setup, done } = scenario.save('save setup spec template scenario')
     await setup('save template saving setup 1')
+    await done()
 
-    t(fs.existsSync(specPath))
+    const record = await io.readScenario('save setup spec template scenario')
+    t(record.setups.find(s => s.id === 'save template saving setup 1'))
   })
 
-  test('scenario.simulate() will cause spec in onSetup to simulate', async () => {
-    const specPath = `__komondor__/specs/simulate spec scenario/1-simulate setup.json`
-    ensureFileNotExists(specPath)
+  test('scenario.simulate() will cause spec in setup to simulate', async () => {
     const o = new AssertOrder(2)
     defineStep('simulate setup', async ({ spec }) => {
-
       const s = await spec(_ => Promise.resolve(true))
       o.on(1, () => t.equal(s.mode, 'save'))
       o.on(2, () => t.equal(s.mode, 'simulate'))
@@ -216,9 +219,8 @@ describe('setup()', () => {
       await s.done()
     })
     const prepare = scenario.save('simulate spec scenario')
-
     await prepare.setup('simulate setup')
-    t(fs.existsSync(specPath))
+    await prepare.done()
 
     const { setup } = scenario.simulate('simulate spec scenario')
     await setup('simulate setup')
@@ -290,7 +292,7 @@ describe('run()', () => {
     t.strictEqual(values[3], 3.14)
   })
 
-  test('spec id in run is predefined to `scenario/run` and not configurable', async () => {
+  test('run id is used as spec id', async () => {
     let result
     let id
     defineStep('run spec - ensure server is up', async ({ spec, inputs }) => {
@@ -309,42 +311,39 @@ describe('run()', () => {
     const actual = await run('run spec - ensure server is up', host)
     t.equal(result, true)
     t.equal(actual, true)
-    t.equal(id, 'run spec/1-run spec - ensure server is up')
+    t.equal(id, 'run spec - ensure server is up')
   })
-  test('scenario.save() will cause spec in onrun to save', async () => {
-    const specPath = `__komondor__/specs/save spec scenario/1-simple saving run.json`
-    ensureFileNotExists(specPath)
+  test('scenario.save() will cause spec in run to save', async () => {
     defineStep('simple saving run', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { run } = scenario.save('save spec scenario')
+    const { run, done } = scenario.save('save run spec')
     await run('simple saving run')
+    await done()
 
-    t(fs.existsSync(specPath))
+    const record = await io.readScenario('save run spec')
+    t(record.runs.find(s => s.id === 'simple saving run'))
   })
 
   test('scenario.save() will cause spec in template onrun to save', async () => {
-    const specPath = `__komondor__/specs/save run spec template scenario/1-save template saving run 1.json`
-    ensureFileNotExists(specPath)
     defineStep('save template saving run {id}', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { run } = scenario.save('save run spec template scenario')
+    const { run, done } = scenario.save('save run spec template')
     await run('save template saving run 1')
+    await done()
 
-    t(fs.existsSync(specPath))
+    const record = await io.readScenario('save run spec template')
+    t(record.runs.find(s => s.id === 'save template saving run 1'))
   })
 
-  test('scenario.simulate() will cause spec in onrun to simulate', async () => {
-    const specPath = `__komondor__/specs/simulate run spec scenario/1-simulate run.json`
-    ensureFileNotExists(specPath)
+  test('scenario.simulate() will cause spec in run to simulate', async () => {
     const o = new AssertOrder(2)
     defineStep('simulate run', async ({ spec }) => {
-
       const s = await spec(_ => Promise.resolve(true))
       o.on(1, () => t.equal(s.mode, 'save'))
       o.on(2, () => t.equal(s.mode, 'simulate'))
@@ -352,28 +351,19 @@ describe('run()', () => {
       await s.subject(0)
       await s.done()
     })
-    const prepare = scenario.save('simulate run spec scenario')
+    const prepare = scenario.save('simulate run spec')
 
     await prepare.run('simulate run')
-    t(fs.existsSync(specPath))
+    await prepare.done()
 
-    const { run } = scenario.simulate('simulate run spec scenario')
+    const { run } = scenario.simulate('simulate run spec')
     await run('simulate run')
 
     o.end()
   })
 
   test('sub step', async () => {
-    const filepaths = [
-      `__komondor__/scenarios/sub step.json`,
-      `__komondor__/specs/sub step/1-run leaf step 1.json`,
-      `__komondor__/specs/sub step/2-run substep 1.json`,
-      `__komondor__/specs/sub step/3-run with substep 1.json`,
-      `__komondor__/specs/sub step/4-run leaf step 2.json`,
-      `__komondor__/specs/sub step/5-run substep 2.json`,
-      `__komondor__/specs/sub step/6-run with substep 2.json`
-    ]
-    filepaths.forEach(ensureFileNotExists)
+    ensureFileNotExists(`${KOMONDOR_FOLDER}/scenarios/sub step.json`)
 
     defineStep('run leaf step {step}', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
@@ -402,8 +392,6 @@ describe('run()', () => {
     await simScenario.run('run with substep 1')
     await simScenario.teardown('run with substep 2')
     await simScenario.done()
-
-    filepaths.forEach(p => t(fs.existsSync(p)))
   })
 })
 
@@ -417,40 +405,36 @@ describe('spec()', () => {
   test('spec id is optional', async () => {
     const { spec } = scenario('optional-spec-id')
     const s = await spec(() => Promise.resolve(true))
-    t.equal(s.id, 'optional-spec-id/1-spec')
+    t.equal(s.id, 'spec')
   })
 
-  test('actual spec id is `scenarioId/1-specId`', async () => {
-    const { spec } = scenario('spec-scenario')
-    const s = await spec('specId', () => Promise.resolve(true))
-    t.equal(s.id, 'spec-scenario/1-specId')
-  })
+  test('spec mode follows scenario mode', async () => {
+    const liveScenario = scenario('spec-scenario')
+    const liveSpec = await liveScenario.spec(() => Promise.resolve(true))
+    t.equal(liveSpec.mode, 'live')
 
-  test('spec runs in live mode', async () => {
-    const { spec } = scenario('spec-scenario')
-    const s = await spec('specId', () => Promise.resolve(true))
-
-    t.equal(s.mode, 'live')
-    const actual = await s.subject()
-    t.equal(actual, true)
+    const saveScenario = scenario.save('spec-scenario')
+    const saveSpec = await saveScenario.spec(() => Promise.resolve(true))
+    t.equal(saveSpec.mode, 'save')
+    const s = await saveScenario.spec(() => Promise.resolve(true))
     await s.done()
+    await saveScenario.done()
+
+    const simScenario = scenario.simulate('spec-scenario')
+    const simSpec = await simScenario.spec(() => Promise.resolve(true))
+    t.equal(simSpec.mode, 'simulate')
+    await simScenario.done()
   })
 
-  test('scenario.save causes spec to run in save mode', async () => {
-    const { spec } = scenario.save('spec-scenario')
+  test('custom spec id is used if specified', async () => {
+    const scenarioName = 'custom spec id'
+    const { spec, done } = scenario.save(scenarioName)
     const s = await spec('specId', () => Promise.resolve(true))
-
-    t.equal(s.mode, 'save')
-    const actual = await s.subject()
-    t.equal(actual, true)
     await s.done()
-  })
+    await done()
 
-  test('scenario.simulate causes spec to run in simulate mode', async () => {
-    const { spec } = scenario.simulate('spec-scenario')
-    const s = await spec('specId', () => Promise.resolve(true))
-
-    t.equal(s.mode, 'simulate')
+    const record = await io.readScenario(scenarioName)
+    t(record.runs.find(s => s.id === 'specId'))
   })
 })
 
@@ -499,58 +483,37 @@ describe('teardown()', () => {
     t.strictEqual(values[3], 3.14)
   })
 
-  test('spec id in teardown is predefined to `scenarioId/n-teardownId` and not configurable', async () => {
-    let result
-    let id
-    defineStep('teardown spec - ensure server is up', async ({ spec, inputs }) => {
-      const host = inputs[0]
-
-      // spec() has no overload of spec(id, subject)
-      const s = await spec(_ => Promise.resolve(true))
-      id = s.id
-      result = await s.subject(host)
-      await s.done()
-      return result
-    })
-
-    const { teardown } = scenario('teardown spec')
-    const host = artifact('teardown host', '10.0.0.1')
-    const actual = await teardown('teardown spec - ensure server is up', host)
-    t.equal(result, true)
-    t.equal(actual, true)
-    t.equal(id, 'teardown spec/1-teardown spec - ensure server is up')
-  })
   test('scenario.save() will cause teardown spec in handle() to save', async () => {
-    const specPath = `__komondor__/specs/save teardown spec scenario/1-simple saving teardown.json`
-    ensureFileNotExists(specPath)
     defineStep('simple saving teardown', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { teardown } = scenario.save('save teardown spec scenario')
+    const { teardown, done } = scenario.save('save teardown spec')
     await teardown('simple saving teardown')
+    await done()
 
-    t(fs.existsSync(specPath))
+    const record = await io.readScenario('save teardown spec')
+    t(record.teardowns.find(s => s.id === 'simple saving teardown'))
   })
 
   test('scenario.save() will cause teardown spec in template handle() to save', async () => {
-    const specPath = `__komondor__/specs/save teardown spec scenario/1-save template saving teardown 1.json`
-    ensureFileNotExists(specPath)
     defineStep('save template saving teardown {id}', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
       await s.subject(0)
       await s.done()
     })
-    const { setup } = scenario.save('save teardown spec scenario')
-    await setup('save template saving teardown 1')
+    const { teardown, done } = scenario.save('save teardown template step')
+    await teardown('save template saving teardown 1')
+    await done()
 
-    t(fs.existsSync(specPath))
+    const record = await io.readScenario('save teardown template step')
+    t(record.teardowns.find(s => s.id === 'save template saving teardown 1'))
   })
 
   test('scenario.simulate() will cause teardown spec in handle to simulate', async () => {
-    const specPath = `__komondor__/specs/simulate teardown spec scenario/1-simulate teardown.json`
-    ensureFileNotExists(specPath)
+    const scenarioName = 'simulate teardown spec scenario'
+    ensureFileNotExists(`${KOMONDOR_FOLDER}/scenarios/${scenarioName}.json`)
     const o = new AssertOrder(2)
     defineStep('simulate teardown', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
@@ -560,12 +523,12 @@ describe('teardown()', () => {
       await s.subject(0)
       await s.done()
     })
-    const prepare = scenario.save('simulate teardown spec scenario')
+    const prepare = scenario.save(scenarioName)
 
     await prepare.teardown('simulate teardown')
-    t(fs.existsSync(specPath))
+    await prepare.done()
 
-    const { teardown } = scenario.simulate('simulate teardown spec scenario')
+    const { teardown } = scenario.simulate(scenarioName)
     await teardown('simulate teardown')
 
     o.end()
@@ -591,12 +554,8 @@ describe('teardown()', () => {
 
 describe('done()', () => {
   test('always resolve in live mode', async () => {
-    const files = [`__komondor__/scenarios/done live.json`,
-      `__komondor__/specs/done live/1-setup done.json`,
-      `__komondor__/specs/done live/2-default.json`,
-      `__komondor__/specs/done live/3-teardown done.json`]
-
-    files.forEach(ensureFileNotExists)
+    const filename = `${KOMONDOR_FOLDER}/scenarios/done live.json`
+    ensureFileNotExists(filename)
 
     const { setup, spec, teardown, done } = scenario('done live')
     defineStep('setup done', async ({ spec }) => {
@@ -618,17 +577,12 @@ describe('done()', () => {
 
     await teardown('teardown done')
     await a.resolves(done())
-
-    files.forEach(f => t(!fs.existsSync(f)))
+    fs.existsSync(filename)
   })
 
   test('resolves after scenario saved', async () => {
-    const files = [`__komondor__/scenarios/done save.json`,
-      `__komondor__/specs/done save/1-setup save done.json`,
-      `__komondor__/specs/done save/2-spec.json`,
-      `__komondor__/specs/done save/3-teardown save done.json`]
-
-    files.forEach(ensureFileNotExists)
+    const filename = `${KOMONDOR_FOLDER}/scenarios/done save.json`
+    ensureFileNotExists(filename)
 
     const { setup, spec, teardown, done } = scenario.save('done save')
     defineStep('setup save done', async ({ spec }) => {
@@ -651,18 +605,12 @@ describe('done()', () => {
     await teardown('teardown save done')
     await a.resolves(done())
 
-    files.forEach(f => t(fs.existsSync(f)))
+    t(fs.existsSync(filename))
   })
 
   test('resolves after scenario simulated', async () => {
-    const scenarioPath = `__komondor__/scenarios/done simulate.json`
-    const setupPath = `__komondor__/specs/done simulate/1-setup simulate done.json`
-    const specPath = `__komondor__/specs/done simulate/2-spec.json`
-    const teardownPath = `__komondor__/specs/done simulate/3-teardown simulate done.json`
+    const scenarioPath = `${KOMONDOR_FOLDER}/scenarios/done simulate.json`
     ensureFileNotExists(scenarioPath)
-    ensureFileNotExists(setupPath)
-    ensureFileNotExists(specPath)
-    ensureFileNotExists(teardownPath)
 
     defineStep('setup simulate done', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
@@ -688,9 +636,6 @@ describe('done()', () => {
       await a.resolves(done())
 
       t(fs.existsSync(scenarioPath))
-      t(fs.existsSync(setupPath))
-      t(fs.existsSync(specPath))
-      t(fs.existsSync(teardownPath))
     }
     await prepare()
     const { setup, spec, teardown, done } = scenario.simulate('done simulate')
@@ -767,11 +712,9 @@ describe('defineStep()', () => {
     t(subStepCalled)
   })
   test('runSubStep saves scenario with specs containing step chain', async () => {
-    const files = [
-      `__komondor__/scenarios/runSubStep save scenario.json`,
-      `__komondor__/specs/runSubStep save scenario/1-subStep save 2.json`
-    ]
-    files.forEach(ensureFileNotExists)
+    const filename = `${KOMONDOR_FOLDER}/scenarios/runSubStep save scenario.json`
+    ensureFileNotExists(filename)
+
     let subStepCalled = false
     defineStep('subStep save 2', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
@@ -792,18 +735,15 @@ describe('defineStep()', () => {
     await s.done()
 
     t(subStepCalled)
-    files.forEach(f => t(fs.existsSync(f)))
+    t(fs.existsSync(filename))
 
-    const scenarioJson = JSON.parse(fs.readFileSync(files[0], 'utf-8'))
-    t.equal(scenarioJson.specs[0], '1-subStep save 2')
+    const record = await io.readScenario('runSubStep save scenario')
+    t(record.runs.find(s => s.id === 'subStep save 2'))
   })
 
   test('runSubStep (simulate)', async () => {
-    const files = [
-      `__komondor__/scenarios/runSubStep simulate scenario.json`,
-      `__komondor__/specs/runSubStep simulate scenario/1-subStep simulate 1.json`
-    ]
-    files.forEach(ensureFileNotExists)
+    const filename = `${KOMONDOR_FOLDER}/scenarios/runSubStep simulate scenario.json`
+    ensureFileNotExists(filename)
     defineStep('subStep simulate 1', async ({ spec }) => {
       const s = await spec(() => Promise.resolve())
       await s.subject()
@@ -817,8 +757,7 @@ describe('defineStep()', () => {
       const s = scenario.save('runSubStep simulate scenario')
       await s.run('runSubStep simulate')
       await s.done()
-
-      files.forEach(f => t(fs.existsSync(f)))
+      t(fs.existsSync(filename))
     }
     await prepare()
 
