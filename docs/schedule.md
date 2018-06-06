@@ -14,4 +14,4 @@ I'll post and update the schedule below.
 
 ## Schedule
 
-- 2018/06/06 10PM (test run)
+- 2018/06/06 10PM PST (test run)
