@@ -17,6 +17,8 @@
 
 `komondor` is your friendly guard dog for writing tests across boundaries.
 
+Check out my [pair programming schedule](docs/schedule.md) if you are interested in working together on this project.
+
 ## The problem
 
 Boundary is where two systems meet and communicate with each other using data structures and primitive types.
