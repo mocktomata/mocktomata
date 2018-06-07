@@ -4,8 +4,8 @@ workflows:
   all:
     jobs:
       - node-latest
+      - node9
       - node8
-      - node6
 jobs:
   node-latest:
     docker:
