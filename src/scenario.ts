@@ -51,6 +51,7 @@ class RecordIO {
   getAccessor(type: string) {
     const me = this
     return {
+      id: this.id,
       pop(id: string) {
         return me.popSpec(type, id)
       },
@@ -105,7 +106,10 @@ function createInertStepCaller(record, defaultId: string, mode: SpecMode) {
       return await invokeHandler({ defaultId, mode, entry, record }, clause, inputs)
     }
     catch (err) {
-      log.warn(`${defaultId}('${clause}') throws '${err}', is it safe to ignore?`)
+      log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${record.id})
+- ${defaultId}(${clause}) throws, is it safe to ignore?
+
+${err}`)
     }
   }
 }
