@@ -36,9 +36,9 @@ jobs:
           command: npm run verify
           post:
             - bash <(curl -s https://codecov.io/bash)
-  node6:
+  node9:
     docker:
-      - image: 'circleci/node:6'
+      - image: 'circleci/node:9'
     steps:
       - checkout
       - run:
