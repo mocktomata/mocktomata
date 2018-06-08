@@ -1,6 +1,6 @@
+import { SpecActionWithSource } from 'komondor-plugin'
 import { BaseError } from 'make-error'
 import { tersify } from 'tersify'
-import { SpecActionWithSource } from 'komondor-plugin';
 
 export class MissingGivenHandler extends BaseError {
   // istanbul ignore next

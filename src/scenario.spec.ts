@@ -240,7 +240,10 @@ describe('setup()', () => {
     const actual = m.logs[0]
     t.deepEqual(actual, {
       id: 'komondor', level: logLevel.warn, messages: [
-        `setup('throw step') throws 'Error: foo', is it safe to ignore?`
+        `scenario.save(throwing setup will pass and emit warning)
+- setup(throw step) throws, is it safe to ignore?
+
+Error: foo`
       ]
     })
     removeAppender(m)
@@ -545,7 +548,10 @@ describe('teardown()', () => {
     const actual = m.logs[0]
     t.deepEqual(actual, {
       id: 'komondor', level: logLevel.warn, messages: [
-        `teardown('throw step2') throws 'Error: foo', is it safe to ignore?`
+        `scenario.save(throwing teardown will pass and emit warning)
+- teardown(throw step2) throws, is it safe to ignore?
+
+Error: foo`
       ]
     })
     removeAppender(m)
