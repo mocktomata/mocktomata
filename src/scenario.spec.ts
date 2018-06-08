@@ -184,11 +184,11 @@ describe('setup()', () => {
       await s.subject(0)
       await s.done()
     })
-    const { setup, done } = scenario.save('save spec scenario')
+    const { setup, done } = scenario.save('save setup scenario')
     await setup('simple saving setup')
     await done()
 
-    const record = await io.readScenario('save spec scenario')
+    const record = await io.readScenario('save setup scenario')
     t(record.setups.find(s => s.id === 'simple saving setup'))
   })
 
@@ -791,5 +791,153 @@ describe('defineStep()', () => {
 
     const { run } = scenario('do not invoke step with missing words')
     await a.throws(run('create car model-3 in fremont street'), MissingHandler)
+  })
+})
+
+describe('ensure()', () => {
+  test('throws MissingHandler if no handler is defined', async () => {
+    const { ensure } = scenario('no handler')
+    const err = await a.throws(() => ensure('no ensure handler'), MissingHandler)
+    t.equal(err.message, `Handler for 'no ensure handler' not found.`)
+  })
+
+  test('arguments are passed to ensure handler as inputs', async () => {
+    const { ensure } = scenario('')
+    const actual: any[] = []
+    defineStep('passing ensure arguments', ({ inputs }) => {
+      actual.push(...inputs)
+    })
+    await ensure('passing ensure arguments', 1, 2, 3)
+    t.deepEqual(actual, [1, 2, 3])
+  })
+
+  test('can call same ensure step twice', async () => {
+    defineStep('ensureTwice', async ({ spec, inputs }) => {
+      const expected = inputs[0]
+      const s = await spec(() => Promise.resolve(expected))
+      const actual = await s.subject()
+
+      t.equal(actual, expected)
+      await s.done()
+    });
+
+    await (async () => {
+      const { ensure, done } = scenario.save('call ensure twice')
+      await ensure('ensureTwice', 0)
+      await ensure('ensureTwice', 2)
+      await done()
+    })()
+
+    const { ensure, done } = scenario.simulate('call ensure twice')
+    await ensure('ensureTwice', 0)
+    await ensure('ensureTwice', 2)
+    await done()
+  })
+
+  test('template match result is passed to handler after input', async () => {
+    let values: any[] = []
+    defineStep('ensure template {id} {code}', ({ inputs }, id, code) => {
+      values.push(...inputs, id, code)
+    })
+    const { ensure } = scenario('ensure with template')
+    await ensure('ensure template 123 abc', 'x')
+    t.deepEqual(values, ['x', '123', 'abc'])
+  })
+  test('template can specify type', async () => {
+    let values: any[] = []
+    defineStep('ensure templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+      values.push(...inputs, id, enable, pi)
+    })
+    const { ensure } = scenario('ensure with template')
+    await ensure('ensure templateWithType 123 true 3.14', 'x')
+    t.equal(values[0], 'x')
+    t.strictEqual(values[1], 123)
+    t.strictEqual(values[2], true)
+    t.strictEqual(values[3], 3.14)
+  })
+
+  test('ensure id is used as spec id', async () => {
+    let result
+    let id
+    defineStep('ensure spec - ensure server is up', async ({ spec, inputs }) => {
+      const host = inputs[0]
+
+      // spec() has no overload of spec(id, subject)
+      const s = await spec(_ => Promise.resolve(true))
+      id = s.id
+      result = await s.subject(host)
+      await s.done()
+      return result
+    })
+
+    const { ensure } = scenario('ensure spec')
+    const host = artifact('ensure host', '10.0.0.1')
+    const actual = await ensure('ensure spec - ensure server is up', host)
+    t.equal(result, true)
+    t.equal(actual, true)
+    t.equal(id, 'ensure spec - ensure server is up')
+  })
+
+  test('scenario.save() will cause spec in step to save', async () => {
+    defineStep('simple saving ensure', async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    const { ensure, done } = scenario.save('save ensure scenario')
+    await ensure('simple saving ensure')
+    await done()
+
+    const record = await io.readScenario('save ensure scenario')
+    t(record.ensures.find(s => s.id === 'simple saving ensure'))
+  })
+
+  test('scenario.save() will cause spec in ensure template step to save', async () => {
+    const specPath = `${KOMONDOR_FOLDER}/specs/save ensure spec template scenario/1-save template saving ensure 1.json`
+    ensureFileNotExists(specPath)
+    defineStep('save template saving ensure {id}', async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      await s.subject(0)
+      await s.done()
+    })
+    const { ensure, done } = scenario.save('save ensure spec template scenario')
+    await ensure('save template saving ensure 1')
+    await done()
+
+    const record = await io.readScenario('save ensure spec template scenario')
+    t(record.ensures.find(s => s.id === 'save template saving ensure 1'))
+  })
+
+  test('scenario.simulate() will cause spec in ensure to simulate', async () => {
+    const o = new AssertOrder(2)
+    defineStep('simulate ensure', async ({ spec }) => {
+      const s = await spec(_ => Promise.resolve(true))
+      o.on(1, () => t.equal(s.mode, 'save'))
+      o.on(2, () => t.equal(s.mode, 'simulate'))
+      o.any([1, 2])
+      await s.subject(0)
+      await s.done()
+    })
+    const prepare = scenario.save('simulate ensure scenario')
+    await prepare.ensure('simulate ensure')
+    await prepare.done()
+
+    const { ensure } = scenario.simulate('simulate ensure scenario')
+    await ensure('simulate ensure')
+
+    o.end()
+  })
+
+  test('thrown ensure will pass and emit warning', async () => {
+    defineStep('throw step', () => { throw new Error('foo') })
+    const { ensure } = scenario.save('throwing ensure will pass and emit warning')
+    log.warn('ignore next message, it is testing ensure throwing error')
+    const m = new MemoryAppender()
+    addAppender(m)
+
+    await ensure('throw step')
+
+    t.equal(m.logs.length, 0)
+    removeAppender(m)
   })
 })
