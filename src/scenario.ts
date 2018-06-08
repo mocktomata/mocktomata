@@ -42,6 +42,7 @@ function getEffectiveMode(clause: string, mode: SpecMode) {
 
 class RecordIO {
   record = {
+    ensures: [] as { id: string, spec: SpecRecord }[],
     setups: [] as { id: string, spec: SpecRecord }[],
     runs: [] as { id: string, spec: SpecRecord }[],
     teardowns: [] as { id: string, spec: SpecRecord }[]
@@ -77,6 +78,7 @@ class RecordIO {
 
 function createScenario(id: string, mode: SpecMode) {
   const io = new RecordIO(id)
+  const ensure = createInertStepCaller(io.getAccessor('ensures'), 'ensure', mode, false)
   const setup = createInertStepCaller(io.getAccessor('setups'), 'setup', mode)
   const spec = createScenarioSpec(io.getAccessor('runs'), 'spec', mode)
   const run = createStepCaller(io.getAccessor('runs'), 'run', mode)
@@ -87,10 +89,10 @@ function createScenario(id: string, mode: SpecMode) {
     else
       return Promise.resolve()
   }
-  return { setup, run, spec, teardown, done, mode }
+  return { ensure, setup, run, spec, teardown, done, mode }
 }
 
-function createInertStepCaller(record, defaultId: string, mode: SpecMode) {
+function createInertStepCaller(record, defaultId: string, mode: SpecMode, shouldLog: boolean = true) {
   return async function inertStep(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
@@ -106,7 +108,8 @@ function createInertStepCaller(record, defaultId: string, mode: SpecMode) {
       return await invokeHandler({ defaultId, mode, entry, record }, clause, inputs)
     }
     catch (err) {
-      log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${record.id})
+      if (shouldLog)
+        log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${record.id})
 - ${defaultId}(${clause}) throws, is it safe to ignore?
 
 ${err}`)
