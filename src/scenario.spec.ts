@@ -58,16 +58,14 @@ class ApiGateway {
 
 describe('acceptance', () => {
   test('basic', async () => {
-    defineStep('create user {username}', async ({ spec, inputs }, username) => {
-      const server = inputs[0]
+    defineStep('create user {username}', async ({ spec }, username, server) => {
       const s = await spec(ApiGateway)
       const api = new s.subject(server.host)
       const user = await api.createUser(username)
       await s.done()
       return user
     })
-    defineStep('delete user {username}', async ({ spec, inputs }, username) => {
-      const server = inputs[0]
+    defineStep('delete user {username}', async ({ spec }, username, server) => {
       const s = await spec(ApiGateway)
       const api = new s.subject(server.host)
       const user = await api.deleteUser(username)
@@ -104,7 +102,7 @@ describe('setup()', () => {
   test('arguments are passed to setup handler as inputs', async () => {
     const { setup } = scenario('')
     const actual: any[] = []
-    defineStep('passing setup arguments', ({ inputs }) => {
+    defineStep('passing setup arguments', ({ }, ...inputs) => {
       actual.push(...inputs)
     })
     await setup('passing setup arguments', 1, 2, 3)
@@ -112,8 +110,7 @@ describe('setup()', () => {
   })
 
   test('can call same setup step twice', async () => {
-    defineStep('setupTwice', async ({ spec, inputs }) => {
-      const expected = inputs[0]
+    defineStep('setupTwice', async ({ spec }, expected) => {
       const s = await spec(() => Promise.resolve(expected))
       const actual = await s.subject()
 
@@ -136,7 +133,7 @@ describe('setup()', () => {
 
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
-    defineStep('setup template {id} {code}', ({ inputs }, id, code) => {
+    defineStep('setup template {id} {code}', ({ }, id, code, ...inputs) => {
       values.push(...inputs, id, code)
     })
     const { setup } = scenario('setup with template')
@@ -145,7 +142,7 @@ describe('setup()', () => {
   })
   test('template can specify type', async () => {
     let values: any[] = []
-    defineStep('setup templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+    defineStep('setup templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
       values.push(...inputs, id, enable, pi)
     })
     const { setup } = scenario('setup with template')
@@ -159,9 +156,7 @@ describe('setup()', () => {
   test('setup id is used as spec id', async () => {
     let result
     let id
-    defineStep('setup spec - ensure server is up', async ({ spec, inputs }) => {
-      const host = inputs[0]
-
+    defineStep('setup spec - ensure server is up', async ({ spec }, host) => {
       // spec() has no overload of spec(id, subject)
       const s = await spec(_ => Promise.resolve(true))
       id = s.id
@@ -260,7 +255,7 @@ describe('run()', () => {
   test('arguments are passed to run handler as inputs', async () => {
     const { run } = scenario('')
     const actual: any[] = []
-    defineStep('passing run arguments', ({ inputs }) => {
+    defineStep('passing run arguments', ({ }, ...inputs) => {
       actual.push(...inputs)
     })
     await run('passing run arguments', 1, 2, 3)
@@ -275,7 +270,7 @@ describe('run()', () => {
 
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
-    defineStep('run template {id} {code}', ({ inputs }, id, code) => {
+    defineStep('run template {id} {code}', ({ }, id, code, ...inputs) => {
       values.push(...inputs, id, code)
     })
     const { run } = scenario('run with template')
@@ -284,7 +279,7 @@ describe('run()', () => {
   })
   test('template can specify type', async () => {
     let values: any[] = []
-    defineStep('run templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+    defineStep('run templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
       values.push(...inputs, id, enable, pi)
     })
     const { run } = scenario('run with template')
@@ -298,9 +293,7 @@ describe('run()', () => {
   test('run id is used as spec id', async () => {
     let result
     let id
-    defineStep('run spec - ensure server is up', async ({ spec, inputs }) => {
-      const host = inputs[0]
-
+    defineStep('run spec - ensure server is up', async ({ spec }, host) => {
       // spec() has no overload of spec(id, subject)
       const s = await spec(_ => Promise.resolve(true))
       id = s.id
@@ -450,7 +443,7 @@ describe('teardown()', () => {
   test('arguments are passed to teardown handler as inputs', async () => {
     const { teardown } = scenario('')
     const actual: any[] = []
-    defineStep('passing teardown arguments', ({ inputs }) => {
+    defineStep('passing teardown arguments', ({ }, ...inputs) => {
       actual.push(...inputs)
     })
     await teardown('passing teardown arguments', 1, 2, 3)
@@ -465,7 +458,7 @@ describe('teardown()', () => {
 
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
-    defineStep('teardown template {id} {code}', ({ inputs }, id, code) => {
+    defineStep('teardown template {id} {code}', ({ }, id, code, ...inputs) => {
       values.push(...inputs, id, code)
     })
     const { teardown } = scenario('teardown with template')
@@ -475,7 +468,7 @@ describe('teardown()', () => {
 
   test('template can specify type', async () => {
     let values: any[] = []
-    defineStep('teardown templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+    defineStep('teardown templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
       values.push(...inputs, id, enable, pi)
     })
     const { teardown } = scenario('teardown with template')
@@ -804,7 +797,7 @@ describe('ensure()', () => {
   test('arguments are passed to ensure handler as inputs', async () => {
     const { ensure } = scenario('')
     const actual: any[] = []
-    defineStep('passing ensure arguments', ({ inputs }) => {
+    defineStep('passing ensure arguments', ({ }, ...inputs) => {
       actual.push(...inputs)
     })
     await ensure('passing ensure arguments', 1, 2, 3)
@@ -812,8 +805,7 @@ describe('ensure()', () => {
   })
 
   test('can call same ensure step twice', async () => {
-    defineStep('ensureTwice', async ({ spec, inputs }) => {
-      const expected = inputs[0]
+    defineStep('ensureTwice', async ({ spec }, expected) => {
       const s = await spec(() => Promise.resolve(expected))
       const actual = await s.subject()
 
@@ -836,7 +828,7 @@ describe('ensure()', () => {
 
   test('template match result is passed to handler after input', async () => {
     let values: any[] = []
-    defineStep('ensure template {id} {code}', ({ inputs }, id, code) => {
+    defineStep('ensure template {id} {code}', ({ }, id, code, ...inputs) => {
       values.push(...inputs, id, code)
     })
     const { ensure } = scenario('ensure with template')
@@ -845,7 +837,7 @@ describe('ensure()', () => {
   })
   test('template can specify type', async () => {
     let values: any[] = []
-    defineStep('ensure templateWithType {id:number} {enable:boolean} {pi:float}', ({ inputs }, id, enable, pi) => {
+    defineStep('ensure templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
       values.push(...inputs, id, enable, pi)
     })
     const { ensure } = scenario('ensure with template')
@@ -859,9 +851,7 @@ describe('ensure()', () => {
   test('ensure id is used as spec id', async () => {
     let result
     let id
-    defineStep('ensure spec - ensure server is up', async ({ spec, inputs }) => {
-      const host = inputs[0]
-
+    defineStep('ensure spec - ensure server is up', async ({ spec }, host) => {
       // spec() has no overload of spec(id, subject)
       const s = await spec(_ => Promise.resolve(true))
       id = s.id

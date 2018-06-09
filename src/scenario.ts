@@ -7,8 +7,11 @@ import { createSpec } from './specInternal';
 import { store } from './store';
 import { log } from './log';
 
-export interface SetupContext {
+export interface StepContext {
   spec<T>(subject: T): Promise<Spec<T>>,
+  /**
+   * @deprecated extra inputs are appended to the handler.
+   */
   inputs: any[],
   runSubStep(clause: string, ...inputs: any[]): Promise<any>
 }
@@ -149,9 +152,9 @@ function invokeHandler({ defaultId, mode, entry, record }, clause, inputs) {
         return parseFloat(v)
       return v
     })
-    return entry.handler({ inputs, spec, runSubStep }, ...values)
+    return entry.handler({ inputs, spec, runSubStep }, ...[...values, ...inputs])
   }
-  return entry.handler({ inputs, spec, runSubStep })
+  return entry.handler({ inputs, spec, runSubStep }, ...inputs)
 }
 
 export interface ScenarioSpec {
@@ -177,7 +180,7 @@ function createScenarioSpec(record, defaultId: string, mode: SpecMode): Scenario
   }
 }
 
-export function defineStep<C extends string>(clause: C, handler: (context: SetupContext, ...args: any[]) => any) {
+export function defineStep<C extends string>(clause: C, handler: (context: StepContext, ...args: any[]) => any) {
   const entry = store.steps.find(entry => {
     return entry.clause.toString() === clause.toString()
   })
