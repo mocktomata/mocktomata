@@ -1,0 +1,87 @@
+import { SpecRecord } from './interfaces'
+import { log } from './log'
+
+export function createFileIO() {
+  const path = require('path')
+  const KOMONDOR_FOLDER = '__komondor7__'
+  const SPECS_FOLDER = `${KOMONDOR_FOLDER}${path.sep}specs`
+  const SCENARIOS_FOLDER = `${KOMONDOR_FOLDER}${path.sep}scenarios`
+  const fs = require('fs')
+
+  return {
+    readSpec(id: string) {
+      return readFrom<SpecRecord>(SPECS_FOLDER, id)
+    },
+    writeSpec(id: string, record: SpecRecord) {
+      return writeTo(SPECS_FOLDER, id, JSON.stringify(record))
+    },
+    readScenario(id: string) {
+      return readFrom<any>(SCENARIOS_FOLDER, id)
+    },
+    writeScenario(id: string, record) {
+      return writeTo(SCENARIOS_FOLDER, id, JSON.stringify(record))
+    }
+  }
+
+  function readFrom<T>(baseDir: string, id: string) {
+    return new Promise<T>((a, r) => {
+      const filePath = getJsonFilePath(baseDir, id)
+      try {
+        const content = fs.readFileSync(filePath, 'utf8')
+        const json = JSON.parse(content)
+        a(json)
+      }
+      catch (err) {
+        // istanbul ignore next
+        r(err)
+      }
+    })
+  }
+
+  // istanbul ignore next
+  function createFolders(location: string) {
+    const sep = path.sep;
+    const initDir = path.isAbsolute(location) ? sep : '';
+    location.split(sep).reduce((parentDir, childDir) => {
+      const curDir = path.resolve(parentDir, childDir);
+      try {
+        if (!fs.existsSync(curDir))
+          fs.mkdirSync(curDir);
+      }
+      catch (err) {
+        if (err.code !== 'EEXIST') {
+          // istanbul ignore next
+          throw err;
+        }
+
+        log.info(`Directory ${curDir} already exists!`);
+      }
+
+      return curDir;
+    }, initDir);
+  }
+
+  function writeTo(baseDir, id, json) {
+    return new Promise<void>((a, r) => {
+      try {
+        const filePath = getJsonFilePath(baseDir, id)
+        const folder = path.dirname(filePath)
+        // istanbul ignore next
+        if (!fs.existsSync(folder))
+          createFolders(folder)
+        fs.writeFileSync(filePath, json)
+        a()
+      }
+      catch (err) {
+        // istanbul ignore next
+        r(err)
+      }
+    })
+  }
+
+  function getJsonFilePath(baseDir: string, id: string) {
+    const basename = path.basename(id)
+    const dirname = path.dirname(id)
+    return path.resolve(baseDir, dirname, `${basename}.json`)
+  }
+}
