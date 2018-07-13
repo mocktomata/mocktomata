@@ -88,11 +88,7 @@ k.trio('class/simple', (title, spec) => {
     const foo = new s.subject(1)
     const actual = foo.getValue()
     t.equal(actual, 1)
-    await s.satisfy([
-      { ...classConstructed('Foo', 1), instanceId: 1 },
-      { ...classMethodInvoked('getValue'), instanceId: 1, invokeId: 1 },
-      { ...classMethodReturned('getValue', 1), instanceId: 1, invokeId: 1 }
-    ])
+    await s.done()
   })
 })
 
@@ -103,11 +99,7 @@ k.trio('class/extend', (title, spec) => {
     const actual = boo.getPlusOne()
 
     t.equal(actual, 2)
-    await s.satisfy([
-      { ...classConstructed('Boo', 1), instanceId: 1 },
-      { ...classMethodInvoked('getPlusOne'), instanceId: 1, invokeId: 1 },
-      { ...classMethodReturned('getPlusOne', 2), instanceId: 1, invokeId: 1 }
-    ])
+    await s.done()
   })
 })
 
