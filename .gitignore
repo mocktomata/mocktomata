@@ -37,6 +37,9 @@ node_modules
 # webstorm
 .idea
 
+# vscode
+.vs
+
 # typings
 typings
 
