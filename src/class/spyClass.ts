@@ -3,8 +3,7 @@ import { SpyContext, SpyInstance } from 'komondor-plugin'
 export function spyClass(context: SpyContext, subject) {
   const SpiedSubject = new Proxy(subject, {
     construct(target, args) {
-      const obj = Object.create(subject.prototype)
-      this.apply(target, obj, args)
+      const obj = Reflect.construct(target, args, subject);
       const spyInstanceRecorder = context.newInstance(args, { className: subject.name })
       return spyInstance(spyInstanceRecorder, obj)
     },

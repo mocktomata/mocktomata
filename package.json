@@ -59,7 +59,7 @@
     "setupFiles": [
       "<rootDir>/scripts/setup-test-env.js"
     ],
-    "testRegex": ".*\\.spec.ts$",
+    "testRegex": "src/.*.spec.(t|j)s$",
     "transform": {
       ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
@@ -82,7 +82,7 @@
     "ts-jest": "^22.4.6",
     "tslint": "^5.10.0",
     "tslint-config-unional": "^0.9.4",
-    "typescript": "~2.8.4"
+    "typescript": "^2.9.2"
   },
   "dependencies": {
     "@unional/logging": "^0.5.3",
