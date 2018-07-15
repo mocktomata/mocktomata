@@ -710,6 +710,7 @@ describe('defineStep()', () => {
 
     t(subStepCalled)
   })
+
   test('runSubStep saves scenario with specs containing step chain', async () => {
     const filename = `${KOMONDOR_FOLDER}/scenarios/runSubStep save scenario.json`
     ensureFileNotExists(filename)
@@ -776,7 +777,6 @@ describe('defineStep()', () => {
 
     t.equal(actual, 'a-b-c')
   })
-
   test('do not invoke step with missing words', async () => {
     defineStep('create car {name} in {location}', async () => {
       return
@@ -784,6 +784,15 @@ describe('defineStep()', () => {
 
     const { run } = scenario('do not invoke step with missing words')
     await a.throws(run('create car model-3 in fremont street'), MissingHandler)
+  })
+
+  test('isDefined() returns false for not yet defined step', async () => {
+    t.equal(defineStep.isDefined('not yet defined'), false)
+  })
+
+  test('isDefined() returns true for already defined step', async () => {
+    defineStep('run test {name}', () => { return })
+    t.equal(defineStep.isDefined('run test {name}'), true)
   })
 })
 
