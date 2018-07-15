@@ -180,25 +180,31 @@ function createScenarioSpec(record, defaultId: string, mode: SpecMode): Scenario
   }
 }
 
-export function defineStep<C extends string>(clause: C, handler: (context: StepContext, ...args: any[]) => any) {
-  const entry = store.steps.find(entry => {
-    return entry.clause.toString() === clause.toString()
+export const defineStep = Object.assign(
+  function defineStep<C extends string>(clause: C, handler: (context: StepContext, ...args: any[]) => any) {
+    const entry = store.steps.find(entry => {
+      return entry.clause.toString() === clause.toString()
+    })
+    if (entry && entry.handler !== handler)
+      throw new DuplicateHandler(clause)
+    else if (isTemplate(clause)) {
+      const valueTypes: string[] = []
+      const regex = new RegExp(`^${clause.replace(/{([\w:]*)}/g, (_, value) => {
+        const m = /[\w]*:(\w*)/.exec(value)
+        valueTypes.push(m ? m[1].trim() : 'string')
+        return '([\\w\\.\\-]*)'
+      })}$`)
+      store.steps.push({ clause, handler, regex, valueTypes })
+    }
+    else {
+      store.steps.push({ clause, handler })
+    }
+  },
+  {
+    isDefined(clause: string) {
+      return store.steps.some(entry => entry.clause === clause)
+    }
   })
-  if (entry && entry.handler !== handler)
-    throw new DuplicateHandler(clause)
-  else if (isTemplate(clause)) {
-    const valueTypes: string[] = []
-    const regex = new RegExp(`^${clause.replace(/{([\w:]*)}/g, (_, value) => {
-      const m = /[\w]*:(\w*)/.exec(value)
-      valueTypes.push(m ? m[1].trim() : 'string')
-      return '([\\w\\.\\-]*)'
-    })}$`)
-    store.steps.push({ clause, handler, regex, valueTypes })
-  }
-  else {
-    store.steps.push({ clause, handler })
-  }
-}
 
 function isTemplate(clause: string) {
   return clause.search(/{([\w-=:]*)}/) >= 0
