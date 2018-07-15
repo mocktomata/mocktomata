@@ -791,8 +791,8 @@ describe('defineStep()', () => {
   })
 
   test('isDefined() returns true for already defined step', async () => {
-    defineStep('run test {name}', () => { return })
-    t.equal(defineStep.isDefined('run test {name}'), true)
+    defineStep('defined step for isDefined', () => { return })
+    t.equal(defineStep.isDefined('defined step for isDefined'), true)
   })
 })
 
