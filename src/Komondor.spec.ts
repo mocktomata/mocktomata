@@ -1,4 +1,4 @@
-test('no test yet')
+test('no test yet', () => { return })
 // import { Komondor } from './Komondor'
 // import { artifact } from '.';
 
