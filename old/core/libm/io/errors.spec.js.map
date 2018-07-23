@@ -1,0 +1,1 @@
+{"version":3,"file":"errors.spec.js","sourceRoot":"","sources":["../../src/io/errors.spec.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,MAAM,GAAG,CAAC;AAExC,IAAI,CAAC,gBAAgB,EAAE,GAAG,EAAE;IAC1B,MAAM,GAAG,GAAG,IAAI,mBAAmB,CAAC,QAAQ,CAAC,CAAC;IAE9C,MAAM,CAAC,GAAG,CAAC,QAAQ,CAAC,CAAC,IAAI,CAAC,QAAQ,CAAC,CAAA;AACrC,CAAC,CAAC,CAAA"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"createConfigFile.js","sourceRoot":"","sources":["../../src/test-util/createConfigFile.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,IAAI,CAAC;AACpB,OAAO,IAAI,MAAM,MAAM,CAAC;AAExB,MAAM,UAAU,gBAAgB,CAAC,GAAW,EAAE,MAAc;IAC1D,EAAE,CAAC,aAAa,CAAC,IAAI,CAAC,IAAI,CAAC,GAAG,EAAE,sBAAsB,CAAC,EAAE,IAAI,CAAC,SAAS,CAAC,MAAM,CAAC,CAAC,CAAA;AAClF,CAAC"}

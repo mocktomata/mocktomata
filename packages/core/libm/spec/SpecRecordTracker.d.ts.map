@@ -1,0 +1,1 @@
+{"version":3,"file":"SpecRecordTracker.d.ts","sourceRoot":"","sources":["../../src/spec/SpecRecordTracker.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,UAAU,EAAE,aAAa,EAAE,MAAM,SAAS,CAAC;AAEhE,qBAAa,iBAAiB;IAChB,OAAO,CAAC,MAAM;gBAAN,MAAM,EAAE,UAAU;IACtC,YAAY,CAAC,GAAG,EAAE,aAAa;IAG/B,SAAS,CAAC,MAAM,EAAE,UAAU;CAG7B"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"typesInternal.d.ts","sourceRoot":"","sources":["../../src/plugin/typesInternal.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,WAAW,CAAC;AACzC,OAAO,EAAE,cAAc,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAEnD,oBAAY,cAAc,GAAG,YAAY,CAAC,cAAc,EAAE,MAAM,CAAC,CAAA;AAEjE,oBAAY,iBAAiB,GAAG;IAC9B,EAAE,EAAE,QAAQ,CAAA;CACb,CAAA"}

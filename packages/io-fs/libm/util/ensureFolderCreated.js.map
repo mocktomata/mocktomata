@@ -1,0 +1,1 @@
+{"version":3,"file":"ensureFolderCreated.js","sourceRoot":"","sources":["../../src/util/ensureFolderCreated.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,IAAI,CAAC;AACpB,OAAO,MAAM,MAAM,QAAQ,CAAC;AAE5B,MAAM,UAAU,mBAAmB,CAAC,GAAW;IAC7C,IAAI,CAAC,EAAE,CAAC,UAAU,CAAC,GAAG,CAAC;QAAE,MAAM,CAAC,IAAI,CAAC,GAAG,CAAC,CAAA;AAC3C,CAAC"}

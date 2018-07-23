@@ -1,0 +1,1 @@
+{"version":3,"file":"findPlugin.js","sourceRoot":"","sources":["../../src/plugin/findPlugin.ts"],"names":[],"mappings":";;AAAA,kCAAiC;AAEjC,SAAgB,UAAU,CAAC,OAAY;IACrC,IAAM,OAAO,GAAG,aAAK,CAAC,GAAG,EAAE,CAAC,OAAO,CAAA;IACnC,OAAO,OAAO,CAAC,IAAI,CAAC,UAAA,CAAC,IAAI,OAAA,CAAC,CAAC,OAAO,CAAC,OAAO,CAAC,EAAlB,CAAkB,CAAC,CAAA;AAC9C,CAAC;AAHD,gCAGC"}
