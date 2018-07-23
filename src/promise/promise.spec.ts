@@ -104,7 +104,7 @@ k.trio('promise/resolve', (title, spec) => {
     // `await` will hide the error if the return value is not a promise.
     return promise.increment(s.subject, 2)
       .then(actual => {
-        t.equal(actual, 3)
+        t.strictEqual(actual, 3)
         return s.satisfy([
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
@@ -148,13 +148,13 @@ k.trio('promise with callback in between', 'promise/inBetween', (title, spec) =>
     let fooing
     return new Promise(a => {
       fooing = s.subject(2, msg => {
-        t.equal(msg, 'called')
+        t.strictEqual(msg, 'called')
         a()
       })
     })
       .then(() => fooing)
       .then(actual => {
-        t.equal(actual, 3)
+        t.strictEqual(actual, 3)
         return s.satisfy([
           { ...functionConstructed({ functionName: 'foo' }), instanceId: 1 },
           { ...functionInvoked(2), invokeId: 1, instanceId: 1 },
@@ -176,7 +176,7 @@ k.trio('promise/returns/function', (title, spec) => {
     // `await` will hide the error if the return value is not a promise.
     return promise.increment(s.subject, 2)
       .then(actualFn => {
-        t.equal(actualFn(), 3)
+        t.strictEqual(actualFn(), 3)
         return s.satisfy([
           { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
           { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },

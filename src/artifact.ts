@@ -5,7 +5,7 @@ import { store } from './store'
 /**
  * create an artifact out of the original value.
  * Note that artifact object cannot be used in enumerating comparision,
- * such as `t.deepEqual()`.
+ * such as `t.deepStrictEqual()`.
  * @param original original value. It should be simple object (think struct)
  */
 export function artifact<T = any>(id: string, original?: T): T {

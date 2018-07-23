@@ -41,16 +41,16 @@ test('acceptance', async () => {
 })
 
 test('get same object if nothing to spy on', async () => {
-  t.deepEqual(await testObject({}), {})
-  t.deepEqual(await testObject({ a: 1 }), { a: 1 })
-  t.deepEqual(await testObject({ a: true }), { a: true })
-  t.deepEqual(await testObject({ a: 'a' }), { a: 'a' })
+  t.deepStrictEqual(await testObject({}), {})
+  t.deepStrictEqual(await testObject({ a: 1 }), { a: 1 })
+  t.deepStrictEqual(await testObject({ a: true }), { a: true })
+  t.deepStrictEqual(await testObject({ a: 'a' }), { a: 'a' })
 })
 
 async function testObject(expected) {
   const objSpec = await spec(() => expected)
   const actual = objSpec.subject()
-  t.deepEqual(actual, expected)
+  t.deepStrictEqual(actual, expected)
   return actual
 }
 
@@ -172,7 +172,7 @@ k.trio('function/fetch/success', (title, spec) => {
       { ...functionReturned(), instanceId: 2, invokeId: 1 },
       { ...functionReturned(), instanceId: 1, invokeId: 1 }
     ])
-    t.equal(actual, 3)
+    t.strictEqual(actual, 3)
   })
 })
 
@@ -199,7 +199,7 @@ k.trio('function/literalCallback/success', (title, spec) => {
     const s = await spec(literalCallback.success)
     const actual = await literalCallback.increment(s.subject, 2)
 
-    t.equal(actual, 3)
+    t.strictEqual(actual, 3)
 
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
@@ -237,7 +237,7 @@ k.trio('function/synchronous/success', (title, spec) => {
     const speced = await spec(synchronous.success)
     const actual = synchronous.increment(speced.subject, 2)
 
-    t.equal(actual, 3)
+    t.strictEqual(actual, 3)
     await speced.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
       { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
@@ -264,7 +264,7 @@ k.trio('function/recursive/twoCalls', (title, spec) => {
   test(title, async () => {
     const s = await spec(recursive.success)
     const actual = await recursive.decrementToZero(s.subject, 2)
-    t.equal(actual, 0)
+    t.strictEqual(actual, 0)
 
     await s.satisfy([
       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
@@ -317,9 +317,9 @@ k.trio('function/arrayArgs/success', (title, spec) => {
     const s = await spec(function takeArray(name, args) { return { name, args } })
     const actual = s.subject('node', ['--version'])
 
-    t.equal(actual.name, 'node')
+    t.strictEqual(actual.name, 'node')
     t(Array.isArray(actual.args))
-    t.equal(actual.args[0], '--version')
+    t.strictEqual(actual.args[0], '--version')
     await s.satisfy([])
   })
 })
@@ -333,8 +333,8 @@ k.trio('function/composite', (title, spec) => {
       }
     )
     const s = await spec(subject)
-    t.equal(s.subject(3), 3)
-    t.equal(s.subject.type, 'func')
+    t.strictEqual(s.subject(3), 3)
+    t.strictEqual(s.subject.type, 'func')
     await s.done()
   })
 })

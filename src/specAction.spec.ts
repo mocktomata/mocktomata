@@ -7,7 +7,7 @@ import { BaseError } from 'make-error'
 
 test('serialize error', () => {
   const actual = makeSerializableAction(specAction({ payload: new Error('foo') }))
-  t.deepEqual(actual.payload, { message: 'foo', prototype: 'Error' })
+  t.deepStrictEqual(actual.payload, { message: 'foo', prototype: 'Error' })
 })
 
 test('serialize custom error', () => {
@@ -20,7 +20,7 @@ test('serialize custom error', () => {
     }
   }
   const actual = makeSerializableAction(specAction({ payload: new CustomError('cat') }))
-  t.deepEqual(actual.payload, { message: 'error with cat', value: 'cat', prototype: 'Error' })
+  t.deepStrictEqual(actual.payload, { message: 'error with cat', value: 'cat', prototype: 'Error' })
 })
 
 test('circular reference', () => {
@@ -29,7 +29,7 @@ test('circular reference', () => {
   const actual = makeSerializableAction(specAction({
     payload
   }))
-  t.deepEqual(actual, { payload: [{ cir: '[circular:0]' }] })
+  t.deepStrictEqual(actual, { payload: [{ cir: '[circular:0]' }] })
 })
 
 describe('isMismatchAction()', () => {

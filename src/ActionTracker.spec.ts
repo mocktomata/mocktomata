@@ -32,7 +32,7 @@ test('will invoke callback in arguments with error', async () => {
   tracker.received({
     ...functionInvoked(2, err => {
       o.once(1)
-      t.equal(err.message, 'fail')
+      t.strictEqual(err.message, 'fail')
     }),
     instanceId: 1,
     invokeId: 1
@@ -50,7 +50,7 @@ test('invoke callback in literal inside arguments', async () => {
       error() { return },
       success(value) {
         o.once(1)
-        t.equal(value, 3)
+        t.strictEqual(value, 3)
       }
     }),
     instanceId: 1,
@@ -86,8 +86,8 @@ test('Missing return action throws SimulationMismatch', async () => {
   ])
 
   const err = await a.throws(() => tracker.received(invoke), SimulationMismatch)
-  t.deepEqual(err.expected, { type: 'function', name: 'return', instanceId: 1, invokeId: 1 })
-  t.deepEqual(err.actual, undefined)
+  t.deepStrictEqual(err.expected, { type: 'function', name: 'return', instanceId: 1, invokeId: 1 })
+  t.deepStrictEqual(err.actual, undefined)
 })
 
 test('resolving promise', async () => {
@@ -98,7 +98,7 @@ test('resolving promise', async () => {
     t(tracker.succeed())
     tracker.result().then(v => a(v))
   })
-  t.equal(actual, 3)
+  t.strictEqual(actual, 3)
 })
 
 test('promise/inBetween', async () => {
@@ -109,13 +109,13 @@ test('promise/inBetween', async () => {
     tracker.received({
       ...functionInvoked(2, v => {
         o.once(1)
-        t.equal(v, 'called')
+        t.strictEqual(v, 'called')
       }), instanceId: 1, invokeId: 1
     })
     t(tracker.succeed())
     tracker.result().then(v => a(v))
   })
-  t.equal(actual, 3)
+  t.strictEqual(actual, 3)
 })
 
 async function setupTrackerTest(specId: string) {
