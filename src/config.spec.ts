@@ -60,7 +60,7 @@ test(`config.spec('simulate') will force all specs in simulate mode`, async () =
   // const actual = await simpleCallback.increment(s.subject, 2)
   // await s.satisfy(forceReplaySuccessExpectation)
 
-  // t.equal(actual, 3)
+  // t.strictEqual(actual, 3)
 
   config.spec('simulate')
 
@@ -69,7 +69,7 @@ test(`config.spec('simulate') will force all specs in simulate mode`, async () =
 
   await s.satisfy(forceReplaySuccessExpectation)
 
-  t.equal(actual, 3)
+  t.strictEqual(actual, 3)
 })
 
 test('config.spec() can filter for specific spec', async () => {
@@ -118,7 +118,7 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
   config.spec('live')
   const sucessSpec = await spec.simulate('config/forceReplayFail', simpleCallback.success)
   const actual = await simpleCallback.increment(sucessSpec.subject, 2)
-  t.equal(actual, 3)
+  t.strictEqual(actual, 3)
 
   await sucessSpec.satisfy(forceReplaySuccessExpectation)
 })
@@ -126,21 +126,21 @@ test(`config.spec() can use 'live' mode to switch spec in simulation to make liv
 test(`config.spec('save'|'simulate') will cause spec with no id to throw`, async () => {
   config.spec('save')
   const err: MissingSpecID = await a.throws(spec(simpleCallback.success), MissingSpecID)
-  t.equal(err.mode, 'save')
+  t.strictEqual(err.mode, 'save')
 
   config.spec('simulate')
   const err2: MissingSpecID = await a.throws(spec(simpleCallback.success), MissingSpecID)
-  t.equal(err2.mode, 'simulate')
+  t.strictEqual(err2.mode, 'simulate')
 })
 
 
 test('config.given() with no filter sets mode for all environments', async () => {
   config.given('live')
   onGiven('config all 1', ({ mode }) => {
-    t.equal(mode, 'live')
+    t.strictEqual(mode, 'live')
   })
   onGiven('config all 2', ({ mode }) => {
-    t.equal(mode, 'live')
+    t.strictEqual(mode, 'live')
   })
   return Promise.all([
     given.simulate('config all 1'),
@@ -151,10 +151,10 @@ test('config.given() with no filter sets mode for all environments', async () =>
 test('config.given() can filter by string', async () => {
   config.given('live', 'config specific yes')
   onGiven('config specific yes', ({ mode }) => {
-    t.equal(mode, 'live')
+    t.strictEqual(mode, 'live')
   })
   onGiven('config specific no', ({ mode }) => {
-    t.equal(mode, 'simulate')
+    t.strictEqual(mode, 'simulate')
   })
   return Promise.all([
     given.simulate('config specific yes'),
@@ -165,10 +165,10 @@ test('config.given() can filter by string', async () => {
 test('config.given() can filter by regex', async () => {
   config.given('live', /yes/)
   onGiven('config regex yes', ({ mode }) => {
-    t.equal(mode, 'live')
+    t.strictEqual(mode, 'live')
   })
   onGiven('config regex no', ({ mode }) => {
-    t.equal(mode, 'simulate')
+    t.strictEqual(mode, 'simulate')
   })
   return Promise.all([
     given.simulate('config regex yes'),
@@ -187,7 +187,7 @@ test(`config.given('live') will force spec.sim() to spec()`, async () => {
 
     const simpleSpec = await spec.simulate('simpleCallback', success)
     const actual = await simpleCallback.increment(simpleSpec.subject, 2)
-    t.equal(actual, 3)
+    t.strictEqual(actual, 3)
   })
   order.end()
 })
@@ -195,13 +195,13 @@ test(`config.given('live') will force spec.sim() to spec()`, async () => {
 test(`config.given('save') to force live to save`, async () => {
   config.given('save', 'live to save')
 
-  await given('live to save', async ({ spec }) => t.equal(spec.name, 'specSave'))
+  await given('live to save', async ({ spec }) => t.strictEqual(spec.name, 'specSave'))
 })
 
 test(`config.given('save') to force simulate to save`, async () => {
   config.given('save', 'simulate to save')
 
-  await given.simulate('simulate to save', async ({ spec }) => t.equal(spec.name, 'specSave'))
+  await given.simulate('simulate to save', async ({ spec }) => t.strictEqual(spec.name, 'specSave'))
 })
 
 test('register plugin manually', () => {

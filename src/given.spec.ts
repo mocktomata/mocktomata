@@ -34,8 +34,8 @@ import {
 
 //     const game = new Game([cavern1, cavern2], player)
 //     game.playerMove('west')
-//     t.equal(cavern1.objects.length, 0)
-//     t.equal(cavern2.objects[0], player)
+//     t.strictEqual(cavern1.objects.length, 0)
+//     t.strictEqual(cavern2.objects[0], player)
 //   })
 
 test('no handler registered throws MissingGivenHandler', async () => {
@@ -77,10 +77,10 @@ test('using given twice will only invoke handler once', async () => {
     return { a: 1 }
   })
 
-  t.deepEqual((await given('invoke once')).fixture, { a: 1 })
+  t.deepStrictEqual((await given('invoke once')).fixture, { a: 1 })
 
   // in another test
-  t.deepEqual((await given('invoke once')).fixture, { a: 1 })
+  t.deepStrictEqual((await given('invoke once')).fixture, { a: 1 })
 
   order.end()
 })
@@ -89,14 +89,14 @@ test('resulting env.fixture contains information provided by the handler', async
   onGiven('returning context', () => ({ a: 1 }))
 
   const actual = await given<{ a: number }>('returning context')
-  t.deepEqual(actual.fixture, { a: 1 })
+  t.deepStrictEqual(actual.fixture, { a: 1 })
 })
 
 test('receives async given context from the handler', async () => {
   onGiven('returning async context', () => Promise.resolve({ a: 1 }))
 
   const actual = await given<{ a: number }>('returning async context')
-  t.deepEqual(actual.fixture, { a: 1 })
+  t.deepStrictEqual(actual.fixture, { a: 1 })
 })
 
 test('with localHandler, MissingGivenHandler will not be thrown', () => {
@@ -111,21 +111,21 @@ test('define localHandler while already has a handler throws DupHandler error', 
 
 test('receive context from localHandler', async () => {
   const actual = await given('returning localHandler context', () => ({ b: 2 }))
-  t.deepEqual(actual.fixture, { b: 2 })
+  t.deepStrictEqual(actual.fixture, { b: 2 })
 })
 
 test('receive async context from localHandler', async () => {
   const actual = await given<{ b: number }>(
     'returning async localHandler context',
     () => Promise.resolve({ b: 2 }))
-  t.deepEqual(actual.fixture, { b: 2 })
+  t.deepStrictEqual(actual.fixture, { b: 2 })
 })
 
 test('given.simulate() calls handler with mode = simulate', async () => {
   const o = new AssertOrder(1)
   onGiven('simulate mode', ({ mode }) => {
     o.once(1)
-    t.equal(mode, 'simulate')
+    t.strictEqual(mode, 'simulate')
   })
 
   await given.simulate('simulate mode')
@@ -137,7 +137,7 @@ test('given.simulate() calls local handler with mode = simulate', async () => {
 
   await given.simulate('simulate mode with local handler', ({ mode }) => {
     o.once(1)
-    t.equal(mode, 'simulate')
+    t.strictEqual(mode, 'simulate')
   })
   o.end()
 })
@@ -149,9 +149,9 @@ test('given.simulate() will force spec to simulate', async () => {
     t.fail('should not reach')
   }
   onGiven('simulate calling env', async ({ mode, spec }) => {
-    t.equal(mode, 'simulate')
+    t.strictEqual(mode, 'simulate')
     const s = await spec('given/simulate/spec', success)
-    s.subject(2, (_, a) => t.equal(a, 3))
+    s.subject(2, (_, a) => t.strictEqual(a, 3))
 
     return s.satisfy([
       functionConstructed(),
@@ -171,9 +171,9 @@ test('given.simulate() will force spec in localHandler to simulate', async () =>
   }
 
   await given.simulate('simulate calling env with localHandler', async ({ mode, spec }) => {
-    t.equal(mode, 'simulate')
+    t.strictEqual(mode, 'simulate')
     const s = await spec('given/simulate/spec', success)
-    s.subject(2, (_, a) => t.equal(a, 3))
+    s.subject(2, (_, a) => t.strictEqual(a, 3))
 
     return s.satisfy([
       functionConstructed(),
@@ -227,11 +227,11 @@ test('save() will record specs used', async () => {
   }
   await given.save('save record with spec', async ({ spec }) => {
     const cbSpec = await spec('given/with spec', success)
-    cbSpec.subject(2, (_err, a) => t.equal(a, 3))
+    cbSpec.subject(2, (_err, a) => t.strictEqual(a, 3))
     await cbSpec.satisfy([])
   })
   const actual = JSON.parse(fs.readFileSync(path.resolve(GIVENS_FOLDER, 'save record with spec.json'), 'utf-8'))
-  t.equal(actual.specs[0], 'given/with spec')
+  t.strictEqual(actual.specs[0], 'given/with spec')
   t(fs.existsSync(path.resolve(SPECS_FOLDER, 'given/with spec.json')))
 })
 
@@ -241,12 +241,12 @@ test('save() will save spec info from global handler', async () => {
   }
   onGiven('save record with spec in global handler', async ({ spec }) => {
     const cbSpec = await spec('given/with spec in global handler', success)
-    cbSpec.subject(2, (_err, a) => t.equal(a, 3))
+    cbSpec.subject(2, (_err, a) => t.strictEqual(a, 3))
     await cbSpec.satisfy([])
   })
   await given.save('save record with spec in global handler')
   const actual = JSON.parse(fs.readFileSync(path.resolve(GIVENS_FOLDER, 'save record with spec in global handler.json'), 'utf-8'))
-  t.equal(actual.specs[0], 'given/with spec in global handler')
+  t.strictEqual(actual.specs[0], 'given/with spec in global handler')
   t(fs.existsSync(path.resolve(SPECS_FOLDER, 'given/with spec in global handler.json')))
 })
 
@@ -258,20 +258,20 @@ test('save() will not cause spec.simulate() to save', async () => {
   const stats = fs.statSync(specPath)
   await given.save('save record with spec.simulate', async ({ spec }) => {
     const cbSpec = await spec.simulate('given/with spec.simulate', success)
-    cbSpec.subject(2, (_err, a) => t.equal(a, 3))
+    cbSpec.subject(2, (_err, a) => t.strictEqual(a, 3))
     await cbSpec.satisfy([])
   })
   const actual = JSON.parse(fs.readFileSync(path.resolve(GIVENS_FOLDER, 'save record with spec.simulate.json'), 'utf-8'))
-  t.equal(actual.specs[0], 'given/with spec.simulate')
+  t.strictEqual(actual.specs[0], 'given/with spec.simulate')
   const newStats = fs.statSync(specPath)
-  t.equal(stats.mtime.getTime(), newStats.mtime.getTime())
+  t.strictEqual(stats.mtime.getTime(), newStats.mtime.getTime())
 })
 
 test('calling live after simulate should invoke handler', async () => {
   const o = new AssertOrder(2)
   onGiven('live after sim', ({ mode }) => {
-    o.wait(1).then(() => t.equal(mode, 'simulate'))
-    o.wait(2).then(() => t.equal(mode, 'live'))
+    o.wait(1, () => t.strictEqual(mode, 'simulate'))
+    o.wait(2, () => t.strictEqual(mode, 'live'))
     o.any([1, 2])
   })
 

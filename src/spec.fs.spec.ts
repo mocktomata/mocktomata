@@ -20,7 +20,7 @@ k.simulate('spec/fs/readStream/success', (title, spec) => {
     const s = await spec(read)
     const file = fs.createReadStream('fixtures/file.txt')
     const actual = await s.subject(file)
-    t.equal(actual, 'file\n')
+    t.strictEqual(actual, 'file\n')
 
     await s.done()
   })

@@ -87,7 +87,7 @@ k.trio('class/simple', (title, spec) => {
     const s = await spec(Foo)
     const foo = new s.subject(1)
     const actual = foo.getValue()
-    t.equal(actual, 1)
+    t.strictEqual(actual, 1)
     await s.done()
   })
 })
@@ -98,7 +98,7 @@ k.trio('class/extend', (title, spec) => {
     const boo = new s.subject(1)
     const actual = boo.getPlusOne()
 
-    t.equal(actual, 2)
+    t.strictEqual(actual, 2)
     await s.done()
   })
 })
@@ -122,10 +122,10 @@ k.trio('class/withCallback', (title, spec) => {
     cb.justDo(1)
     await new Promise(a => {
       cb.callback(v => {
-        t.equal(v, 'called')
+        t.strictEqual(v, 'called')
       })
       cb.callback(v => {
-        t.equal(v, 'called')
+        t.strictEqual(v, 'called')
         a()
       })
     })
@@ -164,7 +164,7 @@ k.trio('method returning promise should have result of promise saved in payload'
       const p = new s.subject()
       const actual = await p.increment(3)
 
-      t.equal(actual, 4)
+      t.strictEqual(actual, 4)
       await s.satisfy([
         { ...classConstructed('WithPromise'), instanceId: 1 },
         { ...classMethodInvoked('increment', 3), instanceId: 1, invokeId: 1 },
@@ -232,7 +232,7 @@ k.trio('internal method invocation will not be recorded', 'class/internal', (tit
   test(title, async () => {
     const s = await spec(InvokeInternal)
     const a = new s.subject()
-    t.equal(a.do(), 'do')
+    t.strictEqual(a.do(), 'do')
 
     await s.satisfy([
       { ...classConstructed('InvokeInternal'), instanceId: 1 },
@@ -248,7 +248,7 @@ k.trio('capture parent class call', 'class/parentCall', (title, spec) => {
     class Child extends Parent { }
     const s = await spec(Child)
     const a = new s.subject()
-    t.equal(a.do(), 'do')
+    t.strictEqual(a.do(), 'do')
 
     await s.satisfy([
       { ...classConstructed('Child'), instanceId: 1 },
@@ -274,9 +274,9 @@ k.trio('should not record inner call when using Promise', 'class/promisWithInner
     }
     const s = await spec(PromiseInner)
     const a = new s.subject()
-    t.equal(await a.do(), 'inner')
+    t.strictEqual(await a.do(), 'inner')
 
-    t.equal(s.actions.length, 5)
+    t.strictEqual(s.actions.length, 5)
     await s.satisfy([
       { ...classConstructed('PromiseInner'), instanceId: 1 },
       { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
@@ -302,9 +302,9 @@ test('promise should not invoke actual code', async () => {
   const s = await spec.simulate('class/simulateNotInvokeInner', PromiseInner)
   const a = new s.subject()
   // tslint:disable-next-line
-  t.equal(await a.do(), 'inner')
+  t.strictEqual(await a.do(), 'inner')
 
-  t.equal(s.actions.length, 5)
+  t.strictEqual(s.actions.length, 5)
   await s.satisfy([
     { ...classConstructed('PromiseInner'), instanceId: 1 },
     { ...classMethodInvoked('do'), instanceId: 1, invokeId: 1 },
@@ -320,7 +320,7 @@ k.trio('not using spec', 'class/notUsedSpec', (title, spec) => {
     }
     const s = await spec(Foo)
     const foo = new s.subject()
-    t.equal(call(foo), 'called')
+    t.strictEqual(call(foo), 'called')
 
     await s.satisfy([
       { ...classConstructed('Foo'), instanceId: 1 }
@@ -384,7 +384,7 @@ k.trio('class with circular reference', 'class/circular', (title, spec) => {
       actual = data.value
     })
 
-    t.equal(actual, 'echo')
+    t.strictEqual(actual, 'echo')
     await s.done()
   })
 })
@@ -399,7 +399,7 @@ k.trio('class with circular reference accessing', 'class/circularAccess', (title
       actual = data.cirRef.value
     })
 
-    t.equal(actual, 'echo')
+    t.strictEqual(actual, 'echo')
     await s.done()
   })
 })
@@ -443,7 +443,7 @@ k.trio('callback with', 'class/callbackWithComplexObject', (title, spec) => {
       channel.stdio.on(data => actual = data)
     })
 
-    t.equal(actual, 'echo')
+    t.strictEqual(actual, 'echo')
     await s.done()
   })
 })
@@ -455,7 +455,7 @@ k.trio('class/callbackWithComposite', (title, spec) => {
         return this.internal(compositeFn)
       }
       internal(input) {
-        t.equal(input.value, 'xyz')
+        t.strictEqual(input.value, 'xyz')
         return input
       }
     }
@@ -468,7 +468,7 @@ k.trio('class/callbackWithComposite', (title, spec) => {
     const s = await spec(Foo)
     const f = new s.subject()
     const actual = f.on(fn)
-    t.equal(actual.value, 'xyz')
+    t.strictEqual(actual.value, 'xyz')
 
     await s.done()
   })
@@ -482,10 +482,10 @@ k.trio('class/withProperty', (title, spec) => {
   test(title, async () => {
     const s = await spec(WithProperty)
     const p = new s.subject()
-    t.equal(p.do(2), 2)
-    t.equal(p.y, 1)
+    t.strictEqual(p.do(2), 2)
+    t.strictEqual(p.y, 1)
     p.y = 3
-    t.equal(p.y, 3)
+    t.strictEqual(p.y, 3)
     await s.done()
   })
 })

@@ -9,7 +9,7 @@ import k from './testUtil'
 describe('loadConfig()', () => {
   test('load config', () => {
     const config = loadConfig('./fixtures/single-plugin')
-    t.equal(config.plugins[0], 'komondor-plugin-single')
+    t.strictEqual(config.plugins[0], 'komondor-plugin-single')
   })
 })
 
@@ -20,21 +20,23 @@ describe('registerPlugin()', () => {
     o.end()
   })
   test('register with same name will throw', () => {
-    registerPlugin({
-      activate(r: Registrar) {
-        r.register(
-          'x',
-          () => false,
-          x => x,
-          (_context, subject) => subject
-        )
-        a.throws(() => r.register(
-          'x',
-          () => false,
-          x => x,
-          (_context, subject) => subject
-        ), DuplicatePlugin)
-      }
+    return new Promise(resolve => {
+      registerPlugin({
+        activate(r: Registrar) {
+          r.register(
+            'x',
+            () => false,
+            x => x,
+            (_context, subject) => subject
+          )
+          resolve(a.throws(() => r.register(
+            'x',
+            () => false,
+            x => x,
+            (_context, subject) => subject
+          ), DuplicatePlugin))
+        }
+      })
     })
   })
 })
@@ -112,12 +114,12 @@ test('onAny() will trigger when any aciton is added', async () => {
 describe('loadPlugin()', () => {
   test('load a plugin without activate() will throw', async () => {
     const err = await a.throws(() => loadPlugin('fixtures/no-activate', 'no-activate-plugin'), InvalidPlugin)
-    t.equal(err.pluginName, 'no-activate-plugin')
+    t.strictEqual(err.pluginName, 'no-activate-plugin')
   })
   test('load a plugin', async () => {
     loadPlugin('fixtures/single-plugin', 'komondor-plugin-single')
     const actual = plugins[0]
-    t.equal(actual.type, 'single')
+    t.strictEqual(actual.type, 'single')
     plugins.splice(0, 1)
   })
 })

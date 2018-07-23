@@ -3,16 +3,16 @@ import t from 'assert'
 import { isInstance } from './isInstance'
 
 test('primitives is false', () => {
-  t.equal(isInstance(1), false)
-  t.equal(isInstance(true), false)
-  t.equal(isInstance('a'), false)
-  t.equal(isInstance(undefined), false)
-  t.equal(isInstance(null), false)
+  t.strictEqual(isInstance(1), false)
+  t.strictEqual(isInstance(true), false)
+  t.strictEqual(isInstance('a'), false)
+  t.strictEqual(isInstance(undefined), false)
+  t.strictEqual(isInstance(null), false)
 })
 
 test('object literal is false', () => {
-  t.equal(isInstance({}), false)
-  t.equal(isInstance({ a: 1 }), false)
+  t.strictEqual(isInstance({}), false)
+  t.strictEqual(isInstance({ a: 1 }), false)
 })
 
 test('Empty class instance is true', () => {
@@ -22,5 +22,5 @@ test('Empty class instance is true', () => {
 
 test('object without prototype is false', () => {
   const subject = Object.create(null, {})
-  t.equal(isInstance(subject), false)
+  t.strictEqual(isInstance(subject), false)
 })

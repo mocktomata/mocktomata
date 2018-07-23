@@ -29,6 +29,6 @@ test('no test yet', () => { return })
 //     return game.movePlayer(direction)
 //   })
 //   k.then(`the player is in @cavern`, async ({ game }, cavern) => {
-//     t.equal(await game.getPlayerCavern(), cavern)
+//     t.strictEqual(await game.getPlayerCavern(), cavern)
 //   })
 // })

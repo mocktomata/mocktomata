@@ -84,7 +84,7 @@ describe('acceptance', () => {
     await api.renameUser('unional', 'homa')
     const user = await api.getUser('homa')
 
-    t.equal(user.username, 'homa')
+    t.strictEqual(user.username, 'homa')
     await s.done()
 
     await teardown('delete user homa', server)
@@ -96,7 +96,7 @@ describe('setup()', () => {
   test('throws MissingHandler if no handler is defined', async () => {
     const { setup } = scenario('no handler')
     const err = await a.throws(() => setup('no setup handler'), MissingHandler)
-    t.equal(err.message, `Handler for 'no setup handler' not found.`)
+    t.strictEqual(err.message, `Handler for 'no setup handler' not found.`)
   })
 
   test('arguments are passed to setup handler as inputs', async () => {
@@ -106,7 +106,7 @@ describe('setup()', () => {
       actual.push(...inputs)
     })
     await setup('passing setup arguments', 1, 2, 3)
-    t.deepEqual(actual, [1, 2, 3])
+    t.deepStrictEqual(actual, [1, 2, 3])
   })
 
   test('can call same setup step twice', async () => {
@@ -114,7 +114,7 @@ describe('setup()', () => {
       const s = await spec(() => Promise.resolve(expected))
       const actual = await s.subject()
 
-      t.equal(actual, expected)
+      t.strictEqual(actual, expected)
       await s.done()
     });
 
@@ -138,7 +138,7 @@ describe('setup()', () => {
     })
     const { setup } = scenario('setup with template')
     await setup('setup template 123 abc', 'x')
-    t.deepEqual(values, ['x', '123', 'abc'])
+    t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
   test('template can specify type', async () => {
     let values: any[] = []
@@ -147,7 +147,7 @@ describe('setup()', () => {
     })
     const { setup } = scenario('setup with template')
     await setup('setup templateWithType 123 true 3.14', 'x')
-    t.equal(values[0], 'x')
+    t.strictEqual(values[0], 'x')
     t.strictEqual(values[1], 123)
     t.strictEqual(values[2], true)
     t.strictEqual(values[3], 3.14)
@@ -168,9 +168,9 @@ describe('setup()', () => {
     const { setup } = scenario('setup spec')
     const host = artifact('setup host', '10.0.0.1')
     const actual = await setup('setup spec - ensure server is up', host)
-    t.equal(result, true)
-    t.equal(actual, true)
-    t.equal(id, 'setup spec - ensure server is up')
+    t.strictEqual(result, true)
+    t.strictEqual(actual, true)
+    t.strictEqual(id, 'setup spec - ensure server is up')
   })
 
   test('scenario.save() will cause spec in onSetup to save', async () => {
@@ -207,8 +207,8 @@ describe('setup()', () => {
     const o = new AssertOrder(2)
     defineStep('simulate setup', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
-      o.on(1, () => t.equal(s.mode, 'save'))
-      o.on(2, () => t.equal(s.mode, 'simulate'))
+      o.on(1, () => t.strictEqual(s.mode, 'save'))
+      o.on(2, () => t.strictEqual(s.mode, 'simulate'))
       o.any([1, 2])
       await s.subject(0)
       await s.done()
@@ -233,7 +233,7 @@ describe('setup()', () => {
     await setup('throw step')
 
     const actual = m.logs[0]
-    t.deepEqual(actual, {
+    t.deepStrictEqual(actual, {
       id: 'komondor', level: logLevel.warn, messages: [
         `scenario.save(throwing setup will pass and emit warning)
 - setup(throw step) throws, is it safe to ignore?
@@ -249,7 +249,7 @@ describe('run()', () => {
   test('throws MissingHandler if no handler is defined', async () => {
     const { run } = scenario('no handler')
     const err = await a.throws(() => run('no run handler'), MissingHandler)
-    t.equal(err.message, `Handler for 'no run handler' not found.`)
+    t.strictEqual(err.message, `Handler for 'no run handler' not found.`)
   })
 
   test('arguments are passed to run handler as inputs', async () => {
@@ -259,13 +259,13 @@ describe('run()', () => {
       actual.push(...inputs)
     })
     await run('passing run arguments', 1, 2, 3)
-    t.deepEqual(actual, [1, 2, 3])
+    t.deepStrictEqual(actual, [1, 2, 3])
   })
 
   test('duplicate handler throws DuplicateHandler', async () => {
     defineStep('duplicate run', () => { return })
     const err = await a.throws(() => defineStep('duplicate run', () => { return }), DuplicateHandler)
-    t.equal(err.message, `Handler for 'duplicate run' is already defined.`)
+    t.strictEqual(err.message, `Handler for 'duplicate run' is already defined.`)
   })
 
   test('template match result is passed to handler after input', async () => {
@@ -275,7 +275,7 @@ describe('run()', () => {
     })
     const { run } = scenario('run with template')
     await run('run template 123 abc', 'x')
-    t.deepEqual(values, ['x', '123', 'abc'])
+    t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
   test('template can specify type', async () => {
     let values: any[] = []
@@ -284,7 +284,7 @@ describe('run()', () => {
     })
     const { run } = scenario('run with template')
     await run('run templateWithType 123 true 3.14', 'x')
-    t.equal(values[0], 'x')
+    t.strictEqual(values[0], 'x')
     t.strictEqual(values[1], 123)
     t.strictEqual(values[2], true)
     t.strictEqual(values[3], 3.14)
@@ -305,9 +305,9 @@ describe('run()', () => {
     const { run } = scenario('run spec')
     const host = artifact('run host', '10.0.0.1')
     const actual = await run('run spec - ensure server is up', host)
-    t.equal(result, true)
-    t.equal(actual, true)
-    t.equal(id, 'run spec - ensure server is up')
+    t.strictEqual(result, true)
+    t.strictEqual(actual, true)
+    t.strictEqual(id, 'run spec - ensure server is up')
   })
   test('scenario.save() will cause spec in run to save', async () => {
     defineStep('simple saving run', async ({ spec }) => {
@@ -341,8 +341,8 @@ describe('run()', () => {
     const o = new AssertOrder(2)
     defineStep('simulate run', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
-      o.on(1, () => t.equal(s.mode, 'save'))
-      o.on(2, () => t.equal(s.mode, 'simulate'))
+      o.on(1, () => t.strictEqual(s.mode, 'save'))
+      o.on(2, () => t.strictEqual(s.mode, 'simulate'))
       o.any([1, 2])
       await s.subject(0)
       await s.done()
@@ -394,31 +394,31 @@ describe('run()', () => {
 describe('spec()', () => {
   test('spec does not have spec.save and spec.simulate', async () => {
     const { spec } = scenario('spec without save and simulate')
-    t.equal(spec['save'], undefined)
-    t.equal(spec['simulate'], undefined)
+    t.strictEqual(spec['save'], undefined)
+    t.strictEqual(spec['simulate'], undefined)
   })
 
   test('spec id is optional', async () => {
     const { spec } = scenario('optional-spec-id')
     const s = await spec(() => Promise.resolve(true))
-    t.equal(s.id, 'spec')
+    t.strictEqual(s.id, 'spec')
   })
 
   test('spec mode follows scenario mode', async () => {
     const liveScenario = scenario('spec-scenario')
     const liveSpec = await liveScenario.spec(() => Promise.resolve(true))
-    t.equal(liveSpec.mode, 'live')
+    t.strictEqual(liveSpec.mode, 'live')
 
     const saveScenario = scenario.save('spec-scenario')
     const saveSpec = await saveScenario.spec(() => Promise.resolve(true))
-    t.equal(saveSpec.mode, 'save')
+    t.strictEqual(saveSpec.mode, 'save')
     const s = await saveScenario.spec(() => Promise.resolve(true))
     await s.done()
     await saveScenario.done()
 
     const simScenario = scenario.simulate('spec-scenario')
     const simSpec = await simScenario.spec(() => Promise.resolve(true))
-    t.equal(simSpec.mode, 'simulate')
+    t.strictEqual(simSpec.mode, 'simulate')
     await simScenario.done()
   })
 
@@ -438,7 +438,7 @@ describe('teardown()', () => {
   test('throws MissingHandler if no handler is defined', async () => {
     const { teardown } = scenario('no teardown handler')
     const err = await a.throws(() => teardown('no teardown handler'), MissingHandler)
-    t.equal(err.message, `Handler for 'no teardown handler' not found.`)
+    t.strictEqual(err.message, `Handler for 'no teardown handler' not found.`)
   })
   test('arguments are passed to teardown handler as inputs', async () => {
     const { teardown } = scenario('')
@@ -447,13 +447,13 @@ describe('teardown()', () => {
       actual.push(...inputs)
     })
     await teardown('passing teardown arguments', 1, 2, 3)
-    t.deepEqual(actual, [1, 2, 3])
+    t.deepStrictEqual(actual, [1, 2, 3])
   })
 
   test('duplicate handler throws DuplicateHandler', async () => {
     defineStep('duplicate teardown', () => { return })
     const err = await a.throws(() => defineStep('duplicate teardown', () => { return }), DuplicateHandler)
-    t.equal(err.message, `Handler for 'duplicate teardown' is already defined.`)
+    t.strictEqual(err.message, `Handler for 'duplicate teardown' is already defined.`)
   })
 
   test('template match result is passed to handler after input', async () => {
@@ -463,7 +463,7 @@ describe('teardown()', () => {
     })
     const { teardown } = scenario('teardown with template')
     await teardown('teardown template 123 abc', 'x')
-    t.deepEqual(values, ['x', '123', 'abc'])
+    t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
 
   test('template can specify type', async () => {
@@ -473,7 +473,7 @@ describe('teardown()', () => {
     })
     const { teardown } = scenario('teardown with template')
     await teardown('teardown templateWithType 123 true 3.14', 'x')
-    t.equal(values[0], 'x')
+    t.strictEqual(values[0], 'x')
     t.strictEqual(values[1], 123)
     t.strictEqual(values[2], true)
     t.strictEqual(values[3], 3.14)
@@ -513,8 +513,8 @@ describe('teardown()', () => {
     const o = new AssertOrder(2)
     defineStep('simulate teardown', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
-      o.on(1, () => t.equal(s.mode, 'save'))
-      o.on(2, () => t.equal(s.mode, 'simulate'))
+      o.on(1, () => t.strictEqual(s.mode, 'save'))
+      o.on(2, () => t.strictEqual(s.mode, 'simulate'))
       o.any([1, 2])
       await s.subject(0)
       await s.done()
@@ -539,7 +539,7 @@ describe('teardown()', () => {
 
     await teardown('throw step2')
     const actual = m.logs[0]
-    t.deepEqual(actual, {
+    t.deepStrictEqual(actual, {
       id: 'komondor', level: logLevel.warn, messages: [
         `scenario.save(throwing teardown will pass and emit warning)
 - teardown(throw step2) throws, is it safe to ignore?
@@ -654,28 +654,28 @@ describe('config.scenario()', () => {
     resetStore()
     config.scenario('live', 'override to live')
     const s = scenario.simulate('override to live')
-    t.equal(s.mode, 'live')
+    t.strictEqual(s.mode, 'live')
   })
 
   test('force simulate to live with regex', () => {
     resetStore()
     config.scenario('live', /override/)
     const s = scenario.simulate('override to live')
-    t.equal(s.mode, 'live')
+    t.strictEqual(s.mode, 'live')
   })
 
   test('force simulate to save with string', () => {
     resetStore()
     config.scenario('save', 'override to save')
     const s = scenario.simulate('override to save')
-    t.equal(s.mode, 'save')
+    t.strictEqual(s.mode, 'save')
   })
 
   test('force simulate to save with regex', () => {
     resetStore()
     config.scenario('save', /override/)
     const s = scenario.simulate('override to save')
-    t.equal(s.mode, 'save')
+    t.strictEqual(s.mode, 'save')
   })
 })
 
@@ -683,7 +683,7 @@ describe('defineStep()', () => {
   test('duplicate handler throws DuplicateHandler', async () => {
     defineStep('duplicate setup', () => { return })
     const err = await a.throws(() => defineStep('duplicate setup', () => { return }), DuplicateHandler)
-    t.equal(err.message, `Handler for 'duplicate setup' is already defined.`)
+    t.strictEqual(err.message, `Handler for 'duplicate setup' is already defined.`)
   })
 
   test('calling multiple times with same handler is ok', async () => {
@@ -775,7 +775,7 @@ describe('defineStep()', () => {
     const { setup } = scenario('template with dash')
     await setup('templateWithDash a-b-c')
 
-    t.equal(actual, 'a-b-c')
+    t.strictEqual(actual, 'a-b-c')
   })
   test('do not invoke step with missing words', async () => {
     defineStep('create car {name} in {location}', async () => {
@@ -787,12 +787,12 @@ describe('defineStep()', () => {
   })
 
   test('isDefined() returns false for not yet defined step', async () => {
-    t.equal(defineStep.isDefined('not yet defined'), false)
+    t.strictEqual(defineStep.isDefined('not yet defined'), false)
   })
 
   test('isDefined() returns true for already defined step', async () => {
     defineStep('defined step for isDefined', () => { return })
-    t.equal(defineStep.isDefined('defined step for isDefined'), true)
+    t.strictEqual(defineStep.isDefined('defined step for isDefined'), true)
   })
 })
 
@@ -800,7 +800,7 @@ describe('ensure()', () => {
   test('throws MissingHandler if no handler is defined', async () => {
     const { ensure } = scenario('no handler')
     const err = await a.throws(() => ensure('no ensure handler'), MissingHandler)
-    t.equal(err.message, `Handler for 'no ensure handler' not found.`)
+    t.strictEqual(err.message, `Handler for 'no ensure handler' not found.`)
   })
 
   test('arguments are passed to ensure handler as inputs', async () => {
@@ -810,7 +810,7 @@ describe('ensure()', () => {
       actual.push(...inputs)
     })
     await ensure('passing ensure arguments', 1, 2, 3)
-    t.deepEqual(actual, [1, 2, 3])
+    t.deepStrictEqual(actual, [1, 2, 3])
   })
 
   test('can call same ensure step twice', async () => {
@@ -818,7 +818,7 @@ describe('ensure()', () => {
       const s = await spec(() => Promise.resolve(expected))
       const actual = await s.subject()
 
-      t.equal(actual, expected)
+      t.strictEqual(actual, expected)
       await s.done()
     });
 
@@ -842,7 +842,7 @@ describe('ensure()', () => {
     })
     const { ensure } = scenario('ensure with template')
     await ensure('ensure template 123 abc', 'x')
-    t.deepEqual(values, ['x', '123', 'abc'])
+    t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
   test('template can specify type', async () => {
     let values: any[] = []
@@ -851,7 +851,7 @@ describe('ensure()', () => {
     })
     const { ensure } = scenario('ensure with template')
     await ensure('ensure templateWithType 123 true 3.14', 'x')
-    t.equal(values[0], 'x')
+    t.strictEqual(values[0], 'x')
     t.strictEqual(values[1], 123)
     t.strictEqual(values[2], true)
     t.strictEqual(values[3], 3.14)
@@ -872,9 +872,9 @@ describe('ensure()', () => {
     const { ensure } = scenario('ensure spec')
     const host = artifact('ensure host', '10.0.0.1')
     const actual = await ensure('ensure spec - ensure server is up', host)
-    t.equal(result, true)
-    t.equal(actual, true)
-    t.equal(id, 'ensure spec - ensure server is up')
+    t.strictEqual(result, true)
+    t.strictEqual(actual, true)
+    t.strictEqual(id, 'ensure spec - ensure server is up')
   })
 
   test('scenario.save() will cause spec in step to save', async () => {
@@ -911,8 +911,8 @@ describe('ensure()', () => {
     const o = new AssertOrder(2)
     defineStep('simulate ensure', async ({ spec }) => {
       const s = await spec(_ => Promise.resolve(true))
-      o.on(1, () => t.equal(s.mode, 'save'))
-      o.on(2, () => t.equal(s.mode, 'simulate'))
+      o.on(1, () => t.strictEqual(s.mode, 'save'))
+      o.on(2, () => t.strictEqual(s.mode, 'simulate'))
       o.any([1, 2])
       await s.subject(0)
       await s.done()
@@ -936,7 +936,7 @@ describe('ensure()', () => {
 
     await ensure('throw step')
 
-    t.equal(m.logs.length, 0)
+    t.strictEqual(m.logs.length, 0)
     removeAppender(m)
   })
 })

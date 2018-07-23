@@ -12,7 +12,7 @@ k.testTrio('js/class/simple', (title, spec) => {
   test(title, async () => {
     const s = await spec(Foo)
     const foo = new s.subject()
-    t.equal(foo.do(), 1)
+    t.strictEqual(foo.do(), 1)
 
     await s.done()
   })

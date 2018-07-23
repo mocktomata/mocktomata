@@ -10,7 +10,7 @@ k.trio('instance/simpleMethod', (title, spec) => {
     }
     const foo = new Foo()
     const s = await spec(foo)
-    t.equal(s.subject.do(1), 2)
+    t.strictEqual(s.subject.do(1), 2)
 
     await s.done()
   })
@@ -44,7 +44,7 @@ k.trio('instance/rejectPromise', (title, spec) => {
     let actual
     await s.subject.do().catch(a => actual = a)
     t(actual instanceof Error)
-    t.equal(actual.message, 'foo')
+    t.strictEqual(actual.message, 'foo')
 
     await s.done()
   })
@@ -57,7 +57,7 @@ k.trio('instance/resolvePromise', (title, spec) => {
     }
     const foo = new Foo()
     const s = await spec(foo)
-    t.equal(await s.subject.do(1), 2)
+    t.strictEqual(await s.subject.do(1), 2)
 
     await s.done()
   })
@@ -74,8 +74,8 @@ k.trio('instance/withInner', (title, spec) => {
     }
     const foo = new Foo()
     const s = await spec(foo)
-    t.equal(await s.subject.do(1), 2)
-    t.equal(s.actions.length, 5)
+    t.strictEqual(await s.subject.do(1), 2)
+    t.strictEqual(s.actions.length, 5)
 
     await s.done()
   })
@@ -88,7 +88,7 @@ k.trio('instance/property', (title, spec) => {
     }
     const foo = new Foo()
     const s = await spec(foo)
-    t.equal(s.subject.value, 3)
+    t.strictEqual(s.subject.value, 3)
 
     await s.done()
   })
@@ -103,7 +103,7 @@ k.trio('instance/asInput', (title, spec) => {
     const s = await spec(({ echo }, y) => echo.do(y))
     let actual
     s.on('instance', 'construct', a => actual = a)
-    t.equal(await s.subject({ echo }, 2), 2)
+    t.strictEqual(await s.subject({ echo }, 2), 2)
 
     t(!!actual)
 
