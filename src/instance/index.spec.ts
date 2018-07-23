@@ -95,7 +95,7 @@ k.trio('instance/property', (title, spec) => {
 })
 
 k.trio('instance/asInput', (title, spec) => {
-  test.skip(title, async () => {
+  test.only(title, async () => {
     class Echo {
       do(x) { return Promise.resolve(x) }
     }
