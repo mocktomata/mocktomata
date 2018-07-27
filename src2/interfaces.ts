@@ -1,7 +1,11 @@
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { ArrayEntryExpectation } from 'satisfier'
 
-export interface KomondorOptions {
+export interface RemoteOptions {
+  baseUrl: string
+}
+
+export interface KomondorOptions extends Partial<RemoteOptions> {
   plugins?: string[]
 }
 

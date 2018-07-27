@@ -3,6 +3,7 @@ import { SpecAction } from 'komondor-plugin';
 import rimraf from 'rimraf';
 import { Spec } from './interfaces';
 import { spec } from './spec';
+import { store } from './store';
 
 export function testTrio(specName: string, handler: ((title: string, spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>))
 export function testTrio(description: string, specName, handler: ((title: string, spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>))
@@ -78,4 +79,17 @@ export function ensureDirNotExists(dirpath: string) {
   if (fs.existsSync(dirpath)) {
     rimraf(dirpath)
   }
+}
+
+// for testing only
+export function resetStore() {
+  store.artifacts = {}
+  store.defaultArtifacts = {}
+  store.defaultMode = undefined
+  store.scenarioOverrides = []
+  store.specDefaultMode = undefined
+  store.specOverrides = []
+  store.steps = []
+  store.envOverrides = []
+  store.options = {}
 }

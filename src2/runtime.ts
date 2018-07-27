@@ -1,5 +1,5 @@
 import { SpecMode } from 'komondor-plugin';
-import { store } from '../store';
+import { store } from './store';
 
 export const runtime = {
   getMode(id: string, mode: SpecMode) {
