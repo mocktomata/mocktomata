@@ -1,18 +1,13 @@
-import { createFileIO } from './fileIO'
-import {
-  SpecRecord
-} from './interfaces'
+import { createFileIO } from './fileIO';
+import { SpecRecord } from './interfaces';
+import { isNode } from './isNode';
+import { createRemoteIO } from './remoteIO';
 
 let actualIO: any
 function getIO() {
-  return actualIO || (actualIO = createFileIO())
+  return actualIO || (actualIO = isNode ? createFileIO() : createRemoteIO())
 }
 
-/**
- * Factory for writer.
- * Depends on config, it will return different write funcitons,
- * such as file-base, database, or remote host
- */
 export const io = {
   get readSpec(): (id: string) => Promise<SpecRecord> {
     return getIO().readSpec

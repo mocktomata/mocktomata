@@ -8,7 +8,7 @@ import {
   spec,
   // @ts-ignore
   SpecFn
-} from '../spec'
+} from './spec'
 
 const komondor = { config, spec }
 
