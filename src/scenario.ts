@@ -7,14 +7,17 @@ import { createSpec } from './specInternal';
 import { store } from './store';
 import { log } from './log';
 
+export type StepCaller = (clause: string, ...inputs: any[]) => Promise<any>
+
 export interface StepContext {
   spec<T>(subject: T): Promise<Spec<T>>,
   /**
    * @deprecated extra inputs are appended to the handler.
    */
   inputs: any[],
-  runSubStep(clause: string, ...inputs: any[]): Promise<any>
+  runSubStep: StepCaller
 }
+
 
 export const scenario = Object.assign(
   function scenario(id: string) {
@@ -95,7 +98,7 @@ function createScenario(id: string, mode: SpecMode) {
   return { ensure, setup, run, spec, teardown, done, mode }
 }
 
-function createInertStepCaller(record, defaultId: string, mode: SpecMode, shouldLog: boolean = true) {
+function createInertStepCaller(record, defaultId: string, mode: SpecMode, shouldLog: boolean = true): StepCaller {
   return async function inertStep(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
@@ -119,7 +122,7 @@ ${err}`)
     }
   }
 }
-function createStepCaller(record, defaultId: string, mode: SpecMode) {
+function createStepCaller(record, defaultId: string, mode: SpecMode): StepCaller {
   return async function step(clause: string, ...inputs: any[]) {
     const entry = store.steps.find(e => {
       if (e.regex) {
