@@ -1,6 +1,6 @@
 import { createFileIO } from './fileIO';
 import { SpecRecord } from './interfaces';
-import { isNode } from './isNode';
+import { isNode } from 'is-node';
 import { createRemoteIO } from './remoteIO';
 
 let actualIO: any

@@ -2,7 +2,7 @@
 // import * as genericFunction from './function'
 // import * as instance from './instance'
 
-import { isNode } from './isNode'
+import { isNode } from 'is-node'
 // import { registerPlugin, loadPlugins } from '../plugin'
 // import * as promise from './promise'
 // import {
