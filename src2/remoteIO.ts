@@ -5,17 +5,21 @@ import { SpecRecord, RemoteOptions } from './interfaces'
 export function createRemoteIO(options: RemoteOptions = { baseUrl: 'http://localhost:7866' }) {
   // TODO authentication and authorization
   return {
-    readSpec(id: string) {
-      return fetch.get(createSpecURL(options, id))
+    async readSpec(id: string) {
+      const response = await fetch(createSpecURL(options, id))
+      return response.json()
     },
-    writeSpec(id: string, record: SpecRecord) {
-      return fetch.post(createSpecURL(options, id), { method: 'POST', body: JSON.stringify(record) })
+    async writeSpec(id: string, record: SpecRecord) {
+      const response = await fetch(createSpecURL(options, id), { method: 'POST', body: JSON.stringify(record) })
+      return response.ok
     },
-    readScenario(id: string) {
-      return fetch.get(createScenarioURL(options, id))
+    async readScenario(id: string) {
+      const response = await fetch(createScenarioURL(options, id))
+      return response.json()
     },
-    writeScenario(id: string, record) {
-      return fetch.post(createScenarioURL(options, id), { method: 'POST', body: JSON.stringify(record) })
+    async writeScenario(id: string, record) {
+      const response = await fetch(createScenarioURL(options, id), { method: 'POST', body: JSON.stringify(record) })
+      return response.ok
     }
   }
 }
