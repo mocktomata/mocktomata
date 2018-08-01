@@ -1,3 +1,3 @@
 it('empty test', () => {
-
+  return
 })

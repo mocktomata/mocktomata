@@ -68,6 +68,11 @@
     "boundary-testing"
   ],
   "jest": {
+    "globals": {
+      "ts-jest": {
+        "enableTsDiagnostics": true
+      }
+    },
     "moduleFileExtensions": [
       "ts",
       "js",
@@ -118,6 +123,7 @@
     "assertron": "^5.2.2",
     "chalk": "^2.4.1",
     "cross-fetch": "^2.2.2",
+    "is-node": "^1.0.2",
     "is-primitive": "^3.0.1",
     "komondor-plugin": "^1.7.7",
     "make-error": "^1.3.5",
