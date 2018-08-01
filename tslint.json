@@ -2,7 +2,7 @@
   "extends": "tslint-config-unional/semi-standard",
   "rules": {
     "no-unnecessary-type-assertion": false,
-    "no-unused-variable": null,
-    "deprecation": false
+    "deprecation": false,
+    "trailing-comma": false
   }
 }

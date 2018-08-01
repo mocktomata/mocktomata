@@ -6,6 +6,8 @@
   "buildOnSave": false,
   "compileOnSave": false,
   "compilerOptions": {
+    "inlineSourceMap": false,
+    "sourceMap": true,
     "plugins": [
       {
         "name": "tslint-language-service"

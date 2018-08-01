@@ -12,7 +12,7 @@ export const runtime = {
     return override ? override.mode :
       store.specDefaultMode || mode
   },
-  findPlugin(subject) {
+  findPlugin() {
     return undefined
   }
 }

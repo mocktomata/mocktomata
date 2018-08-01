@@ -1,8 +1,8 @@
-import { SpecMode, Registrar } from 'komondor-plugin'
+import { SpecMode } from 'komondor-plugin';
+import { KomondorOptions } from './interfaces';
+import { store } from './store';
 
-import { store } from './store'
-import { KomondorOptions } from './interfaces'
-import { registerPlugin } from './plugin'
+// import { registerPlugin } from './plugin'
 
 export interface Config {
   (options: KomondorOptions): void,
@@ -12,7 +12,7 @@ export interface Config {
    * Manually register a plugin.
    * This should be used only for plugin development.
    */
-  registerPlugin(plugin: { activate(registrar: Registrar): void }): void
+  // registerPlugin(plugin: { activate(registrar: Registrar): void }): void
 }
 
 export const config: Config = Object.assign(
@@ -37,5 +37,5 @@ export const config: Config = Object.assign(
         store.specDefaultMode = mode
       }
     },
-    registerPlugin
+    // registerPlugin
   })
