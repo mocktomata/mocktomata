@@ -111,6 +111,7 @@ function createInertStepCaller(record, defaultId: string, mode: SpecMode, should
     }
 
     try {
+      log.info(`${defaultId}(${clause})`)
       return await invokeHandler({ defaultId, mode, entry, record }, clause, inputs)
     }
     catch (err) {
@@ -142,7 +143,6 @@ function invokeHandler({ defaultId, mode, entry, record }, clause, inputs) {
   const runSubStep = createStepCaller(record, defaultId, mode)
 
   const spec = createScenarioSpec(record, clause, mode)
-  log.info(clause)
   if (entry.regex) {
     // regex must pass as it is tested above
     const matches = entry.regex.exec(clause)!
