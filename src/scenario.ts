@@ -115,11 +115,12 @@ function createInertStepCaller(record, defaultId: string, mode: SpecMode, should
       return await invokeHandler({ defaultId, mode, entry, record }, clause, inputs)
     }
     catch (err) {
-      if (shouldLog)
+      if (shouldLog) {
         log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${record.id})
 - ${defaultId}(${clause}) throws, is it safe to ignore?
 
 ${err}`)
+      }
     }
   }
 }

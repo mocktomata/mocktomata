@@ -1,16 +1,16 @@
-import { addAppender, logLevel, removeAppender } from '@unional/logging'
-import t from 'assert'
-import a, { AssertOrder } from 'assertron'
-import { MemoryAppender } from 'aurelia-logging-memory'
-import fs from 'fs'
-
-import { artifact, MissingHandler, DuplicateHandler, config, scenario, defineStep } from '.'
-
-import { resetStore } from './store'
-import { ensureFileNotExists } from './testUtil'
-import { log } from './log';
-import { io } from './io';
+import { addAppender, logLevel, removeAppender } from '@unional/logging';
+import t from 'assert';
+import a, { AssertOrder } from 'assertron';
+import { MemoryAppender } from 'aurelia-logging-memory';
+import fs from 'fs';
+import { has, none } from 'satisfier';
+import { artifact, config, defineStep, DuplicateHandler, MissingHandler, scenario } from '.';
 import { KOMONDOR_FOLDER } from './constants';
+import { io } from './io';
+import { log } from './log';
+import { resetStore } from './store';
+import { ensureFileNotExists } from './testUtil';
+
 
 const users: any[] = []
 class ApiGateway {
@@ -232,15 +232,14 @@ describe('setup()', () => {
 
     await setup('throw step')
 
-    const actual = m.logs[0]
-    t.deepStrictEqual(actual, {
+    a.satisfy(m.logs, has({
       id: 'komondor', level: logLevel.warn, messages: [
         `scenario.save(throwing setup will pass and emit warning)
 - setup(throw step) throws, is it safe to ignore?
 
 Error: foo`
       ]
-    })
+    }))
     removeAppender(m)
   })
 })
@@ -531,22 +530,22 @@ describe('teardown()', () => {
   })
 
   test('thrown teardown will pass and emit warning', async () => {
-    defineStep('throw step2', () => { throw new Error('foo') })
+    defineStep('throw teardown', () => { throw new Error('foo') })
     const { teardown } = scenario.save('throwing teardown will pass and emit warning')
     log.warn('ignore next message, it is testing teardown throwing error')
     const m = new MemoryAppender()
     addAppender(m)
 
-    await teardown('throw step2')
-    const actual = m.logs[0]
-    t.deepStrictEqual(actual, {
+    await teardown('throw teardown')
+
+    a.satisfy(m.logs, has({
       id: 'komondor', level: logLevel.warn, messages: [
         `scenario.save(throwing teardown will pass and emit warning)
-- teardown(throw step2) throws, is it safe to ignore?
+- teardown(throw teardown) throws, is it safe to ignore?
 
 Error: foo`
       ]
-    })
+    }))
     removeAppender(m)
   })
 })
@@ -927,16 +926,15 @@ describe('ensure()', () => {
     o.end()
   })
 
-  test('thrown ensure will pass and emit warning', async () => {
+  test('thrown ensure will pass and not emiting warning', async () => {
     defineStep('throw step', () => { throw new Error('foo') })
     const { ensure } = scenario.save('throwing ensure will pass and emit warning')
-    log.warn('ignore next message, it is testing ensure throwing error')
     const m = new MemoryAppender()
     addAppender(m)
 
     await ensure('throw step')
 
-    t.strictEqual(m.logs.length, 0)
+    a.satisfy(m.logs, none({ level: logLevel.warn, messages: /is it safe to ignore/ }))
     removeAppender(m)
   })
 })

@@ -59,27 +59,28 @@
     "setupFiles": [
       "<rootDir>/scripts/setup-test-env.js"
     ],
+    "testEnvironment": "node",
     "testRegex": "src/.*.spec.(t|j)s$",
     "transform": {
-      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      ".(ts|tsx)": "ts-jest"
     }
   },
   "devDependencies": {
-    "@types/jest": "^23.3.0",
-    "@types/node": "^10.5.2",
-    "@types/ramda": "^0.25.35",
-    "aurelia-logging-color": "^0.5.15",
+    "@types/jest": "^23.3.1",
+    "@types/node": "^10.5.6",
+    "@types/ramda": "^0.25.36",
+    "aurelia-logging-color": "^0.5.16",
     "aurelia-logging-memory": "^0.3.2",
     "cucumber": "^4.2.1",
     "delay": "^3.0.0",
     "dependency-check": "^3.2.0",
-    "eslint": "^5.2.0",
-    "eslint-plugin-harmony": "^1.0.3",
-    "jest": "^23.4.1",
+    "eslint": "^5.3.0",
+    "eslint-plugin-harmony": "^1.0.4",
+    "jest": "^23.4.2",
     "power-assert": "^1.6.0",
     "rimraf": "^2.6.2",
-    "semantic-release": "^15.8.1",
-    "ts-jest": "^23.0.1",
+    "semantic-release": "^15.9.5",
+    "ts-jest": "^23.1.2",
     "tslint": "^5.11.0",
     "tslint-config-unional": "^0.9.6",
     "typescript": "^2.9.2"
@@ -92,7 +93,7 @@
     "komondor-plugin": "^1.7.7",
     "make-error": "^1.3.4",
     "ramda": "^0.25.0",
-    "satisfier": "^4.4.3",
+    "satisfier": "^4.5.0",
     "tersify": "^1.2.6",
     "unpartial": "^0.4.1"
   }
