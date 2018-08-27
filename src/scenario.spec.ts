@@ -140,6 +140,7 @@ describe('setup()', () => {
     await setup('setup template 123 abc', 'x')
     t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
+
   test('template can specify type', async () => {
     let values: any[] = []
     defineStep('setup templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
@@ -151,6 +152,26 @@ describe('setup()', () => {
     t.strictEqual(values[1], 123)
     t.strictEqual(values[2], true)
     t.strictEqual(values[3], 3.14)
+  })
+
+  test('template can take regex', async() => {
+    let values: any[] = []
+    defineStep(`setup templateWithRegex {id:/\\d+/} remaining`, ({}, id) => {
+      values.push(id)
+    })
+
+    defineStep(`setup templateWithRegexNSpace {id:/\\d{3} \\d{4}/} remaining`, ({}, id) => {
+      values.push(id)
+    })
+
+    const { setup } = scenario('setup with regex template')
+    await setup('setup templateWithRegex 1 remaining')
+    await setup('setup templateWithRegex 200 remaining')
+    t.strictEqual(values[0], '1')
+    t.strictEqual(values[1], '200')
+
+    await setup('setup templateWithRegexNSpace 123 1234 remaining')
+    t.strictEqual(values[2], '123 1234')
   })
 
   test('setup id is used as spec id', async () => {
