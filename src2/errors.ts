@@ -142,3 +142,12 @@ export class MissingArtifact extends BaseError {
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
+
+export class NotConfigured extends BaseError {
+  // istanbul ignore next
+  constructor(public feature: string, public configPath: string) {
+    super(`Configuring ${configPath} is required to use ${feature}.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
