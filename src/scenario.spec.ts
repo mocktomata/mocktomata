@@ -163,6 +163,10 @@ describe('setup()', () => {
     defineStep(`setup templateWithRegexNSpace {id:/\\d{3} \\d{4}/} remaining`, ({}, id) => {
       values.push(id)
     })
+    let mm: any[] = []
+    defineStep(`{method} {uri:/[\\w\\.\\/?=]*/} throws`, (_, method, uri) => {
+      mm.push(method, uri)
+    })
 
     const { setup } = scenario('setup with regex template')
     await setup('setup templateWithRegex 1 remaining')
@@ -172,6 +176,10 @@ describe('setup()', () => {
 
     await setup('setup templateWithRegexNSpace 123 1234 remaining')
     t.strictEqual(values[2], '123 1234')
+
+    await setup('GET some/url/1.0/resources?a=b throws')
+    t.strictEqual(mm[0], 'GET')
+    t.strictEqual(mm[1], 'some/url/1.0/resources?a=b')
   })
 
   test('setup id is used as spec id', async () => {

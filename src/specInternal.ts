@@ -20,21 +20,21 @@ export function createSpeclive() {
       id = ''
     }
     const mode = getMode(id, 'live')
-    return createSpec({ io }, id, subject, mode)
+    return createSpec({ io, checkSpecId: true }, id, subject, mode)
   }
 }
 
 export function createSpecSave() {
   return function specSave<T>(id: string, subject: T): Promise<Spec<T>> {
     const mode = getMode(id, 'save')
-    return createSpec({ io }, id, subject, mode)
+    return createSpec({ io, checkSpecId: true }, id, subject, mode)
   }
 }
 
 export function createSpecSimulate() {
   return function specSimulate<T>(id: string, subject: T): Promise<Spec<T>> {
     const mode = getMode(id, 'simulate')
-    return createSpec({ io }, id, subject, mode)
+    return createSpec({ io, checkSpecId: true }, id, subject, mode)
   }
 }
 
@@ -49,8 +49,8 @@ function getMode(id: string, mode: SpecMode) {
     store.specDefaultMode || mode
 }
 
-export async function createSpec({ io }, specId: string, subject, mode: SpecMode) {
-  if (InvalidID.isInvalidID(specId)) {
+export async function createSpec({ io, checkSpecId }, specId: string, subject, mode: SpecMode) {
+  if (checkSpecId && InvalidID.isInvalidID(specId)) {
     throw new InvalidID(specId)
   }
   switch (mode) {
