@@ -14,6 +14,9 @@ module.exports = function(config) {
     autoRun: true,
     concurrency: Infinity,
     karmaTypescriptConfig: {
+      bundlerOptions: {
+        exclude: ['perf_hooks']
+      },
       tsconfig: './tsconfig.json'
     }
   })

@@ -1,8 +1,11 @@
-import fetch from 'cross-fetch'
+import fetch from 'cross-fetch';
+import { NotConfigured } from './errors';
+import { RemoteOptions, SpecRecord } from './interfaces';
+import { store } from './store';
 
-import { SpecRecord, RemoteOptions } from './interfaces'
-
-export function createRemoteIO(options: RemoteOptions = { baseUrl: 'http://localhost:7866' }) {
+export function createRemoteIO() {
+  ensureConfigured()
+  const options = store.options as RemoteOptions
   // TODO authentication and authorization
   return {
     async readSpec(id: string) {
@@ -24,9 +27,15 @@ export function createRemoteIO(options: RemoteOptions = { baseUrl: 'http://local
   }
 }
 
-function createSpecURL(options, id) {
+function ensureConfigured() {
+  if (!store.options.baseUrl) {
+    throw new NotConfigured('browser testing', 'remoteOptions.baseUrl')
+  }
+}
+
+function createSpecURL(options: RemoteOptions, id) {
   return `${options.baseUrl}/spec/${id}`
 }
-function createScenarioURL(options, id) {
-  return `${options}/scenario/${id}`
+function createScenarioURL(options: RemoteOptions, id) {
+  return `${options.baseUrl}/scenario/${id}`
 }

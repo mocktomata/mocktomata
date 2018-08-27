@@ -33,3 +33,7 @@ import { isNode } from 'is-node'
 if (isNode) {
   // loadPlugins()
 }
+
+import { configurator } from './configurator'
+
+export default configurator

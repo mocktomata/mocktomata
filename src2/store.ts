@@ -1,7 +1,6 @@
 import { SpecMode } from 'komondor-plugin'
 import { KomondorOptions } from './interfaces'
 
-
 let specDefaultMode: SpecMode | undefined
 let specOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
 let envOverrides: { mode: SpecMode, filter: string | RegExp }[] = []
