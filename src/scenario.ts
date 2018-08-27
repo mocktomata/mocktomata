@@ -181,7 +181,7 @@ function createScenarioSpec(record, defaultId: string, mode: SpecMode): Scenario
         record.push(id, specRecord)
       }
     }
-    return createSpec({ io, checkSpecId: true }, id, subject, mode)
+    return createSpec({ io, checkSpecId: false }, id, subject, mode)
   }
 }
 
