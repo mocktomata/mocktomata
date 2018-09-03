@@ -72,7 +72,7 @@
     "aurelia-logging-color": "^0.5.16",
     "aurelia-logging-memory": "^0.3.2",
     "cucumber": "^4.2.1",
-    "delay": "^3.1.0",
+    "delay": "^4.0.0",
     "dependency-check": "^3.2.0",
     "eslint": "^5.4.0",
     "eslint-plugin-harmony": "^1.0.4",
