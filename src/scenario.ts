@@ -204,7 +204,7 @@ export const defineStep = Object.assign(
         }
         else {
           valueTypes.push(valueType)
-          return '([\\w\\.\\-]*)'
+          return '([^ ]*)'
         }
       })}$`)
       store.steps.push({ clause, handler, regex, valueTypes })
