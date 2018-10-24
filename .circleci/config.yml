@@ -4,48 +4,85 @@ workflows:
   all:
     jobs:
       - node-latest
-      - node9
-      - node8
+      - node9:
+          requires:
+            - node-latest
+      - node8:
+          requires:
+            - node-latest
+      - release:
+          filters:
+            branches:
+              only: master
+          requires:
+            - node-latest
+            - node9
+            - node8
 jobs:
+  local-test:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run: npm run verify
   node-latest:
     docker:
-      - image: 'circleci/node:9'
+      - image: circleci/node:10
     steps:
       - checkout
+      - restore_cache:
+          name: Restore node_modules cache
+          key: node_modules-{{ checksum "package-lock.json" }}
       - run:
-          name: install
-          command: npm install
-      - run:
-          name: verify
-          command: npm run verify
-          post:
-            - bash <(curl -s https://codecov.io/bash)
-      - run:
-          name: release
-          command: npm run semantic-release || true
-  node8:
-    docker:
-      - image: 'circleci/node:8'
-    steps:
-      - checkout
-      - run:
-          name: install
-          command: npm install
-      - run:
-          name: verify
-          command: npm run verify
-          post:
-            - bash <(curl -s https://codecov.io/bash)
+          name: Install Dependencies
+          command: |
+            if [ ! -d node_modules ]; then
+              npm ci
+            fi
+      - save_cache:
+          name: Save node modules cache
+          key: node_modules-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - run: npm run verify-ci
+      - run: npx codecov
+      - store_test_results:
+          path: .reports/junit
   node9:
     docker:
       - image: 'circleci/node:9'
     steps:
       - checkout
+      - restore_cache:
+          name: Restore node_modules cache
+          key: node_modules-{{ checksum "package-lock.json" }}
+      - run: npm run verify-ci
+      - store_test_results:
+          path: .reports/junit
+  node8:
+    docker:
+      - image: 'circleci/node:8'
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore node_modules cache
+          key: node_modules-{{ checksum "package-lock.json" }}
+      - run: npm run verify-ci
+      - store_test_results:
+          path: .reports/junit
+  release:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - restore_cache:
+          name: Restore node_modules cache
+          key: node_modules-{{ checksum "package-lock.json" }}
       - run:
-          name: install
-          command: npm install
+          name: update greenkeeper lockfile
+          command: ./node_modules/.bin/greenkeeper-lockfile-update
+      - run: npm run build
       - run:
-          name: verify
-          command: npm run ci-verify
-          post:
-            - bash <(curl -s https://codecov.io/bash)
+          name: upload greenkeeper lockfile
+          command: ./node_modules/.bin/greenkeeper-lockfile-upload
+      - run: npx semantic-release

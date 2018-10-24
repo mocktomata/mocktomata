@@ -194,7 +194,7 @@ export const defineStep = Object.assign(
       throw new DuplicateHandler(clause)
     else if (isTemplate(clause)) {
       const valueTypes: string[] = []
-      const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/(.*)\/))?)?}/g, (_, value) => {
+      const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/([^\}]*)\/))?)?}/g, (_, value) => {
         const m = /[\w]*:(.*)/.exec(value)
         const valueType = m ? m[1].trim() : 'string'
         const isRegex = valueType.startsWith('/')

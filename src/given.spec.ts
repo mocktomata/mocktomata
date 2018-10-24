@@ -53,7 +53,7 @@ test('handler will be invoked', async () => {
 
 test('duplicate handler will throws', async () => {
   onGiven('dup handler', () => { return })
-  await a.throws(() => onGiven('dup handler', () => { return }), DuplicateGivenHandler)
+  a.throws(() => onGiven('dup handler', () => { return }), DuplicateGivenHandler)
 })
 
 test('handler can be registered using regex', async () => {
@@ -67,7 +67,7 @@ test('handler can be registered using regex', async () => {
 
 test('duplicate regex handler will throws', async () => {
   onGiven(/dup regex handler/, () => { return })
-  await a.throws(() => onGiven(/dup regex handler/, () => { return }), DuplicateGivenHandler)
+  a.throws(() => onGiven(/dup regex handler/, () => { return }), DuplicateGivenHandler)
 })
 
 test('using given twice will only invoke handler once', async () => {

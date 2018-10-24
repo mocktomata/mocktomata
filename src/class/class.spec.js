@@ -1,8 +1,5 @@
 const t = require('assert')
-const komondor = require('..')
 const k = require('../testUtil')
-
-const { spec } = komondor
 
 class Foo {
   do() { return 1 }

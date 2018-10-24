@@ -26,7 +26,7 @@ k.trio('done() same as satisfy', 'spec/done', (title, spec) => {
 k.trio('Error payload will pass instanceof', 'spec/errorPassInstanceof', (title, spec) => {
   test(title, async () => {
     const s = await spec(() => { throw new Error('err') })
-    const err = await a.throws(() => s.subject())
+    const err = a.throws(() => s.subject()) as any
 
     t(err instanceof Error)
     await s.done()
@@ -40,7 +40,7 @@ k.trio('CustomError properties are kept', 'spec/errorCustomProperty', (title, sp
       one = 1
     }
     const s = await spec(() => { throw new CustomError('err') })
-    const err = await a.throws(() => s.subject())
+    const err = a.throws(() => s.subject()) as any
 
     t(err instanceof Error)
     t.strictEqual(err.message, 'err')
