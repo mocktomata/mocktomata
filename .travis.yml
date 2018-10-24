@@ -20,7 +20,7 @@ before_script:
   - ./scripts/run-on-node-version.sh latest "greenkeeper-lockfile-update"
 
 script:
-  - npm run ci-verify
+  - npm run verify-ci
 
 after_success:
   - npm install -g travis-deploy-once@4
