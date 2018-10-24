@@ -113,7 +113,7 @@ test('onAny() will trigger when any aciton is added', async () => {
 
 describe('loadPlugin()', () => {
   test('load a plugin without activate() will throw', async () => {
-    const err = await a.throws(() => loadPlugin('fixtures/no-activate', 'no-activate-plugin'), InvalidPlugin)
+    const err = a.throws(() => loadPlugin('fixtures/no-activate', 'no-activate-plugin'), InvalidPlugin)
     t.strictEqual(err.pluginName, 'no-activate-plugin')
   })
   test('load a plugin', async () => {

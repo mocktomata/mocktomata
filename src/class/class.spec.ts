@@ -75,7 +75,7 @@ test('simple class simulate with different constructor will throw', async () => 
   // t(boo)
   // await s.done()
   const s = await spec.simulate('class/wrongConstructorCall', Foo)
-  await a.throws(() => new s.subject(2), SimulationMismatch)
+  a.throws(() => new s.subject(2), SimulationMismatch)
 })
 
 test('simulate on not existing spec will throw', async () => {
@@ -185,7 +185,7 @@ k.trio('class/throwing', (title, spec) => {
   test(title, async () => {
     const s = await spec(Throwing)
     const o = new s.subject()
-    await a.throws(() => o.doThrow())
+    a.throws(() => o.doThrow())
 
     await s.satisfy([
       { ...classConstructed('Throwing'), instanceId: 1 },
