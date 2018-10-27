@@ -9,17 +9,6 @@ restore-node: &restore-node
   restore_cache:
     name: Restore node_modules cache
     key: node_modules-{{ checksum "package-lock.json" }}
-save-git: &save-git
-  save_cache:
-    name: Save git cache
-    key: code-{{ .Revision }}
-    paths:
-      - .git
-      - ~/.ssh
-restore-git: &restore-git
-  restore_cache:
-    name: Restore git cache
-    key: code-{{ .Revision }}
 workflows:
   version: 2
   all:
@@ -58,7 +47,13 @@ jobs:
           name: update greenkeeper lockfile
           command: ./node_modules/.bin/greenkeeper-lockfile-update
       - <<: *save-node
-      - <<: *save-git
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - '.'
+            - node_modules
+            - '.git'
+            - '~/.ssh'
       - run: npm run verify-ci
       - run: npx codecov
       - store_test_results:
@@ -67,17 +62,17 @@ jobs:
     docker:
       - image: 'circleci/node:8'
     steps:
-      - <<: *restore-git
-      - <<: *restore-node
+      - attach_workspace:
+          at: '.'
       - run: npm run verify-ci
   release:
     docker:
       - image: circleci/node:10
     steps:
-      - <<: *restore-git
-      - <<: *restore-node
+      - attach_workspace:
+          at: '.'
       - run: npm run build
+      - run: npx semantic-release
       - run:
           name: upload greenkeeper lockfile
           command: ./node_modules/.bin/greenkeeper-lockfile-upload
-      - run: npx semantic-release
