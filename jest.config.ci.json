@@ -6,7 +6,7 @@
     }
   },
   "roots": [
-    "<rootDir>/src"
+    "<rootDir>/src2"
   ],
   "testEnvironment": "node",
   "testMatch": ["**/*.spec.ts"],

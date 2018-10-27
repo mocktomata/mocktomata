@@ -18,10 +18,7 @@
     "strictNullChecks": true,
     "target": "es2015"
   },
-  "exclude": [
-    "src/instance"
-  ],
   "files": [
-    "src/index.ts"
+    "src2/index.ts"
   ]
 }

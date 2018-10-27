@@ -41,7 +41,7 @@
     "test:browser": "karma start --single-run",
     "watch:browser": "karma start",
     "verify": "npm run lint && npm run build && jest --coverage && npm run test:browser && npm run dependency-check",
-    "verify:ci": "npm run lint && npm run build && jest --coverage --maxWorkers=4 --config jest.config.ci.json && npm run dependency-check",
+    "verify:ci": "npm run lint && npm run build && jest --coverage --maxWorkers=4 --config jest.config.ci.json",
     "watch": "jest --watch"
   },
   "dependencies": {
