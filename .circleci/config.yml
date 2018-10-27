@@ -70,7 +70,7 @@ jobs:
       - run: npm run verify:ci
   browser-test:
     docker:
-      - image: circleci/node:labrowser-tests
+      - image: circleci/node:browser-tests
     steps:
       - attach_workspace:
           at: '.'
