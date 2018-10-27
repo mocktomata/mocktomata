@@ -7,7 +7,7 @@ module.exports = {
   },
   'reporters': [
     'default',
-    '@unional/jest-progress-reporter',
+    'jest-progress-tracker',
     ['jest-audio-reporter', { volume: 0.3 }],
   ],
   'roots': [
@@ -16,20 +16,9 @@ module.exports = {
   'testEnvironment': 'node',
   'testMatch': ['**/*.spec.ts'],
   'watchPlugins': [
-    [
-      'jest-watch-suspend'
-    ],
-    [
-      'jest-watch-toggle-config',
-      {
-        'setting': 'verbose'
-      }
-    ],
-    [
-      'jest-watch-toggle-config',
-      {
-        'setting': 'collectCoverage'
-      }
-    ]
+    'jest-watch-repeat',
+    ['jest-watch-suspend'],
+    ['jest-watch-toggle-config', { 'setting': 'verbose' }],
+    ['jest-watch-toggle-config', { 'setting': 'collectCoverage' }]
   ]
 }
