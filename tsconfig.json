@@ -23,6 +23,6 @@
     "src2"
   ],
   "files": [
-    "src2/index"
+    "src2/index.ts"
   ]
 }
