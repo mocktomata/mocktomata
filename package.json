@@ -85,7 +85,6 @@
     "karma-typescript": "^3.0.13",
     "mocha": "^5.2.0",
     "power-assert": "^1.6.1",
-    "puppeteer": "^1.9.0",
     "rimraf": "^2.6.2",
     "semantic-release": "^15.10.5",
     "ts-jest": "^23.10.4",
