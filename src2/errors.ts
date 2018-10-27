@@ -52,7 +52,7 @@ export class SourceNotFound extends BaseError {
 
 export class SpecNotFound extends BaseError {
   // istanbul ignore next
-  constructor(public specId: string, public reason?) {
+  constructor(public specId: string, public reason?: string) {
     super(reason ?
       `Unable to find the spec record for '${specId}' due to: ${reason}` :
       `Unable to find the spec record for '${specId}'`
@@ -73,7 +73,7 @@ export class ScenarioNotFound extends BaseError {
 
 export class NotSpecable extends BaseError {
   // istanbul ignore next
-  constructor(public subject) {
+  constructor(public subject: any) {
     super(`The ${typeof subject === 'string' ? subject : `subject ${tersify(subject, { maxLength: 50 })}`} is not supported by any loaded plugins`)
 
     Object.setPrototypeOf(this, new.target.prototype)

@@ -39,10 +39,11 @@
     "dc": "npm run dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
     "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
-    "test": "npm run build && jest",
-    "test:browser": "karma start",
-    "verify": "npm run lint && npm run build && jest --coverage && npx karma start --single-run && npm run dependency-check",
-    "verify:ci": "npm run lint && npm run build && jest --coverage --maxWorkers=4 --config jest.config.ci.json &&  npx karma start --single-run && npm run dependency-check",
+    "test": "jest",
+    "test:browser": "karma start --single-run",
+    "watch:browser": "karma start",
+    "verify": "npm run lint && npm run build && jest --coverage && npm run test:browser && npm run dependency-check",
+    "verify:ci": "npm run lint && npm run build && jest --coverage --maxWorkers=4 --config jest.config.ci.json &&  npm run test:browser && npm run dependency-check",
     "watch": "jest --watch"
   },
   "dependencies": {
@@ -50,6 +51,7 @@
     "assertron": "^5.2.2",
     "chalk": "^2.4.1",
     "cross-fetch": "^2.2.2",
+    "global-store": "^0.7.3",
     "is-node": "^1.0.2",
     "is-primitive": "^3.0.1",
     "komondor-plugin": "^1.7.7",

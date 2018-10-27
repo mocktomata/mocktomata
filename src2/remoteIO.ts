@@ -5,7 +5,7 @@ import { store } from './store';
 
 export function createRemoteIO() {
   ensureConfigured()
-  const options = store.options as RemoteOptions
+  const options = store.get().options as RemoteOptions
   // TODO authentication and authorization
   return {
     async readSpec(id: string) {
@@ -20,7 +20,7 @@ export function createRemoteIO() {
       const response = await fetch(createScenarioURL(options, id))
       return response.json()
     },
-    async writeScenario(id: string, record) {
+    async writeScenario(id: string, record: any) {
       const response = await fetch(createScenarioURL(options, id), { method: 'POST', body: JSON.stringify(record) })
       return response.ok
     }
@@ -28,14 +28,14 @@ export function createRemoteIO() {
 }
 
 function ensureConfigured() {
-  if (!store.options.baseUrl) {
+  if (!store.get().options.baseUrl) {
     throw new NotConfigured('browser testing', 'remoteOptions.baseUrl')
   }
 }
 
-function createSpecURL(options: RemoteOptions, id) {
+function createSpecURL(options: RemoteOptions, id: string) {
   return `${options.baseUrl}/spec/${id}`
 }
-function createScenarioURL(options: RemoteOptions, id) {
+function createScenarioURL(options: RemoteOptions, id: string) {
   return `${options.baseUrl}/scenario/${id}`
 }

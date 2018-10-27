@@ -11,8 +11,8 @@ export interface KomondorOptions extends Partial<RemoteOptions> {
 
 export interface Spy<T> {
   mode: SpecMode,
-  on(type: string, name: string, callback: (action: SpecAction) => void),
-  onAny(callback: (action: SpecAction) => void),
+  on(type: string, name: string, callback: (action: SpecAction) => void): void,
+  onAny(callback: (action: SpecAction) => void): void,
   actions: SpecAction[],
   subject: T
 }
