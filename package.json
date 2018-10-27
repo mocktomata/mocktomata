@@ -29,9 +29,7 @@
   "main": "dist-es2015/index.js",
   "typings": "dist-es2015/index.d.ts",
   "scripts": {
-    "build": "npm run build:es2015",
-    "build:es2015": "tsc -p tsconfig.es2015.json",
-    "build:es5": "tsc -p tsconfig.es5.json",
+    "build": "tsc -p tsconfig.base.json",
     "clean": "rimraf dist dist-es5 && rimraf dist-es2015",
     "codecov": "codecov",
     "coverage": "jest --coverage",

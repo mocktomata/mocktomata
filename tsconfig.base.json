@@ -12,9 +12,11 @@
     "newLine": "LF",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "outDir": "dist-es2015",
     "removeComments": false,
     "skipLibCheck": true,
-    "strict": true
+    "strictNullChecks": true,
+    "target": "es2015"
   },
   "exclude": [
     "src/instance"
