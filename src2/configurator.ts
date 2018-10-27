@@ -15,6 +15,6 @@ import { KomondorOptions } from './interfaces';
 
 export const configurator = {
   config(options: KomondorOptions) {
-    store.options = options
+    store.get().options = options
   }
 }

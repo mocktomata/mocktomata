@@ -11,7 +11,7 @@ module.exports = {
     ['jest-audio-reporter', { volume: 0.3 }],
   ],
   'roots': [
-    '<rootDir>/src'
+    '<rootDir>/src2'
   ],
   'testEnvironment': 'node',
   'testMatch': ['**/*.spec.ts'],

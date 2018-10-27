@@ -17,24 +17,23 @@ export interface Config {
 
 export const config: Config = Object.assign(
   function config(options: KomondorOptions) {
-    store.options = options
+    store.get().options = options
   },
   {
     scenario(mode: SpecMode, ...filters: (string | RegExp)[]) {
       if (filters.length > 0) {
-        store.scenarioOverrides.push(...filters.map(filter => ({ mode, filter })))
+        store.get().scenarioOverrides.push(...filters.map(filter => ({ mode, filter })))
       }
       else {
-        // istanbul ignore next
-        store.defaultMode = mode
+        store.get().scenarioDefaultMode = mode
       }
     },
     spec(mode: SpecMode, ...filters: (string | RegExp)[]) {
       if (filters.length > 0) {
-        store.specOverrides.push(...filters.map(filter => ({ mode, filter })))
+        store.get().specOverrides.push(...filters.map(filter => ({ mode, filter })))
       }
       else {
-        store.specDefaultMode = mode
+        store.get().specDefaultMode = mode
       }
     },
     // registerPlugin

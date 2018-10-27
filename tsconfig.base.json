@@ -10,11 +10,10 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "newLine": "LF",
-    "noImplicitAny": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "removeComments": false,
-    "strictNullChecks": true
+    "strict": true
   },
   "exclude": [
     "src/instance"

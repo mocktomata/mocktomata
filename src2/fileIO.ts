@@ -18,7 +18,7 @@ export function createFileIO() {
     readScenario(id: string) {
       return readFrom<any>(SCENARIOS_FOLDER, id)
     },
-    writeScenario(id: string, record) {
+    writeScenario(id: string, record: any) {
       return writeTo(SCENARIOS_FOLDER, id, JSON.stringify(record))
     }
   }
@@ -61,7 +61,7 @@ export function createFileIO() {
     }, initDir);
   }
 
-  function writeTo(baseDir, id, json) {
+  function writeTo(baseDir: string, id: string, json: string) {
     return new Promise<void>((a, r) => {
       try {
         const filePath = getJsonFilePath(baseDir, id)
