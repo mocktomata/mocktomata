@@ -17,6 +17,9 @@ workflows:
       - node8:
           requires:
             - node-latest
+      - browser-test:
+          requires:
+            - node-latest
       - release:
           filters:
             branches:
@@ -24,6 +27,7 @@ workflows:
           requires:
             - node-latest
             - node8
+            - browser-test
 jobs:
   local-test:
     docker:
@@ -64,6 +68,13 @@ jobs:
       - attach_workspace:
           at: '.'
       - run: npm run verify:ci
+  browser-test:
+    docker:
+      - image: circleci/node:labrowser-tests
+    steps:
+      - attach_workspace:
+          at: '.'
+      - run: npm run test:browser
   release:
     docker:
       - image: circleci/node:10
