@@ -53,7 +53,7 @@ jobs:
             - '.'
             - node_modules
             - '.git'
-      - run: npm run verify-ci
+      - run: npm run verify:ci
       - run: npx codecov
       - store_test_results:
           path: .reports/junit
@@ -63,7 +63,7 @@ jobs:
     steps:
       - attach_workspace:
           at: '.'
-      - run: npm run verify-ci
+      - run: npm run verify:ci
   release:
     docker:
       - image: circleci/node:10
