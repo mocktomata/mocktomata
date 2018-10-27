@@ -8,7 +8,6 @@
   "compilerOptions": {
     "inlineSourceMap": false,
     "sourceMap": true,
-    "skipLibCheck": true,
     "plugins": [
       {
         "name": "tslint-language-service"
