@@ -1,51 +1,80 @@
 version: 2
+save-node: &save-node
+  save_cache:
+    name: Save node modules cache
+    key: node_modules-{{ checksum "package-lock.json" }}
+    paths:
+      - node_modules
+restore-node: &restore-node
+  restore_cache:
+    name: Restore node_modules cache
+    key: node_modules-{{ checksum "package-lock.json" }}
 workflows:
   version: 2
   all:
     jobs:
       - node-latest
-      - node9
-      - node8
+      - node8:
+          requires:
+            - node-latest
+      - release:
+          filters:
+            branches:
+              only: master
+          requires:
+            - node-latest
+            - node8
 jobs:
-  node-latest:
+  local-test:
     docker:
-      - image: 'circleci/node:9'
+      - image: circleci/node:10
     steps:
       - checkout
+      - run: npm run verify
+  node-latest:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - <<: *restore-node
       - run:
-          name: install
-          command: npm install
+          name: Install Dependencies
+          command: |
+            if [ ! -d node_modules ]; then
+              npm ci
+            fi
       - run:
-          name: verify
-          command: npm run verify
-          post:
-            - bash <(curl -s https://codecov.io/bash)
-      - run:
-          name: release
-          command: npm run semantic-release || true
+          name: update greenkeeper lockfile
+          command: ./node_modules/.bin/greenkeeper-lockfile-update
+      - <<: *save-node
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - '.'
+            - node_modules
+            - '.git'
+      - run: npm run verify-ci
+      - run: npx codecov
+      - store_test_results:
+          path: .reports/junit
   node8:
     docker:
       - image: 'circleci/node:8'
     steps:
-      - checkout
-      - run:
-          name: install
-          command: npm install
-      - run:
-          name: verify
-          command: npm run verify
-          post:
-            - bash <(curl -s https://codecov.io/bash)
-  node9:
+      - attach_workspace:
+          at: '.'
+      - run: npm run verify-ci
+  release:
     docker:
-      - image: 'circleci/node:9'
+      - image: circleci/node:10
     steps:
-      - checkout
+      - attach_workspace:
+          at: '.'
+      - run: npm run build
+      - run: npx semantic-release
       - run:
-          name: install
-          command: npm install
+          name: SSH Avoid hosts unknown
+          command: 'mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config'
       - run:
-          name: verify
-          command: npm run ci-verify
-          post:
-            - bash <(curl -s https://codecov.io/bash)
+          name: upload greenkeeper lockfile
+          command: ./node_modules/.bin/greenkeeper-lockfile-upload

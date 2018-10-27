@@ -11,7 +11,7 @@ test('Wrong action throws mismatch', async () => {
   const tracker = await setupTrackerTest('function/simpleCallback/success')
 
   tracker.received({ ...functionConstructed({ functionName: 'success' }), instanceId: 1 })
-  await a.throws(() => tracker.received(
+  a.throws(() => tracker.received(
     // should be [2, ...]
     { ...functionInvoked(1, () => ({})), instanceId: 1, invokeId: 1 }),
     SimulationMismatch)
@@ -85,7 +85,7 @@ test('Missing return action throws SimulationMismatch', async () => {
     invoke
   ])
 
-  const err = await a.throws(() => tracker.received(invoke), SimulationMismatch)
+  const err = a.throws(() => tracker.received(invoke), SimulationMismatch)
   t.deepStrictEqual(err.expected, { type: 'function', name: 'return', instanceId: 1, invokeId: 1 })
   t.deepStrictEqual(err.actual, undefined)
 })

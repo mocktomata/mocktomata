@@ -20,6 +20,6 @@
     "src/instance"
   ],
   "files": [
-    "src/index"
+    "src/index.ts"
   ]
 }

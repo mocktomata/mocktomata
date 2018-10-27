@@ -1,0 +1,17 @@
+{
+  "preset": "ts-jest",
+  "roots": [
+    "<rootDir>/src"
+  ],
+  "testEnvironment": "node",
+  "testMatch": ["**/*.spec.ts"],
+  "reporters": [
+    "default",
+    [
+      "jest-junit",
+      {
+        "output": ".reports/junit/js-test-results.xml"
+      }
+    ]
+  ]
+}

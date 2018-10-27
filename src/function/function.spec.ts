@@ -31,7 +31,7 @@ test('acceptance', async () => {
   ])
 
   const s = await spec(doThrow)
-  await a.throws(() => s.subject())
+  a.throws(() => s.subject())
 
   await s.satisfy([
     { ...functionConstructed({ functionName: 'doThrow' }), instanceId: 1 },

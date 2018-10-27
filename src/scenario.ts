@@ -181,7 +181,7 @@ function createScenarioSpec(record, defaultId: string, mode: SpecMode): Scenario
         record.push(id, specRecord)
       }
     }
-    return createSpec({ io }, id, subject, mode)
+    return createSpec({ io, checkSpecId: false }, id, subject, mode)
   }
 }
 
@@ -194,10 +194,18 @@ export const defineStep = Object.assign(
       throw new DuplicateHandler(clause)
     else if (isTemplate(clause)) {
       const valueTypes: string[] = []
-      const regex = new RegExp(`^${clause.replace(/{([\w:]*)}/g, (_, value) => {
-        const m = /[\w]*:(\w*)/.exec(value)
-        valueTypes.push(m ? m[1].trim() : 'string')
-        return '([\\w\\.\\-]*)'
+      const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/([^\}]*)\/))?)?}/g, (_, value) => {
+        const m = /[\w]*:(.*)/.exec(value)
+        const valueType = m ? m[1].trim() : 'string'
+        const isRegex = valueType.startsWith('/')
+        if (isRegex) {
+          valueTypes.push('regex')
+          return `(${valueType.slice(1, -1)})`
+        }
+        else {
+          valueTypes.push(valueType)
+          return '([^ ]*)'
+        }
       })}$`)
       store.steps.push({ clause, handler, regex, valueTypes })
     }
@@ -212,5 +220,5 @@ export const defineStep = Object.assign(
   })
 
 function isTemplate(clause: string) {
-  return clause.search(/{([\w-=:]*)}/) >= 0
+  return clause.search(/{([\w-]*(:(number|boolean|float|string|\/(.*)\/))?)?}/) >= 0
 }
