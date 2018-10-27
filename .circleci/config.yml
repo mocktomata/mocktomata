@@ -53,7 +53,6 @@ jobs:
             - '.'
             - node_modules
             - '.git'
-            - '~/.ssh'
       - run: npm run verify-ci
       - run: npx codecov
       - store_test_results:
@@ -73,6 +72,9 @@ jobs:
           at: '.'
       - run: npm run build
       - run: npx semantic-release
+      - run:
+          name: SSH Avoid hosts unknown
+          command: 'mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config'
       - run:
           name: upload greenkeeper lockfile
           command: ./node_modules/.bin/greenkeeper-lockfile-upload
