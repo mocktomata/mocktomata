@@ -1,3 +1,0 @@
-it('empty test', () => {
-  return
-})

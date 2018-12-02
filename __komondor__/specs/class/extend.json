@@ -1,1 +1,0 @@
-{"expectation":"[]","actions":[{"type":"class","name":"construct","payload":[1],"meta":{"className":"Boo"},"instanceId":1},{"type":"class","name":"invoke","payload":[],"meta":{"methodName":"getPlusOne"},"invokeId":1,"instanceId":1},{"type":"class","name":"return","payload":2,"meta":{"methodName":"getPlusOne"},"invokeId":1,"instanceId":1}]}

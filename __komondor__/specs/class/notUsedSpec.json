@@ -1,1 +1,0 @@
-{"expectation":"[{ type: 'class', name: 'construct', payload: [], meta: { className: 'Foo' }, instanceId: 1 }]","actions":[{"type":"class","name":"construct","payload":[],"meta":{"className":"Foo"},"instanceId":1}]}

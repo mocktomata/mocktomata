@@ -1,0 +1,33 @@
+language: node_js
+cache:
+  directories:
+    - ~/.npm
+    - node_modules
+notifications:
+  email: false
+node_js:
+  - '9'
+  - '8'
+  - '6'
+branches:
+  only:
+    - master
+    - /^greenkeeper.*$/
+
+before_install:
+  - ./scripts/run-on-node-version.sh 9 "npm install -g greenkeeper-lockfile@1"
+
+before_script:
+  - ./scripts/run-on-node-version.sh 9 "greenkeeper-lockfile-update"
+
+script:
+  - npm run verify
+
+after_success:
+  - npm install -g travis-deploy-once@4
+  - travis-deploy-once "npm run semantic-release"
+  - ./scripts/run-on-node-version.sh 9 "npm install --no-save coveralls && npm run coveralls"
+  - ./scripts/run-on-node-version.sh 9 "npm install --no-save codecov && npm run codecov"
+
+after_script:
+  - ./scripts/run-on-node-version.sh 9 "greenkeeper-lockfile-upload"

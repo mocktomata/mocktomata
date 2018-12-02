@@ -1,1 +1,0 @@
-{"expectation":"[{ type: 'class/constructor', payload: [2] }, { type: 'class/invoke', payload: [], meta: { name: 'getPlusOne' } }, { type: 'class/return', payload: 3 }]","actions":[{"type":"class/constructor","payload":[2]},{"type":"class/invoke","payload":[],"meta":{"methodId":0,"name":"getPlusOne"}},{"type":"class/return","payload":3,"meta":{"methodId":0}}]}

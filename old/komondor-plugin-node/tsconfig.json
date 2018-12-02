@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.es2015.json",
+  "atom": {
+    "rewriteTsconfig": false
+  },
+  "buildOnSave": false,
+  "compileOnSave": false,
+  "include": [
+    "src"
+  ]
+}

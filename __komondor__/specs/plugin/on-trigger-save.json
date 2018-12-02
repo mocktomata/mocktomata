@@ -1,1 +1,0 @@
-{"expectation":"[{ type: 'on-trigger-save', name: 'construct' }, { type: 'on-trigger-save', name: 'invoke' }]","actions":[{"type":"on-trigger-save","name":"construct","instanceId":1},{"type":"on-trigger-save","name":"invoke","payload":[],"invokeId":1,"instanceId":1}]}

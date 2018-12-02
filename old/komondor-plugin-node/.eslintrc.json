@@ -1,0 +1,7 @@
+{
+  "extends": "plugin:harmoney/latest",
+  "root": true,
+  "env": {
+    "node": true
+  }
+}

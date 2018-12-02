@@ -1,0 +1,98 @@
+{
+  "name": "@komondor/core",
+  "version": "7.0.0",
+  "description": "Komondor core library",
+  "keywords": [
+    "boundary",
+    "boundary-testing",
+    "fixture",
+    "testing",
+    "testing-framework",
+    "testing-tools"
+  ],
+  "homepage": "https://github.com/unional/komondor",
+  "bugs": {
+    "url": "https://github.com/unional/komondor/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unional/komondor.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Homa Wong",
+    "email": "homawong@gmail.com"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "rimraf lib",
+    "codecov": "codecov",
+    "coverage": "jest --coverage",
+    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "dc": "npm run dependency-check",
+    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "lint": "tslint -p tsconfig.json 'src/**/*.ts'",
+    "test": "jest",
+    "test:browser": "karma start --single-run",
+    "test:electron": "jest --config jest.config.electron.js",
+    "verify": "npm run lint && npm run build && jest --coverage && npm run test:browser && npm run dependency-check",
+    "verify:ci": "npm run lint && npm run build && jest --coverage --maxWorkers=4 --config jest.config.ci.json",
+    "watch": "jest --watch",
+    "watch:browser": "karma start",
+    "watch:electron": "jest --watch --config jest.config.electron.js",
+    "webpack": "webpack"
+  },
+  "dependencies": {
+    "is-node": "^1.0.2",
+    "systemjs": "^2.1.1"
+  },
+  "devDependencies": {
+    "@jest-runner/electron": "0.0.12",
+    "@komondor/plugin-fixture-deep-link": "^1.0.0",
+    "@komondor/plugin-fixture-dummy": "^1.0.0",
+    "@komondor/plugin-fixture-no-activate": "^1.0.0",
+    "@types/jest": "^23.3.8",
+    "@types/node": "^10.12.0",
+    "@types/ramda": "^0.25.40",
+    "assertron": "^5.2.2",
+    "aurelia-logging-color": "^0.5.16",
+    "aurelia-logging-memory": "^0.3.2",
+    "codecov": "^3.1.0",
+    "dependency-check": "^3.2.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-harmony": "^1.0.4",
+    "greenkeeper-lockfile": "^1.15.1",
+    "jasmine-core": "^3.3.0",
+    "jest": "^23.6.0",
+    "jest-audio-reporter": "^2.2.0",
+    "jest-junit": "^5.2.0",
+    "jest-progress-tracker": "^2.0.1",
+    "jest-watch-repeat": "^1.0.0",
+    "jest-watch-suspend": "^1.1.0",
+    "jest-watch-toggle-config": "^1.0.2",
+    "karma": "^3.1.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-jasmine": "^1.1.2",
+    "karma-mocha": "^1.3.0",
+    "karma-typescript": "^3.0.13",
+    "karma-webpack": "^3.0.5",
+    "merge": "^1.2.1",
+    "mocha": "^5.2.0",
+    "power-assert": "^1.6.1",
+    "rimraf": "^2.6.2",
+    "semantic-release": "^15.10.6",
+    "ts-jest": "^23.10.4",
+    "ts-loader": "^5.3.1",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-unional": "^0.10.0",
+    "tslint-language-service": "^0.9.9",
+    "typescript": "^3.1.3",
+    "webpack": "^4.26.1"
+  }
+}
