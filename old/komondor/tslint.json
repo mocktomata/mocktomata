@@ -1,0 +1,8 @@
+{
+  "extends": "tslint-config-unional/semi-standard",
+  "rules": {
+    "no-unnecessary-type-assertion": false,
+    "deprecation": false,
+    "trailing-comma": false
+  }
+}

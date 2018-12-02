@@ -1,32 +1,8 @@
 language: node_js
-cache:
-  directories:
-    - ~/.npm
-notifications:
-  email: false
-node_js:
-  - '10'
-  - '9'
-  - '8'
-branches:
-  only:
-    - master
-    - /^greenkeeper.*$/
+sudo: false
+matrix:
+  include:
+    - env: PROJECT=packages/komondor-plugin
+    - env: PROJECT=packages/komondor
 
-before_install:
-  - ./scripts/run-on-node-version.sh latest "npm install -g greenkeeper-lockfile@1"
-
-before_script:
-  - ./scripts/run-on-node-version.sh latest "greenkeeper-lockfile-update"
-
-script:
-  - npm run verify:ci
-
-after_success:
-  - npm install -g travis-deploy-once@4
-  - travis-deploy-once "npm run semantic-release"
-  - ./scripts/run-on-node-version.sh latest "npm install --no-save coveralls && npm run coveralls"
-  - ./scripts/run-on-node-version.sh latest "npm install --no-save codecov && npm run codecov"
-
-after_script:
-  - ./scripts/run-on-latest-node.sh "greenkeeper-lockfile-upload"
+script: if .travis/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then echo "$PROJECT is being built"; else echo "$PROJECT is NOT being built"; fi

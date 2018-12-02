@@ -1,0 +1,15 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "exclude": [
+    "src/**/*.node-spec.ts"
+  ],
+  "include": [
+    "custom-typings",
+    "src"
+  ]
+}

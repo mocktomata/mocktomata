@@ -1,1 +1,0 @@
-{"expectation":"[]","actions":[{"type":"instance","name":"construct","meta":{"className":"Foo","properties":{"value":{"descriptor":{"value":3,"writable":true,"enumerable":true,"configurable":true},"type":"number"}}},"instanceId":1}]}

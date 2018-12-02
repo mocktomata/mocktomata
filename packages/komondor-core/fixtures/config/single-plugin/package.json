@@ -1,0 +1,7 @@
+{
+  "komondor": {
+    "plugins": [
+      "komondor-plugin-single"
+    ]
+  }
+}

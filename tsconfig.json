@@ -1,28 +1,11 @@
 {
-  "extends": "./tsconfig.base.json",
-  "atom": {
-    "rewriteTsconfig": false
-  },
-  "buildOnSave": false,
-  "compileOnSave": false,
-  "compilerOptions": {
-    "inlineSourceMap": false,
-    "plugins": [
-      {
-        "name": "tslint-language-service"
-      }
-    ],
-    "sourceMap": true,
-    "strict": true
-  },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "custom-typings",
-    "src2"
-  ],
-  "files": [
-    "src2/index.ts"
+  "files": [],
+  "references": [
+    {
+      "path": "packages/komondor-plugin"
+    },
+    {
+      "path": "packages/a2"
+    }
   ]
 }

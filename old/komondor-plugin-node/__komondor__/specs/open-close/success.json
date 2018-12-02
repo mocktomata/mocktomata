@@ -1,0 +1,1 @@
+{"expectation":"[{ type: 'ws/constructor' }, { type: 'ws/event', meta: { event: 'open' } }, { type: 'ws/terminate' }]","actions":[{"type":"ws/constructor","payload":["ws://html5rocks.websocket.org/echo",null]},{"type":"ws/event","payload":[],"meta":{"event":"open"}},{"type":"ws/terminate"}]}

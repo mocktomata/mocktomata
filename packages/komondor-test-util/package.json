@@ -1,0 +1,10 @@
+{
+  "name": "@komondor/test-util",
+  "version": "1.0.0",
+  "dependencies": {
+    "@komondor/plugin": "^1.7.7"
+  },
+  "devDependencies": {
+    "typescript": "^3.1.3"
+  }
+}
