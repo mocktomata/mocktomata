@@ -1,7 +1,7 @@
 // TODO: remove workaround for karma-typescript
-// import '@komondor/plugin-fixture-deep-link/pluginA'
-// import '@komondor/plugin-fixture-dummy'
-// import '@komondor/plugin-fixture-no-activate'
+import 'komondor-plugin-fixture-deep-link/pluginA'
+import 'komondor-plugin-fixture-dummy'
+import 'komondor-plugin-fixture-no-activate'
 
 import { PluginAlreadyLoaded, PluginNotConforming, PluginNotExist } from './errors';
 import { getPlugins } from './getPlugins';
@@ -25,7 +25,8 @@ function tryImport(pluginName: string) {
     // TODO: add README about bundling komondor with plugins
     // Doing this rename because karma-typescript tries to load 'pluginPath' module when there is `require(pluginPath)`
     // That's a bug of karma-typescript.
-    return require(pluginName + '')
+    // return require('komondor-plugin-fixture-no-activate')
+    return require(pluginName)
   }
   catch {
     throw new PluginNotExist(pluginName)

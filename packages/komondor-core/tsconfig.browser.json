@@ -1,13 +1,28 @@
 {
-  "extends": "../tsconfig.settings.json",
   "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "lib": [
+      "es2015"
+    ],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "newLine": "LF",
+    "noUnusedLocals": true,
+    "removeComments": false,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2015",
     "skipLibCheck": true,
     "outDir": "lib",
     "rootDir": "src"
   },
-  "exclude": [
-    "src/**/*.node-spec.ts"
+  "files": [
+    "src/index.ts"
   ],
+  // "exclude": [
+  //   "src/**/*.node-spec.ts"
+  // ],
   "include": [
     "custom-typings",
     "src"

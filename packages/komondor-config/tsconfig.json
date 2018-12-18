@@ -8,9 +8,5 @@
   "include": [
     "custom-typings",
     "src"
-  ],
-  "files": [
-    "src/index.ts",
-    "src/cli/bin.ts"
   ]
 }
