@@ -1,7 +1,6 @@
 {
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "skipLibCheck": true,
     "outDir": "lib",
     "rootDir": "src"
   },
@@ -10,7 +9,6 @@
     "src"
   ],
   "files": [
-    "src/index.ts",
-    "src/cli/bin.ts"
+    "src/index.ts"
   ]
 }

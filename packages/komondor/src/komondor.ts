@@ -1,5 +1,4 @@
-import { config } from './config'
-
-export const komondor = {
-  config
+import {} from 'komondor-config'
+export function config(options: any) {
+  setConfig(options)
 }

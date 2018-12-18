@@ -1,8 +1,9 @@
 {
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": ["packages/*"],
+    "nohoist": ["**/karma*", "**/komondor-plugin-fixture*"]
+  },
   "name": "komondor",
   "devDependencies": {
     "lerna": "^3.4.3",

@@ -1,5 +1,5 @@
 module.exports = {
   activate(r) {
-    r.register('@komondor/plugin-fixture-dummy')
+    r.register('komondor-plugin-fixture-dummy')
   }
 }
