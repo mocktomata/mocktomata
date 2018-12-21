@@ -1,0 +1,26 @@
+{
+  "name": "@komondor-lab/io-fs",
+  "description": "komondor file system IO package",
+  "version": "7.0.0-alpha",
+  "homepage": "https://github.com/unional/komondor",
+  "bugs": {
+    "url": "https://github.com/unional/komondor/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unional/komondor.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Homa Wong",
+    "email": "homawong@gmail.com"
+  },
+  "files": [
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "engines": {
+    "node": ">= 6"
+  }
+}

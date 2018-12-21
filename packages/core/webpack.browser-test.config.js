@@ -33,7 +33,7 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   output: {
-    path: path.resolve('browser-test-out'),
+    path: path.resolve('out-browser-test'),
     filename: `[name].js`
   }
 }
