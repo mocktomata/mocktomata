@@ -1,7 +1,7 @@
 {
-  "name": "komondor",
+  "name": "@komondor-lab/core",
   "version": "7.0.0-alpha",
-  "description": "Your friendly guard dog for writing tests across boundaries",
+  "description": "Komondor core library",
   "keywords": [
     "boundary",
     "boundary-testing",
@@ -23,27 +23,18 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
-  "bin": {
-    "komondor": "lib/bin.js"
-  },
   "files": [
     "lib"
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
-    "@unional/logging": "^0.5.3",
-    "assertron": "^5.2.2",
-    "chalk": "^2.4.1",
-    "cross-fetch": "^2.2.2",
-    "global-store": "^0.7.3",
-    "is-node": "^1.0.2",
-    "is-primitive": "^3.0.1",
-    "komondor-plugin": "^1.7.7",
-    "make-error": "^1.3.5",
-    "ramda": "^0.25.0",
-    "satisfier": "^4.5.0",
-    "tersify": "^1.2.6",
-    "unpartial": "^0.4.1"
+    "clibuilder": "^2.4.1",
+    "is-node": "^1.0.2"
+  },
+  "devDependencies": {
+    "komondor-plugin-fixture-deep-link": "^1.0.0",
+    "komondor-plugin-fixture-dummy": "^1.0.0",
+    "komondor-plugin-fixture-no-activate": "^1.0.0"
   }
 }

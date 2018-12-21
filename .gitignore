@@ -46,4 +46,6 @@ typings
 # workspace
 .nowhere
 .progress
+.reports
 lib
+out*

@@ -2,10 +2,10 @@
   "files": [],
   "references": [
     {
-      "path": "packages/komondor-plugin"
+      "path": "packages/io-fs"
     },
     {
-      "path": "packages/a2"
+      "path": "packages/core"
     }
   ]
 }
