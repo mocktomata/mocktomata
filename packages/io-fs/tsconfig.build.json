@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "outDir": "lib",
+    "rootDir": "src"
+  },
+  "include": [
+    "custom-typings",
+    "src"
+  ],
+  "files": [
+    "src/index.ts"
+  ]
+}
