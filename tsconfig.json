@@ -5,6 +5,9 @@
       "path": "packages/io-fs"
     },
     {
+      "path": "packages/io-client"
+    },
+    {
       "path": "packages/core"
     }
   ]
