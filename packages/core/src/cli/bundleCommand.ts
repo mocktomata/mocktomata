@@ -16,7 +16,8 @@ export const bundleCommand: CliCommand = {
     }
   },
   run(args) {
-    const { config, output } = args
-    const komondorConfig =  fs.readFileSync(config, 'utf-8')
+    const { config } = args
+    const komondorConfig = fs.readFileSync(config, 'utf-8')
+    console.log(komondorConfig)
   }
 }

@@ -1,4 +1,4 @@
-export * from './config';
+export * from './registerConfigHandler';
 export * from './errors';
-export * from './getConfig';
 export * from './loadConfig';
+export * from './setConfig';
