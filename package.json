@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@unional/logging": "^0.5.3",
-    "assertron": "^5.2.2",
+    "assertron": "^6.0.0",
     "chalk": "^2.4.1",
     "is-primitive": "^3.0.1",
     "komondor-plugin": "^1.7.7",
