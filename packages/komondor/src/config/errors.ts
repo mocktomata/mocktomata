@@ -1,4 +1,22 @@
-import { BaseError } from 'make-error'
+import { BaseError } from 'make-error';
+
+export class InvalidConfigFormat extends BaseError {
+  // istanbul ignore next
+  constructor(public filename: string) {
+    super(`The ${filename} does not contain a valid configuration`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class AmbiguousConfig extends BaseError {
+  // istanbul ignore next
+  constructor(public configs: string[]) {
+    super(`Multiple configuration detected (${configs.join(', ')}). Please consolidate to one config.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
 
 export class MissingConfigForFeature extends BaseError {
   // istanbul ignore next

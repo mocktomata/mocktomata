@@ -3,9 +3,10 @@ import { writeByHash } from './writeByHash';
 
 export function writeTo(baseDir: string, id: string, json: string) {
   const hash = getHash(id)
-  return new Promise<void>((a, r) => {
+  return new Promise<undefined>((a, r) => {
     try {
-      a(writeByHash(baseDir, id, json, hash))
+      writeByHash(baseDir, id, json, hash)
+      a()
     }
     catch (err) {
       // istanbul ignore next

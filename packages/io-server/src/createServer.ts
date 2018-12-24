@@ -1,13 +1,9 @@
-import { IOOptions } from '@komondor-lab/core'
+import { readSpec, writeSpec } from '@komondor-lab/io-fs';
 import { Server } from 'hapi';
-import { readSpec, writeSpec } from '@komondor-lab/io-fs'
+import { IOServerOptions } from './interfaces';
 
-export type IOServerContext = {
-  ui: any
-}
-
-export function createServer(context: IOServerContext, options: IOOptions) {
-  const server = new Server()
+export function createServer(options: IOServerOptions) {
+  const server = new Server({ port: options.port })
   server.route([
     {
       method: 'GET',
@@ -19,8 +15,9 @@ export function createServer(context: IOServerContext, options: IOOptions) {
     {
       method: 'POST',
       path: '/spec/{id}',
-      handler: (request, h) => {
-        return writeSpec(request.params.id, request.payload as string)
+      handler: async (request, h) => {
+        await writeSpec(request.params.id, request.payload as string)
+        return h.response()
       }
     }
   ])
