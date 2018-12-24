@@ -23,14 +23,20 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
-  "bin": {
-    "komondor": "lib/bin.js"
-  },
   "files": [
     "lib"
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "bin": {
+    "komondor": "lib/bin.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dc": "yarn dependency-check",
+    "dependency-check": "dependency-check . --unused --no-dev -i type-plus && dependency-check . --missing --no-dev",
+    "verify": "rimraf lib && yarn build && jest --coverage"
+  },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-client": "^7.0.0-alpha",
@@ -39,6 +45,7 @@
     "assertron": "^6.0.0",
     "chalk": "^2.4.1",
     "clibuilder": "^2.4.4",
+    "type-plus": "^1.0.0",
     "validate.js": "^0.12.0"
   },
   "devDependencies": {

@@ -3,8 +3,8 @@ import a from 'assertron';
 import fs from 'fs';
 import path from 'path';
 import { dirSync } from 'tmp';
-import { loadConfig } from '.';
-import { AmbiguousConfig, InvalidConfigFormat } from './errors';
+import { loadConfig } from './loadConfig';
+import { AmbiguousConfig, InvalidConfigFormat } from '../config';
 
 test('no config returns empty object', () => {
   const tmp = dirSync()
