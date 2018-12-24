@@ -1,6 +1,6 @@
 import { createServer } from '@komondor-lab/io-server';
 import { CliCommand } from 'clibuilder';
-import { loadConfig } from '../config';
+import { loadConfig } from '../runtime';
 import { validate } from './validate';
 import chalk from 'chalk'
 
@@ -24,10 +24,9 @@ export const serveCommand: CliCommand = {
       const server = createServer({ port: config.localPort! })
       await server.start()
 
-      this.ui.info(`komondor server started. Access URLs:`)
+      this.ui.info(`komondor server started.`)
       this.ui.info(`--------------------------------------------------------------------------------`)
-      this.ui.info(`      Local: ${chalk.magenta(`${server.info.protocol}://localhost:${server.info.port}`)}`)
-      this.ui.info(`   External: ${chalk.magenta(`${server.info.protocol}://${server.info.host}:${server.info.port}`)}`)
+      this.ui.info(`      ${chalk.magenta(`${server.info.protocol}://localhost:${server.info.port}`)}`)
       this.ui.info(`--------------------------------------------------------------------------------`)
     }
   }

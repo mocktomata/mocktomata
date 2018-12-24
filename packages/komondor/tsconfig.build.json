@@ -1,7 +1,8 @@
 {
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "outDir": "lib"
+    "outDir": "lib",
+    "rootDir": "src"
   },
   "references": [
     {
@@ -24,6 +25,7 @@
     "src"
   ],
   "files": [
-    "src/index.ts"
+    "src/index.ts",
+    "src/bin.ts"
   ]
 }

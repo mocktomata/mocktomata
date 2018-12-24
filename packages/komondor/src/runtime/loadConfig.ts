@@ -1,9 +1,9 @@
 import fs from 'fs';
 import path from 'path';
-import { AmbiguousConfig, InvalidConfigFormat } from './errors';
-import { Config } from './interfaces';
+import { RecursivePartial } from 'type-plus';
+import { AmbiguousConfig, Config, InvalidConfigFormat } from '../config';
 
-export function loadConfig(cwd: string): Partial<Config> {
+export function loadConfig(cwd: string): RecursivePartial<Config> {
   const configs: { [k in string]?: any } = {
     pjson: loadPjsonConfig(cwd),
     kjson: loadKjsonConfig(cwd),
@@ -17,7 +17,6 @@ export function loadConfig(cwd: string): Partial<Config> {
 
   const config = configs[names[0]]
 
-  // TODO: perform validation
   return config
 }
 

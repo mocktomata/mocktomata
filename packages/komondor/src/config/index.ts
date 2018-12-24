@@ -1,3 +1,3 @@
+export * from './config';
 export * from './errors';
-export * from './loadConfig';
-export * from './setConfig';
+export * from './interfaces';
