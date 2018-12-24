@@ -34,7 +34,16 @@
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-client": "^7.0.0-alpha",
-    "@komondor-lab/io-fs": "^7.0.0-alpha",
-    "clibuilder": "^2.4.3"
+    "@komondor-lab/io-local": "^7.0.0-alpha",
+    "@komondor-lab/io-server": "^7.0.0-alpha.0",
+    "assertron": "^6.0.0",
+    "chalk": "^2.4.1",
+    "clibuilder": "^2.4.4",
+    "validate.js": "^0.12.0"
+  },
+  "devDependencies": {
+    "@types/tmp": "^0.0.33",
+    "jest": "^24.0.0-alpha.9",
+    "tmp": "^0.0.33"
   }
 }

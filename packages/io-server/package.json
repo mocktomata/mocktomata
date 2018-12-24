@@ -35,6 +35,9 @@
     "node": ">= 6"
   },
   "devDependencies": {
-    "@types/hapi": "^17.8.2"
+    "@types/hapi": "^17.8.2",
+    "@types/node-fetch": "^2.1.4",
+    "delay": "^4.1.0",
+    "node-fetch": "^2.3.0"
   }
 }

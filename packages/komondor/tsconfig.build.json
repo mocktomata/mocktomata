@@ -3,6 +3,23 @@
   "compilerOptions": {
     "outDir": "lib"
   },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../io-client"
+    },
+    {
+      "path": "../io-local"
+    },
+    {
+      "path": "../io-server"
+    },
+    {
+      "path": "../plugin"
+    }
+  ],
   "include": [
     "src"
   ],

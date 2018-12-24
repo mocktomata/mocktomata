@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch';
-import { IORemoteOptions, SpecRecord } from './interfaces';
+import { IOClientOptions, SpecRecord } from './interfaces';
 
-export function createIO(options: IORemoteOptions) {
+export function createIO(options: IOClientOptions) {
   return {
     async readSpec(id: string) {
       const response = await this.fetch(createSpecURL(options, id))
@@ -23,9 +23,9 @@ export function createIO(options: IORemoteOptions) {
   }
 }
 
-function createSpecURL(options: IORemoteOptions, id: string) {
+function createSpecURL(options: IOClientOptions, id: string) {
   return `${options.url}/spec/${id}`
 }
-function createScenarioURL(options: IORemoteOptions, id: string) {
+function createScenarioURL(options: IOClientOptions, id: string) {
   return `${options.url}/scenario/${id}`
 }
