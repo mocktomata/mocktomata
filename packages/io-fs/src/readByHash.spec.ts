@@ -1,4 +1,4 @@
-import assertron from 'assertron';
+import t from 'assert';
 import { dirSync } from 'tmp';
 import { readByHash } from './readByHash';
 import { writeByHash } from './writeByHash';
@@ -9,6 +9,6 @@ test('can read conflicted spec', async () => {
   writeByHash(tmp.name, 'conflict2', '{ "actions":[], "expectation": "b" }', 'conflicted hash')
 
   const actual = readByHash(tmp.name, 'conflict2', 'conflicted hash')
-  assertron.satisfies(actual, { expectation: 'b' })
+  t.strictEqual(actual, '{ "actions":[], "expectation": "b" }')
 })
 

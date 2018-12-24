@@ -24,9 +24,9 @@ export function readScenario(id: string) {
 
 readScenario.dir = SPECS_FOLDER
 
-export function writeScenario(id: string, record: any) {
+export function writeScenario(id: string, scenarioStr: string) {
   ensureFolderCreated(writeScenario.dir)
-  return writeTo(writeScenario.dir, id, JSON.stringify(record))
+  return writeTo(writeScenario.dir, id, scenarioStr)
 }
 
 writeScenario.dir = SCENARIOS_FOLDER

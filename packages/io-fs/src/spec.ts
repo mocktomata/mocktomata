@@ -2,13 +2,12 @@ import { SPECS_FOLDER } from './constants';
 import { ensureFolderCreated } from './ensureFolderCreated';
 import { SpecNotFound } from './errors';
 import { getHash } from './getHash';
-import { SpecRecord } from './interfaces';
 import { readByHash } from './readByHash';
 import { writeTo } from './writeTo';
 
 export function readSpec(id: string) {
   const hash = getHash(id)
-  return new Promise<SpecRecord>((a, r) => {
+  return new Promise<string>((a, r) => {
     try {
       a(readByHash(readSpec.dir, id, hash))
     }
@@ -25,9 +24,9 @@ export function readSpec(id: string) {
 
 readSpec.dir = SPECS_FOLDER
 
-export function writeSpec(id: string, record: SpecRecord) {
+export function writeSpec(id: string, specStr: string) {
   ensureFolderCreated(writeSpec.dir)
-  return writeTo(writeSpec.dir, id, JSON.stringify(record))
+  return writeTo(writeSpec.dir, id, specStr)
 }
 
 writeSpec.dir = SPECS_FOLDER

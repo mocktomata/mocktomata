@@ -1,7 +1,7 @@
 {
-  "name": "@komondor-lab/io-fs",
+  "name": "@komondor-lab/io-local",
   "version": "7.0.0-alpha",
-  "description": "komondor file system IO package",
+  "description": "komondor local IO package",
   "homepage": "https://github.com/unional/komondor",
   "bugs": {
     "url": "https://github.com/unional/komondor/issues"
@@ -21,20 +21,15 @@
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
     "dc": "yarn dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev -i '@komondor-lab/core' && dependency-check . --missing --no-dev",
-    "verify": "rimraf lib && yarn build && jest --coverage && yarn dependency-check"
+    "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
-    "make-error": "^1.3.5",
-    "md5": "^2.2.1",
-    "mkdirp": "^0.5.1"
+    "@komondor-lab/io-fs": "^7.0.0-alpha"
   },
   "devDependencies": {
-    "@types/md5": "^2.1.33",
-    "@types/mkdirp": "^0.5.2",
     "@types/tmp": "^0.0.33",
     "assertron": "^6.0.0",
     "tmp": "^0.0.33"
