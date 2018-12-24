@@ -16,7 +16,7 @@ describe('readScenario()', () => {
     readScenario.dir = tmp.name
     writeScenario.dir = tmp.name
 
-    const expected = { actions: [], expectation: 'some expectation' }
+    const expected = JSON.stringify({ actions: [], expectation: 'some expectation' })
     await writeScenario('retrieve', expected)
     const actual = await readScenario('retrieve')
     t.deepStrictEqual(actual, expected)
@@ -27,7 +27,7 @@ describe('writeScenario()', () => {
   test('write scenario to the scenario folder', async () => {
     const tmp = dirSync()
     writeScenario.dir = tmp.name
-    await writeScenario('some Scenario', { actions: [], expectation: 'some expectation' })
+    await writeScenario('some Scenario', JSON.stringify({ actions: [], expectation: 'some expectation' }))
     const folderContent = fs.readdirSync(tmp.name)
     t.strictEqual(folderContent.length, 1)
   })

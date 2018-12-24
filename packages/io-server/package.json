@@ -1,15 +1,7 @@
 {
-  "name": "komondor",
+  "name": "@komondor-lab/io-server",
   "version": "7.0.0-alpha",
-  "description": "Your friendly guard dog for writing tests across boundaries",
-  "keywords": [
-    "boundary",
-    "boundary-testing",
-    "fixture",
-    "testing",
-    "testing-framework",
-    "testing-tools"
-  ],
+  "description": "komondor IO server",
   "homepage": "https://github.com/unional/komondor",
   "bugs": {
     "url": "https://github.com/unional/komondor/issues"
@@ -23,18 +15,26 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
-  "bin": {
-    "komondor": "lib/bin.js"
-  },
   "files": [
     "lib"
   ],
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dc": "yarn dependency-check",
+    "dependency-check": "dependency-check . --unused --no-dev -i '@komondor-lab/core' && dependency-check . --missing --no-dev",
+    "verify": "rimraf lib && yarn build && jest --coverage && yarn dependency-check"
+  },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
-    "@komondor-lab/io-client": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
-    "clibuilder": "^2.4.3"
+    "hapi": "^17.8.1"
+  },
+  "engines": {
+    "node": ">= 6"
+  },
+  "devDependencies": {
+    "@types/hapi": "^17.8.2"
   }
 }
