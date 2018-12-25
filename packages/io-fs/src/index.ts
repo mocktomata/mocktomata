@@ -1,3 +1,4 @@
 export * from './config';
-export * from './scenario/scenario';
-export * from './spec/spec';
+export * from './errors';
+export * from './scenario';
+export * from './spec';

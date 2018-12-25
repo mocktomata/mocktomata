@@ -1,6 +1,7 @@
-import { loadConfig, readSpec, writeSpec } from '@komondor-lab/io-fs';
+import { loadConfig, createSpecIO } from '@komondor-lab/io-fs';
 import { Server, ServerOptions } from 'hapi';
 import { IOServerOptions } from './interfaces';
+import { unpartial } from 'unpartial'
 
 const pjson = require('../package.json')
 
@@ -8,9 +9,11 @@ const pjson = require('../package.json')
  * @param options.port The port number to start the server with.
  * This should not be specified in normal use. For testing only.
  */
-export function createServer({ port }: IOServerOptions = { port: 3698 }) {
+export function createServer(options?: IOServerOptions) {
+  let { cwd, port } = unpartial({ cwd: process.cwd(), port: 3698 }, options)
+
   const startingPort = port
-  let server = createHapiServer({ port })
+  let server = createHapiServer({ cwd, hapi: { port } })
   let retryCount = 0
   return {
     info: server.info,
@@ -26,7 +29,7 @@ export function createServer({ port }: IOServerOptions = { port: 3698 }) {
           if (retryCount >= 100) {
             throw new Error(`Unable to start komondor server using port from ${startingPort} to ${startingPort + 100}`)
           }
-          server = createHapiServer({ port })
+          server = createHapiServer({ cwd, hapi: { port } })
           this.info = server.info
           return this.start()
         }
@@ -39,9 +42,10 @@ export function createServer({ port }: IOServerOptions = { port: 3698 }) {
     }
   }
 }
-function createHapiServer(options: ServerOptions) {
-  let server = new Server(options)
+function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
 
+  let server = new Server(hapi)
+  const spec = createSpecIO({ cwd })
   server.route([
     {
       method: 'GET',
@@ -57,21 +61,21 @@ function createHapiServer(options: ServerOptions) {
       method: 'GET',
       path: '/komondor/config',
       handler: async () => {
-        return JSON.stringify(loadConfig(process.cwd()))
+        return JSON.stringify(loadConfig(cwd))
       }
     },
     {
       method: 'GET',
       path: '/komondor/spec/{id}',
       handler: (request) => {
-        return readSpec(request.params.id)
+        return spec.read(request.params.id)
       }
     },
     {
       method: 'POST',
       path: '/komondor/spec/{id}',
       handler: async (request, h) => {
-        await writeSpec(request.params.id, request.payload as string)
+        await spec.write(request.params.id, request.payload as string)
         return h.response()
       }
     }
