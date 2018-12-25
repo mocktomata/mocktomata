@@ -1,4 +1,3 @@
-import { io } from '../io';
 import { Plugin } from '../plugin';
 import { store } from '../runtime';
 import { IDCannotBeEmpty, NotSpecable } from './errors';
@@ -12,26 +11,26 @@ export type SpecMode = 'live' | 'save' | 'simulate'
 export async function spec<T>(id: string, subject: T): Promise<Spec<T>> {
   assertSpecID(id)
   const mode = getSpecMode(id, 'live')
-  return createSpec({ io }, id, subject, mode)
+  return createSpec({}, id, subject, mode)
 }
 
 async function saveSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   assertSpecID(id)
   const mode = getSpecMode(id, 'save')
-  return createSpec({ io }, id, subject, mode)
+  return createSpec({}, id, subject, mode)
 }
 
 async function simulateSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   assertSpecID(id)
   const mode = getSpecMode(id, 'simulate')
-  return createSpec({ io }, id, subject, mode)
+  return createSpec({}, id, subject, mode)
 }
 
 
 async function liveSpec<T>(id: string, subject: T): Promise<Spec<T>> {
   assertSpecID(id)
   const mode = getSpecMode(id, 'live')
-  return createSpec({ io }, id, subject, mode)
+  return createSpec({}, id, subject, mode)
 }
 
 spec.save = saveSpec
@@ -46,8 +45,8 @@ function assertSpecID(id: string) {
   if (id === '') throw new IDCannotBeEmpty()
 }
 
-type CreateSpecContext = { io: typeof io }
-function createSpec({ io }: CreateSpecContext, specId: string, subject: any, mode: SpecMode) {
+type CreateSpecContext = {}
+function createSpec({ }: CreateSpecContext, specId: string, subject: any, mode: SpecMode) {
   const plugins = store.get<Plugin[]>('plugins')
 
   const plugin = plugins && plugins.find(p => p.support(subject))
@@ -58,9 +57,9 @@ function createSpec({ io }: CreateSpecContext, specId: string, subject: any, mod
     case 'live':
       return createSpyingSpec(specId, subject)
     case 'save':
-      return createSavingSpec({ io }, specId, subject)
+      return createSavingSpec({}, specId, subject)
     case 'simulate':
-      return createStubbingSpec({ io }, specId, subject)
+      return createStubbingSpec({}, specId, subject)
   }
 }
 
