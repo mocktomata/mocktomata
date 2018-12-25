@@ -5,6 +5,14 @@
     "rootDir": "src",
     "skipLibCheck": true
   },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../io-server"
+    }
+  ],
   "include": [
     "custom-typings",
     "src"

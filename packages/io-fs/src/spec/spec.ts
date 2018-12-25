@@ -1,9 +1,9 @@
-import { SPECS_FOLDER } from './constants';
-import { ensureFolderCreated } from './ensureFolderCreated';
-import { SpecNotFound } from './errors';
-import { getHash } from './getHash';
-import { readByHash } from './readByHash';
-import { writeTo } from './writeTo';
+import { SPECS_FOLDER } from '../constants';
+import { ensureFolderCreated } from '../util/ensureFolderCreated';
+import { SpecNotFound } from '../errors';
+import { getHash } from '../util/getHash';
+import { readByHash } from '../util/readByHash';
+import { writeTo } from '../util/writeTo';
 
 export function readSpec(id: string) {
   const hash = getHash(id)

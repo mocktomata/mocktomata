@@ -2,8 +2,8 @@ import t from 'assert';
 import a from 'assertron';
 import fs from 'fs';
 import { dirSync } from 'tmp';
-import { ScenarioNotFound } from './errors';
-import { readScenario, writeScenario } from '.';
+import { readScenario, writeScenario } from '..';
+import { ScenarioNotFound } from '../errors';
 
 describe('readScenario()', () => {
   test('not exist Scenario throws ScenarioNotFound', async () => {

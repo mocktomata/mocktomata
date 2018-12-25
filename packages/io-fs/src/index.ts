@@ -1,2 +1,3 @@
-export * from './scenario';
-export * from './spec';
+export * from './config';
+export * from './scenario/scenario';
+export * from './spec/spec';
