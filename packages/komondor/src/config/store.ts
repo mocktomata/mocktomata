@@ -1,4 +1,4 @@
 import { create } from 'global-store';
 import { Config } from './interfaces';
 
-export const store = create<Config>('komondor/config', {})
+export const store = create<Config>('komondor/config', { localPort: 3698 })

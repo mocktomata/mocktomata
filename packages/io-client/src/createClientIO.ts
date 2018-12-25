@@ -2,7 +2,7 @@ import fetch from 'cross-fetch';
 import { IOClientOptions, SpecRecord } from './interfaces';
 import { getServerInfo } from './getServerInfo';
 
-export async function createIO(options?: IOClientOptions) {
+export async function createClientIO(options?: IOClientOptions) {
   const info = await getServerInfo(options)
   return {
     async readSpec(id: string) {

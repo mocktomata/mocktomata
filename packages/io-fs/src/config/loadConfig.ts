@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { AmbiguousConfig, InvalidConfigFormat } from './errors';
 
-export function loadConfig(cwd: string): object {
-  const configs: { [k in string]?: any } = {
+export function loadConfig(cwd: string) {
+  const configs: { [k in string]: Record<string, any> } = {
     pjson: loadPjsonConfig(cwd),
     kjson: loadKjsonConfig(cwd),
     kjs: loadKjsConfig(cwd)
