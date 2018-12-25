@@ -11,16 +11,13 @@ test('server defaults to port 3698', () => {
 describe('server behavior', () => {
   const tmp = dirSync()
 
-  const cwd = process.cwd()
-  const server = createServer()
+  const server = createServer({ cwd: tmp.name, port: 3698 })
 
   beforeAll(() => {
-    process.chdir(tmp.name)
     return server.start()
   })
 
   afterAll(() => {
-    process.chdir(cwd)
     return server.stop()
   })
 

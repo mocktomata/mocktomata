@@ -1,9 +1,9 @@
 import t from 'assert';
-import { createIO } from './createIO';
+import { createLocalIO } from './createLocalIO';
 
 describe('readSpec()', () => {
   test('returns an object', async () => {
-    const io = createIO()
+    const io = createLocalIO()
     const expected = { actions: [], expectation: 'abc' };
     io._deps.spec.read = (() => Promise.resolve(JSON.stringify(expected))) as any
 

@@ -1,5 +1,5 @@
 import t from 'assert';
-import { createIO } from './createIO';
+import { createClientIO } from './createClientIO';
 import { createServer } from '@komondor-lab/io-server'
 
 let server: ReturnType<typeof createServer>
@@ -13,7 +13,7 @@ afterAll(async () => {
 
 describe('readSpec()', () => {
   test('read existing spec', async () => {
-    const io = await createIO({ url: 'http://localhost:4000' })
+    const io = await createClientIO({ url: 'http://localhost:4000' })
     const expected = { actions: [], expectation: 'abc' };
     io._deps.fetch = () => Promise.resolve({ json: () => expected } as any)
 
@@ -24,7 +24,7 @@ describe('readSpec()', () => {
 
 describe('loadConfig()', () => {
   test('load...', async () => {
-    const io = await createIO({ url: 'http://localhost:4000' })
+    const io = await createClientIO({ url: 'http://localhost:4000' })
     await io.loadConfig()
   })
 })

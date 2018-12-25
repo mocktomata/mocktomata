@@ -1,14 +1,16 @@
+import { createLocalIO } from '@komondor-lab/io-local';
 import { createServer } from '@komondor-lab/io-server';
+import chalk from 'chalk';
 import { CliCommand } from 'clibuilder';
-import { loadConfig } from '../runtime';
+import { LocalIOConfig } from '../config';
 import { validate } from './validate';
-import chalk from 'chalk'
 
 export const serveCommand: CliCommand = {
   name: 'serve',
   description: 'Starts a local server to serve requests from client (browser)',
   async run() {
-    const config = loadConfig(this.cwd)
+    const io = createLocalIO({ cwd: this.cwd })
+    const config = await io.loadConfig() as LocalIOConfig
 
     if (validate({ ui: this.ui }, config, {
       localPort: {
@@ -21,7 +23,7 @@ export const serveCommand: CliCommand = {
         }
       }
     })) {
-      const server = createServer({ port: config.localPort! })
+      const server = createServer({ port: config.localPort })
       await server.start()
 
       this.ui.info(`komondor server started.`)

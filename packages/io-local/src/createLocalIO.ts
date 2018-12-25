@@ -1,7 +1,7 @@
 import { loadConfig, createSpecIO, createScenarioIO } from '@komondor-lab/io-fs';
 import { SpecRecord } from './interfaces';
 
-export function createIO({ cwd } = { cwd: process.cwd() }) {
+export function createLocalIO({ cwd } = { cwd: process.cwd() }) {
   const spec = createSpecIO({ cwd })
   const scenario = createScenarioIO({ cwd })
 
@@ -21,7 +21,7 @@ export function createIO({ cwd } = { cwd: process.cwd() }) {
       return this._deps.scenario.write(id, JSON.stringify(record))
     },
     async loadConfig() {
-      return Promise.resolve(this._deps.loadConfig(process.cwd()))
+      return Promise.resolve(this._deps.loadConfig(cwd))
     },
     _deps: { loadConfig, spec, scenario }
   }
