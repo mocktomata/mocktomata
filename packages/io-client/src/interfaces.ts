@@ -11,8 +11,4 @@ export interface IOClientOptions {
    * This is used by browser tests to connect to the komondor server.
    */
   url: string
-  /**
-   * Authenticate key to komondor service
-   */
-  key?: string
 }
