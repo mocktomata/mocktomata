@@ -4,9 +4,13 @@
     "outDir": "lib",
     "rootDir": "src"
   },
+  "references": [
+    {
+      "path": "../core"
+    }
+  ],
   "include": [
-    "custom-typings",
-    "src"
+    "typings"
   ],
   "files": [
     "src/index.ts"

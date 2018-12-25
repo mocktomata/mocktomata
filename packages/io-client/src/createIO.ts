@@ -21,7 +21,7 @@ export function createIO(options: IOClientOptions) {
     },
     async loadConfig() {
       const response = await this.fetch(createConfigURL(options))
-      return await response.json()
+      return response.json()
     },
     fetch
   }

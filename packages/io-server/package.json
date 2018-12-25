@@ -29,7 +29,8 @@
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
-    "hapi": "^17.8.1"
+    "hapi": "^17.8.1",
+    "unpartial": "^0.4.1"
   },
   "engines": {
     "node": ">= 6"

@@ -13,8 +13,7 @@
     }
   ],
   "include": [
-    "custom-typings",
-    "src"
+    "typings"
   ],
   "files": [
     "src/index.ts"

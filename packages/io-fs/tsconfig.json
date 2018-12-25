@@ -1,16 +1,7 @@
 {
-  "extends": "../tsconfig.settings.json",
-  "compilerOptions": {
-    "outDir": "lib",
-    "rootDir": "src"
-  },
-  "references": [
-    {
-      "path": "../core"
-    }
-  ],
+  "extends": "./tsconfig.build.json",
   "include": [
-    "custom-typings",
+    "typings",
     "src"
   ],
 }
