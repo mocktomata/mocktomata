@@ -15,15 +15,15 @@ it('plugin without activate() thows PluginNotConforming', () => {
 
 it('load plugin with same name throws PluginAlreadyLoaded', () => {
   const err = a.throws(() => loadPlugins(['komondor-plugin-fixture-dummy', 'komondor-plugin-fixture-dummy']), PluginAlreadyLoaded)
-  a.equal(err.pluginName, 'komondor-plugin-fixture-dummy')
+  t.strictEqual(err.pluginName, 'komondor-plugin-fixture-dummy')
 })
 
 it('can load node module plugin', () => {
   loadPlugins(['komondor-plugin-fixture-dummy'])
-  a.satisfy(getPlugins(), some({ name: 'komondor-plugin-fixture-dummy' }))
+  a.satisfies(getPlugins(), some({ name: 'komondor-plugin-fixture-dummy' }))
 })
 
 it('can load plugin using deep link', () => {
   loadPlugins(['komondor-plugin-fixture-deep-link/pluginA'])
-  a.satisfy(getPlugins(), some({ name: 'komondor-plugin-fixture-deep-link-pluginA' }))
+  a.satisfies(getPlugins(), some({ name: 'komondor-plugin-fixture-deep-link-pluginA' }))
 })
