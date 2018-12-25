@@ -3,28 +3,51 @@ import fetch from 'node-fetch';
 import { dirSync } from 'tmp';
 import { createServer } from '.';
 
-test('server uses specified port', () => {
-  const server = createServer({ port: 3224 })
-  t.strictEqual(server.info.port, 3224)
+test('server defaults to port 3698', () => {
+  const server = createServer()
+  t.strictEqual(server.info.port, 3698)
 })
 
-test('can read and write spec', async () => {
+describe('server behavior', () => {
   const tmp = dirSync()
 
-  const port = 7892
-  const server = createServer({ port })
-
   const cwd = process.cwd()
-  try {
-    process.chdir(tmp.name)
-    await server.start()
-    await fetch(`http://localhost:${port}/spec/abc`, { method: 'POST', body: '{ a: 1 }' })
+  const server = createServer()
 
-    const response = await fetch(`http://localhost:${port}/spec/abc`)
+  beforeAll(() => {
+    process.chdir(tmp.name)
+    return server.start()
+  })
+
+  afterAll(() => {
+    process.chdir(cwd)
+    return server.stop()
+  })
+
+  test('will start of the next port if the preious port is occupied', async () => {
+    const server2 = createServer()
+
+    try {
+      await server2.start()
+      t.strictEqual(server2.info.port, 3699)
+    }
+    finally {
+      await server2.stop()
+    }
+  })
+
+  test('can read and write spec', async () => {
+    await fetch(`http://localhost:${server.info.port}/komondor/spec/abc`, { method: 'POST', body: '{ a: 1 }' })
+
+    const response = await fetch(`http://localhost:${server.info.port}/komondor/spec/abc`)
     const actual = await response.text()
     t.strictEqual(actual, '{ a: 1 }')
-  }
-  finally {
-    process.chdir(cwd)
-  }
+  })
+
+  test('get komondor info', async () => {
+    const response = await fetch(`http://localhost:${server.info.port}/komondor/info`)
+    const actual = await response.text()
+    const pjson = require('../package.json')
+    t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}"}`)
+  })
 })
