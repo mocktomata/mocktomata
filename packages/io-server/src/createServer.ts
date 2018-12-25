@@ -1,10 +1,14 @@
-import { readSpec, writeSpec } from '@komondor-lab/io-fs';
+import { loadConfig, readSpec, writeSpec } from '@komondor-lab/io-fs';
 import { Server, ServerOptions } from 'hapi';
+import { IOServerOptions } from './interfaces';
 
 const pjson = require('../package.json')
 
-export function createServer() {
-  let port = 3698
+/**
+ * @param options.port The port number to start the server with.
+ * This should not be specified in normal use. For testing only.
+ */
+export function createServer({ port }: IOServerOptions = { port: 3698 }) {
   const startingPort = port
   let server = createHapiServer({ port })
   let retryCount = 0
@@ -47,6 +51,13 @@ function createHapiServer(options: ServerOptions) {
           name: 'komondor',
           version: pjson.version
         })
+      }
+    },
+    {
+      method: 'GET',
+      path: '/komondor/config',
+      handler: async () => {
+        return JSON.stringify(loadConfig(process.cwd()))
       }
     },
     {

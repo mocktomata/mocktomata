@@ -2,7 +2,11 @@
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "src",
+    "lib": [
+      "dom",
+      "es2015"
+    ]
   },
   "references": [
     {
@@ -22,7 +26,7 @@
     }
   ],
   "include": [
-    "src"
+    "typings"
   ],
   "files": [
     "src/index.ts",

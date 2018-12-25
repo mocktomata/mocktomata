@@ -19,13 +19,21 @@ export function createIO(options: IOClientOptions) {
       const response = await this.fetch(createScenarioURL(options, id), { method: 'POST', body: JSON.stringify(record) })
       return response.ok
     },
+    async loadConfig() {
+      const response = await this.fetch(createConfigURL(options))
+      return await response.json()
+    },
     fetch
   }
 }
 
 function createSpecURL(options: IOClientOptions, id: string) {
-  return `${options.url}/spec/${id}`
+  return `${options.url}/komondor/spec/${id}`
 }
 function createScenarioURL(options: IOClientOptions, id: string) {
-  return `${options.url}/scenario/${id}`
+  return `${options.url}/komondor/scenario/${id}`
+}
+
+function createConfigURL(options: IOClientOptions) {
+  return `${options.url}/komondor/config`
 }

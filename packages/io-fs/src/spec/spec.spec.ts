@@ -2,8 +2,8 @@ import t from 'assert';
 import a from 'assertron';
 import fs from 'fs';
 import { dirSync } from 'tmp';
-import { SpecNotFound } from './errors';
-import { readSpec, writeSpec } from '.';
+import { readSpec, writeSpec } from '..';
+import { SpecNotFound } from '../errors';
 
 describe('readSpec()', () => {
   test('not exist spec throws SpecNotFound', async () => {

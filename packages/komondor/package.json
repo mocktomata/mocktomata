@@ -45,6 +45,8 @@
     "assertron": "^6.0.0",
     "chalk": "^2.4.1",
     "clibuilder": "^2.4.4",
+    "cross-fetch": "^3.0.0",
+    "is-node": "^1.0.2",
     "type-plus": "^1.0.0",
     "validate.js": "^0.12.0"
   },

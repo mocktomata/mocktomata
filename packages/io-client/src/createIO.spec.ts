@@ -1,5 +1,15 @@
 import t from 'assert';
 import { createIO } from './createIO';
+import { createServer } from '@komondor-lab/io-server'
+
+let server: ReturnType<typeof createServer>
+beforeAll(async () => {
+  server = createServer({ port: 4000 })
+  await server.start()
+})
+afterAll(async () => {
+  await server.stop()
+})
 
 describe('readSpec()', () => {
   test('read existing spec', async () => {
@@ -12,3 +22,10 @@ describe('readSpec()', () => {
   })
 })
 
+describe('loadConfig()', () => {
+  test('load', async () => {
+    const io = createIO({ url: 'http://localhost:4000' })
+    const actual = await io.loadConfig()
+    console.log(actual)
+  })
+})

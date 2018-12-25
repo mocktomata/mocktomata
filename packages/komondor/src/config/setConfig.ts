@@ -1,6 +1,6 @@
 import { Config } from './interfaces';
 import { store } from './store';
 
-export function config(options: Config) {
+export function setConfig(options: Config) {
   store.set(options)
 }

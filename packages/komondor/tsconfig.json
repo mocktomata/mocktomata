@@ -1,28 +1,7 @@
 {
-  "extends": "../tsconfig.settings.json",
-  "compilerOptions": {
-    "outDir": "lib",
-    "rootDir": "src"
-  },
-  "references": [
-    {
-      "path": "../core"
-    },
-    {
-      "path": "../io-client"
-    },
-    {
-      "path": "../io-local"
-    },
-    {
-      "path": "../io-server"
-    },
-    {
-      "path": "../plugin"
-    }
-  ],
+  "extends": "./tsconfig.build.json",
   "include": [
-    "custom-typings",
+    "typings",
     "src"
   ],
 }
