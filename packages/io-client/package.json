@@ -27,12 +27,14 @@
   },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
-    "cross-fetch": "^3.0.0"
+    "cross-fetch": "^3.0.0",
+    "unpartial": "^0.4.1"
   },
   "engines": {
     "node": ">= 6"
   },
   "devDependencies": {
-    "@komondor-lab/io-server": "^7.0.0-alpha.0"
+    "@komondor-lab/io-server": "^7.0.0-alpha.0",
+    "assertron": "^6.0.0"
   }
 }

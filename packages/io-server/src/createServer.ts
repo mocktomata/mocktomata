@@ -1,5 +1,5 @@
 import { loadConfig, createSpecIO } from '@komondor-lab/io-fs';
-import { Server, ServerOptions } from 'hapi';
+import { Server, RequestInfo, ServerOptions, ServerInfo } from 'hapi';
 import { IOServerOptions } from './interfaces';
 import { unpartial } from 'unpartial'
 
@@ -42,6 +42,7 @@ export function createServer(options?: IOServerOptions) {
     }
   }
 }
+
 function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
 
   let server = new Server(hapi)
@@ -50,10 +51,11 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
     {
       method: 'GET',
       path: '/komondor/info',
-      handler: () => {
+      handler: (request) => {
         return JSON.stringify({
           name: 'komondor',
-          version: pjson.version
+          version: pjson.version,
+          url: getReflectiveUrl(request.info, server.info)
         })
       }
     },
@@ -81,4 +83,14 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
     }
   ])
   return server
+}
+
+/**
+ * If request is calling from local, return as localhost.
+ */
+function getReflectiveUrl(requestInfo: RequestInfo, serverInfo: ServerInfo) {
+  if (requestInfo.hostname === 'localhost' || requestInfo.remoteAddress === '127.0.0.1') {
+    return `${serverInfo.protocol}://localhost${serverInfo.port ? `:${serverInfo.port}` : ''}`
+  }
+  return serverInfo.uri
 }

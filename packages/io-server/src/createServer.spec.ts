@@ -48,6 +48,6 @@ describe('server behavior', () => {
     const response = await fetch(`http://localhost:${server.info.port}/komondor/info`)
     const actual = await response.text()
     const pjson = require('../package.json')
-    t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}"}`)
+    t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}","url":"http://localhost:3698"}`)
   })
 })
