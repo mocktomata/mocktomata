@@ -7,6 +7,6 @@ module.exports = {
   roots: [
     '<rootDir>/src'
   ],
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   testMatch: ['**/*.spec.ts', '**/*.node-spec.ts'],
 }

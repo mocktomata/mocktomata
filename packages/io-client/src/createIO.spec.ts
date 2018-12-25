@@ -13,9 +13,9 @@ afterAll(async () => {
 
 describe('readSpec()', () => {
   test('read existing spec', async () => {
-    const io = createIO({ url: 'http://localhost' })
+    const io = await createIO({ url: 'http://localhost:4000' })
     const expected = { actions: [], expectation: 'abc' };
-    io.fetch = () => Promise.resolve({ json: () => expected })
+    io._deps.fetch = () => Promise.resolve({ json: () => expected } as any)
 
     const actual = await io.readSpec('abc')
     t.deepStrictEqual(actual, expected)
@@ -23,9 +23,8 @@ describe('readSpec()', () => {
 })
 
 describe('loadConfig()', () => {
-  test('load', async () => {
-    const io = createIO({ url: 'http://localhost:4000' })
-    const actual = await io.loadConfig()
-    console.log(actual)
+  test('load...', async () => {
+    const io = await createIO({ url: 'http://localhost:4000' })
+    await io.loadConfig()
   })
 })

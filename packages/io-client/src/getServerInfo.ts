@@ -1,0 +1,45 @@
+import { IOClientOptions } from './interfaces';
+import fetch from 'cross-fetch';
+
+export type ServerInfo = {
+  version: string
+  url: string
+}
+
+export async function getServerInfo(options?: IOClientOptions): Promise<ServerInfo> {
+  if (options) {
+    return tryGetServerInfo(options.url)
+  }
+
+  return lookupServerInfo()
+}
+
+async function lookupServerInfo() {
+  if (location.hostname === 'localhost') {
+    let serverInfo = undefined
+    let count = 0
+    while (!serverInfo && count < 100) {
+      serverInfo = await tryGetServerInfo(`${location.protocol}//localhost:${3698 + count}`)
+      count++
+    }
+    return serverInfo
+  }
+  // istanbul ignore next
+  else {
+    return tryGetServerInfo(`${location.protocol}//${location.hostname}`)
+  }
+}
+
+async function tryGetServerInfo(url: string) {
+  try {
+    const response = await fetch(`${url}/komondor/info`)
+    return response.json()
+  }
+  catch (e) {
+    if (e.code === 'ECONNREFUSED') {
+      return
+    }
+    // istanbul ignore next
+    throw e
+  }
+}
