@@ -1,5 +1,5 @@
-import { IOClientOptions } from './interfaces';
 import fetch from 'cross-fetch';
+import { IOClientOptions } from './interfaces';
 
 export type ServerInfo = {
   version: string
