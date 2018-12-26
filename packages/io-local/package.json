@@ -30,6 +30,8 @@
     "@komondor-lab/io-fs": "^7.0.0-alpha"
   },
   "devDependencies": {
+    "@komondor-lab/plugin-fixture-dummy": "^1.0.0",
+    "@komondor-lab/plugin-fixture-no-activate": "^1.0.0",
     "@types/tmp": "^0.0.33",
     "assertron": "^6.0.0",
     "tmp": "^0.0.33"
