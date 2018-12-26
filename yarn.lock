@@ -6407,6 +6407,11 @@ komondor-plugin-fixture-dummy@^1.0.0:
   resolved "https://registry.yarnpkg.com/komondor-plugin-fixture-dummy/-/komondor-plugin-fixture-dummy-1.0.0.tgz#512ba38601e654073c41247de532969f3430ebc6"
   integrity sha512-c7JJpyTP/2R42MH3f74Q8Eifx49oPg04kpFIGepc/Swx0EYGpODVzKYVbXxFP966ENfFkmjmekh7DpGp+8lRUA==
 
+komondor-plugin-fixture-no-activate@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/komondor-plugin-fixture-no-activate/-/komondor-plugin-fixture-no-activate-1.0.0.tgz#c3412767ad9eb3be95f4674c8ffc707bd8843401"
+  integrity sha512-MNhT5wMOIldnlif0fgRlTm0CW1r+X+7IEpgvrqgUS9WfIqa1+dFRxtBQ7bpk2FJXhN1Qb2/hyNtsYSGAtow3Iw==
+
 latest-version@^3.0.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/latest-version/-/latest-version-3.1.0.tgz#a205383fea322b33b5ae3b18abee0dc2f356ee15"

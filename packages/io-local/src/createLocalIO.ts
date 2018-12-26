@@ -1,5 +1,6 @@
 import { loadConfig, createSpecIO, createScenarioIO } from '@komondor-lab/io-fs';
 import { SpecRecord } from './interfaces';
+import { loadPlugin } from './loadPlugin';
 
 export function createLocalIO({ cwd } = { cwd: process.cwd() }) {
   const spec = createSpecIO({ cwd })
@@ -23,6 +24,9 @@ export function createLocalIO({ cwd } = { cwd: process.cwd() }) {
     async loadConfig() {
       return Promise.resolve(this._deps.loadConfig(cwd))
     },
-    _deps: { loadConfig, spec, scenario }
+    async loadPlugin(name: string) {
+      return this._deps.loadPlugin(name)
+    },
+    _deps: { loadConfig, loadPlugin, spec, scenario }
   }
 }
