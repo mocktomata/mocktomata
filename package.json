@@ -7,6 +7,7 @@
     ]
   },
   "scripts": {
+    "build": "tsc -b -w",
     "test": "yarn jest",
     "verify": "yarn test",
     "watch": "yarn jest --watch"
@@ -14,9 +15,9 @@
   "dependencies": {
     "@jest-runner/electron": "^0.1.0",
     "@types/ramda": "^0.25.45",
-    "@unional/devpkg-node": "^1.1.2"
+    "@unional/devpkg-node": "^1.1.4"
   },
   "devDependencies": {
-    "lerna": "^3.4.3"
+    "lerna": "^3.8.0"
   }
 }
