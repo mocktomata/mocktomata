@@ -73,7 +73,8 @@ jobs:
             - packages/io-server/node_modules
             - packages/komondor/node_modules
             - packages/plugin-fixture-dummy/node_modules
-      - run: yarn verify
+      - run: yarn build
+      - run: yarn test
       # - run: npx codecov
       # - store_test_results:
       #     path: packages/uni-cli/.reports/junit
@@ -84,7 +85,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn verify
+      - run: yarn build
+      - run: yarn test
       # - store_test_results:
       #     path: packages/uni-cli/.reports/junit
   node9:
@@ -94,7 +96,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn verify
+      - run: yarn build
+      - run: yarn test
       # - store_test_results:
       #     path: packages/uni-cli/.reports/junit
   node8:
@@ -104,7 +107,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn verify
+      - run: yarn build
+      - run: yarn test
       # - store_test_results:
       #     path: packages/uni-cli/.reports/junit
   node6:
@@ -114,7 +118,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn verify
+      - run: yarn build
+      - run: yarn test
       # - store_test_results:
       #     path: packages/uni-cli/.reports/junit
   release:

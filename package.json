@@ -9,7 +9,6 @@
   "scripts": {
     "build": "tsc -b",
     "test": "yarn jest",
-    "verify": "tsc -b && yarn test",
     "watch": "yarn jest --watch"
   },
   "dependencies": {
