@@ -31,4 +31,11 @@ describe('loadPlugin()', () => {
 
     t.strictEqual(typeof actual.activate, 'function')
   })
+
+  test('can load plugin using deep link', async () => {
+    const io = createLocalIO()
+    const actual = await io.loadPlugin('@komondor-lab/plugin-fixture-deep-link/pluginA')
+
+    t.strictEqual(typeof actual.activate, 'function')
+  })
 })
