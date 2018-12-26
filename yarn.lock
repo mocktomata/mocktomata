@@ -6402,6 +6402,11 @@ kleur@^3.0.0:
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.1.tgz#4f5b313f5fa315432a400f19a24db78d451ede62"
   integrity sha512-P3kRv+B+Ra070ng2VKQqW4qW7gd/v3iD8sy/zOdcYRsfiD+QBokQNOps/AfP6Hr48cBhIIBFWckB9aO+IZhrWg==
 
+komondor-plugin-fixture-deep-link@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/komondor-plugin-fixture-deep-link/-/komondor-plugin-fixture-deep-link-1.0.0.tgz#924dd1d52cb6c9bd33a911245d626ca4f59f38a0"
+  integrity sha512-oAONC1FmsQVKF8/bTWhJTNxGQK5Eg4yaveN9J+wLjv5ocFti9P7Pkz8yyfbLMxoDdVZBclo72B4pZU9mJ1Y/tg==
+
 komondor-plugin-fixture-dummy@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/komondor-plugin-fixture-dummy/-/komondor-plugin-fixture-dummy-1.0.0.tgz#512ba38601e654073c41247de532969f3430ebc6"

@@ -1,19 +1,19 @@
-import { DuplicatePlugin } from './errors';
-import { PluginActivationContext } from './interfaces';
+import { PluginAlreadyLoaded } from './errors';
+import { PluginActivationContext, PluginModule } from './interfaces';
 import { store } from './store';
 
-const plugins = store.get().plugins
 
 const activationContext: PluginActivationContext = {
-  register(type, support, getSpy, getStub, serialize) {
-    if (plugins.some(p => p.type === type)) {
-      throw new DuplicatePlugin(type)
+  register(name, support, getSpy, getStub, serialize) {
+    const plugins = store.get().plugins
+    if (plugins.some(p => p.name === name)) {
+      throw new PluginAlreadyLoaded(name)
     }
 
-    plugins.unshift({ type, support, getSpy, getStub, serialize })
+    plugins.unshift({ name, support, getSpy, getStub, serialize })
   }
 }
 
-export function registerPlugin(plugin: { activate: (activationContext: PluginActivationContext) => void }) {
-  plugin.activate(activationContext)
+export function registerPlugin(pluginModule: PluginModule) {
+  pluginModule.activate(activationContext)
 }

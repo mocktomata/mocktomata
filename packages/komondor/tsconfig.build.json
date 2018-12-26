@@ -20,9 +20,6 @@
     },
     {
       "path": "../io-server"
-    },
-    {
-      "path": "../plugin"
     }
   ],
   "include": [
