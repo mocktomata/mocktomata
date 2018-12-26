@@ -1,7 +1,7 @@
-import { loadConfig, createSpecIO } from '@komondor-lab/io-fs';
-import { Server, RequestInfo, ServerOptions, ServerInfo } from 'hapi';
+import { createSpecIO, loadConfig } from '@komondor-lab/io-fs';
+import { RequestInfo, Server, ServerInfo, ServerOptions } from 'hapi';
+import { unpartial } from 'unpartial';
 import { IOServerOptions } from './interfaces';
-import { unpartial } from 'unpartial'
 
 const pjson = require('../package.json')
 
@@ -79,6 +79,14 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
       handler: async (request, h) => {
         await spec.write(request.params.id, request.payload as string)
         return h.response()
+      }
+    },
+    {
+      method: 'GET',
+      path: '/komondor/plugins/{id*}',
+      handler: async (request) => {
+        // TODO: resolve the path from node, send the content up.
+        return `console.log('hello')`
       }
     }
   ])

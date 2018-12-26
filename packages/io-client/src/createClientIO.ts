@@ -1,6 +1,7 @@
 import fetch from 'cross-fetch';
 import { IOClientOptions, SpecRecord } from './interfaces';
 import { getServerInfo } from './getServerInfo';
+import 'systemjs/dist/system'
 
 export async function createClientIO(options?: IOClientOptions) {
   const info = await getServerInfo(options)
@@ -24,6 +25,13 @@ export async function createClientIO(options?: IOClientOptions) {
     async loadConfig() {
       const response = await this._deps.fetch(createConfigURL(info.url))
       return response.json()
+    },
+    async loadPlugin(name: string) {
+      const url = `${info.url}/komondor/plugins/${name}`
+      const response = await this._deps.fetch(url)
+      console.info('plugin is available from server', await response.text())
+      // TODO: SystemJS timeout here.
+      // return System.import(url)
     },
     _deps: { fetch }
   }

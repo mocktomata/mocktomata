@@ -2,24 +2,15 @@
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
     "outDir": "lib",
-    "rootDir": "src",
-    "skipLibCheck": true,
-    "lib": [
-      "dom",
-      "es2015"
-    ]
+    "rootDir": "src"
   },
   "references": [
     {
-      "path": "../core"
-    },
-    {
-      "path": "../io-server"
+      "path": "../komondor"
     }
   ],
   "include": [
-    "typings",
-    "src"
+    "typings"
   ],
   "files": [
     "src/index.ts"

@@ -1,7 +1,7 @@
 {
-  "name": "@komondor-lab/io-client",
-  "version": "7.0.0-alpha",
-  "description": "komondor client IO package",
+  "name": "@komondor-lab/plugin-fixture-dummy",
+  "version": "1.0.0",
+  "description": "komondor dummy plugin for internal testing",
   "homepage": "https://github.com/unional/komondor",
   "bugs": {
     "url": "https://github.com/unional/komondor/issues"
@@ -25,20 +25,10 @@
     "dependency-check": "dependency-check . --unused --no-dev -i '@komondor-lab/core' && dependency-check . --missing --no-dev",
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
-  "dependencies": {
-    "@komondor-lab/core": "^7.0.0-alpha",
-    "cross-fetch": "^3.0.0",
-    "systemjs": "^2.1.1",
-    "unpartial": "^0.4.1"
-  },
   "engines": {
     "node": ">= 6"
   },
   "devDependencies": {
-    "@komondor-lab/io-server": "^7.0.0-alpha.0",
-    "@types/http-server": "^0.10.0",
-    "assertron": "^6.0.0",
-    "hapi": "^17.8.1",
-    "http-server": "^0.11.1"
+    "komondor": "^7.0.0-alpha"
   }
 }

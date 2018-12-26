@@ -2,12 +2,11 @@ const base = require('@unional/devpkg-node/simple/config/jest.common')
 
 module.exports = {
   ...base,
-  name: 'io-client',
-  displayName: 'io-client',
+  name: 'io-fs',
+  displayName: 'io-fs',
   roots: [
     '<rootDir>/src'
   ],
-  testEnvironment: 'jsdom',
-  testURL: 'http://localhost:4000',
+  testEnvironment: 'node',
   testMatch: ['**/*.spec.ts', '**/*.node-spec.ts'],
 }
