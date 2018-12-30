@@ -45,7 +45,7 @@
     "watch": "jest --watch"
   },
   "dependencies": {
-    "@unional/logging": "^0.5.3",
+    "@unional/logging": "^1.0.0",
     "assertron": "^5.2.2",
     "chalk": "^2.4.1",
     "is-primitive": "^3.0.1",
