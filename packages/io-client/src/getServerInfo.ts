@@ -7,11 +7,7 @@ export type ServerInfo = {
 }
 
 export async function getServerInfo(options?: IOClientOptions): Promise<ServerInfo> {
-  if (options) {
-    return tryGetServerInfo(options.url)
-  }
-
-  return lookupServerInfo()
+  return options ? tryGetServerInfo(options.url) : lookupServerInfo()
 }
 
 async function lookupServerInfo() {
