@@ -8,20 +8,20 @@ test('simulate but file does not exists', async () => {
   await a.throws(spec.simulate('not exist', x => x), SpecNotFound)
 })
 
-k.trio('subject not specable will throw', 'spec/notSpecable', (title, spec) => {
-  test(title, async () => {
-    await a.throws(spec(true), NotSpecable)
-  })
-})
+// k.trio('subject not specable will throw', 'spec/notSpecable', (title, spec) => {
+//   test(title, async () => {
+//     await a.throws(spec(true), NotSpecable)
+//   })
+// })
 
-k.trio('done() same as satisfy', 'spec/done', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(x => x)
-    t.strictEqual(s.subject(1), 1)
+// k.trio('done() same as satisfy', 'spec/done', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(x => x)
+//     t.strictEqual(s.subject(1), 1)
 
-    await s.done()
-  })
-})
+//     await s.done()
+//   })
+// })
 
 k.trio('Error payload will pass instanceof', 'spec/errorPassInstanceof', (title, spec) => {
   test(title, async () => {
@@ -50,27 +50,27 @@ k.trio('CustomError properties are kept', 'spec/errorCustomProperty', (title, sp
   })
 })
 
-test('spec id containing invalid path character should throws InvalidID', () => {
-  return Promise.all([
-    'a > b',
-    'new: some-condition'
-  ].map(p => {
-    return Promise.all([
-      a.throws(() => spec(p, () => ({})), InvalidID),
-      a.throws(() => spec.save(p, () => ({})), InvalidID),
-      a.throws(() => spec.simulate(p, () => ({})), InvalidID)
-    ])
-  }))
-})
+// test('spec id containing invalid path character should throws InvalidID', () => {
+//   return Promise.all([
+//     'a > b',
+//     'new: some-condition'
+//   ].map(p => {
+//     return Promise.all([
+//       a.throws(() => spec(p, () => ({})), InvalidID),
+//       a.throws(() => spec.save(p, () => ({})), InvalidID),
+//       a.throws(() => spec.simulate(p, () => ({})), InvalidID)
+//     ])
+//   }))
+// })
 
-test('spec id containing path should work', () => {
-  return Promise.all([
-    'spec/done',
-    'spec\\done'
-  ].map(p => {
-    return spec(p, () => ({}))
-  }))
-})
+// test('spec id containing path should work', () => {
+//   return Promise.all([
+//     'spec/done',
+//     'spec\\done'
+//   ].map(p => {
+//     return spec(p, () => ({}))
+//   }))
+// })
 
 export function echo(a, callback) {
   callback(a)

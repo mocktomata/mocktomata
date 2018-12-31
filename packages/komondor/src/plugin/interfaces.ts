@@ -1,6 +1,11 @@
 
 export type PluginActivationContext = {
-  register(name: string, support: (subject: any) => boolean, getSpy: (subject: any) => any, getStub: (subject: any) => any, serialize: any): void
+  register(
+    name: string,
+    support: (subject: any) => boolean,
+    getSpy: (context: any, subject: any) => any,
+    getStub: (context: any, subject: any) => any,
+    serialize: (subject: any) => string): void
 }
 
 export interface Plugin<T extends object = {}> {

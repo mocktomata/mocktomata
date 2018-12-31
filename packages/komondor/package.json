@@ -23,6 +23,9 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
+  "browser": {
+    "./lib/runtime/getIO.js": "./lib/runtime/getIO-browser.js"
+  },
   "files": [
     "lib"
   ],
@@ -42,6 +45,8 @@
     "@komondor-lab/io-client": "^7.0.0-alpha",
     "@komondor-lab/io-local": "^7.0.0-alpha",
     "@komondor-lab/io-server": "^7.0.0-alpha.0",
+    "@unional/devpkg-node": "^1.1.2",
+    "@unional/logging": "^1.0.1",
     "assertron": "^6.0.0",
     "chalk": "^2.4.1",
     "clibuilder": "^2.4.4",
@@ -53,7 +58,10 @@
   "devDependencies": {
     "@komondor-lab/plugin-fixture-deep-link": "^1.0.0",
     "@komondor-lab/plugin-fixture-dummy": "^1.0.0",
+    "@types/delay": "^3.1.0",
     "@types/tmp": "^0.0.33",
+    "aurelia-logging-memory": "^1.0.1",
+    "delay": "^4.1.0",
     "jest": "^24.0.0-alpha.9",
     "tmp": "^0.0.33"
   }
