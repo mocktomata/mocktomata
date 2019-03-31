@@ -8,12 +8,12 @@ import { SpecNotFound } from '../errors';
 describe('readSpec()', () => {
   test('not exist spec throws SpecNotFound', async () => {
     const tmp = dirSync()
-    const specIO = createSpecIO({ cwd: tmp.name })
+    const specIO = createSpecIO(tmp.name)
     await a.throws(() => specIO.read('not existing spec'), SpecNotFound)
   })
   test('retrieve record for saved spec', async () => {
     const tmp = dirSync()
-    const specIO = createSpecIO({ cwd: tmp.name })
+    const specIO = createSpecIO(tmp.name)
 
     const expected = JSON.stringify({ actions: [], expectation: 'some expectation' })
     await specIO.write('retrieve', expected)
@@ -25,7 +25,7 @@ describe('readSpec()', () => {
 describe('writeSpec()', () => {
   test('write spec to the spec folder', async () => {
     const tmp = dirSync()
-    const specIO = createSpecIO({ cwd: tmp.name })
+    const specIO = createSpecIO(tmp.name)
 
     await specIO.write('some spec', JSON.stringify({ actions: [], expectation: 'some expectation' }))
     const folderContent = fs.readdirSync(tmp.name)
