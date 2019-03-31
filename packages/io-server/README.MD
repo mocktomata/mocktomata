@@ -1,3 +1,5 @@
-# @komondor-lab/io-fs
+# @komondor-lab/io-server
 
-komondor file system IO package.
+`komondor` io server for receiving requests from client.
+
+This is the library used to serve `komondor` running in the browser (client).
