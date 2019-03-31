@@ -2,7 +2,7 @@ import { ScenarioNotFound } from '../errors';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 import { getScenarioFolder } from './getScenerioFolder';
 
-export function createScenarioIO({ cwd } = { cwd: process.cwd() }) {
+export function createScenarioIO(cwd: string) {
   const dir = getScenarioFolder(cwd)
   return {
     read(id: string) {

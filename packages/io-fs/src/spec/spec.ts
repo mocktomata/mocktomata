@@ -3,7 +3,7 @@ import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 import { getSpecFolder } from './getSpecFolder';
 
 
-export function createSpecIO({ cwd } = { cwd: process.cwd() }) {
+export function createSpecIO(cwd: string) {
   const specDir = getSpecFolder(cwd)
   return {
     read(id: string) {

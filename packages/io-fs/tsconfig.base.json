@@ -1,15 +1,15 @@
 {
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "outDir": "lib",
+    "lib": [
+      "es2015"
+    ],
     "rootDir": "src"
   },
   "references": [
-    {
-      "path": "../core"
-    }
   ],
   "include": [
+    "src",
     "typings"
   ],
   "files": [
