@@ -18,7 +18,7 @@ export function createServer(options?: IOServerOptions) {
   let retryCount = 0
   return {
     info: server.info,
-    async start(): ReturnType<typeof server.start> {
+    async start(): Promise<void> {
       try {
         return await server.start()
       }
@@ -85,9 +85,10 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
     {
       method: 'GET',
       path: '/komondor/plugins/{id*}',
-      handler: async (request) => {
+      handler: async (_request, h) => {
         // TODO: resolve the path from node, send the content up.
-        return `console.log('hello')`
+        return h.response(`module.export = { a: 1 }`)
+          .type('text/javascript')
       }
     }
   ])
