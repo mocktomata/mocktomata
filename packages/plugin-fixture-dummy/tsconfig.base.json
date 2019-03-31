@@ -1,15 +1,16 @@
 {
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
+    "lib": [
+      "es2015"
+    ],
     "outDir": "lib",
-    "rootDir": "src"
+    "rootDir": "src",
   },
   "references": [
-    {
-      "path": "../komondor"
-    }
   ],
   "include": [
+    "src",
     "typings"
   ],
   "files": [
