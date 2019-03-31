@@ -16,28 +16,32 @@
     "email": "homawong@gmail.com"
   },
   "files": [
-    "lib"
+    "lib",
+    "libm"
   ],
   "main": "lib/index.js",
+  "module": "libm/index.js",
+  "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
+    "clean": "rimraf lib libm",
     "dc": "yarn dependency-check",
-    "dependency-check": "dependency-check . --unused --no-dev -i '@komondor-lab/core' && dependency-check . --missing --no-dev",
-    "verify": "rimraf lib && yarn build && jest --coverage && yarn dependency-check"
+    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "verify": "yarn clean && yarn build && jest --coverage",
+    "watch": "jest --watch"
   },
   "dependencies": {
-    "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
-    "hapi": "^17.8.1",
-    "unpartial": "^0.4.1"
+    "hapi": "^18.1.0",
+    "unpartial": "^0.5.0"
   },
   "engines": {
     "node": ">= 6"
   },
   "devDependencies": {
-    "@types/hapi": "^17.8.2",
-    "@types/node-fetch": "^2.1.4",
+    "@types/hapi": "^18.0.1",
+    "@types/node-fetch": "^2.1.7",
     "delay": "^4.1.0",
     "node-fetch": "^2.3.0"
   }

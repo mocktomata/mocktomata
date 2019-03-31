@@ -2,8 +2,8 @@ const base = require('@unional/devpkg-node/simple/config/jest.common')
 
 module.exports = {
   ...base,
-  name: 'io-service',
-  displayName: 'io-service',
+  name: 'io-server',
+  displayName: 'io-server',
   roots: [
     '<rootDir>/src'
   ],

@@ -1,9 +1,10 @@
 import { createSpecIO, loadConfig } from '@komondor-lab/io-fs';
 import { RequestInfo, Server, ServerInfo, ServerOptions } from 'hapi';
+import path from 'path';
 import { unpartial } from 'unpartial';
 import { IOServerOptions } from './interfaces';
 
-const pjson = require('../package.json')
+const pjson = require(path.resolve(__dirname, '../package.json'))
 
 /**
  * @param options.port The port number to start the server with.
@@ -46,7 +47,7 @@ export function createServer(options?: IOServerOptions) {
 function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
 
   let server = new Server(hapi)
-  const spec = createSpecIO({ cwd })
+  const spec = createSpecIO(cwd)
   server.route([
     {
       method: 'GET',
