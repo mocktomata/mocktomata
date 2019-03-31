@@ -33,7 +33,7 @@ async function tryGetServerInfo(url: string) {
   }
   catch (e) {
     if (e.code === 'ECONNREFUSED') {
-      return
+      return undefined
     }
     // istanbul ignore next
     throw e
