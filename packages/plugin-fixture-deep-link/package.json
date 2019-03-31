@@ -1,4 +1,8 @@
 {
   "name": "@komondor-lab/plugin-fixture-deep-link",
-  "version": "1.0.0"
+  "version": "1.0.0",
+  "files": [
+    "index.js",
+    "pluginA.js"
+  ]
 }
