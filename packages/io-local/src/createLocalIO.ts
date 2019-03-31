@@ -3,8 +3,8 @@ import { SpecRecord } from './interfaces';
 import { loadPlugin } from './loadPlugin';
 
 export function createLocalIO({ cwd } = { cwd: process.cwd() }) {
-  const spec = createSpecIO({ cwd })
-  const scenario = createScenarioIO({ cwd })
+  const spec = createSpecIO(cwd)
+  const scenario = createScenarioIO(cwd)
 
   return {
     async readSpec(id: string): Promise<SpecRecord> {
