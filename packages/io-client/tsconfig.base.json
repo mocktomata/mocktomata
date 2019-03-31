@@ -1,25 +1,22 @@
 {
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
-    "outDir": "lib",
-    "rootDir": "src",
-    "skipLibCheck": true,
     "lib": [
-      "dom",
       "es2015"
-    ]
+    ],
+    "rootDir": "src"
   },
   "references": [
     {
-      "path": "../core"
+      "path": "../io-server"
     },
     {
-      "path": "../io-server"
+      "path": "../spec"
     }
   ],
   "include": [
-    "typings",
-    "src"
+    "src",
+    "typings"
   ],
   "files": [
     "src/index.ts"

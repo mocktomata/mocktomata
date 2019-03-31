@@ -1,7 +1,6 @@
 import fetch from 'cross-fetch';
-import { IOClientOptions, SpecRecord } from './interfaces';
+import { IOClientOptions } from './interfaces';
 import { getServerInfo } from './getServerInfo';
-import 'systemjs/dist/system'
 
 export async function createClientIO(options?: IOClientOptions) {
   const info = await getServerInfo(options)
@@ -10,7 +9,7 @@ export async function createClientIO(options?: IOClientOptions) {
       const response = await this._deps.fetch(createSpecURL(info.url, id))
       return response.json()
     },
-    async writeSpec(id: string, record: SpecRecord) {
+    async writeSpec(id: string, record: any) {
       const response = await this._deps.fetch(createSpecURL(info.url, id), { method: 'POST', body: JSON.stringify(record) })
       return response.ok
     },
@@ -27,19 +26,16 @@ export async function createClientIO(options?: IOClientOptions) {
       return response.json()
     },
     async loadPlugin(name: string) {
-      const url = `${info.url}/komondor/plugins/${name}`
-      const response = await this._deps.fetch(url)
-      console.info('plugin is available from server', await response.text())
-      // TODO: SystemJS timeout here.
-      // return System.import(url)
+      return this._deps.import(name)
     },
-    _deps: { fetch }
+    _deps: { fetch, import(url: string) { return import(url) } }
   }
 }
 
 function createSpecURL(url: string, id: string) {
   return `${url}/komondor/spec/${id}`
 }
+
 function createScenarioURL(url: string, id: string) {
   return `${url}/komondor/scenario/${id}`
 }
