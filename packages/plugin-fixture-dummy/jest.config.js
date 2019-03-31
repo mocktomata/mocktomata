@@ -2,8 +2,8 @@ const base = require('@unional/devpkg-node/simple/config/jest.common')
 
 module.exports = {
   ...base,
-  name: 'io-fs',
-  displayName: 'io-fs',
+  name: 'plugin-fixture-dummy',
+  displayName: 'plugin-fixture-dummy',
   roots: [
     '<rootDir>/src'
   ],
