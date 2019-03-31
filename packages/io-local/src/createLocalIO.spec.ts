@@ -1,7 +1,5 @@
 import t from 'assert';
-import a from 'assertron';
 import { createLocalIO } from './createLocalIO';
-import { PluginNotConforming, PluginNotFound } from './errors';
 
 describe('readSpec()', () => {
   test('returns an object', async () => {
@@ -15,16 +13,6 @@ describe('readSpec()', () => {
 })
 
 describe('loadPlugin()', () => {
-  test('Not existing plugin throws PluginNotFound', async () => {
-    const io = createLocalIO()
-    await a.throws(() => io.loadPlugin('not-exist'), PluginNotFound)
-  })
-
-  test('package without activate function throws PluginNotConforming', async () => {
-    const io = createLocalIO()
-    await a.throws(() => io.loadPlugin('@komondor-lab/plugin-fixture-no-activate'), PluginNotConforming)
-  })
-
   test('load npm plugin package', async () => {
     const io = createLocalIO()
     const actual = await io.loadPlugin('@komondor-lab/plugin-fixture-dummy')

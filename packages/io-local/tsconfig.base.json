@@ -1,0 +1,33 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "lib": [
+      "es2015"
+    ],
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../io-fs"
+    },
+    {
+      "path": "../plugin"
+    },
+    {
+      "path": "../plugin-fixture-deep-link"
+    },
+    {
+      "path": "../plugin-fixture-dummy"
+    },
+    {
+      "path": "../plugin-fixture-no-activate"
+    }
+  ],
+  "include": [
+    "src",
+    "typings"
+  ],
+  "files": [
+    "src/index.ts"
+  ]
+}
