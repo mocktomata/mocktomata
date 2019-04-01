@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "@types/jest": "^23.3.7",
-    "@types/node": "^10.12.0",
+    "@types/node": "^11.12.3",
     "@types/ramda": "^0.25.40",
     "aurelia-logging-color": "^0.5.16",
     "aurelia-logging-memory": "^0.3.2",
