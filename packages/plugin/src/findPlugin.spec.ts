@@ -1,9 +1,9 @@
-import { findSupportingPlugin, registerPlugin } from '.';
+import { findPlugin, registerPlugin } from '.';
 import { dummyPlugin } from './test-util/dummyPlugin';
 
 test('not supported subject gets undefined', () => {
   const notSupportedSubject = { oh: 'no' }
-  expect(findSupportingPlugin(notSupportedSubject)).toBe(undefined)
+  expect(findPlugin(notSupportedSubject)).toBe(undefined)
 })
 
 test('supported', () => {
@@ -13,7 +13,7 @@ test('supported', () => {
     }
   })
 
-  const actual = findSupportingPlugin({})
+  const actual = findPlugin({})
 
   expect(actual).not.toBeUndefined();
 })

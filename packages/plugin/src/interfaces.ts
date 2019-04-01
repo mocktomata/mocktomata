@@ -5,11 +5,17 @@ export type PluginActivationContext = {
 
 export interface KomondorPlugin<T extends object = {}> {
   support: (subject: any) => boolean,
-  getSpy: any,// getSpy<T>,
-  getStub: any,// getStub<T>,
+  getSpy: (context: any, subject: T) => any
+  getStub: (context: any, subject: T) => any
   serialize?: (subject: T) => string
 }
 
 export type PluginModule = {
   activate: (activationContext: PluginActivationContext) => void
+}
+
+export type PluginInstance = KomondorPlugin & { name: string }
+
+export type PluginIO = {
+  loadPlugin(name: string): Promise<PluginModule>
 }

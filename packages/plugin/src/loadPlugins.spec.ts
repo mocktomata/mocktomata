@@ -1,12 +1,14 @@
-import { createLocalIO } from '@komondor-lab/io-local';
 import a from 'assertron';
-import { getPlugins, loadPlugins, PluginNotFound } from '.';
+import { loadPlugins, PluginNotFound } from '.';
+import { getPlugins } from './getPlugins';
+import { PluginIO } from './interfaces';
+import { dummyPluginModule } from './test-util/dummyPlugin';
 
 /**
  * Plugin order is reversed so that most specific plugin are checked first.
  */
 test('load plugins in reverse order', async () => {
-  const io = createLocalIO()
+  const io = createPluginIO(() => Promise.resolve(dummyPluginModule))
   const pluginNames = ['@komondor-lab/plugin-fixture-dummy', '@komondor-lab/plugin-fixture-deep-link/pluginA']
   await loadPlugins({ io }, pluginNames)
   const actual = getPlugins()
@@ -14,6 +16,10 @@ test('load plugins in reverse order', async () => {
 })
 
 test('Not existing plugin throws PluginNotFound', async () => {
-  const io = createLocalIO()
+  const io = createPluginIO(() => { throw new Error('module not found') })
   await a.throws(() => loadPlugins({ io }, ['not-exist']), PluginNotFound)
 })
+
+function createPluginIO(loadPlugin: PluginIO['loadPlugin']) {
+  return { loadPlugin }
+}

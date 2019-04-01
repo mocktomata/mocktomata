@@ -1,6 +1,7 @@
 import a from 'assertron';
 import { some } from 'satisfier';
-import { getPlugins, PluginAlreadyLoaded, PluginNotConforming, registerPlugin } from '.';
+import { PluginAlreadyLoaded, PluginNotConforming, registerPlugin } from '.';
+import { getPlugins } from './getPlugins';
 import { dummyPluginModule } from './test-util/dummyPlugin';
 import { missGetSpyPluginModule } from './test-util/missGetSpyPlugin';
 import { missGetStubPluginModule } from './test-util/missGetStubPlugin';
