@@ -9,7 +9,8 @@ export type LoadPluginContext = {
 /**
  * Load plugins to the system.
  */
-export async function loadPlugins({ io }: LoadPluginContext, pluginNames: string[]) {
+export async function loadPlugins({ io }: LoadPluginContext) {
+  const pluginNames = await io.getPluginList()
   return Promise.all(pluginNames.map(async name => {
     const m = await tryLoad({ io }, name)
     registerPlugin(name, m)

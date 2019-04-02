@@ -17,5 +17,6 @@ export type PluginModule = {
 export type PluginInstance = KomondorPlugin & { name: string }
 
 export type PluginIO = {
+  getPluginList(): Promise<string[]>
   loadPlugin(name: string): Promise<PluginModule>
 }
