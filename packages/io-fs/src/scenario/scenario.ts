@@ -4,11 +4,11 @@ import path from 'path'
 export function createScenarioIO(komondorFolder: string) {
   const dir = getScenarioFolder(komondorFolder)
   return {
-    read(id: string) {
+    readScenario(id: string) {
       const hash = getHash(id)
       return readByHash(dir, id, hash)
     },
-    write(id: string, data: string) {
+    writeScenario(id: string, data: string) {
       ensureFolderCreated(dir)
       writeTo(dir, id, data)
     }

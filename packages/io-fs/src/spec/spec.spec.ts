@@ -1,20 +1,22 @@
 import t from 'assert';
 import a from 'assertron';
 import { dirSync } from 'tmp';
-import { createSpecIO } from '.';
+import { createFileIO } from '..';
 
 describe('readSpec()', () => {
   test('not exist spec throws SpecNotFound', async () => {
     const tmp = dirSync()
-    const specIO = createSpecIO(tmp.name)
-    a.throws(() => specIO.read('not existing spec'))
+    const io = createFileIO(tmp.name)
+
+    a.throws(() => io.readSpec('not existing spec'))
   })
   test('retrieve record for saved spec', async () => {
     const tmp = dirSync()
-    const specIO = createSpecIO(tmp.name)
+    const io = createFileIO(tmp.name)
     const expected = JSON.stringify({ actions: [], expectation: 'some expectation' })
-    specIO.write('retrieve', expected)
-    const actual = specIO.read('retrieve')
+    io.writeSpec('retrieve', expected)
+
+    const actual = io.readSpec('retrieve')
     t.deepStrictEqual(actual, expected)
   })
 })
