@@ -28,28 +28,28 @@ function loadPjsonConfig(cwd: string) {
 }
 
 function loadKjsonConfig(cwd: string) {
-  const filepath = path.resolve(cwd, 'komondor.config.json')
+  const filepath = path.resolve(cwd, '.komondor.json')
   if (fs.existsSync(filepath)) {
     try {
       return require(filepath)
     }
     catch (e) {
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('komondor.config.json')
+        throw new InvalidConfigFormat('.komondor.json')
       }
     }
   }
 }
 
 function loadKjsConfig(cwd: string) {
-  const filepath = path.resolve(cwd, 'komondor.config.js')
+  const filepath = path.resolve(cwd, '.komondor.js')
   if (fs.existsSync(filepath)) {
     try {
       return require(filepath)
     }
     catch (e) {
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('komondor.config.js')
+        throw new InvalidConfigFormat('.komondor.js')
       }
     }
   }

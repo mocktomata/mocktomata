@@ -1,30 +1,20 @@
-import { SpecNotFound } from '../errors';
+import path from 'path';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
-import { getSpecFolder } from './getSpecFolder';
 
-
-export function createSpecIO(cwd: string) {
-  const specDir = getSpecFolder(cwd)
+export function createSpecIO(komondorFolder: string) {
+  const specDir = getSpecFolder(komondorFolder)
   return {
     read(id: string) {
       const hash = getHash(id)
-      return new Promise<string>((a, r) => {
-        try {
-          a(readByHash(specDir, id, hash))
-        }
-        catch (err) {
-          // istanbul ignore next
-          if (err.code === 'ENOENT')
-            r(new SpecNotFound(id))
-          else {
-            r(err)
-          }
-        }
-      })
+      return readByHash(specDir, id, hash)
     },
     write(id: string, data: string) {
       ensureFolderCreated(specDir)
-      return writeTo(specDir, id, data)
+      writeTo(specDir, id, data)
     }
   }
+}
+
+export function getSpecFolder(komondorFolder: string) {
+  return path.resolve(komondorFolder, 'specs')
 }

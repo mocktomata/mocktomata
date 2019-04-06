@@ -2,13 +2,13 @@ import t from 'assert';
 import a from 'assertron';
 import fs from 'fs';
 import { dirSync } from 'tmp';
-import { createScenarioIO, ScenarioNotFound } from '..';
+import { createScenarioIO } from '.';
 
 describe('readScenario()', () => {
   test('not exist Scenario throws ScenarioNotFound', async () => {
     const tmp = dirSync()
     const io = createScenarioIO(tmp.name)
-    await a.throws(() => io.read('not existing scenario'), ScenarioNotFound)
+    await a.throws(() => io.read('not existing scenario'))
   })
   test('retrieve record for saved Scenario', async () => {
     const tmp = dirSync()

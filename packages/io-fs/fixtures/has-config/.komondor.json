@@ -1,0 +1,5 @@
+{
+  "plugins": [
+    "@komondor-lab/plugin-fixture-dummy"
+  ]
+}
