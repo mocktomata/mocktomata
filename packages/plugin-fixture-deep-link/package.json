@@ -1,6 +1,9 @@
 {
   "name": "@komondor-lab/plugin-fixture-deep-link",
   "version": "1.0.0",
+  "keywords": [
+    "komondor-plugin"
+  ],
   "files": [
     "index.js",
     "pluginA.js"
