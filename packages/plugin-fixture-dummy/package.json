@@ -1,6 +1,6 @@
 {
   "name": "@komondor-lab/plugin-fixture-dummy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "komondor dummy plugin for internal testing",
   "keywords": [
     "komondor-plugin"
