@@ -4,7 +4,7 @@ import { createGetPluginListFn } from './plugin';
 import { createScenarioIO } from './scenario';
 import { createSpecIO } from './spec';
 
-export function createIO(cwd = process.cwd()) {
+export function createFileIO(cwd = process.cwd()) {
   const config = getConfig(cwd)
   const komondorFolder = path.resolve(cwd, config.komondorFolder)
   const specIO = createSpecIO(komondorFolder)

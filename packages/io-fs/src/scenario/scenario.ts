@@ -6,11 +6,11 @@ export function createScenarioIO(komondorFolder: string) {
   return {
     read(id: string) {
       const hash = getHash(id)
-      return Promise.resolve().then(() => readByHash(dir, id, hash))
+      return readByHash(dir, id, hash)
     },
     write(id: string, data: string) {
       ensureFolderCreated(dir)
-      return writeTo(dir, id, data)
+      writeTo(dir, id, data)
     }
   }
 }
