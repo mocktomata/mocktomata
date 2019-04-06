@@ -2,6 +2,9 @@
   "name": "@komondor-lab/plugin-fixture-dummy",
   "version": "1.0.0",
   "description": "komondor dummy plugin for internal testing",
+  "keywords": [
+    "komondor-plugin"
+  ],
   "homepage": "https://github.com/unional/komondor",
   "bugs": {
     "url": "https://github.com/unional/komondor/issues"
@@ -30,9 +33,8 @@
     "dependency-check": "dependency-check . --unused --no-dev -i '@komondor-lab/core' && dependency-check . --missing --no-dev",
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
+  "devDependencies": {},
   "engines": {
     "node": ">= 6"
-  },
-  "devDependencies": {
   }
 }
