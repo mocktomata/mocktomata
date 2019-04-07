@@ -2,6 +2,7 @@ import t from 'assert';
 import fetch from 'node-fetch';
 import { dirSync } from 'tmp';
 import { createServer } from '.';
+import { createFileRepository } from '@komondor-lab/io-fs';
 
 test('server defaults to port 3698', () => {
   const server = createServer()
@@ -11,7 +12,8 @@ test('server defaults to port 3698', () => {
 describe('server behavior', () => {
   const tmp = dirSync()
 
-  const server = createServer({ cwd: tmp.name, port: 3698 })
+  const repository = createFileRepository(tmp.name)
+  const server = createServer({ port: 3698, repository })
 
   beforeAll(() => {
     return server.start()

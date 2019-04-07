@@ -1,8 +1,8 @@
-import { createFileIO } from '@komondor-lab/io-fs';
+import { createFileRepository } from '@komondor-lab/io-fs';
 import { RequestInfo, Server, ServerInfo, ServerOptions } from 'hapi';
 import path from 'path';
-import { unpartial } from 'unpartial';
-import { IOServerOptions } from './interfaces';
+import { required } from 'unpartial';
+import { Options } from './interfaces';
 
 const pjson = require(path.resolve(__dirname, '../package.json'))
 
@@ -10,11 +10,13 @@ const pjson = require(path.resolve(__dirname, '../package.json'))
  * @param options.port The port number to start the server with.
  * This should not be specified in normal use. For testing only.
  */
-export function createServer(options?: IOServerOptions) {
-  let { cwd, port } = unpartial({ cwd: process.cwd(), port: 3698 }, options)
+export function createServer(options?: Partial<Options>) {
+  const o = required({ port: 3698 }, options)
 
+  const repository = o.repository || createFileRepository(process.cwd())
+  let port = o.port
   const startingPort = port
-  let server = createHapiServer({ cwd, hapi: { port } })
+  let server = createHapiServer({ repository }, { hapi: { port } })
   let retryCount = 0
   return {
     info: server.info,
@@ -30,7 +32,7 @@ export function createServer(options?: IOServerOptions) {
           if (retryCount >= 100) {
             throw new Error(`Unable to start komondor server using port from ${startingPort} to ${startingPort + 100}`)
           }
-          server = createHapiServer({ cwd, hapi: { port, routes: { 'cors': true } } })
+          server = createHapiServer({ repository }, { hapi: { port, routes: { 'cors': true } } })
           this.info = server.info
           return this.start()
         }
@@ -44,10 +46,10 @@ export function createServer(options?: IOServerOptions) {
   }
 }
 
-function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
+function createHapiServer({ repository }: { repository: ReturnType<typeof createFileRepository> }, { hapi }: { hapi: ServerOptions }) {
 
   let server = new Server(hapi)
-  const io = createFileIO(cwd)
+
   server.route([
     {
       method: 'GET',
@@ -58,7 +60,7 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
           name: 'komondor',
           version: pjson.version,
           url: getReflectiveUrl(request.info, server.info),
-          plugins: await io.getPluginList()
+          plugins: await repository.getPluginList()
         })
       }
     },
@@ -74,14 +76,14 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
       method: 'GET',
       path: '/komondor/specs/{id}',
       handler: (request) => {
-        return io.readSpec(request.params.id)
+        return repository.readSpec(request.params.id)
       }
     },
     {
       method: 'POST',
       path: '/komondor/specs/{id}',
       handler: async (request, h) => {
-        await io.writeSpec(request.params.id, request.payload as string)
+        await repository.writeSpec(request.params.id, request.payload as string)
         return h.response()
       }
     },
@@ -89,14 +91,14 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
       method: 'GET',
       path: '/komondor/scenarios/{id}',
       handler: (request) => {
-        return io.readScenario(request.params.id)
+        return repository.readScenario(request.params.id)
       }
     },
     {
       method: 'POST',
       path: '/komondor/scenarios/{id}',
       handler: async (request, h) => {
-        await io.writeScenario(request.params.id, request.payload as string)
+        await repository.writeScenario(request.params.id, request.payload as string)
         return h.response()
       }
     }
