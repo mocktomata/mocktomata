@@ -4,11 +4,11 @@ import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 export function createSpecIO(komondorFolder: string) {
   const specDir = getSpecFolder(komondorFolder)
   return {
-    readSpec(id: string) {
+    async readSpec(id: string) {
       const hash = getHash(id)
       return readByHash(specDir, id, hash)
     },
-    writeSpec(id: string, data: string) {
+    async writeSpec(id: string, data: string) {
       ensureFolderCreated(specDir)
       writeTo(specDir, id, data)
     }

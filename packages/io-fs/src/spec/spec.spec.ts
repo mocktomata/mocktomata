@@ -8,15 +8,15 @@ describe('readSpec()', () => {
     const tmp = dirSync()
     const io = createFileIO(tmp.name)
 
-    a.throws(() => io.readSpec('not existing spec'))
+    await a.throws(() => io.readSpec('not existing spec'))
   })
   test('retrieve record for saved spec', async () => {
     const tmp = dirSync()
     const io = createFileIO(tmp.name)
     const expected = JSON.stringify({ actions: [], expectation: 'some expectation' })
-    io.writeSpec('retrieve', expected)
+    await io.writeSpec('retrieve', expected)
 
-    const actual = io.readSpec('retrieve')
+    const actual = await io.readSpec('retrieve')
     t.deepStrictEqual(actual, expected)
   })
 })
