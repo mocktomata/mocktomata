@@ -1,7 +1,7 @@
 {
-  "name": "@komondor-lab/io-server",
+  "name": "@komondor-lab/file-server",
   "version": "7.0.0-alpha.0",
-  "description": "komondor IO server",
+  "description": "komondor file server",
   "homepage": "https://github.com/unional/komondor",
   "bugs": {
     "url": "https://github.com/unional/komondor/issues"
@@ -24,11 +24,11 @@
   "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
-    "clean": "rimraf lib libm",
+    "clean": "rimraf lib libm *.tsbuildinfo",
+    "compile": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
     "dc": "yarn dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
-    "verify": "yarn clean && yarn build && jest --coverage",
+    "verify": "yarn compile && yarn dc && jest --coverage --reporters=default",
     "watch": "jest --watch"
   },
   "dependencies": {
@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@types/hapi": "^18.0.1",
-    "@types/node-fetch": "^2.1.7",
+    "@types/node-fetch": "^2.3.0",
     "delay": "^4.1.0",
     "node-fetch": "^2.3.0"
   }

@@ -33,18 +33,26 @@ describe('server behavior', () => {
     }
   })
 
-  test('can read and write spec', async () => {
-    await fetch(`http://localhost:${server.info.port}/komondor/spec/abc`, { method: 'POST', body: '{ a: 1 }' })
-
-    const response = await fetch(`http://localhost:${server.info.port}/komondor/spec/abc`)
-    const actual = await response.text()
-    t.strictEqual(actual, '{ a: 1 }')
-  })
-
   test('get komondor info', async () => {
     const response = await fetch(`http://localhost:${server.info.port}/komondor/info`)
     const actual = await response.text()
     const pjson = require('../package.json')
-    t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}","url":"http://localhost:3698"}`)
+    t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}","url":"http://localhost:3698","plugins":[]}`)
+  })
+
+  test('can read and write spec', async () => {
+    await fetch(`http://localhost:${server.info.port}/komondor/specs/abc`, { method: 'POST', body: '{ a: 1 }' })
+
+    const response = await fetch(`http://localhost:${server.info.port}/komondor/specs/abc`)
+    const actual = await response.text()
+    t.strictEqual(actual, '{ a: 1 }')
+  })
+
+  test('can read and write scenario', async () => {
+    await fetch(`http://localhost:${server.info.port}/komondor/scenarios/abc`, { method: 'POST', body: '{ scen: 1 }' })
+
+    const response = await fetch(`http://localhost:${server.info.port}/komondor/scenarios/abc`)
+    const actual = await response.text()
+    t.strictEqual(actual, '{ scen: 1 }')
   })
 })

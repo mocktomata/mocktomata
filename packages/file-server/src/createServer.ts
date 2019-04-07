@@ -1,4 +1,4 @@
-import { createSpecIO, loadConfig } from '@komondor-lab/io-fs';
+import { createFileIO } from '@komondor-lab/io-fs';
 import { RequestInfo, Server, ServerInfo, ServerOptions } from 'hapi';
 import path from 'path';
 import { unpartial } from 'unpartial';
@@ -30,7 +30,7 @@ export function createServer(options?: IOServerOptions) {
           if (retryCount >= 100) {
             throw new Error(`Unable to start komondor server using port from ${startingPort} to ${startingPort + 100}`)
           }
-          server = createHapiServer({ cwd, hapi: { port } })
+          server = createHapiServer({ cwd, hapi: { port, routes: { 'cors': true } } })
           this.info = server.info
           return this.start()
         }
@@ -47,48 +47,57 @@ export function createServer(options?: IOServerOptions) {
 function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
 
   let server = new Server(hapi)
-  const spec = createSpecIO(cwd)
+  const io = createFileIO(cwd)
   server.route([
     {
       method: 'GET',
       path: '/komondor/info',
-      handler: (request) => {
+      options: { cors: true },
+      handler: async (request) => {
         return JSON.stringify({
           name: 'komondor',
           version: pjson.version,
-          url: getReflectiveUrl(request.info, server.info)
+          url: getReflectiveUrl(request.info, server.info),
+          plugins: await io.getPluginList()
         })
       }
     },
+    // {
+    //   method: 'GET',
+    //   path: '/komondor/config',
+    //   options: { cors: true },
+    //   handler: async (request, h) => {
+    //     return JSON.stringify(loadConfig(cwd))
+    //   }
+    // },
     {
       method: 'GET',
-      path: '/komondor/config',
-      handler: async () => {
-        return JSON.stringify(loadConfig(cwd))
-      }
-    },
-    {
-      method: 'GET',
-      path: '/komondor/spec/{id}',
+      path: '/komondor/specs/{id}',
       handler: (request) => {
-        return spec.read(request.params.id)
+        return io.readSpec(request.params.id)
       }
     },
     {
       method: 'POST',
-      path: '/komondor/spec/{id}',
+      path: '/komondor/specs/{id}',
       handler: async (request, h) => {
-        await spec.write(request.params.id, request.payload as string)
+        await io.writeSpec(request.params.id, request.payload as string)
         return h.response()
       }
     },
     {
       method: 'GET',
-      path: '/komondor/plugins/{id*}',
-      handler: async (_request, h) => {
-        // TODO: resolve the path from node, send the content up.
-        return h.response(`module.export = { a: 1 }`)
-          .type('text/javascript')
+      path: '/komondor/scenarios/{id}',
+      handler: (request) => {
+        return io.readScenario(request.params.id)
+      }
+    },
+    {
+      method: 'POST',
+      path: '/komondor/scenarios/{id}',
+      handler: async (request, h) => {
+        await io.writeScenario(request.params.id, request.payload as string)
+        return h.response()
       }
     }
   ])
@@ -99,8 +108,9 @@ function createHapiServer({ cwd, hapi }: { cwd: string, hapi: ServerOptions }) {
  * If request is calling from local, return as localhost.
  */
 function getReflectiveUrl(requestInfo: RequestInfo, serverInfo: ServerInfo) {
-  if (requestInfo.hostname === 'localhost' || requestInfo.remoteAddress === '127.0.0.1') {
-    return `${serverInfo.protocol}://localhost${serverInfo.port ? `:${serverInfo.port}` : ''}`
+  if (requestInfo.remoteAddress === '127.0.0.1') {
+    return `${serverInfo.protocol}://localhost:${serverInfo.port}`
   }
+  // istanbul ignore next
   return serverInfo.uri
 }
