@@ -1,1 +1,1 @@
-export * from './createGetPluginListFn';
+export * from './plugin';

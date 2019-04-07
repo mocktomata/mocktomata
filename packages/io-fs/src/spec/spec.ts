@@ -1,7 +1,7 @@
 import path from 'path';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 
-export function createSpecIO(komondorFolder: string) {
+export function createSpecRepository(komondorFolder: string) {
   const specDir = getSpecFolder(komondorFolder)
   return {
     async readSpec(id: string) {

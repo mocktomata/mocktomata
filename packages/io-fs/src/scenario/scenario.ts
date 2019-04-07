@@ -1,7 +1,7 @@
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 import path from 'path'
 
-export function createScenarioIO(komondorFolder: string) {
+export function createScenarioRepository(komondorFolder: string) {
   const dir = getScenarioFolder(komondorFolder)
   return {
     async readScenario(id: string) {
