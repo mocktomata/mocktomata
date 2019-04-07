@@ -13,6 +13,9 @@ export function createFileIO(cwd: string) {
   return {
     ...specIO,
     ...scenarioIO,
-    getPluginList: createGetPluginListFn({ cwd, config })
+    getPluginList: createGetPluginListFn({ cwd, config }),
+    async loadPlugin(name: string) {
+      return require(name)
+    }
   }
 }
