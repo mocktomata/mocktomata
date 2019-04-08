@@ -1,3 +1,2 @@
-export * from './createClientIO';
+export * from './createIO';
 export * from './interfaces';
-

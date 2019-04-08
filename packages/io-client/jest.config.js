@@ -5,8 +5,6 @@ module.exports = {
   ...base,
   name: 'io-client',
   displayName: 'io-client',
-  globalSetup: './scripts/setup.js',
-  globalTeardown: './scripts/teardown.js',
   roots: [
     '<rootDir>/src'
   ],

@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@komondor-lab/plugin-fixture-dummy": "^1.0.3"
+  }
+}

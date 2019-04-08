@@ -2,16 +2,20 @@
   "extends": "../tsconfig.settings.json",
   "compilerOptions": {
     "lib": [
+      "dom",
       "es2015"
     ],
     "rootDir": "src"
   },
   "references": [
     {
-      "path": "../io-server"
+      "path": "../core"
     },
     {
-      "path": "../spec"
+      "path": "../io-fs"
+    },
+    {
+      "path": "../file-server"
     }
   ],
   "include": [
