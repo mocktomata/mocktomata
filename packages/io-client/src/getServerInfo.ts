@@ -1,7 +1,13 @@
 import fetch from 'cross-fetch';
 import { buildUrl } from './buildUrl';
 import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors';
-import { CreateIOOptions, ServerInfo } from './interfaces';
+import { CreateIOOptions } from './interfaces';
+
+export type ServerInfo = {
+  version: string
+  url: string,
+  plugins: string[]
+}
 
 export async function getServerInfo(options?: CreateIOOptions): Promise<ServerInfo> {
   return options ? tryGetServerInfo(options.url) : lookupServerInfo()

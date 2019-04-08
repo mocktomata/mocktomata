@@ -5,9 +5,3 @@ export interface CreateIOOptions {
    */
   url: string
 }
-
-export type ServerInfo = {
-  version: string
-  url: string,
-  plugins: string[]
-}

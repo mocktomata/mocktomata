@@ -1,11 +1,11 @@
-import { SpecNotFound, SpecRecord, ScenarioNotFound, ScenarioRecord } from '@komondor-lab/core';
+import { SpecNotFound, SpecRecord, ScenarioNotFound, ScenarioRecord, IO } from '@komondor-lab/core';
 import fetch from 'cross-fetch';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
 import { CreateIOOptions } from './interfaces';
 import { PluginModule } from '@komondor-lab/plugin';
 
-export async function createIO(options?: CreateIOOptions) {
+export async function createIO(options?: CreateIOOptions): Promise<IO> {
   const info = await getServerInfo(options)
   return {
     async readSpec(id: string): Promise<SpecRecord> {
