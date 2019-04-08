@@ -3,11 +3,10 @@ export type Options = {
   /**
    * Port number the server will run on.
    */
-  port: number,
-
-  repository: Repository
+  port: number
 }
 
+// TODO: this will move into `io-fs` and exposed in `komondor`
 export type Repository = {
   readSpec(id: string): Promise<string>
   writeSpec(id: string, data: string): Promise<void>
