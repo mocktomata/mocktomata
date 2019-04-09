@@ -1,6 +1,5 @@
-import { createFileRepository } from '@komondor-lab/io-fs';
+import { createFileRepository, Repository } from '@komondor-lab/io-fs';
 import { createStore } from 'global-store';
-import { Repository } from './interfaces';
 
 export type Context = {
   repository: Repository
