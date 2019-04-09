@@ -8,19 +8,13 @@
   },
   "references": [
     {
+      "path": "../core"
+    },
+    {
       "path": "../io-fs"
     },
     {
-      "path": "../plugin"
-    },
-    {
-      "path": "../plugin-fixture-deep-link"
-    },
-    {
       "path": "../plugin-fixture-dummy"
-    },
-    {
-      "path": "../plugin-fixture-no-activate"
     }
   ],
   "include": [
