@@ -23,6 +23,7 @@ export async function start(options?: Partial<Options>) {
 }
 
 async function tryCreateHapi(port: number, start: number, end: number): Promise<Server> {
+  // istanbul ignore next
   if (port > end) {
     throw new Error(`Unable to start komondor server using port from ${start} to ${end}`)
   }

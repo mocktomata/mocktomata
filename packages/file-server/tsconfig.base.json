@@ -8,12 +8,6 @@
   },
   "references": [
     {
-      "path": "../core"
-    },
-    {
-      "path": "../plugin"
-    },
-    {
       "path": "../io-fs"
     }
   ],
