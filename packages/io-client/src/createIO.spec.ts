@@ -66,7 +66,7 @@ test('write Scenario', async () => {
 })
 
 describe('getPluginList()', () => {
-  test('yes', async () => {
+  test('returns installed plugin', async () => {
     const io = await createIO()
 
     const list = await io.getPluginList()
