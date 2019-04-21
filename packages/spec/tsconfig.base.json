@@ -1,0 +1,21 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "lib": [
+      "es2015"
+    ],
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../plugin"
+    }
+  ],
+  "include": [
+    "src",
+    "typings"
+  ],
+  "files": [
+    "src/index.ts"
+  ]
+}
