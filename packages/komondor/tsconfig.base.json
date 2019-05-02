@@ -1,0 +1,35 @@
+{
+  "extends": "../tsconfig.settings.json",
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2015"
+    ],
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../plugin"
+    },
+    {
+      "path": "../io-client"
+    },
+    {
+      "path": "../io-local"
+    },
+    {
+      "path": "../plugin-fixture-dummy"
+    }
+  ],
+  "include": [
+    "src",
+    "typings"
+  ],
+  "files": [
+    "src/bin.ts",
+    "src/index.ts"
+  ]
+}

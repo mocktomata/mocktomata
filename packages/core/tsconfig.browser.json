@@ -24,7 +24,7 @@
   //   "src/**/*.node-spec.ts"
   // ],
   "include": [
-    "custom-typings",
-    "src"
+    "src",
+    "typings"
   ]
 }

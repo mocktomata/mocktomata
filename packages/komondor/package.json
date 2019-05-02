@@ -23,46 +23,65 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
-  "browser": {
-    "./lib/runtime/getIO.js": "./lib/runtime/getIO-browser.js"
-  },
   "files": [
-    "lib"
+    "lib",
+    "libm",
+    "dist"
   ],
   "main": "lib/index.js",
+  "module": "libm/index.js",
+  "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "bin": {
     "komondor": "lib/bin.js"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "yarn build:es5 && yarn build:esnext && yarn build:browser",
+    "build:es5": "tsc -p tsconfig.es5.json",
+    "build:esnext": "tsc -p tsconfig.esnext.json",
+    "build:browser": "webpack",
+    "clean": "rimraf lib libm dist",
     "dc": "yarn dependency-check",
-    "dependency-check": "dependency-check . --unused --no-dev -i type-plus && dependency-check . --missing --no-dev",
-    "verify": "rimraf lib && yarn build && jest --coverage"
+    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "test": "jest --reporters=default",
+    "verify": "yarn clean && yarn build && jest --coverage --reporters=default",
+    "watch": "jest --watch"
   },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-client": "^7.0.0-alpha",
     "@komondor-lab/io-local": "^7.0.0-alpha",
     "@komondor-lab/io-server": "^7.0.0-alpha.0",
-    "@unional/devpkg-node": "^1.1.2",
+    "@komondor-lab/plugin": "^7.0.0-alpha",
     "@unional/logging": "^1.0.1",
-    "assertron": "^6.0.0",
-    "chalk": "^2.4.1",
-    "clibuilder": "^2.4.4",
-    "cross-fetch": "^3.0.0",
+    "assertron": "^7.0.0",
+    "async-fp": "^1.0.0",
+    "chalk": "^2.4.2",
+    "clibuilder": "^4.3.0",
     "is-node": "^1.0.2",
-    "type-plus": "^1.0.0",
+    "type-plus": "^1.16.0",
     "validate.js": "^0.12.0"
   },
   "devDependencies": {
     "@komondor-lab/plugin-fixture-deep-link": "^1.0.0",
     "@komondor-lab/plugin-fixture-dummy": "^1.0.0",
     "@types/delay": "^3.1.0",
-    "@types/tmp": "^0.0.33",
+    "@types/tmp": "^0.1.0",
+    "@unional/devpkg-node": "^1.2.5",
     "aurelia-logging-memory": "^1.0.1",
     "delay": "^4.1.0",
-    "jest": "^24.0.0-alpha.9",
-    "tmp": "^0.0.33"
+    "jest": "^24.6.0",
+    "karma": "^4.0.1",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-mocha": "^1.3.0",
+    "karma-typescript": "^4.0.0",
+    "mocha": "^6.1.2",
+    "param-case": "^2.1.1",
+    "pascal-case": "^2.0.1",
+    "source-map-loader": "^0.2.4",
+    "tmp": "^0.1.0",
+    "ts-loader": "^5.3.3",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   }
 }

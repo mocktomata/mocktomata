@@ -7,6 +7,8 @@
     ]
   },
   "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean",
     "build": "tsc -b",
     "build:watch": "tsc -b -w",
     "test": "yarn jest",
@@ -14,11 +16,11 @@
     "watch": "yarn jest --watch"
   },
   "dependencies": {
-    "@jest-runner/electron": "^0.1.0",
-    "@types/ramda": "^0.25.45",
-    "@unional/devpkg-node": "^1.1.2"
   },
   "devDependencies": {
-    "lerna": "^3.4.3"
+    "@jest-runner/electron": "1.1.1",
+    "@types/ramda": "^0.26.5",
+    "@unional/devpkg-node": "^1.2.5",
+    "lerna": "^3.13.1"
   }
 }

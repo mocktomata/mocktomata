@@ -1,5 +1,5 @@
 import { StubContext } from 'komondor-plugin'
-import { getPartialProperties, assignPropertiesIfNeeded } from './composeWithSubject'
+import { getPartialProperties, assignPropertiesIfNeeded } from './getPartialProperties'
 
 export function stubFunction(context: StubContext, subject, action) {
   const meta: any = {}

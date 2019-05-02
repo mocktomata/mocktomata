@@ -1,5 +1,8 @@
 # Design note
 
+The `komondor` project is the entry point to the system.
+It is the main partition.
+
 The SpecAction is the syntax of the finite state machine.
 The SpecActions recorded is the finite state machine.
 

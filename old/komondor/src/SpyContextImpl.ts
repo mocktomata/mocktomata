@@ -50,7 +50,6 @@ export class SpyContextImpl implements SpyContext {
     if (plugin) {
       const childContext = this.createReturnContext(plugin, action)
       action.returnType = plugin.type
-      // return plugin.getSpy(childContext, action.payload)
       return getSpy(childContext, plugin, action.payload)
     }
   }

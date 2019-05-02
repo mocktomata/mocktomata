@@ -1,4 +1,4 @@
-import { KomondorPlugin, PluginModule } from '../interfaces';
+import { KomondorPlugin, PluginModule } from '../types';
 
 // istanbul ignore next
 export const dummyPluginModule: PluginModule = {

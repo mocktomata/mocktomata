@@ -1,19 +1,22 @@
-import { createLocalIO } from '@komondor-lab/io-local';
-import { createServer } from '@komondor-lab/io-server';
+import { start } from '@komondor-lab/file-server';
 import chalk from 'chalk';
-import { CliCommand } from 'clibuilder';
-import { LocalIOConfig } from '../config';
+import { CliArgs, CliCommand } from 'clibuilder';
 import { validate } from './validate';
 
 export const serveCommand: CliCommand = {
   name: 'serve',
   description: 'Starts a local server to serve requests from client (browser)',
-  async run() {
-    const io = createLocalIO({ cwd: this.cwd })
-    const config = await io.loadConfig() as LocalIOConfig
-
-    if (validate({ ui: this.ui }, config, {
-      localPort: {
+  options: {
+    number: {
+      port: {
+        description: 'port number',
+        default: 3698
+      }
+    }
+  },
+  async run(args) {
+    if (validate({ ui: this.ui }, args, {
+      port: {
         presence: true,
         numericality: {
           onlyInteger: true,
@@ -23,13 +26,22 @@ export const serveCommand: CliCommand = {
         }
       }
     })) {
-      const server = createServer({ port: config.localPort })
-      await server.start()
-
-      this.ui.info(`komondor server started.`)
-      this.ui.info(`--------------------------------------------------------------------------------`)
-      this.ui.info(`      ${chalk.magenta(`${server.info.protocol}://localhost:${server.info.port}`)}`)
-      this.ui.info(`--------------------------------------------------------------------------------`)
+      const server = await startServer(args)
+      const msg = `      ${chalk.magenta(`${server.info.protocol}://localhost:${server.info.port}`)}`
+      const bar = '-'.repeat(msg.length)
+      this.ui.info(`
+komondor server started.
+${bar}
+${msg}
+${bar}
+`)
     }
   }
+}
+
+function startServer(args: CliArgs) {
+  if (args._defaults.indexOf('port') >= 0)
+    return start()
+  else
+    return start({ port: args.port })
 }

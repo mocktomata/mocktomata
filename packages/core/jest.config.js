@@ -7,5 +7,5 @@ module.exports = {
   roots: [
     '<rootDir>/src'
   ],
-  testMatch: ['**/*.spec.ts', '**/*.node-spec.ts'],
+  testMatch: ['**/*.spec.ts'],
 }

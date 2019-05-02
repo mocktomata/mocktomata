@@ -1,4 +1,3 @@
-export * from './errors';
+export * from './addPluginModule';
 export * from './findPlugin';
-export * from './types';
 export * from './loadPlugins';

@@ -1,12 +1,11 @@
 {
-  "extends": "../tsconfig.settings.json",
+  "extends": "./tsconfig.esnext.json",
   "compilerOptions": {
-    "skipLibCheck": true,
-    "outDir": "lib",
-    "rootDir": "src"
-  },
-  "include": [
-    "custom-typings",
-    "src"
-  ]
+    "noEmit": true,
+    "plugins": [
+      {
+        "name": "tslint-language-service"
+      }
+    ]
+  }
 }

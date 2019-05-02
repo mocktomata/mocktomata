@@ -1,10 +1,17 @@
-export type SpecMode = 'live' | 'save' | 'replay'
+import { RequiredPick } from 'type-plus';
+
+export type SpecMode = 'auto' | 'live' | 'save' | 'simulate'
 
 export type Spec<T> = {
   subject: T,
   done(): Promise<void>
 }
 
+/**
+ * Meta data of the action.
+ * Save information about the action during spying,
+ * so that it can be used during stubbing to replay the behavior.
+ */
 export type Meta = Record<string, any>
 
 export type SpecRecord = { actions: SpecAction[] }
@@ -18,42 +25,73 @@ export type SpecOptions = {
   timeout: number
 }
 
-export type SpecAction = ConstructAction | InvokeAction | ReturnAction | ThrowAction | CallbackConstructAction
+export type SpecAction = ConstructAction | InvokeAction | GetAction | SetAction |
+  ReturnAction | ThrowAction | CallbackConstructAction
 
-export type ConstructAction = {
-  name: 'construct',
+export type SpecActionInternal = ConstructActionInternal
+
+export type ConstructActionInternal = ConstructAction & {
   plugin: string,
-  payload: any[] | undefined,
-  meta?: Meta,
   instanceId: number
 }
 
-export type InvokeAction = {
-  name: 'invoke',
+
+export type SubjectInfo = {
   plugin: string,
-  payload: any[],
-  meta?: Meta,
-  instanceId: number,
-  invokeId: number
+  subjectId: number,
+  instanceId?: number,
+  invokeId?: number
 }
+
+export type SourceInfo = SourceArgumentInfo | SourceReturnInfo | SourceThrowInfo | SourceYieldInfo
+
+export type SourceArgumentInfo = SubjectInfo & {
+  type: 'argument'
+  /**
+   * When used as source info, not defined site means the subject is a return value.
+   */
+  site?: (string | number)[]
+}
+
+export type SourceReturnInfo = SubjectInfo & {
+  type: 'return'
+}
+
+export type SourceThrowInfo = SubjectInfo & {
+  type: 'throw'
+}
+
+export type SourceYieldInfo = SubjectInfo & {
+  type: 'yield'
+}
+
+export type SpecActionBase<SUB = SubjectInfo> = {
+  subject: SUB,
+  source?: SourceInfo
+  payload: any,
+  meta?: Meta | undefined
+}
+
+export type ConstructAction = {
+  name: 'construct'
+} & SpecActionBase
+
+export type InvokeAction = {
+  name: 'invoke'
+} & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
 
 export type ReturnAction = {
   name: 'return',
-  plugin: string,
-  payload: any,
-  meta?: Meta,
-  instanceId: number,
-  invokeId: number,
-  returnType: string,
-  returnInstanceId: number
-}
+  returnPlugin?: string,
+  returnInstanceId?: number
+} & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
 
 export type CallbackConstructAction = {
   name: 'construct-callback',
   plugin: string,
   payload: any[],
   meta?: Meta,
-  // TODO validate: instance id is optional because komondor/callback action does not have instanceId
+  subjectId: number,
   instanceId: number
   sourceType: string;
   sourceInstanceId: number;
@@ -63,9 +101,14 @@ export type CallbackConstructAction = {
 
 export type ThrowAction = {
   name: 'throw',
-  plugin: string,
-  payload: any,
-  meta?: Meta,
-  instanceId: number,
-  invokeId: number
-}
+  throwPlugin?: string,
+  throwInstanceId?: number
+} & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
+
+export type GetAction = {
+  name: 'get'
+} & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
+
+export type SetAction = {
+  name: 'set',
+} & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>

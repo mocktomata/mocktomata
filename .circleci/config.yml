@@ -1,91 +1,133 @@
 version: 2
-save-node: &save-node
-  save_cache:
-    name: Save node modules cache
-    key: node_modules-{{ checksum "package-lock.json" }}
-    paths:
-      - node_modules
-restore-node: &restore-node
-  restore_cache:
-    name: Restore node_modules cache
-    key: node_modules-{{ checksum "package-lock.json" }}
 workflows:
   version: 2
   all:
     jobs:
       - node-latest
+      - node10:
+          requires:
+            - node-latest
+      - node9:
+          requires:
+            - node-latest
       - node8:
           requires:
             - node-latest
-      - browser-test:
-          requires:
-            - node-latest
-      - release:
-          filters:
-            branches:
-              only: master
-          requires:
-            - node-latest
-            - node8
-            - browser-test
+      # - node6:
+      #     requires:
+      #       - node-latest
+      # - release:
+      #     filters:
+      #       branches:
+      #         only: master
+      #     requires:
+      #       - node-latest
+      #       - node10
+      #       - node9
+      #       - node8
+      #       - node6
 jobs:
   local-test:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:11
     steps:
       - checkout
       - run: npm run verify
   node-latest:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:11
     steps:
       - checkout
-      - <<: *restore-node
+      # - restore_cache:
+      #     name: Restore node_modules cache
+      #     key: node_modules-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
           command: |
             if [ ! -d node_modules ]; then
-              npm ci
+              yarn install
+              # npm i --no-save jest-junit
             fi
-      - run:
-          name: update greenkeeper lockfile
-          command: ./node_modules/.bin/greenkeeper-lockfile-update
-      - <<: *save-node
+      # - save_cache:
+      #     name: Save node modules cache
+      #     key: node_modules-{{ checksum "yarn.lock" }}
+      #     paths:
+      #       - node_modules
+      #       - packages/config/node_modules
+      #       - packages/core/node_modules
+      #       - packages/io-client/node_modules
+      #       - packages/io-fs/node_modules
+      #       - packages/io-local/node_modules
+      #       - packages/io-server/node_modules
+      #       - packages/komondor/node_modules
+      #       - packages/plugin-fixture-dummy/node_modules
       - persist_to_workspace:
           root: '.'
           paths:
-            - '.'
             - node_modules
-            - '.git'
-      - run: npm run verify:ci
-      - run: npx codecov
-      - store_test_results:
-          path: .reports/junit
+            - packages/config/node_modules
+            - packages/core/node_modules
+            - packages/io-client/node_modules
+            - packages/io-fs/node_modules
+            - packages/io-local/node_modules
+            - packages/io-server/node_modules
+            - packages/komondor/node_modules
+            - packages/plugin-fixture-dummy/node_modules
+      - run: yarn build
+      - run: yarn test
+      # - run: npx codecov
+      # - store_test_results:
+      #     path: packages/uni-cli/.reports/junit
+  node10:
+    docker:
+      - image: 'circleci/node:9'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - run: yarn build
+      - run: yarn test
+      # - store_test_results:
+      #     path: packages/uni-cli/.reports/junit
+  node9:
+    docker:
+      - image: 'circleci/node:9'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - run: yarn build
+      - run: yarn test
+      # - store_test_results:
+      #     path: packages/uni-cli/.reports/junit
   node8:
     docker:
       - image: 'circleci/node:8'
     steps:
+      - checkout
       - attach_workspace:
           at: '.'
-      - run: npm run verify:ci
-  browser-test:
+      - run: yarn build
+      - run: yarn test
+      # - store_test_results:
+      #     path: packages/uni-cli/.reports/junit
+  node6:
     docker:
-      - image: circleci/node:latest-browsers
+      - image: 'circleci/node:6'
     steps:
+      - checkout
       - attach_workspace:
           at: '.'
-      - run: npm run test:browser
+      - run: yarn build
+      - run: yarn test
+      # - store_test_results:
+      #     path: packages/uni-cli/.reports/junit
   release:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:11
     steps:
+      - checkout
       - attach_workspace:
           at: '.'
-      - run: npm run build
-      - run: npx semantic-release
-      - run:
-          name: SSH Avoid hosts unknown
-          command: 'mkdir -p ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config'
-      - run:
-          name: upload greenkeeper lockfile
-          command: ./node_modules/.bin/greenkeeper-lockfile-upload
+      - run: yarn build
+      # - run: npx lerna exec --concurrency 1 -- npx semantic-release -e semantic-release-monorepo

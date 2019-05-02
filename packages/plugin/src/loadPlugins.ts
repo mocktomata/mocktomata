@@ -1,5 +1,5 @@
 import { PluginNotFound } from './errors';
-import { PluginIO } from './interfaces';
+import { PluginIO } from './types';
 import { registerPlugin } from './registerPlugin';
 
 export type LoadPluginContext = {

@@ -1,7 +1,10 @@
-module.exports = function(config) {
+module.exports = function (config) {
   config.set({
     frameworks: ['mocha', 'karma-typescript'],
-    files: ['src2/**/*.ts'],
+    files: [
+      'src/komondor.ts',
+      'src/komondor.test.ts'
+    ],
     preprocessors: {
       '**/*.ts': 'karma-typescript'
     },
@@ -17,7 +20,7 @@ module.exports = function(config) {
       bundlerOptions: {
         exclude: ['perf_hooks']
       },
-      tsconfig: './tsconfig.json'
+      tsconfig: './tsconfig.browser.json'
     }
   })
 }

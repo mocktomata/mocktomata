@@ -40,12 +40,11 @@ node_modules
 # webstorm
 .idea
 
-# typings
-typings
-
 # workspace
 .nowhere
 .progress
 .reports
-lib
+lib*
 out*
+tsconfig.tsbuildinfo
+tsconfig.*.tsbuildinfo

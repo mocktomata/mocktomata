@@ -11,12 +11,8 @@
     "moduleResolution": "node",
     "newLine": "LF",
     "noUnusedLocals": true,
+    // This is added just in case tsconfig.json forgot to have `noEmit: true`
     "outDir": ".nowhere",
-    "plugins": [
-      {
-        "name": "tslint-language-service"
-      }
-    ],
     "removeComments": false,
     "sourceMap": true,
     "strict": true,

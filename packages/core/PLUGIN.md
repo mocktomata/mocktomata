@@ -1,6 +1,6 @@
 # Creating Komondor Plugins
 
-Komondor plugins add support to packages, classes, or specific construct that is not supported by the build in mechanism.
+Komondor plugins add support to packages, classes, or specific construct that is not supported by the build-in mechanism.
 
 To create a plugin, you need to export a `activate()` function as follow:
 

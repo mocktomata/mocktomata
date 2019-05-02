@@ -18,7 +18,9 @@
     "strict": true
   },
   "references": [
-    { "path": "../komondor-plugin"}
+    {
+      "path": "../komondor-plugin"
+    }
   ],
   "exclude": [
     "node_modules"

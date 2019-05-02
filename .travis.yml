@@ -2,7 +2,13 @@ language: node_js
 sudo: false
 matrix:
   include:
-    - env: PROJECT=packages/komondor-plugin
+    - env: PROJECT=packages/config
+    - env: PROJECT=packages/core
+    - env: PROJECT=packages/io-client
+    - env: PROJECT=packages/io-fs
+    - env: PROJECT=packages/io-local
+    - env: PROJECT=packages/io-server
     - env: PROJECT=packages/komondor
+    - env: PROJECT=packages/plugin-fixture-dummy
 
 script: if .travis/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then echo "$PROJECT is being built"; else echo "$PROJECT is NOT being built"; fi

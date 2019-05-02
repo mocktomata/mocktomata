@@ -1,6 +1,6 @@
 import { PluginAlreadyLoaded, PluginNotConforming } from './errors';
 import { getPlugins } from './getPlugins';
-import { KomondorPlugin, PluginInstance, PluginModule } from './interfaces';
+import { KomondorPlugin, PluginInstance, PluginModule } from './types';
 
 export function registerPlugin(pluginName: string, pluginModule: PluginModule) {
   assertModuleConfirming(pluginName, pluginModule)

@@ -1,7 +1,6 @@
 import { spec } from '../spec';
 import { TestHandler } from './interfaces';
 
-
 export function testLive(specName: string, handler: TestHandler): void
 export function testLive(description: string, specName: string, handler: TestHandler): void
 export function testLive(description: string, specNameOrHandler: string | TestHandler, inputHandler?: TestHandler): void {

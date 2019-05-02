@@ -1,2 +1,3 @@
-export * from './plugin';
+export * from './io';
+export * from './scenario';
 export * from './spec';
