@@ -54,7 +54,7 @@
     "ramda": "^0.25.0",
     "satisfier": "^4.5.0",
     "tersify": "^1.2.6",
-    "unpartial": "^0.5.0"
+    "unpartial": "^0.6.0"
   },
   "devDependencies": {
     "@types/jest": "^23.3.7",
