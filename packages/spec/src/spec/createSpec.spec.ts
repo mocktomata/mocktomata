@@ -7,15 +7,15 @@ import { echoPluginModule } from '../test-util';
 import { createLiveSpec } from './createSpec';
 
 let harness: ReturnType<typeof createTestHarness>
-beforeEach(() => {
-  harness = createTestHarness()
-})
-
-afterEach(() => {
-  harness.reset()
-})
 
 describe('timeout warning', () => {
+  beforeEach(() => {
+    harness = createTestHarness({ showLog: false })
+  })
+
+  afterEach(() => {
+    harness.reset()
+  })
   test(`when test did not call done within specified 'timeout', a warning message will be displayed.`, async () => {
     harness.io.addPluginModule('echo', echoPluginModule)
     await loadPlugins(harness)
@@ -38,33 +38,41 @@ describe('timeout warning', () => {
     a.satisfies(harness.appender.logs, [])
   })
 })
-
-test('no suitable plugin throws NotSpecable', async () => {
-  const spyPlugin = { support: jest.fn(), getSpy: jest.fn(), getStub: jest.fn() }
-  harness.io.addPluginModule('spy', {
-    activate(context) {
-      context.register(spyPlugin)
-    }
+describe('aa', () => {
+  beforeEach(() => {
+    harness = createTestHarness()
   })
-  await loadPlugins(harness)
 
-  spyPlugin.support.mockReturnValue(false)
-  await a.throws(
-    createLiveSpec(harness, 'no supporting plugin', 'no supporting plugin', { timeout: 300 }),
-    NotSpecable)
-})
-
-test('supported plugin got getSpy() invoked', async () => {
-  const spyPlugin = { support: jest.fn(), getSpy: jest.fn(), getStub: jest.fn() }
-  harness.io.addPluginModule('spy', {
-    activate(context) {
-      context.register(spyPlugin)
-    }
+  afterEach(() => {
+    harness.reset()
   })
-  await loadPlugins(harness)
+  test('no suitable plugin throws NotSpecable', async () => {
+    const spyPlugin = { support: jest.fn(), getSpy: jest.fn(), getStub: jest.fn() }
+    harness.io.addPluginModule('spy', {
+      activate(context) {
+        context.register(spyPlugin)
+      }
+    })
+    await loadPlugins(harness)
 
-  spyPlugin.support.mockReturnValue(true)
-  const s = await createLiveSpec(harness, 'call spy', 'call spy', { timeout: 300 })
-  await s.done()
-  expect(spyPlugin.getSpy.mock.calls.length).toBe(1)
+    spyPlugin.support.mockReturnValue(false)
+    await a.throws(
+      createLiveSpec(harness, 'no supporting plugin', 'no supporting plugin', { timeout: 300 }),
+      NotSpecable)
+  })
+
+  test('supported plugin got getSpy() invoked', async () => {
+    const spyPlugin = { support: jest.fn(), getSpy: jest.fn(), getStub: jest.fn() }
+    harness.io.addPluginModule('spy', {
+      activate(context) {
+        context.register(spyPlugin)
+      }
+    })
+    await loadPlugins(harness)
+
+    spyPlugin.support.mockReturnValue(true)
+    const s = await createLiveSpec(harness, 'call spy', 'call spy', { timeout: 300 })
+    await s.done()
+    expect(spyPlugin.getSpy.mock.calls.length).toBe(1)
+  })
 })

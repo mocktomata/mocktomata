@@ -3,18 +3,8 @@ import { SpyContext, SpyInstance } from '../../types';
 import { isPromise } from '../promise/isPromise';
 import { getPropertyNames } from './getPropertyNames';
 
-export function spyClass2(context: any, subject: any) {
-  const recorder = context.newRecorder()
-  const spiedClass = class extends subject {
-    constructor(...args: any[]) {
-      super(...args)
-      context.construct(args)
-    }
-  }
-  return spiedClass
-}
-
 export function spyClass(context: SpyContext, subject: any) {
+  const recorder = context.newRecorder({ className: subject.name })
   const spiedClass = class extends subject {
     // tslint:disable-next-line:variable-name
     __komondor: any = {}
@@ -22,7 +12,7 @@ export function spyClass(context: SpyContext, subject: any) {
     constructor(...args: any[]) {
       // @ts-ignore
       super(...args)
-      this.__komondor.instance = context.newInstance(args, { className: subject.name })
+      this.__komondor.instance = recorder.construct(args)
     }
   }
   const propertyNames = getPropertyNames(spiedClass)

@@ -4,8 +4,7 @@ import { SpecAction } from './types';
 
 export function isMismatchAction(actual: SpecAction, expected: SpecAction) {
   const expectation = createActionExpectation(expected)
-  console.log(expectation)
-  return !createSatisfier(expectation).test(actual)
+  return !createSatisfier(expectation as any).test(actual)
 }
 
 function createActionExpectation(action: SpecAction) {

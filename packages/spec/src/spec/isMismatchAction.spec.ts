@@ -14,8 +14,8 @@ describe('isMismatchAction()', () => {
   })
   test('name mismatch returns true', () => {
     t(isMismatchAction(
-      specAction({ name: 'construct' }),
-      specAction({ name: 'invoke' })
+      specAction({ type: 'construct' }),
+      specAction({ type: 'invoke' })
     ))
   })
   test('payload mismatch returns true', () => {

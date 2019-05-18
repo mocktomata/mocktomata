@@ -1,5 +1,5 @@
-export const nodeCallback = {
-  invoke(remote: Function, value: number) {
+export const simpleCallback = {
+  increment(remote: Function, value: number) {
     return new Promise<number>((a, r) => {
       remote(value, (err: Error | undefined, response: number) => {
         if (err) r(err)
@@ -7,28 +7,11 @@ export const nodeCallback = {
       })
     })
   },
-  increment(value: number, callback: (err: any, result: number) => void) {
+  success(value: number, callback: (err: any, result: number) => void) {
     callback(null, value + 1)
   },
   fail(value: number, callback: (err: any, result?: number) => void) {
-    callback({ message: 'fail' })
-  }
-}
-
-export const simpleCallback = {
-  increment(remote: Function, x: number) {
-    return new Promise<number>((a, r) => {
-      remote(x, (err: Error | undefined, response: number) => {
-        if (err) r(err)
-        a(response)
-      })
-    })
-  },
-  success(a: number, callback: Function) {
-    callback(null, a + 1)
-  },
-  fail(_a: number | undefined, callback: Function) {
-    callback({ message: 'fail' }, null)
+    callback(new Error('fail'))
   }
 }
 

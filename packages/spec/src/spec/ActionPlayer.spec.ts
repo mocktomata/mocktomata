@@ -22,7 +22,7 @@ test('end with remaining action throws', async () => {
   harness.io.addPlugin('echo', echoPlugin)
   await loadPlugins(harness)
 
-  harness.io.readSpec = async () => ({ actions: [{ name: 'construct', plugin: 'echo', instanceId: 1, payload: undefined }] })
+  harness.io.readSpec = async () => ({ actions: [{ type: 'construct', subjectInfo: { plugin: 'echo', subjectId: 1 }, payload: undefined }] })
 
   const player = await createActionPlayer(harness, 'echo', 'abc')
   a.throws(() => player.end(), SimulationMismatch)

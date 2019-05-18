@@ -1,7 +1,7 @@
 import { KeyTypes, RequiredPick } from 'type-plus';
 import { NotSpecable } from '../errors';
 import { findPlugin } from '../plugin';
-import { CaptureContext } from '../types';
+import { CaptureContext, KomondorPlugin } from '../types';
 import { createTimeoutWarning } from './createTimeoutWarning';
 import { serializeActions } from './serializeActions';
 import { Meta, SourceInfo, SpecAction, SpecOptions, SubjectInfo } from './types';
@@ -56,8 +56,9 @@ type RecorderContext = {
  * the function returning the value.
  */
 function createSpy<T>(context: RecorderContext, subject: T, sourceInfo?: SourceInfo): T {
-  if (context.spyMap.has(subject)) {
-    const entry = context.spyMap.get(subject)!
+  const { spyMap } = context
+  if (spyMap.has(subject)) {
+    const entry = spyMap.get(subject)!
     return entry.spy
   }
 
@@ -65,10 +66,10 @@ function createSpy<T>(context: RecorderContext, subject: T, sourceInfo?: SourceI
   if (!plugin) {
     throw new NotSpecable(subject)
   }
-  const spyContext = createSpyContext(context, subject, plugin.name, sourceInfo)
-  const spy = plugin.getSpy(spyContext as any, subject)
+  const spyContext = createSpyContext(context, subject, plugin, sourceInfo)
+  const spy = plugin.getSpy(spyContext, subject)
   if (spyContext.subjectInfo) {
-    context.spyMap.set(subject, {
+    spyMap.set(subject, {
       spy,
       subjectInfo: spyContext.subjectInfo,
       sourceInfo
@@ -83,143 +84,146 @@ export type ActionRecorder = {
    * @param args
    */
   construct(args?: any[]): any,
-  invoke(args?: any[]): ReturnType<typeof createSpyCallRecorder>,
-  get(prop: KeyTypes): ReturnType<typeof createSpyGetterRecorder>,
-  set(prop: KeyTypes, value: any): ReturnType<typeof createSpySetterRecorder>
+  invoke(args?: any[]): ReturnType<typeof createInvocationRecorder>,
+  get(prop: KeyTypes): ReturnType<typeof createGetterRecorder>,
+  set(prop: KeyTypes, value: any): ReturnType<typeof createSetterRecorder>
 }
 
-function createSpyContext(context: RecorderContext, subject: any, plugin: string, source?: SourceInfo) {
+function createSpyContext(context: RecorderContext, subject: any, plugin: KomondorPlugin, sourceInfo?: SourceInfo) {
   const subjectInfo = context.spyMap.has(subject) ?
     context.spyMap.get(subject)!.subjectInfo :
     { plugin, subjectId: context.spyMap.size + 1 }
   let invokeId = 0
   return {
     newRecorder(meta?: Meta): ActionRecorder {
+      subjectInfo.meta = meta
       this.subjectInfo = subjectInfo
+
       return {
         construct(args?: any[]) {
+          // TODO: save spy instance to spyMap
           subjectInfo.instanceId = subjectInfo.instanceId ? subject.instanceId + 1 : 1
-          return createSpyInstanceRecorder(context, subjectInfo, source, args)
+          return createInstanceRecorder(context, subjectInfo, sourceInfo, args)
         },
         invoke(args: any[]) {
-          return createSpyCallRecorder(context, { ...subjectInfo, invokeId: ++invokeId }, source, args)
+          return createInvocationRecorder(context, { ...subjectInfo, invokeId: ++invokeId }, sourceInfo, args)
         },
         get(prop: KeyTypes) {
-          return createSpyGetterRecorder(context, { ...subjectInfo, invokeId: ++invokeId }, source!, prop)
+          return createGetterRecorder(context, { ...subjectInfo, invokeId: ++invokeId }, sourceInfo!, prop)
         },
         set(prop: KeyTypes, value: any) {
-          return createSpySetterRecorder(context, { ...subjectInfo, invokeId: ++invokeId }, source!, prop, value)
+          return createSetterRecorder(context, { ...subjectInfo, invokeId: ++invokeId }, sourceInfo!, prop, value)
         }
       }
     }
   } as { subjectInfo?: SubjectInfo, newRecorder(meta?: Meta): ActionRecorder }
 }
 
-function createSpyInstanceRecorder(context: RecorderContext, subject: SubjectInfo, source?: SourceInfo, args?: any[]) {
+function createInstanceRecorder(context: RecorderContext, subjectInfo: SubjectInfo, sourceInfo?: SourceInfo, args?: any[]) {
   context.actions.push({
-    name: 'construct',
-    subject,
-    source,
+    type: 'construct',
+    subjectInfo,
+    sourceInfo,
     payload: args
   })
   return {
-    spiedArgs: createSpiedArgs(context, args, subject)
+    spiedArgs: createSpiedArgs(context, args, subjectInfo)
   }
 }
 
-function createSpyCallRecorder(context: RecorderContext, subject: RequiredPick<SubjectInfo, 'invokeId'>, source?: SourceInfo, args?: any[]) {
+function createInvocationRecorder(context: RecorderContext, subjectInfo: RequiredPick<SubjectInfo, 'invokeId'>, sourceInfo?: SourceInfo, args?: any[]) {
   context.actions.push({
-    name: 'invoke',
-    subject,
-    source,
+    type: 'invoke',
+    subjectInfo,
+    sourceInfo,
     payload: args
   })
 
-  const spiedArgs = createSpiedArgs(context, args, subject)
+  const spiedArgs = createSpiedArgs(context, args, subjectInfo)
 
   return {
     spiedArgs,
     return(result: any) {
       context.actions.push({
-        name: 'return',
-        subject,
-        source,
+        type: 'return',
+        subjectInfo,
+        // source,
         payload: result
       })
-      return createSpy(context, result, { type: 'return', ...subject })
+      return createSpy(context, result, { type: 'return', ...subjectInfo })
     },
     throw(error: any) {
       context.actions.push({
-        name: 'throw',
-        subject,
-        source,
+        type: 'throw',
+        subjectInfo,
+        // source,
         payload: error
       })
-      return createSpy(context, error, { type: 'throw', ...subject })
+      return createSpy(context, error, { type: 'throw', ...subjectInfo })
     }
   }
 }
 
-function createSpyGetterRecorder(context: RecorderContext, subject: RequiredPick<SubjectInfo, 'invokeId'>, source: SourceInfo, prop: KeyTypes) {
+function createGetterRecorder(context: RecorderContext, subjectInfo: RequiredPick<SubjectInfo, 'invokeId'>, sourceInfo: SourceInfo, prop: KeyTypes) {
   context.actions.push({
-    name: 'get',
-    subject,
-    source,
+    type: 'get',
+    subjectInfo,
+    sourceInfo,
     payload: prop
   })
   return {
     return(result: any) {
       context.actions.push({
-        name: 'return',
-        subject,
-        source,
+        type: 'return',
+        subjectInfo,
+        // source,
         payload: result
       })
-      return createSpy(context, result, { type: 'return', ...subject })
+      return createSpy(context, result, { type: 'return', ...subjectInfo })
     },
     throw(err: any) {
       context.actions.push({
-        name: 'throw',
-        subject,
-        source,
+        type: 'throw',
+        subjectInfo,
+        // source,
         payload: err
       })
-      return createSpy(context, err, { type: 'throw', ...subject })
+      return createSpy(context, err, { type: 'throw', ...subjectInfo })
     }
   }
 }
 
-function createSpySetterRecorder(context: RecorderContext, subject: RequiredPick<SubjectInfo, 'invokeId'>, source: SourceInfo, prop: KeyTypes, value: any) {
+function createSetterRecorder(context: RecorderContext, subjectInfo: RequiredPick<SubjectInfo, 'invokeId'>, sourceInfo: SourceInfo, prop: KeyTypes, value: any) {
   context.actions.push({
-    name: 'set',
-    subject,
-    source,
+    type: 'set',
+    subjectInfo,
+    sourceInfo,
     payload: { prop, value }
   })
   return {
     return(result: any) {
       context.actions.push({
-        name: 'return',
-        subject,
-        source,
+        type: 'return',
+        subjectInfo,
+        // source,
         payload: result
       })
-      return createSpy(context, result, { type: 'return', ...subject })
+      return createSpy(context, result, { type: 'return', ...subjectInfo })
     },
     throw(err: any) {
       context.actions.push({
-        name: 'throw',
-        subject,
-        source,
+        type: 'throw',
+        subjectInfo,
+        // source,
         payload: err
       })
-      return createSpy(context, err, { type: 'throw', ...subject })
+      return createSpy(context, err, { type: 'throw', ...subjectInfo })
     }
   }
 }
 
-function createSpiedArgs(context: RecorderContext, args: any[] | undefined, subject: SubjectInfo) {
+function createSpiedArgs(context: RecorderContext, args: any[] | undefined, subjectInfo: SubjectInfo) {
   return args ?
-    args.map((arg, i) => createSpy(context, arg, { type: 'argument', ...subject, site: [i] })) :
+    args.map((arg, i) => createSpy(context, arg, { type: 'argument', ...subjectInfo, site: [i] })) :
     undefined
 }

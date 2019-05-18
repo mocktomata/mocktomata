@@ -5,6 +5,7 @@ import { createActionPlayer } from './ActionPlayer';
 import { createActionRecorder } from './ActionRecorder';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
 import { Spec, SpecMode, SpecOptions } from './types';
+import { createRecorder } from './createRecorder';
 
 export function createSpec(defaultMode: SpecMode) {
   return async <T>(id: string, subject: T, options = { timeout: 3000 }): Promise<Spec<T>> => {
@@ -45,23 +46,37 @@ export async function createAutoSpec<T>(context: CaptureContext, id: string, sub
 }
 
 export async function createLiveSpec<T>(context: CaptureContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createActionRecorder(context, id, subject, options)
+  const recorder = createRecorder(context, id, options)
   return {
-    subject: recorder.spy,
+    subject: recorder.getSpy(subject),
     done() {
       return recorder.end()
     }
   }
+  // const recorder = createActionRecorder(context, id, subject, options)
+  // return {
+  //   subject: recorder.spy,
+  //   done() {
+  //     return recorder.end()
+  //   }
+  // }
 }
 
 export async function createSaveSpec<T>(context: CaptureContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createActionRecorder(context, id, subject, options)
+  const recorder = createRecorder(context, id, options)
   return {
-    subject: recorder.spy,
+    subject: recorder.getSpy(subject),
     done() {
       return recorder.save()
     }
   }
+  // const recorder = createActionRecorder(context, id, subject, options)
+  // return {
+  //   subject: recorder.spy,
+  //   done() {
+  //     return recorder.save()
+  //   }
+  // }
 }
 
 export async function createSimulateSpec<T>(context: CaptureContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {

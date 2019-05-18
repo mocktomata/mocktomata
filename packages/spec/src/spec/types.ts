@@ -1,4 +1,5 @@
 import { RequiredPick } from 'type-plus';
+import { KomondorPlugin } from '../types';
 
 export type SpecMode = 'auto' | 'live' | 'save' | 'simulate'
 
@@ -26,7 +27,7 @@ export type SpecOptions = {
 }
 
 export type SpecAction = ConstructAction | InvokeAction | GetAction | SetAction |
-  ReturnAction | ThrowAction | CallbackConstructAction
+  ReturnAction | ThrowAction
 
 export type SpecActionInternal = ConstructActionInternal
 
@@ -37,10 +38,11 @@ export type ConstructActionInternal = ConstructAction & {
 
 
 export type SubjectInfo = {
-  plugin: string,
+  plugin: KomondorPlugin,
   subjectId: number,
   instanceId?: number,
-  invokeId?: number
+  invokeId?: number,
+  meta?: Meta
 }
 
 export type SourceInfo = SourceArgumentInfo | SourceReturnInfo | SourceThrowInfo | SourceYieldInfo
@@ -66,49 +68,49 @@ export type SourceYieldInfo = SubjectInfo & {
 }
 
 export type SpecActionBase<SUB = SubjectInfo> = {
-  subject: SUB,
-  source?: SourceInfo
+  subjectInfo: SUB,
+  sourceInfo?: SourceInfo
   payload: any,
   meta?: Meta | undefined
 }
 
 export type ConstructAction = {
-  name: 'construct'
+  type: 'construct'
 } & SpecActionBase
 
 export type InvokeAction = {
-  name: 'invoke'
+  type: 'invoke'
 } & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
 
 export type ReturnAction = {
-  name: 'return',
+  type: 'return',
   returnPlugin?: string,
   returnInstanceId?: number
 } & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
 
-export type CallbackConstructAction = {
-  name: 'construct-callback',
-  plugin: string,
-  payload: any[],
-  meta?: Meta,
-  subjectId: number,
-  instanceId: number
-  sourceType: string;
-  sourceInstanceId: number;
-  sourceInvokeId: number;
-  sourceSite: (string | number)[];
-}
+// export type CallbackConstructAction = {
+//   name: 'construct-callback',
+//   plugin: string,
+//   payload: any[],
+//   meta?: Meta,
+//   subjectId: number,
+//   instanceId: number
+//   sourceType: string;
+//   sourceInstanceId: number;
+//   sourceInvokeId: number;
+//   sourceSite: (string | number)[];
+// }
 
 export type ThrowAction = {
-  name: 'throw',
+  type: 'throw',
   throwPlugin?: string,
   throwInstanceId?: number
 } & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
 
 export type GetAction = {
-  name: 'get'
+  type: 'get'
 } & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>
 
 export type SetAction = {
-  name: 'set',
+  type: 'set'
 } & SpecActionBase<RequiredPick<SubjectInfo, 'invokeId'>>

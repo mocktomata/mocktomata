@@ -15,8 +15,7 @@
     "verify": "yarn test",
     "watch": "yarn jest --watch"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@jest-runner/electron": "1.1.1",
     "@types/ramda": "^0.26.5",

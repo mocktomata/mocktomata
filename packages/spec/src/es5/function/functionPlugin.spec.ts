@@ -1,19 +1,18 @@
 import a from 'assertron';
 import { createTestHarness } from '../../createTestHarness';
-import { NotSpecable } from '../../errors';
 import { loadPlugins } from '../../plugin';
-import { spec } from '../../spec';
 import k from '../../testUtil';
+import { errorPlugin } from '../error';
 import { functionPlugin } from '../function';
 import { primitivePlugin } from '../primitive';
 import { Dummy } from '../test-util/Dummy';
-import { simpleCallback, nodeCallback } from './testSuites';
+import { simpleCallback } from './testSuites';
 
 let harness: ReturnType<typeof createTestHarness>
 
 beforeAll(() => {
   harness = createTestHarness()
-  harness.io.addPlugin('@komondor-lab/es5', primitivePlugin, functionPlugin)
+  harness.io.addPlugin('@komondor-lab/es5', primitivePlugin, errorPlugin, functionPlugin)
   return loadPlugins(harness)
 })
 
@@ -64,23 +63,44 @@ k.trio('es5/function: function without callback', (title, spec) => {
   })
 })
 
-k.trio('es5/function: success callback', (title, spec) => {
-  test.only(title, async () => {
-    const s = await spec(nodeCallback.increment)
+k.trio('es5/function: simple callback success (direct)', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(simpleCallback.success)
 
-    const actual = await nodeCallback.invoke(s.subject, 2)
+    let actual
+    s.subject(2, (_, result) => {
+      actual = result
+    })
 
     expect(actual).toBe(3)
 
     await s.done()
-    harness.logSpecs()
+  })
+})
+
+k.trio('es5/function: simple callback success', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(simpleCallback.success)
+
+    const actual = await simpleCallback.increment(s.subject, 2)
+
+    expect(actual).toBe(3)
+
+    await s.done()
   })
 })
 
 
-// function increment(x) {
-//   return x + 1;
-// }
-// function doThrow() {
-//   throw new Error('throwing');
-// }
+k.trio('es5/function: simple callback fail', (title, spec) => {
+  test.only(title, async () => {
+    const s = await spec(simpleCallback.fail)
+
+    const err = await a.throws(simpleCallback.increment(s.subject, 2))
+
+    expect(err.message).toBe('fail')
+
+    await s.done()
+
+    harness.logSpecs()
+  })
+})

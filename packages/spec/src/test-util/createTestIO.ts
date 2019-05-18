@@ -19,7 +19,11 @@ export function createTestIO(): TestIO {
       return Promise.resolve(JSON.parse(record))
     },
     async writeSpec(id, record) {
-      specs[id] = JSON.stringify(record, undefined, 2)
+      specs[id] = `{
+  "actions": [
+    ${record.actions.map(a => JSON.stringify(a)).join(',\n    ')}
+  ]
+}`
     },
     addPluginModule(moduleName: string, pluginModule: PluginModule) {
       plugins[moduleName] = pluginModule

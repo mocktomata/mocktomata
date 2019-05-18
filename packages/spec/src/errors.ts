@@ -1,7 +1,6 @@
 import { logLevel } from '@unional/logging';
 import { ModuleError } from 'iso-error';
 import { tersify } from 'tersify';
-import { SpecContext } from './context';
 import { log } from './log';
 import { SpecAction } from './spec/types';
 
@@ -40,21 +39,21 @@ export class NotSpecable extends SpecError {
 
 export class SimulationMismatch extends SpecError {
   // istanbul ignore next
-  constructor(public specId: string, public expected: SpecAction, public actual?: SpecAction) {
+  constructor(public specId: string, public expected: Pick<SpecAction, 'type'>, public actual?: Pick<SpecAction, 'type'>) {
     super(`Recorded data for '${specId}' doesn't match with simulation. Expecting ${tersifyAction(expected)} but received ${tersifyAction(actual)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
-function tersifyAction(action?: SpecAction): string {
+function tersifyAction(action: Pick<SpecAction, 'type'> | undefined): string {
   if (!action) return 'none'
 
   if (log.level >= logLevel.debug) {
     return tersify(action, { maxLength: Infinity })
   }
   else {
-    return `${['a', 'e', 'i', 'o', 'u'].some(x => action.name.startsWith(x)) ? 'an' : 'a'} ${action.name} action`
+    return `${['a', 'e', 'i', 'o', 'u'].some(x => action.type.startsWith(x)) ? 'an' : 'a'} ${action.type} action`
   }
 }
 

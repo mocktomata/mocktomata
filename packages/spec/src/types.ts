@@ -3,25 +3,27 @@ import { SpecContext } from './context';
 import { ActionPlayer } from './spec/ActionPlayer';
 import { ActionRecorder } from './spec/ActionRecorder';
 import { Meta } from './spec/types';
+import { SpyContext2 } from './spec/createRecorder';
 
 export type PluginActivationContext = {
   register(plugin: KomondorPlugin<any>): void
 }
 
-export interface KomondorPlugin<T = any> {
+export interface KomondorPlugin<S = any> {
   name?: string,
   support: (subject: any) => boolean,
-  /**
-   * @param context A context that gives the plugin all the tools needed to record what has happend to the subject.
-   * @param subject The spying subject
-   */
-  getSpy(context: SpyContext, subject: T): T
-  getStub(context: StubContext, subject: T): T
+  // /**
+  //  * @param context A context that gives the plugin all the tools needed to record what has happend to the subject.
+  //  * @param subject The spying subject
+  //  */
+  // getSpy(context: SpyContext, subject: S): S
+  getSpy(context: SpyContext2, subject: S): S,
+  getStub(context: StubContext, subject: S): S
   /**
    * Serizlie the subject.
    * The result is used during simulation for comparison.
    */
-  serialize?: (subject: T) => string | number | boolean | null
+  serialize?: (subject: S) => any
 }
 
 export type PluginModule = {
@@ -42,10 +44,6 @@ export type CaptureContext = SpecContext
  */
 export type SpyContext = {
   newRecorder(meta?: Meta): ActionRecorder
-  /**
-   * @deprecated
-   */
-  newInstance(args?: any[], meta?: Meta): SpyInstance;
 }
 
 /**

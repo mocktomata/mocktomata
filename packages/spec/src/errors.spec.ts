@@ -1,20 +1,12 @@
 import a from 'assertron';
 import { SimulationMismatch } from '.';
-import { SpecAction } from './spec/types';
-// import { createTestHarness } from './createTestHarness';
 
-const expected: SpecAction = { name: 'invoke', payload: [0, 'a'], instanceId: 1, invokeId: 2 }
-const actual: SpecAction = { name: 'construct', payload: ['a'], instanceId: 1 }
-
-// let harness: ReturnType<typeof createTestHarness>
-
-beforeAll(() => {
-  // harness = createTestHarness('errors')
-})
+const expected = { type: 'invoke' }
+const actual = { type: 'construct' }
 
 describe('SimulationMismatch', () => {
   test('Two different actions', () => {
-    const err = new SimulationMismatch('different action', expected, actual)
+    const err = new SimulationMismatch('different action', { type: 'invoke' }, { type: 'construct' })
     a.satisfies(err, {
       specId: 'different action',
       expected,
@@ -24,7 +16,7 @@ describe('SimulationMismatch', () => {
   })
 
   test('no actual action', () => {
-    const err = new SimulationMismatch('no action', expected)
+    const err = new SimulationMismatch('no action', { type: 'invoke' })
     a.satisfies(err, {
       specId: 'no action',
       expected,
