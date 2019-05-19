@@ -4,8 +4,7 @@
   "workspaces": {
     "packages": [
       "packages/*"
-    ],
-    "nohoist": ["**/@komondor-lab/plugin-fixture*/**"]
+    ]
   },
   "scripts": {
     "bootstrap": "lerna bootstrap",
