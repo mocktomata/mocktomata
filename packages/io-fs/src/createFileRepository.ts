@@ -1,4 +1,4 @@
-import { PluginModule } from '@komondor-lab/plugin';
+import { PluginModule } from '@komondor-lab/core';
 import path from 'path';
 import { getConfig } from './config';
 import { createPluginRepository } from './plugin';

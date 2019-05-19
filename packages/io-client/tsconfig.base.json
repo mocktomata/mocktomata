@@ -1,5 +1,5 @@
 {
-  "extends": "../tsconfig.settings.json",
+  "extends": "../../tsconfig.settings.json",
   "compilerOptions": {
     "lib": [
       "dom",
@@ -21,8 +21,5 @@
   "include": [
     "src",
     "typings"
-  ],
-  "files": [
-    "src/index.ts"
   ]
 }

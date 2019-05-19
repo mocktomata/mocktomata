@@ -1,27 +1,41 @@
 {
-  // "extends": "./packages/tsconfig.settings.json",
   "files": [],
   "references": [
     {
-      "path": "packages/core"
+      "path": "packages/core/tsconfig.es5.json"
     },
     {
-      "path": "packages/file-server"
+      "path": "packages/core/tsconfig.esnext.json"
     },
     {
-      "path": "packages/io-client"
+      "path": "packages/file-server/tsconfig.es5.json"
     },
     {
-      "path": "packages/io-fs"
+      "path": "packages/file-server/tsconfig.esnext.json"
     },
     {
-      "path": "packages/io-local"
+      "path": "packages/io-client/tsconfig.es5.json"
     },
     {
-      "path": "packages/plugin"
+      "path": "packages/io-client/tsconfig.esnext.json"
     },
     {
-      "path": "packages/plugin-fixture-dummy"
+      "path": "packages/io-fs/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/io-fs/tsconfig.esnext.json"
+    },
+    {
+      "path": "packages/io-local/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/io-local/tsconfig.esnext.json"
+    },
+    {
+      "path": "packages/plugin-fixture-dummy/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
     }
   ]
 }

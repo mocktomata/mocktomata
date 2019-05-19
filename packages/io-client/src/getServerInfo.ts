@@ -1,7 +1,7 @@
 import fetch from 'cross-fetch';
 import { buildUrl } from './buildUrl';
 import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors';
-import { CreateIOOptions } from './interfaces';
+import { CreateIOOptions } from './types';
 
 export type ServerInfo = {
   version: string

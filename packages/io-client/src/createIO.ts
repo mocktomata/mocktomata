@@ -2,7 +2,7 @@ import { SpecNotFound, SpecRecord, ScenarioNotFound, ScenarioRecord, IO } from '
 import fetch from 'cross-fetch';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
-import { CreateIOOptions } from './interfaces';
+import { CreateIOOptions } from './types';
 import { PluginModule } from '@komondor-lab/plugin';
 
 export async function createIO(options?: CreateIOOptions): Promise<IO> {

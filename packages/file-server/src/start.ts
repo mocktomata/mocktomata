@@ -3,7 +3,7 @@ import { RequestInfo, Server, ServerInfo } from 'hapi';
 import path from 'path';
 import { required } from 'unpartial';
 import { context } from './context';
-import { Options } from './interfaces';
+import { Options } from './types';
 
 export async function start(options?: Partial<Options>) {
   const o = required<Options>({}, options)

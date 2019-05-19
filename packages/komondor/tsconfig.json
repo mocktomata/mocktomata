@@ -1,11 +1,3 @@
 {
-  "extends": "./tsconfig.esnext.json",
-  "compilerOptions": {
-    "noEmit": true,
-    "plugins": [
-      {
-        "name": "tslint-language-service"
-      }
-    ]
-  }
+  "extends": "./tsconfig.esnext.json"
 }

@@ -1,5 +1,4 @@
-const base = require('@unional/devpkg-node/simple/config/jest.common')
-
+const base = require('../../jest.config.node-base')
 
 module.exports = {
   ...base,
@@ -9,5 +8,5 @@ module.exports = {
     '<rootDir>/src'
   ],
   testEnvironment: 'jsdom',
-  testMatch: ['**/*.spec.ts', '**/*.node-spec.ts'],
+  testMatch: ['**/*.spec.ts'],
 }

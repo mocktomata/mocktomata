@@ -1,5 +1,5 @@
+import path from 'path';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
-import path from 'path'
 
 export function createScenarioRepository(komondorFolder: string) {
   const dir = getScenarioFolder(komondorFolder)

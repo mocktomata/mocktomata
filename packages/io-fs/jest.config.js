@@ -8,5 +8,5 @@ module.exports = {
     '<rootDir>/src'
   ],
   testEnvironment: 'node',
-  testMatch: ['**/*.spec.ts', '**/*.node-spec.ts'],
+  testMatch: ['**/*.spec.ts'],
 }

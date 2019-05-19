@@ -24,17 +24,23 @@
   "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib libm *.tsbuildinfo",
-    "compile": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
+    "build": "yarn build:es5 && yarn build:esnext",
+    "build:es5": "tsc -p tsconfig.es5.json",
+    "build:esnext": "tsc -p tsconfig.esnext.json",
+    "clean": "rimraf lib libm .ts",
+    "coverage": "jest --coverage --reporters=default",
     "dc": "yarn dependency-check",
-    "dependency-check": "dependency-check . --unused --no-dev -i @komondor-lab/plugin && dependency-check . --missing --no-dev",
-    "verify": "yarn compile && yarn dc && jest --coverage --reporters=default",
-    "watch": "jest --watch"
+    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "lint": "tslint -p tsconfig.json",
+    "test": "jest --reporters=default",
+    "test:watch": "jest --watch",
+    "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
+    "watch": "yarn test:watch"
   },
   "dependencies": {
     "@komondor-lab/io-fs": "^7.0.0-alpha",
     "boom": "^7.3.0",
-    "global-store": "^0.8.1",
+    "global-store": "^0.8.2",
     "hapi": "^18.1.0",
     "unpartial": "^0.6.3"
   },
@@ -42,12 +48,12 @@
     "node": ">= 6"
   },
   "devDependencies": {
-    "@types/hapi": "^18.0.1",
-    "@types/node-fetch": "^2.3.0",
+    "@types/hapi": "^18.0.2",
+    "@types/node-fetch": "^2.3.4",
     "@types/update-notifier": "^2.5.0",
-    "assertron": "^7.0.0",
-    "delay": "^4.1.0",
-    "node-fetch": "^2.3.0",
-    "type-plus": "^1.17.0"
+    "assertron": "^7.0.2",
+    "delay": "^4.2.0",
+    "node-fetch": "^2.6.0",
+    "type-plus": "^1.18.1"
   }
 }

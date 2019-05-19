@@ -24,12 +24,18 @@
   "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "clean": "rimraf lib libm",
-    "compile": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
+    "build": "yarn build:es5 && yarn build:esnext",
+    "build:es5": "tsc -p tsconfig.es5.json",
+    "build:esnext": "tsc -p tsconfig.esnext.json",
+    "clean": "rimraf lib libm .ts",
+    "coverage": "jest --coverage --reporters=default",
     "dc": "yarn dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
-    "verify": "yarn clean && yarn compile && jest --coverage --reporters=default",
-    "watch": "jest --watch"
+    "lint": "tslint -p tsconfig.json",
+    "test": "jest --reporters=default",
+    "test:watch": "jest --watch",
+    "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
+    "watch": "yarn test:watch"
   },
   "dependencies": {
     "cross-fetch": "^3.0.2"
@@ -38,8 +44,8 @@
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/file-server": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
-    "assertron": "^7.0.0",
-    "type-plus": "^1.17.0"
+    "assertron": "^7.0.2",
+    "type-plus": "^1.18.1"
   },
   "engines": {
     "node": ">= 6"

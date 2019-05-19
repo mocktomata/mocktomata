@@ -1,0 +1,58 @@
+{
+  "name": "@komondor-lab/core",
+  "version": "7.0.0-alpha",
+  "description": "Komondor core library",
+  "homepage": "https://github.com/unional/komondor",
+  "bugs": {
+    "url": "https://github.com/unional/komondor/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unional/komondor.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Homa Wong",
+    "email": "homawong@gmail.com"
+  },
+  "files": [
+    "lib",
+    "libm"
+  ],
+  "main": "lib/index.js",
+  "module": "libm/index.js",
+  "jsnext:main": "libm/index.js",
+  "typings": "lib/index.d.ts",
+  "scripts": {
+    "build": "yarn build:es5 && yarn build:esnext",
+    "build:es5": "tsc -p tsconfig.es5.json",
+    "build:esnext": "tsc -p tsconfig.esnext.json",
+    "clean": "rimraf lib libm .ts",
+    "coverage": "jest --coverage --reporters=default",
+    "dc": "yarn dependency-check",
+    "dependency-check": "dependency-check . --unused --no-dev -i type-plus && dependency-check . --missing --no-dev",
+    "lint": "tslint -p tsconfig.json",
+    "test": "jest --reporters=default",
+    "test:watch": "jest --watch",
+    "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
+    "watch": "yarn test:watch"
+  },
+  "dependencies": {
+    "@types/ramda": "^0.26.8",
+    "@unional/logging": "^1.0.5",
+    "async-fp": "^1.2.0",
+    "aurelia-logging-color": "^1.0.5",
+    "aurelia-logging-memory": "^1.0.4",
+    "global-store": "^0.8.2",
+    "iso-error": "^2.0.0",
+    "satisfier": "^5.0.2",
+    "tersify": "^3.0.2",
+    "type-plus": "^1.18.1"
+  },
+  "devDependencies": {
+    "@types/rimraf": "^2.0.2",
+    "@unional/devpkg-node": "^1.3.0",
+    "assertron": "^7.0.2",
+    "rimraf": "^2.6.3"
+  }
+}

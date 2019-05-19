@@ -1,7 +1,9 @@
 import { createFileRepository } from '@komondor-lab/io-fs';
+import path from 'path'
 
 export function createFakeRepository() {
-  const repo = createFileRepository('fixtures/with-plugin')
+  const cwd = path.resolve(__dirname, '../../fixtures/with-plugin')
+  const repo = createFileRepository(cwd)
 
   const { readScenario, readSpec } = repo
 

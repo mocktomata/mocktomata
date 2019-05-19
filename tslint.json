@@ -2,7 +2,11 @@
   "extends": "tslint-config-unional/semi-standard",
   "linterOptions": {
     "exclude": [
-        "**/bin",
-        "**/lib"
+      "**/bin",
+      "**/lib"
     ]
-}}
+  },
+  "rules": {
+    "trailing-comma": false
+  }
+}

@@ -1,11 +1,5 @@
 {
-  "extends": "./tsconfig.esnext.json",
+  "extends": "./tsconfig.es5.json",
   "compilerOptions": {
-    "noEmit": true,
-    "plugins": [
-      {
-        "name": "tslint-language-service"
-      }
-    ]
   }
 }
