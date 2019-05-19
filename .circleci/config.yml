@@ -45,7 +45,8 @@ jobs:
           name: Install Dependencies
           command: |
             if [ ! -d node_modules ]; then
-              yarn install
+              yarn
+              yarn bootstrap
               # npm i --no-save jest-junit
             fi
       # - save_cache:
@@ -65,12 +66,11 @@ jobs:
           root: '.'
           paths:
             - node_modules
-            - packages/config/node_modules
             - packages/core/node_modules
+            - packages/file-server/node_modules
             - packages/io-client/node_modules
             - packages/io-fs/node_modules
             - packages/io-local/node_modules
-            - packages/io-server/node_modules
             - packages/komondor/node_modules
             - packages/plugin-fixture-dummy/node_modules
       - run: yarn build
