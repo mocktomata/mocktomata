@@ -1,12 +1,6 @@
-const base = require('@unional/devpkg-node/simple/config/jest.common')
+const base = require('../../jest.config.node-base')
 
 module.exports = {
   ...base,
-  name: 'io-fs',
-  displayName: 'io-fs',
-  roots: [
-    '<rootDir>/src'
-  ],
-  testEnvironment: 'node',
-  testMatch: ['**/*.spec.ts'],
+  displayName: 'io-fs'
 }
