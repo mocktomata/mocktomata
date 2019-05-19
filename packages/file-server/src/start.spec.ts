@@ -14,14 +14,6 @@ test('automatically find a port between 3698 and 3798', async () => {
   await server.stop()
 })
 
-test('will start of the next port if the preious port is occupied', async () => {
-  const server = await start()
-  const server2 = await start()
-  expect(server2.info.port).toEqual(Number(server.info.port) + 1)
-  await server.stop()
-  await server2.stop();
-})
-
 test('if a port is specified and not available, will throw an error', async () => {
   const runningServer = await start()
   const e = await a.throws<Error & Record<string, any>>(start({ port: Number(runningServer.info.port) }))
