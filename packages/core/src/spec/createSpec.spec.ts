@@ -1,11 +1,9 @@
 import { logLevel } from '@unional/logging';
 import a from 'assertron';
 import delay from 'delay';
-import { createTestHarness, loadPlugins, NotSpecable, SpecOptions, TestHarness } from '..';
+import { createTestHarness, loadPlugins, TestHarness } from '..';
 import { echoPluginModule } from '../test-util';
-import { createLiveSpec, createSaveSpec, createSimulateSpec } from './createSpec';
-
-const specOptions: SpecOptions = { timeout: 30 }
+import { createLiveSpec, createSaveSpec } from './createSpec';
 
 describe('timeout warning', () => {
   let harness: TestHarness
@@ -50,34 +48,4 @@ describe('timeout warning', () => {
 
     a.satisfies(harness.appender.logs, [])
   })
-})
-
-test('createLiveSpec() on non-string primitives throw NotSpecable', async () => {
-  const harness = createTestHarness()
-
-  await a.throws(() => createLiveSpec(harness, 'throw not specable', undefined, specOptions), NotSpecable)
-  await a.throws(() => createLiveSpec(harness, 'throw not specable', null, specOptions), NotSpecable)
-  await a.throws(() => createLiveSpec(harness, 'throw not specable', 1, specOptions), NotSpecable)
-  await a.throws(() => createLiveSpec(harness, 'throw not specable', true, specOptions), NotSpecable)
-  await a.throws(() => createLiveSpec(harness, 'throw not specable', Symbol(), specOptions), NotSpecable)
-})
-
-test('createSaveSpec() on non-string primitives throw NotSpecable', async () => {
-  const harness = createTestHarness()
-
-  await a.throws(() => createSaveSpec(harness, 'throw not specable', undefined, specOptions), NotSpecable)
-  await a.throws(() => createSaveSpec(harness, 'throw not specable', null, specOptions), NotSpecable)
-  await a.throws(() => createSaveSpec(harness, 'throw not specable', 1, specOptions), NotSpecable)
-  await a.throws(() => createSaveSpec(harness, 'throw not specable', true, specOptions), NotSpecable)
-  await a.throws(() => createSaveSpec(harness, 'throw not specable', Symbol(), specOptions), NotSpecable)
-})
-
-test.skip('createSimulateSpec() on non-string primitives throw NotSpecable', async () => {
-  const harness = createTestHarness()
-
-  await a.throws(() => createSimulateSpec(harness, 'undefined throw not specable', undefined, specOptions), NotSpecable)
-  await a.throws(() => createSimulateSpec(harness, 'null throw not specable', null, specOptions), NotSpecable)
-  await a.throws(() => createSimulateSpec(harness, 'number throw not specable', 1, specOptions), NotSpecable)
-  await a.throws(() => createSimulateSpec(harness, 'boolean throw not specable', true, specOptions), NotSpecable)
-  await a.throws(() => createSimulateSpec(harness, 'Symbol throw not specable', Symbol(), specOptions), NotSpecable)
 })

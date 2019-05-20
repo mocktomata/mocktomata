@@ -1,6 +1,8 @@
+import a from 'assertron';
 import * as es5Module from '.';
 import { createTestHarness, TestHarness } from '..';
 import { loadPlugins } from '../plugin';
+import { NotSpecable } from '../spec';
 import k from '../test-util';
 
 let harness: TestHarness
@@ -12,13 +14,9 @@ beforeAll(async () => {
 
 afterAll(() => harness.reset())
 
-describe('es5/string', () => {
-  k.trio('save reference', (title, spec) => {
-    test(title, async () => {
-      const s = await spec('abc')
-      expect(s.subject).toBe('abc')
-      await s.done()
-    })
+k.live('primitives throws NotSpecable', (title, spec) => {
+  test.each([undefined, null, 1, true, Symbol(), 'str'])(`%s ${title}`, async (value) => {
+    await a.throws(spec(value), NotSpecable)
   })
 })
 
@@ -33,26 +31,17 @@ describe('es5/function', () => {
     })
   })
 
-  // k.trio('function without argument', (title, spec) => {
-  //   test(title, async () => {
-  //     const s = await spec(() => 'abc')
-  //     const actual = s.subject()
-  //     expect(actual).toBe('abc')
+  k.trio('function without callback', (title, spec) => {
+    test.skip(title, async () => {
+      const s = await spec((x: number, y: number) => x + y)
+      const actual = s.subject(1, 2)
 
-  //     await s.done()
-  //   })
-  // })
+      expect(actual).toBe(3)
 
-  // k.trio('function without callback', (title, spec) => {
-  //   test(title, async () => {
-  //     const s = await spec((x: number, y: number) => x + y)
-  //     const actual = s.subject(1, 2)
+      await s.done()
+    })
+  })
 
-  //     expect(actual).toBe(3)
-
-  //     await s.done()
-  //   })
-  // })
 
   // k.trio('simple callback success (direct)', (title, spec) => {
   //   test(title, async () => {

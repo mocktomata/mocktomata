@@ -66,9 +66,9 @@ export async function createSaveSpec<T>(context: SpecContext, id: string, subjec
 }
 
 export async function createSimulateSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const player = await createPlayer(context, id, options)
+  const player = await createPlayer(context, id, subject, options)
   return {
-    subject: player.getStub(subject),
+    subject: player.stub,
     async done() {
       return player.end()
     }
@@ -82,6 +82,7 @@ function createRecorder(context: SpecContext, id: string, options: SpecOptions) 
   const idleWarning = createTimeoutWarning(options.timeout)
   return {
     getSpy<T>(subject: T): T {
+      if (typeof subject === 'string') throw new NotSpecable(subject)
       try {
         return getSpy(recordTracker, subject)
       }
@@ -160,27 +161,25 @@ function makeSerializable(record: SpecRecord): SpecRecord {
   return record as any
 }
 
-async function createPlayer(context: SpecContext, id: string, options: SpecOptions) {
+async function createPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
+  if (typeof subject === 'string') throw new NotSpecable(subject)
+
+  const plugin = findPlugin(subject)
+  if (!plugin) throw new NotSpecable(subject)
+
   const record: SpecRecord = { refs: [], actions: [] }
   const actual = await context.io.readSpec(id)
   const recordValidator = createSpecRecordValidator(id, actual, record)
 
+  const stubContext = createStubContext(recordValidator, plugin, subject)
+  const stub = plugin.getStub(stubContext, subject)
+
   return {
-    getStub<T>(subject: T): T {
-      return getStub(recordValidator, subject)
-    },
+    stub,
     async end() {
       return
     }
   }
-}
-
-function getStub<T>(recordValidator: SpecRecordValidator, subject: T): T {
-  const plugin = findPlugin(subject)
-  if (!plugin) throw new NotSpecable(subject)
-
-  const stubContext = createStubContext(recordValidator, plugin, subject)
-  return plugin.getStub(stubContext, subject)
 }
 
 function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginInstance, subject: any) {
