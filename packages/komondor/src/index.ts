@@ -1,11 +1,11 @@
-import { start } from '@komondor-lab/core';
-import { createIO } from '@komondor-lab/io-local';
+// import { start } from '@komondor-lab/core';
+// import { createIO } from '@komondor-lab/io-local';
 
-const io = createIO()
+// const io = createIO()
 
-// TODO: Detect different platforms and load different plugins.
-// e.g. NodeJS 5 does not support Promise, NodeJS 11 supports bigint
-// language and platform support will change over time.
-start({ io, libs: [] })
+// // TODO: Detect different platforms and load different plugins.
+// // e.g. NodeJS 5 does not support Promise, NodeJS 11 supports bigint
+// // language and platform support will change over time.
+// start({ io, libs: [] })
 
-export { spec } from '@komondor-lab/core'
+// export { spec } from '@komondor-lab/core'

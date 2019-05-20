@@ -1,5 +1,7 @@
 import { KomondorPlugin } from '../plugin/types';
 
+export type SpecMode = 'live' | 'save' | 'simulate'
+
 export type SpecIO = {
   readSpec(id: string): Promise<SpecRecord>,
   writeSpec(id: string, record: SpecRecord): Promise<void>
