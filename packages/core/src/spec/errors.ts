@@ -3,6 +3,15 @@ import { tersify } from 'tersify';
 import { log, KomondorError } from '../common';
 import { SpecAction } from './types';
 
+export class IDCannotBeEmpty extends KomondorError {
+  // istanbul ignore next
+  constructor() {
+    super(`The spec id cannot be an empty string. It should uniquely identify the spec.`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
 export class SpecNotFound extends KomondorError {
   // istanbul ignore next
   constructor(public specId: string, public reason?: Error) {

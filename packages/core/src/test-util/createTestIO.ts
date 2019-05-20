@@ -19,6 +19,9 @@ export function createTestIO(): TestIO {
     },
     async writeSpec(id, record) {
       specs[id] = `{
+  "refs": [
+    ${record.refs.map(r => JSON.stringify(r)).join(',\n    ')}
+  ],
   "actions": [
     ${record.actions.map(a => JSON.stringify(a)).join(',\n    ')}
   ]

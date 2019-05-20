@@ -21,6 +21,7 @@
     "@jest-runner/electron": "1.1.1",
     "@types/ramda": "^0.26.8",
     "@unional/devpkg-node": "^1.3.0",
+    "jest-watch-exec": "^1.4.1",
     "lerna": "^3.14.1"
   }
 }

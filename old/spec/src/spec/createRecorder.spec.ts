@@ -2,11 +2,9 @@ import { logLevel } from '@unional/logging';
 import a from 'assertron';
 import delay from 'delay';
 import { createTestHarness, TestHarness } from '../createTestHarness';
+import { NotSpecable } from '../errors';
 import { createRecorder } from './createRecorder';
 import { SpecOptions } from './types';
-import { NotSpecable } from '../errors';
-import { loadPlugins } from '..';
-import { echoPlugin } from '../test-util';
 
 const specOptions: SpecOptions = { timeout: 30 }
 
@@ -72,33 +70,33 @@ test('getSpy() throws NotSpecable when there is no supported plugin', () => {
 //   })
 // })
 
-const specRecord = {
-  refs: {
-    '1': {
-      plugin: 'es5/function',
-      subjectId: 1,
-      invokeId: 1
-      // no value means it is from real time
-    },
-    '2': {
-      plugin: 'es5/error',
-      value: { message: 'abc' }
-    },
-    '3': {
-      plugin: 'es5/string',
-      value: 'actual string'
-    },
-    '4': {
-      plugin: 'es2015/symbol',
-      value: 'get from input or create in real time'
-    },
-    '5': {
-      plugin: 'es5/function',
-      value: 'from real time'
-    }
-  },
-  actions: [
-    { type: 'invoke', payload: ['2', '4'], ref: '1' },
-    { type: 'invoke', payload: [], ref: '4' }
-  ]
-}
+// const specRecord = {
+//   refs: {
+//     '1': {
+//       plugin: 'es5/function',
+//       subjectId: 1,
+//       invokeId: 1
+//       // no value means it is from real time
+//     },
+//     '2': {
+//       plugin: 'es5/error',
+//       value: { message: 'abc' }
+//     },
+//     '3': {
+//       plugin: 'es5/string',
+//       value: 'actual string'
+//     },
+//     '4': {
+//       plugin: 'es2015/symbol',
+//       value: 'get from input or create in real time'
+//     },
+//     '5': {
+//       plugin: 'es5/function',
+//       value: 'from real time'
+//     }
+//   },
+//   actions: [
+//     { type: 'invoke', payload: ['2', '4'], ref: '1' },
+//     { type: 'invoke', payload: [], ref: '4' }
+//   ]
+// }

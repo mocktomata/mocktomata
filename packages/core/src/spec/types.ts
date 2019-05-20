@@ -1,6 +1,15 @@
-import { KomondorPlugin } from '../plugin/types';
+// #region Spec
+export type SpecMode = 'live' | 'save' | 'simulate' | 'auto'
 
-export type SpecMode = 'live' | 'save' | 'simulate'
+export type Spec<T> = {
+  subject: T,
+  done(): Promise<void>
+}
+
+export type SpecOptions = {
+  timeout: number
+}
+// #endregion
 
 export type SpecIO = {
   readSpec(id: string): Promise<SpecRecord>,
@@ -8,23 +17,25 @@ export type SpecIO = {
 }
 
 export type SpecRecord = {
-  refs: Record<string, SpecReferenceRecord>,
+  refs: SpecReference[]
   actions: SpecAction[]
 }
 
-export type SpecRecordLive = {
-  refs: Map<any, SpecReferenceLive>,
-  actions: SpecAction[]
+export type SpecReference = {
+  /**
+   * Name of the plugin
+   */
+  plugin: string
+  /**
+   * `target` is the spy or stub of the subject.
+   */
+  target: any,
+  ref: string
 }
 
 export type SpecReferenceRecord = SpecReferenceBase & {
   plugin: string,
   value?: any
-}
-
-export type SpecReferenceLive<T = any> = SpecReferenceBase & {
-  plugin: KomondorPlugin<T>,
-  ref: string
 }
 
 export type SpecReferenceBase = {
@@ -45,13 +56,13 @@ export type SpecAction = ConstructAction | InvokeAction | GetAction | SetAction 
 
 export type ConstructAction = {
   type: 'construct',
-  payload: any[],
+  payload: any[] | undefined,
   ref: string,
 }
 
 export type InvokeAction = {
   type: 'invoke',
-  payload: any[],
+  payload: any[] | undefined,
   ref: string
 }
 
@@ -78,6 +89,3 @@ export type SetAction = {
   payload: [string | number, any],
   ref: string
 }
-
-export type SpyContext = any
-export type StubContext = any
