@@ -1,1 +1,0 @@
-{"version":3,"file":"loadPlugin.d.ts","sourceRoot":"","sources":["../../src/plugin/loadPlugin.ts"],"names":[],"mappings":"AAGA,oBAAY,aAAa,GAAG;IAC1B,EAAE,EAAE;QACF,UAAU,CAAC,EAAE,EAAE,MAAM,GAAG,GAAG,CAAA;KAC5B,CAAA;CACF,CAAA;AAED,wBAAsB,WAAW,CAAC,EAAE,EAAE,EAAE,EAAE,aAAa,EAAE,SAAS,EAAE,MAAM,EAAE,mBAQ3E"}

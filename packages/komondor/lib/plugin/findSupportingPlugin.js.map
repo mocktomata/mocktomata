@@ -1,1 +1,0 @@
-{"version":3,"file":"findSupportingPlugin.js","sourceRoot":"","sources":["../../src/plugin/findSupportingPlugin.ts"],"names":[],"mappings":";;AAAA,6CAA0C;AAE1C,SAAgB,oBAAoB,CAAC,OAAY;IAC/C,MAAM,OAAO,GAAG,uBAAU,EAAE,CAAA;IAC5B,OAAO,OAAO,CAAC,IAAI,CAAC,CAAC,CAAC,EAAE,CAAC,CAAC,CAAC,OAAO,CAAC,OAAO,CAAC,CAAC,CAAA;AAC9C,CAAC;AAHD,oDAGC"}

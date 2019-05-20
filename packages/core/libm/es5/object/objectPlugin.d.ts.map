@@ -1,1 +1,0 @@
-{"version":3,"file":"objectPlugin.d.ts","sourceRoot":"","sources":["../../../src/es5/object/objectPlugin.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,WAAW,CAAC;AACrC,OAAO,EAAE,cAAc,EAAE,MAAM,cAAc,CAAC;AAE9C,eAAO,MAAM,YAAY,EAAE,cAAc,CAAC,MAAM,CAAC,QAAQ,EAAE,GAAG,CAAC,CAS9D,CAAA"}

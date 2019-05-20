@@ -1,1 +1,0 @@
-{"version":3,"file":"errors.js","sourceRoot":"","sources":["../../src/scenario/errors.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,WAAW,CAAC;AAE1C,MAAM,OAAO,gBAAiB,SAAQ,aAAa;IACjD,uBAAuB;IACvB,YAAY,EAAU;QACpB,KAAK,CAAC,yBAAyB,EAAE,GAAG,CAAC,CAAA;QACrC,MAAM,CAAC,cAAc,CAAC,IAAI,EAAE,GAAG,CAAC,MAAM,CAAC,SAAS,CAAC,CAAA;IACnD,CAAC;CACF"}

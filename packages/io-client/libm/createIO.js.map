@@ -1,1 +1,0 @@
-{"version":3,"file":"createIO.js","sourceRoot":"","sources":["../src/createIO.ts"],"names":[],"mappings":"AACA,OAAO,KAAK,MAAM,aAAa,CAAC;AAChC,OAAO,EAAE,gBAAgB,EAAE,MAAM,oBAAoB,CAAC;AAGtD,MAAM,CAAC,KAAK,UAAU,QAAQ,CAAC,OAAyB;IACtD,OAAO,gBAAgB,CAAC,EAAE,KAAK,EAAE,QAAQ,EAAE,EAAE,OAAO,CAAC,CAAA;AACvD,CAAC"}

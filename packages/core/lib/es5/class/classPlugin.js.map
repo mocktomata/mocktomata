@@ -1,1 +1,0 @@
-{"version":3,"file":"classPlugin.js","sourceRoot":"","sources":["../../../src/es5/class/classPlugin.ts"],"names":[],"mappings":";;AACA,qCAAoC;AACpC,uCAAsC;AACtC,yCAAwC;AAE3B,QAAA,WAAW,GAAmB;IACzC,IAAI,EAAE,OAAO;IACb,OAAO,EAAE,iBAAO;IAChB,MAAM,EAAE,mBAAQ;IAChB,OAAO,EAAE,qBAAS;CACnB,CAAA"}

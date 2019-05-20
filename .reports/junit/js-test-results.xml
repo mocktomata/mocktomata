@@ -1,25 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="9" failures="0" time="7.845">
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2019-05-19T06:33:23" time="1.556" tests="2">
-    <testcase classname=" not supported subject gets undefined" name=" not supported subject gets undefined" time="0.008">
+<testsuites name="jest tests" tests="17" failures="0" time="5.08">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2019-05-20T17:22:04" time="1.445" tests="8">
+    <testcase classname=" read not exist spec throws SpecNotFound" name=" read not exist spec throws SpecNotFound" time="0.007">
     </testcase>
-    <testcase classname=" find plugin that handles the subject" name=" find plugin that handles the subject" time="0.005">
+    <testcase classname=" read existing spec" name=" read existing spec" time="0.005">
+    </testcase>
+    <testcase classname=" write spec" name=" write spec" time="0.001">
+    </testcase>
+    <testcase classname=" read not exist scenario throws ScenarioNotFound" name=" read not exist scenario throws ScenarioNotFound" time="0.001">
+    </testcase>
+    <testcase classname=" read existing scenario" name=" read existing scenario" time="0">
+    </testcase>
+    <testcase classname=" write Scenario" name=" write Scenario" time="0.001">
+    </testcase>
+    <testcase classname="getPluginList() returns installed plugin" name="getPluginList() returns installed plugin" time="0.001">
+    </testcase>
+    <testcase classname="loadPlugin() load existing plugin" name="loadPlugin() load existing plugin" time="0.003">
     </testcase>
   </testsuite>
-  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2019-05-19T06:33:25" time="0.364" tests="7">
-    <testcase classname=" load plugins in reverse order" name=" load plugins in reverse order" time="0.009">
+  <testsuite name="undefined" errors="0" failures="0" skipped="0" timestamp="2019-05-20T17:22:04" time="3.588" tests="9">
+    <testcase classname=" read not exist spec throws SpecNotFound" name=" read not exist spec throws SpecNotFound" time="0.007">
     </testcase>
-    <testcase classname=" Not existing plugin throws PluginNotFound" name=" Not existing plugin throws PluginNotFound" time="0.004">
+    <testcase classname=" read existing spec" name=" read existing spec" time="0.006">
     </testcase>
-    <testcase classname=" registering plugin with the same name throws PluginAlreadyLoaded" name=" registering plugin with the same name throws PluginAlreadyLoaded" time="0.001">
+    <testcase classname=" write spec" name=" write spec" time="0.001">
     </testcase>
-    <testcase classname=" plugin without activate function throws" name=" plugin without activate function throws" time="0">
+    <testcase classname=" read not exist scenario throws ScenarioNotFound" name=" read not exist scenario throws ScenarioNotFound" time="0.001">
     </testcase>
-    <testcase classname=" plugin missing support method throws" name=" plugin missing support method throws" time="0.001">
+    <testcase classname=" read existing scenario" name=" read existing scenario" time="0">
     </testcase>
-    <testcase classname=" plugin missing getSpy method throws" name=" plugin missing getSpy method throws" time="0.001">
+    <testcase classname=" write Scenario" name=" write Scenario" time="0.001">
     </testcase>
-    <testcase classname=" plugin missing getStub method throws" name=" plugin missing getStub method throws" time="0">
+    <testcase classname="getPluginList() returns installed plugin" name="getPluginList() returns installed plugin" time="0.022">
+    </testcase>
+    <testcase classname="loadPlugin() load npm plugin package" name="loadPlugin() load npm plugin package" time="0.004">
+    </testcase>
+    <testcase classname="loadPlugin() can load plugin using deep link" name="loadPlugin() can load plugin using deep link" time="0.002">
     </testcase>
   </testsuite>
 </testsuites>

@@ -24,7 +24,7 @@ test('write spec', async () => {
   const fetch = createFakeServerFetch()
   const io = await createIOInternal({ fetch, location })
 
-  const record: SpecRecord = { refs: {}, actions: [{ type: 'construct', payload: [], ref: '1' }] }
+  const record: SpecRecord = { refs: [], actions: [{ type: 'construct', payload: [], ref: '1' }] }
   await io.writeSpec('new spec', record)
 
   const spec = fetch.specs['new spec']
