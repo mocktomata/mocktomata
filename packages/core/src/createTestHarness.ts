@@ -1,4 +1,4 @@
-import { addAppender, logLevel, LogLevel, removeAppender, setLevel } from '@unional/logging';
+import { addAppender, logLevel, removeAppender, setLevel } from '@unional/logging';
 import { ColorAppender } from 'aurelia-logging-color';
 import { MemoryAppender } from 'aurelia-logging-memory';
 import { forEachKey, required } from 'type-plus';
@@ -9,7 +9,7 @@ import { createTestIO } from './test-util';
 
 export type TestHarness = ReturnType<typeof createTestHarness>
 
-export function createTestHarness(options?: Partial<{ level: LogLevel, showLog: boolean }>) {
+export function createTestHarness(options?: Partial<{ level: number, showLog: boolean }>) {
   const { level, showLog } = required({ level: logLevel.info, showLog: true }, options)
   const appender = new MemoryAppender()
   addAppender(appender)

@@ -1,13 +1,15 @@
+import { logLevel } from '@unional/logging';
 import a from 'assertron';
 import * as es5Module from '.';
 import { createTestHarness, TestHarness } from '..';
 import { loadPlugins } from '../plugin';
 import { NotSpecable } from '../spec';
 import k from '../test-util';
+import { simpleCallback } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
-  harness = createTestHarness()
+  harness = createTestHarness({ level: logLevel.debug, showLog: true })
   harness.io.addPluginModule('@komondor-lab/es5', es5Module)
   await loadPlugins(harness)
 })
@@ -32,7 +34,7 @@ describe('es5/function', () => {
   })
 
   k.trio('function without callback', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const s = await spec((x: number, y: number) => x + y)
       const actual = s.subject(1, 2)
 
@@ -42,21 +44,19 @@ describe('es5/function', () => {
     })
   })
 
+  k.trio('simple callback success (direct)', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(simpleCallback.success)
+      let actual
+      s.subject(2, (_, result) => {
+        actual = result
+      })
 
-  // k.trio('simple callback success (direct)', (title, spec) => {
-  //   test(title, async () => {
-  //     const s = await spec(simpleCallback.success)
+      expect(actual).toBe(3)
 
-  //     let actual
-  //     s.subject(2, (_, result) => {
-  //       actual = result
-  //     })
-
-  //     expect(actual).toBe(3)
-
-  //     await s.done()
-  //   })
-  // })
+      await s.done()
+    })
+  })
 
   // k.trio('simple callback success', (title, spec) => {
   //   test(title, async () => {

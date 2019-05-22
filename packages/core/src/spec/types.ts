@@ -30,7 +30,11 @@ export type SpecReference = {
    * `target` is the spy or stub of the subject.
    */
   target: any,
-  ref: string
+  /**
+   * Indicate is this a spec subject.
+   * For class, multiple instances of the subject can be created.
+   */
+  isSubject?: true
 }
 
 export type SpecReferenceRecord = SpecReferenceBase & {
@@ -56,36 +60,36 @@ export type SpecAction = ConstructAction | InvokeAction | GetAction | SetAction 
 
 export type ConstructAction = {
   type: 'construct',
-  payload: any[] | undefined,
-  ref: string,
+  payload: any[],
+  id: string,
 }
 
 export type InvokeAction = {
   type: 'invoke',
-  payload: any[] | undefined,
-  ref: string
+  payload: any[],
+  id: string
 }
 
 export type ReturnAction = {
   type: 'return',
   payload: any,
-  ref: string
+  id: string
 }
 
 export type ThrowAction = {
   type: 'throw',
   payload: any,
-  ref: string
+  id: string
 }
 
 export type GetAction = {
   type: 'get',
   payload: string | number,
-  ref: string
+  id: string
 }
 
 export type SetAction = {
   type: 'set',
   payload: [string | number, any],
-  ref: string
+  id: string
 }

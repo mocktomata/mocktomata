@@ -46,5 +46,8 @@ export const functionPlugin: KomondorPlugin<Function> = {
     }, meta.properties)
     const recorder = context.newStubRecorder(stub, meta)
     return stub
+  },
+  invoke(target, args) {
+    target(...args)
   }
 }

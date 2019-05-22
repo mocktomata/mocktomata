@@ -1,6 +1,6 @@
 import { KeyTypes } from 'type-plus';
 import { context, SpecContext } from '../context';
-import { findPlugin } from '../plugin';
+import { findPlugin, getPlugin } from '../plugin';
 import { PluginInstance } from '../plugin/typesInternal';
 import { createTimeoutWarning } from './createTimeoutWarning';
 import { IDCannotBeEmpty, NotSpecable, SpecNotFound } from './errors';
@@ -46,9 +46,9 @@ export async function createAutoSpec<T>(context: SpecContext, id: string, subjec
 }
 
 export async function createLiveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createRecorder(context, id, options)
+  const recorder = createRecorder(context, id, subject, options)
   return {
-    subject: recorder.getSpy(subject),
+    subject: recorder.spy,
     done() {
       return recorder.end()
     }
@@ -56,9 +56,9 @@ export async function createLiveSpec<T>(context: SpecContext, id: string, subjec
 }
 
 export async function createSaveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createRecorder(context, id, options)
+  const recorder = createRecorder(context, id, subject, options)
   return {
-    subject: recorder.getSpy(subject),
+    subject: recorder.spy,
     done() {
       return recorder.save()
     }
@@ -75,22 +75,20 @@ export async function createSimulateSpec<T>(context: SpecContext, id: string, su
   }
 }
 
-function createRecorder(context: SpecContext, id: string, options: SpecOptions) {
+function createRecorder<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
+  if (typeof subject === 'string') throw new NotSpecable(subject)
+
+  const plugin = findPlugin(subject)
+  if (!plugin) throw new NotSpecable(subject)
+
   const record: SpecRecord = { refs: [], actions: [] }
   const recordTracker = createSpecRecordTracker(record)
 
+  const spyContext = createSpyContext(recordTracker, plugin, subject, true)
+  const spy = plugin.getSpy(spyContext, subject)
   const idleWarning = createTimeoutWarning(options.timeout)
   return {
-    getSpy<T>(subject: T): T {
-      if (typeof subject === 'string') throw new NotSpecable(subject)
-      try {
-        return getSpy(recordTracker, subject)
-      }
-      catch (e) {
-        idleWarning.stop()
-        throw e
-      }
-    },
+    spy,
     async end() {
       idleWarning.stop()
     },
@@ -101,26 +99,16 @@ function createRecorder(context: SpecContext, id: string, options: SpecOptions) 
   }
 }
 
-function getSpy<T>(recordTracker: SpecRecordTracker, subject: T, source?: any): T {
-  const plugin = findPlugin(subject)
-  if (!plugin) throw new NotSpecable(subject)
-
-  const spyContext = createSpyContext(recordTracker, plugin, subject)
-  const spy = plugin.getSpy(spyContext, subject)
-
-  return spy
-}
-
-function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstance, subject: any) {
+function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstance, subject: any, isSubject?: true) {
   return {
     newSpyRecorder(spy: any, meta?: Meta) {
-      const ref = recordTracker.getReference(plugin.name, spy)
+      const ref = recordTracker.getId(plugin.name, spy, isSubject)
       return {
-        construct(args?: any[]) {
+        construct(args: any[] = []) {
           recordTracker.addAction({
             type: 'construct',
             payload: args,
-            ref
+            id: ref
           })
 
           return {} as any
@@ -157,6 +145,16 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
   }
 }
 
+function getSpy<T>(recordTracker: SpecRecordTracker, subject: T, source?: any): T {
+  const plugin = findPlugin(subject)
+  if (!plugin) return subject
+
+  const spyContext = createSpyContext(recordTracker, plugin, subject)
+  const spy = plugin.getSpy(spyContext, subject)
+
+  return spy
+}
+
 function makeSerializable(record: SpecRecord): SpecRecord {
   return record as any
 }
@@ -170,7 +168,6 @@ async function createPlayer<T>(context: SpecContext, id: string, subject: T, opt
   const record: SpecRecord = { refs: [], actions: [] }
   const actual = await context.io.readSpec(id)
   const recordValidator = createSpecRecordValidator(id, actual, record)
-
   const stubContext = createStubContext(recordValidator, plugin, subject)
   const stub = plugin.getStub(stubContext, subject)
 
@@ -185,12 +182,12 @@ async function createPlayer<T>(context: SpecContext, id: string, subject: T, opt
 function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginInstance, subject: any) {
   return {
     newStubRecorder(stub: any, meta?: Meta) {
-      const ref = recordValidator.getReference(plugin.name, stub)
+      const ref = recordValidator.getId(plugin.name, stub)
       return {
         invoke(args: any[] = []) {
           const spiedArgs = args.map(arg => getSpy(recordValidator, arg))
           recordValidator.invoke(ref, spiedArgs)
-
+          processNextActions(recordValidator)
           // TODO process until ready
           return {
             succeed() {
@@ -206,3 +203,15 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
   }
 }
 
+function processNextActions(recordValidator: SpecRecordValidator) {
+  const next = recordValidator.peekNextAction()
+  if (recordValidator.isSubject(next.id)) return
+
+  const ref = recordValidator.getRef(next.id)
+  const plugin = getPlugin(ref.plugin)!
+  const target = recordValidator.getTarget(next.id)
+  switch (next.type) {
+    case 'invoke':
+      plugin.invoke!(target, next.payload)
+  }
+}

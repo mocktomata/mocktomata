@@ -7,37 +7,40 @@ export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
 
 export function createSpecRecordTracker(record: SpecRecord) {
   return {
-    getReference(plugin: string, target: any) {
-      const ref = this.findReference(target) || String(record.refs.length + 1)
-      record.refs.push({ ref, plugin, target })
-      return ref
+    getId(plugin: string, target: any, isSubject?: true) {
+      const id = this.findId(target)
+      if (!id) {
+        record.refs.push(isSubject ? { plugin, target, isSubject } : { plugin, target })
+        return String(record.refs.length - 1)
+      }
 
+      return id
     },
-    findReference(target: any) {
-      const specRef = record.refs.find(ref => ref.target === target)
-      if (specRef) return specRef.ref
+    findId(target: any) {
+      const id = record.refs.findIndex(ref => ref.target === target)
+      if (id !== -1) return String(id)
       return undefined
     },
     invoke(ref: string, args: any[]) {
       record.actions.push({
         type: 'invoke',
-        ref,
-        payload: args.map(arg => this.findReference(arg) || arg)
+        id: ref,
+        payload: args.map(arg => this.findId(arg) || arg)
       })
     },
     return(ref: string, result: any) {
-      const payload = this.findReference(result) || result
+      const payload = this.findId(result) || result
       record.actions.push({
         type: 'return',
-        ref,
+        id: ref,
         payload
       })
     },
     throw(ref: string, err: any) {
-      const payload = this.findReference(err) || err
+      const payload = this.findId(err) || err
       record.actions.push({
         type: 'throw',
-        ref,
+        id: ref,
         payload
       })
     },
@@ -52,22 +55,35 @@ export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 
 export function createSpecRecordValidator(id: string, loaded: SpecRecord, record: SpecRecord) {
   return {
-    getReference(plugin: string, target: any) {
-      const ref = this.findReference(target) || String(record.refs.length + 1)
-      record.refs.push({ ref, plugin, target })
-      return ref
+    loaded,
+    record,
+    getId(plugin: string, target: any) {
+      const ref = this.findId(target)
+      if (!ref) {
+        record.refs.push({ plugin, target })
+        return String(record.refs.length - 1)
+      }
 
+      return ref
     },
-    findReference(target: any) {
-      const specRef = record.refs.find(ref => ref.target === target)
-      if (specRef) return specRef.ref
+    findId(target: any) {
+      const ref = record.refs.findIndex(ref => ref.target === target)
+      if (ref !== -1) return String(ref)
       return undefined
     },
-    resolveTarget(ref: string) {
-      let specRef = record.refs.find(r => r.ref === ref)
+    getRef(id: string) {
+      return record.refs[Number(id)]
+    },
+    isSubject(ref: string) {
+      const index = Number(ref)
+      return !!loaded.refs[index].isSubject
+    },
+    getTarget(ref: string) {
+      const index = Number(ref)
+      let specRef = record.refs[index]
       if (specRef) return specRef.target
 
-      specRef = loaded.refs.find(r => r.ref === ref)
+      specRef = loaded.refs[index]
       if (specRef) {
         const plugin = getPlugin(specRef.plugin)
         if (plugin && plugin.deserialize) {
@@ -80,30 +96,33 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
 
       return undefined
     },
+    peekNextAction() {
+      return loaded.actions[record.actions.length]
+    },
     invoke(ref: string, args: any[]) {
       const action: InvokeAction = {
         type: 'invoke',
-        ref,
-        payload: args.map(arg => this.findReference(arg) || arg)
+        id: ref,
+        payload: args.map(arg => this.findId(arg) || arg)
       }
       validateAction(id, loaded, record, action)
       record.actions.push(action)
     },
     return(ref: string, result: any) {
-      const payload = this.findReference(result) || result
+      const payload = this.findId(result) || result
       const action: ReturnAction = {
         type: 'return',
-        ref,
+        id: ref,
         payload
       }
       validateAction(id, loaded, record, action)
       record.actions.push(action)
     },
     throw(ref: string, err: any) {
-      const payload = this.findReference(err) || err
+      const payload = this.findId(err) || err
       const action: ThrowAction = {
         type: 'throw',
-        ref,
+        id: ref,
         payload
       }
       validateAction(id, loaded, record, action)
@@ -114,12 +133,12 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
       record.actions.push(action)
     },
     succeed() {
-      const next = loaded.actions[record.actions.length]
+      const next = this.peekNextAction()
       return next.type === 'return'
     },
     result() {
-      const next = loaded.actions[record.actions.length]
-      return this.resolveTarget(next.payload) || next.payload
+      const next = this.peekNextAction()
+      return this.getTarget(next.payload) || next.payload
     }
   }
 }
