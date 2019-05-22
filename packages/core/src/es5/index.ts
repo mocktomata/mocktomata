@@ -6,7 +6,7 @@ import { errorPlugin } from './error';
 
 export function activate(context: PluginActivationContext) {
   context.register(stringPlugin)
-  context.register(errorPlugin)
   context.register(objectPlugin)
   context.register(functionPlugin)
+  context.register(errorPlugin)
 }

@@ -58,32 +58,30 @@ describe('es5/function', () => {
     })
   })
 
-  // k.trio('simple callback success', (title, spec) => {
-  //   test(title, async () => {
-  //     const s = await spec(simpleCallback.success)
+  k.trio('simple callback success', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(simpleCallback.success)
 
-  //     const actual = await simpleCallback.increment(s.subject, 2)
+      const actual = await simpleCallback.increment(s.subject, 2)
 
-  //     expect(actual).toBe(3)
+      expect(actual).toBe(3)
 
-  //     await s.done()
-  //   })
-  // })
+      await s.done()
+    })
+  })
 
 
-  // k.trio('simple callback fail', (title, spec) => {
-  //   test.only(title, async () => {
-  //     const s = await spec(simpleCallback.fail)
+  k.trio('simple callback fail', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(simpleCallback.fail)
 
-  //     const err = await a.throws(simpleCallback.increment(s.subject, 2))
+      const err = await a.throws(simpleCallback.increment(s.subject, 2))
 
-  //     expect(err.message).toBe('fail')
+      expect(err.message).toBe('fail')
 
-  //     await s.done()
-
-  //     harness.logSpecs()
-  //   })
-  // })
+      await s.done()
+    })
+  })
 })
 
 // describe('es5/object', () => {

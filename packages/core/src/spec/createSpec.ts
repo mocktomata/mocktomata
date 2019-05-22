@@ -156,7 +156,21 @@ function getSpy<T>(recordTracker: SpecRecordTracker, subject: T, source?: any): 
 }
 
 function makeSerializable(record: SpecRecord): SpecRecord {
-  return record as any
+  return {
+    refs: record.refs.map(ref => {
+      const plugin = getPlugin(ref.plugin)!
+      if (plugin.serialize) {
+        return {
+          ...ref,
+          target: plugin.serialize(ref.target)
+        }
+      }
+      else {
+        return ref
+      }
+    }),
+    actions: record.actions
+  }
 }
 
 async function createPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
@@ -188,7 +202,6 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
           const spiedArgs = args.map(arg => getSpy(recordValidator, arg))
           recordValidator.invoke(ref, spiedArgs)
           processNextActions(recordValidator)
-          // TODO process until ready
           return {
             succeed() {
               return recordValidator.succeed()
@@ -212,6 +225,6 @@ function processNextActions(recordValidator: SpecRecordValidator) {
   const target = recordValidator.getTarget(next.id)
   switch (next.type) {
     case 'invoke':
-      plugin.invoke!(target, next.payload)
+      plugin.invoke!(target, next.payload.map(x => typeof x === 'string' ? recordValidator.getTarget(x) : x))
   }
 }
