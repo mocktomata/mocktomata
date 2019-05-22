@@ -248,28 +248,18 @@ addAppender(new ColorAppender())
 getLogger('komondor').setLevel(logLevel.debug)
 ```
 
-### Using komondor with node-fetch
+### Using komondor with complex subject
 
-`node-fetch` and some other libraries provides more features then just handling simple data structure.
-For example they support streaming and web-socket.
+Out of the box, `komondor` cannot handles subject that returns another function or returns object that contains functions.
 
-`komondor` cannot work with them directly because it needs to be able to serialize and deserialize the result.
+For example, `node-fetch` supports streaming and web-socket.
 
-The response object from `node-fetch` is not serializable:
+The response object from `node-fetch` is not serializable.
 
-```ts
-import fetch = require('node-fetch')
+To work with these subjects, you can:
 
-test('response is complex', async t => {
-  const response = await fetch('some url')
-  // it contains `.text()` method and others,
-  // so it is not serializable.
-  const json = JSON.parse(response.text())
-})
-```
-
-One way to get around this is create a wraping function that returns DTO.
-`komondor` can then work on that function.
+- create a plugin
+- wrap it to reutrn DTO.
 
 ```ts
 import fetch = require('node-fetch')
