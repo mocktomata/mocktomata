@@ -29,39 +29,37 @@ workflows:
 jobs:
   local-test:
     docker:
-      - image: circleci/node:11
+      - image: circleci/node:latest
     steps:
       - checkout
       - run: npm run verify
   node-latest:
     docker:
-      - image: circleci/node:11
+      - image: circleci/node:latest
     steps:
       - checkout
-      # - restore_cache:
-      #     name: Restore node_modules cache
-      #     key: node_modules-{{ checksum "yarn.lock" }}
+      - restore_cache:
+          name: Restore node_modules cache
+          key: node_modules-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
           command: |
             if [ ! -d node_modules ]; then
               yarn
               yarn bootstrap
-              # npm i --no-save jest-junit
             fi
-      # - save_cache:
-      #     name: Save node modules cache
-      #     key: node_modules-{{ checksum "yarn.lock" }}
-      #     paths:
-      #       - node_modules
-      #       - packages/config/node_modules
-      #       - packages/core/node_modules
-      #       - packages/io-client/node_modules
-      #       - packages/io-fs/node_modules
-      #       - packages/io-local/node_modules
-      #       - packages/io-server/node_modules
-      #       - packages/komondor/node_modules
-      #       - packages/plugin-fixture-dummy/node_modules
+      - save_cache:
+          name: Save node modules cache
+          key: node_modules-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - packages/core/node_modules
+            - packages/file-server/node_modules
+            - packages/io-client/node_modules
+            - packages/io-fs/node_modules
+            - packages/io-local/node_modules
+            - packages/komondor/node_modules
+            - packages/plugin-fixture-dummy/node_modules
       - persist_to_workspace:
           root: '.'
           paths:
@@ -75,9 +73,9 @@ jobs:
             - packages/plugin-fixture-dummy/node_modules
       - run: yarn build
       - run: yarn test
-      # - run: npx codecov
-      # - store_test_results:
-      #     path: packages/uni-cli/.reports/junit
+      - run: npx codecov
+      - store_test_results:
+          path: .reports/junit
   node10:
     docker:
       - image: 'circleci/node:9'
@@ -87,8 +85,8 @@ jobs:
           at: '.'
       - run: yarn build
       - run: yarn test
-      # - store_test_results:
-      #     path: packages/uni-cli/.reports/junit
+      - store_test_results:
+          path: .reports/junit
   node9:
     docker:
       - image: 'circleci/node:9'
@@ -98,8 +96,8 @@ jobs:
           at: '.'
       - run: yarn build
       - run: yarn test
-      # - store_test_results:
-      #     path: packages/uni-cli/.reports/junit
+      - store_test_results:
+          path: .reports/junit
   node8:
     docker:
       - image: 'circleci/node:8'
@@ -109,8 +107,8 @@ jobs:
           at: '.'
       - run: yarn build
       - run: yarn test
-      # - store_test_results:
-      #     path: packages/uni-cli/.reports/junit
+      - store_test_results:
+          path: .reports/junit
   node6:
     docker:
       - image: 'circleci/node:6'
@@ -120,11 +118,11 @@ jobs:
           at: '.'
       - run: yarn build
       - run: yarn test
-      # - store_test_results:
-      #     path: packages/uni-cli/.reports/junit
+      - store_test_results:
+          path: .reports/junit
   release:
     docker:
-      - image: circleci/node:11
+      - image: circleci/node:latest
     steps:
       - checkout
       - attach_workspace:
