@@ -11,7 +11,7 @@
     "clean": "lerna clean",
     "build": "tsc -b",
     "build:watch": "tsc -b -w",
-    "test": "yarn jest",
+    "test": "yarn jest --maxWorkers=2",
     "test:watch": "yarn jest --watch",
     "verify": "yarn build && yarn test",
     "watch": "yarn test:watch"

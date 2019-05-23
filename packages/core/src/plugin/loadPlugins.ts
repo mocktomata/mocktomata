@@ -18,7 +18,7 @@ async function tryLoad({ io }: LoadPluginContext, name: string) {
   try {
     return await io.loadPlugin(name)
   }
-  catch {
+  catch (e) {
     throw new PluginNotFound(name)
   }
 }
