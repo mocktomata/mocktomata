@@ -24,7 +24,8 @@ export function createTestHarness(options?: Partial<{ level: number, showLog: bo
     io,
     appender,
     showLog() {
-      addAppender(new ColorAppender())
+      if (!showLog)
+        addAppender(new ColorAppender())
     },
     reset() {
       context.clear()

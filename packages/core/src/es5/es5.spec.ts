@@ -1,4 +1,3 @@
-import { logLevel } from '@unional/logging';
 import a from 'assertron';
 import * as es5Module from '.';
 import { createTestHarness, TestHarness } from '..';
