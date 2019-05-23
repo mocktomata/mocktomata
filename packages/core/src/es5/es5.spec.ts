@@ -5,7 +5,7 @@ import { createTestHarness, TestHarness } from '..';
 import { loadPlugins } from '../plugin';
 import { NotSpecable } from '../spec';
 import k from '../test-util';
-import { simpleCallback, delayed } from './testSubjects';
+import { callbackInObjLiteral, delayed, simpleCallback } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -95,16 +95,28 @@ describe('es5/function', () => {
   })
 
   k.trio('delayed callback invocation', (title, spec) => {
-    test.only(title, async () => {
+    test(title, async () => {
       const s = await spec(delayed.success)
 
       expect(await delayed.increment(s.subject, 2)).toBe(3)
       expect(await delayed.increment(s.subject, 4)).toBe(5)
 
       await s.done()
-      harness.logSpecs()
     })
   })
+
+  k.trio('callback in object literal success', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(callbackInObjLiteral.success)
+
+      expect(await callbackInObjLiteral.increment(s.subject, 2)).toBe(3)
+      // expect(await callbackInObjLiteral.increment(s.subject, 4)).toBe(5)
+
+      await s.done()
+    })
+  })
+
+  test.todo('callback in deep literal')
 })
 
 // describe('es5/object', () => {

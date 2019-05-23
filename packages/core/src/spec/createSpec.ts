@@ -1,4 +1,3 @@
-import { KeyTypes } from 'type-plus';
 import { context, SpecContext } from '../context';
 import { findPlugin, getPlugin } from '../plugin';
 import { PluginInstance } from '../plugin/typesInternal';
@@ -7,6 +6,8 @@ import { IDCannotBeEmpty, NotSpecable, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
 import { createSpecRecordTracker, createSpecRecordValidator, SpecRecordTracker, SpecRecordValidator } from './SpecRecord';
 import { Meta, Spec, SpecMode, SpecOptions, SpecRecord } from './types';
+import { log } from '../common';
+import { tersify } from 'tersify';
 
 export function createSpec(defaultMode: SpecMode) {
   return async <T>(id: string, subject: T, options = { timeout: 3000 }): Promise<Spec<T>> => {
@@ -116,7 +117,7 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
         /**
          * @param target The scope. This is usually the stub.
          */
-        invoke(args: any[] = []) {
+        invoke(args: any[]) {
           const spiedArgs = args.map((arg, i) => getSpy(recordTracker, arg, { ref, site: [i] }))
           recordTracker.invoke(ref, spiedArgs)
 
@@ -134,11 +135,37 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
             }
           }
         },
-        get(target: any, prop: KeyTypes) {
-          return {} as any
+        // todo: handle symbol, use KeyTypes
+        get(prop: string | number) {
+          recordTracker.get(ref, prop)
+          return {
+            return(result: any) {
+              const spiedResult = getSpy(recordTracker, result)
+              recordTracker.return(ref, spiedResult)
+              return spiedResult
+            },
+            throw(error: any) {
+              const spiedError = getSpy(recordTracker, error)
+              recordTracker.throw(ref, spiedError)
+              return spiedError
+            }
+          }
         },
-        set(target: any, prop: KeyTypes, value: any) {
-          return {} as any
+        // todo: handle symbol, use KeyTypes
+        set(prop: string | number, value: any) {
+          recordTracker.set(ref, prop, value)
+          return {
+            return(result: any) {
+              const spiedResult = getSpy(recordTracker, result)
+              recordTracker.return(ref, spiedResult)
+              return spiedResult
+            },
+            throw(error: any) {
+              const spiedError = getSpy(recordTracker, error)
+              recordTracker.throw(ref, spiedError)
+              return spiedError
+            }
+          }
         }
       }
     }
@@ -200,6 +227,7 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
       return {
         invoke(args: any[] = []) {
           const spiedArgs = args.map(arg => getSpy(recordValidator, arg))
+          log.onDebug(log => log(`invoke:`, `"${ref}" with ${tersify(args)}`))
           recordValidator.invoke(ref, spiedArgs)
           processNextActions(recordValidator)
           return {
@@ -223,14 +251,25 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
 
 function processNextActions(recordValidator: SpecRecordValidator) {
   const next = recordValidator.peekNextAction()
+  log.debug(`next action:`, next)
   if (!next || recordValidator.isSubject(next.id)) return
 
   const ref = recordValidator.getRef(next.id)
   const plugin = getPlugin(ref.plugin)!
   const target = recordValidator.getTarget(next.id)
+
+  // TOTHINK: where does the return value go to? All not used?
   switch (next.type) {
     case 'invoke':
-      plugin.invoke!(target, next.payload.map(x => typeof x === 'string' ? recordValidator.getTarget(x) : x))
+      const args = next.payload.map(x => typeof x === 'string' ? recordValidator.getTarget(x) : x)
+      log.onDebug(() => `auto invoke: "${recordValidator.findId(target)}" with ${tersify(args)}`)
+      plugin.invoke!(target, args)
       processNextActions(recordValidator)
+      break;
+    case 'get':
+      log.onDebug(() => `auto get: "${recordValidator.findId(target)}" for ${tersify(next.payload)}`)
+      plugin.get!(target, next.payload)
+      processNextActions(recordValidator)
+      break;
   }
 }

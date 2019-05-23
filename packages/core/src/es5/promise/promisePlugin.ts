@@ -11,7 +11,7 @@ export const promisePlugin: KomondorPlugin = {
 }
 
 function getPromiseSpy(context: SpyContext, subject: Promise<any>) {
-  const recorder = context.newSpyRecorder()
+  const recorder = context.newSpyRecorder(subject)
   const instance = recorder.construct()
   const call = instance.newCall()
   return subject.then(

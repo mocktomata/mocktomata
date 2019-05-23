@@ -1,7 +1,7 @@
 
 import { SpyContext } from '../../plugin';
 import { isPromise } from '../promise/isPromise';
-import { getPropertyNames } from './getPropertyNames';
+import { getPropertyNames } from '../util';
 
 export function spyClass(context: SpyContext, subject: any) {
   const recorder = context.newSpyRecorder({ className: subject.name })

@@ -20,24 +20,7 @@ export const simpleCallback = {
   }
 }
 
-export const fetch = {
-  add(fetch: Function, x: number, y: number) {
-    return new Promise((a, r) => {
-      fetch('remoteAdd', { x, y }, (err: Error | undefined, response: number) => {
-        if (err) r(err)
-        a(response)
-      })
-    })
-  },
-  success(_url: string, options: { x: number, y: number }, callback: Function) {
-    callback(null, options.x + options.y)
-  },
-  fail(_url: string, _options: { x: number, y: number }, callback: Function) {
-    callback({ message: 'fail' }, null)
-  }
-}
-
-export const literalCallback = {
+export const callbackInObjLiteral = {
   increment(remote: Function, x: number) {
     return new Promise((a, r) => {
       remote({

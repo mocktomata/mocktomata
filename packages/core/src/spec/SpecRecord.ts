@@ -1,7 +1,7 @@
 import { getPlugin } from '../plugin';
 import { SimulationMismatch } from './errors';
 import { isMismatchAction } from './isMismatchAction';
-import { InvokeAction, SpecAction, SpecRecord } from './types';
+import { InvokeAction, SpecAction, SpecRecord, GetAction, SetAction } from './types';
 
 export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
 
@@ -26,6 +26,20 @@ export function createSpecRecordTracker(record: SpecRecord) {
         type: 'invoke',
         id: ref,
         payload: args.map(arg => this.findId(arg) || arg)
+      })
+    },
+    get(ref: string, prop: string | number) {
+      record.actions.push({
+        type: 'get',
+        id: ref,
+        payload: prop
+      })
+    },
+    set(ref: string, prop: string | number, value: any) {
+      record.actions.push({
+        type: 'set',
+        id: ref,
+        payload: [prop, value]
       })
     },
     return(ref: string, result: any) {
@@ -104,6 +118,24 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
         type: 'invoke',
         id: ref,
         payload: args.map(arg => this.findId(arg) || arg)
+      }
+      validateAction(id, loaded, record, action)
+      record.actions.push(action)
+    },
+    get(ref: string, prop: string | number) {
+      const action: GetAction = {
+        type: 'get',
+        id: ref,
+        payload: prop
+      }
+      validateAction(id, loaded, record, action)
+      record.actions.push(action)
+    },
+    set(ref: string, prop: string | number, value: any) {
+      const action: SetAction = {
+        type: 'set',
+        id: ref,
+        payload: [prop, value]
       }
       validateAction(id, loaded, record, action)
       record.actions.push(action)

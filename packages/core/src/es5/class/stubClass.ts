@@ -1,4 +1,4 @@
-import { getPropertyNames } from './getPropertyNames';
+import { getPropertyNames } from '../util/getPropertyNames';
 import { StubContext } from '../../plugin';
 
 export function stubClass(context: StubContext, subject: any) {

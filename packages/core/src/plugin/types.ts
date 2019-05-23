@@ -1,4 +1,5 @@
 import { Meta } from '../spec';
+import { KeyTypes } from 'type-plus';
 
 export type PluginActivationContext = {
   register(plugin: KomondorPlugin<any>): void
@@ -16,13 +17,27 @@ export interface KomondorPlugin<S = any> {
    */
   getSpy(context: SpyContext, subject: S): S,
   getStub(context: StubContext, subject: S): S,
-  invoke?: (target: S, args: any[]) => any,
   serialize?: (subject: S) => string,
-  deserialize?: (input: string) => S
+  deserialize?: (input: string) => S,
+  invoke?: (target: S, args: any[]) => any,
+  get?: (target: S, prop: KeyTypes) => any,
 }
 
 export type SpyContext = {
-  newSpyRecorder(spy?: any, meta?: Meta): any
+  newSpyRecorder(spy: any, meta?: Meta): SpyRecorder
+}
+
+export type SpyRecorder = {
+  construct(args?: any[]): any,
+  invoke(args?: any[]): SpyInvokeRecorder,
+  get(prop: KeyTypes): any,
+  set(prop: KeyTypes, value: any): any,
+}
+
+export type SpyInvokeRecorder = {
+  spiedArgs: any[]
+  return<R>(result: R): R,
+  throw<E>(error: E): E
 }
 
 export type StubContext = {
