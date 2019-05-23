@@ -96,7 +96,7 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
 
       return undefined
     },
-    peekNextAction() {
+    peekNextAction(): SpecAction | undefined {
       return loaded.actions[record.actions.length]
     },
     invoke(ref: string, args: any[]) {
@@ -109,14 +109,14 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
       record.actions.push(action)
     },
     return() {
-      const next = this.peekNextAction()
+      const next = this.peekNextAction()!
       const result = this.getTarget(next.payload) || next.payload
       validateAction(id, loaded, record, next)
       record.actions.push(next)
       return result
     },
     throw() {
-      const next = this.peekNextAction()
+      const next = this.peekNextAction()!
       const err = this.getTarget(next.payload) || next.payload
       validateAction(id, loaded, record, next)
       record.actions.push(next)
@@ -127,7 +127,7 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
       record.actions.push(action)
     },
     succeed() {
-      const next = this.peekNextAction()
+      const next = this.peekNextAction()!
       return next.type === 'return'
     }
   }

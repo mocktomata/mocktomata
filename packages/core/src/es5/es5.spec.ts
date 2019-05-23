@@ -5,7 +5,7 @@ import { createTestHarness, TestHarness } from '..';
 import { loadPlugins } from '../plugin';
 import { NotSpecable } from '../spec';
 import k from '../test-util';
-import { simpleCallback } from './testSubjects';
+import { simpleCallback, delayed } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -94,7 +94,17 @@ describe('es5/function', () => {
     })
   })
 
-  // k.trio('ded')
+  k.trio('delayed callback invocation', (title, spec) => {
+    test.only(title, async () => {
+      const s = await spec(delayed.success)
+
+      expect(await delayed.increment(s.subject, 2)).toBe(3)
+      expect(await delayed.increment(s.subject, 4)).toBe(5)
+
+      await s.done()
+      harness.logSpecs()
+    })
+  })
 })
 
 // describe('es5/object', () => {

@@ -80,9 +80,7 @@ export const delayed = {
     })
   },
   success(a: number, callback: Function) {
-    setTimeout(() => {
-      callback(null, a + 1)
-    }, 10)
+    setImmediate(() => callback(null, a + 1))
   }
 }
 

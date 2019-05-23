@@ -207,9 +207,11 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
               return recordValidator.succeed()
             },
             return() {
+              setImmediate(() => processNextActions(recordValidator))
               return recordValidator.return()
             },
             throw() {
+              setImmediate(() => processNextActions(recordValidator))
               return recordValidator.throw()
             }
           }
@@ -221,7 +223,7 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
 
 function processNextActions(recordValidator: SpecRecordValidator) {
   const next = recordValidator.peekNextAction()
-  if (recordValidator.isSubject(next.id)) return
+  if (!next || recordValidator.isSubject(next.id)) return
 
   const ref = recordValidator.getRef(next.id)
   const plugin = getPlugin(ref.plugin)!
