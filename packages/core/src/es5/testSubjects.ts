@@ -42,6 +42,30 @@ export const callbackInObjLiteral = {
   }
 }
 
+export const callbackInDeepObjLiteral = {
+  increment(remote: Function, x: number) {
+    return new Promise((a, r) => {
+      remote({
+        data: x,
+        handlers: {
+          error(_xhr: any, _textStatus: string, errorThrown: Error) {
+            r(errorThrown)
+          },
+          success(data: number, _textStatus: string, _xhr: any) {
+            a(data)
+          }
+        }
+      })
+    })
+  },
+  success(options: { data: number, handlers: { success: Function } }) {
+    options.handlers.success(options.data + 1)
+  },
+  fail(options: { data: number, handlers: { error: Function } }) {
+    options.handlers.error(null, 'failStatus', { message: 'fail' })
+  }
+}
+
 export const synchronous = {
   increment(remote: Function, x: number) {
     return remote('increment', x)
