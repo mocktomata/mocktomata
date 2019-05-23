@@ -34,7 +34,7 @@ async function tryCreateHapi(port: number, start: number, end: number): Promise<
     await server.stop()
     return server
   }
-  catch {
+  catch (e) {
     return tryCreateHapi(port + 1, start, end)
   }
 }

@@ -16,7 +16,7 @@ export function createIO(options?: CreateIOOptions): IO {
         const specStr = await repo.readSpec(id)
         return JSON.parse(specStr)
       }
-      catch {
+      catch (e) {
         throw new SpecNotFound(id)
       }
     },
@@ -28,7 +28,7 @@ export function createIO(options?: CreateIOOptions): IO {
         const specStr = await repo.readScenario(id)
         return JSON.parse(specStr)
       }
-      catch {
+      catch (e) {
         throw new ScenarioNotFound(id)
       }
     },

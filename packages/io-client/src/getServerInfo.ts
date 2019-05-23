@@ -34,7 +34,7 @@ async function tryGetServerInfoAtPort(context: Context, urlBase: string, port: n
   try {
     return await tryGetServerInfo(context, url)
   }
-  catch {
+  catch (e) {
     return tryGetServerInfoAtPort(context, urlBase, port + 1, start, end)
   }
 }
