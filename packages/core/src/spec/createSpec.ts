@@ -206,8 +206,11 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
             succeed() {
               return recordValidator.succeed()
             },
-            result() {
-              return recordValidator.result()
+            return() {
+              return recordValidator.return()
+            },
+            throw() {
+              return recordValidator.throw()
             }
           }
         }
@@ -226,5 +229,6 @@ function processNextActions(recordValidator: SpecRecordValidator) {
   switch (next.type) {
     case 'invoke':
       plugin.invoke!(target, next.payload.map(x => typeof x === 'string' ? recordValidator.getTarget(x) : x))
+      processNextActions(recordValidator)
   }
 }

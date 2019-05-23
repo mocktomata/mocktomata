@@ -82,6 +82,19 @@ describe('es5/function', () => {
       await s.done()
     })
   })
+
+  k.trio('simple callback invoked multiple times', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(simpleCallback.success)
+
+      expect(await simpleCallback.increment(s.subject, 2)).toBe(3)
+      expect(await simpleCallback.increment(s.subject, 4)).toBe(5)
+
+      await s.done()
+    })
+  })
+
+  // k.trio('ded')
 })
 
 // describe('es5/object', () => {

@@ -38,10 +38,10 @@ export const functionPlugin: KomondorPlugin<Function> = {
     const stub = assignPropertiesIfNeeded(function (this: any, ...args: any[]) {
       const call = recorder.invoke(args)
       if (call.succeed()) {
-        return call.result()
+        return call.return()
       }
       else {
-        throw call.result()
+        throw call.throw()
       }
     }, meta.properties)
     const recorder = context.newStubRecorder(stub, meta)

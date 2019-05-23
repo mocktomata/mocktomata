@@ -1,7 +1,7 @@
 import { getPlugin } from '../plugin';
 import { SimulationMismatch } from './errors';
 import { isMismatchAction } from './isMismatchAction';
-import { InvokeAction, ReturnAction, SpecAction, SpecRecord, ThrowAction } from './types';
+import { InvokeAction, SpecAction, SpecRecord } from './types';
 
 export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
 
@@ -108,25 +108,19 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
       validateAction(id, loaded, record, action)
       record.actions.push(action)
     },
-    return(ref: string, result: any) {
-      const payload = this.findId(result) || result
-      const action: ReturnAction = {
-        type: 'return',
-        id: ref,
-        payload
-      }
-      validateAction(id, loaded, record, action)
-      record.actions.push(action)
+    return() {
+      const next = this.peekNextAction()
+      const result = this.getTarget(next.payload) || next.payload
+      validateAction(id, loaded, record, next)
+      record.actions.push(next)
+      return result
     },
-    throw(ref: string, err: any) {
-      const payload = this.findId(err) || err
-      const action: ThrowAction = {
-        type: 'throw',
-        id: ref,
-        payload
-      }
-      validateAction(id, loaded, record, action)
-      record.actions.push(action)
+    throw() {
+      const next = this.peekNextAction()
+      const err = this.getTarget(next.payload) || next.payload
+      validateAction(id, loaded, record, next)
+      record.actions.push(next)
+      return err
     },
     addAction(action: SpecAction) {
       validateAction(id, loaded, record, action)
@@ -135,10 +129,6 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     succeed() {
       const next = this.peekNextAction()
       return next.type === 'return'
-    },
-    result() {
-      const next = this.peekNextAction()
-      return this.getTarget(next.payload) || next.payload
     }
   }
 }

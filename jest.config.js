@@ -6,7 +6,7 @@ module.exports = {
     '<rootDir>/packages/*'
   ],
   'watchPlugins': [
-    ['jest-watch-exec', { 'on-start': 'yarn build', 'on-start-ignore-error': true }],
+    // ['jest-watch-exec', { 'on-start': 'yarn build', 'on-start-ignore-error': true }],
     'jest-watch-suspend',
     'jest-watch-repeat',
     'jest-watch-typeahead/filename',
