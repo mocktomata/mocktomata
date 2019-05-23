@@ -215,6 +215,7 @@ async function createPlayer<T>(context: SpecContext, id: string, subject: T, opt
   return {
     stub,
     async end() {
+      recordValidator.stop()
       return
     }
   }
@@ -229,47 +230,22 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
           const spiedArgs = args.map(arg => getSpy(recordValidator, arg))
           log.onDebug(log => log(`invoke:`, `"${ref}" with ${tersify(args)}`))
           recordValidator.invoke(ref, spiedArgs)
-          processNextActions(recordValidator)
+          recordValidator.processNextActions()
           return {
             succeed() {
               return recordValidator.succeed()
             },
             return() {
-              setImmediate(() => processNextActions(recordValidator))
+              recordValidator.scheduleProcessNextActions()
               return recordValidator.return()
             },
             throw() {
-              setImmediate(() => processNextActions(recordValidator))
+              recordValidator.scheduleProcessNextActions()
               return recordValidator.throw()
             }
           }
         }
       }
     }
-  }
-}
-
-function processNextActions(recordValidator: SpecRecordValidator) {
-  const next = recordValidator.peekNextAction()
-  log.debug(`next action:`, next)
-  if (!next || recordValidator.isSubject(next.id)) return
-
-  const ref = recordValidator.getRef(next.id)
-  const plugin = getPlugin(ref.plugin)!
-  const target = recordValidator.getTarget(next.id)
-
-  // TOTHINK: where does the return value go to? All not used?
-  switch (next.type) {
-    case 'invoke':
-      const args = next.payload.map(x => typeof x === 'string' ? recordValidator.getTarget(x) : x)
-      log.onDebug(() => `auto invoke: "${recordValidator.findId(target)}" with ${tersify(args)}`)
-      plugin.invoke!(target, args)
-      processNextActions(recordValidator)
-      break;
-    case 'get':
-      log.onDebug(() => `auto get: "${recordValidator.findId(target)}" for ${tersify(next.payload)}`)
-      plugin.get!(target, next.payload)
-      processNextActions(recordValidator)
-      break;
   }
 }

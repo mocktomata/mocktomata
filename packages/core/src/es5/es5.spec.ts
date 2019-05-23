@@ -9,7 +9,7 @@ import { callbackInObjLiteral, delayed, simpleCallback } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
-  harness = createTestHarness({ level: logLevel.debug, showLog: true })
+  harness = createTestHarness()
   harness.io.addPluginModule('@komondor-lab/es5', es5Module)
   await loadPlugins(harness)
 })
@@ -110,7 +110,7 @@ describe('es5/function', () => {
       const s = await spec(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(s.subject, 2)).toBe(3)
-      // expect(await callbackInObjLiteral.increment(s.subject, 4)).toBe(5)
+      expect(await callbackInObjLiteral.increment(s.subject, 4)).toBe(5)
 
       await s.done()
     })

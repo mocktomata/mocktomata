@@ -2,6 +2,8 @@ import { getPlugin } from '../plugin';
 import { SimulationMismatch } from './errors';
 import { isMismatchAction } from './isMismatchAction';
 import { InvokeAction, SpecAction, SpecRecord, GetAction, SetAction } from './types';
+import { log } from '../common';
+import { tersify } from 'tersify';
 
 export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
 
@@ -68,6 +70,8 @@ export function createSpecRecordTracker(record: SpecRecord) {
 export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 
 export function createSpecRecordValidator(id: string, loaded: SpecRecord, record: SpecRecord) {
+  // not using specific type as the type is platform specific (i.e. NodeJS.Immediate)
+  const scheduled: any[] = []
   return {
     loaded,
     record,
@@ -161,6 +165,37 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     succeed() {
       const next = this.peekNextAction()!
       return next.type === 'return'
+    },
+    processNextActions() {
+      const next = this.peekNextAction()
+      log.debug(`next action:`, next)
+      if (!next || this.isSubject(next.id)) return
+
+      const ref = this.getRef(next.id)
+      const plugin = getPlugin(ref.plugin)!
+      const target = this.getTarget(next.id)
+
+      // TOTHINK: where does the return value go to? All not used?
+      switch (next.type) {
+        case 'invoke':
+          const args = next.payload.map(x => typeof x === 'string' ? this.getTarget(x) : x)
+          log.onDebug(() => `auto invoke: "${this.findId(target)}" with ${tersify(args)}`)
+          plugin.invoke!(target, args)
+          this.processNextActions()
+          break;
+        case 'get':
+          log.onDebug(() => `auto get: "${this.findId(target)}" for ${tersify(next.payload)}`)
+          plugin.get!(target, next.payload)
+          this.processNextActions()
+          break;
+      }
+    },
+    scheduleProcessNextActions() {
+      scheduled.push(setImmediate(() => this.processNextActions()))
+    },
+    stop() {
+
+      scheduled.forEach(s => clearImmediate(s))
     }
   }
 }
