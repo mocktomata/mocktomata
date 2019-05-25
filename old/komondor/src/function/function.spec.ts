@@ -40,12 +40,12 @@ test('acceptance', async () => {
   ])
 })
 
-test('get same object if nothing to spy on', async () => {
-  t.deepStrictEqual(await testObject({}), {})
-  t.deepStrictEqual(await testObject({ a: 1 }), { a: 1 })
-  t.deepStrictEqual(await testObject({ a: true }), { a: true })
-  t.deepStrictEqual(await testObject({ a: 'a' }), { a: 'a' })
-})
+// test('get same object if nothing to spy on', async () => {
+//   t.deepStrictEqual(await testObject({}), {})
+//   t.deepStrictEqual(await testObject({ a: 1 }), { a: 1 })
+//   t.deepStrictEqual(await testObject({ a: true }), { a: true })
+//   t.deepStrictEqual(await testObject({ a: 'a' }), { a: 'a' })
+// })
 
 async function testObject(expected) {
   const objSpec = await spec(() => expected)
@@ -54,164 +54,164 @@ async function testObject(expected) {
   return actual
 }
 
-test('simulate with not existing record will throw', async () => {
-  return a.throws(spec.simulate('function/simpleCallback/notExist', simpleCallback.success), SpecNotFound)
-})
+// test('simulate with not existing record will throw', async () => {
+//   return a.throws(spec.simulate('function/simpleCallback/notExist', simpleCallback.success), SpecNotFound)
+// })
 
-k.trio('onAny(callback) will invoke on any action', 'function/simpleCallback/success', (title, spec) => {
-  test(title, async () => {
-    const o = new AssertOrder(1)
-    const s = await spec(simpleCallback.success)
+// k.trio('onAny(callback) will invoke on any action', 'function/simpleCallback/success', (title, spec) => {
+//   test(title, async () => {
+//     const o = new AssertOrder(1)
+//     const s = await spec(simpleCallback.success)
 
-    s.onAny(action => {
-      o.exactly(1, 5)
-      t(action)
-    })
+//     s.onAny(action => {
+//       o.exactly(1, 5)
+//       t(action)
+//     })
 
-    await simpleCallback.increment(s.subject, 2)
-    o.end()
-  })
-})
+//     await simpleCallback.increment(s.subject, 2)
+//     o.end()
+//   })
+// })
 
-k.trio('function/simpleCallback/success', (title, spec) => {
-  test(title, async () => {
-    const o = new AssertOrder(4)
-    const s = await spec(simpleCallback.success)
+// k.trio('function/simpleCallback/success', (title, spec) => {
+//   test(title, async () => {
+//     const o = new AssertOrder(4)
+//     const s = await spec(simpleCallback.success)
 
-    s.on('function', 'invoke', action => {
-      o.on(1, () => satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 }))
-      o.on(2, () => satisfy(action, { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 }))
-      o.any([1, 2])
-    })
+//     s.on('function', 'invoke', action => {
+//       o.on(1, () => satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 }))
+//       o.on(2, () => satisfy(action, { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 }))
+//       o.any([1, 2])
+//     })
 
-    s.on('function', 'return', action => {
-      o.on(3, () => satisfy(action, { ...functionReturned(), instanceId: 2, invokeId: 1 }))
-      o.on(4, () => satisfy(action, { ...functionReturned(), instanceId: 1, invokeId: 1 }))
-      o.any([3, 4])
-    })
+//     s.on('function', 'return', action => {
+//       o.on(3, () => satisfy(action, { ...functionReturned(), instanceId: 2, invokeId: 1 }))
+//       o.on(4, () => satisfy(action, { ...functionReturned(), instanceId: 1, invokeId: 1 }))
+//       o.any([3, 4])
+//     })
 
-    await simpleCallback.increment(s.subject, 2)
+//     await simpleCallback.increment(s.subject, 2)
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-      { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
-      { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 1, invokeId: 1 }
-    ])
-    o.end()
-  })
-})
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+//       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
+//       { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
+//       { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 1, invokeId: 1 }
+//     ])
+//     o.end()
+//   })
+// })
 
-k.trio('function/simpleCallback/fail', (title, spec) => {
-  test(title, async () => {
-    const o = new AssertOrder(3)
-    const s = await spec(simpleCallback.fail)
+// k.trio('function/simpleCallback/fail', (title, spec) => {
+//   test(title, async () => {
+//     const o = new AssertOrder(3)
+//     const s = await spec(simpleCallback.fail)
 
-    s.on('function', 'invoke', action => {
-      o.on(1, () => satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 }))
-      o.on(2, () => satisfy(action, { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 }))
-      o.any([1, 2])
-    })
+//     s.on('function', 'invoke', action => {
+//       o.on(1, () => satisfy(action, { ...functionInvoked(2), instanceId: 1, invokeId: 1 }))
+//       o.on(2, () => satisfy(action, { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 }))
+//       o.any([1, 2])
+//     })
 
-    s.on('function', 'return', action => {
-      o.on(3, () => satisfy(action, { ...functionReturned(), instanceId: 2, invokeId: 1 }))
-      o.on(4, () => satisfy(action, { ...functionReturned(), instanceId: 1, invokeId: 1 }))
-      o.any([3, 4])
-    })
+//     s.on('function', 'return', action => {
+//       o.on(3, () => satisfy(action, { ...functionReturned(), instanceId: 2, invokeId: 1 }))
+//       o.on(4, () => satisfy(action, { ...functionReturned(), instanceId: 1, invokeId: 1 }))
+//       o.any([3, 4])
+//     })
 
-    return simpleCallback.increment(s.subject, 2)
-      .then(() => t.fail('should not reach'))
-      .catch(async () => {
-        await s.satisfy([
-          { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
-          { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
-          { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
-          { ...functionReturned(), instanceId: 2, invokeId: 1 },
-          { ...functionReturned(), instanceId: 1, invokeId: 1 }])
-        o.end()
-      })
-  })
-})
+//     return simpleCallback.increment(s.subject, 2)
+//       .then(() => t.fail('should not reach'))
+//       .catch(async () => {
+//         await s.satisfy([
+//           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
+//           { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
+//           { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
+//           { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
+//           { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//           { ...functionReturned(), instanceId: 1, invokeId: 1 }])
+//         o.end()
+//       })
+//   })
+// })
 
-k.trio('function spec can be called multiple times', 'spec/delayed/multiple', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(delayed.success)
-    await delayed.increment(s.subject, 2)
-    await delayed.increment(s.subject, 4)
+// k.trio('function spec can be called multiple times', 'spec/delayed/multiple', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(delayed.success)
+//     await delayed.increment(s.subject, 2)
+//     await delayed.increment(s.subject, 4)
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-      { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
-      { ...functionReturned(), instanceId: 1, invokeId: 1 },
-      { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 2, invokeId: 1 },
-      { ...functionInvoked(4), instanceId: 1, invokeId: 2 },
-      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [1] },
-      { ...functionReturned(), instanceId: 1, invokeId: 2 },
-      { ...functionInvoked(null, 5), instanceId: 3, invokeId: 1 },
-      { ...functionReturned(), instanceId: 3, invokeId: 1 }
-    ])
-  })
-})
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+//       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
+//       { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
+//       { ...functionReturned(), instanceId: 1, invokeId: 1 },
+//       { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//       { ...functionInvoked(4), instanceId: 1, invokeId: 2 },
+//       { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [1] },
+//       { ...functionReturned(), instanceId: 1, invokeId: 2 },
+//       { ...functionInvoked(null, 5), instanceId: 3, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 3, invokeId: 1 }
+//     ])
+//   })
+// })
 
-k.trio('function/fetch/success', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(fetch.success)
+// k.trio('function/fetch/success', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(fetch.success)
 
-    const actual = await fetch.add(s.subject, 1, 2)
+//     const actual = await fetch.add(s.subject, 1, 2)
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-      { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
-      { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 1, invokeId: 1 }
-    ])
-    t.strictEqual(actual, 3)
-  })
-})
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+//       { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
+//       { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
+//       { ...functionInvoked(null, 3), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 1, invokeId: 1 }
+//     ])
+//     t.strictEqual(actual, 3)
+//   })
+// })
 
-k.trio('function/fetch/fail', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(fetch.fail)
-    return fetch.add(s.subject, 1, 2)
-      .then(() => t.fail('should not reach'))
-      .catch(() => {
-        return s.satisfy([
-          { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
-          { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
-          { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
-          { ...functionReturned(), instanceId: 2, invokeId: 1 },
-          { ...functionReturned(), instanceId: 1, invokeId: 1 }
-        ])
-      })
-  })
-})
+// k.trio('function/fetch/fail', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(fetch.fail)
+//     return fetch.add(s.subject, 1, 2)
+//       .then(() => t.fail('should not reach'))
+//       .catch(() => {
+//         return s.satisfy([
+//           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
+//           { ...functionInvoked('remoteAdd', { x: 1, y: 2 }), instanceId: 1, invokeId: 1 },
+//           { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
+//           { ...functionInvoked({ message: 'fail' }), instanceId: 2, invokeId: 1 },
+//           { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//           { ...functionReturned(), instanceId: 1, invokeId: 1 }
+//         ])
+//       })
+//   })
+// })
 
-k.trio('function/literalCallback/success', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(literalCallback.success)
-    const actual = await literalCallback.increment(s.subject, 2)
+// k.trio('function/literalCallback/success', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(literalCallback.success)
+//     const actual = await literalCallback.increment(s.subject, 2)
 
-    t.strictEqual(actual, 3)
+//     t.strictEqual(actual, 3)
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-      { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'error'] },
-      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'success'] },
-      { ...functionInvoked(3), instanceId: 3, invokeId: 1 },
-      { ...functionReturned(), instanceId: 3, invokeId: 1 },
-      { ...functionReturned(), instanceId: 1, invokeId: 1 }
-    ])
-  })
-})
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+//       { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
+//       { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'error'] },
+//       { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'success'] },
+//       { ...functionInvoked(3), instanceId: 3, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 3, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 1, invokeId: 1 }
+//     ])
+//   })
+// })
 
 k.trio('function/literalCallback/fail', (title, spec) => {
   test(title, async () => {

@@ -115,6 +115,18 @@ describe('es5/function', () => {
     })
   })
 
+  k.trio('callback in object literal fail', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(callbackInObjLiteral.fail)
+
+      const err = await a.throws(callbackInObjLiteral.increment(s.subject, 2), Error)
+
+      expect(err.message).toBe('fail')
+
+      await s.done()
+    })
+  })
+
   k.trio('callback in deep object literal success', (title, spec) => {
     test(title, async () => {
       const s = await spec(callbackInDeepObjLiteral.success)

@@ -38,7 +38,7 @@ export const callbackInObjLiteral = {
     options.success(options.data + 1)
   },
   fail(options: { data: number, success: Function, error: Function }) {
-    options.error(null, 'failStatus', { message: 'fail' })
+    options.error(null, 'failStatus', new Error('fail'))
   }
 }
 
