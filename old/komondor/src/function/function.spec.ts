@@ -213,52 +213,52 @@ async function testObject(expected) {
 //   })
 // })
 
-k.trio('function/literalCallback/fail', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(literalCallback.fail)
-    await literalCallback.increment(s.subject, 2)
-      .then(() => t.fail('should not reach'))
-      .catch(() => {
-        return s.satisfy([
-          { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
-          { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
-          { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'error'] },
-          { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'success'] },
-          { ...functionInvoked(undefined, undefined, { message: 'fail' }), instanceId: 2, invokeId: 1 },
-          { ...functionReturned(), instanceId: 2, invokeId: 1 },
-          { ...functionReturned(), instanceId: 1, invokeId: 1 }
-        ])
-      })
-  })
-})
+// k.trio('function/literalCallback/fail', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(literalCallback.fail)
+//     await literalCallback.increment(s.subject, 2)
+//       .then(() => t.fail('should not reach'))
+//       .catch(() => {
+//         return s.satisfy([
+//           { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
+//           { ...functionInvoked({ data: 2 }), instanceId: 1, invokeId: 1 },
+//           { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'error'] },
+//           { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [0, 'success'] },
+//           { ...functionInvoked(undefined, undefined, { message: 'fail' }), instanceId: 2, invokeId: 1 },
+//           { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//           { ...functionReturned(), instanceId: 1, invokeId: 1 }
+//         ])
+//       })
+//   })
+// })
 
-k.trio('function/synchronous/success', (title, spec) => {
-  test(title, async () => {
-    const speced = await spec(synchronous.success)
-    const actual = synchronous.increment(speced.subject, 2)
+// k.trio('function/synchronous/success', (title, spec) => {
+//   test(title, async () => {
+//     const speced = await spec(synchronous.success)
+//     const actual = synchronous.increment(speced.subject, 2)
 
-    t.strictEqual(actual, 3)
-    await speced.satisfy([
-      { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-      { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
-      { ...functionReturned(3), instanceId: 1, invokeId: 1 }
-    ])
-  })
-})
+//     t.strictEqual(actual, 3)
+//     await speced.satisfy([
+//       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+//       { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
+//       { ...functionReturned(3), instanceId: 1, invokeId: 1 }
+//     ])
+//   })
+// })
 
-k.trio('function/synchronous/fail', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(synchronous.fail)
+// k.trio('function/synchronous/fail', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(synchronous.fail)
 
-    a.throws(() => synchronous.increment(s.subject, 2), e => e instanceof Error && e.message === 'fail')
+//     a.throws(() => synchronous.increment(s.subject, 2), e => e instanceof Error && e.message === 'fail')
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
-      { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
-      { ...functionThrown({ message: 'fail' }), instanceId: 1, invokeId: 1 }
-    ])
-  })
-})
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'fail' }), instanceId: 1 },
+//       { ...functionInvoked('increment', 2), instanceId: 1, invokeId: 1 },
+//       { ...functionThrown({ message: 'fail' }), instanceId: 1, invokeId: 1 }
+//     ])
+//   })
+// })
 
 k.trio('function/recursive/twoCalls', (title, spec) => {
   test(title, async () => {

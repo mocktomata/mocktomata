@@ -4,7 +4,7 @@ import { createTestHarness, TestHarness } from '..';
 import { loadPlugins } from '../plugin';
 import { NotSpecable } from '../spec';
 import k from '../test-util';
-import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral } from './testSubjects';
+import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -133,6 +133,28 @@ describe('es5/function', () => {
 
       expect(await callbackInDeepObjLiteral.increment(s.subject, 2)).toBe(3)
       expect(await callbackInDeepObjLiteral.increment(s.subject, 4)).toBe(5)
+
+      await s.done()
+    })
+  })
+
+  k.trio('synchronous callback success', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(synchronous.success)
+
+      expect(synchronous.increment(s.subject, 3)).toBe(4)
+
+      await s.done()
+    })
+  })
+
+  k.trio('synchronous callback throws', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(synchronous.fail)
+
+      const err = a.throws(() => synchronous.increment(s.subject, 3), Error)
+
+      expect(err.message).toBe('fail')
 
       await s.done()
     })

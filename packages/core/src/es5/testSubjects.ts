@@ -67,10 +67,10 @@ export const callbackInDeepObjLiteral = {
 }
 
 export const synchronous = {
-  increment(remote: Function, x: number) {
-    return remote('increment', x)
+  increment(remote: (x: number) => number, x: number) {
+    return remote(x)
   },
-  success(_url: string, x: number) {
+  success(x: number) {
     return x + 1
   },
   fail() {
