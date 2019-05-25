@@ -1,10 +1,11 @@
+import t from 'assert';
 import a from 'assertron';
 import * as es5Module from '.';
 import { createTestHarness, TestHarness } from '..';
 import { loadPlugins } from '../plugin';
 import { NotSpecable } from '../spec';
 import k from '../test-util';
-import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous } from './testSubjects';
+import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -158,6 +159,48 @@ describe('es5/function', () => {
 
       await s.done()
     })
+  })
+
+  k.trio('recursive two calls success', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(recursive.success)
+
+      const actual = await recursive.decrementToZero(s.subject, 2)
+
+      expect(actual).toBe(0)
+
+      await s.done()
+    })
+  })
+
+  k.trio('invoke callback after returns', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(postReturn.fireEvent)
+
+      await new Promise(a => {
+        let called = 0
+        s.subject('event', 3, () => {
+          called++
+          if (called === 3)
+            a()
+        })
+      })
+
+      await s.done()
+    })
+  })
+})
+
+k.save('functino with array arguments', (title, spec) => {
+  test.skip(title, async () => {
+    const s = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
+    const actual = s.subject('node', ['--version'])
+
+    t.strictEqual(actual.name, 'node')
+    console.log(actual)
+    t(Array.isArray(actual.args))
+    t.strictEqual(actual.args[0], '--version')
+    await s.done()
   })
 })
 

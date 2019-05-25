@@ -260,57 +260,57 @@ async function testObject(expected) {
 //   })
 // })
 
-k.trio('function/recursive/twoCalls', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(recursive.success)
-    const actual = await recursive.decrementToZero(s.subject, 2)
-    t.strictEqual(actual, 0)
+// k.trio('function/recursive/twoCalls', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(recursive.success)
+//     const actual = await recursive.decrementToZero(s.subject, 2)
+//     t.strictEqual(actual, 0)
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
-      { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
-      { ...functionInvoked(null, 1), instanceId: 2, invokeId: 1 },
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'success' }), instanceId: 1 },
+//       { ...functionInvoked(2), instanceId: 1, invokeId: 1 },
+//       { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [1] },
+//       { ...functionInvoked(null, 1), instanceId: 2, invokeId: 1 },
 
-      { ...functionInvoked(1), instanceId: 1, invokeId: 2 },
-      { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [1] },
-      { ...functionInvoked(null, 0), instanceId: 3, invokeId: 1 },
-      { ...functionReturned(), instanceId: 3, invokeId: 1 },
-      { ...functionReturned(), instanceId: 1, invokeId: 2 },
-      { ...functionReturned(), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 1, invokeId: 1 }
-    ])
-  })
-})
+//       { ...functionInvoked(1), instanceId: 1, invokeId: 2 },
+//       { ...functionConstructed(), instanceId: 3, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 2, sourceSite: [1] },
+//       { ...functionInvoked(null, 0), instanceId: 3, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 3, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 1, invokeId: 2 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 1, invokeId: 1 }
+//     ])
+//   })
+// })
 
-k.trio('function/postReturn/success', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(postReturn.fireEvent)
-    // console.log(s.actions)
-    await new Promise(a => {
-      let called = 0
-      s.subject('event', 3, () => {
-        called++
-        // console.log('received event', called)
-        if (called === 3)
-          a()
-      })
-    })
+// k.trio('function/postReturn/success', (title, spec) => {
+//   test(title, async () => {
+//     const s = await spec(postReturn.fireEvent)
+//     // console.log(s.actions)
+//     await new Promise(a => {
+//       let called = 0
+//       s.subject('event', 3, () => {
+//         called++
+//         // console.log('received event', called)
+//         if (called === 3)
+//           a()
+//       })
+//     })
 
-    await s.satisfy([
-      { ...functionConstructed({ functionName: 'fireEvent' }), instanceId: 1 },
-      { ...functionInvoked('event', 3), instanceId: 1, invokeId: 1 },
-      { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
-      { ...functionReturned(), instanceId: 1, invokeId: 1 },
-      { ...functionInvoked('event'), instanceId: 2, invokeId: 1 },
-      { ...functionReturned(), instanceId: 2, invokeId: 1 },
-      { ...functionInvoked('event'), instanceId: 2, invokeId: 2 },
-      { ...functionReturned(), instanceId: 2, invokeId: 2 },
-      { ...functionInvoked('event'), instanceId: 2, invokeId: 3 },
-      { ...functionReturned(), instanceId: 2, invokeId: 3 }
-    ])
-  })
-})
+//     await s.satisfy([
+//       { ...functionConstructed({ functionName: 'fireEvent' }), instanceId: 1 },
+//       { ...functionInvoked('event', 3), instanceId: 1, invokeId: 1 },
+//       { ...functionConstructed(), instanceId: 2, sourceType: 'function', sourceInstanceId: 1, sourceInvokeId: 1, sourceSite: [2] },
+//       { ...functionReturned(), instanceId: 1, invokeId: 1 },
+//       { ...functionInvoked('event'), instanceId: 2, invokeId: 1 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 1 },
+//       { ...functionInvoked('event'), instanceId: 2, invokeId: 2 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 2 },
+//       { ...functionInvoked('event'), instanceId: 2, invokeId: 3 },
+//       { ...functionReturned(), instanceId: 2, invokeId: 3 }
+//     ])
+//   })
+// })
 
 k.trio('function/arrayArgs/success', (title, spec) => {
   test(title, async () => {
