@@ -19,6 +19,7 @@ export interface KomondorPlugin<S = any> {
   getStub(context: StubContext, subject: S): S,
   serialize?: (subject: S) => string,
   deserialize?: (input: string) => S,
+  construct?: (target: S, args: any[]) => any,
   invoke?: (target: S, args: any[]) => any,
   get?: (target: S, prop: KeyTypes) => any,
 }
@@ -41,7 +42,20 @@ export type SpyInvokeRecorder = {
 }
 
 export type StubContext = {
-  newStubRecorder(stub?: any, meta?: Meta): any
+  newStubRecorder(stub?: any, meta?: Meta): StubPlayer
+}
+
+export type StubPlayer = {
+  construct(args?: any[]): any,
+  invoke(args?: any[]): StubInvokeRecorder,
+  get(prop: KeyTypes): any,
+  set(prop: KeyTypes, value: any): any,
+}
+
+export type StubInvokeRecorder = {
+  succeed(): boolean,
+  return(): any,
+  throw(): any,
 }
 
 export type PluginIO = {

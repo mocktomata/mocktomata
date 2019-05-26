@@ -191,16 +191,17 @@ describe('es5/function', () => {
   })
 })
 
-k.save('functino with array arguments', (title, spec) => {
+k.trio('function with array arguments', (title, spec) => {
   test.skip(title, async () => {
+    harness.showLog()
     const s = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
     const actual = s.subject('node', ['--version'])
 
     t.strictEqual(actual.name, 'node')
-    console.log(actual)
     t(Array.isArray(actual.args))
     t.strictEqual(actual.args[0], '--version')
     await s.done()
+    harness.logSpecs()
   })
 })
 

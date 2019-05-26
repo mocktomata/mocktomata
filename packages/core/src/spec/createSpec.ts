@@ -106,13 +106,12 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
       const ref = recordTracker.getId(plugin.name, spy, isSubject)
       return {
         construct(args: any[] = []) {
-          recordTracker.addAction({
-            type: 'construct',
-            payload: args,
-            id: ref
-          })
+          const spiedArgs = args.map((arg, i) => getSpy(recordTracker, arg, { ref, site: [i] }))
+          recordTracker.construct(ref, spiedArgs)
 
-          return {} as any
+          return {
+            spiedArgs
+          } as any
         },
         /**
          * @param target The scope. This is usually the stub.
@@ -125,12 +124,12 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
             spiedArgs,
             return(result: any) {
               const spiedResult = getSpy(recordTracker, result)
-              recordTracker.return(ref, spiedResult)
+              recordTracker.invokeReturn(ref, spiedResult)
               return spiedResult
             },
             throw(error: any) {
               const spiedError = getSpy(recordTracker, error)
-              recordTracker.throw(ref, spiedError)
+              recordTracker.invokeThrow(ref, spiedError)
               return spiedError
             }
           }
@@ -141,12 +140,12 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
           return {
             return(result: any) {
               const spiedResult = getSpy(recordTracker, result)
-              recordTracker.return(ref, spiedResult)
+              recordTracker.getReturn(ref, prop, spiedResult)
               return spiedResult
             },
             throw(error: any) {
               const spiedError = getSpy(recordTracker, error)
-              recordTracker.throw(ref, spiedError)
+              recordTracker.getThrow(ref, prop, spiedError)
               return spiedError
             }
           }
@@ -157,12 +156,12 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
           return {
             return(result: any) {
               const spiedResult = getSpy(recordTracker, result)
-              recordTracker.return(ref, spiedResult)
+              recordTracker.setReturn(ref, prop, value, spiedResult)
               return spiedResult
             },
             throw(error: any) {
               const spiedError = getSpy(recordTracker, error)
-              recordTracker.throw(ref, spiedError)
+              recordTracker.setThrow(ref, prop, value, spiedError)
               return spiedError
             }
           }
@@ -173,6 +172,8 @@ function createSpyContext(recordTracker: SpecRecordTracker, plugin: PluginInstan
 }
 
 function getSpy<T>(recordTracker: SpecRecordTracker, subject: T, source?: any): T {
+  if (recordTracker.findId(subject)) return subject
+
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
@@ -226,6 +227,15 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
     newStubRecorder(stub: any, meta?: Meta) {
       const ref = recordValidator.getId(plugin.name, stub)
       return {
+        construct(args: any[] = []) {
+          const spiedArgs = args.map((arg, i) => getSpy(recordValidator, arg, { ref, site: [i] }))
+          recordValidator.construct(ref, spiedArgs)
+          recordValidator.processNextActions()
+
+          return {
+            spiedArgs
+          } as any
+        },
         invoke(args: any[] = []) {
           const spiedArgs = args.map(arg => getSpy(recordValidator, arg))
           log.onDebug(log => log(`invoke:`, `"${ref}" with ${tersify(args)}`))
@@ -237,11 +247,43 @@ function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginI
             },
             return() {
               recordValidator.scheduleProcessNextActions()
-              return recordValidator.return()
+              return recordValidator.invokeReturn()
             },
             throw() {
               recordValidator.scheduleProcessNextActions()
-              return recordValidator.throw()
+              return recordValidator.invokeThrow()
+            }
+          }
+        },
+        // todo: handle symbol, use KeyTypes
+        get(prop: string | number) {
+          recordValidator.get(ref, prop)
+          return {
+            return(result: any) {
+              const spiedResult = getSpy(recordValidator, result)
+              recordValidator.getReturn(ref, prop, spiedResult)
+              return spiedResult
+            },
+            throw(error: any) {
+              const spiedError = getSpy(recordValidator, error)
+              recordValidator.getThrow(ref, prop, spiedError)
+              return spiedError
+            }
+          }
+        },
+        // todo: handle symbol, use KeyTypes
+        set(prop: string | number, value: any) {
+          recordValidator.set(ref, prop, value)
+          return {
+            return(result: any) {
+              const spiedResult = getSpy(recordValidator, result)
+              recordValidator.setReturn(ref, prop, value, spiedResult)
+              return spiedResult
+            },
+            throw(error: any) {
+              const spiedError = getSpy(recordValidator, error)
+              recordValidator.setThrow(ref, prop, value, spiedError)
+              return spiedError
             }
           }
         }

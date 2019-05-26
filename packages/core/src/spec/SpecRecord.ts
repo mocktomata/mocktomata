@@ -1,9 +1,9 @@
+import { tersify } from 'tersify';
+import { log } from '../common';
 import { getPlugin } from '../plugin';
 import { SimulationMismatch } from './errors';
 import { isMismatchAction } from './isMismatchAction';
-import { InvokeAction, SpecAction, SpecRecord, GetAction, SetAction } from './types';
-import { log } from '../common';
-import { tersify } from 'tersify';
+import { ConstructAction, GetAction, InvokeAction, SetAction, SpecAction, SpecRecord, InvokeReturnAction, InvokeThrowAction, SetReturnAction, SetThrowAction, GetThrowAction, GetReturnAction } from './types';
 
 export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
 
@@ -23,11 +23,34 @@ export function createSpecRecordTracker(record: SpecRecord) {
       if (id !== -1) return String(id)
       return undefined
     },
+    construct(ref: string, args: any[]) {
+      record.actions.push({
+        type: 'construct',
+        id: ref,
+        payload: args.map(arg => this.findId(arg) || arg)
+      })
+    },
     invoke(ref: string, args: any[]) {
       record.actions.push({
         type: 'invoke',
         id: ref,
         payload: args.map(arg => this.findId(arg) || arg)
+      })
+    },
+    invokeReturn(ref: string, result: any) {
+      const payload = this.findId(result) || result
+      record.actions.push({
+        type: 'invoke-return',
+        id: ref,
+        payload
+      })
+    },
+    invokeThrow(ref: string, err: any) {
+      const payload = this.findId(err) || err
+      record.actions.push({
+        type: 'invoke-throw',
+        id: ref,
+        payload
       })
     },
     get(ref: string, prop: string | number) {
@@ -37,6 +60,20 @@ export function createSpecRecordTracker(record: SpecRecord) {
         payload: prop
       })
     },
+    getReturn(ref: string, prop: string | number, value: any) {
+      record.actions.push({
+        type: 'get-return',
+        id: ref,
+        payload: [prop, value]
+      })
+    },
+    getThrow(ref: string, prop: string | number, value: any) {
+      record.actions.push({
+        type: 'get-throw',
+        id: ref,
+        payload: [prop, value]
+      })
+    },
     set(ref: string, prop: string | number, value: any) {
       record.actions.push({
         type: 'set',
@@ -44,25 +81,19 @@ export function createSpecRecordTracker(record: SpecRecord) {
         payload: [prop, value]
       })
     },
-    return(ref: string, result: any) {
-      const payload = this.findId(result) || result
+    setReturn(ref: string, prop: string | number, input: any, value: any) {
       record.actions.push({
-        type: 'return',
+        type: 'set-return',
         id: ref,
-        payload
+        payload: [prop, input, value]
       })
     },
-    throw(ref: string, err: any) {
-      const payload = this.findId(err) || err
+    setThrow(ref: string, prop: string | number, input: any, value: any) {
       record.actions.push({
-        type: 'throw',
+        type: 'set-throw',
         id: ref,
-        payload
+        payload: [prop, input, value]
       })
-    },
-
-    addAction(action: SpecAction) {
-      record.actions.push(action)
     }
   }
 }
@@ -72,6 +103,11 @@ export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 export function createSpecRecordValidator(id: string, loaded: SpecRecord, record: SpecRecord) {
   // not using specific type as the type is platform specific (i.e. NodeJS.Immediate)
   const scheduled: any[] = []
+  function addAction(action: SpecAction) {
+    validateAction(id, loaded, record, action)
+    record.actions.push(action)
+  }
+
   return {
     loaded,
     record,
@@ -117,14 +153,33 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     peekNextAction(): SpecAction | undefined {
       return loaded.actions[record.actions.length]
     },
+    construct(ref: string, args: any[]) {
+      const action: ConstructAction = {
+        type: 'construct',
+        id: ref,
+        payload: args.map(arg => this.findId(arg) || arg)
+      }
+      addAction(action)
+    },
     invoke(ref: string, args: any[]) {
       const action: InvokeAction = {
         type: 'invoke',
         id: ref,
         payload: args.map(arg => this.findId(arg) || arg)
       }
-      validateAction(id, loaded, record, action)
-      record.actions.push(action)
+      addAction(action)
+    },
+    invokeReturn() {
+      const action = this.peekNextAction() as InvokeReturnAction
+      const result = this.getTarget(action.payload) || action.payload
+      addAction(action)
+      return result
+    },
+    invokeThrow() {
+      const action = this.peekNextAction() as InvokeThrowAction
+      const err = this.getTarget(action.payload) || action.payload
+      addAction(action)
+      return err
     },
     get(ref: string, prop: string | number) {
       const action: GetAction = {
@@ -132,8 +187,23 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
         id: ref,
         payload: prop
       }
-      validateAction(id, loaded, record, action)
-      record.actions.push(action)
+      addAction(action)
+    },
+    getReturn(ref: string, prop: string | number, value: any) {
+      const action: GetReturnAction = {
+        type: 'get-return',
+        id: ref,
+        payload: [prop, value]
+      }
+      addAction(action)
+    },
+    getThrow(ref: string, prop: string | number, value: any) {
+      const action: GetThrowAction = {
+        type: 'get-throw',
+        id: ref,
+        payload: [prop, value]
+      }
+      addAction(action)
     },
     set(ref: string, prop: string | number, value: any) {
       const action: SetAction = {
@@ -141,51 +211,59 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
         id: ref,
         payload: [prop, value]
       }
-      validateAction(id, loaded, record, action)
-      record.actions.push(action)
+      addAction(action)
     },
-    return() {
-      const next = this.peekNextAction()!
-      const result = this.getTarget(next.payload) || next.payload
-      validateAction(id, loaded, record, next)
-      record.actions.push(next)
-      return result
+    setReturn(ref: string, prop: string | number, input: any, value: any) {
+      const action: SetReturnAction = {
+        type: 'set-return',
+        id: ref,
+        payload: [prop, input, value]
+      }
+      addAction(action)
     },
-    throw() {
-      const next = this.peekNextAction()!
-      const err = this.getTarget(next.payload) || next.payload
-      validateAction(id, loaded, record, next)
-      record.actions.push(next)
-      return err
-    },
-    addAction(action: SpecAction) {
-      validateAction(id, loaded, record, action)
-      record.actions.push(action)
+    setThrow(ref: string, prop: string | number, input: any, value: any) {
+      const action: SetThrowAction = {
+        type: 'set-throw',
+        id: ref,
+        payload: [prop, input, value]
+      }
+      addAction(action)
     },
     succeed() {
       const next = this.peekNextAction()!
-      return next.type === 'return'
+      return next.type === 'invoke-return'
     },
     processNextActions() {
       const next = this.peekNextAction()
-      log.debug(`next action:`, next)
+      log.warn(`next action:`, next)
       if (!next || this.isSubject(next.id)) return
 
       const ref = this.getRef(next.id)
+      log.warn(`ref`, ref, record.refs)
       const plugin = getPlugin(ref.plugin)!
       const target = this.getTarget(next.id)
 
       // TOTHINK: where does the return value go to? All not used?
+      // setup expectation for stub?
       switch (next.type) {
+        case 'construct':
+          const constructArgs = next.payload.map(x => typeof x === 'string' ? this.getTarget(x) : x)
+          log.onDebug(() => `auto construct: "${this.findId(target)}" with ${tersify(constructArgs)}`)
+          plugin.construct!(target, constructArgs)
+          this.processNextActions()
+          break;
         case 'invoke':
           const args = next.payload.map(x => typeof x === 'string' ? this.getTarget(x) : x)
           log.onDebug(() => `auto invoke: "${this.findId(target)}" with ${tersify(args)}`)
-          plugin.invoke!(target, args)
+          target(...args)
+          // plugin.invoke!(target, args)
           this.processNextActions()
           break;
         case 'get':
-          log.onDebug(() => `auto get: "${this.findId(target)}" for ${tersify(next.payload)}`)
-          plugin.get!(target, next.payload)
+          // log.onDebug(() => `auto get: "${this.findId(target)}" for ${tersify(next.payload)}`)
+          // tslint:disable-next-line: no-unused-expression
+          target[next.payload]
+          // plugin.get!(target, next.payload)
           this.processNextActions()
           break;
       }

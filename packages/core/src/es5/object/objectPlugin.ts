@@ -30,7 +30,28 @@ export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
     return spy
   },
   getStub: (context, subject) => {
-    return subject
+    const propertyNames = getPropertyNames(subject)
+    const stub: any = {}
+    const describeProps = propertyNames.reduce((p, name) => {
+      p[name] = {
+        get() {
+          const getter = recorder.get(name)
+          // TODO: handle throw
+          const result = subject[name]
+          return getter.return(result)
+        },
+        set(value: any) {
+          const setter = recorder.set(name, value)
+          // TODO: handle throw
+          const result = subject[name] = value
+          return setter.return(result)
+        }
+      }
+      return p
+    }, {} as any)
+    Object.defineProperties(stub, describeProps)
+    const recorder = context.newStubRecorder(stub)
+    return stub
   },
   get: (spy, prop) => {
     return spy[prop as any]

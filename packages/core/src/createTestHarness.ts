@@ -10,7 +10,7 @@ import { createTestIO } from './test-util';
 export type TestHarness = ReturnType<typeof createTestHarness>
 
 export function createTestHarness(options?: Partial<{ level: number, showLog: boolean }>) {
-  let { level, showLog } = required({ level: logLevel.info, showLog: true }, options)
+  let { level, showLog } = required({ level: logLevel.info, showLog: false }, options)
   const appender = new MemoryAppender()
   addAppender(appender)
   if (showLog) addAppender(new ColorAppender())

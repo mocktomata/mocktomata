@@ -55,41 +55,68 @@ export type SpecReferenceBase = {
  */
 export type Meta = Record<string, any>
 
-export type SpecAction = ConstructAction | InvokeAction | GetAction | SetAction |
-  ReturnAction | ThrowAction
+export type SpecAction = ConstructAction |
+  InvokeAction | InvokeReturnAction | InvokeThrowAction |
+  GetAction | GetReturnAction | GetThrowAction |
+  SetAction | SetReturnAction | SetThrowAction
+
 
 export type ConstructAction = {
   type: 'construct',
-  payload: any[],
   id: string,
+  payload: any[],
 }
 
 export type InvokeAction = {
   type: 'invoke',
+  id: string
   payload: any[],
-  id: string
 }
 
-export type ReturnAction = {
-  type: 'return',
-  payload: any,
+export type InvokeReturnAction = {
+  type: 'invoke-return',
   id: string
+  payload: any,
 }
 
-export type ThrowAction = {
-  type: 'throw',
-  payload: any,
+export type InvokeThrowAction = {
+  type: 'invoke-throw',
   id: string
+  payload: any,
 }
 
 export type GetAction = {
   type: 'get',
-  payload: string | number,
   id: string
+  payload: string | number,
+}
+
+export type GetReturnAction = {
+  type: 'get-return',
+  id: string,
+  payload: [string | number, any]
+}
+
+export type GetThrowAction = {
+  type: 'get-throw',
+  id: string,
+  payload: [string | number, any]
 }
 
 export type SetAction = {
   type: 'set',
-  payload: [string | number, any],
-  id: string
+  id: string,
+  payload: [string | number, any]
+}
+
+export type SetReturnAction = {
+  type: 'set-return',
+  id: string,
+  payload: [string | number, any, any]
+}
+
+export type SetThrowAction = {
+  type: 'set-throw',
+  id: string,
+  payload: [string | number, any, any]
 }
