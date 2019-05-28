@@ -7,7 +7,7 @@ export const missSupportPluginModule = {
 
 // istanbul ignore next
 export const missSupportPlugin = {
-  getSpy() { return {} },
-  getStub() { return {} },
+  createSpy() { return {} },
+  createStub() { return {} },
   serialize() { return '' }
 }

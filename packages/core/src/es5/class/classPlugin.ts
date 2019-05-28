@@ -6,6 +6,9 @@ import { stubClass } from './stubClass';
 export const classPlugin: KomondorPlugin = {
   name: 'class',
   support: isClass,
-  getSpy: spyClass,
-  getStub: stubClass
+  createSpy: spyClass,
+  createStub: stubClass,
+  createReplayer(context, value) {
+    return {}
+  }
 }

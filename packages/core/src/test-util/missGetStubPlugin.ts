@@ -8,6 +8,6 @@ export const missGetStubPluginModule = {
 // istanbul ignore next
 export const missGetStubPlugin = {
   support() { return false },
-  getSpy() { return {} },
+  createSpy() { return {} },
   serialize() { return '' }
 }

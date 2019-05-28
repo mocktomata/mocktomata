@@ -29,8 +29,8 @@ function assertPluginConfirming(plugin: any) {
   if (
     !plugin ||
     typeof plugin.support !== 'function' ||
-    typeof plugin.getSpy !== 'function' ||
-    typeof plugin.getStub !== 'function'
+    typeof plugin.createSpy !== 'function' ||
+    typeof plugin.createStub !== 'function'
   )
     throw new PluginNotConforming(plugin.name)
 }

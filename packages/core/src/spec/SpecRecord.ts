@@ -3,16 +3,17 @@ import { log } from '../common';
 import { getPlugin } from '../plugin';
 import { SimulationMismatch } from './errors';
 import { isMismatchAction } from './isMismatchAction';
-import { ConstructAction, GetAction, InvokeAction, SetAction, SpecAction, SpecRecord, InvokeReturnAction, InvokeThrowAction, SetReturnAction, SetThrowAction, GetThrowAction, GetReturnAction } from './types';
+import { ConstructAction, GetAction, GetReturnAction, GetThrowAction, InvokeAction, InvokeReturnAction, InvokeThrowAction, SetAction, SetReturnAction, SetThrowAction, SpecAction, SpecRecord } from './types';
+import { SpecRecordLive } from './typesInternal';
 
 export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
 
-export function createSpecRecordTracker(record: SpecRecord) {
+export function createSpecRecordTracker(record: SpecRecordLive) {
   return {
-    getId(plugin: string, target: any, isSubject?: true) {
+    getId(plugin: string, subject: any, target: any, serialize = true) {
       const id = this.findId(target)
       if (!id) {
-        record.refs.push(isSubject ? { plugin, target, isSubject } : { plugin, target })
+        record.refs.push(serialize ? { plugin, subject, target, serialize } : { plugin, subject, target })
         return String(record.refs.length - 1)
       }
 
@@ -100,7 +101,7 @@ export function createSpecRecordTracker(record: SpecRecord) {
 
 export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 
-export function createSpecRecordValidator(id: string, loaded: SpecRecord, record: SpecRecord) {
+export function createSpecRecordValidator(id: string, loaded: SpecRecord, record: SpecRecordLive) {
   // not using specific type as the type is platform specific (i.e. NodeJS.Immediate)
   const scheduled: any[] = []
   function addAction(action: SpecAction) {
@@ -111,10 +112,10 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
   return {
     loaded,
     record,
-    getId(plugin: string, target: any) {
+    getId(plugin: string, subject: any, target: any) {
       const ref = this.findId(target)
       if (!ref) {
-        record.refs.push({ plugin, target })
+        record.refs.push({ plugin, subject, target })
         return String(record.refs.length - 1)
       }
 
@@ -128,24 +129,27 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     getRef(id: string) {
       return record.refs[Number(id)]
     },
-    isSubject(ref: string) {
+    isSerialized(ref: string) {
       const index = Number(ref)
-      return !!loaded.refs[index].isSubject
+      return !!loaded.refs[index].serialize
     },
-    getTarget(ref: string) {
+    getSubject(ref: string) {
       const index = Number(ref)
       let specRef = record.refs[index]
       if (specRef) return specRef.target
 
       specRef = loaded.refs[index]
       if (specRef) {
-        const plugin = getPlugin(specRef.plugin)
-        if (plugin && plugin.deserialize) {
-          return plugin.deserialize(specRef.target)
+        if (specRef.serialize) {
+          const plugin = getPlugin(specRef.plugin)!
+          if (plugin.deserialize) {
+            // const subject = plugin.deserialize(specRef.subject)
+            // plugin.createStub(recordValidator, subject)
+            return plugin.deserialize(specRef.subject)
+          }
         }
-        else {
-          return specRef.target
-        }
+
+        return specRef.subject
       }
 
       return undefined
@@ -171,13 +175,13 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     },
     invokeReturn() {
       const action = this.peekNextAction() as InvokeReturnAction
-      const result = this.getTarget(action.payload) || action.payload
+      const result = this.getSubject(action.payload) || action.payload
       addAction(action)
       return result
     },
     invokeThrow() {
       const action = this.peekNextAction() as InvokeThrowAction
-      const err = this.getTarget(action.payload) || action.payload
+      const err = this.getSubject(action.payload) || action.payload
       addAction(action)
       return err
     },
@@ -236,24 +240,24 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     processNextActions() {
       const next = this.peekNextAction()
       log.warn(`next action:`, next)
-      if (!next || this.isSubject(next.id)) return
+      if (!next || !this.isSerialized(next.id)) return
 
       const ref = this.getRef(next.id)
       log.warn(`ref`, ref, record.refs)
       const plugin = getPlugin(ref.plugin)!
-      const target = this.getTarget(next.id)
+      const target = this.getSubject(next.id)
 
       // TOTHINK: where does the return value go to? All not used?
       // setup expectation for stub?
       switch (next.type) {
         case 'construct':
-          const constructArgs = next.payload.map(x => typeof x === 'string' ? this.getTarget(x) : x)
+          const constructArgs = next.payload.map(x => typeof x === 'string' ? this.getSubject(x) : x)
           log.onDebug(() => `auto construct: "${this.findId(target)}" with ${tersify(constructArgs)}`)
           plugin.construct!(target, constructArgs)
           this.processNextActions()
           break;
         case 'invoke':
-          const args = next.payload.map(x => typeof x === 'string' ? this.getTarget(x) : x)
+          const args = next.payload.map(x => typeof x === 'string' ? this.getSubject(x) : x)
           log.onDebug(() => `auto invoke: "${this.findId(target)}" with ${tersify(args)}`)
           target(...args)
           // plugin.invoke!(target, args)
@@ -278,9 +282,17 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
   }
 }
 
-function validateAction(id: string, actualRecord: SpecRecord, record: SpecRecord, action: SpecAction) {
-  const expected = actualRecord.actions[record.actions.length]
-  if (isMismatchAction(action, expected)) {
-    throw new SimulationMismatch(id, expected, action)
+function validateAction(id: string, loaded: SpecRecord, record: SpecRecord, action: SpecAction) {
+  const loadedAction = loaded.actions[record.actions.length]
+  if (isMismatchAction(action, loadedAction)) {
+    const expected = {
+      type: loadedAction.type,
+      plugin: loaded.refs[Number(loadedAction.id)].plugin
+    }
+    const actual = {
+      type: action.type,
+      plugin: record.refs[Number(action.id)].plugin
+    }
+    throw new SimulationMismatch(id, expected, actual)
   }
 }

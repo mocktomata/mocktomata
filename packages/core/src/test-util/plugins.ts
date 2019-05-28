@@ -10,8 +10,9 @@ export const echoPluginModule: PluginModule = {
 // istanbul ignore next
 export const echoPlugin: KomondorPlugin = {
   support() { return true },
-  getSpy(_, s) { return s },
-  getStub(_, s) { return s }
+  createSpy(_, s) { return s },
+  createStub(_, s) { return s },
+  createReplayer(_, v) { return v }
 }
 
 
@@ -26,8 +27,9 @@ export const pluginModuleA: PluginModule = {
 export const pluginA: KomondorPlugin = {
   name: 'plugin-a',
   support() { return true },
-  getSpy() { return {} },
-  getStub() { return {} },
+  createSpy() { return {} },
+  createStub() { return {} },
+  createReplayer(_, v) { return v },
   serialize() { return '' }
 }
 

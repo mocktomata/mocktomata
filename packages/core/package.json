@@ -47,7 +47,7 @@
     "ramda": "^0.26.1",
     "satisfier": "^5.0.2",
     "tersify": "^3.0.2",
-    "type-plus": "^1.18.1"
+    "type-plus": "^1.19.0"
   },
   "devDependencies": {
     "@types/ramda": "^0.26.8",

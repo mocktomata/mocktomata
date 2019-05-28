@@ -26,15 +26,19 @@ export type SpecReference = {
    * Name of the plugin
    */
   plugin: string
+
+  subject: any,
+
   /**
-   * `target` is the spy or stub of the subject.
+   * Indicates the reference subject needs to be serialized.
+   * Examples of subjects need to be serialized are:
+   * - strings
+   * - return object or array not passing in from argument
+   * Examples of subjects should not be serialized:
+   * - instantiation of inbound classes.
+   * - return function (cannot be done because scope can't be attached)
    */
-  target: any,
-  /**
-   * Indicate is this a spec subject.
-   * For class, multiple instances of the subject can be created.
-   */
-  isSubject?: true
+  serialize?: true
 }
 
 export type SpecReferenceRecord = SpecReferenceBase & {

@@ -3,7 +3,7 @@ import { KomondorPlugin } from '../../plugin';
 export const arrayPlugin: KomondorPlugin<any[]> = {
   name: 'array',
   support: Array.isArray,
-  getSpy: (context, subject) => {
+  createSpy: (context, subject) => {
     const spy: any[] = []
     const recorder = context.newSpyRecorder(spy)
     const instanceRecorder = recorder.construct(subject)
@@ -11,11 +11,20 @@ export const arrayPlugin: KomondorPlugin<any[]> = {
     instanceRecorder.spiedArgs.forEach((a: any) => spy.push(a))
     return spy
   },
-  getStub: (context, subject) => {
+  createStub: (context, subject) => {
     const stub: any[] = []
     const recorder = context.newStubRecorder(stub)
     const instanceRecorder = recorder.construct(subject)
-    return instanceRecorder.spiedArgs
+    instanceRecorder.stubbedArgs.forEach((a: any) => stub.push(a))
+    return stub
+  },
+  createReplayer(context, value) {
+    const entry = JSON.parse(value) as any[]
+    const fake: any[] = []
+    const replayer = context.newReplayer(fake)
+    const instanceReplayer = replayer.construct(entry)
+    instanceReplayer.stubbedArgs.forEach((a: any) => fake.push(a))
+    return fake
   },
   construct(target, args) {
     console.log(target)

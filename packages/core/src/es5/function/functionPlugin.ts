@@ -11,11 +11,12 @@ export const functionPlugin: KomondorPlugin<Function> = {
 
     return true
   },
-  getSpy: (context, subject) => {
+  createSpy: (context, subject) => {
     const meta = {
       functionName: subject.name,
       properties: getPartialProperties(subject)
     }
+    // const rec = context.newRecorder()
 
     const spy = assignPropertiesIfNeeded(function (this: any, ...args: any[]) {
       const call = recorder.invoke(args)
@@ -27,10 +28,11 @@ export const functionPlugin: KomondorPlugin<Function> = {
         throw call.throw(err)
       }
     }, meta.properties)
+    // const spyRecorder = rec.newSpy(spy)
     const recorder = context.newSpyRecorder(spy, meta)
     return spy
   },
-  getStub: (context, subject) => {
+  createStub: (context, subject) => {
     const meta = {
       functionName: subject.name,
       properties: getPartialProperties(subject)
@@ -45,6 +47,14 @@ export const functionPlugin: KomondorPlugin<Function> = {
       }
     }, meta.properties)
     const recorder = context.newStubRecorder(stub, meta)
+    return stub
+  },
+  createReplayer(context, value) {
+    const stub = function(this: any, ...args: any[]) {
+
+    }
+    // const replayer = context.newReplayer(stub)
+
     return stub
   },
   invoke(target, args) {

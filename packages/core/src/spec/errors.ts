@@ -1,7 +1,6 @@
 import { logLevel } from '@unional/logging';
 import { tersify } from 'tersify';
-import { log, KomondorError } from '../common';
-import { SpecAction } from './types';
+import { KomondorError, log } from '../common';
 
 export class IDCannotBeEmpty extends KomondorError {
   // istanbul ignore next
@@ -32,20 +31,20 @@ export class NotSpecable extends KomondorError {
 
 export class SimulationMismatch extends KomondorError {
   // istanbul ignore next
-  constructor(public specId: string, public expected: Pick<SpecAction, 'type'>, public actual?: Pick<SpecAction, 'type'>) {
+  constructor(public specId: string, public expected: { type: string, plugin: string }, public actual?: { type: string, plugin: string }) {
     super(`Recorded data for '${specId}' doesn't match with simulation. Expecting ${tersifyAction(expected)} but received ${tersifyAction(actual)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
-function tersifyAction(action: Pick<SpecAction, 'type'> | undefined): string {
+function tersifyAction(action: { type: string, plugin: string } | undefined): string {
   if (!action) return 'none'
 
   if (log.level >= logLevel.debug) {
     return tersify(action, { maxLength: Infinity })
   }
   else {
-    return `${['a', 'e', 'i', 'o', 'u'].some(x => action.type.startsWith(x)) ? 'an' : 'a'} ${action.type} action`
+    return `${['a', 'e', 'i', 'o', 'u'].some(x => action.plugin.startsWith(x)) ? 'an' : 'a'} ${action.plugin} ${action.type} action`
   }
 }

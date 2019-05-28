@@ -35,7 +35,8 @@ async function tryCreateHapi(port: number, start: number, end: number): Promise<
     return server
   }
   catch (e) {
-    return tryCreateHapi(port + 1, start, end)
+    // tslint:disable-next-line: no-return-await
+    return await tryCreateHapi(port + 1, start, end)
   }
 }
 

@@ -1,5 +1,4 @@
-import { IO, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@komondor-lab/core';
-import { PluginModule } from '@komondor-lab/plugin';
+import { IO, PluginModule, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@komondor-lab/core';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
 import { CreateIOOptions } from './types';

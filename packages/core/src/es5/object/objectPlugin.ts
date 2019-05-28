@@ -5,31 +5,39 @@ import { getPropertyNames } from '../util';
 export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
-  getSpy: (context, subject) => {
+  createSpy: (context, subject) => {
     const propertyNames = getPropertyNames(subject)
-    const spy: any = {}
-    const describeProps = propertyNames.reduce((p, name) => {
+    const spy = Object.defineProperties({}, propertyNames.reduce((p, name) => {
       p[name] = {
         get() {
-          const getter = recorder.get(name)
-          // TODO: handle throw
-          const result = subject[name]
-          return getter.return(result)
+          const getRecorder = recorder.get(name)
+          try {
+            const result = subject[name]
+            return getRecorder.return(result)
+          }
+          catch (e) {
+            getRecorder.throw(e)
+            throw e
+          }
         },
         set(value: any) {
-          const setter = recorder.set(name, value)
-          // TODO: handle throw
-          const result = subject[name] = value
-          return setter.return(result)
+          const setRecorder = recorder.set(name, value)
+          try {
+            const result = subject[name] = value
+            setRecorder.return(result)
+          }
+          catch (e) {
+            setRecorder.throw(e)
+            throw e
+          }
         }
       }
       return p
-    }, {} as any)
-    Object.defineProperties(spy, describeProps)
-    const recorder = context.newSpyRecorder(spy)
+    }, {} as any))
+    const recorder = context.newSpyRecorder(spy, { props: propertyNames, accessed: [] as string[] })
     return spy
   },
-  getStub: (context, subject) => {
+  createStub: (context, subject) => {
     const propertyNames = getPropertyNames(subject)
     const stub: any = {}
     const describeProps = propertyNames.reduce((p, name) => {
@@ -51,6 +59,12 @@ export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
     }, {} as any)
     Object.defineProperties(stub, describeProps)
     const recorder = context.newStubRecorder(stub)
+    return stub
+  },
+  createReplayer(context, value) {
+    const stub: any = {}
+    // const replayer = context.newReplayer(stub)
+
     return stub
   },
   get: (spy, prop) => {

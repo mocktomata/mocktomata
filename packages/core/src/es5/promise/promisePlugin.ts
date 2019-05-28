@@ -5,9 +5,16 @@ import { KomondorPlugin, SpyContext, StubContext } from '../../plugin';
 export const promisePlugin: KomondorPlugin = {
   name: 'promise',
   support: isPromise,
-  getSpy: getPromiseSpy,
-  getStub: getPromiseStub
+  createSpy: getPromiseSpy,
+  createStub: getPromiseStub,
+  createReplayer(context, value) {
+    const p = new Promise((a, r) => {
+      replayer.on('return', (value: any) => a(value))
+    })
+    const replayer = context.newReplayer(p)
 
+    return p
+  }
 }
 
 function getPromiseSpy(context: SpyContext, subject: Promise<any>) {
