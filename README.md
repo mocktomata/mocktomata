@@ -78,9 +78,11 @@ function getFollowers(github: GitHub, username: string) {
       username
     }, (err, res) => {
       if (err) r(err)
-      // massage the response in some way that make sense to your application.
-      const response = messege(res)
-      a(response)
+      else {
+        // massage the response in some way that make sense to your application.
+        const response = messege(res)
+        a(response)
+      }
     })
   })
 }
@@ -114,36 +116,37 @@ import { spec } from 'komondor'
 
 test('get follower of a user', async t => {
   const github = new GitHub()
-  const getFollowersSpec = await spec(github.users.getFollowersForUser)
+  const s = await spec(github.users.getFollowersForUser)
 
-  // do `specs.subject.bind(github.users)` when needed.
+  // do `specs.subject.bind(github.users)` if needed.
   github.users.getFollowersForUser = specs.subject
 
   const followers = await getFollowers(github, 'someRealUser')
 
   // (optional) get the actual actions recorded by `komondor` for inspection
-  console.log(getFollowersSpec.actions)
+  console.log(s.actions)
 
   // (required) tells spec that it is ready to save the record (in save mode).
-  await getFollowersSpec.done()
+  await s.done()
 })
 ```
 
 The code above uses `komondor` to spy on the call and make sure the data received meet your expectation.
 
-`getFollowersSpec.satisfy()` uses [`satisfier`](https://github.com/unional/satisfier) to validate the data.
-Please check it out to see how to define your expectation.
-
 Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
 you can now tell `komondor` to save the result.
 
-To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide a `name` to it.:
+To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide an `id`:
 
 ```ts
-  const getFollowersSpec = await spec.save(
+  const s = await spec.save(
     'github getFollowersForUser',
     github.users.getFollowersForUser)
 ```
+
+Note that the `id` needs to be unique across all tests.
+And in version 6, it cannot contain any invalid characters for file name.
+This will be improved in version 7.
 
 When you run the test, the result will be saved.
 
@@ -155,7 +158,7 @@ The way to do it is extremely simple.
 All you need is to change the call from `spec.save()` to `spec.simulate()`:
 
 ```ts
-  const getFollowersSpec = await spec.simulate(
+  const s = await spec.simulate(
     'github getFollowersForUser',
     github.users.getFollowersForUser)
 ```
@@ -175,7 +178,7 @@ You can execute the test steps in different context:
 
 ## artifact
 
-Some time the input used in test are environment or time dependent, e.g. absolute path, `new Date()`, or random number.
+Sometimes the input used in test are environment or time dependent, e.g. absolute path, `new Date()`, or random number.
 Those value does not work well with `komondor` because `komondor` will compare the actions performed to make sure they are the same.
 
 For those values, you can use `artifact()` to tell `komonodor` to ignore them during validation.
