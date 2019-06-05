@@ -315,6 +315,7 @@ describe('run()', () => {
     await run('run template 123 abc', 'x')
     t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
+
   test('template can specify type', async () => {
     let values: any[] = []
     defineStep('run templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
@@ -882,6 +883,7 @@ describe('ensure()', () => {
     await ensure('ensure template 123 abc', 'x')
     t.deepStrictEqual(values, ['x', '123', 'abc'])
   })
+
   test('template can specify type', async () => {
     let values: any[] = []
     defineStep('ensure templateWithType {id:number} {enable:boolean} {pi:float}', ({ }, id, enable, pi, ...inputs) => {
@@ -975,5 +977,21 @@ describe('ensure()', () => {
 
     a.satisfy(m.logs, none({ level: logLevel.warn, messages: /is it safe to ignore/ }))
     removeAppender(m)
+  })
+
+  test('async calls are propertly waited', async () => {
+    let actual = ''
+    defineStep('async step', (_, x: number) => new Promise(a => {
+      actual += 'i' + x
+      setTimeout(() => {
+        actual += 'o' + x
+        a(x)
+      }, x)
+    }))
+    const { ensure } = scenario('async steps are waited property')
+
+    await ensure('async step', 50), await ensure('async step', 10)
+
+    expect(actual).toEqual('i50o50i10o10')
   })
 })

@@ -162,19 +162,23 @@ All you need is to change the call from `spec.save()` to `spec.simulate()`:
 
 That's it! Now your test will be ran using the saved result and not making actual remote calls.
 
-## given
+## scenario
 
-`given` is a construct to declare and verify the fixture of the spec to run on.
-It is a mean to communicate between engineer, QA, and possibility IT.
-It can consist of `spec`, which is used to configure or validate if the environment is valid.
-These specs provide the necessary information for the QA and IT to re-create the fixture.
+You can use `scenario()` to execute test steps defined using the `defineStep()` function.
+You can execute the test steps in different context:
 
-Alternatively, a service can be provided to get the fixture information at real time,
-so that the fixture can be decoupled from the tests.
+- `ensure()`: run the test step and ignore any error. This is used for clean up before and after the test.
+- `setup()`: run a setup test step. Any failure will not fail the test, but a warning message will be printed.
+- `run()`: run a test step.
+- `spec()`: run a custom spec, if your tests are unique and do not need to be defined as a test step.
+- `teardown()`: run a teardown test step. Behavior is the same as `setup()`\
 
-For example, when a test ask for a "version 1, normal load" environment,
-the service can spawn up a new docker container and return the endpoint information to the test.
-That means each test can be run in its own environment.
+## artifact
+
+Some time the input used in test are environment or time dependent, e.g. absolute path, `new Date()`, or random number.
+Those value does not work well with `komondor` because `komondor` will compare the actions performed to make sure they are the same.
+
+For those values, you can use `artifact()` to tell `komonodor` to ignore them during validation.
 
 ## API
 
@@ -185,16 +189,6 @@ function spec<T>(subject: T): Promise<Spec<T>>
 function spec<T>(name: string, subject: T): Promise<Spec<T>>
 function spec.save<T>(name: string, subject: T): Promise<Spec<T>>
 function spec.simulate<T>(name: string, subject: T): Promise<Spec<T>>
-```
-
-### given()
-
-```ts
-function given<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-function given.save<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-function given.simulate<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-
-function onGiven(clause: string | RegExp, handler: (context: GivenContext) => any): void
 ```
 
 ## Plugins

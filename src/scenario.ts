@@ -168,7 +168,7 @@ export interface ScenarioSpec {
 }
 
 function createScenarioSpec(record, defaultId: string, mode: SpecMode): ScenarioSpec {
-  return function (id, subject?) {
+  return function (id: string, subject?: any) {
     if (!subject) {
       subject = id
       id = defaultId
