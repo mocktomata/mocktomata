@@ -78,9 +78,11 @@ function getFollowers(github: GitHub, username: string) {
       username
     }, (err, res) => {
       if (err) r(err)
-      // massage the response in some way that make sense to your application.
-      const response = messege(res)
-      a(response)
+      else {
+        // massage the response in some way that make sense to your application.
+        const response = messege(res)
+        a(response)
+      }
     })
   })
 }
@@ -114,36 +116,37 @@ import { spec } from 'komondor'
 
 test('get follower of a user', async t => {
   const github = new GitHub()
-  const getFollowersSpec = await spec(github.users.getFollowersForUser)
+  const s = await spec(github.users.getFollowersForUser)
 
-  // do `specs.subject.bind(github.users)` when needed.
+  // do `specs.subject.bind(github.users)` if needed.
   github.users.getFollowersForUser = specs.subject
 
   const followers = await getFollowers(github, 'someRealUser')
 
   // (optional) get the actual actions recorded by `komondor` for inspection
-  console.log(getFollowersSpec.actions)
+  console.log(s.actions)
 
   // (required) tells spec that it is ready to save the record (in save mode).
-  await getFollowersSpec.done()
+  await s.done()
 })
 ```
 
 The code above uses `komondor` to spy on the call and make sure the data received meet your expectation.
 
-`getFollowersSpec.satisfy()` uses [`satisfier`](https://github.com/unional/satisfier) to validate the data.
-Please check it out to see how to define your expectation.
-
 Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
 you can now tell `komondor` to save the result.
 
-To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide a `name` to it.:
+To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide an `id`:
 
 ```ts
-  const getFollowersSpec = await spec.save(
+  const s = await spec.save(
     'github getFollowersForUser',
     github.users.getFollowersForUser)
 ```
+
+Note that the `id` needs to be unique across all tests.
+And in version 6, it cannot contain any invalid characters for file name.
+This will be improved in version 7.
 
 When you run the test, the result will be saved.
 
@@ -155,26 +158,30 @@ The way to do it is extremely simple.
 All you need is to change the call from `spec.save()` to `spec.simulate()`:
 
 ```ts
-  const getFollowersSpec = await spec.simulate(
+  const s = await spec.simulate(
     'github getFollowersForUser',
     github.users.getFollowersForUser)
 ```
 
 That's it! Now your test will be ran using the saved result and not making actual remote calls.
 
-## given
+## scenario
 
-`given` is a construct to declare and verify the fixture of the spec to run on.
-It is a mean to communicate between engineer, QA, and possibility IT.
-It can consist of `spec`, which is used to configure or validate if the environment is valid.
-These specs provide the necessary information for the QA and IT to re-create the fixture.
+You can use `scenario()` to execute test steps defined using the `defineStep()` function.
+You can execute the test steps in different context:
 
-Alternatively, a service can be provided to get the fixture information at real time,
-so that the fixture can be decoupled from the tests.
+- `ensure()`: run the test step and ignore any error. This is used for clean up before and after the test.
+- `setup()`: run a setup test step. Any failure will not fail the test, but a warning message will be printed.
+- `run()`: run a test step.
+- `spec()`: run a custom spec, if your tests are unique and do not need to be defined as a test step.
+- `teardown()`: run a teardown test step. Behavior is the same as `setup()`\
 
-For example, when a test ask for a "version 1, normal load" environment,
-the service can spawn up a new docker container and return the endpoint information to the test.
-That means each test can be run in its own environment.
+## artifact
+
+Sometimes the input used in test are environment or time dependent, e.g. absolute path, `new Date()`, or random number.
+Those value does not work well with `komondor` because `komondor` will compare the actions performed to make sure they are the same.
+
+For those values, you can use `artifact()` to tell `komonodor` to ignore them during validation.
 
 ## API
 
@@ -185,16 +192,6 @@ function spec<T>(subject: T): Promise<Spec<T>>
 function spec<T>(name: string, subject: T): Promise<Spec<T>>
 function spec.save<T>(name: string, subject: T): Promise<Spec<T>>
 function spec.simulate<T>(name: string, subject: T): Promise<Spec<T>>
-```
-
-### given()
-
-```ts
-function given<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-function given.save<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-function given.simulate<T>(clause: string, localHandler?: (context: GivenContext) => any): Promise<Given<T>>
-
-function onGiven(clause: string | RegExp, handler: (context: GivenContext) => any): void
 ```
 
 ## Plugins
