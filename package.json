@@ -64,7 +64,7 @@
     "aurelia-logging-memory": "^0.3.2",
     "codecov": "^3.1.0",
     "cucumber": "^4.2.1",
-    "delay": "^3.1.0",
+    "delay": "^4.3.0",
     "dependency-check": "^3.2.1",
     "eslint": "^5.8.0",
     "eslint-plugin-harmony": "^1.0.4",
