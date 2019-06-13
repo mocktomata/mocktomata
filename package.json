@@ -57,7 +57,7 @@
     "unpartial": "^0.5.0"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.7",
+    "@types/jest": "^24.0.14",
     "@types/node": "^10.12.0",
     "@types/ramda": "^0.25.40",
     "aurelia-logging-color": "^0.5.16",
