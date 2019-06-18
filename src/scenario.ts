@@ -140,7 +140,7 @@ function createStepCaller(record, defaultId: string, mode: SpecMode): StepCaller
   }
 }
 
-function invokeHandler({ defaultId, mode, entry, record }, clause, inputs) {
+async function invokeHandler({ defaultId, mode, entry, record }, clause, inputs) {
   const runSubStep = createStepCaller(record, defaultId, mode)
 
   const spec = createScenarioSpec(record, clause, mode)

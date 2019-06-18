@@ -1,4 +1,4 @@
-import { satisfy } from 'assertron'
+import a from 'assertron'
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { tersify } from 'tersify'
 
@@ -84,7 +84,7 @@ async function createSpyingSpec<T>(id: string, subject: T): Promise<Spec<T>> {
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        satisfy(spec.actions, expectation)
+        a.satisfy(spec.actions, expectation)
       })
     },
     done() {
@@ -118,7 +118,7 @@ async function createSavingSpec<T>({ io }, id: string, subject: T): Promise<Spec
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        satisfy(context.actions, expectation)
+        a.satisfy(context.actions, expectation)
         // istanbul ignore next
         if (!id)
           throw new Error('Cannot save spec without options.id.')
@@ -162,7 +162,7 @@ async function createStubbingSpec<T>({ io }, id: string, subject: T): Promise<Sp
     },
     satisfy(expectation) {
       return Promise.resolve().then(() => {
-        satisfy(spec.actions, expectation)
+        a.satisfy(spec.actions, expectation)
       })
     },
     done() {
