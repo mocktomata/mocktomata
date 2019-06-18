@@ -12,7 +12,6 @@ export const echoPlugin: KomondorPlugin = {
   support() { return true },
   createSpy(_, s) { return s },
   createStub(_, s) { return s },
-  createReplayer(_, v) { return v }
 }
 
 
@@ -29,7 +28,6 @@ export const pluginA: KomondorPlugin = {
   support() { return true },
   createSpy() { return {} },
   createStub() { return {} },
-  createReplayer(_, v) { return v },
   serialize() { return '' }
 }
 

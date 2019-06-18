@@ -1,9 +1,9 @@
 import { tersify } from 'tersify';
-import { log } from '../common';
 import { getPlugin } from '../plugin';
-import { SimulationMismatch } from './errors';
+import { log } from '../util';
+import { ActionMismatch } from './errors';
 import { isMismatchAction } from './isMismatchAction';
-import { ConstructAction, GetAction, GetReturnAction, GetThrowAction, InvokeAction, InvokeReturnAction, InvokeThrowAction, SetAction, SetReturnAction, SetThrowAction, SpecAction, SpecRecord } from './types';
+import { GetAction, InstantiateAction, InvokeAction, ReturnAction, SetAction, SpecAction, SpecRecord, ThrowAction } from './types';
 import { SpecRecordLive } from './typesInternal';
 
 export type SpecRecordTracker = ReturnType<typeof createSpecRecordTracker>
@@ -26,73 +26,73 @@ export function createSpecRecordTracker(record: SpecRecordLive) {
     },
     construct(ref: string, args: any[]) {
       record.actions.push({
-        type: 'construct',
-        id: ref,
+        type: 'instantiate',
+        ref,
         payload: args.map(arg => this.findId(arg) || arg)
       })
     },
     invoke(ref: string, args: any[]) {
       record.actions.push({
         type: 'invoke',
-        id: ref,
+        ref,
         payload: args.map(arg => this.findId(arg) || arg)
       })
     },
     invokeReturn(ref: string, result: any) {
       const payload = this.findId(result) || result
       record.actions.push({
-        type: 'invoke-return',
-        id: ref,
+        type: 'return',
+        ref: 0,
         payload
       })
     },
     invokeThrow(ref: string, err: any) {
       const payload = this.findId(err) || err
       record.actions.push({
-        type: 'invoke-throw',
-        id: ref,
+        type: 'throw',
+        ref: 0,
         payload
       })
     },
     get(ref: string, prop: string | number) {
       record.actions.push({
         type: 'get',
-        id: ref,
+        ref,
         payload: prop
       })
     },
     getReturn(ref: string, prop: string | number, value: any) {
       record.actions.push({
-        type: 'get-return',
-        id: ref,
+        type: 'return',
+        ref: 0,
         payload: [prop, value]
       })
     },
     getThrow(ref: string, prop: string | number, value: any) {
       record.actions.push({
-        type: 'get-throw',
-        id: ref,
+        type: 'throw',
+        ref: 0,
         payload: [prop, value]
       })
     },
     set(ref: string, prop: string | number, value: any) {
       record.actions.push({
         type: 'set',
-        id: ref,
+        ref,
         payload: [prop, value]
       })
     },
     setReturn(ref: string, prop: string | number, input: any, value: any) {
       record.actions.push({
-        type: 'set-return',
-        id: ref,
+        type: 'return',
+        ref: 0,
         payload: [prop, input, value]
       })
     },
     setThrow(ref: string, prop: string | number, input: any, value: any) {
       record.actions.push({
-        type: 'set-throw',
-        id: ref,
+        type: 'throw',
+        ref: 0,
         payload: [prop, input, value]
       })
     }
@@ -129,7 +129,7 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     getRef(id: string) {
       return record.refs[Number(id)]
     },
-    isSerialized(ref: string) {
+    isSerialized(ref: any) {
       const index = Number(ref)
       return !!loaded.refs[index].serialize
     },
@@ -158,9 +158,9 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
       return loaded.actions[record.actions.length]
     },
     construct(ref: string, args: any[]) {
-      const action: ConstructAction = {
-        type: 'construct',
-        id: ref,
+      const action: InstantiateAction = {
+        type: 'instantiate',
+        ref,
         payload: args.map(arg => this.findId(arg) || arg)
       }
       addAction(action)
@@ -168,19 +168,19 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     invoke(ref: string, args: any[]) {
       const action: InvokeAction = {
         type: 'invoke',
-        id: ref,
+        ref,
         payload: args.map(arg => this.findId(arg) || arg)
       }
       addAction(action)
     },
     invokeReturn() {
-      const action = this.peekNextAction() as InvokeReturnAction
+      const action = this.peekNextAction() as ReturnAction
       const result = this.getSubject(action.payload) || action.payload
       addAction(action)
       return result
     },
     invokeThrow() {
-      const action = this.peekNextAction() as InvokeThrowAction
+      const action = this.peekNextAction() as ThrowAction
       const err = this.getSubject(action.payload) || action.payload
       addAction(action)
       return err
@@ -188,23 +188,23 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     get(ref: string, prop: string | number) {
       const action: GetAction = {
         type: 'get',
-        id: ref,
+        ref,
         payload: prop
       }
       addAction(action)
     },
     getReturn(ref: string, prop: string | number, value: any) {
-      const action: GetReturnAction = {
-        type: 'get-return',
-        id: ref,
+      const action: ReturnAction = {
+        type: 'return',
+        ref: 0,
         payload: [prop, value]
       }
       addAction(action)
     },
     getThrow(ref: string, prop: string | number, value: any) {
-      const action: GetThrowAction = {
-        type: 'get-throw',
-        id: ref,
+      const action: ThrowAction = {
+        type: 'throw',
+        ref: 0,
         payload: [prop, value]
       }
       addAction(action)
@@ -212,48 +212,50 @@ export function createSpecRecordValidator(id: string, loaded: SpecRecord, record
     set(ref: string, prop: string | number, value: any) {
       const action: SetAction = {
         type: 'set',
-        id: ref,
+        ref,
         payload: [prop, value]
       }
       addAction(action)
     },
     setReturn(ref: string, prop: string | number, input: any, value: any) {
-      const action: SetReturnAction = {
-        type: 'set-return',
-        id: ref,
+      const action: ReturnAction = {
+        type: 'return',
+        ref: 0,
         payload: [prop, input, value]
       }
       addAction(action)
     },
     setThrow(ref: string, prop: string | number, input: any, value: any) {
-      const action: SetThrowAction = {
-        type: 'set-throw',
-        id: ref,
+      const action: ThrowAction = {
+        type: 'throw',
+        ref: 0,
         payload: [prop, input, value]
       }
       addAction(action)
     },
     succeed() {
       const next = this.peekNextAction()!
-      return next.type === 'invoke-return'
+      return next.type === 'return'
     },
     processNextActions() {
       const next = this.peekNextAction()
       log.warn(`next action:`, next)
-      if (!next || !this.isSerialized(next.id)) return
+      if (!next || !this.isSerialized(next.ref)) return
 
-      const ref = this.getRef(next.id)
+      const ref = this.getRef(next.ref as any)
       log.warn(`ref`, ref, record.refs)
-      const plugin = getPlugin(ref.plugin)!
-      const target = this.getSubject(next.id)
+      // const plugin = getPlugin(ref.plugin)!
+      const target = this.getSubject(next.ref as any)
 
       // TOTHINK: where does the return value go to? All not used?
       // setup expectation for stub?
       switch (next.type) {
-        case 'construct':
+        case 'instantiate':
           const constructArgs = next.payload.map(x => typeof x === 'string' ? this.getSubject(x) : x)
           log.onDebug(() => `auto construct: "${this.findId(target)}" with ${tersify(constructArgs)}`)
-          plugin.construct!(target, constructArgs)
+          // TODO: get SpyRecorder of the `target` and call `.on('construct', cb) to get the instance?
+          // plugin.construct!(target, constructArgs)
+
           this.processNextActions()
           break;
         case 'invoke':
@@ -287,12 +289,12 @@ function validateAction(id: string, loaded: SpecRecord, record: SpecRecord, acti
   if (isMismatchAction(action, loadedAction)) {
     const expected = {
       type: loadedAction.type,
-      plugin: loaded.refs[Number(loadedAction.id)].plugin
+      plugin: loaded.refs[Number(loadedAction.ref)].plugin
     }
     const actual = {
       type: action.type,
-      plugin: record.refs[Number(action.id)].plugin
+      plugin: record.refs[Number(action.ref)].plugin
     }
-    throw new SimulationMismatch(id, expected, actual)
+    throw new ActionMismatch(id, expected, actual)
   }
 }

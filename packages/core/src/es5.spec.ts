@@ -1,11 +1,11 @@
-import t from 'assert';
+// import t from 'assert';
 import a from 'assertron';
-import * as es5Module from '.';
-import { createTestHarness, TestHarness } from '..';
-import { loadPlugins } from '../plugin';
-import { NotSpecable } from '../spec';
-import k from '../test-util';
-import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './testSubjects';
+import { createTestHarness, TestHarness, NotSpecable } from '.';
+import * as es5Module from './es5';
+import { loadPlugins } from './plugin';
+// import { NotSpecable } from '../spec';
+import k from './test-util';
+// import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './testSubjects';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -16,194 +16,230 @@ beforeAll(async () => {
 
 afterAll(() => harness.reset())
 
-k.live('primitives throws NotSpecable', (title, spec) => {
+
+k.trio('primitives cannot be speced directly. Throws NotSpecable', (title, spec) => {
   test.each([undefined, null, 1, true, Symbol(), 'str'])(`%s ${title}`, async (value) => {
     await a.throws(spec(value), NotSpecable)
   })
 })
 
-describe('es5/function', () => {
-  k.trio('function without argument', (title, spec) => {
+describe.skip('string', () => {
+  k.save('as result', (title, spec) => {
     test(title, async () => {
       const s = await spec(() => 'abc')
       const actual = s.subject()
       expect(actual).toBe('abc')
 
       await s.done()
-    })
-  })
 
-  k.trio('function without callback', (title, spec) => {
-    test(title, async () => {
-      const s = await spec((x: number, y: number) => x + y)
-      const actual = s.subject(1, 2)
-
-      expect(actual).toBe(3)
-
-      await s.done()
-    })
-  })
-
-  k.trio('simple callback success (direct)', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(simpleCallback.success)
-      let actual
-      s.subject(2, (_, result) => {
-        actual = result
-      })
-
-      expect(actual).toBe(3)
-
-      await s.done()
-    })
-  })
-
-  k.trio('simple callback success', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(simpleCallback.success)
-
-      const actual = await simpleCallback.increment(s.subject, 2)
-
-      expect(actual).toBe(3)
-
-      await s.done()
-    })
-  })
-
-
-  k.trio('simple callback fail', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(simpleCallback.fail)
-
-      const err = await a.throws(simpleCallback.increment(s.subject, 2))
-
-      expect(err.message).toBe('fail')
-
-      await s.done()
-    })
-  })
-
-  k.trio('simple callback invoked multiple times', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(simpleCallback.success)
-
-      expect(await simpleCallback.increment(s.subject, 2)).toBe(3)
-      expect(await simpleCallback.increment(s.subject, 4)).toBe(5)
-
-      await s.done()
-    })
-  })
-
-  k.trio('delayed callback invocation', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(delayed.success)
-
-      expect(await delayed.increment(s.subject, 2)).toBe(3)
-      expect(await delayed.increment(s.subject, 4)).toBe(5)
-
-      await s.done()
-    })
-  })
-
-  k.trio('callback in object literal success', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(callbackInObjLiteral.success)
-
-      expect(await callbackInObjLiteral.increment(s.subject, 2)).toBe(3)
-      expect(await callbackInObjLiteral.increment(s.subject, 4)).toBe(5)
-
-      await s.done()
-    })
-  })
-
-  k.trio('callback in object literal fail', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(callbackInObjLiteral.fail)
-
-      const err = await a.throws(callbackInObjLiteral.increment(s.subject, 2), Error)
-
-      expect(err.message).toBe('fail')
-
-      await s.done()
-    })
-  })
-
-  k.trio('callback in deep object literal success', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(callbackInDeepObjLiteral.success)
-
-      expect(await callbackInDeepObjLiteral.increment(s.subject, 2)).toBe(3)
-      expect(await callbackInDeepObjLiteral.increment(s.subject, 4)).toBe(5)
-
-      await s.done()
-    })
-  })
-
-  k.trio('synchronous callback success', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(synchronous.success)
-
-      expect(synchronous.increment(s.subject, 3)).toBe(4)
-
-      await s.done()
-    })
-  })
-
-  k.trio('synchronous callback throws', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(synchronous.fail)
-
-      const err = a.throws(() => synchronous.increment(s.subject, 3), Error)
-
-      expect(err.message).toBe('fail')
-
-      await s.done()
-    })
-  })
-
-  k.trio('recursive two calls success', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(recursive.success)
-
-      const actual = await recursive.decrementToZero(s.subject, 2)
-
-      expect(actual).toBe(0)
-
-      await s.done()
-    })
-  })
-
-  k.trio('invoke callback after returns', (title, spec) => {
-    test(title, async () => {
-      const s = await spec(postReturn.fireEvent)
-
-      await new Promise(a => {
-        let called = 0
-        s.subject('event', 3, () => {
-          called++
-          if (called === 3)
-            a()
-        })
-      })
-
-      await s.done()
+      harness.logSpecs()
     })
   })
 })
 
-k.trio('function with array arguments', (title, spec) => {
-  test.skip(title, async () => {
-    harness.showLog()
-    const s = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
-    const actual = s.subject('node', ['--version'])
+// k.live('primitives throws NotSpecable', (title, spec) => {
+//   test.each([undefined, null, 1, true, Symbol(), 'str'])(`%s ${title}`, async (value) => {
+//     await a.throws(spec(value), NotSpecable)
+//   })
+// })
 
-    t.strictEqual(actual.name, 'node')
-    t(Array.isArray(actual.args))
-    t.strictEqual(actual.args[0], '--version')
-    await s.done()
-    harness.logSpecs()
-  })
-})
+// describe('es5/function', () => {
+//   k.trio('function without argument', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(() => 'abc')
+//       const actual = s.subject()
+//       expect(actual).toBe('abc')
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('function without callback', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec((x: number, y: number) => x + y)
+//       const actual = s.subject(1, 2)
+
+//       expect(actual).toBe(3)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('simple callback success (direct)', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(simpleCallback.success)
+//       let actual
+//       s.subject(2, (_, result) => {
+//         actual = result
+//       })
+
+//       expect(actual).toBe(3)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('simple callback success', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(simpleCallback.success)
+
+//       const actual = await simpleCallback.increment(s.subject, 2)
+
+//       expect(actual).toBe(3)
+
+//       await s.done()
+//     })
+//   })
+
+
+//   k.trio('simple callback fail', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(simpleCallback.fail)
+
+//       const err = await a.throws(simpleCallback.increment(s.subject, 2))
+
+//       expect(err.message).toBe('fail')
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('simple callback invoked multiple times', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(simpleCallback.success)
+
+//       expect(await simpleCallback.increment(s.subject, 2)).toBe(3)
+//       expect(await simpleCallback.increment(s.subject, 4)).toBe(5)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('delayed callback invocation', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(delayed.success)
+
+//       expect(await delayed.increment(s.subject, 2)).toBe(3)
+//       expect(await delayed.increment(s.subject, 4)).toBe(5)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('callback in object literal success', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(callbackInObjLiteral.success)
+
+//       expect(await callbackInObjLiteral.increment(s.subject, 2)).toBe(3)
+//       expect(await callbackInObjLiteral.increment(s.subject, 4)).toBe(5)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('callback in object literal fail', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(callbackInObjLiteral.fail)
+
+//       const err = await a.throws(callbackInObjLiteral.increment(s.subject, 2), Error)
+
+//       expect(err.message).toBe('fail')
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('callback in deep object literal success', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(callbackInDeepObjLiteral.success)
+
+//       expect(await callbackInDeepObjLiteral.increment(s.subject, 2)).toBe(3)
+//       expect(await callbackInDeepObjLiteral.increment(s.subject, 4)).toBe(5)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('synchronous callback success', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(synchronous.success)
+
+//       expect(synchronous.increment(s.subject, 3)).toBe(4)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('synchronous callback throws', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(synchronous.fail)
+
+//       const err = a.throws(() => synchronous.increment(s.subject, 3), Error)
+
+//       expect(err.message).toBe('fail')
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('recursive two calls success', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(recursive.success)
+
+//       const actual = await recursive.decrementToZero(s.subject, 2)
+
+//       expect(actual).toBe(0)
+
+//       await s.done()
+//     })
+//   })
+
+//   k.trio('invoke callback after returns', (title, spec) => {
+//     test(title, async () => {
+//       const s = await spec(postReturn.fireEvent)
+
+//       await new Promise(a => {
+//         let called = 0
+//         s.subject('event', 3, () => {
+//           called++
+//           if (called === 3)
+//             a()
+//         })
+//       })
+
+//       await s.done()
+//     })
+//   })
+// })
+
+// k.trio('function with array arguments', (title, spec) => {
+//   test.skip(title, async () => {
+//     harness.showLog()
+//     const s = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
+//     const actual = s.subject('node', ['--version'])
+
+//     t.strictEqual(actual.name, 'node')
+//     t(Array.isArray(actual.args))
+//     t.strictEqual(actual.args[0], '--version')
+//     await s.done()
+//     harness.logSpecs()
+//   })
+// })
+
+
+
+test.todo('Above is working for the last version. Trying v7 take 2')
+
+
+
+
+
+
+
+
+
+
+
 
 // describe('es5/object', () => {
 //   k.trio('get primitive property', (title, spec) => {

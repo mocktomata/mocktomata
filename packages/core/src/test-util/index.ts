@@ -8,6 +8,7 @@ export * from './missGetStubPlugin';
 export * from './missSupportPlugin';
 export * from './noActivatePluginModule';
 export * from './plugins';
+export * from './testSubjects';
 
 export function testTrio(description: string, handler: ((title: string, spec: <T>(subject: T) => Promise<Spec<T>>) => void | Promise<any>)) {
   testLive(description, handler)

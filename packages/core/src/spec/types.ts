@@ -12,8 +12,8 @@ export type SpecOptions = {
 // #endregion
 
 export type SpecIO = {
-  readSpec(id: string): Promise<SpecRecord>,
-  writeSpec(id: string, record: SpecRecord): Promise<void>
+  readSpec(ref: string): Promise<SpecRecord>,
+  writeSpec(ref: string, record: SpecRecord): Promise<void>
 }
 
 export type SpecRecord = {
@@ -27,7 +27,7 @@ export type SpecReference = {
    */
   plugin: string
 
-  subject: any,
+  subject?: any,
 
   /**
    * Indicates the reference subject needs to be serialized.
@@ -59,68 +59,48 @@ export type SpecReferenceBase = {
  */
 export type Meta = Record<string, any>
 
-export type SpecAction = ConstructAction |
-  InvokeAction | InvokeReturnAction | InvokeThrowAction |
-  GetAction | GetReturnAction | GetThrowAction |
-  SetAction | SetReturnAction | SetThrowAction
+export type SpecAction = InstantiateAction | InvokeAction | GetAction | SetAction |
+  ReturnAction | ThrowAction
 
 
-export type ConstructAction = {
-  type: 'construct',
-  id: string,
+export type InstantiateAction = {
+  type: 'instantiate',
+  ref: string,
+  tick: number,
   payload: any[],
 }
 
 export type InvokeAction = {
   type: 'invoke',
-  id: string
+  ref: string | number,
+  tick: number,
   payload: any[],
 }
 
-export type InvokeReturnAction = {
-  type: 'invoke-return',
-  id: string
+export type ReturnAction = {
+  type: 'return',
+  ref: number,
+  tick: number,
   payload: any,
 }
 
-export type InvokeThrowAction = {
-  type: 'invoke-throw',
-  id: string
+export type ThrowAction = {
+  type: 'throw',
+  ref: number,
+  tick: number,
   payload: any,
 }
 
 export type GetAction = {
   type: 'get',
-  id: string
+  ref: string | number,
+  tick: number,
   payload: string | number,
-}
-
-export type GetReturnAction = {
-  type: 'get-return',
-  id: string,
-  payload: [string | number, any]
-}
-
-export type GetThrowAction = {
-  type: 'get-throw',
-  id: string,
-  payload: [string | number, any]
 }
 
 export type SetAction = {
   type: 'set',
-  id: string,
+  ref: string | number,
+  tick: number,
   payload: [string | number, any]
-}
-
-export type SetReturnAction = {
-  type: 'set-return',
-  id: string,
-  payload: [string | number, any, any]
-}
-
-export type SetThrowAction = {
-  type: 'set-throw',
-  id: string,
-  payload: [string | number, any, any]
 }

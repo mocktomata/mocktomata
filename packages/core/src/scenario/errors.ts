@@ -1,4 +1,4 @@
-import { KomondorError } from '../common';
+import { KomondorError } from '../errors';
 
 export class ScenarioNotFound extends KomondorError {
   // istanbul ignore next

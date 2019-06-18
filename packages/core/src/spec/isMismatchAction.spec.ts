@@ -6,8 +6,8 @@ import { SpecAction } from './types';
 describe('isMismatchAction()', () => {
   test('ref mismatch returns true', () => {
     t(isMismatchAction(
-      specAction({ id: '1' }),
-      specAction({ id: '2' })
+      specAction({ ref: '1' }),
+      specAction({ ref: '2' })
     ))
   })
   test('type mismatch returns true', () => {

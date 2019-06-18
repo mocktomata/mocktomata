@@ -1,6 +1,7 @@
 import { logLevel } from '@unional/logging';
 import { tersify } from 'tersify';
-import { KomondorError, log } from '../common';
+import { KomondorError } from '../errors';
+import { log } from '../util';
 
 export class IDCannotBeEmpty extends KomondorError {
   // istanbul ignore next
@@ -29,9 +30,18 @@ export class NotSpecable extends KomondorError {
   }
 }
 
-export class SimulationMismatch extends KomondorError {
+export class ReferenceMismatch extends KomondorError {
   // istanbul ignore next
-  constructor(public specId: string, public expected: { type: string, plugin: string }, public actual?: { type: string, plugin: string }) {
+  constructor(public specId: string, public expected: { plugin: string } | undefined, public actual: { plugin: string }) {
+    super(`Recorded data for '${specId}' doesn't match with simulation. Expecting ${tersifyReference(expected)} but received ${tersifyReference(actual)}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export class ActionMismatch extends KomondorError {
+  // istanbul ignore next
+  constructor(public specId: string, public expected: { type: string, plugin: string } | undefined, public actual: { type: string, plugin: string } | undefined) {
     super(`Recorded data for '${specId}' doesn't match with simulation. Expecting ${tersifyAction(expected)} but received ${tersifyAction(actual)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
@@ -46,5 +56,17 @@ function tersifyAction(action: { type: string, plugin: string } | undefined): st
   }
   else {
     return `${['a', 'e', 'i', 'o', 'u'].some(x => action.plugin.startsWith(x)) ? 'an' : 'a'} ${action.plugin} ${action.type} action`
+  }
+}
+
+
+function tersifyReference(reference: { plugin: string } | undefined): string {
+  if (!reference) return 'none'
+
+  if (log.level >= logLevel.debug) {
+    return tersify(reference, { maxLength: Infinity })
+  }
+  else {
+    return `${['a', 'e', 'i', 'o', 'u'].some(x => reference.plugin.startsWith(x)) ? 'an' : 'a'} ${reference.plugin} reference`
   }
 }

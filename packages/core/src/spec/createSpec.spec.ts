@@ -5,7 +5,7 @@ import { createTestHarness, loadPlugins, TestHarness } from '..';
 import { echoPluginModule } from '../test-util';
 import { createLiveSpec, createSaveSpec, createSimulateSpec } from './createSpec';
 import * as es5Module from '../es5'
-import { SimulationMismatch } from './errors';
+import { ActionMismatch } from './errors';
 
 describe('timeout warning', () => {
   let harness: TestHarness
@@ -67,7 +67,7 @@ describe('timeout warning', () => {
 
     const s = await createSimulateSpec(harness, 'plugin not loaded', function (x: any) { return x }, { timeout: 10 })
 
-    a.throws(() => s.subject('arg'), SimulationMismatch)
+    a.throws(() => s.subject('arg'), ActionMismatch)
 
     await s.done()
   })

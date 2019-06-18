@@ -1,6 +1,6 @@
 import { KeyTypes } from 'type-plus';
-import { KomondorPlugin } from '../../plugin';
 import { getPropertyNames } from '../util';
+import { KomondorPlugin } from '../plugin';
 
 export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
   name: 'object',
@@ -13,10 +13,10 @@ export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
           const getRecorder = recorder.get(name)
           try {
             const result = subject[name]
-            return getRecorder.return(result)
+            return getRecorder.returns(result)
           }
           catch (e) {
-            getRecorder.throw(e)
+            getRecorder.throws(e)
             throw e
           }
         },
@@ -24,50 +24,47 @@ export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
           const setRecorder = recorder.set(name, value)
           try {
             const result = subject[name] = value
-            setRecorder.return(result)
+            setRecorder.returns(result)
           }
           catch (e) {
-            setRecorder.throw(e)
+            setRecorder.throws(e)
             throw e
           }
         }
       }
       return p
     }, {} as any))
-    const recorder = context.newSpyRecorder(spy, { props: propertyNames, accessed: [] as string[] })
+    const recorder = context.recorder.declare(spy)
     return spy
   },
-  createStub: (context, subject) => {
+  createStub: ({ player }, subject) => {
     const propertyNames = getPropertyNames(subject)
     const stub: any = {}
     const describeProps = propertyNames.reduce((p, name) => {
       p[name] = {
         get() {
           const getter = recorder.get(name)
-          // TODO: handle throw
-          const result = subject[name]
-          return getter.return(result)
+          if (getter.succeed()) {
+            return getter.returns()
+          }
+          else {
+            throw getter.throws()
+          }
         },
         set(value: any) {
           const setter = recorder.set(name, value)
-          // TODO: handle throw
-          const result = subject[name] = value
-          return setter.return(result)
+          if (setter.succeed()) {
+            return setter.returns()
+          }
+          else {
+            throw setter.throws()
+          }
         }
       }
       return p
     }, {} as any)
     Object.defineProperties(stub, describeProps)
-    const recorder = context.newStubRecorder(stub)
+    const recorder = player.declare(stub)
     return stub
-  },
-  createReplayer(context, value) {
-    const stub: any = {}
-    // const replayer = context.newReplayer(stub)
-
-    return stub
-  },
-  get: (spy, prop) => {
-    return spy[prop as any]
   }
 }

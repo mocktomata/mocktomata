@@ -1,6 +1,6 @@
 import { context, SpecContext } from '../context';
-import { createPlayer } from './createPlayer';
-import { createRecorder } from './createRecorder';
+import { createSpecSimulator } from './createSpecSimulator';
+import { createSpecRecorder } from './createSpecRecorder';
 import { IDCannotBeEmpty, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
 import { Spec, SpecMode, SpecOptions } from './types';
@@ -42,30 +42,30 @@ export async function createAutoSpec<T>(context: SpecContext, id: string, subjec
   }
 }
 
-export async function createLiveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createRecorder(context, id, subject, options)
+export async function createLiveSpec<T>(_context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
+  const recorder = createSpecRecorder(id, subject, options)
   return {
-    subject: recorder.spy,
-    done() {
-      return recorder.end()
+    subject: recorder.subject,
+    async done() {
+      recorder.end()
     }
   }
 }
 
 export async function createSaveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createRecorder(context, id, subject, options)
+  const recorder = createSpecRecorder(id, subject, options)
   return {
-    subject: recorder.spy,
-    done() {
-      return recorder.save()
+    subject: recorder.subject,
+    async done() {
+      recorder.end()
+      return context.io.writeSpec(id, recorder.getRecord())
     }
   }
 }
-
 export async function createSimulateSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const player = await createPlayer(context, id, subject, options)
+  const player = await createSpecSimulator(context, id, subject, options)
   return {
-    subject: player.stub,
+    subject: player.subject,
     async done() {
       return player.end()
     }

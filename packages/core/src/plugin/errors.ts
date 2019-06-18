@@ -1,4 +1,4 @@
-import { KomondorError } from '../common';
+import { KomondorError } from '../errors';
 
 export class PluginNotFound extends KomondorError {
   // istanbul ignore next
