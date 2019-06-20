@@ -1,4 +1,5 @@
-import { KomondorPlugin, PluginModule } from '../plugin';
+import { PluginModule } from '../plugin';
+import { SpecPlugin } from '../spec';
 
 // istanbul ignore next
 export const echoPluginModule: PluginModule = {
@@ -8,12 +9,11 @@ export const echoPluginModule: PluginModule = {
 }
 
 // istanbul ignore next
-export const echoPlugin: KomondorPlugin = {
+export const echoPlugin: SpecPlugin = {
   support() { return true },
   createSpy(_, s) { return s },
   createStub(_, s) { return s },
 }
-
 
 // istanbul ignore next
 export const pluginModuleA: PluginModule = {
@@ -23,7 +23,7 @@ export const pluginModuleA: PluginModule = {
 }
 
 // istanbul ignore next
-export const pluginA: KomondorPlugin = {
+export const pluginA: SpecPlugin = {
   name: 'plugin-a',
   support() { return true },
   createSpy() { return {} },

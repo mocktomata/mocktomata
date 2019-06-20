@@ -1,6 +1,6 @@
-import { KomondorPlugin } from '../plugin';
+import { SpecPlugin } from '../spec';
 
-export const arrayPlugin: KomondorPlugin<any[]> = {
+export const arrayPlugin: SpecPlugin<any[]> = {
   name: 'array',
   support: Array.isArray,
   createSpy: ({ recorder }, subject) => {
@@ -10,8 +10,8 @@ export const arrayPlugin: KomondorPlugin<any[]> = {
   },
   createStub: ({ player }, subject) => {
     const stub: any[] = []
-    const instancePlayer = player.declare(stub)
-    subject.forEach(s => stub.push(instancePlayer.getStub(s)))
+    player.declare(stub)
+    subject.forEach(s => stub.push(player.getStub(s)))
     return stub
   }
 }

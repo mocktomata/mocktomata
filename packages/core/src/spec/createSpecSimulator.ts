@@ -1,109 +1,104 @@
 import { SpecContext } from '../context';
-import { findPlugin, StubContext } from '../plugin';
-import { PluginInstance } from '../plugin/typesInternal';
+import { findPlugin } from '../plugin';
+import { createValidatingRecord, ValidatingRecord } from './createValidatingRecord';
 import { NotSpecable } from './errors';
-import { SpecRecordInstance } from './SpecRecordInstance';
-import { SpecRecordValidator, createSpecRecordValidator } from './createSpecRecordValidator';
-import { SpecOptions, SpecRecord } from './types';
+import { getSpy } from './getSpy';
+import { SpecOptions } from './types';
+import { pick } from 'type-plus';
+import { isSpecable } from './isSpecable';
 
 export async function createSpecSimulator<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
+  if (!isSpecable(subject)) throw new NotSpecable(subject)
+
   const actual = await context.io.readSpec(id)
-
-  if (typeof subject !== 'function' && typeof subject !== 'object' && Array.isArray(subject)) throw new NotSpecable(subject)
-
-  const recordValidator = createSpecRecordValidator(id, actual)
-
-  const stub = getStub(recordValidator, subject)
-
+  const record = createValidatingRecord(id, actual, options)
   return {
-    subject: stub,
-    async end() {
-      recordValidator.end()
-      return
-    }
+    subject: getStub(record, subject),
+    end: async () => record.end(),
   }
 }
 
-function getStub<T>(recordValidator: SpecRecordValidator, subject: T): T {
+export type StubContext = {
+  player: ReturnType<typeof createPluginReplayer>
+}
+
+function getStub<T>(record: ValidatingRecord, subject: T): T {
   const plugin = findPlugin(subject)
   if (!plugin) throw new NotSpecable(subject)
 
-  const stubContext = createStubContext(recordValidator, plugin, subject)
-  return plugin.createStub(stubContext, subject)
+  const player = createPluginReplayer(record, plugin.name, subject)
+  return plugin.createStub({ player }, subject)
 }
 
-function createStubContext(recordValidator: SpecRecordValidator, plugin: PluginInstance, subject: any): StubContext {
-  const player = new StubReplayer(recordValidator, plugin.name, subject) as any
+function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any) {
   return {
-    player
+    declare: (stub: any) => createSubjectReplayer(record, plugin, subject, stub),
+    getStub: (subject: any) => getStub(record, subject)
   }
 }
 
-class StubReplayer {
-  constructor(private record: SpecRecordValidator, private plugin: string, private subject: any) { }
+function createSubjectReplayer(record: ValidatingRecord, plugin: string, subject: any, stub: any) {
+  record.addRef({ plugin, subject, target: stub })
+  const ref = record.getRefId(stub)!
 
-  declare(stub: any) {
-    return new StubSubjectReplayer(this.record, this.plugin, this.subject, stub)
+  return {
+    instantiate: (args: any[]) => createInstanceReplayer(record, plugin, ref, args),
+    invoke: (args: any[]) => createInvocationReplayer(record, plugin, ref, args),
+    get: (name: string | number) => createGetterReplayer(record, plugin, ref, name),
+    set: (name: string | number, value: any) => createSetterReplayer(record, plugin, ref, name, value)
   }
 }
 
-class StubSubjectReplayer {
-  public ref: string
-  /**
-   * id of action.
-   * It increments for every "action set"
-   */
-  private id = 0
-  constructor(public record: SpecRecordValidator, public plugin: string, subject: any, stub: any) {
-    this.ref = this.record.addReference(this.plugin, subject, stub)
-  }
-  getStub<T>(subject: T): T {
-    return getStub(this.record, subject)
-  }
-  invoke(args: any[]) {
-    return new StubInvocationReplayer(this, args)
-  }
-  nextId() {
-    return ++this.id
-  }
-  findRef(target: any) {
-    return this.record.findRef(target)
+function createInstanceReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
+  const payload: any[] = []
+  args.forEach((arg, i) => {
+    const spy = args[i] = getSpy(record, arg)
+    payload.push(record.getRefId(spy) || spy)
+  })
+  const id = record.addAction(plugin, { type: 'instantiate', ref, payload })
+
+  return {
+    get: (name: string | number) => createGetterReplayer(record, plugin, id, name),
+    set: (name: string | number, value: any) => createSetterReplayer(record, plugin, id, name, value)
   }
 }
 
-class StubInvocationReplayer {
-  constructor(private subjectReplayer: StubSubjectReplayer, args: any[]) {
-    const payload: any[] = []
-    args.forEach((arg, i) => {
-      const stub = args[i] = subjectReplayer.getStub(arg)
-      payload.push(this.subjectReplayer.findRef(stub) || stub)
-    })
-    this.subjectReplayer.record.actions.push({
-      type: 'invoke',
-      ref: this.ref,
-      payload
-    })
+function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
+  const payload: any[] = []
+  args.forEach((arg, i) => {
+    const stub = args[i] = getStub(record, arg)
+    payload.push(record.getRefId(stub) || stub)
+  })
+  const id = record.addAction(plugin, { type: 'invoke', ref, payload })
+  // TODO: wait and get result by replayer
+  return {
+    waitUntilConclude: (cb: () => void) => waitUntilConclude(record, id, cb),
+    getResult: () => getResult(record, id)
   }
-  returns(value: any) {
-    const spy = getSpy(this.record, value)
-    const ref = this.record.findRef(spy)
-    this.record.actions.push({
-      type: 'invoke-return',
-      ref: this.subjectReplayer.ref,
-      id: this.id,
-      payload: ref
-    })
-    return spy
+}
+
+function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number) {
+  const id = record.addAction(plugin, { type: 'get', ref, payload: name })
+
+  return {
+    getResult: () => getResult(record, id)
   }
-  throws(err: any) {
-    const spy = getSpy(this.record, err)
-    const ref = this.record.findRef(spy)
-    this.record.actions.push({
-      type: 'invoke-throw',
-      ref: this.ref,
-      id: this.id,
-      payload: ref
-    })
-    return spy
+}
+
+function createSetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number, value: any) {
+  const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
+
+  return {
+    getResult: () => getResult(record, id)
   }
+}
+
+function waitUntilConclude(record: ValidatingRecord, id: number, cb: () => void) {
+
+}
+
+function getResult(record: ValidatingRecord, id: number) {
+  // record.processUntilConclude(id)
+  const action = record.peekAction()
+  return pick(action, 'type', 'payload', 'meta')
 }

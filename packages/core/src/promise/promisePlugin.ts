@@ -1,12 +1,13 @@
 
 import { isPromise } from './isPromise'
-import { KomondorPlugin } from '../plugin';
+import { SpecPlugin } from '../spec';
 
-export const promisePlugin: KomondorPlugin<Promise<any>> = {
+export const promisePlugin: SpecPlugin<Promise<any>> = {
   name: 'promise',
   support: isPromise,
   createSpy({ recorder }, subject) {
     const subjectRecorder = recorder.declare(subject)
+
     // This is a bit off, but seen as a special case for Promise.
     // For Promise, we know we only interested in the `then()` function,
     // when the `invoke()` statement indicates that "we" have invoked the `then()`
@@ -22,17 +23,19 @@ export const promisePlugin: KomondorPlugin<Promise<any>> = {
   },
   createStub({ player }) {
     const stub = new Promise((resolve, reject) => {
-      call.waitUntilReturn(() => {
-        if (call.succeed({ state: 'fulfilled' })) {
-          resolve(call.returns())
-        }
-        else {
-          reject(call.returns())
+      call.waitUntilConclude(() => {
+        const result = call.getResult()
+        if (result.type === 'return') {
+          if (result.meta!.state === 'fulfilled') {
+            resolve(result.payload)
+          }
+          else {
+            reject(result.payload)
+          }
         }
       })
     })
-    const subjectPlayer = player.declare(stub)
-    const call = subjectPlayer.invoke([])
+    const call = player.declare(stub).invoke([])
     return stub
   }
 }

@@ -1,6 +1,6 @@
-import { KomondorPlugin } from '../plugin';
+import { SpecPlugin } from '../spec';
 
-export const stringPlugin: KomondorPlugin = {
+export const stringPlugin: SpecPlugin = {
   name: 'string',
   support: subject => typeof subject === 'string',
   createSpy: ({ recorder }, subject) => {

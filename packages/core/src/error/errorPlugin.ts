@@ -1,6 +1,6 @@
-import { KomondorPlugin } from '../plugin';
+import { SpecPlugin } from '../spec';
 
-export const errorPlugin: KomondorPlugin = {
+export const errorPlugin: SpecPlugin = {
   name: 'error',
   support: subject => subject instanceof Error,
   createSpy: ({ recorder }, subject) => {

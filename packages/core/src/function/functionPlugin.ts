@@ -1,7 +1,7 @@
-import { KomondorPlugin } from '../plugin';
 import { hasPropertyInPrototype } from '../util';
+import { SpecPlugin } from '../spec';
 
-export const functionPlugin: KomondorPlugin<Function> = {
+export const functionPlugin: SpecPlugin<Function> = {
   name: 'function',
   support: subject => {
     if (typeof subject !== 'function') return false
@@ -26,11 +26,12 @@ export const functionPlugin: KomondorPlugin<Function> = {
   createStub: ({ player }, subject) => {
     const stub = function (this: any, ...args: any[]) {
       const invocation = stubPlayer.invoke(args)
-      if (invocation.succeed()) {
-        return invocation.returns()
+      const result = invocation.getResult()
+      if (result.type === 'return') {
+        return result.payload
       }
       else {
-        throw invocation.throws()
+        throw result.payload
       }
     }
     const stubPlayer = player.declare(stub)

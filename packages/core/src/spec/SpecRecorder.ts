@@ -1,11 +1,13 @@
-import { pick } from 'type-plus';
+import { Omit, pick } from 'type-plus';
 import { findPlugin, getPlugin } from '../plugin';
 import { createTimeTracker, log, TimeTracker } from '../util';
 import { NotSpecable } from './errors';
-import { SpecAction, SpecOptions, InstantiateAction, InvokeAction, GetAction, SetAction, ReturnAction, ThrowAction } from './types';
+import { GetAction, InstantiateAction, InvokeAction, ReturnAction, SetAction, SpecAction, SpecOptions, ThrowAction } from './types';
 import { SpecReferenceLive } from './typesInternal';
-import { Omit } from 'type-plus'
-import { specAction } from './isMismatchAction.spec';
+
+export type SpyContext = {
+  recorder: SpyRecorder
+}
 
 export class SpecRecorder<T = any> {
   private refs: SpecReferenceLive[] = []

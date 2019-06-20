@@ -1,7 +1,8 @@
 import { RequiredPick } from 'type-plus';
-import { KomondorPlugin, PluginIO } from './types';
+import { PluginIO } from './types';
+import { SpecPlugin } from '../spec';
 
-export type PluginInstance = RequiredPick<KomondorPlugin, 'name'>
+export type PluginInstance = RequiredPick<SpecPlugin, 'name'>
 
 export type LoadPluginContext = {
   io: PluginIO

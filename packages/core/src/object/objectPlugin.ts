@@ -1,8 +1,8 @@
 import { KeyTypes } from 'type-plus';
+import { SpecPlugin } from '../spec';
 import { getPropertyNames } from '../util';
-import { KomondorPlugin } from '../plugin';
 
-export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
+export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
   createSpy: (context, subject) => {
@@ -44,20 +44,22 @@ export const objectPlugin: KomondorPlugin<Record<KeyTypes, any>> = {
       p[name] = {
         get() {
           const getter = recorder.get(name)
-          if (getter.succeed()) {
-            return getter.returns()
+          const result = getter.getResult()
+          if (result.type === 'return') {
+            return result.payload
           }
           else {
-            throw getter.throws()
+            throw result.payload
           }
         },
         set(value: any) {
           const setter = recorder.set(name, value)
-          if (setter.succeed()) {
-            return setter.returns()
+          const result = setter.getResult()
+          if (result.type === 'return') {
+            return result.payload
           }
           else {
-            throw setter.throws()
+            throw result.payload
           }
         }
       }

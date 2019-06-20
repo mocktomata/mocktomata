@@ -1,10 +1,10 @@
-import { KomondorPlugin, PluginIO, PluginModule } from '../plugin/types';
-import { SpecIO, SpecNotFound } from '../spec';
+import { PluginIO, PluginModule } from '../plugin/types';
+import { SpecIO, SpecNotFound, SpecPlugin } from '../spec';
 
 export type TestIO = {
   specs: Record<string, string>
   addPluginModule(moduleName: string, pluginModule: PluginModule): void
-  addPlugin(moduleName: string, ...plugins: KomondorPlugin[]): void
+  addPlugin(moduleName: string, ...plugins: SpecPlugin[]): void
 } & SpecIO & PluginIO
 
 export function createTestIO(): TestIO {
@@ -30,7 +30,7 @@ export function createTestIO(): TestIO {
     addPluginModule(moduleName: string, pluginModule: PluginModule) {
       plugins[moduleName] = pluginModule
     },
-    addPlugin(moduleName: string, ...plugins: KomondorPlugin[]) {
+    addPlugin(moduleName: string, ...plugins: SpecPlugin[]) {
       this.addPluginModule(moduleName, {
         activate(c) {
           plugins.forEach(p => c.register(p))

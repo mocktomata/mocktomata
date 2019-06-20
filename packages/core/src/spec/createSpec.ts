@@ -47,7 +47,7 @@ export async function createLiveSpec<T>(_context: SpecContext, id: string, subje
   return {
     subject: recorder.subject,
     async done() {
-      recorder.end()
+      return recorder.end()
     }
   }
 }
@@ -57,7 +57,7 @@ export async function createSaveSpec<T>(context: SpecContext, id: string, subjec
   return {
     subject: recorder.subject,
     async done() {
-      recorder.end()
+      await recorder.end()
       return context.io.writeSpec(id, recorder.getRecord())
     }
   }

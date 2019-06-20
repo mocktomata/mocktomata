@@ -1,9 +1,9 @@
-import { KomondorPlugin } from '../plugin';
 import { isPromise } from '../promise/isPromise';
 import { getPropertyNames } from '../util';
 import { isClass } from './isClass';
+import { SpecPlugin } from '../spec';
 
-export const classPlugin: KomondorPlugin = {
+export const classPlugin: SpecPlugin = {
   name: 'class',
   support: isClass,
   createSpy({ recorder }, subject) {
@@ -14,7 +14,7 @@ export const classPlugin: KomondorPlugin = {
       constructor(...args: any[]) {
         // @ts-ignore
         super(...args)
-        this.__komondor.instance = spyRecorder.construct(args)
+        this.__komondor.instance = spyRecorder.instantiate(args)
       }
     }
     const propertyNames = getPropertyNames(spiedClass)
@@ -55,14 +55,14 @@ export const classPlugin: KomondorPlugin = {
     const spyRecorder = recorder.declare(spiedClass)
     return spiedClass
   },
-  createStub({player}, subject) {
+  createStub({ player }, subject) {
     const stubClass = class extends subject {
       // tslint:disable-next-line:variable-name
       __komondorStub: any = {}
       constructor(...args: any[]) {
         // @ts-ignore
         super(...args)
-        this.__komondorStub.instance = stubPlayer.construct(args)
+        this.__komondorStub.instance = stubPlayer.instantiate(args)
       }
     }
     getPropertyNames(stubClass).forEach(p => {
