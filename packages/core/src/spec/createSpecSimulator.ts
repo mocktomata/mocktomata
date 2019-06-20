@@ -1,11 +1,11 @@
+import { pick } from 'type-plus';
 import { SpecContext } from '../context';
 import { findPlugin } from '../plugin';
 import { createValidatingRecord, ValidatingRecord } from './createValidatingRecord';
 import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
-import { SpecOptions } from './types';
-import { pick } from 'type-plus';
 import { isSpecable } from './isSpecable';
+import { Meta, SpecOptions } from './types';
 
 export async function createSpecSimulator<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
@@ -24,7 +24,7 @@ export type StubContext = {
 
 function getStub<T>(record: ValidatingRecord, subject: T): T {
   const plugin = findPlugin(subject)
-  if (!plugin) throw new NotSpecable(subject)
+  if (!plugin) return subject
 
   const player = createPluginReplayer(record, plugin.name, subject)
   return plugin.createStub({ player }, subject)
@@ -73,7 +73,9 @@ function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref:
   // TODO: wait and get result by replayer
   return {
     waitUntilConclude: (cb: () => void) => waitUntilConclude(record, id, cb),
-    getResult: () => getResult(record, id)
+    getResult: () => getResult(record, id),
+    returns: (value: any) => expressionReturns(record, plugin, id, value),
+    throws: (err: any) => expressionThrows(record, plugin, id, err)
   }
 }
 
@@ -81,7 +83,9 @@ function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: str
   const id = record.addAction(plugin, { type: 'get', ref, payload: name })
 
   return {
-    getResult: () => getResult(record, id)
+    getResult: () => getResult(record, id),
+    returns: (value: any) => expressionReturns(record, plugin, id, value),
+    throws: (err: any) => expressionThrows(record, plugin, id, err)
   }
 }
 
@@ -89,7 +93,9 @@ function createSetterReplayer(record: ValidatingRecord, plugin: string, ref: str
   const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
 
   return {
-    getResult: () => getResult(record, id)
+    getResult: () => getResult(record, id),
+    returns: (value: any) => expressionReturns(record, plugin, id, value),
+    throws: (err: any) => expressionThrows(record, plugin, id, err)
   }
 }
 
@@ -100,5 +106,32 @@ function waitUntilConclude(record: ValidatingRecord, id: number, cb: () => void)
 function getResult(record: ValidatingRecord, id: number) {
   // record.processUntilConclude(id)
   const action = record.peekAction()
-  return pick(action, 'type', 'payload', 'meta')
+  return {
+    ...pick(action, 'type', 'meta'),
+    payload: record.getSubject(action.payload)
+  }
+}
+
+function expressionReturns(record: ValidatingRecord, plugin: string, id: number, value: any, meta?: Meta) {
+  const spy = getSpy(record, value)
+  const ref = record.getRefId(spy)
+  if (ref) {
+    record.addAction(plugin, { type: 'return', ref: id, payload: ref, meta })
+  }
+  else {
+    record.addAction(plugin, { type: 'return', ref: id, payload: value, meta })
+  }
+  return spy
+}
+
+function expressionThrows(record: ValidatingRecord, plugin: string, id: number, err: any) {
+  const spy = getSpy(record, err)
+  const ref = record.getRefId(spy)
+  if (ref) {
+    record.addAction(plugin, { type: 'throw', ref: id, payload: ref })
+  }
+  else {
+    record.addAction(plugin, { type: 'throw', ref: id, payload: err })
+  }
+  return spy
 }

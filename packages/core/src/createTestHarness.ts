@@ -1,7 +1,7 @@
 import { addAppender, clearAppenders, logLevel, setLevel } from '@unional/logging';
 import { ColorAppender } from 'aurelia-logging-color';
 import { MemoryAppender } from 'aurelia-logging-memory';
-import { forEachKey, required } from 'type-plus';
+import { required } from 'type-plus';
 import { context } from './context';
 import { SpecRecord } from './spec';
 import { resetStore } from './store';
@@ -31,14 +31,13 @@ export function createTestHarness(options?: Partial<{ level: number, showLog: bo
       context.clear()
       clearAppenders()
     },
-    getSpec(id: string): SpecRecord {
-      const spec = io.specs[id]
-      return JSON.parse(spec)
+    async getSpec(id: string): Promise<SpecRecord> {
+      return io.readSpec(id)
     },
     logSpecs() {
-      forEachKey(io.specs, key => {
-        console.info(`${key}:\n`, io.specs[key])
-      })
+      for (let e of io.getAllSpecs()) {
+        console.info(`${e[0]}:\n`, e[1])
+      }
     }
   }
 }

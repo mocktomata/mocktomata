@@ -27,10 +27,10 @@ export const promisePlugin: SpecPlugin<Promise<any>> = {
         const result = call.getResult()
         if (result.type === 'return') {
           if (result.meta!.state === 'fulfilled') {
-            resolve(result.payload)
+            resolve(call.returns(result.payload))
           }
           else {
-            reject(result.payload)
+            reject(call.returns(result.payload))
           }
         }
       })

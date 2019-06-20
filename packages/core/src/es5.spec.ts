@@ -16,19 +16,37 @@ beforeAll(async () => {
 
 afterAll(() => harness.reset())
 
-
 k.trio('primitives cannot be speced directly. Throws NotSpecable', (title, spec) => {
   test.each([undefined, null, 1, true, Symbol(), 'str'])(`%s ${title}`, async (value) => {
     await a.throws(spec(value), NotSpecable)
   })
 })
 
-describe.skip('string', () => {
-  k.save('as result', (title, spec) => {
+describe('function', () => {
+  k.trio('no input no result', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(() => { })
+      const actual = s.subject()
+      expect(actual).toBeUndefined()
+
+      await s.done()
+    })
+  })
+  k.trio('no input, string result', (title, spec) => {
     test(title, async () => {
       const s = await spec(() => 'abc')
       const actual = s.subject()
       expect(actual).toBe('abc')
+
+      await s.done()
+    })
+  })
+  k.trio('primitive inputs, simple result', (title, spec) => {
+    test(title, async () => {
+      const s = await spec((x: number, y: number) => x + y)
+      const actual = s.subject(1, 2)
+
+      expect(actual).toBe(3)
 
       await s.done()
 
@@ -37,33 +55,7 @@ describe.skip('string', () => {
   })
 })
 
-// k.live('primitives throws NotSpecable', (title, spec) => {
-//   test.each([undefined, null, 1, true, Symbol(), 'str'])(`%s ${title}`, async (value) => {
-//     await a.throws(spec(value), NotSpecable)
-//   })
-// })
-
 // describe('es5/function', () => {
-//   k.trio('function without argument', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec(() => 'abc')
-//       const actual = s.subject()
-//       expect(actual).toBe('abc')
-
-//       await s.done()
-//     })
-//   })
-
-//   k.trio('function without callback', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec((x: number, y: number) => x + y)
-//       const actual = s.subject(1, 2)
-
-//       expect(actual).toBe(3)
-
-//       await s.done()
-//     })
-//   })
 
 //   k.trio('simple callback success (direct)', (title, spec) => {
 //     test(title, async () => {
@@ -226,20 +218,7 @@ describe.skip('string', () => {
 //   })
 // })
 
-
-
 test.todo('Above is working for the last version. Trying v7 take 2')
-
-
-
-
-
-
-
-
-
-
-
 
 // describe('es5/object', () => {
 //   k.trio('get primitive property', (title, spec) => {

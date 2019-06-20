@@ -34,6 +34,8 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
       received.refs.push(ref)
     },
     getRefId: (stub: any) => getRefId(received.refs, stub),
+    getSubject: (refOrValue: any) => typeof refOrValue !== 'string' ?
+      refOrValue : getSubject(original.refs, refOrValue),
     addAction(plugin: string, action: Omit<SpecAction, 'tick'>) {
       if (ended) throw new ActionMismatch(specId, undefined, { type: action.type, plugin })
 
@@ -62,4 +64,10 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
     }
     return original.refs[Number(ref)].plugin
   }
+}
+
+function getSubject(refs: SpecReferenceLive[], ref: string) {
+  const i = Number(ref)
+  const entry = refs[i]
+  return entry.subject
 }

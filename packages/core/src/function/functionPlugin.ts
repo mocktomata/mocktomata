@@ -28,10 +28,10 @@ export const functionPlugin: SpecPlugin<Function> = {
       const invocation = stubPlayer.invoke(args)
       const result = invocation.getResult()
       if (result.type === 'return') {
-        return result.payload
+        return invocation.returns(result.payload)
       }
       else {
-        throw result.payload
+        throw invocation.throws(result.payload)
       }
     }
     const stubPlayer = player.declare(stub)

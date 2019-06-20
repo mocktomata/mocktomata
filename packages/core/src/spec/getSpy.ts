@@ -1,6 +1,5 @@
 import { findPlugin } from '../plugin';
 import { RecordingRecord } from './createRecordingRecord';
-import { NotSpecable } from './errors';
 import { Meta } from './types';
 
 export type SpyContext = {
@@ -9,7 +8,7 @@ export type SpyContext = {
 
 export function getSpy<T>(record: RecordingRecord, subject: T): T {
   const plugin = findPlugin(subject)
-  if (!plugin) throw new NotSpecable(subject)
+  if (!plugin) return subject
 
   const recorder = createPluginRecorder(record, plugin.name, subject)
   return plugin.createSpy({ recorder }, subject)
@@ -82,14 +81,24 @@ function createSetterRecorder(record: RecordingRecord, plugin: string, ref: stri
 
 function expressionReturns(record: RecordingRecord, plugin: string, id: number, value: any, meta?: Meta) {
   const spy = getSpy(record, value)
-  const ref = record.getRefId(spy)!
-  record.addAction(plugin, { type: 'return', ref: id, payload: ref, meta })
+  const ref = record.getRefId(spy)
+  if (ref) {
+    record.addAction(plugin, { type: 'return', ref: id, payload: ref, meta })
+  }
+  else {
+    record.addAction(plugin, { type: 'return', ref: id, payload: value, meta })
+  }
   return spy
 }
 
 function expressionThrows(record: RecordingRecord, plugin: string, id: number, err: any) {
   const spy = getSpy(record, err)
-  const ref = record.getRefId(spy)!
-  record.addAction(plugin, { type: 'throw', ref: id, payload: ref })
+  const ref = record.getRefId(spy)
+  if (ref) {
+    record.addAction(plugin, { type: 'throw', ref: id, payload: ref })
+  }
+  else {
+    record.addAction(plugin, { type: 'throw', ref: id, payload: err })
+  }
   return spy
 }

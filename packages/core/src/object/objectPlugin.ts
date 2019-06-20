@@ -46,20 +46,20 @@ export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
           const getter = recorder.get(name)
           const result = getter.getResult()
           if (result.type === 'return') {
-            return result.payload
+            return getter.returns(result.payload)
           }
           else {
-            throw result.payload
+            throw getter.throws(result.payload)
           }
         },
         set(value: any) {
           const setter = recorder.set(name, value)
           const result = setter.getResult()
           if (result.type === 'return') {
-            return result.payload
+            return setter.returns(result.payload)
           }
           else {
-            throw result.payload
+            throw setter.throws(result.payload)
           }
         }
       }
