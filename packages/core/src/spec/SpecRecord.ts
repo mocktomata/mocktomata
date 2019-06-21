@@ -1,7 +1,14 @@
-import { SpecReferenceLive } from './typesInternal';
+import { SpecReferenceLive, SpecRecordLive } from './typesInternal';
 
 export function addRef(refs: SpecReferenceLive[], ref: SpecReferenceLive) {
   refs.push(ref)
+}
+
+export function getRef({ refs, actions }: SpecRecordLive, ref: string | number) {
+  while (typeof ref === 'number') {
+    ref = actions[ref].ref
+  }
+  return refs[Number(ref)]
 }
 
 export function getRefId(refs: SpecReferenceLive[], target: any) {

@@ -1,10 +1,11 @@
 // import t from 'assert';
 import a from 'assertron';
-import { createTestHarness, TestHarness, NotSpecable } from '.';
+import { createTestHarness, NotSpecable, TestHarness } from '.';
 import * as es5Module from './es5';
 import { loadPlugins } from './plugin';
 // import { NotSpecable } from '../spec';
-import k, { simpleCallback } from './test-util';
+import k, { callbackInObjLiteral, delayed, simpleCallback } from './test-util';
+import { logLevel } from 'aurelia-logging';
 // import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './testSubjects';
 
 let harness: TestHarness
@@ -95,45 +96,41 @@ describe('function', () => {
       expect(err.message).toBe('fail')
 
       await s.done()
-      harness.logSpecs()
+    })
+  })
+  k.trio('simple callback invoked multiple times', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(simpleCallback.success)
+
+      expect(await simpleCallback.increment(s.subject, 2)).toBe(3)
+      expect(await simpleCallback.increment(s.subject, 4)).toBe(5)
+
+      await s.done()
+    })
+  })
+  k.trio('delayed callback invocation', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(delayed.success)
+
+      expect(await delayed.increment(s.subject, 2)).toBe(3)
+      expect(await delayed.increment(s.subject, 4)).toBe(5)
+
+      await s.done()
+    })
+  })
+  k.trio('callback in object literal success', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(callbackInObjLiteral.success)
+
+      expect(await callbackInObjLiteral.increment(s.subject, 2)).toBe(3)
+
+      await s.done()
     })
   })
 })
 
 // describe('es5/function', () => {
 
-//   k.trio('simple callback invoked multiple times', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec(simpleCallback.success)
-
-//       expect(await simpleCallback.increment(s.subject, 2)).toBe(3)
-//       expect(await simpleCallback.increment(s.subject, 4)).toBe(5)
-
-//       await s.done()
-//     })
-//   })
-
-//   k.trio('delayed callback invocation', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec(delayed.success)
-
-//       expect(await delayed.increment(s.subject, 2)).toBe(3)
-//       expect(await delayed.increment(s.subject, 4)).toBe(5)
-
-//       await s.done()
-//     })
-//   })
-
-//   k.trio('callback in object literal success', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec(callbackInObjLiteral.success)
-
-//       expect(await callbackInObjLiteral.increment(s.subject, 2)).toBe(3)
-//       expect(await callbackInObjLiteral.increment(s.subject, 4)).toBe(5)
-
-//       await s.done()
-//     })
-//   })
 
 //   k.trio('callback in object literal fail', (title, spec) => {
 //     test(title, async () => {

@@ -1,6 +1,6 @@
 import { Omit } from 'type-plus';
 import { createTimeTracker, log } from '../util';
-import { addRef, getRefId } from './SpecRecord';
+import { addRef, getRef, getRefId } from './SpecRecord';
 import { SpecAction, SpecOptions } from './types';
 import { SpecReferenceLive } from './typesInternal';
 
@@ -19,7 +19,8 @@ export function createRecordingRecord({ refs, actions }: RecordingRecordContext,
   return {
     addRef: (ref: SpecReferenceLive) => addRef(refs, ref),
     getRefId: (spy: any) => getRefId(refs, spy),
-    addAction: (plugin: string, action: Omit<SpecAction, 'tick'>) => actions.push({ ...action, tick: time.elaspe() }),
-    end: () => { time.stop() }
+    addAction: (plugin: string, action: Omit<SpecAction, 'tick'>) => actions.push({ ...action, tick: time.elaspe() }) - 1,
+    end: () => { time.stop() },
+    getSubject: (ref: string | number) => getRef({ refs, actions }, ref).subject
   }
 }

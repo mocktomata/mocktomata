@@ -6,6 +6,8 @@ import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
 import { Meta, SpecOptions } from './types';
+import { log } from '../util';
+import { tersify } from 'tersify';
 
 export async function createSpecPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
@@ -38,6 +40,7 @@ function createPluginReplayer(record: ValidatingRecord, plugin: string, subject:
 }
 
 function createSubjectReplayer(record: ValidatingRecord, plugin: string, subject: any, stub: any, isSpecTarget: boolean) {
+  log.debug(`${plugin} stub created for:\n`, subject)
   record.addRef(isSpecTarget ? { plugin, subject, target: stub, specTarget: true } : { plugin, subject, target: stub })
   const ref = record.getRefId(stub)!
 
@@ -64,6 +67,10 @@ function createInstanceReplayer(record: ValidatingRecord, plugin: string, ref: s
 }
 
 function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
+  log.onDebug(log => {
+    console.log('reffff', ref)
+    log(`${plugin} invoke with ${tersify(args)} on:\n`, record.getSubject(ref))
+  })
   const payload: any[] = []
   args.forEach((arg, i) => {
     const stub = args[i] = getSpy(record, arg)
@@ -80,6 +87,9 @@ function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref:
 }
 
 function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number) {
+  log.onDebug(log => {
+    log(`${plugin} get '${name}' from:\n`, record.getSubject(ref))
+  })
   const id = record.addAction(plugin, { type: 'get', ref, payload: name })
 
   return {
@@ -90,6 +100,9 @@ function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: str
 }
 
 function createSetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number, value: any) {
+  log.onDebug(log => {
+    log(`${plugin} set '${name}' with '${value}' to:\n`, record.getSubject(ref))
+  })
   const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
 
   return {

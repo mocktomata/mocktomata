@@ -1,11 +1,11 @@
 import { Omit } from 'type-plus';
 import { getPlugin, PluginNotFound } from '../plugin';
+import { createTimeTracker } from '../util';
 import { ActionMismatch, ReferenceMismatch } from './errors';
-import { getRefId } from './SpecRecord';
-import { SpecAction, SpecRecord, SpecOptions } from './types';
-import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
-import { createTimeTracker, log } from '../util';
+import { getRef, getRefId } from './SpecRecord';
 import { createSpecSimulator } from './SpecSimulator';
+import { SpecAction, SpecOptions, SpecRecord } from './types';
+import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
 
 export type ValidatingRecord = ReturnType<typeof createValidatingRecord>
 
@@ -37,13 +37,12 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
     },
     getRefId: (stub: any) => getRefId(received.refs, stub),
     getRef: (ref: string | number) => getRef(received, ref),
-    getSubject: (refOrValue: any) => typeof refOrValue !== 'string' ?
-      refOrValue : getSubject(original.refs, refOrValue),
+    getSubject: (refOrValue: any) => getSubject(original, received, refOrValue),
     addAction(plugin: string, action: Omit<SpecAction, 'tick'>) {
       if (ended) throw new ActionMismatch(specId, undefined, { type: action.type, plugin })
 
       const newAction = { ...action, tick: time.elaspe() }
-      const id = received.actions.push(newAction)
+      const id = received.actions.push(newAction) - 1
       simulator.process()
       return id
       // const expected = this.original.actions[0]
@@ -79,21 +78,21 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
   }
 }
 
-function getSubject(refs: SpecReferenceLive[], ref: string) {
-  const i = Number(ref)
-  const entry = refs[i]
-  const plugin = getPlugin(entry.plugin)
-  if (!plugin) throw new PluginNotFound(entry.plugin)
+function getSubject(original: SpecRecordLive, received: SpecRecordLive, refOrValue: any) {
+  if (typeof refOrValue !== 'string') return refOrValue
 
-  if (plugin.deserialize) {
-    return plugin.deserialize(entry.subject)
-  }
-  return entry.subject
-}
+  let ref = getRef(original, refOrValue)
+  if (ref.subject) {
+    const plugin = getPlugin(ref.plugin)
+    if (!plugin) throw new PluginNotFound(ref.plugin)
 
-function getRef({ refs, actions }: SpecRecordLive, ref: string | number) {
-  while (typeof ref === 'number') {
-    ref = actions[ref].ref
+    if (plugin.deserialize) {
+      return plugin.deserialize(ref.subject)
+    }
+    return ref.subject
   }
-  return refs[Number(ref)]
+  else {
+    ref = getRef(received, refOrValue)
+    return ref.subject
+  }
 }
