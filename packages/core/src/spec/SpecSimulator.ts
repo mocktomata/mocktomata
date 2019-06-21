@@ -20,7 +20,8 @@ function createSpecImmediateSimulator(record: ValidatingRecord) {
         case 'invoke':
           const ref = record.getRef(action.ref)
           if (ref.specTarget) return
-          ref.target(...action.payload)
+          const args = action.payload.map(a => record.getSubject(a))
+          ref.target(...args)
       }
     }
   }
