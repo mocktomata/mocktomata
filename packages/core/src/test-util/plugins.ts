@@ -28,6 +28,6 @@ export const pluginA: SpecPlugin = {
   support() { return true },
   createSpy() { return {} },
   createStub() { return {} },
-  serialize() { return '' }
+  createRepresentation() { return '' }
 }
 

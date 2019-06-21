@@ -1,14 +1,17 @@
+import { tersify } from 'tersify';
 import { findPlugin } from '../plugin';
+import { log } from '../util';
 import { RecordingRecord } from './createRecordingRecord';
 import { Meta } from './types';
-import { log } from '../util';
-import { tersify } from 'tersify';
 
 export type SpyContext = {
   recorder: ReturnType<typeof createPluginRecorder>
 }
 
 export function getSpy<T>(record: RecordingRecord, subject: T, isSpecTarget: boolean = false): T {
+  const spy = record.findTarget(subject)
+  if (spy) return spy
+
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
@@ -24,7 +27,7 @@ function createPluginRecorder(record: RecordingRecord, plugin: string, subject: 
 }
 
 function createSubjectRecorder(record: RecordingRecord, plugin: string, subject: any, spy: any, isSpecTarget: boolean) {
-  log.debug(`${plugin} spy created for:\n`, subject)
+  log.onDebug(log => log(`${plugin} spy created for:\n`, tersify(subject)))
   record.addRef(isSpecTarget ? { plugin, subject, target: spy, specTarget: true } : { plugin, subject, target: spy })
   const ref = record.getRefId(spy)!
 
@@ -51,9 +54,7 @@ function createInstanceRecorder(record: RecordingRecord, plugin: string, ref: st
 }
 
 function createInvocationRecorder(record: RecordingRecord, plugin: string, ref: string, args: any[]) {
-  log.onDebug(log => {
-    log(`${plugin} invoke with ${tersify(args)} on:\n`, record.getSubject(ref))
-  })
+  log.onDebug(log => log(`${plugin} invoke with ${tersify(args)} on:\n`, tersify(record.getSubject(ref))))
 
   const payload: any[] = []
   args.forEach((arg, i) => {
@@ -69,9 +70,7 @@ function createInvocationRecorder(record: RecordingRecord, plugin: string, ref: 
 }
 
 function createGetterRecorder(record: RecordingRecord, plugin: string, ref: string | number, name: string | number) {
-  log.onDebug(log => {
-    log(`${plugin} get '${name}' from:\n`, record.getSubject(ref))
-  })
+  log.onDebug(log => log(`${plugin} get '${name}' from:\n`, tersify(record.getSubject(ref))))
   const spy = getSpy(record, name)
   const payload = record.getRefId(spy) || spy
   const id = record.addAction(plugin, { type: 'get', ref, payload })
@@ -83,9 +82,7 @@ function createGetterRecorder(record: RecordingRecord, plugin: string, ref: stri
 }
 
 function createSetterRecorder(record: RecordingRecord, plugin: string, ref: string | number, name: string | number, value: any) {
-  log.onDebug(log => {
-    log(`${plugin} set '${name}' with '${value}' to:\n`, record.getSubject(ref))
-  })
+  log.onDebug(log => log(`${plugin} set '${name}' with '${value}' to:\n`, tersify(record.getSubject(ref))))
   const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
 
   return {

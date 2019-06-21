@@ -16,6 +16,12 @@ export function getRefId(refs: SpecReferenceLive[], target: any) {
   return (id !== -1) ? String(id) : undefined
 }
 
+export function findTarget<T>(refs: SpecReferenceLive[], subject: T): T | undefined {
+  const ref = refs.find(r => r.subject === subject)
+  if (ref) return ref.target
+  return undefined
+}
+
 // export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 
 // export function createSpecRecordValidator(id: string, loaded: SpecRecord, record: SpecRecordLive) {

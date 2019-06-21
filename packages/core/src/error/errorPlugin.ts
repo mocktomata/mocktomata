@@ -12,6 +12,6 @@ export const errorPlugin: SpecPlugin = {
     return subject
   },
   // TODO: serialize custom properties.
-  serialize: (subject) => JSON.stringify({ message: subject.message }),
-  deserialize: (input) => new Error(JSON.parse(input).message)
+  createRepresentation: ({ process }, subject) => ({ message: process(subject.message) }),
+  recreateSubject: ({ process }, input) => new Error(process(input.message))
 }

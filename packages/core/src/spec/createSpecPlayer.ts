@@ -35,12 +35,13 @@ function getStub<T>(record: ValidatingRecord, subject: T, isSpecTarget: boolean 
 function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
     declare: (stub: any) => createSubjectReplayer(record, plugin, subject, stub, isSpecTarget),
+    getSpy: (subject: any) => getSpy(record, subject),
     getStub: (subject: any) => getStub(record, subject)
   }
 }
 
 function createSubjectReplayer(record: ValidatingRecord, plugin: string, subject: any, stub: any, isSpecTarget: boolean) {
-  log.debug(`${plugin} stub created for:\n`, subject)
+  log.onDebug(log => log(`${plugin} stub created for:\n`, tersify(subject)))
   record.addRef(isSpecTarget ? { plugin, subject, target: stub, specTarget: true } : { plugin, subject, target: stub })
   const ref = record.getRefId(stub)!
 
@@ -67,10 +68,7 @@ function createInstanceReplayer(record: ValidatingRecord, plugin: string, ref: s
 }
 
 function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
-  log.onDebug(log => {
-    console.log('reffff', ref)
-    log(`${plugin} invoke with ${tersify(args)} on:\n`, record.getSubject(ref))
-  })
+  log.onDebug(log => log(`${plugin} invoke with ${tersify(args)} on:\n`, tersify(record.getSubject(ref))))
   const payload: any[] = []
   args.forEach((arg, i) => {
     const stub = args[i] = getSpy(record, arg)
@@ -87,9 +85,7 @@ function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref:
 }
 
 function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number) {
-  log.onDebug(log => {
-    log(`${plugin} get '${name}' from:\n`, record.getSubject(ref))
-  })
+  log.onDebug(log => log(`${plugin} get '${name}' from:\n`, tersify(record.getSubject(ref))))
   const id = record.addAction(plugin, { type: 'get', ref, payload: name })
 
   return {
@@ -100,9 +96,7 @@ function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: str
 }
 
 function createSetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number, value: any) {
-  log.onDebug(log => {
-    log(`${plugin} set '${name}' with '${value}' to:\n`, record.getSubject(ref))
-  })
+  log.onDebug(log => log(`${plugin} set '${name}' with '${value}' to:\n`, tersify(record.getSubject(ref))))
   const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
 
   return {

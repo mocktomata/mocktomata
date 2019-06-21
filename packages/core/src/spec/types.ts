@@ -111,14 +111,16 @@ export interface SpecPlugin<S = any> {
    */
   createSpy(context: SpyContext, subject: S): S,
   createStub(context: StubContext, subject: S): S,
+
   /**
-   * Serialize the subject.
-   * This is used to deserialize the subject back during simulation.
+   * Create a serializable representation of the subject.
+   * The result will be stringified and stored.
+   * This is used to construct the subject back during simulation.
    */
-  serialize?: (subject: S, meta?: any) => string,
+  createRepresentation?: (context: { process(subject: any): any }, subject: S, meta?: any) => S,
   /**
-   * Deserialize the saved data into a fake subject.
+   * Reconstruct the subject from the saved data.
    * This subject will be passed to the createStub() function to create a stub.
    */
-  deserialize?: (input: string) => S,
+  recreateSubject?: (context: { process(input: any): any }, input: any) => S,
 }

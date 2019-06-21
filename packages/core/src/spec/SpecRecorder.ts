@@ -50,10 +50,10 @@ export class SpecRecorder<T = any> {
     return {
       refs: this.refs.map(ref => {
         const plugin = getPlugin(ref.plugin)!
-        if (plugin.serialize) {
+        if (plugin.createRepresentation) {
           return {
             ...pick(ref, 'plugin', 'serialize'),
-            subject: plugin.serialize(ref.subject)
+            subject: plugin.createRepresentation(ref.subject)
           }
         }
         else {

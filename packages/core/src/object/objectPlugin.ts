@@ -68,5 +68,13 @@ export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
     Object.defineProperties(stub, describeProps)
     const recorder = player.declare(stub)
     return stub
-  }
+  },
+  createRepresentation: ({ process }, subject) => Object.keys(subject).reduce((p, k) => {
+    p[k] = process(subject[k])
+    return p
+  }, {} as any),
+  recreateSubject: ({ process }, input) => Object.keys(input).reduce((p, k) => {
+    p[k] = process(input[k])
+    return p
+  }, {} as any),
 }

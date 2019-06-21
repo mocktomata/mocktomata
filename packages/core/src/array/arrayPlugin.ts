@@ -9,9 +9,10 @@ export const arrayPlugin: SpecPlugin<any[]> = {
     return subject
   },
   createStub: ({ player }, subject) => {
-    const stub: any[] = []
-    player.declare(stub)
-    subject.forEach(s => stub.push(player.getStub(s)))
-    return stub
-  }
+    player.declare(subject)
+    subject.forEach((s, i) => subject[i] = player.getSpy(s))
+    return subject
+  },
+  createRepresentation: ({ process }, subject) => subject.map(s => process(s)),
+  recreateSubject: ({ process }, input: any[]) => input.map(s => process(s))
 }

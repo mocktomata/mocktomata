@@ -1,5 +1,5 @@
 import { ValidatingRecord } from './createValidatingRecord';
-import { SpecOptions, SpecAction, InvokeAction, GetAction } from './types';
+import { GetAction, InvokeAction, SpecOptions } from './types';
 
 export function createSpecSimulator(record: ValidatingRecord, options: SpecOptions) {
   // use `options` to control which simulator to use.

@@ -1,11 +1,12 @@
 import { pick } from 'type-plus';
-import { getPlugin } from '../plugin';
+import { findPlugin, getPlugin } from '../plugin';
 import { createRecordingRecord } from './createRecordingRecord';
 import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
 import { SpecAction, SpecOptions } from './types';
 import { SpecReferenceLive } from './typesInternal';
+import { getRefId } from './SpecRecord';
 
 export function createSpecRecorder<T>(id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
@@ -20,18 +21,32 @@ export function createSpecRecorder<T>(id: string, subject: T, options: SpecOptio
     end: async () => record.end(),
     getRecord: () => ({
       refs: refs.map(ref => {
-        const plugin = getPlugin(ref.plugin)!
-        if (plugin.serialize && !ref.specTarget) {
-          return {
-            ...pick(ref, 'plugin'),
-            subject: plugin.serialize(ref.subject)
-          }
-        }
-        else {
+        if (ref.specTarget) {
           return pick(ref, 'plugin', 'subject', 'specTarget')
+        }
+        return {
+          ...pick(ref, 'plugin'),
+          subject: createRepresentation(refs, ref)
         }
       }),
       actions
     })
+  }
+}
+
+function createRepresentation(refs: SpecReferenceLive[], ref: SpecReferenceLive): any {
+  const plugin = getPlugin(ref.plugin)
+
+  if (plugin && plugin.createRepresentation) {
+    return plugin.createRepresentation({
+      process: (subject) => {
+        const refId = refs.findIndex(r => r.subject === subject)
+        if (refId !== -1) return String(refId)
+        return subject
+      }
+    }, ref.subject)
+  }
+  else {
+    return ref.subject
   }
 }

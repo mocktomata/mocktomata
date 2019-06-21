@@ -2,7 +2,7 @@ import { Omit } from 'type-plus';
 import { getPlugin, PluginNotFound } from '../plugin';
 import { createTimeTracker } from '../util';
 import { ActionMismatch, ReferenceMismatch } from './errors';
-import { getRef, getRefId } from './SpecRecord';
+import { findTarget, getRef, getRefId } from './SpecRecord';
 import { createSpecSimulator } from './SpecSimulator';
 import { SpecAction, SpecOptions, SpecRecord } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
@@ -63,6 +63,7 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
         throw new ActionMismatch(specId, { type: expectedAction.type, plugin }, undefined)
       }
     },
+    findTarget: <T>(subject: T) => findTarget(received.refs, subject),
     logReceived() {
       console.info('received', received)
     }
@@ -78,21 +79,25 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
   }
 }
 
-function getSubject(original: SpecRecordLive, received: SpecRecordLive, refOrValue: any) {
+function getSubject(original: SpecRecordLive, received: SpecRecordLive, refOrValue: any): any {
   if (typeof refOrValue !== 'string') return refOrValue
 
-  let ref = getRef(original, refOrValue)
-  if (ref.subject) {
+  let ref = getRef(received, refOrValue)
+  if (ref) {
+    return ref.subject
+  }
+
+  ref = getRef(original, refOrValue)
+  if (ref && ref.subject) {
     const plugin = getPlugin(ref.plugin)
     if (!plugin) throw new PluginNotFound(ref.plugin)
 
-    if (plugin.deserialize) {
-      return plugin.deserialize(ref.subject)
+    if (plugin.recreateSubject) {
+      return plugin.recreateSubject({ process: (input) => getSubject(original, received, input) }, ref.subject)
     }
     return ref.subject
   }
   else {
-    ref = getRef(received, refOrValue)
-    return ref.subject
+    return refOrValue
   }
 }
