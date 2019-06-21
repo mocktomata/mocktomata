@@ -7,13 +7,13 @@ import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
 import { Meta, SpecOptions } from './types';
 
-export async function createSpecSimulator<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
+export async function createSpecPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
 
   const actual = await context.io.readSpec(id)
   const record = createValidatingRecord(id, actual, options)
   return {
-    subject: getStub(record, subject),
+    subject: getStub(record, subject, true),
     end: async () => record.end(),
   }
 }
@@ -22,23 +22,23 @@ export type StubContext = {
   player: ReturnType<typeof createPluginReplayer>
 }
 
-function getStub<T>(record: ValidatingRecord, subject: T): T {
+function getStub<T>(record: ValidatingRecord, subject: T, isSpecTarget: boolean = false): T {
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
-  const player = createPluginReplayer(record, plugin.name, subject)
+  const player = createPluginReplayer(record, plugin.name, subject, isSpecTarget)
   return plugin.createStub({ player }, subject)
 }
 
-function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any) {
+function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
-    declare: (stub: any) => createSubjectReplayer(record, plugin, subject, stub),
+    declare: (stub: any) => createSubjectReplayer(record, plugin, subject, stub, isSpecTarget),
     getStub: (subject: any) => getStub(record, subject)
   }
 }
 
-function createSubjectReplayer(record: ValidatingRecord, plugin: string, subject: any, stub: any) {
-  record.addRef({ plugin, subject, target: stub })
+function createSubjectReplayer(record: ValidatingRecord, plugin: string, subject: any, stub: any, isSpecTarget: boolean) {
+  record.addRef(isSpecTarget ? { plugin, subject, target: stub, specTarget: true } : { plugin, subject, target: stub })
   const ref = record.getRefId(stub)!
 
   return {
@@ -66,7 +66,7 @@ function createInstanceReplayer(record: ValidatingRecord, plugin: string, ref: s
 function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
   const payload: any[] = []
   args.forEach((arg, i) => {
-    const stub = args[i] = getStub(record, arg)
+    const stub = args[i] = getSpy(record, arg)
     payload.push(record.getRefId(stub) || stub)
   })
   const id = record.addAction(plugin, { type: 'invoke', ref, payload })
@@ -105,7 +105,7 @@ function waitUntilConclude(record: ValidatingRecord, id: number, cb: () => void)
 
 function getResult(record: ValidatingRecord, id: number) {
   // record.processUntilConclude(id)
-  const action = record.peekAction()
+  const action = record.peekAction()!
   return {
     ...pick(action, 'type', 'meta'),
     payload: record.getSubject(action.payload)

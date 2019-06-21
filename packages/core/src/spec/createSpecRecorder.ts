@@ -16,19 +16,19 @@ export function createSpecRecorder<T>(id: string, subject: T, options: SpecOptio
   const record = createRecordingRecord({ refs, actions }, options)
 
   return {
-    subject: getSpy(record, subject),
+    subject: getSpy(record, subject, true),
     end: async () => record.end(),
     getRecord: () => ({
       refs: refs.map(ref => {
         const plugin = getPlugin(ref.plugin)!
-        if (plugin.serialize) {
+        if (plugin.serialize && !ref.specTarget) {
           return {
-            ...pick(ref, 'plugin', 'serialize'),
+            ...pick(ref, 'plugin'),
             subject: plugin.serialize(ref.subject)
           }
         }
         else {
-          return pick(ref, 'plugin', 'serialize', 'subject')
+          return pick(ref, 'plugin', 'subject', 'specTarget')
         }
       }),
       actions

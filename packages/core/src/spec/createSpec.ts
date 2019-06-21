@@ -1,5 +1,5 @@
 import { context, SpecContext } from '../context';
-import { createSpecSimulator } from './createSpecSimulator';
+import { createSpecPlayer } from './createSpecPlayer';
 import { createSpecRecorder } from './createSpecRecorder';
 import { IDCannotBeEmpty, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
@@ -63,7 +63,7 @@ export async function createSaveSpec<T>(context: SpecContext, id: string, subjec
   }
 }
 export async function createSimulateSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const player = await createSpecSimulator(context, id, subject, options)
+  const player = await createSpecPlayer(context, id, subject, options)
   return {
     subject: player.subject,
     async done() {

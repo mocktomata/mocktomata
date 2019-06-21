@@ -6,23 +6,23 @@ export type SpyContext = {
   recorder: ReturnType<typeof createPluginRecorder>
 }
 
-export function getSpy<T>(record: RecordingRecord, subject: T): T {
+export function getSpy<T>(record: RecordingRecord, subject: T, isSpecTarget: boolean = false): T {
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
-  const recorder = createPluginRecorder(record, plugin.name, subject)
+  const recorder = createPluginRecorder(record, plugin.name, subject, isSpecTarget)
   return plugin.createSpy({ recorder }, subject)
 }
 
-function createPluginRecorder(record: RecordingRecord, plugin: string, subject: any) {
+function createPluginRecorder(record: RecordingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
-    declare: (spy: any) => createSubjectRecorder(record, plugin, subject, spy),
+    declare: (spy: any) => createSubjectRecorder(record, plugin, subject, spy, isSpecTarget),
     getSpy: <T>(subject: T): T => getSpy(record, subject)
   }
 }
 
-function createSubjectRecorder(record: RecordingRecord, plugin: string, subject: any, spy: any) {
-  record.addRef({ plugin, subject, target: spy })
+function createSubjectRecorder(record: RecordingRecord, plugin: string, subject: any, spy: any, isSpecTarget: boolean) {
+  record.addRef(isSpecTarget ? { plugin, subject, target: spy, specTarget: true } : { plugin, subject, target: spy })
   const ref = record.getRefId(spy)!
 
   return {

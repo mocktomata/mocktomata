@@ -1,4 +1,4 @@
-import { StubContext } from './createSpecSimulator';
+import { StubContext } from './createSpecPlayer';
 import { SpyContext } from './getSpy';
 
 // #region Spec
@@ -32,16 +32,7 @@ export type SpecReference = {
 
   subject?: any,
 
-  /**
-   * Indicates the reference subject needs to be serialized.
-   * Examples of subjects need to be serialized are:
-   * - strings
-   * - return object or array not passing in from argument
-   * Examples of subjects should not be serialized:
-   * - instantiation of inbound classes.
-   * - return function (cannot be done because scope can't be attached)
-   */
-  serialize?: true
+  specTarget?: true
 }
 
 export type SpecReferenceRecord = SpecReferenceBase & {
@@ -64,7 +55,6 @@ export type Meta = Record<string, any>
 
 export type SpecAction = InstantiateAction | InvokeAction | GetAction | SetAction |
   ReturnAction | ThrowAction
-
 
 export type InstantiateAction = {
   type: 'instantiate',

@@ -4,7 +4,7 @@ import { createTestHarness, TestHarness, NotSpecable } from '.';
 import * as es5Module from './es5';
 import { loadPlugins } from './plugin';
 // import { NotSpecable } from '../spec';
-import k from './test-util';
+import k, { simpleCallback } from './test-util';
 // import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './testSubjects';
 
 let harness: TestHarness
@@ -49,27 +49,36 @@ describe('function', () => {
       expect(actual).toBe(3)
 
       await s.done()
+    })
+  })
+  k.trio('throwing error', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(() => { throw new Error('failed') })
+      const err = a.throws(() => s.subject()) as Error
 
-      harness.logSpecs()
+      expect(err.message).toBe('failed')
+
+      await s.done()
+    })
+  })
+
+  k.trio('simple callback success (direct)', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(simpleCallback.success)
+      let actual
+      s.subject(2, (_, result) => {
+        actual = result
+      })
+
+      expect(actual).toBe(3)
+
+      await s.done()
     })
   })
 })
 
 // describe('es5/function', () => {
 
-//   k.trio('simple callback success (direct)', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec(simpleCallback.success)
-//       let actual
-//       s.subject(2, (_, result) => {
-//         actual = result
-//       })
-
-//       expect(actual).toBe(3)
-
-//       await s.done()
-//     })
-//   })
 
 //   k.trio('simple callback success', (title, spec) => {
 //     test(title, async () => {
