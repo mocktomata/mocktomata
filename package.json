@@ -66,7 +66,7 @@
     "cucumber": "^4.2.1",
     "delay": "^3.1.0",
     "dependency-check": "^3.2.1",
-    "eslint": "^5.16.0",
+    "eslint": "^6.0.0",
     "eslint-plugin-harmony": "^1.0.4",
     "greenkeeper-lockfile": "^1.15.1",
     "jest": "^23.6.0",
