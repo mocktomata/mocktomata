@@ -86,7 +86,9 @@ function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref:
 
 function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number) {
   log.onDebug(log => log(`${plugin} get '${name}' from:\n`, tersify(record.getSubject(ref))))
-  const id = record.addAction(plugin, { type: 'get', ref, payload: name })
+  const spy = getSpy(record, name)
+  const payload = record.getRefId(spy) || spy
+  const id = record.addAction(plugin, { type: 'get', ref, payload })
 
   return {
     getResult: () => getResult(record, id),

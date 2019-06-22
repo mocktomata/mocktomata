@@ -1,4 +1,3 @@
-
 import { spec, Spec } from '../spec';
 
 export * from './createTestIO';

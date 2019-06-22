@@ -1,12 +1,8 @@
-// import t from 'assert';
 import a from 'assertron';
 import { createTestHarness, NotSpecable, TestHarness } from '.';
 import * as es5Module from './es5';
 import { loadPlugins } from './plugin';
-// import { NotSpecable } from '../spec';
-import k, { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './test-util';
-import { logLevel } from 'aurelia-logging';
-// import { callbackInObjLiteral, delayed, simpleCallback, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './testSubjects';
+import k, { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous } from './test-util';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -62,7 +58,6 @@ describe('function', () => {
       await s.done()
     })
   })
-
   k.trio('simple callback success (direct)', (title, spec) => {
     test(title, async () => {
       const s = await spec(simpleCallback.success)
@@ -206,24 +201,41 @@ describe('function', () => {
       await s.done()
     })
   })
+  test.todo('function with static prop')
 })
 
-// describe('es5/function', () => {
+describe('object', () => {
+  k.trio('get primitive property', (title, spec) => {
+    test(title, async () => {
+      const s = await spec({ a: 1 })
+      const actual = s.subject.a
 
-test.todo('Above is working for the last version. Trying v7 take 2')
+      expect(actual).toBe(1)
 
-// describe('es5/object', () => {
-//   k.trio('get primitive property', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec({ a: 1 })
-//       const actual = s.subject.a
+      await s.done()
+    })
+  })
+  k.trio('set primitive property', (title, spec) => {
+    test(title, async () => {
+      const s = await spec({ a: 1 })
+      const actual = s.subject.a = 2
 
-//       expect(actual).toBe(1)
+      expect(actual).toBe(2)
 
-//       await s.done()
-//     })
-//   })
-// })
+      await s.done()
+    })
+  })
+  k.trio('primitive method', (title, spec) => {
+    test(title, async () => {
+      const s = await spec({ echo: (x: number) => x })
+      const actual = s.subject.echo(3)
+
+      expect(actual).toBe(3)
+
+      await s.done()
+    })
+  })
+})
 
 // describe('es5/class', () => {
 

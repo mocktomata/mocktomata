@@ -44,13 +44,21 @@ export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
       p[name] = {
         get() {
           const getter = recorder.get(name)
-          const result = getter.getResult()
-          if (result.type === 'return') {
-            return getter.returns(result.payload)
+          try {
+            const result = subject[name]
+            return getter.returns(result)
           }
-          else {
-            throw getter.throws(result.payload)
+          catch (e) {
+            getter.throws(e)
+            throw e
           }
+          // const result = getter.getResult()
+          // if (result.type === 'return') {
+          //   return getter.returns(result.payload)
+          // }
+          // else {
+          //   throw getter.throws(result.payload)
+          // }
         },
         set(value: any) {
           const setter = recorder.set(name, value)

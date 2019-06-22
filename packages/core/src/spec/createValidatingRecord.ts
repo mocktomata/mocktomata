@@ -28,6 +28,7 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
       if (received.refs.length >= original.refs.length) throw new ReferenceMismatch(specId, undefined, ref)
 
       const expected = original.refs[received.refs.length]
+
       if (ref.plugin !== expected.plugin) throw new ReferenceMismatch(specId, expected, ref)
 
       const plugin = getPlugin(expected.plugin)
