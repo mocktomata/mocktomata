@@ -128,24 +128,14 @@ function getResult(record: ValidatingRecord, id: number) {
 
 function expressionReturns({ record, plugin, id }: { record: ValidatingRecord; plugin: string; id: number }, value: any, meta?: Meta) {
   const spy = getSpy({ record }, value)
-  const ref = record.getRefId(spy)
-  if (ref) {
-    record.addAction(plugin, { type: 'return', ref: id, payload: ref, meta })
-  }
-  else {
-    record.addAction(plugin, { type: 'return', ref: id, payload: value, meta })
-  }
+  const payload = record.getRefId(spy) || value
+  record.addAction(plugin, { type: 'return', ref: id, payload, meta })
   return spy
 }
 
 function expressionThrows({ record, plugin, id }: { record: ValidatingRecord; plugin: string; id: number }, err: any) {
   const spy = getSpy({ record }, err)
-  const ref = record.getRefId(spy)
-  if (ref) {
-    record.addAction(plugin, { type: 'throw', ref: id, payload: ref })
-  }
-  else {
-    record.addAction(plugin, { type: 'throw', ref: id, payload: err })
-  }
+  const payload = record.getRefId(spy) || err
+  record.addAction(plugin, { type: 'throw', ref: id, payload })
   return spy
 }
