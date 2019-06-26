@@ -75,7 +75,7 @@ export type ReturnAction = {
   ref: number,
   tick: number,
   payload: any,
-  meta?: Meta
+  meta?: Meta,
 }
 
 export type ThrowAction = {
@@ -83,6 +83,7 @@ export type ThrowAction = {
   ref: number,
   tick: number,
   payload: any,
+  meta?: Meta,
 }
 
 export type GetAction = {

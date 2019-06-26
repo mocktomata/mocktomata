@@ -8,7 +8,7 @@ export type SpyContext = {
   recorder: ReturnType<typeof createPluginRecorder>
 }
 
-export function getSpy<T>(record: RecordingRecord, subject: T, isSpecTarget: boolean = false): T {
+export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, isSpecTarget: boolean = false): T {
   const spy = record.findTarget(subject)
   if (spy) return spy
 
@@ -21,78 +21,82 @@ export function getSpy<T>(record: RecordingRecord, subject: T, isSpecTarget: boo
 
 function createPluginRecorder(record: RecordingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
-    declare: (spy: any) => createSubjectRecorder(record, plugin, subject, spy, isSpecTarget),
-    getSpy: <T>(subject: T): T => getSpy(record, subject)
+    declare: (spy: any) => createSubjectRecorder({ record, plugin }, subject, spy, isSpecTarget),
+    getSpy: <T>(subject: T, options?: { isSpecTarget?: boolean }): T => getSpy(
+      { record },
+      subject,
+      options && options.isSpecTarget || isSpecTarget
+    )
   }
 }
 
-function createSubjectRecorder(record: RecordingRecord, plugin: string, subject: any, spy: any, isSpecTarget: boolean) {
+function createSubjectRecorder({ record, plugin }: { record: RecordingRecord; plugin: string; }, subject: any, spy: any, isSpecTarget: boolean) {
   log.onDebug(log => log(`${plugin} spy created for:\n`, tersify(subject)))
   record.addRef(isSpecTarget ? { plugin, subject, target: spy, specTarget: true } : { plugin, subject, target: spy })
   const ref = record.getRefId(spy)!
 
   return {
-    instantiate: (args: any[]) => createInstanceRecorder(record, plugin, ref, args),
-    invoke: (args: any[]) => createInvocationRecorder(record, plugin, ref, args),
-    get: (name: string | number) => createGetterRecorder(record, plugin, ref, name),
-    set: (name: string | number, value: any) => createSetterRecorder(record, plugin, ref, name, value)
+    instantiate: (args: any[]) => createInstanceRecorder({ record, plugin, ref }, args),
+    invoke: (args: any[]) => createInvocationRecorder({ record, plugin, ref }, args),
+    get: (name: string | number) => createGetterRecorder({ record, plugin, ref }, name),
+    set: (name: string | number, value: any) => createSetterRecorder({ record, plugin, ref }, name, value)
   }
 }
 
-function createInstanceRecorder(record: RecordingRecord, plugin: string, ref: string, args: any[]) {
+function createInstanceRecorder({ record, plugin, ref }: { record: RecordingRecord; plugin: string; ref: string; }, args: any[]) {
   const payload: any[] = []
   args.forEach((arg, i) => {
-    const spy = args[i] = getSpy(record, arg)
+    const spy = args[i] = getSpy({ record }, arg)
     payload.push(record.getRefId(spy) || spy)
   })
   const id = record.addAction(plugin, { type: 'instantiate', ref, payload })
 
   return {
-    get: (name: string | number) => createGetterRecorder(record, plugin, id, name),
-    set: (name: string | number, value: any) => createSetterRecorder(record, plugin, id, name, value)
+    get: (name: string | number) => createGetterRecorder({ record, plugin, ref: id }, name),
+    set: (name: string | number, value: any) => createSetterRecorder({ record, plugin, ref: id }, name, value)
   }
 }
 
-function createInvocationRecorder(record: RecordingRecord, plugin: string, ref: string, args: any[]) {
+function createInvocationRecorder({ record, plugin, ref }: { record: RecordingRecord, plugin: string, ref: string }, args: any[]) {
   log.onDebug(log => log(`${plugin} invoke with ${tersify(args)} on:\n`, tersify(record.getSubject(ref))))
 
   const payload: any[] = []
   args.forEach((arg, i) => {
-    const spy = args[i] = getSpy(record, arg)
+    const spy = args[i] = getSpy({ record }, arg)
     payload.push(record.getRefId(spy) || spy)
   })
   const id = record.addAction(plugin, { type: 'invoke', ref, payload })
 
   return {
-    returns: (value: any, meta?: Meta) => expressionReturns(record, plugin, id, value, meta),
-    throws: (err: any) => expressionThrows(record, plugin, id, err)
+    returns: (value: any, options?: { meta?: Meta }) => expressionReturns({ record, plugin, id }, value, options && options.meta),
+    throws: (err: any, options?: { meta?: Meta }) => expressionThrows({ record, plugin, id }, err, options && options.meta)
   }
 }
 
-function createGetterRecorder(record: RecordingRecord, plugin: string, ref: string | number, name: string | number) {
+function createGetterRecorder({ record, plugin, ref }: { record: RecordingRecord, plugin: string, ref: string | number }, name: string | number) {
   log.onDebug(log => log(`${plugin} get '${name}' from:\n`, tersify(record.getSubject(ref))))
-  const spy = getSpy(record, name)
+  const spy = getSpy({ record }, name)
   const payload = record.getRefId(spy) || spy
   const id = record.addAction(plugin, { type: 'get', ref, payload })
 
   return {
-    returns: (value: any) => expressionReturns(record, plugin, id, value),
-    throws: (err: any) => expressionThrows(record, plugin, id, err)
+    returns: (value: any, options?: { meta?: Meta }) => expressionReturns({ record, plugin, id }, value, options && options.meta),
+    throws: (err: any, options?: { meta?: Meta }) => expressionThrows({ record, plugin, id }, err, options && options.meta)
   }
 }
 
-function createSetterRecorder(record: RecordingRecord, plugin: string, ref: string | number, name: string | number, value: any) {
+function createSetterRecorder({ record, plugin, ref }: { record: RecordingRecord, plugin: string, ref: string | number }, name: string | number, value: any) {
   log.onDebug(log => log(`${plugin} set '${name}' with '${value}' to:\n`, tersify(record.getSubject(ref))))
   const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
 
   return {
-    returns: (value: any) => expressionReturns(record, plugin, id, value),
-    throws: (err: any) => expressionThrows(record, plugin, id, err)
+    returns: (value: any, options?: { meta?: Meta }) => expressionReturns({ record, plugin, id }, value, options && options.meta),
+    throws: (err: any, options?: { meta?: Meta }) => expressionThrows({ record, plugin, id }, err, options && options.meta)
   }
 }
 
-function expressionReturns(record: RecordingRecord, plugin: string, id: number, value: any, meta?: Meta) {
-  const spy = getSpy(record, value)
+function expressionReturns({ record, plugin, id }: { record: RecordingRecord; plugin: string; id: number; }, value: any, meta?: Meta) {
+  const spy = getSpy({ record }, value)
   const ref = record.getRefId(spy)
   if (ref) {
     record.addAction(plugin, { type: 'return', ref: id, payload: ref, meta })
@@ -103,14 +107,14 @@ function expressionReturns(record: RecordingRecord, plugin: string, id: number, 
   return spy
 }
 
-function expressionThrows(record: RecordingRecord, plugin: string, id: number, err: any) {
-  const spy = getSpy(record, err)
+function expressionThrows({ record, plugin, id }: { record: RecordingRecord; plugin: string; id: number; }, err: any, meta?: Meta) {
+  const spy = getSpy({ record }, err)
   const ref = record.getRefId(spy)
   if (ref) {
-    record.addAction(plugin, { type: 'throw', ref: id, payload: ref })
+    record.addAction(plugin, { type: 'throw', ref: id, payload: ref, meta })
   }
   else {
-    record.addAction(plugin, { type: 'throw', ref: id, payload: err })
+    record.addAction(plugin, { type: 'throw', ref: id, payload: err, meta })
   }
   return spy
 }

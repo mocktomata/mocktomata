@@ -51,7 +51,7 @@ describe('function', () => {
   k.trio('throwing error', (title, spec) => {
     test(title, async () => {
       const s = await spec(() => { throw new Error('failed') })
-      const err = a.throws(() => s.subject()) as Error
+      const err = a.throws(() => s.subject())
 
       expect(err.message).toBe('failed')
 
@@ -233,6 +233,33 @@ describe('object', () => {
       expect(actual).toBe(3)
 
       await s.done()
+    })
+  })
+  k.trio('primitive method throws error', (title, spec) => {
+    test(title, async () => {
+      const s = await spec({ echo: (x: string) => { throw new Error(x) } })
+      const err = a.throws(() => s.subject.echo('abc'))
+
+      expect(err.message).toBe('abc')
+
+      await s.done()
+    })
+  })
+  k.trio('callback method success', (title, spec) => {
+    test.skip(title, async () => {
+      harness.showLog(40)
+      const s = await spec({
+        inc(x: number, cb: (x: number) => void) {
+          cb(x + 1)
+        }
+      })
+      let actual: number
+      s.subject.inc(3, x => actual = x)
+
+      expect(actual!).toBe(4)
+
+      await s.done()
+      harness.logSpecs()
     })
   })
 })

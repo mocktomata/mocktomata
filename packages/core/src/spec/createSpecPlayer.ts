@@ -1,13 +1,14 @@
+import { tersify } from 'tersify';
 import { pick } from 'type-plus';
 import { SpecContext } from '../context';
 import { findPlugin } from '../plugin';
+import { log } from '../util';
+import { getField } from '../util/getField';
 import { createValidatingRecord, ValidatingRecord } from './createValidatingRecord';
 import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
 import { Meta, SpecOptions } from './types';
-import { log } from '../util';
-import { tersify } from 'tersify';
 
 export async function createSpecPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
@@ -15,7 +16,7 @@ export async function createSpecPlayer<T>(context: SpecContext, id: string, subj
   const actual = await context.io.readSpec(id)
   const record = createValidatingRecord(id, actual, options)
   return {
-    subject: getStub(record, subject, true),
+    subject: getStub({ record }, subject, true),
     end: async () => record.end(),
   }
 }
@@ -24,7 +25,7 @@ export type StubContext = {
   player: ReturnType<typeof createPluginReplayer>
 }
 
-function getStub<T>(record: ValidatingRecord, subject: T, isSpecTarget: boolean = false): T {
+function getStub<T>({ record }: { record: ValidatingRecord }, subject: T, isSpecTarget: boolean = false): T {
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
@@ -34,44 +35,48 @@ function getStub<T>(record: ValidatingRecord, subject: T, isSpecTarget: boolean 
 
 function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
-    declare: (stub: any) => createSubjectReplayer(record, plugin, subject, stub, isSpecTarget),
-    getSpy: (subject: any) => getSpy(record, subject),
-    getStub: (subject: any) => getStub(record, subject)
+    declare: (stub: any) => createSubjectReplayer({ record, plugin }, subject, stub, isSpecTarget),
+    getSpy: (subject: any, options?: { isSpecTarget?: boolean }) => getSpy(
+      { record },
+      subject,
+      getField(options, 'isSpecTarget', isSpecTarget)
+    ),
+    getStub: (subject: any) => getStub({ record }, subject)
   }
 }
 
-function createSubjectReplayer(record: ValidatingRecord, plugin: string, subject: any, stub: any, isSpecTarget: boolean) {
+function createSubjectReplayer({ record, plugin }: { record: ValidatingRecord, plugin: string }, subject: any, stub: any, isSpecTarget: boolean) {
   log.onDebug(log => log(`${plugin} stub created for:\n`, tersify(subject)))
   record.addRef(isSpecTarget ? { plugin, subject, target: stub, specTarget: true } : { plugin, subject, target: stub })
   const ref = record.getRefId(stub)!
 
   return {
-    instantiate: (args: any[]) => createInstanceReplayer(record, plugin, ref, args),
-    invoke: (args: any[]) => createInvocationReplayer(record, plugin, ref, args),
-    get: (name: string | number) => createGetterReplayer(record, plugin, ref, name),
-    set: (name: string | number, value: any) => createSetterReplayer(record, plugin, ref, name, value)
+    instantiate: (args: any[]) => createInstanceReplayer({ record, plugin, ref }, args),
+    invoke: (args: any[]) => createInvocationReplayer({ record, plugin, ref }, args),
+    get: (name: string | number) => createGetterReplayer({ record, plugin, ref }, name),
+    set: (name: string | number, value: any) => createSetterReplayer({ record, plugin, ref }, name, value)
   }
 }
 
-function createInstanceReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
+function createInstanceReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string }, args: any[]) {
   const payload: any[] = []
   args.forEach((arg, i) => {
-    const spy = args[i] = getSpy(record, arg)
+    const spy = args[i] = getSpy({ record }, arg)
     payload.push(record.getRefId(spy) || spy)
   })
   const id = record.addAction(plugin, { type: 'instantiate', ref, payload })
 
   return {
-    get: (name: string | number) => createGetterReplayer(record, plugin, id, name),
-    set: (name: string | number, value: any) => createSetterReplayer(record, plugin, id, name, value)
+    get: (name: string | number) => createGetterReplayer({ record, plugin, ref: id }, name),
+    set: (name: string | number, value: any) => createSetterReplayer({ record, plugin, ref: id }, name, value)
   }
 }
 
-function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref: string, args: any[]) {
+function createInvocationReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string }, args: any[]) {
   log.onDebug(log => log(`${plugin} invoke with ${tersify(args)} on:\n`, tersify(record.getSubject(ref))))
   const payload: any[] = []
   args.forEach((arg, i) => {
-    const stub = args[i] = getSpy(record, arg)
+    const stub = args[i] = getSpy({ record }, arg)
     payload.push(record.getRefId(stub) || stub)
   })
   const id = record.addAction(plugin, { type: 'invoke', ref, payload })
@@ -79,32 +84,32 @@ function createInvocationReplayer(record: ValidatingRecord, plugin: string, ref:
   return {
     waitUntilConclude: (cb: () => void) => waitUntilConclude(record, id, cb),
     getResult: () => getResult(record, id),
-    returns: (value: any) => expressionReturns(record, plugin, id, value),
-    throws: (err: any) => expressionThrows(record, plugin, id, err)
+    returns: (value: any) => expressionReturns({ record, plugin, id }, value),
+    throws: (err: any) => expressionThrows({ record, plugin, id }, err)
   }
 }
 
-function createGetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number) {
+function createGetterReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string | number }, name: string | number) {
   log.onDebug(log => log(`${plugin} get '${name}' from:\n`, tersify(record.getSubject(ref))))
-  const spy = getSpy(record, name)
+  const spy = getSpy({ record }, name)
   const payload = record.getRefId(spy) || spy
   const id = record.addAction(plugin, { type: 'get', ref, payload })
 
   return {
     getResult: () => getResult(record, id),
-    returns: (value: any) => expressionReturns(record, plugin, id, value),
-    throws: (err: any) => expressionThrows(record, plugin, id, err)
+    returns: (value: any) => expressionReturns({ record, plugin, id }, value),
+    throws: (err: any) => expressionThrows({ record, plugin, id }, err)
   }
 }
 
-function createSetterReplayer(record: ValidatingRecord, plugin: string, ref: string | number, name: string | number, value: any) {
+function createSetterReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string | number }, name: string | number, value: any) {
   log.onDebug(log => log(`${plugin} set '${name}' with '${value}' to:\n`, tersify(record.getSubject(ref))))
   const id = record.addAction(plugin, { type: 'set', ref, payload: [name, value] })
 
   return {
     getResult: () => getResult(record, id),
-    returns: (value: any) => expressionReturns(record, plugin, id, value),
-    throws: (err: any) => expressionThrows(record, plugin, id, err)
+    returns: (value: any) => expressionReturns({ record, plugin, id }, value),
+    throws: (err: any) => expressionThrows({ record, plugin, id }, err)
   }
 }
 
@@ -121,8 +126,8 @@ function getResult(record: ValidatingRecord, id: number) {
   }
 }
 
-function expressionReturns(record: ValidatingRecord, plugin: string, id: number, value: any, meta?: Meta) {
-  const spy = getSpy(record, value)
+function expressionReturns({ record, plugin, id }: { record: ValidatingRecord; plugin: string; id: number }, value: any, meta?: Meta) {
+  const spy = getSpy({ record }, value)
   const ref = record.getRefId(spy)
   if (ref) {
     record.addAction(plugin, { type: 'return', ref: id, payload: ref, meta })
@@ -133,8 +138,8 @@ function expressionReturns(record: ValidatingRecord, plugin: string, id: number,
   return spy
 }
 
-function expressionThrows(record: ValidatingRecord, plugin: string, id: number, err: any) {
-  const spy = getSpy(record, err)
+function expressionThrows({ record, plugin, id }: { record: ValidatingRecord; plugin: string; id: number }, err: any) {
+  const spy = getSpy({ record }, err)
   const ref = record.getRefId(spy)
   if (ref) {
     record.addAction(plugin, { type: 'throw', ref: id, payload: ref })
