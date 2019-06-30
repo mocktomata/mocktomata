@@ -8,10 +8,10 @@ export const errorPlugin: SpecPlugin = {
     return subject
   },
   createStub: ({ player }, subject) => {
-    player.declare(subject)
+    player.declare().setTarget(subject)
     return subject
   },
   // TODO: serialize custom properties.
-  createRepresentation: ({ process }, subject) => ({ message: process(subject.message) }),
-  recreateSubject: ({ process }, input) => new Error(process(input.message))
+  createRepresentation: (_, subject) => ({ message: subject.message }),
+  recreateSubject: (_, input) => new Error(input.message)
 }

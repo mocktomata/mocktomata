@@ -24,6 +24,7 @@ export const functionPlugin: SpecPlugin<Function> = {
     return spy
   },
   createStub: ({ player }, subject) => {
+    const stubPlayer = player.declare()
     const stub = function (this: any, ...args: any[]) {
       const invocation = stubPlayer.invoke(args)
       const result = invocation.getResult()
@@ -34,7 +35,7 @@ export const functionPlugin: SpecPlugin<Function> = {
         throw invocation.throws(result.payload)
       }
     }
-    const stubPlayer = player.declare(stub)
+    stubPlayer.setTarget(stub)
     return stub
   }
 }

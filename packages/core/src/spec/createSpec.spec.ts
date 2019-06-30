@@ -6,6 +6,7 @@ import { echoPluginModule } from '../test-util';
 import { createLiveSpec, createSaveSpec, createSimulateSpec } from './createSpec';
 import * as es5Module from '../es5'
 import { ActionMismatch } from './errors';
+import { SpecRecord } from './types';
 
 describe('timeout warning', () => {
   let harness: TestHarness
@@ -56,14 +57,14 @@ describe('timeout warning', () => {
     harness.io.addPluginModule('es5', es5Module)
     await loadPlugins(harness)
 
-    harness.io.specs['plugin not loaded'] = JSON.stringify({
+    await harness.io.writeSpec('plugin not loaded', {
       refs: [{
         plugin: 'function'
       }],
       actions: [
-        { type: 'invoke', id: '0', payload: [1] }
+        { type: 'invoke', ref: '0', payload: [1] }
       ]
-    })
+    } as SpecRecord)
 
     const s = await createSimulateSpec(harness, 'plugin not loaded', function (x: any) { return x }, { timeout: 10 })
 

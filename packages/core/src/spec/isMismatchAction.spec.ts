@@ -12,7 +12,7 @@ describe('isMismatchAction()', () => {
   })
   test('type mismatch returns true', () => {
     t(isMismatchAction(
-      specAction({ type: 'construct' }),
+      specAction({ type: 'instantiate' }),
       specAction({ type: 'invoke' })
     ))
   })

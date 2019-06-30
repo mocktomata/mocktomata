@@ -32,7 +32,7 @@ export type SpecReference = {
 
   subject?: any,
 
-  specTarget?: true
+  specTarget?: boolean
 }
 
 export type SpecReferenceRecord = SpecReferenceBase & {

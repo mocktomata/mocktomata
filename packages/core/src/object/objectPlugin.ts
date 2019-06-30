@@ -38,8 +38,10 @@ export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
     return spy
   },
   createStub: ({ player }, subject) => {
+    const recorder = player.declare()
     const propertyNames = getPropertyNames(subject)
     const stub: any = {}
+    recorder.setTarget(stub)
     const describeProps = propertyNames.reduce((p, name) => {
       p[name] = {
         get() {
@@ -74,7 +76,6 @@ export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
       return p
     }, {} as any)
     Object.defineProperties(stub, describeProps)
-    const recorder = player.declare(stub)
     return stub
   },
   createRepresentation: ({ process }, subject) => Object.keys(subject).reduce((p, k) => {

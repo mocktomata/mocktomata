@@ -3,6 +3,7 @@ import { errorPlugin } from './error';
 import { functionPlugin } from './function';
 import { objectPlugin } from './object';
 import { PluginActivationContext } from './plugin';
+import { promisePlugin } from './promise';
 import { stringPlugin } from './string';
 
 export function activate(context: PluginActivationContext) {
@@ -11,4 +12,5 @@ export function activate(context: PluginActivationContext) {
   context.register(arrayPlugin)
   context.register(functionPlugin)
   context.register(errorPlugin)
+  context.register(promisePlugin)
 }

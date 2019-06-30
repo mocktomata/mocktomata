@@ -10250,12 +10250,19 @@ type-name@^2.0.1:
   resolved "https://registry.yarnpkg.com/type-name/-/type-name-2.0.2.tgz#efe7d4123d8ac52afff7f40c7e4dec5266008fb4"
   integrity sha1-7+fUEj2KxSr/9/QMfk3sUmYAj7Q=
 
-type-plus@^1.18.0, type-plus@^1.18.1, type-plus@^1.22.0:
+type-plus@^1.18.0, type-plus@^1.18.1:
   version "1.22.0"
   resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.22.0.tgz#b2f5843ce01baefa33013c9a8672b6053700394c"
   integrity sha512-HVK/+hrefczp4YPbtk69xsQi2TtAPqam6xuFAGmqxem+6C+2Il+edwrA0cQ0EebJBxqAdpAXqaa1SUhIDa0/Lw==
   dependencies:
     unpartial "^0.6.2"
+
+type-plus@^1.23.0:
+  version "1.23.0"
+  resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.23.0.tgz#47017ebaddef47f3160a77fa2c99fe202d3c400c"
+  integrity sha512-NJTa7V4wJJZ5SdX/2gP5oeLFRN79F32lbKUacQySZWneDoQdBt/Zs1TrhwBpXcOy2Hd7qn2zloKWDyJdGnI99g==
+  dependencies:
+    unpartial "^0.6.3"
 
 typedarray@^0.0.6:
   version "0.0.6"

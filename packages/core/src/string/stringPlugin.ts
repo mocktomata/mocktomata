@@ -8,7 +8,7 @@ export const stringPlugin: SpecPlugin = {
     return subject
   },
   createStub: ({ player }, subject) => {
-    player.declare(subject)
+    player.declare().setTarget(subject)
     return subject
   }
 }

@@ -33,7 +33,11 @@ export class NotSpecable extends KomondorError {
 export class ReferenceMismatch extends KomondorError {
   // istanbul ignore next
   constructor(public specId: string, public expected: { plugin: string } | undefined, public actual: { plugin: string }) {
-    super(`Recorded data for '${specId}' doesn't match with simulation. Expecting ${tersifyReference(expected)} but received ${tersifyReference(actual)}`)
+    super(`Recorded data for '${specId}' doesn't match with simulation.
+Expecting:
+${tersifyReference(expected)}
+Received:
+${tersifyReference(actual)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }
@@ -42,7 +46,11 @@ export class ReferenceMismatch extends KomondorError {
 export class ActionMismatch extends KomondorError {
   // istanbul ignore next
   constructor(public specId: string, public expected: { type: string, plugin: string } | undefined, public actual: { type: string, plugin: string } | undefined) {
-    super(`Recorded data for '${specId}' doesn't match with simulation. Expecting ${tersifyAction(expected)} but received ${tersifyAction(actual)}`)
+    super(`Recorded data for '${specId}' doesn't match with simulation.
+Expecting:
+${tersifyAction(expected)}
+Received:
+${tersifyAction(actual)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
   }

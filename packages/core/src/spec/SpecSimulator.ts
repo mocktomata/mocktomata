@@ -32,6 +32,10 @@ function createSpecImmediateSimulator(record: ValidatingRecord) {
 
 function processInvoke(record: ValidatingRecord, action: InvokeAction) {
   const ref = record.getRef(action.ref)
+  if (!ref) {
+    record.resolveRef(action.ref)
+    return
+  }
   if (ref.specTarget) return
   const args = action.payload.map(a => record.getSubject(a))
   log.onDebug(log => log(`${ref.plugin} auto invoke ${tersify(args)} on:\n`, tersify(ref.subject)))
@@ -39,7 +43,7 @@ function processInvoke(record: ValidatingRecord, action: InvokeAction) {
 }
 
 function processGet(record: ValidatingRecord, action: GetAction) {
-  const ref = record.getRef(action.ref)
+  const ref = record.resolveRef(action.ref)
   if (ref.specTarget) return
   const name = record.getSubject(action.payload)
   log.onDebug(log => log(`${ref.plugin} auto get ${name} on:\n`, tersify(ref.subject)))

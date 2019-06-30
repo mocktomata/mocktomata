@@ -9,7 +9,7 @@ export const arrayPlugin: SpecPlugin<any[]> = {
     return subject
   },
   createStub: ({ player }, subject) => {
-    player.declare(subject)
+    player.declare().setTarget(subject)
     subject.forEach((s, i) => subject[i] = player.getSpy(s))
     return subject
   },

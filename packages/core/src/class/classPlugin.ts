@@ -78,7 +78,7 @@ export const classPlugin: SpecPlugin = {
         throw call.thrown()
       }
     })
-    const stubPlayer = player.declare(stubClass)
+    const stubPlayer = player.declare().setTarget(stubClass)
     return stubClass
   },
 }

@@ -1,12 +1,13 @@
+import { SpecPlugin } from '../spec';
 import { store } from '../store';
 import { DuplicatePlugin, NoActivate, PluginNotConforming } from './errors';
-import { KomondorPlugin, PluginModule } from './types';
+import { PluginModule } from './types';
 
 export function addPluginModule(moduleName: string, pluginModule: PluginModule) {
   assertModuleConfirming(moduleName, pluginModule)
 
   pluginModule.activate({
-    register(plugin: KomondorPlugin) {
+    register(plugin: SpecPlugin) {
       assertPluginConfirming(plugin)
       const pluginName = plugin.name ? `${moduleName}/${plugin.name}` : moduleName
       const plugins = store.get().plugins
