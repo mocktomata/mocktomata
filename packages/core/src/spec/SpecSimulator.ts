@@ -15,7 +15,7 @@ export function createSpecSimulator(record: ValidatingRecord, options: SpecOptio
  */
 function createSpecImmediateSimulator(record: ValidatingRecord) {
   return {
-    process() {
+    run() {
       const action = record.peekAction()
       if (!action) return
       switch (action.type) {

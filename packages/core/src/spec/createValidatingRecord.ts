@@ -3,8 +3,7 @@ import { getPlugin, PluginNotFound } from '../plugin';
 import { createTimeTracker } from '../util';
 import { createPluginReplayer } from './createSpecPlayer';
 import { ActionMismatch, ReferenceMismatch } from './errors';
-import { addReference, findTarget, getRef, findRefIdByTarget, resolveRefId, addAction } from './SpecRecord';
-import { createSpecSimulator } from './SpecSimulator';
+import { addAction, addReference, findRefIdByTarget, findTarget, getRef, resolveRefId } from './SpecRecord';
 import { SpecAction, SpecOptions, SpecRecord, SpecReference } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
 
@@ -15,27 +14,19 @@ export type ValidatingRecord = ReturnType<typeof createValidatingRecord>
  */
 export function createValidatingRecord(specId: string, original: SpecRecord, options: SpecOptions) {
   const time = createTimeTracker(options)
+  const addActionListeners: Array<() => void> = []
   const listeners: { ref: number, listener: () => void }[] = []
   const received: SpecRecordLive = { refs: [], actions: [] }
   let ended = false
   const record = {
     specId,
     addRef: (ref: SpecReferenceLive) => {
-      if (received.refs.length >= original.refs.length) throw new ReferenceMismatch(specId, undefined, ref)
-
-      const expected = original.refs[received.refs.length]
-      if (ref.plugin !== expected.plugin) throw new ReferenceMismatch(specId, expected, ref)
-
-      const plugin = getPlugin(expected.plugin)
-      if (!plugin) throw new PluginNotFound(expected.plugin)
-
+      assertNotAddingExtraReference(specId, original.refs, received.refs, ref)
+      assertMatchingReference(specId, ref, getExpectedReference(original.refs, received.refs))
       return addReference(received.refs, ref)
     },
     addAction(action: Omit<SpecAction, 'tick'>) {
-      if (ended) {
-        const plugin = getRef(received, action.ref)!.plugin
-        throw new ActionMismatch(specId, undefined, { type: action.type, plugin })
-      }
+      assertNotAddingWhenEnded(specId, received, ended, action)
 
       const id = addAction(received.actions, { ...action, tick: time.elaspe() })
 
@@ -48,18 +39,20 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
           }
         }
       })
-      simulator.process()
+      addActionListeners.forEach(l => l())
       return id
     },
     end() {
       ended = true
       time.stop()
-      if (original.actions.length > received.actions.length) {
-        const expectedAction = original.actions[received.actions.length]
-        const plugin = getRef(original, expectedAction.ref)!.plugin
-        throw new ActionMismatch(specId, { type: expectedAction.type, plugin }, undefined)
-      }
+      assertReceivedAllExpectedActions(specId, original, received)
     },
+    onAddAction(listener: () => void) {
+      addActionListeners.push(listener)
+    },
+    /**
+     * Show the received record. For debugging purpose only.
+     */
     logReceived() {
       console.info('received', received)
     },
@@ -80,8 +73,34 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
     getSubject: (refOrValue: any) => getSubject(original, received, refOrValue),
     findTarget: <T>(subject: T) => findTarget(received.refs, subject),
   }
-  const simulator = createSpecSimulator(record, options)
   return record
+}
+
+function assertNotAddingExtraReference(specId: string, loadedRefs: SpecReference[], receivedRefs: SpecReferenceLive[], ref: SpecReferenceLive) {
+  if (receivedRefs.length >= loadedRefs.length) throw new ReferenceMismatch(specId, undefined, ref)
+}
+
+function getExpectedReference(loadedRefs: SpecReference[], receviedRefs: SpecReferenceLive[]) {
+  return loadedRefs[receviedRefs.length]
+}
+
+function assertMatchingReference(specId: string, actual: SpecReference, expected: SpecReference) {
+  if (actual.plugin !== expected.plugin) throw new ReferenceMismatch(specId, expected, actual)
+}
+
+function assertNotAddingWhenEnded(specId: string, received: SpecRecordLive, ended: boolean, action: Pick<SpecAction, 'type' | 'ref'>) {
+  if (ended) {
+    const plugin = getRef(received, action.ref)!.plugin
+    throw new ActionMismatch(specId, undefined, { type: action.type, plugin })
+  }
+}
+
+function assertReceivedAllExpectedActions(specId: string, original: SpecRecord, received: SpecRecordLive) {
+  if (original.actions.length > received.actions.length) {
+    const expectedAction = original.actions[received.actions.length]
+    const plugin = getRef(original, expectedAction.ref)!.plugin
+    throw new ActionMismatch(specId, { type: expectedAction.type, plugin }, undefined)
+  }
 }
 
 function getSubject(original: SpecRecord, received: SpecRecordLive, refOrValue: any): any {
