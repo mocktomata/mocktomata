@@ -1,9 +1,10 @@
 import { Omit, pick } from 'type-plus';
 import { getPlugin } from '../plugin';
-import { createTimeTracker, log } from '../util';
-import { addAction, addReference, findTarget, getRef, findRefIdByTarget } from './SpecRecord';
+import { createTimeTracker } from '../util';
+import { logRecordingTimeout } from './log';
+import { addAction, addReference, findRefIdByTarget, findTarget, getRef } from './SpecRecord';
 import { SpecAction, SpecOptions } from './types';
-import { SpecReferenceLive } from './typesInternal';
+import { SpecReferenceLive, SpecRecordLive } from './typesInternal';
 
 export type RecordingRecord = Omit<ReturnType<typeof createRecordingRecord>, 'getRecord'>
 
@@ -13,31 +14,28 @@ export type RecordingRecordContext = {
 }
 
 export function createRecordingRecord(options: SpecOptions) {
-  const refs: SpecReferenceLive[] = []
-  const actions: SpecAction[] = []
-  const time = createTimeTracker(options, () => {
-    log.warn(`done() was not called in ${options.timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
-  })
+  const received: SpecRecordLive = { refs: [], actions: [] }
+  const time = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
 
   return {
-    addRef: (ref: SpecReferenceLive) => addReference(refs, ref),
-    addAction: (action: Omit<SpecAction, 'tick'>) => addAction(actions, { ...action, tick: time.elaspe() }),
+    addRef: (ref: SpecReferenceLive) => addReference(received.refs, ref),
+    addAction: (action: Omit<SpecAction, 'tick'>) => addAction(received.actions, { ...action, tick: time.elaspe() }),
     end: () => { time.stop() },
     getRecord: () => ({
-      refs: refs.map(ref => {
+      refs: received.refs.map(ref => {
         if (ref.specTarget) {
           return pick(ref, 'plugin', 'subject', 'specTarget')
         }
         return {
           ...pick(ref, 'plugin'),
-          subject: createRepresentation(refs, ref)
+          subject: createRepresentation(received.refs, ref)
         }
       }),
-      actions
+      actions: received.actions
     }),
-    getRefId: (spy: any) => findRefIdByTarget(refs, spy),
-    getSubject: (ref: string | number) => getRef({ refs, actions }, ref)!.subject,
-    findTarget: <T>(subject: T) => findTarget(refs, subject),
+    getRefId: (spy: any) => findRefIdByTarget(received.refs, spy),
+    getSubject: (ref: string | number) => getRef(received, ref)!.subject,
+    findTarget: <T>(subject: T) => findTarget(received.refs, subject),
   }
 }
 

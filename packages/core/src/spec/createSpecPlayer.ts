@@ -1,15 +1,13 @@
-import { tersify } from 'tersify';
 import { getField, pick } from 'type-plus';
 import { SpecContext } from '../context';
 import { findPlugin } from '../plugin';
-import { log } from '../util';
 import { createValidatingRecord, ValidatingRecord } from './createValidatingRecord';
 import { NotSpecable } from './errors';
-import { getSpy, getSpies } from './getSpy';
+import { getSpies, getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
-import { Meta, SpecOptions } from './types';
+import { logCreateStub, logGetAction, logInstantiateAction, logInvokeAction, logReturnAction, logSetAction, logThrowAction } from './log';
 import { createSpecSimulator } from './SpecSimulator';
-import { logInstantiateAction, logInvokeAction, logGetAction, logSetAction, logReturnAction, logThrowAction } from './log';
+import { Meta, SpecOptions } from './types';
 
 export async function createSpecPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
@@ -59,7 +57,7 @@ function createSubjectReplayer(
   const specRef = isSpecTarget ? { plugin, subject, target: undefined, specTarget: true } : { plugin, subject, target: undefined }
   const ref = record.addRef(specRef)
 
-  log.onDebug(log => log(`${plugin} ${ref}: create reference\n`, tersify(subject)))
+  logCreateStub({ plugin, ref }, subject)
 
   return {
     instantiate: (args: any[]) => createInstanceReplayer({ record, plugin, ref }, args),

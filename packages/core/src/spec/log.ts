@@ -1,6 +1,7 @@
 import { tersify } from 'tersify';
 import { log } from '../util';
 import { RecordingRecord } from './createRecordingRecord';
+import { SpecReferenceLive } from './typesInternal';
 
 export type ActionLoggingContext = {
   record: Pick<RecordingRecord, 'getSubject'>;
@@ -8,8 +9,20 @@ export type ActionLoggingContext = {
   ref: string | number;
 }
 
+export function logCreateSpy({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, subject: any) {
+  log.onDebug(log => log(`${plugin} ${ref}: create spy\n${tersify(subject)}`))
+}
+
+export function logCreateStub({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, subject: any) {
+  log.onDebug(log => log(`${plugin} ${ref}: create stub\n${tersify(subject)}`))
+}
+
+export function logRecordingTimeout(timeout: number) {
+  log.warn(`done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
+}
+
 export function logInstantiateAction({ record, plugin, ref }: ActionLoggingContext, id: number, args: any[]) {
-  log.onDebug(log => log(`${plugin} ${ref}/${id}: instantiate with ${tersify(args)}\n${tersify(record.getSubject(ref))}`));
+  log.onDebug(log => log(`${plugin} ${ref} /${id}: instantiate with ${tersify(args)}\n${tersify(record.getSubject(ref))}`));
 }
 
 export function logInvokeAction({ record, plugin, ref }: ActionLoggingContext, id: number, args: any[]) {
@@ -30,4 +43,12 @@ export function logReturnAction({ plugin, ref }: Omit<ActionLoggingContext, 'rec
 
 export function logThrowAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
   log.onDebug(() => `${plugin} ${ref}/${sourceId}/${id}: throws ${value}`)
+}
+
+export function logAutoInvokeAction(ref: SpecReferenceLive, refId: string, id: number, args: any[]) {
+  log.onDebug(log => log(`${ref.plugin} ${refId}/${id}: auto invoke with ${tersify(args)}\n${tersify(ref.subject)}`))
+}
+
+export function logAutoGetAction(ref: SpecReferenceLive, refId: string, id: number, name: string | number) {
+  log.onDebug(log => log(`${ref.plugin} ${refId}/${id}: auto get ${typeof name === 'string' ? `'${name}'` : name}\n${tersify(ref.subject)}`))
 }

@@ -10,14 +10,14 @@ export function addAction(actions: SpecAction[], action: SpecAction) {
 }
 
 export function getRef(record: SpecRecordLive, ref: string | number): SpecReferenceLive | undefined {
-  return record.refs[resolveRefId(record, ref)]
+  return record.refs[Number(resolveRefId(record, ref))]
 }
 
 export function resolveRefId({ actions }: Pick<SpecRecordLive, 'actions'>, ref: string | number) {
   while (typeof ref === 'number') {
     ref = actions[ref].ref
   }
-  return Number(ref)
+  return ref
 }
 
 export function findRefIdByTarget(refs: SpecReferenceLive[], target: any) {

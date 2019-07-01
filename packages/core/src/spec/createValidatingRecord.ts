@@ -56,6 +56,7 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
     logReceived() {
       console.info('received', received)
     },
+    resolveRefId: (ref: string | number) => resolveRefId(received, ref),
     getRefId: (stub: any) => findRefIdByTarget(received.refs, stub),
     getRef: (ref: string | number) => getRef(received, ref),
     resolveRef: (ref: string | number) => resolveRef(record, original, received, ref),
@@ -63,6 +64,9 @@ export function createValidatingRecord(specId: string, original: SpecRecord, opt
       return received.actions.length < original.actions.length ?
         original.actions[received.actions.length] :
         undefined
+    },
+    peekActionId() {
+      return received.actions.length
     },
     onAction(ref: number, listener: () => void) {
       listeners.push({
@@ -127,7 +131,7 @@ function recreateSubject(original: SpecRecord, received: SpecRecord, ref: SpecRe
 }
 
 function resolveRef(record: ValidatingRecord, original: SpecRecord, received: SpecRecord, ref: string | number): SpecReferenceLive {
-  const refId = resolveRefId(received, ref)
+  const refId = Number(resolveRefId(received, ref))
   if (received.refs[refId]) return received.refs[refId]
 
   const specRef = original.refs[refId]
