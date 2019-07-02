@@ -14,9 +14,7 @@ export function getRef(record: SpecRecordLive, ref: string | number): SpecRefere
 }
 
 export function resolveRefId({ actions }: Pick<SpecRecordLive, 'actions'>, ref: string | number) {
-  while (typeof ref === 'number') {
-    ref = actions[ref].ref
-  }
+  while (typeof ref === 'number') ref = actions[ref].ref
   return ref
 }
 
@@ -27,6 +25,5 @@ export function findRefIdByTarget(refs: SpecReferenceLive[], target: any) {
 
 export function findTarget<T>(refs: SpecReferenceLive[], subject: T): T | undefined {
   const ref = refs.find(r => r.subject === subject)
-  if (ref) return ref.target
-  return undefined
+  return ref && ref.target
 }

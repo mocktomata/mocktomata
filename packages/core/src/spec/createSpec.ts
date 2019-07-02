@@ -1,8 +1,9 @@
 import { context, SpecContext } from '../context';
 import { createSpecPlayer } from './createSpecPlayer';
 import { createSpecRecorder } from './createSpecRecorder';
-import { IDCannotBeEmpty, SpecNotFound } from './errors';
+import { IDCannotBeEmpty, NotSpecable, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
+import { isSpecable } from './isSpecable';
 import { Spec, SpecMode, SpecOptions } from './types';
 
 export function createSpec(defaultMode: SpecMode) {
@@ -42,13 +43,12 @@ export async function createAutoSpec<T>(context: SpecContext, id: string, subjec
   }
 }
 
-export async function createLiveSpec<T>(_context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createSpecRecorder(id, subject, options)
+export async function createLiveSpec<T>(_context: SpecContext, _id: string, subject: T, _options: SpecOptions): Promise<Spec<T>> {
+  if (!isSpecable(subject)) throw new NotSpecable(subject)
+
   return {
-    subject: recorder.subject,
-    async done() {
-      return recorder.end()
-    }
+    subject,
+    async done() { }
   }
 }
 
