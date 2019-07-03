@@ -8,12 +8,14 @@ import { isSpecable } from './isSpecable';
 import { logCreateStub, logGetAction, logInstantiateAction, logInvokeAction, logReturnAction, logSetAction, logThrowAction } from './log';
 import { createSpecSimulator } from './SpecSimulator';
 import { Meta, SpecOptions } from './types';
+import { SpecRecordLive } from './typesInternal';
 
 export async function createSpecPlayer<T>(context: SpecContext, id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
 
   const loaded = await context.io.readSpec(id)
-  const record = createValidatingRecord(id, loaded, options)
+  const received: SpecRecordLive = { refs: [], actions: [] }
+  const record = createValidatingRecord(id, loaded, received, options)
   const simulator = createSpecSimulator(record, options)
   record.onAddAction(simulator.run)
   return {

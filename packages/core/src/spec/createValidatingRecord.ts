@@ -12,11 +12,10 @@ export type ValidatingRecord = ReturnType<typeof createValidatingRecord>
 /**
  * Validate if the action occured matches the recorded actions.
  */
-export function createValidatingRecord(specId: string, original: SpecRecord, options: SpecOptions) {
+export function createValidatingRecord(specId: string, original: SpecRecord, received: SpecRecordLive, options: SpecOptions) {
   const time = createTimeTracker(options)
   const addActionListeners: Array<() => void> = []
   const listeners: { ref: number, listener: () => void }[] = []
-  const received: SpecRecordLive = { refs: [], actions: [] }
   let ended = false
   const record = {
     specId,
