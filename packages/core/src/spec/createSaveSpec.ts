@@ -1,13 +1,25 @@
 import { pick } from 'type-plus';
+import { SpecContext } from '../context';
 import { getPlugin } from '../plugin';
 import { createRecordingRecord } from './createRecordingRecord';
 import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
-import { SpecOptions } from './types';
+import { SpecOptions, Spec } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
 
-export function createSpecRecorder<T>(id: string, subject: T, options: SpecOptions) {
+export async function createSaveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
+  const recorder = createSpecRecorder(id, subject, options)
+  return {
+    subject: recorder.subject,
+    async done() {
+      await recorder.end()
+      return context.io.writeSpec(id, recorder.getRecord())
+    }
+  }
+}
+
+function createSpecRecorder<T>(id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
 
   const received: SpecRecordLive = { refs: [], actions: [] }

@@ -2,9 +2,10 @@ import { logLevel } from '@unional/logging';
 import a from 'assertron';
 import delay from 'delay';
 import { createTestHarness, loadPlugins, TestHarness } from '..';
+import * as es5Module from '../es5';
 import { echoPluginModule } from '../test-util';
-import { createLiveSpec, createSaveSpec, createSimulateSpec } from './createSpec';
-import * as es5Module from '../es5'
+import { createSaveSpec } from './createSaveSpec';
+import { createLiveSpec, createSimulateSpec } from './createSpec';
 import { ActionMismatch } from './errors';
 import { SpecRecord } from './types';
 
