@@ -1,8 +1,8 @@
 import { Omit } from 'type-plus';
 import { getPlugin, PluginNotFound } from '../plugin';
 import { createTimeTracker } from '../util';
-import { createPluginReplayer } from './createSpecPlayer';
 import { ActionMismatch, ReferenceMismatch } from './errors';
+import { createPluginReplayer } from './getStub';
 import { addAction, addReference, findRefIdByTarget, findTarget, getRef, resolveRefId } from './SpecRecord';
 import { SpecAction, SpecOptions, SpecRecord, SpecReference } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './typesInternal';

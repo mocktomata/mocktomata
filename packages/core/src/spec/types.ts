@@ -1,5 +1,5 @@
-import { StubContext } from './createSpecPlayer';
 import { SpyContext } from './getSpy';
+import { StubContext } from './getStub';
 
 // #region Spec
 export type SpecMode = 'live' | 'save' | 'simulate' | 'auto'

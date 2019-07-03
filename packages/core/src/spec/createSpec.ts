@@ -1,6 +1,6 @@
 import { context, SpecContext } from '../context';
 import { createSaveSpec } from './createSaveSpec';
-import { createSpecPlayer } from './createSpecPlayer';
+import { createSimulateSpec } from './createSimulateSpec';
 import { IDCannotBeEmpty, NotSpecable, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
 import { isSpecable } from './isSpecable';
@@ -49,15 +49,5 @@ export async function createLiveSpec<T>(_context: SpecContext, _id: string, subj
   return {
     subject,
     async done() { }
-  }
-}
-
-export async function createSimulateSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const player = await createSpecPlayer(context, id, subject, options)
-  return {
-    subject: player.subject,
-    async done() {
-      return player.end()
-    }
   }
 }

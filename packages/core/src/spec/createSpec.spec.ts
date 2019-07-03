@@ -5,9 +5,10 @@ import { createTestHarness, loadPlugins, TestHarness } from '..';
 import * as es5Module from '../es5';
 import { echoPluginModule } from '../test-util';
 import { createSaveSpec } from './createSaveSpec';
-import { createLiveSpec, createSimulateSpec } from './createSpec';
+import { createLiveSpec } from './createSpec';
 import { ActionMismatch } from './errors';
 import { SpecRecord } from './types';
+import { createSimulateSpec } from './createSimulateSpec';
 
 describe('timeout warning', () => {
   let harness: TestHarness
