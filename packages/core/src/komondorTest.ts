@@ -9,15 +9,18 @@ export function testTrio(description: string, handler: KomondorTestHandler) {
 }
 
 export function testLive(description: string, handler: KomondorTestHandler) {
-  handler(`${description}: live`, s => spec.live(description, s))
+  const ktm = process.env.KOMONDOR_TEST_MODE
+  if (!ktm || ktm === 'live') handler(`${description}: live`, s => spec.live(description, s))
 }
 
 export function testSave(description: string, handler: KomondorTestHandler) {
-  handler(`${description}: save`, s => spec.save(description, s))
+  const ktm = process.env.KOMONDOR_TEST_MODE
+  if (!ktm || ktm === 'save') handler(`${description}: save`, s => spec.save(description, s))
 }
 
 export function testSimulate(description: string, handler: KomondorTestHandler) {
-  handler(`${description}: simulate`, s => spec.simulate(description, s))
+  const ktm = process.env.KOMONDOR_TEST_MODE
+  if (!ktm || ktm === 'simulate') handler(`${description}: simulate`, s => spec.simulate(description, s))
 }
 
 export const komondorTest = {
