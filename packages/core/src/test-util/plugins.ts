@@ -30,4 +30,3 @@ export const pluginA: SpecPlugin = {
   createStub() { return {} },
   createRepresentation() { return '' }
 }
-

@@ -9,17 +9,6 @@ import { SpecOptions, Spec } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
 
 export async function createSaveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
-  const recorder = createSpecRecorder(id, subject, options)
-  return {
-    subject: recorder.subject,
-    async done() {
-      await recorder.end()
-      return context.io.writeSpec(id, recorder.getRecord())
-    }
-  }
-}
-
-function createSpecRecorder<T>(id: string, subject: T, options: SpecOptions) {
   if (!isSpecable(subject)) throw new NotSpecable(subject)
 
   const received: SpecRecordLive = { refs: [], actions: [] }
@@ -27,23 +16,26 @@ function createSpecRecorder<T>(id: string, subject: T, options: SpecOptions) {
 
   return {
     subject: getSpy({ record }, subject, true),
-    end: async () => record.end(),
-    getRecord: () => ({
-      refs: received.refs.map(ref => {
-        if (ref.specTarget) {
-          return pick(ref, 'plugin', 'subject', 'specTarget')
-        }
-        return {
-          ...pick(ref, 'plugin'),
-          subject: createRepresentation(received.refs, ref)
-        }
-      }),
-      actions: received.actions
-    })
+    async done() {
+      record.end()
+      return context.io.writeSpec(id, toSpecRecord(received))
+    }
   }
 }
 
-function createRepresentation(refs: SpecReferenceLive[], ref: SpecReferenceLive): any {
+function toSpecRecord({ refs, actions }: SpecRecordLive) {
+  return {
+    refs: refs.map(ref => ref.specTarget ?
+      pick(ref, 'plugin', 'subject', 'specTarget') :
+      {
+        ...pick(ref, 'plugin'),
+        subject: createSubjectRepresentation(refs, ref)
+      }),
+    actions
+  }
+}
+
+function createSubjectRepresentation(refs: SpecReferenceLive[], ref: SpecReferenceLive): any {
   const plugin = getPlugin(ref.plugin)
 
   if (plugin && plugin.createRepresentation) {
