@@ -1,7 +1,7 @@
 import { getField, pick } from 'type-plus';
 import { findPlugin } from '../plugin';
 import { ValidatingRecord } from './createValidatingRecord';
-import { getSpies, getSpy } from './getSpy';
+import { getSpy } from './getSpy';
 import { logCreateStub, logGetAction, logInstantiateAction, logInvokeAction, logReturnAction, logSetAction, logThrowAction } from './log';
 import { Meta } from './types';
 
@@ -89,7 +89,7 @@ function createInstanceReplayer(
 }
 
 function createInvocationReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string }, args: any[]) {
-  const payload = getSpies({ record }, args)
+  const payload = args.map(arg => getSpy({ record }, arg))
   const id = record.addAction({ type: 'invoke', ref, payload })
   logInvokeAction({ record, plugin, ref }, id, args)
 

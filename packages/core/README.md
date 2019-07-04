@@ -1,3 +1,4 @@
 # @komondor-lab/core
 
-Core logic of `komondor`.
+Core logic library of `komondor`.
+

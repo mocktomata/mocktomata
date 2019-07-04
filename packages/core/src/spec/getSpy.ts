@@ -19,11 +19,7 @@ export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, i
   return plugin.createSpy({ recorder }, subject)
 }
 
-export function getSpies({ record }: { record: RecordingRecord }, subjects: any[]) {
-  return subjects.map(s => getSpy({ record }, s))
-}
-
-export function createPluginRecorder(record: RecordingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
+function createPluginRecorder(record: RecordingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
     declare: (spy: any) => createSubjectRecorder(
       { record, plugin },
@@ -38,7 +34,12 @@ export function createPluginRecorder(record: RecordingRecord, plugin: string, su
   }
 }
 
-function createSubjectRecorder({ record, plugin }: { record: RecordingRecord; plugin: string; }, subject: any, spy: any, isSpecTarget: boolean) {
+function createSubjectRecorder(
+  { record, plugin }: { record: RecordingRecord; plugin: string; },
+  subject: any,
+  spy: any,
+  isSpecTarget: boolean
+) {
   const ref = record.addRef(isSpecTarget ? { plugin, subject, target: spy, specTarget: true } : { plugin, subject, target: spy })
 
   logCreateSpy({ plugin, ref }, subject)
@@ -60,7 +61,10 @@ function createSubjectRecorder({ record, plugin }: { record: RecordingRecord; pl
   }
 }
 
-function createInstanceRecorder({ record, plugin, ref }: { record: RecordingRecord; plugin: string; ref: string; }, args: any[]) {
+function createInstanceRecorder(
+  { record, plugin, ref }: { record: RecordingRecord; plugin: string; ref: string; },
+  args: any[]
+) {
   const payload: any[] = []
   args.forEach(arg => {
     const spy = getSpy({ record }, arg)

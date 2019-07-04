@@ -42,12 +42,9 @@ function createSubjectRepresentation(refs: SpecReferenceLive[], ref: SpecReferen
     return plugin.createRepresentation({
       process: (subject) => {
         const refId = refs.findIndex(r => r.subject === subject)
-        if (refId !== -1) return String(refId)
-        return subject
+        return refId !== -1 ? String(refId) : subject
       }
     }, ref.subject)
   }
-  else {
-    return ref.subject
-  }
+  else return ref.subject
 }
