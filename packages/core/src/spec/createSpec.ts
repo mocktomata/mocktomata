@@ -34,12 +34,10 @@ export async function createAutoSpec<T>(context: SpecContext, id: string, subjec
     return await createSimulateSpec(context, id, subject, options)
   }
   catch (e) {
-    if (e instanceof SpecNotFound) {
+    if (e instanceof SpecNotFound)
       return createSaveSpec(context, id, subject, options)
-    }
-    else {
+    else
       throw e
-    }
   }
 }
 
