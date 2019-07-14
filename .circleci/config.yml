@@ -4,28 +4,24 @@ workflows:
   all:
     jobs:
       - node-latest
-      - node10:
+      - node11:
           requires:
             - node-latest
-      - node9:
+      - node10:
           requires:
             - node-latest
       - node8:
           requires:
             - node-latest
-      # - node6:
-      #     requires:
-      #       - node-latest
       # - release:
       #     filters:
       #       branches:
       #         only: master
       #     requires:
       #       - node-latest
+      #       - node11
       #       - node10
-      #       - node9
       #       - node8
-      #       - node6
 jobs:
   local-test:
     docker:
@@ -46,56 +42,44 @@ jobs:
           command: |
             if [ ! -d node_modules ]; then
               yarn
-              yarn bootstrap
             fi
       - save_cache:
           name: Save node modules cache
           key: node_modules-{{ checksum "yarn.lock" }}
           paths:
             - node_modules
-            - packages/core/node_modules
-            - packages/file-server/node_modules
-            - packages/io-client/node_modules
-            - packages/io-fs/node_modules
-            - packages/io-local/node_modules
-            - packages/komondor/node_modules
-            - packages/plugin-fixture-dummy/node_modules
+            - packages/*/node_modules
+      - run: yarn build
+      - run: yarn verify
+      - run: npx codecov
+      - store_test_results:
+          path: .reports/junit
       - persist_to_workspace:
           root: '.'
           paths:
             - node_modules
-            - packages/core/node_modules
-            - packages/file-server/node_modules
-            - packages/io-client/node_modules
-            - packages/io-fs/node_modules
-            - packages/io-local/node_modules
-            - packages/komondor/node_modules
-            - packages/plugin-fixture-dummy/node_modules
-      - run: yarn build
-      - run: yarn test
-      - run: npx codecov
+            - .tsbuildinfo
+            - ./packages/*/dist/*
+            - ./packages/*/lib/*
+            - ./packages/*/libm/*
+  node11:
+    docker:
+      - image: 'circleci/node:11'
+    steps:
+      - checkout
+      - attach_workspace:
+          at: '.'
+      - run: yarn coverage
       - store_test_results:
           path: .reports/junit
   node10:
     docker:
-      - image: 'circleci/node:9'
+      - image: 'circleci/node:10'
     steps:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn build
-      - run: yarn test
-      - store_test_results:
-          path: .reports/junit
-  node9:
-    docker:
-      - image: 'circleci/node:9'
-    steps:
-      - checkout
-      - attach_workspace:
-          at: '.'
-      - run: yarn build
-      - run: yarn test
+      - run: yarn coverage
       - store_test_results:
           path: .reports/junit
   node8:
@@ -105,8 +89,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn build
-      - run: yarn test
+      - run: yarn coverage
       - store_test_results:
           path: .reports/junit
   node6:
@@ -127,5 +110,9 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn build
-      # - run: npx lerna exec --concurrency 1 -- npx semantic-release -e semantic-release-monorepo
+      - run: git config user.email $GIT_CONFIG_EMAIL
+      - run: git config user.name $GIT_CONFIG_NAME
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
+      - run: yarn release

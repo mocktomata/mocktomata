@@ -36,6 +36,12 @@
     },
     {
       "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
+    },
+    {
+      "path": "packages/plugin-node-fetch/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/plugin-node-fetch/tsconfig.esnext.json"
     }
   ]
 }
