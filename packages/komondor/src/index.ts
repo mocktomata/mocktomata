@@ -1,4 +1,3 @@
-// import { start } from '@komondor-lab/core';
 // import { createIO } from '@komondor-lab/io-local';
 
 // const io = createIO()
@@ -8,4 +7,5 @@
 // // language and platform support will change over time.
 // start({ io, libs: [] })
 
-// export { spec } from '@komondor-lab/core'
+export { komondorTest, spec, Spec, SpecAction } from '@komondor-lab/core';
+
