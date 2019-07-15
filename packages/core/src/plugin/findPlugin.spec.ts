@@ -1,5 +1,6 @@
 import { findPlugin, loadPlugins } from '.';
-import { createTestIO, echoPluginModule } from '../test-util';
+import { echoPluginModule } from '../test-artifacts';
+import { createTestIO } from '../test-util';
 
 test('not supported subject gets undefined', () => {
   const notSupportedSubject = { oh: 'no' }

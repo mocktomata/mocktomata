@@ -45,17 +45,9 @@
     "aurelia-logging-memory": "^1.0.4",
     "global-store": "^0.8.2",
     "iso-error": "^2.0.0",
-    "lerna": "^3.14.1",
     "ramda": "^0.26.1",
     "satisfier": "^5.0.2",
     "tersify": "^3.0.2",
     "type-plus": "^1.23.0"
-  },
-  "devDependencies": {
-    "@types/ramda": "^0.26.8",
-    "@types/rimraf": "^2.0.2",
-    "@unional/devpkg-node": "^1.3.0",
-    "assertron": "^7.1.0",
-    "rimraf": "^2.6.3"
   }
 }

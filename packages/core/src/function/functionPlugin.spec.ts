@@ -1,5 +1,5 @@
 import { functionPlugin } from '../function';
-import { Dummy } from '../test-util';
+import { Dummy } from '../test-artifacts';
 
 test('do not supports primitive types other than functions', () => {
   expect(functionPlugin.support(undefined)).toBe(false)

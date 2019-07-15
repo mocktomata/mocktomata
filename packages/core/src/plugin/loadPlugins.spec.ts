@@ -1,7 +1,8 @@
 import a from 'assertron';
 import { DuplicatePlugin, loadPlugins, NoActivate, PluginNotConforming, PluginNotFound } from '.';
 import { resetStore, store } from '../store';
-import { createTestIO, echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-util';
+import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts';
+import { createTestIO } from '../test-util';
 
 beforeEach(() => {
   resetStore()

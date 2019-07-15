@@ -1,8 +1,8 @@
 import a from 'assertron';
-import { createTestHarness, NotSpecable, TestHarness } from '.';
+import { createTestHarness, komondorTest as k, NotSpecable, TestHarness } from '.';
 import * as es5Module from './es5';
 import { loadPlugins } from './plugin';
-import k, { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous } from './test-util';
+import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
 let harness: TestHarness
 beforeAll(async () => {

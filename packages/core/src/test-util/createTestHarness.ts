@@ -2,10 +2,10 @@ import { addAppender, clearAppenders, logLevel, setLevel } from '@unional/loggin
 import { ColorAppender } from 'aurelia-logging-color';
 import { MemoryAppender } from 'aurelia-logging-memory';
 import { required } from 'type-plus';
-import { context } from './context';
-import { SpecRecord } from './spec';
-import { resetStore } from './store';
-import { createTestIO } from './test-util';
+import { context } from '../context';
+import { SpecRecord } from '../spec';
+import { resetStore } from '../store';
+import { createTestIO } from './createTestIO';
 
 export type TestHarness = ReturnType<typeof createTestHarness>
 
