@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "outDir": "libm",
+    "target": "esnext",
+    "tsBuildInfoFile": ".ts/es5.tsbuildInfo"
+  }
+}
