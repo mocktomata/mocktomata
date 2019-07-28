@@ -56,7 +56,6 @@
     "@komondor-lab/io-local": "^7.0.0-alpha",
     "@komondor-lab/io-server": "^7.0.0-alpha.0",
     "@komondor-lab/plugin": "^7.0.0-alpha",
-    "@types/ramda": "^0.26.8",
     "@unional/logging": "^1.0.5",
     "assertron": "^7.1.2",
     "async-fp": "^1.2.0",

@@ -6,17 +6,19 @@ export type SpecStore = {
   plugins: PluginInstance[]
 }
 
-export const store = createStore<SpecStore>(
-  '@komondor-lab/core',
-  {
-    specTypeIds: {},
-    plugins: []
+export const store = createStore<SpecStore>({
+  moduleName: '@komondor-lab/core',
+  key: '578b2645-0a5b-4364-89a7-0906d214d769',
+  version: '7.0.0',
+  initializer: (current) => {
+    return {
+      specTypeIds: {},
+      plugins: [],
+      ...current
+    } as SpecStore
   }
-)
+})
 
 export function resetStore() {
-  store.set({
-    specTypeIds: {},
-    plugins: []
-  })
+  store.reset()
 }

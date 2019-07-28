@@ -1,4 +1,4 @@
-import { logLevel } from '@unional/logging';
+import { logLevel } from 'standard-log';
 import a from 'assertron';
 import delay from 'delay';
 import { createTestHarness, loadPlugins, TestHarness } from '..';
@@ -27,7 +27,7 @@ describe('timeout warning', () => {
     await delay(30)
     await s.done()
 
-    a.satisfies(harness.appender.logs, [{ id: 'komondor', level: logLevel.warn, messages: ['done() was not called in 10 ms. Did the test takes longer than expected or you forget to call done()?'] }])
+    a.satisfies(harness.reporter.logs, [{ id: 'komondor', level: logLevel.warn, args: ['done() was not called in 10 ms. Did the test takes longer than expected or you forget to call done()?'] }])
   })
 
   test(`createLiveSpec() will not log warning message if stop() is called before the specified 'timeout'.`, async () => {
@@ -35,7 +35,7 @@ describe('timeout warning', () => {
     await recorder.done()
     await delay(30)
 
-    a.satisfies(harness.appender.logs, [])
+    a.satisfies(harness.reporter.logs, [])
   })
 
   test(`createSaveSpec() will not log warning message if stop() is called before the specified 'timeout'.`, async () => {
@@ -43,7 +43,7 @@ describe('timeout warning', () => {
     await recorder.done()
     await delay(30)
 
-    a.satisfies(harness.appender.logs, [])
+    a.satisfies(harness.reporter.logs, [])
   })
 })
 

@@ -10,7 +10,7 @@ export function addPluginModule(moduleName: string, pluginModule: PluginModule) 
     register(plugin: SpecPlugin) {
       assertPluginConfirming(plugin)
       const pluginName = plugin.name ? `${moduleName}/${plugin.name}` : moduleName
-      const plugins = store.get().plugins
+      const plugins = store.value.plugins
       if (plugins.some(p => p.name === pluginName)) {
         throw new DuplicatePlugin(pluginName)
       }

@@ -1,4 +1,4 @@
-import { logLevel } from '@unional/logging';
+import { logLevel, shouldLog } from 'standard-log';
 import { tersify } from 'tersify';
 import { KomondorError } from '../errors';
 import { log } from '../util';
@@ -59,7 +59,7 @@ ${tersifyAction(actual)}`)
 function tersifyAction(action: { type: string, plugin: string } | undefined): string {
   if (!action) return 'none'
 
-  if (log.level >= logLevel.debug) {
+  if (shouldLog(logLevel.debug, log.level)) {
     return tersify(action, { maxLength: Infinity })
   }
   else {
@@ -71,7 +71,7 @@ function tersifyAction(action: { type: string, plugin: string } | undefined): st
 function tersifyReference(reference: { plugin: string } | undefined): string {
   if (!reference) return 'none'
 
-  if (log.level >= logLevel.debug) {
+  if (shouldLog(logLevel.debug, log.level)) {
     return tersify(reference, { maxLength: Infinity })
   }
   else {

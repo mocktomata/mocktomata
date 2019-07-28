@@ -1,6 +1,5 @@
-import { addAppender, clearAppenders, logLevel, setLevel } from '@unional/logging';
-import { ColorAppender } from 'aurelia-logging-color';
-import { MemoryAppender } from 'aurelia-logging-memory';
+import { addLogReporter, clearLogReporters, createConsoleLogReporter, logLevel, LogReporter, setLogLevel, config } from 'standard-log';
+import { createMemoryLogReporter } from 'standard-log-memory';
 import { required } from 'type-plus';
 import { context } from '../context';
 import { SpecRecord } from '../spec';
@@ -11,28 +10,29 @@ export type TestHarness = ReturnType<typeof createTestHarness>
 
 export function createTestHarness(options?: Partial<{ level: number, showLog: boolean }>) {
   let { level, showLog } = required({ level: logLevel.info, showLog: false }, options)
-  const appender = new MemoryAppender()
-  addAppender(appender)
-  if (showLog) addAppender(new ColorAppender())
-  setLevel(level)
 
+  const reporter = createMemoryLogReporter()
+  const reporters: LogReporter[] = [reporter]
+
+  if (showLog) reporters.push(createConsoleLogReporter())
+  config({ mode: 'test', reporters, logLevel: level })
   const io = createTestIO()
   context.set({ io })
   resetStore()
 
   return {
     io,
-    appender,
+    reporter,
     showLog(level?: number) {
       if (!showLog) {
-        addAppender(new ColorAppender())
+        addLogReporter(createConsoleLogReporter())
         showLog = true
       }
-      if (level !== undefined) setLevel(level)
+      if (level !== undefined) setLogLevel(level)
     },
     reset() {
       context.clear()
-      clearAppenders()
+      clearLogReporters()
     },
     async getSpec(id: string): Promise<SpecRecord> {
       return io.readSpec(id)

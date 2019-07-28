@@ -17,7 +17,7 @@ test('load plugins in reverse order', async () => {
   io.addPluginModule('@komondor-lab/plugin-fixture-deep-link/pluginA', pluginModuleA)
 
   await loadPlugins({ io })
-  const actual = store.get().plugins
+  const actual = store.value.plugins
   a.satisfies(actual.map(p => p.name), ['@komondor-lab/plugin-fixture-deep-link/pluginA/plugin-a', '@komondor-lab/plugin-fixture-dummy'])
 })
 
