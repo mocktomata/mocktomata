@@ -55,7 +55,6 @@
     "@komondor-lab/io-client": "^7.0.0-alpha",
     "@komondor-lab/io-local": "^7.0.0-alpha",
     "@komondor-lab/io-server": "^7.0.0-alpha.0",
-    "@komondor-lab/plugin": "^7.0.0-alpha",
     "assertron": "^7.1.2",
     "async-fp": "^1.2.0",
     "chalk": "^2.4.2",

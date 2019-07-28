@@ -1,11 +1,11 @@
-import { logLevel } from 'standard-log';
 import a from 'assertron';
 import delay from 'delay';
+import { logLevel } from 'standard-log';
 import { createTestHarness, loadPlugins, TestHarness } from '..';
 import * as es5Module from '../es5';
+import { createLiveSpec } from './createLiveSpec';
 import { createSaveSpec } from './createSaveSpec';
 import { createSimulateSpec } from './createSimulateSpec';
-import { createLiveSpec } from './createSpec';
 import { ReferenceMismatch } from './errors';
 import { SpecRecord } from './types';
 

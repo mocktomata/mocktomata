@@ -363,7 +363,7 @@ describe('promise', () => {
   })
 
   k.trio('promise/returns/function', (title, spec) => {
-    test.skip(title, async () => {
+    test.only(title, async () => {
       // harness.showLog(40)
       const s = await spec(promiseChain.success)
       // not using `await` to make sure the return value is a promise.
@@ -372,7 +372,7 @@ describe('promise', () => {
         .then(async (actualFn: Function) => {
           expect(actualFn()).toBe(3)
           await s.done()
-          // harness.logSpecs()
+          harness.logSpecs()
         })
     })
   })

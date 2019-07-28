@@ -987,14 +987,6 @@
     "@komondor-lab/io-fs" "^7.0.0-alpha"
     hapi "^17.8.1"
 
-"@komondor-lab/plugin@^7.0.0-alpha":
-  version "7.0.0-alpha"
-  resolved "https://registry.yarnpkg.com/@komondor-lab/plugin/-/plugin-7.0.0-alpha.tgz#d05e28af574a5b2801ffd3c175258c0410104e5e"
-  integrity sha512-qNh3fk56dBsG4DsBZu2+PZjxafmdvytAEE6dnbyihb9xjAt7M/8r9115xj0rk6341yIEegvbSdoF9YmTcVWI3Q==
-  dependencies:
-    global-store "^0.8.1"
-    make-error "^1.3.5"
-
 "@lerna/add@3.16.2":
   version "3.16.2"
   resolved "https://registry.yarnpkg.com/@lerna/add/-/add-3.16.2.tgz#90ecc1be7051cfcec75496ce122f656295bd6e94"

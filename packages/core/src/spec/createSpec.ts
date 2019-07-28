@@ -1,9 +1,9 @@
 import { context, SpecContext } from '../context';
+import { createLiveSpec } from './createLiveSpec';
 import { createSaveSpec } from './createSaveSpec';
 import { createSimulateSpec } from './createSimulateSpec';
-import { IDCannotBeEmpty, NotSpecable, SpecNotFound } from './errors';
+import { IDCannotBeEmpty, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
-import { isSpecable } from './isSpecable';
 import { Spec, SpecMode, SpecOptions } from './types';
 
 export function createSpec(defaultMode: SpecMode) {
@@ -29,7 +29,7 @@ function assertSpecID(id: string) {
   if (id === '') throw new IDCannotBeEmpty()
 }
 
-export async function createAutoSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
+async function createAutoSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
   try {
     return await createSimulateSpec(context, id, subject, options)
   }
@@ -38,14 +38,5 @@ export async function createAutoSpec<T>(context: SpecContext, id: string, subjec
       return createSaveSpec(context, id, subject, options)
     else
       throw e
-  }
-}
-
-export async function createLiveSpec<T>(_context: SpecContext, _id: string, subject: T, _options: SpecOptions): Promise<Spec<T>> {
-  if (!isSpecable(subject)) throw new NotSpecable(subject)
-
-  return {
-    subject,
-    async done() { }
   }
 }
