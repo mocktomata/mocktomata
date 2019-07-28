@@ -1998,7 +1998,7 @@
     tslint-config-unional "^0.10.0"
     typescript "^3.3.3333"
 
-"@unional/logging@^1.0.3", "@unional/logging@^1.0.5":
+"@unional/logging@^1.0.3":
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/@unional/logging/-/logging-1.0.5.tgz#261def6e293e2642f2c7459edd68ee22191b09fd"
   integrity sha512-GAbR1yJF0G7XNtx93HMje57gts+21ylW83pSH6EserSNZqWdkC61/yWbKHey3rtq8mrchwrJGlEMBzrpxY13sA==
@@ -2620,14 +2620,6 @@ aurelia-logging-color@^1.0.3:
     aurelia-logging "^1.5.2"
     color-map "^1.1.0"
     is-node "^1.0.2"
-
-aurelia-logging-memory@^1.0.4:
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/aurelia-logging-memory/-/aurelia-logging-memory-1.0.4.tgz#cbba85b0907b0846c938fa99dd72845833cdaf91"
-  integrity sha512-4RWiVxkIsfgxuCX9qX+fZ4zfPyXRalyyWMoKzQg1E/OeJCKq8CovhQxmUE1AaWY/D3e1WHA8NU58odgKDV2Tcg==
-  dependencies:
-    aurelia-logging "^1.5.2"
-    upper-case "^1.1.3"
 
 aurelia-logging@^1.5.2:
   version "1.5.2"
