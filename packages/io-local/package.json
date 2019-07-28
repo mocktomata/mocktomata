@@ -38,12 +38,14 @@
     "watch": "yarn test:watch"
   },
   "workspaces": {
-    "nohoist": ["@komondor-lab/plugin-fixture*"]
+    "nohoist": [
+      "@komondor-lab/plugin-fixture*"
+    ]
   },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
-    "global-store": "^0.8.2"
+    "global-store": "^1.0.0-beta.11"
   },
   "devDependencies": {
     "@komondor-lab/plugin-fixture-deep-link": "^1.0.2",

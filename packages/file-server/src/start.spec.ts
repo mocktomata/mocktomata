@@ -28,7 +28,7 @@ describe('server behavior', () => {
     const repository = createFileRepository(tmp.name)
     await repository.writeSpec('exist', '{ "spec": "exist" }')
     await repository.writeScenario('exist', '{ "scenario": "exist" }')
-    context.get().repository = repository
+    context.value.repository = repository
     server = await start()
   })
   afterAll(() => {
@@ -63,7 +63,7 @@ describe('server behavior', () => {
     const response = await fetch(buildUrl('specs/abc'), { method: 'POST', body: '{ a: 1 }' })
 
     expect(response.status).toBe(200)
-    const repository = context.get().repository
+    const repository = context.value.repository
     const actual = await repository.readSpec('abc')
 
     expect(actual).toEqual('{ a: 1 }')
@@ -87,7 +87,7 @@ describe('server behavior', () => {
     const response = await fetch(buildUrl('scenarios/abc'), { method: 'POST', body: '{ a: 1 }' })
 
     expect(response.status).toBe(200)
-    const repository = context.get().repository
+    const repository = context.value.repository
     const actual = await repository.readScenario('abc')
 
     expect(actual).toEqual('{ a: 1 }')

@@ -8,12 +8,12 @@ const defaultConfig = {
 }
 
 export function getConfig(cwd: string) {
-  const config = store.get().config
+  const config = store.value.config
   if (config) return config
 
   const c = loadConfig(cwd)
   const newConfig = required(defaultConfig, c)
-  store.get().config = newConfig
+  store.value.config = newConfig
 
   return newConfig
 }

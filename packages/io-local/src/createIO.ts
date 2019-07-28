@@ -8,8 +8,8 @@ export type CreateIOOptions = {
 
 export function createIO(options?: CreateIOOptions): IO {
   const repo = options ?
-    context.get().repository = createFileRepository(options.cwd) :
-    context.get().repository
+    context.value.repository = createFileRepository(options.cwd) :
+    context.value.repository
   return {
     async readSpec(id: string): Promise<SpecRecord> {
       try {

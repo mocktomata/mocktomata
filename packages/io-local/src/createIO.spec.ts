@@ -6,7 +6,7 @@ import { createIO } from './createIO';
 import { createFakeRepository } from './test-util';
 
 beforeAll(async () => {
-  context.get().repository = createFakeRepository()
+  context.value.repository = createFakeRepository()
 })
 
 test('read not exist spec throws SpecNotFound', async () => {
@@ -29,7 +29,7 @@ test('write spec', async () => {
   const record: SpecRecord = { refs: [], actions: [{ type: 'instantiate', payload: [], ref: '1', tick: 0 }] }
   await io.writeSpec('new spec', record)
 
-  const repo = context.get().repository
+  const repo = context.value.repository
   const spec = await repo.readSpec('new spec')
   expect(spec).toEqual(JSON.stringify(record))
 })
@@ -54,7 +54,7 @@ test('write Scenario', async () => {
   const record: ScenarioRecord = { actions: [{ name: 'construct', instanceId: 1, plugin: '', payload: [] }] }
   await io.writeScenario('new scenario', record)
 
-  const repo = context.get().repository
+  const repo = context.value.repository
   const scenario = await repo.readScenario('new scenario')
   expect(scenario).toEqual(JSON.stringify(record))
 })

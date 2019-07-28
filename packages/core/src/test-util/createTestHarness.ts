@@ -1,5 +1,4 @@
-import { addLogReporter, clearLogReporters, createConsoleLogReporter, logLevel, LogReporter, setLogLevel, config } from 'standard-log';
-import { createMemoryLogReporter } from 'standard-log-memory';
+import { addLogReporter, clearLogReporters, config, createConsoleLogReporter, createMemoryLogReporter, logLevel, LogReporter, setLogLevel } from 'standard-log';
 import { required } from 'type-plus';
 import { context } from '../context';
 import { SpecRecord } from '../spec';

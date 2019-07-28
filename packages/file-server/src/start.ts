@@ -51,7 +51,7 @@ function defineRoutes(server: Server) {
           name: 'komondor',
           version: pjson.version,
           url: getReflectiveUrl(request.info, server.info),
-          plugins: await context.get().repository.getPluginList()
+          plugins: await context.value.repository.getPluginList()
         })
       }
     },
@@ -68,7 +68,7 @@ function defineRoutes(server: Server) {
       path: '/komondor/specs/{id}',
       handler: async (request) => {
         try {
-          return await context.get().repository.readSpec(request.params.id)
+          return await context.value.repository.readSpec(request.params.id)
         }
         catch (e) {
           throw boom.notFound(e.message)
@@ -79,7 +79,7 @@ function defineRoutes(server: Server) {
       method: 'POST',
       path: '/komondor/specs/{id}',
       handler: async (request, h) => {
-        await context.get().repository.writeSpec(request.params.id, request.payload as string)
+        await context.value.repository.writeSpec(request.params.id, request.payload as string)
         return h.response()
       }
     },
@@ -88,7 +88,7 @@ function defineRoutes(server: Server) {
       path: '/komondor/scenarios/{id}',
       handler: async (request) => {
         try {
-          return await context.get().repository.readScenario(request.params.id)
+          return await context.value.repository.readScenario(request.params.id)
         }
         catch (e) {
           throw boom.notFound(e.message)
@@ -99,7 +99,7 @@ function defineRoutes(server: Server) {
       method: 'POST',
       path: '/komondor/scenarios/{id}',
       handler: async (request, h) => {
-        await context.get().repository.writeScenario(request.params.id, request.payload as string)
+        await context.value.repository.writeScenario(request.params.id, request.payload as string)
         return h.response()
       }
     }
