@@ -100,7 +100,7 @@ export type SetAction = {
   payload: [string | number, any]
 }
 
-export interface SpecPlugin<S = any> {
+export interface SpecPlugin<S = any, R = any> {
   /**
    * Name of the plugin. This is needed only if there are multiple plugins in a package.
    */
@@ -111,8 +111,7 @@ export interface SpecPlugin<S = any> {
    * @param subject The spying subject
    */
   createSpy(context: SpyContext, subject: S): S,
-  createStub(context: StubContext, subject: S): S,
-
+  createStub(context: StubContext, subject: S, representation: R): S,
   /**
    * Create a serializable representation of the subject.
    * The result will be stringified and stored.

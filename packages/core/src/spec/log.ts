@@ -35,15 +35,15 @@ export function logGetAction({ record, plugin, ref }: ActionLoggingContext, id: 
 }
 
 export function logSetAction({ record, plugin, ref }: ActionLoggingContext, id: number, name: string | number, value: any) {
-  log.on(logLevel.debug, log => log(`${plugin} ${ref}/${id}: set ${typeof name === 'string' ? `'${name}'` : name} with ${value}\n${tersify(record.getSubject(ref))}`))
+  log.on(logLevel.debug, log => log(`${plugin} ${ref}/${id}: set ${typeof name === 'string' ? `'${name}'` : name} with ${tersify(value)}\n${tersify(record.getSubject(ref))}`))
 }
 
 export function logReturnAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ${ref}/${sourceId}/${id}: returns ${value}`)
+  log.on(logLevel.debug, () => `${plugin} ${ref}/${sourceId}/${id}: returns ${tersify(value)}`)
 }
 
 export function logThrowAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ${ref}/${sourceId}/${id}: throws ${value}`)
+  log.on(logLevel.debug, () => `${plugin} ${ref}/${sourceId}/${id}: throws ${tersify(value)}`)
 }
 
 export function logAutoInvokeAction(ref: SpecReferenceLive, refId: string, id: number, args: any[]) {

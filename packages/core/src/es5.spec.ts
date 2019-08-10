@@ -1,4 +1,5 @@
 import a from 'assertron';
+import { logLevel } from 'standard-log';
 import { createTestHarness, komondorTest as k, NotSpecable, TestHarness } from '.';
 import * as es5Module from './es5';
 import { loadPlugins } from './plugin';
@@ -363,8 +364,8 @@ describe('promise', () => {
   })
 
   k.trio('promise/returns/function', (title, spec) => {
-    test.only(title, async () => {
-      // harness.showLog(40)
+    test.skip(title, async () => {
+      harness.showLog(logLevel.debug)
       const s = await spec(promiseChain.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.

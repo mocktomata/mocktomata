@@ -5,7 +5,7 @@ import { createRecordingRecord } from './createRecordingRecord';
 import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
-import { SpecOptions, Spec } from './types';
+import { SpecOptions, Spec, SpecRecord } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
 
 export async function createSaveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
@@ -23,7 +23,7 @@ export async function createSaveSpec<T>(context: SpecContext, id: string, subjec
   }
 }
 
-function toSpecRecord({ refs, actions }: SpecRecordLive) {
+function toSpecRecord({ refs, actions }: SpecRecordLive): SpecRecord {
   return {
     refs: refs.map(ref => ref.specTarget ?
       pick(ref, 'plugin', 'subject', 'specTarget') :

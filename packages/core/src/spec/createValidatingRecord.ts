@@ -142,7 +142,7 @@ function resolveRef(record: ValidatingRecord, original: SpecRecord, received: Sp
       plugin.recreateSubject({ process: (input) => getSubject(original, received, input) }, specRef.subject) :
       specRef.subject
     const player = createPluginReplayer(record, plugin.name, subject, false)
-    plugin.createStub({ player }, subject)
+    plugin.createStub({ player }, subject, undefined)
   }
   return getRef(received, ref)!
 }

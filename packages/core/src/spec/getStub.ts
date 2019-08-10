@@ -14,7 +14,7 @@ export function getStub<T>({ record }: { record: ValidatingRecord }, subject: T,
   if (!plugin) return subject
 
   const player = createPluginReplayer(record, plugin.name, subject, isSpecTarget)
-  return plugin.createStub({ player }, subject)
+  return plugin.createStub({ player }, subject, undefined)
 }
 
 export function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any, isSpecTarget: boolean) {

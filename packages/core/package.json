@@ -39,11 +39,12 @@
   },
   "dependencies": {
     "async-fp": "^1.2.0",
-    "global-store": "^1.0.0-beta.11",
+    "global-store": "^1.0.0-beta.14",
     "iso-error": "^2.0.0",
     "ramda": "^0.26.1",
     "satisfier": "^5.0.2",
-    "standard-log": "^2.0.0",
+    "standard-log": "^3.1.1",
+    "standard-log-color": "^1.5.3",
     "tersify": "^3.0.2",
     "type-plus": "^1.23.0"
   },
