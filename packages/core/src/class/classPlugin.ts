@@ -55,7 +55,7 @@ export const classPlugin: SpecPlugin = {
     const spyRecorder = recorder.declare(spiedClass)
     return spiedClass
   },
-  createStub({ player }, subject) {
+  createStub({ recorder: player }, subject) {
     const stubClass = class extends subject {
       // tslint:disable-next-line:variable-name
       __komondorStub: any = {}

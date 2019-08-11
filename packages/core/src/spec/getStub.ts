@@ -5,16 +5,14 @@ import { getSpy } from './getSpy';
 import { logCreateStub, logGetAction, logInstantiateAction, logInvokeAction, logReturnAction, logSetAction, logThrowAction } from './log';
 import { Meta } from './types';
 
-export type StubContext = {
-  player: ReturnType<typeof createPluginReplayer>
-}
+export type StubRecorder = ReturnType<typeof createPluginReplayer>
 
 export function getStub<T>({ record }: { record: ValidatingRecord }, subject: T, isSpecTarget: boolean = false): T {
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
   const player = createPluginReplayer(record, plugin.name, subject, isSpecTarget)
-  return plugin.createStub({ player }, subject, undefined)
+  return plugin.createStub({ recorder: player }, subject, undefined)
 }
 
 export function createPluginReplayer(record: ValidatingRecord, plugin: string, subject: any, isSpecTarget: boolean) {

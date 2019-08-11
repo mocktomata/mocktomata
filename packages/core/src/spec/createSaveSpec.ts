@@ -6,7 +6,7 @@ import { NotSpecable } from './errors';
 import { getSpy } from './getSpy';
 import { isSpecable } from './isSpecable';
 import { SpecOptions, Spec, SpecRecord } from './types';
-import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
+import { SpecRecordLive, SpecReferenceLive } from './types-internal';
 
 export async function createSaveSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
   if (!isSpecable(subject)) throw new NotSpecable(subject)

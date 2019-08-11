@@ -1,7 +1,7 @@
 import { tersify } from 'tersify';
 import { log } from '../util';
 import { RecordingRecord } from './createRecordingRecord';
-import { SpecReferenceLive } from './typesInternal';
+import { SpecReferenceLive } from './types-internal';
 import { logLevel } from 'standard-log';
 
 export type ActionLoggingContext = {

@@ -23,7 +23,7 @@ export const promisePlugin: SpecPlugin<Promise<any>> = {
     const call = subjectRecorder.invoke([])
     return spy
   },
-  createStub({ player }) {
+  createStub({ recorder: player }) {
     const declaration = player.declare()
     const call = declaration.invoke([])
     const stub = new Promise((resolve, reject) => {

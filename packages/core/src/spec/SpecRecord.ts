@@ -1,4 +1,4 @@
-import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
+import { SpecRecordLive, SpecReferenceLive } from './types-internal';
 import { SpecAction } from './types';
 
 export function addReference(refs: SpecReferenceLive[], ref: SpecReferenceLive) {

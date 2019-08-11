@@ -7,7 +7,7 @@ export const errorPlugin: SpecPlugin = {
     recorder.declare(subject)
     return subject
   },
-  createStub: ({ player }, subject) => {
+  createStub: ({ recorder: player }, subject) => {
     player.declare().setTarget(subject)
     return subject
   },

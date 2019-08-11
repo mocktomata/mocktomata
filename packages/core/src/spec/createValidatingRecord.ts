@@ -5,7 +5,7 @@ import { ActionMismatch, ReferenceMismatch } from './errors';
 import { createPluginReplayer } from './getStub';
 import { addAction, addReference, findRefIdByTarget, findTarget, getRef, resolveRefId } from './SpecRecord';
 import { SpecAction, SpecOptions, SpecRecord, SpecReference } from './types';
-import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
+import { SpecRecordLive, SpecReferenceLive } from './types-internal';
 
 export type ValidatingRecord = ReturnType<typeof createValidatingRecord>
 
@@ -142,7 +142,7 @@ function resolveRef(record: ValidatingRecord, original: SpecRecord, received: Sp
       plugin.recreateSubject({ process: (input) => getSubject(original, received, input) }, specRef.subject) :
       specRef.subject
     const player = createPluginReplayer(record, plugin.name, subject, false)
-    plugin.createStub({ player }, subject, undefined)
+    plugin.createStub({ recorder: player }, subject, undefined)
   }
   return getRef(received, ref)!
 }

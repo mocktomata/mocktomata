@@ -5,7 +5,7 @@ import { NotSpecable } from './errors';
 import { getStub } from './getStub';
 import { isSpecable } from './isSpecable';
 import { createSpecSimulator } from './SpecSimulator';
-import { SpecRecordLive } from './typesInternal';
+import { SpecRecordLive } from './types-internal';
 
 export async function createSimulateSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
   if (!isSpecable(subject)) throw new NotSpecable(subject)

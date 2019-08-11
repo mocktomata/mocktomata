@@ -3,7 +3,7 @@ import { createTimeTracker } from '../util';
 import { logRecordingTimeout } from './log';
 import { addAction, addReference, findRefIdByTarget, findTarget, getRef } from './SpecRecord';
 import { SpecAction, SpecOptions } from './types';
-import { SpecRecordLive, SpecReferenceLive } from './typesInternal';
+import { SpecRecordLive, SpecReferenceLive } from './types-internal';
 
 export type RecordingRecord = ReturnType<typeof createRecordingRecord>
 

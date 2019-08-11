@@ -24,8 +24,7 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
     const spyRecorder = recorder.declare(spy)
     return spy
   },
-  createStub({ player }, subject, representation) {
-    const stubPlayer = player.declare()
+  createStub({ recorder: player }, subject, representation) {
     const stub = function (this: any, ...args: any[]) {
       const invocation = stubPlayer.invoke(args)
       const result = invocation.getResult()
@@ -43,6 +42,7 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
           return p
         }, {} as Record<string, any>))
     }
+    const stubPlayer = player.declare()
     stubPlayer.setTarget(stub)
     if (!subject) {
       // player.on('invoke', args => {

@@ -8,7 +8,7 @@ export const arrayPlugin: SpecPlugin<any[]> = {
     subject.forEach((s, i) => subject[i] = recorder.getSpy(s))
     return subject
   },
-  createStub: ({ player }, subject) => {
+  createStub: ({ recorder: player }, subject) => {
     player.declare().setTarget(subject)
     subject.forEach((s, i) => subject[i] = player.getSpy(s))
     return subject

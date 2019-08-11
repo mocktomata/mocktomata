@@ -37,7 +37,7 @@ export const objectPlugin: SpecPlugin<Record<KeyTypes, any>> = {
     const recorder = context.recorder.declare(spy)
     return spy
   },
-  createStub: ({ player }, subject) => {
+  createStub: ({ recorder: player }, subject) => {
     const recorder = player.declare()
     const propertyNames = getPropertyNames(subject)
     const stub: any = {}

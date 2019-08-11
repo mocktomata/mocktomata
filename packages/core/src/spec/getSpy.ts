@@ -4,9 +4,7 @@ import { RecordingRecord } from './createRecordingRecord';
 import { logCreateSpy, logGetAction, logInstantiateAction, logInvokeAction, logReturnAction, logSetAction, logThrowAction } from './log';
 import { Meta } from './types';
 
-export type SpyContext = {
-  recorder: ReturnType<typeof createPluginRecorder>
-}
+export type SpyRecorder = ReturnType<typeof createPluginRecorder>
 
 export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, isSpecTarget: boolean = false): T {
   const spy = record.findTarget(subject)

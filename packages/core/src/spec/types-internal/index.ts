@@ -1,4 +1,4 @@
-import { SpecAction, SpecReference } from './types';
+import { SpecAction, SpecReference } from '../types';
 
 export type SpecRecordLive = {
   refs: SpecReferenceLive[],
