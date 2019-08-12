@@ -205,9 +205,19 @@ function expressionReturns(
 function expressionThrows(
   { record, plugin, ref, id }: { record: RecordingRecord, plugin: string, ref: string | number, id: number; },
   err: any,
-  { meta, isSpecTarget }: { meta?: Meta, isSpecTarget?: boolean }
+  { meta, isSpecTarget = false }: { meta?: Meta, isSpecTarget?: boolean }
 ) {
-  const spy = getSpy({ record }, err, isSpecTarget)
+  let spy = findCreatedSpy(record, err)
+  if (!spy) {
+    spy = createSpy(record, err, isSpecTarget)
+    if (spy) {
+      const reference = record.getRefByTarget(spy)
+      reference.source = record.findSourceInfo(err)
+    }
+    else {
+      spy = err
+    }
+  }
   const payload = record.getRefId(spy) || err
   const throwId = record.addAction({ type: 'throw', ref: id, payload, meta })
   logThrowAction({ plugin, ref }, id, throwId, err)
