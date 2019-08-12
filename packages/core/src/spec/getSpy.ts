@@ -7,9 +7,18 @@ import { Meta, ReturnAction } from './types';
 export type SpyRecorder = ReturnType<typeof createSpyRecorder>
 
 export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, isSpecTarget: boolean = false): T {
-  return findCreatedSpy(record, subject) ||
-    createSpy(record, subject, isSpecTarget) ||
-    subject
+  let spy = findCreatedSpy(record, subject)
+  if (spy) return spy
+
+  spy = createSpy(record, subject, isSpecTarget)
+  if (spy) {
+    const reference = record.getRefByTarget(spy)
+    reference.source = record.findSourceInfo(subject)
+    return spy
+  }
+  else {
+    return subject
+  }
 }
 
 function findCreatedSpy(record: RecordingRecord, subject: any) {
@@ -185,17 +194,7 @@ function expressionReturns(
   { meta, isSpecTarget = false }: { meta?: Meta, isSpecTarget?: boolean }
 ) {
   const action: Pick<ReturnAction, 'type' | 'ref' | 'payload' | 'meta'> = { type: 'return', ref: id, payload: undefined, meta }
-  let spy = findCreatedSpy(record, value)
-  if (!spy) {
-    spy = createSpy(record, value, isSpecTarget)
-    if (spy) {
-      const reference = record.getRefByTarget(spy)
-      reference.source = record.findSourceInfo(value)
-    }
-    else {
-      spy = value
-    }
-  }
+  const spy = getSpy({ record }, value, isSpecTarget)
   action.payload = record.getRefId(spy) || value
   const returnId = record.addAction(action)
   logReturnAction({ plugin, ref }, id, returnId, value)
@@ -207,17 +206,7 @@ function expressionThrows(
   err: any,
   { meta, isSpecTarget = false }: { meta?: Meta, isSpecTarget?: boolean }
 ) {
-  let spy = findCreatedSpy(record, err)
-  if (!spy) {
-    spy = createSpy(record, err, isSpecTarget)
-    if (spy) {
-      const reference = record.getRefByTarget(spy)
-      reference.source = record.findSourceInfo(err)
-    }
-    else {
-      spy = err
-    }
-  }
+  const spy = getSpy({ record }, err, isSpecTarget)
   const payload = record.getRefId(spy) || err
   const throwId = record.addAction({ type: 'throw', ref: id, payload, meta })
   logThrowAction({ plugin, ref }, id, throwId, err)
