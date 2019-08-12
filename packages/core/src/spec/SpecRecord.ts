@@ -70,6 +70,8 @@ function findSourcePath(source: Record<any, any> | Array<any>, value: any, path:
   }
 
   return someKey(source, k => {
+    const descriptor = Object.getOwnPropertyDescriptor(source, k)
+    if (descriptor && descriptor.get) return false
     const actual = source[k]
     if (actual === value) {
       path.push(k)

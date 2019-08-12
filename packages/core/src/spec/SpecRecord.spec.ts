@@ -41,4 +41,16 @@ describe('findSource()', () => {
 
     expect(findSourceInfo(refs, subject)).toEqual({ id: '0', path: ['a', 0] })
   })
+
+  test('getter is not invoked', () => {
+    // this is debatable as it may cause problem in immutable object, proxy, or private complex object.
+    // The reason for doing this is to avoid introducing side effect as getter can create side effects.
+    // When we found a subject that has this behavior and needs to reference it properly,
+    // we will determine what API is needed to support that.
+    const refs: SpecReferenceLive[] = []
+    const subject = () => true
+    addReference(refs, { plugin: 'obj', subject: { get a() { return subject } } })
+
+    expect(findSourceInfo(refs, subject)).toBeUndefined()
+  })
 })
