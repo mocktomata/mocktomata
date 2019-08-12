@@ -1,3 +1,4 @@
+export type ReferenceId = string | number
 
 export type SpecAction = InstantiateAction | InvokeAction | GetAction | SetAction |
   ReturnAction | ThrowAction
@@ -11,7 +12,7 @@ export type InstantiateAction = {
 
 export type InvokeAction = {
   type: 'invoke',
-  ref: string | number,
+  ref: ReferenceId,
   tick: number,
   payload: any[],
 }
@@ -34,14 +35,14 @@ export type ThrowAction = {
 
 export type GetAction = {
   type: 'get',
-  ref: string | number,
+  ref: ReferenceId,
   tick: number,
   payload: string | number,
 }
 
 export type SetAction = {
   type: 'set',
-  ref: string | number,
+  ref: ReferenceId,
   tick: number,
   payload: [string | number, any]
 }

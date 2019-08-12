@@ -9495,7 +9495,7 @@ standard-log-color@^1.5.3:
     standard-log "^3.1.2"
     unpartial "^0.6.3"
 
-standard-log@^3.1.0, standard-log@^3.1.1, standard-log@^3.1.2:
+standard-log@^3.1.1, standard-log@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/standard-log/-/standard-log-3.1.2.tgz#2a4d3339ff625c66a6734af52274224cbbda294e"
   integrity sha512-JyJQi/V3lIovmJPO7lHgHKLVV4m9YpwfEV2E5P1yITgmtQ3R6kavXQHOnbSG228YfLo8Tqqzwns083V5dX4wHg==
@@ -10216,10 +10216,17 @@ type-name@^2.0.1:
   resolved "https://registry.yarnpkg.com/type-name/-/type-name-2.0.2.tgz#efe7d4123d8ac52afff7f40c7e4dec5266008fb4"
   integrity sha1-7+fUEj2KxSr/9/QMfk3sUmYAj7Q=
 
-type-plus@^1.18.0, type-plus@^1.18.1, type-plus@^1.23.0, type-plus@^1.24.0, type-plus@^1.26.2:
+type-plus@^1.18.0, type-plus@^1.18.1, type-plus@^1.24.0, type-plus@^1.26.2:
   version "1.26.2"
   resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.26.2.tgz#149fa43609fed4b41b9f7e689acdc9a874143c1a"
   integrity sha512-DGMdK8xoWxxjFIdkE27ecuYjt9nKu0laZX+VjMZNENRXYJI0e1CxWiksXFcqZXHSVIj8S3iuosKq3eYeH/Jsrw==
+  dependencies:
+    unpartial "^0.6.3"
+
+type-plus@^1.27.0:
+  version "1.27.0"
+  resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.27.0.tgz#5723ff1654ef4e04668558cafd92f315eafad909"
+  integrity sha512-0PYfpfObpTr+mgu7fCOmbpNpRpqXCC/S0QT8tdp+NVpOzmja+max2E1ZMylaG5PDIXbht5UtBmlZ2IY/vzba8A==
   dependencies:
     unpartial "^0.6.3"
 

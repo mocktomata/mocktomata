@@ -3,7 +3,7 @@ import { getPlugin, PluginNotFound } from '../plugin';
 import { createTimeTracker } from '../util';
 import { ActionMismatch, ReferenceMismatch } from './errors';
 import { createPluginReplayer } from './getStub';
-import { addAction, addReference, findRefIdByTarget, findTarget, getRef, resolveRefId } from './SpecRecord';
+import { addAction, addReference, findRefIdByTarget, findTarget, getRef, resolveRefId, findRefByTarget, findSourceInfo } from './SpecRecord';
 import { SpecAction, SpecOptions, SpecRecord, SpecReference } from './types';
 import { SpecRecordLive, SpecReferenceLive } from './types-internal';
 
@@ -58,6 +58,7 @@ export function createValidatingRecord(specId: string, original: SpecRecord, rec
     resolveRefId: (ref: string | number) => resolveRefId(received, ref),
     getRefId: (stub: any) => findRefIdByTarget(received.refs, stub),
     getRef: (ref: string | number) => getRef(received, ref),
+    getRefByTarget: (spy: any) => findRefByTarget(received.refs, spy)!,
     resolveRef: (ref: string | number) => resolveRef(record, original, received, ref),
     peekAction() {
       return received.actions.length < original.actions.length ?
@@ -75,6 +76,7 @@ export function createValidatingRecord(specId: string, original: SpecRecord, rec
     },
     getSubject: (refOrValue: any) => getSubject(original, received, refOrValue),
     findTarget: <T>(subject: T) => findTarget(received.refs, subject),
+    findSourceInfo: (subject: any) => findSourceInfo(received.refs, subject),
   }
   return record
 }

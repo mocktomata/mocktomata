@@ -1,3 +1,4 @@
+import { ReferenceId } from './SpecAction';
 
 export type SpecReference = {
   /**
@@ -8,4 +9,6 @@ export type SpecReference = {
   subject?: any,
 
   specTarget?: boolean
+
+  source?: { id: ReferenceId, path: Array<string | number> }
 }

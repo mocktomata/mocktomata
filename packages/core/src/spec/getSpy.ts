@@ -2,22 +2,29 @@ import { getField } from 'type-plus';
 import { findPlugin } from '../plugin';
 import { RecordingRecord } from './createRecordingRecord';
 import { logCreateSpy, logGetAction, logInstantiateAction, logInvokeAction, logReturnAction, logSetAction, logThrowAction } from './log';
-import { Meta } from './types';
+import { Meta, ReturnAction } from './types';
 
-export type SpyRecorder = ReturnType<typeof createPluginRecorder>
+export type SpyRecorder = ReturnType<typeof createSpyRecorder>
 
 export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, isSpecTarget: boolean = false): T {
-  const spy = record.findTarget(subject)
-  if (spy) return spy
+  return findCreatedSpy(record, subject) ||
+    createSpy(record, subject, isSpecTarget) ||
+    subject
+}
 
+function findCreatedSpy(record: RecordingRecord, subject: any) {
+  return record.findTarget(subject)
+}
+
+function createSpy(record: RecordingRecord, subject: any, isSpecTarget: boolean) {
   const plugin = findPlugin(subject)
-  if (!plugin) return subject
+  if (!plugin) return undefined
 
-  const recorder = createPluginRecorder(record, plugin.name, subject, isSpecTarget)
+  const recorder = createSpyRecorder(record, plugin.name, subject, isSpecTarget)
   return plugin.createSpy({ recorder }, subject)
 }
 
-function createPluginRecorder(record: RecordingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
+function createSpyRecorder(record: RecordingRecord, plugin: string, subject: any, isSpecTarget: boolean) {
   return {
     declare: (spy: any) => createSubjectRecorder(
       { record, plugin },
@@ -91,6 +98,7 @@ function createInvocationRecorder(
   args: any[]) {
 
   const payload: any[] = []
+  // TODO: get spy for the whole args array
   args.forEach((arg, i) => {
     const spy = args[i] = getSpy({ record }, arg)
     payload.push(record.getRefId(spy) || spy)
@@ -174,11 +182,22 @@ function createSetterRecorder(
 function expressionReturns(
   { record, plugin, ref, id }: { record: RecordingRecord, plugin: string, ref: string | number, id: number; },
   value: any,
-  { meta, isSpecTarget }: { meta?: Meta, isSpecTarget?: boolean }
+  { meta, isSpecTarget = false }: { meta?: Meta, isSpecTarget?: boolean }
 ) {
-  const spy = getSpy({ record }, value, isSpecTarget)
-  const payload = record.getRefId(spy) || value
-  const returnId = record.addAction({ type: 'return', ref: id, payload, meta })
+  const action: Pick<ReturnAction, 'type' | 'ref' | 'payload' | 'meta'> = { type: 'return', ref: id, payload: undefined, meta }
+  let spy = findCreatedSpy(record, value)
+  if (!spy) {
+    spy = createSpy(record, value, isSpecTarget)
+    if (spy) {
+      const reference = record.getRefByTarget(spy)
+      reference.source = record.findSourceInfo(value)
+    }
+    else {
+      spy = value
+    }
+  }
+  action.payload = record.getRefId(spy) || value
+  const returnId = record.addAction(action)
   logReturnAction({ plugin, ref }, id, returnId, value)
   return spy
 }
