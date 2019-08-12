@@ -62,6 +62,7 @@ function createInstanceReplayer(
   { record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string },
   args: any[]
 ) {
+  // const payload = getSpy({ record }, args).map(spy => record.getRefId(spy) || spy)
   const payload: any[] = []
   args.forEach((arg, i) => {
     const spy = args[i] = getSpy({ record }, arg)
@@ -87,7 +88,7 @@ function createInstanceReplayer(
 }
 
 function createInvocationReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string }, args: any[]) {
-  const payload = args.map(arg => getSpy({ record }, arg))
+  const payload = getSpy({ record }, args).map(spy => record.getRefId(spy) || spy)
   const id = record.addAction({ type: 'invoke', ref, payload })
   logInvokeAction({ record, plugin, ref }, id, args)
 

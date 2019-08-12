@@ -23,12 +23,12 @@ export function createTestHarness(options?: Partial<{ level: number, showLog: bo
   return {
     io,
     reporter,
-    showLog(level?: number) {
+    showLog(level: number = Infinity) {
       if (!showLog) {
         addLogReporter(createColorLogReporter())
         showLog = true
       }
-      if (level !== undefined) setLogLevel(level)
+      setLogLevel(level)
     },
     reset() {
       context.clear()

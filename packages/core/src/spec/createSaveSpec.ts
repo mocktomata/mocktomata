@@ -26,9 +26,9 @@ export async function createSaveSpec<T>(context: SpecContext, id: string, subjec
 function toSpecRecord({ refs, actions }: SpecRecordLive): SpecRecord {
   return {
     refs: refs.map(ref => ref.specTarget ?
-      pick(ref, 'plugin', 'subject', 'specTarget') :
+      pick(ref, 'plugin', 'subject', 'specTarget', 'source') :
       {
-        ...pick(ref, 'plugin'),
+        ...pick(ref, 'plugin', 'source'),
         subject: createSubjectRepresentation(refs, ref)
       }),
     actions

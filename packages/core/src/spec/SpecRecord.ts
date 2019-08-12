@@ -46,7 +46,7 @@ export function findSourceInfo(refs: SpecReferenceLive[], subject: any): { id: R
 }
 
 function findSourcePathInRef(ref: SpecReferenceLive, subject: any): Array<string | number> | undefined {
-  if (typeof ref.subject !== 'object') return undefined
+  if (typeof ref.subject !== 'object' || ref.subject === null) return undefined
 
   return findSourcePath(ref.subject, subject, [])
 }
@@ -58,7 +58,7 @@ function findSourcePath(source: Record<any, any> | Array<any>, value: any, path:
         path.push(i)
         return true
       }
-      if (typeof actual === 'object') {
+      if (typeof actual === 'object' && actual !== null) {
         const newPath = findSourcePath(actual, value, [...path, i])
         if (newPath) {
           path = newPath

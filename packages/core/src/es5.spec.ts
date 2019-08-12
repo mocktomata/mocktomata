@@ -247,7 +247,8 @@ describe('object', () => {
     })
   })
   k.trio('callback method success', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
+      harness.showLog()
       const s = await spec({
         inc(x: number, cb: (x: number) => void) {
           cb(x + 1)
@@ -259,6 +260,7 @@ describe('object', () => {
       expect(actual!).toBe(4)
 
       await s.done()
+      harness.logSpecs()
     })
   })
 })

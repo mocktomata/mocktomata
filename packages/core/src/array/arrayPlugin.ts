@@ -13,6 +13,12 @@ export const arrayPlugin: SpecPlugin<any[]> = {
     subject.forEach((s, i) => subject[i] = player.getSpy(s))
     return subject
   },
-  createRepresentation: ({ process }, subject) => subject.map(s => process(s)),
-  recreateSubject: ({ process }, input: any[]) => input.map(s => process(s))
+  createRepresentation: ({ process }, subject) => {
+    subject.forEach((s, i) => subject[i] = process(s))
+    return subject
+  },
+  recreateSubject: ({ process }, input: any[]) => {
+    input.forEach((s,i) => input[i] = process(s))
+    return input
+  }
 }

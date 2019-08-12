@@ -106,12 +106,13 @@ function createInvocationRecorder(
   { record, plugin, ref }: { record: RecordingRecord, plugin: string, ref: string },
   args: any[]) {
 
-  const payload: any[] = []
-  // TODO: get spy for the whole args array
-  args.forEach((arg, i) => {
-    const spy = args[i] = getSpy({ record }, arg)
-    payload.push(record.getRefId(spy) || spy)
-  })
+  const payload = getSpy({ record }, args).map(spy => record.getRefId(spy) || spy)
+  // const payl oad: any[] = []
+  // // TODO: get spy for the whole args array
+  // args.forEach((arg, i) => {
+  //   const spy = args[i] = getSpy({ record }, arg)
+  //   payload.push(record.getRefId(spy) || spy)
+  // })
   const id = record.addAction({ type: 'invoke', ref, payload })
   logInvokeAction({ record, plugin, ref }, id, args)
 
