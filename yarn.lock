@@ -1916,7 +1916,7 @@
   resolved "https://registry.yarnpkg.com/@types/podium/-/podium-1.0.0.tgz#bfaa2151be2b1d6109cc69f7faa9dac2cba3bb20"
   integrity sha1-v6ohUb4rHWEJzGn3+qnawsujuyA=
 
-"@types/ramda@^0.26.18", "@types/ramda@^0.26.8":
+"@types/ramda@^0.26.18", "@types/ramda@^0.26.19", "@types/ramda@^0.26.8":
   version "0.26.19"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.26.19.tgz#400580597566c016e9743f17c1c48bf4671cda81"
   integrity sha512-lJuMZDXqZ8W2hl0Gz+wEPUhXcf/tZRuaO5vrxFD3Dv2XMqgTZVw+bvfS6iQAsio9XQV+uhkggtT4eLhDmUpI5g==
@@ -2568,6 +2568,13 @@ async-fp@^1.2.0:
   integrity sha512-6eWiu4Vk5d+3y55+KZjHGFd+/PCTqBfrHl89TWZhkUUmmaBAcswkwQDqhIPQZvGAfYCDbr3BzxH0Bb11kQgNEw==
   dependencies:
     iso-error "2.2.0"
+
+async-fp@^1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-1.2.2.tgz#4248001f274662c6525f451476829944d1cc4353"
+  integrity sha512-DbeGDB/ZKgnqKCmCDVosmPd9pBZyKuanZ0PgAPGazckLsn/cEATQxvHMS5K5XvGbNmkR9XY3Npp7MUeaWIYxOg==
+  dependencies:
+    iso-error "2.3.0"
 
 async-limiter@~1.0.0:
   version "1.0.1"
@@ -5955,6 +5962,11 @@ iso-error@2.2.0, iso-error@^2.0.0, iso-error@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-2.2.0.tgz#bf0b3fd6aaa79b3c55dddf21c1f67e50a0340bf9"
   integrity sha512-I8nytzVErW5K76vL+EtiQAIZ6qpHr2o7tMB0oASwWTayTL4KbFhIPE7OjLfQH5XkNZRn1epDWhx1mPJrGCqE9w==
+
+iso-error@2.3.0, iso-error@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-2.3.0.tgz#d09d1eb23276650cf7589d29dd3b2348a05af1bb"
+  integrity sha512-s9mgbDgrhqU7HvyHHjFZ7q0WJjqOUVv9tp8e+dXrkxG7pByLpfsu7ee0/Y/aoc8OCfyK/CNg6JNgbCjcgBodwQ==
 
 isobject@^2.0.0:
   version "2.1.0"
@@ -9839,7 +9851,7 @@ terser@^4.1.2:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-tersify@^3.0.0, tersify@^3.0.1, tersify@^3.0.2:
+tersify@^3.0.0, tersify@^3.0.1, tersify@^3.0.2, tersify@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/tersify/-/tersify-3.0.4.tgz#945476b7f32a3e17505af48c2aed87f9c2ec5373"
   integrity sha512-wwY7ISFJ8d2xtykNLiALMpEZ0z7siScrgjPsEWNrUF5I9Horhu3yux98jMe2a+n0Bh/bgVQIYKZ0AVtCt0+VUQ==

@@ -2,46 +2,52 @@
   "files": [],
   "references": [
     {
-      "path": "packages/core/tsconfig.es5.json"
+      "path": "packages/core2/tsconfig.es5.json"
     },
     {
-      "path": "packages/core/tsconfig.esnext.json"
+      "path": "packages/core2/tsconfig.esnext.json"
     },
-    {
-      "path": "packages/io-fs/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/io-fs/tsconfig.esnext.json"
-    },
-    {
-      "path": "packages/file-server/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/file-server/tsconfig.esnext.json"
-    },
-    {
-      "path": "packages/io-client/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/io-client/tsconfig.esnext.json"
-    },
-    {
-      "path": "packages/io-local/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/io-local/tsconfig.esnext.json"
-    },
-    {
-      "path": "packages/plugin-fixture-dummy/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
-    },
-    {
-      "path": "packages/plugin-node-fetch/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/plugin-node-fetch/tsconfig.esnext.json"
-    }
+    // {
+    //   "path": "packages/core/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/core/tsconfig.esnext.json"
+    // },
+    // {
+    //   "path": "packages/io-fs/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/io-fs/tsconfig.esnext.json"
+    // },
+    // {
+    //   "path": "packages/file-server/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/file-server/tsconfig.esnext.json"
+    // },
+    // {
+    //   "path": "packages/io-client/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/io-client/tsconfig.esnext.json"
+    // },
+    // {
+    //   "path": "packages/io-local/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/io-local/tsconfig.esnext.json"
+    // },
+    // {
+    //   "path": "packages/plugin-fixture-dummy/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
+    // },
+    // {
+    //   "path": "packages/plugin-node-fetch/tsconfig.es5.json"
+    // },
+    // {
+    //   "path": "packages/plugin-node-fetch/tsconfig.esnext.json"
+    // }
   ]
 }
