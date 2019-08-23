@@ -1,5 +1,6 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
+  "breadcrumbs.enabled": true,
+  "eslint.enable": true,
   "json.schemas": [
     {
       "fileMatch": [
@@ -8,7 +9,6 @@
       "url": "http://json.schemastore.org/tsconfig"
     }
   ],
-  "breadcrumbs.enabled": true,
-  "workbench.editor.closeEmptyGroups": false,
-  "jest.pathToConfig": "jest.config.js"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "workbench.editor.closeEmptyGroups": false
 }

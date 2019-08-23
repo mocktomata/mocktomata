@@ -49,9 +49,10 @@ jobs:
           paths:
             - node_modules
             - packages/*/node_modules
+      - run: yarn lint
       - run: yarn build
-      - run: yarn verify
-      - run: npx codecov
+      - run: yarn depcheck
+      - run: yarn coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
       - persist_to_workspace:
@@ -69,7 +70,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn coverage
+      - run: yarn coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
   node10:
@@ -79,7 +80,8 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn coverage
+      - run: yarn coverage --maxWorkers=2
+      - run: npx codecov
       - store_test_results:
           path: .reports/junit
   node8:
@@ -89,18 +91,7 @@ jobs:
       - checkout
       - attach_workspace:
           at: '.'
-      - run: yarn coverage
-      - store_test_results:
-          path: .reports/junit
-  node6:
-    docker:
-      - image: 'circleci/node:6'
-    steps:
-      - checkout
-      - attach_workspace:
-          at: '.'
-      - run: yarn build
-      - run: yarn test
+      - run: yarn coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
   release:
