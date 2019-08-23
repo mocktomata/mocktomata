@@ -1,5 +1,5 @@
 import a from 'assertron';
-import { NotSpecable, spec, SpecIDCannotBeEmpty } from '..';
+import { NotSpecable, spec, SpecIDCannotBeEmpty, SpecNotFound } from '..';
 import k from '../test-utils';
 
 beforeAll(() => {
@@ -30,6 +30,6 @@ k.trio('array is not specable', (description, spec) => {
   })
 })
 
-// test('simulate but file does not exists', async () => {
-//   await a.throws(spec.simulate('not exist', (x: any) => x), SpecNotFound)
-// })
+test('simulate throws if spec record does not exist', async () => {
+  await a.throws(spec.simulate('not exist', (x: any) => x), SpecNotFound)
+})

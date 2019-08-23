@@ -26,7 +26,7 @@ export const spec: SpecObject = Object.assign(
 export function createSpec(defaultMode: SpecMode): SpecFunction {
   return async (id: string, subject: any, options = { timeout: 3000 }) => {
     assertSpecID(id)
-  if (!isSpecable(subject)) throw new NotSpecable(subject)
+    assertIsSpecable(subject)
 
     const mode = getEffectiveSpecMode(id, defaultMode)
 
@@ -48,14 +48,16 @@ function assertSpecID(id: string) {
   if (id === '') throw new SpecIDCannotBeEmpty()
 }
 
+function assertIsSpecable(subject: any) {
+  if (!isSpecable(subject)) throw new NotSpecable(subject)
+}
+
 async function createAutoSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
   try {
     return await createSimulateSpec(context, id, subject, options)
   }
   catch (e) {
-    if (e instanceof SpecNotFound)
-      return createSaveSpec(context, id, subject, options)
-    else
-      throw e
+    if (e instanceof SpecNotFound) return createSaveSpec(context, id, subject, options)
+    else throw e
   }
 }
