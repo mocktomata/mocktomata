@@ -46,6 +46,7 @@ function defineRoutes(server: Server) {
       method: 'GET',
       path: '/komondor/info',
       handler: async (request) => {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const pjson = require(path.resolve(__dirname, '../package.json'))
         return JSON.stringify({
           name: 'komondor',

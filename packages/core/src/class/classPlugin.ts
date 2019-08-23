@@ -7,20 +7,18 @@ export const classPlugin: SpecPlugin = {
   name: 'class',
   support: isClass,
   createSpy({ recorder }, subject) {
-    const spiedClass = class extends subject {
-      // tslint:disable-next-line:variable-name
+    const SpiedClass = class extends subject {
       __komondor: any = {}
 
       constructor(...args: any[]) {
-        // @ts-ignore
         super(...args)
         this.__komondor.instance = spyRecorder.instantiate(args)
       }
     }
-    const propertyNames = getPropertyNames(spiedClass)
+    const propertyNames = getPropertyNames(SpiedClass)
     propertyNames.forEach(p => {
-      const method = spiedClass.prototype[p]
-      spiedClass.prototype[p] = function (...args: any[]) {
+      const method = SpiedClass.prototype[p]
+      SpiedClass.prototype[p] = function (...args: any[]) {
         const invoking = this.__komondor.invoking
         const instance: any = this.__komondor.instance
         if (!invoking) {
@@ -52,21 +50,19 @@ export const classPlugin: SpecPlugin = {
         }
       }
     })
-    const spyRecorder = recorder.declare(spiedClass)
-    return spiedClass
+    const spyRecorder = recorder.declare(SpiedClass)
+    return SpiedClass
   },
   createStub({ recorder: player }, subject) {
-    const stubClass = class extends subject {
-      // tslint:disable-next-line:variable-name
+    const StubClass = class extends subject {
       __komondorStub: any = {}
       constructor(...args: any[]) {
-        // @ts-ignore
         super(...args)
         this.__komondorStub.instance = stubPlayer.instantiate(args)
       }
     }
-    getPropertyNames(stubClass).forEach(p => {
-      stubClass.prototype[p] = function (...args: any[]) {
+    getPropertyNames(StubClass).forEach(p => {
+      StubClass.prototype[p] = function (...args: any[]) {
         const instance = this.__komondorStub.instance
         const call = instance.newCall({ methodName: p })
         call.invoked(args)
@@ -78,7 +74,7 @@ export const classPlugin: SpecPlugin = {
         throw call.thrown()
       }
     })
-    const stubPlayer = player.declare().setTarget(stubClass)
-    return stubClass
+    const stubPlayer = player.declare().setTarget(StubClass)
+    return StubClass
   },
 }

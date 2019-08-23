@@ -4,7 +4,7 @@ export type SpecReference = {
   /**
    * Name of the plugin
    */
-  plugin: string
+  plugin: string,
 
   subject?: any,
 

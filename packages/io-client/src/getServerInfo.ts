@@ -4,7 +4,7 @@ import { CreateIOOptions } from './types';
 import { Context } from './typesInternal';
 
 export type ServerInfo = {
-  version: string
+  version: string,
   url: string,
   plugins: string[]
 }

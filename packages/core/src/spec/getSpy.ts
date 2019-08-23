@@ -6,7 +6,7 @@ import { Meta, ReturnAction } from './types';
 
 export type SpyRecorder = ReturnType<typeof createSpyRecorder>
 
-export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, isSpecTarget: boolean = false): T {
+export function getSpy<T>({ record }: { record: RecordingRecord }, subject: T, isSpecTarget = false): T {
   let spy = findCreatedSpy(record, subject)
   if (spy) return spy
 
@@ -49,7 +49,7 @@ function createSpyRecorder(record: RecordingRecord, plugin: string, subject: any
 }
 
 function createSubjectRecorder(
-  { record, plugin }: { record: RecordingRecord; plugin: string; },
+  { record, plugin }: { record: RecordingRecord, plugin: string },
   subject: any,
   spy: any,
   isSpecTarget: boolean
@@ -76,7 +76,7 @@ function createSubjectRecorder(
 }
 
 function createInstanceRecorder(
-  { record, plugin, ref }: { record: RecordingRecord; plugin: string; ref: string; },
+  { record, plugin, ref }: { record: RecordingRecord, plugin: string, ref: string },
   args: any[]
 ) {
   const payload: any[] = []
@@ -190,7 +190,7 @@ function createSetterRecorder(
 }
 
 function expressionReturns(
-  { record, plugin, ref, id }: { record: RecordingRecord, plugin: string, ref: string | number, id: number; },
+  { record, plugin, ref, id }: { record: RecordingRecord, plugin: string, ref: string | number, id: number },
   value: any,
   { meta, isSpecTarget = false }: { meta?: Meta, isSpecTarget?: boolean }
 ) {
@@ -203,7 +203,7 @@ function expressionReturns(
 }
 
 function expressionThrows(
-  { record, plugin, ref, id }: { record: RecordingRecord, plugin: string, ref: string | number, id: number; },
+  { record, plugin, ref, id }: { record: RecordingRecord, plugin: string, ref: string | number, id: number },
   err: any,
   { meta, isSpecTarget = false }: { meta?: Meta, isSpecTarget?: boolean }
 ) {

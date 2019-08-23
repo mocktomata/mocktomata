@@ -42,6 +42,7 @@ describe('server behavior', () => {
   test('get komondor info', async () => {
     const response = await fetch(buildUrl('info'))
     const actual = await response.text()
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pjson = require('../package.json')
     t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}","url":"http://localhost:${server.info.port}","plugins":[]}`)
   })

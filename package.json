@@ -11,7 +11,7 @@
     "clean": "lerna run clean && rimraf .tsbuildinfo",
     "coverage": "jest --coverage",
     "depcheck": "lerna run depcheck",
-    "lint": "lerna run lint",
+    "lint": "eslint --ext=js,ts .",
     "nuke": "yarn clean && lerna clean -y && rimraf node_modules",
     "release": "lerna publish --amend",
     "test": "jest",
@@ -26,6 +26,7 @@
     "@types/rimraf": "^2.0.2",
     "@unional/devpkg-node": "^1.4.0",
     "assertron": "^7.1.2",
+    "eslint-plugin-harmony": "^2.1.6",
     "jest-watch-exec": "^1.4.1",
     "lerna": "^3.16.4",
     "rimraf": "^3.0.0"

@@ -1,1 +1,1 @@
-console.log('dummy coming')
+console.info('dummy coming')

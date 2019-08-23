@@ -15,7 +15,7 @@ export type SpyRecorder<M extends Meta | undefined> = {
 
 export type SpyInvokeRecorder<M extends Meta | undefined> = {
   meta: M,
-  spiedArgs: any[]
+  spiedArgs: any[],
   return<R>(result: R): R,
   throw<E>(error: E): E
 }

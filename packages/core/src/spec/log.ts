@@ -5,8 +5,8 @@ import { SpecReferenceLive } from './types-internal';
 import { logLevel } from 'standard-log';
 
 export type ActionLoggingContext = {
-  record: Pick<RecordingRecord, 'getSubject'>;
-  plugin: string;
+  record: Pick<RecordingRecord, 'getSubject'>,
+  plugin: string,
   ref: string | number;
 }
 

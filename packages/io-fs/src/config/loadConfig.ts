@@ -22,6 +22,7 @@ export function loadConfig(cwd: string) {
 function loadPjsonConfig(cwd: string) {
   const pjsonPath = path.resolve(cwd, 'package.json')
   if (fs.existsSync(pjsonPath)) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pjson = require(pjsonPath)
     if (pjson.komondor) return pjson.komondor
   }

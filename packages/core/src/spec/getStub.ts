@@ -7,7 +7,7 @@ import { Meta } from './types';
 
 export type StubRecorder = ReturnType<typeof createPluginReplayer>
 
-export function getStub<T>({ record }: { record: ValidatingRecord }, subject: T, isSpecTarget: boolean = false): T {
+export function getStub<T>({ record }: { record: ValidatingRecord }, subject: T, isSpecTarget = false): T {
   const plugin = findPlugin(subject)
   if (!plugin) return subject
 
@@ -59,7 +59,7 @@ function createSubjectReplayer(
 }
 
 function createInstanceReplayer(
-  { record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string },
+  { record, plugin, ref }: { record: ValidatingRecord, plugin: string, ref: string },
   args: any[]
 ) {
   // const payload = getSpy({ record }, args).map(spy => record.getRefId(spy) || spy)
@@ -87,7 +87,7 @@ function createInstanceReplayer(
   }
 }
 
-function createInvocationReplayer({ record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string }, args: any[]) {
+function createInvocationReplayer({ record, plugin, ref }: { record: ValidatingRecord, plugin: string, ref: string }, args: any[]) {
   const payload = getSpy({ record }, args).map(spy => record.getRefId(spy) || spy)
   const id = record.addAction({ type: 'invoke', ref, payload })
   logInvokeAction({ record, plugin, ref }, id, args)
@@ -109,7 +109,7 @@ function createInvocationReplayer({ record, plugin, ref }: { record: ValidatingR
 }
 
 function createGetterReplayer(
-  { record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string | number },
+  { record, plugin, ref }: { record: ValidatingRecord, plugin: string, ref: string | number },
   name: string | number,
   isSpecTarget: boolean,
 ) {
@@ -137,7 +137,7 @@ function createGetterReplayer(
 }
 
 function createSetterReplayer(
-  { record, plugin, ref }: { record: ValidatingRecord; plugin: string; ref: string | number },
+  { record, plugin, ref }: { record: ValidatingRecord, plugin: string, ref: string | number },
   name: string | number,
   value: any,
   isSpecTarget: boolean,

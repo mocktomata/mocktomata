@@ -2,8 +2,8 @@ import { PluginIO, PluginModule } from '../plugin/types';
 import { SpecIO, SpecNotFound, SpecPlugin } from '../spec';
 
 export type TestIO = {
-  getAllSpecs(): IterableIterator<[string, string]>
-  addPluginModule(moduleName: string, pluginModule: PluginModule): void
+  getAllSpecs(): IterableIterator<[string, string]>,
+  addPluginModule(moduleName: string, pluginModule: PluginModule): void,
   addPlugin(moduleName: string, ...plugins: SpecPlugin[]): void
 } & SpecIO & PluginIO
 

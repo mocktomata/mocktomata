@@ -6,12 +6,12 @@ export type SpyRecorder = {
   /**
    * Declare a new spy.
    */
-  declare(spy: any): SpySubjectRecorder
+  declare(spy: any): SpySubjectRecorder,
   getSpy<T>(subject: T): T
 }
 
 export type SpySubjectRecorder = {
-  instantiate(args: any[]): SpyInstanceRecorder
+  instantiate(args: any[]): SpyInstanceRecorder,
   invoke(args: any[]): SpyInvocationRecorder
 } & SpyInstanceRecorder
 

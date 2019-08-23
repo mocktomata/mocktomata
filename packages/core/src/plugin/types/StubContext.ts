@@ -14,7 +14,7 @@ export type StubSubjectPlayer = {
    * Get a stub of the specified subject
    */
   getStub<T>(subject: T): T,
-  construct(args: any[]): StubInstancePlayer
+  construct(args: any[]): StubInstancePlayer,
   invoke(args: any[]): StubInvocationPlayer
 } & StubInstancePlayer & StubInvocationPlayer
 
