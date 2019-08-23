@@ -25,7 +25,7 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
 }
 
 export type SpyContext = {
-  declare<S>(spy: S, meta?: Meta): SpyRecorder
+  declare<S>(spy: S, meta?: Meta): SpyRecorder,
   getSpy<S>(subject: S): S
 }
 

@@ -1,7 +1,7 @@
-import { PluginModule, SpecPlugin } from '../spec/types';
+import { SpecPluginModule, SpecPlugin } from '../spec/types';
 
 // istanbul ignore next
-export const echoPluginModule: PluginModule = {
+export const echoPluginModule: SpecPluginModule = {
   activate(context) {
     context.register(echoPlugin)
   }
@@ -15,7 +15,7 @@ export const echoPlugin: SpecPlugin = {
 }
 
 // istanbul ignore next
-export const pluginModuleA: PluginModule = {
+export const pluginModuleA: SpecPluginModule = {
   activate(context) {
     context.register(pluginA)
   }
