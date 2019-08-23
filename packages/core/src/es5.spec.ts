@@ -1,13 +1,13 @@
 import a from 'assertron';
 import { logLevel } from 'standard-log';
-import { createTestHarness, komondorTest as k, NotSpecable, TestHarness } from '.';
+import { komondorTest as k, NotSpecable, TestHarness } from '.';
 import * as es5Module from './es5';
 import { loadPlugins } from './plugin';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
 let harness: TestHarness
 beforeAll(async () => {
-  harness = createTestHarness()
+  harness = k.createTestHarness()
   harness.io.addPluginModule('@komondor-lab/es5', es5Module)
   await loadPlugins(harness)
 })

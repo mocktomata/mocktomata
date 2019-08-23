@@ -6,8 +6,6 @@ import { SpecRecord } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
 
-export type TestHarness = ReturnType<typeof createTestHarness>
-
 export function createTestHarness(options?: Partial<{ level: number, showLog: boolean }>) {
   const opts = required({ level: logLevel.info, showLog: false }, options)
   const level = opts.level

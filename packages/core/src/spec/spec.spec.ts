@@ -1,8 +1,8 @@
 import a from 'assertron';
-import { createTestHarness, IDCannotBeEmpty, spec } from '..';
+import { komondorTest as k, IDCannotBeEmpty, spec } from '..';
 
 beforeAll(() => {
-  createTestHarness()
+  k.createTestHarness()
 })
 
 test('id cannot be an empty string', async () => {

@@ -1,7 +1,7 @@
 import a from 'assertron';
 import delay from 'delay';
 import { logLevel } from 'standard-log';
-import { createTestHarness, loadPlugins, TestHarness } from '..';
+import { komondorTest, loadPlugins, TestHarness } from '..';
 import * as es5Module from '../es5';
 import { createLiveSpec } from './createLiveSpec';
 import { createSaveSpec } from './createSaveSpec';
@@ -11,7 +11,7 @@ import { SpecRecord } from './types';
 
 let harness: TestHarness
 beforeEach(async () => {
-  harness = createTestHarness({ showLog: false })
+  harness = komondorTest.createTestHarness({ showLog: false })
   harness.io.addPluginModule('es5', es5Module)
   await loadPlugins(harness)
 })
