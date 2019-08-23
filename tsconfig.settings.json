@@ -17,7 +17,6 @@
     "removeComments": false,
     "sourceMap": true,
     "strict": true,
-    "target": "es2015",
-    "tsBuildInfoFile": ".tsbuildinfo"
+    "target": "esnext"
   }
 }

@@ -3,6 +3,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "outDir": "lib",
-    "target": "es5"
+    "target": "es5",
+    "tsBuildInfoFile": ".ts/es5.buildinfo"
   }
 }
