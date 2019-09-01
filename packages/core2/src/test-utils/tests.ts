@@ -1,42 +1,59 @@
-import { spec, Spec } from '../spec';
+import { spec, Spec, CreateSpec } from '../spec';
 
 export type KomondorTestHandler = (
-  description: string,
-  spec: <T>(subject: T) => Promise<Spec<T>>
+  title: string,
+  spec: TestSpec
 ) => void | Promise<any>
 
-export function testTrio(description: string, handler: KomondorTestHandler) {
-  testLive(description, handler)
-  testSave(description, handler)
-  testSimulate(description, handler)
+export function testTrio(title: string, handler: KomondorTestHandler) {
+  testLive(title, handler)
+  testSave(title, handler)
+  testSimulate(title, handler)
 }
 
-export function testLive(description: string, handler: KomondorTestHandler) {
+export function testDuo(title: string, handler: KomondorTestHandler) {
+  testSave(title, handler)
+  testSimulate(title, handler)
+}
+
+export function testLive(title: string, handler: KomondorTestHandler) {
   const ktm = process.env.KOMONDOR_TEST_MODE
   if (!ktm || ktm === 'live') {
-    handler(
-      `${description}: live`,
-      subject => spec.live(description, subject)
-    )
+    const liveTitle = `${title}: live`
+    handler(liveTitle, createTestSpec(spec.live, liveTitle))
   }
 }
 
-export function testSave(description: string, handler: KomondorTestHandler) {
+export function testSave(title: string, handler: KomondorTestHandler) {
   const ktm = process.env.KOMONDOR_TEST_MODE
   if (!ktm || ktm === 'save') {
-    handler(
-      `${description}: save`,
-      subject => spec.save(description, subject)
-    )
+    const saveTitle = `${title}: save`
+    handler(saveTitle, createTestSpec(spec.save, saveTitle))
   }
 }
 
-export function testSimulate(description: string, handler: KomondorTestHandler) {
+export function testSimulate(title: string, handler: KomondorTestHandler) {
   const ktm = process.env.KOMONDOR_TEST_MODE
   if (!ktm || ktm === 'simulate') {
-    handler(
-      `${description}: simulate`,
-      subject => spec.simulate(description, subject)
-    )
+    const simTitle = `${title}: simulate`
+    handler(simTitle, createTestSpec(spec.simulate, simTitle))
+  }
+}
+export type TestSpec = {
+  mock<S>(subject: S): Promise<S>,
+  done(): Promise<void>
+}
+function createTestSpec(specFn: CreateSpec, title: string): TestSpec {
+  return {
+    mock: subject => getSpec().then(s => s.mock(subject)),
+    done: () => getSpec().then(s => s.done())
+  }
+
+  let s: Spec
+  async function getSpec() {
+    if (s) return s
+
+    // eslint-disable-next-line require-atomic-updates
+    return s = await specFn(title)
   }
 }

@@ -1,12 +1,12 @@
 export type SpecMode = 'live' | 'save' | 'simulate' | 'auto'
 
-export type CreateSpecFunction = <S>(id: string, subject: S, options?: SpecOptions) => Promise<Spec<S>>
+export type CreateSpec = (id: string, options?: SpecOptions) => Promise<Spec>
 
 export type SpecOptions = {
   timeout: number
 }
 
-export type Spec<S> = {
-  subject: S,
+export type Spec = {
+  mock<S>(subject: S): S,
   done(): Promise<void>
 }

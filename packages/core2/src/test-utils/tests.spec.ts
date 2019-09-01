@@ -1,7 +1,12 @@
 import { AssertOrder } from 'assertron';
 import k from '.';
 
-test('KOMONDOR_TEST_MODE=simulate will only run the simulate test', () => {
+// beforeAll(async () => {
+//   const harness = k.createTestHarness()
+//   await harness.io.writeSpec('only simulate: simulate', { refs: [], actions: [] })
+// })
+
+test('KOMONDOR_TEST_MODE=simulate will only run the simulate test', async () => {
   const o = new AssertOrder(1)
   let actual = ''
   process.env.KOMONDOR_TEST_MODE = 'simulate'
@@ -10,10 +15,11 @@ test('KOMONDOR_TEST_MODE=simulate will only run the simulate test', () => {
     actual = title
   })
 
+  await o.end(100)
   expect(actual).toBe(`only simulate: simulate`)
 })
 
-test('KOMONDOR_TEST_MODE=save will only run the save test', () => {
+test('KOMONDOR_TEST_MODE=save will only run the save test', async () => {
   const o = new AssertOrder(1)
   let actual = ''
   process.env.KOMONDOR_TEST_MODE = 'save'
@@ -22,10 +28,11 @@ test('KOMONDOR_TEST_MODE=save will only run the save test', () => {
     actual = title
   })
 
+  await o.end(100)
   expect(actual).toBe(`only save: save`)
 })
 
-test('KOMONDOR_TEST_MODE=live will only run the live test', () => {
+test('KOMONDOR_TEST_MODE=live will only run the live test', async () => {
   const o = new AssertOrder(1)
   let actual = ''
   process.env.KOMONDOR_TEST_MODE = 'live'
@@ -34,5 +41,6 @@ test('KOMONDOR_TEST_MODE=live will only run the live test', () => {
     actual = title
   })
 
+  await o.end(100)
   expect(actual).toBe(`only live: live`)
 })

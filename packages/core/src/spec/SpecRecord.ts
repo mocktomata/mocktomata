@@ -33,7 +33,7 @@ export function findTarget<T>(refs: SpecReferenceLive[], subject: T): T | undefi
   return ref && ref.target
 }
 
-export function findSourceInfo(refs: SpecReferenceLive[], subject: any): { id: ReferenceId, path: Array<string | number> } | undefined {
+export function  findSourceInfo(refs: SpecReferenceLive[], subject: any): { id: ReferenceId, path: Array<string | number> } | undefined {
   return refs.reduce((p, ref, i) => {
     if (p) return p
 

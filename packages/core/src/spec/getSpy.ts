@@ -107,7 +107,7 @@ function createInvocationRecorder(
   args: any[]) {
 
   const payload = getSpy({ record }, args).map(spy => record.getRefId(spy) || spy)
-  // const payl oad: any[] = []
+  // const payload: any[] = []
   // // TODO: get spy for the whole args array
   // args.forEach((arg, i) => {
   //   const spy = args[i] = getSpy({ record }, arg)

@@ -1,18 +1,15 @@
 import { context, SpecContext } from '../context';
 import { createLiveSpec } from './createLiveSpec';
-import { SpecIDCannotBeEmpty, SpecNotFound, NotSpecable } from './errors';
-import { getEffectiveSpecMode } from './getEffectiveSpecMode';
-import { Spec, SpecMode, SpecOptions } from './types';
-import { createSimulateSpec } from './createSimulateSpec';
 import { createSaveSpec } from './createSaveSpec';
-import { isSpecable } from './isSpecable';
+import { createSimulateSpec } from './createSimulateSpec';
+import { SpecIDCannotBeEmpty, SpecNotFound } from './errors';
+import { getEffectiveSpecMode } from './getEffectiveSpecMode';
+import { Spec, CreateSpec, SpecMode, SpecOptions } from './types';
 
-export type SpecFunction = <T>(id: string, subject: T, options?: SpecOptions) => Promise<Spec<T>>
-
-export type SpecObject = SpecFunction & {
-  live: SpecFunction,
-  save: SpecFunction,
-  simulate: SpecFunction,
+export type SpecObject = CreateSpec & {
+  live: CreateSpec,
+  save: CreateSpec,
+  simulate: CreateSpec,
 }
 
 export const spec: SpecObject = Object.assign(
@@ -23,23 +20,22 @@ export const spec: SpecObject = Object.assign(
   }
 )
 
-export function createSpec(defaultMode: SpecMode): SpecFunction {
-  return async (id: string, subject: any, options = { timeout: 3000 }) => {
+export function createSpec(defaultMode: SpecMode): CreateSpec {
+  return async (id: string, options: SpecOptions = { timeout: 3000 }) => {
     assertSpecID(id)
-    assertIsSpecable(subject)
 
     const mode = getEffectiveSpecMode(id, defaultMode)
 
-    const { io } = await context.get()
+    const ctx = await context.get()
     switch (mode) {
       case 'auto':
-        return createAutoSpec({ io }, id, subject, options)
+        return createAutoSpec(ctx, id, options)
       case 'live':
-        return createLiveSpec({ io }, id, subject, options)
+        return createLiveSpec()
       case 'save':
-        return createSaveSpec({ io }, id, subject, options)
+        return createSaveSpec(ctx, id, options)
       case 'simulate':
-        return createSimulateSpec({ io }, id, subject, options)
+        return createSimulateSpec(ctx, id, options)
     }
   }
 }
@@ -48,16 +44,12 @@ function assertSpecID(id: string) {
   if (id === '') throw new SpecIDCannotBeEmpty()
 }
 
-function assertIsSpecable(subject: any) {
-  if (!isSpecable(subject)) throw new NotSpecable(subject)
-}
-
-async function createAutoSpec<T>(context: SpecContext, id: string, subject: T, options: SpecOptions): Promise<Spec<T>> {
+async function createAutoSpec(context: SpecContext, id: string, options: SpecOptions): Promise<Spec> {
   try {
-    return await createSimulateSpec(context, id, subject, options)
+    return await createSimulateSpec(context, id, options)
   }
   catch (e) {
-    if (e instanceof SpecNotFound) return createSaveSpec(context, id, subject, options)
+    if (e instanceof SpecNotFound) return createSaveSpec(context, id, options)
     else throw e
   }
 }

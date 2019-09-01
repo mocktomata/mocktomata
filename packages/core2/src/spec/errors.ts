@@ -1,5 +1,8 @@
 import { tersify } from 'tersify';
 import { KomondorError } from '../errors';
+import { shouldLog, logLevel } from 'standard-log';
+import { log } from '../log';
+import { SpecReference } from './types';
 
 export class SpecIDCannotBeEmpty extends KomondorError {
   // istanbul ignore next
@@ -53,5 +56,29 @@ export class PluginNotConforming extends KomondorError {
   // istanbul ignore next
   constructor(public pluginName: string) {
     super(`${pluginName} is not a plugin.`)
+  }
+}
+
+export class ReferenceMismatch extends KomondorError {
+  // istanbul ignore next
+  constructor(public specId: string, public expected: Pick<SpecReference, 'plugin'> | undefined, public actual: Pick<SpecReference, 'plugin'>) {
+    super(`Recorded data for '${specId}' doesn't match with simulation.
+Expecting:
+${tersifyReference(expected)}
+Received:
+${tersifyReference(actual)}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+function tersifyReference(reference: Pick<SpecReference, 'plugin'> | undefined): string {
+  if (!reference) return 'none'
+
+  if (shouldLog(logLevel.debug, log.level)) {
+    return tersify(reference, { maxLength: Infinity })
+  }
+  else {
+    return `${['a', 'e', 'i', 'o', 'u'].some(x => reference.plugin.startsWith(x)) ? 'an' : 'a'} ${reference.plugin} reference`
   }
 }
