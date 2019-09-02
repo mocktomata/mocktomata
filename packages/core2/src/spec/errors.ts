@@ -1,8 +1,8 @@
+import { logLevel, shouldLog } from 'standard-log';
 import { tersify } from 'tersify';
 import { KomondorError } from '../errors';
-import { shouldLog, logLevel } from 'standard-log';
 import { log } from '../log';
-import { SpecReference } from './types';
+import { SpecActionBase, SpecReference } from './types';
 
 export class SpecIDCannotBeEmpty extends KomondorError {
   // istanbul ignore next
@@ -69,6 +69,32 @@ Received:
 ${tersifyReference(actual)}`)
 
     Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+export type MismatchActionModel = SpecActionBase & { plugin: string }
+
+export class ActionMismatch extends KomondorError {
+  // istanbul ignore next
+  constructor(public specId: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
+    super(`Recorded data for '${specId}' doesn't match with simulation.
+Expecting:
+${tersifyAction(expected)}
+Received:
+${tersifyAction(actual)}`)
+
+    Object.setPrototypeOf(this, new.target.prototype)
+  }
+}
+
+function tersifyAction(action: MismatchActionModel | undefined): string {
+  if (!action) return 'none'
+
+  if (shouldLog(logLevel.debug, log.level)) {
+    return tersify(action, { maxLength: Infinity })
+  }
+  else {
+    return `${['a', 'e', 'i', 'o', 'u'].some(x => action.plugin.startsWith(x)) ? 'an' : 'a'} ${action.plugin} ${action.type} action`
   }
 }
 

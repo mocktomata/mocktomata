@@ -15,14 +15,14 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = never> {
    * @param context Provides tools needed to record the subject's behavior.
    * @param subject The subject to spy.
    */
-  createSpy(context: SpyContext, subject: S): S,
+  createSpy(context: SpyContext<S>, subject: S): S,
   /**
    * Creates a stub in place of the specified subject.
    * @param context Provides tools needed to reproduce the subject's behavior.
    * @param meta Meta data of the subject.
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
-  createStub(context: StubContext, meta: M): S,
+  createStub(context: StubContext<S>, meta: M): S,
   /**
    *
    */
@@ -36,32 +36,47 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = never> {
   createImitator(context: any, meta: M): void,
 }
 
+export type SpyContext<S> = {
+  declare(spy: S, meta?: Meta): SpyRecorder<S>,
+  getSpy<A>(subject: A, options: SpyOptions): A
+}
+
 export type SpyOptions = {
   mode: ActionMode,
   // meta?: Meta
 }
 
-export type SpyContext = {
-  declare<S>(spy: S, meta?: Meta): SpyRecorder,
-  getSpy<S>(subject: S, options: SpyOptions): S
+export type SpyRecorder<S> = {
+  spy: S,
+  invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder
 }
 
-export type InvokeOptions = {
+export type SpyInvokeOptions = {
   mode?: ActionMode,
   transform?: <A>(arg: A) => A,
   meta?: Meta
 }
-export type SpyRecorder = {
-  invoke(args: any[], options?: InvokeOptions): InvocationRecorder
-}
 
 export type InvocationRecorder = {
-  returns<V>(value: V, options?: InvokeOptions): V,
-  throws<E>(err: E, options?: InvokeOptions): E
+  returns<V>(value: V, options?: SpyInvokeOptions): V,
+  throws<E>(err: E, options?: SpyInvokeOptions): E
 }
 
-export type StubContext = {
-  declare<S>(stub: S, meta?: Meta): StubRecorder
+export type StubContext<S> = {
+  declare(stub: S, meta?: Meta): StubRecorder<S>,
+  getStub<A>(subject: A): A,
 }
 
-export type StubRecorder = {}
+export type StubRecorder<S> = {
+  stub: S,
+  invoke(args: any[], options?: StubInvokeOptions): InvocationResponder
+}
+
+export type StubInvokeOptions = {
+  transform?: <A>(arg: A) => A,
+}
+
+export type InvocationResponder = {
+  getResult(): { type: 'return' | 'throw', value: any },
+  getResultAsync(): Promise<{ type: 'return' | 'throw', value: any }>,
+}

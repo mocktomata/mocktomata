@@ -20,7 +20,7 @@ export function testLive(title: string, handler: KomondorTestHandler) {
   const ktm = process.env.KOMONDOR_TEST_MODE
   if (!ktm || ktm === 'live') {
     const liveTitle = `${title}: live`
-    handler(liveTitle, createTestSpec(spec.live, liveTitle))
+    handler(liveTitle, createTestSpec(spec.live, title))
   }
 }
 
@@ -28,7 +28,7 @@ export function testSave(title: string, handler: KomondorTestHandler) {
   const ktm = process.env.KOMONDOR_TEST_MODE
   if (!ktm || ktm === 'save') {
     const saveTitle = `${title}: save`
-    handler(saveTitle, createTestSpec(spec.save, saveTitle))
+    handler(saveTitle, createTestSpec(spec.save, title))
   }
 }
 
@@ -36,7 +36,7 @@ export function testSimulate(title: string, handler: KomondorTestHandler) {
   const ktm = process.env.KOMONDOR_TEST_MODE
   if (!ktm || ktm === 'simulate') {
     const simTitle = `${title}: simulate`
-    handler(simTitle, createTestSpec(spec.simulate, simTitle))
+    handler(simTitle, createTestSpec(spec.simulate, title))
   }
 }
 export type TestSpec = {

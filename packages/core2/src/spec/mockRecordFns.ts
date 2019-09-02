@@ -22,3 +22,8 @@ export function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, ref: Refe
   while (typeof ref === 'number') ref = actions[ref].ref
   return ref
 }
+
+export function getSubject(record: SpecRecord, ref: ReferenceId | ActionId) {
+  const reference = getRef(record, ref)
+  return reference && reference.subject
+}

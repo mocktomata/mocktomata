@@ -42,6 +42,12 @@ export type SupportedKeyTypes = string | number
 
 export type SpecAction = InvokeAction | InstantiateAction | GetAction | ReturnAction | ThrowAction
 
+export type SpecActionBase = {
+  type: string,
+  ref: ReferenceId | ActionId,
+  payload: any
+}
+
 export type InstantiateAction = {
   type: 'instantiate',
   ref: ReferenceId,

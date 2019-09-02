@@ -38,13 +38,11 @@ test('simulate throws if spec record does not exist', async () => {
 
 describe('function', () => {
   k.duo('no input no result', (title, spec) => {
-    test.only(title, async () => {
+    test(title, async () => {
       const s = await spec.mock(() => { })
       expect(s()).toBeUndefined()
 
       await spec.done()
-
-      harness.logSpecs()
     })
   })
 })

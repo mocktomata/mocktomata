@@ -1,9 +1,10 @@
+import { Omit, pick } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { createValidateRecord, ValidateRecord } from './createValidateRecord';
 import { findPlugin } from './findPlugin';
-import { logCreateStub } from './logs';
-import { Meta, Spec, SpecOptions, StubContext, StubRecorder } from './types';
+import { logCreateStub, logInvokeAction } from './logs';
+import { InvocationResponder, Meta, ReferenceId, Spec, SpecOptions, SpyInvokeOptions, StubContext, StubInvokeOptions, StubRecorder, InvokeAction, ReturnAction, ThrowAction } from './types';
 
 export async function createSimulateSpec(context: SpecContext, id: string, options: SpecOptions): Promise<Spec> {
   const loaded = await context.io.readSpec(id)
@@ -34,9 +35,10 @@ function createStub<S>(record: ValidateRecord, subject: S): S | undefined {
   return plugin.createStub(context, subject)
 }
 
-function createStubContext(record: ValidateRecord, plugin: string, subject: any): StubContext {
+function createStubContext<S>(record: ValidateRecord, plugin: string, subject: S): StubContext<S> {
   return {
-    declare: (stub: any, meta?: Meta) => createStubRecorder({ record, plugin }, subject, stub, meta),
+    declare: (stub: S, meta?: Meta) => createStubRecorder<S>({ record, plugin }, subject, stub, meta),
+    getStub: <A>(subject: A) => getStub<A>(record, subject)
   }
 }
 
@@ -45,17 +47,42 @@ type RecorderContext = {
   plugin: string
 }
 
-function createStubRecorder(
+function createStubRecorder<S>(
   { record, plugin }: RecorderContext,
-  subject: any,
-  stub: any,
+  subject: S,
+  stub: S,
   meta: Meta | undefined
-): StubRecorder {
+): StubRecorder<S> {
   const ref = record.addRef({ plugin, subject, testDouble: stub, meta })
 
   logCreateStub({ plugin, ref }, subject)
 
   return {
+    stub,
+    invoke: (args: any[], options?: StubInvokeOptions) => createInvocationResponder({ record, plugin }, ref, args, options)
+  }
+}
 
+function createInvocationResponder(
+  { record, plugin }: RecorderContext,
+  ref: ReferenceId,
+  args: any[],
+  options: SpyInvokeOptions = {}
+): InvocationResponder {
+  const action: Omit<InvokeAction, 'tick' | 'mode'> = { type: 'invoke', ref, payload: options.transform ? args.map(options.transform) : args }
+  const id = record.addAction(action)
+
+  logInvokeAction({ record, plugin, ref }, id, args)
+  return {
+    getResult: () => {
+      const next = record.getExpectedAction()! as ReturnAction | ThrowAction
+      return {
+        ...pick(next, 'type', 'meta'),
+        value: record.getSubject(next.payload) || next.payload
+      }
+    },
+    getResultAsync: () => {
+      return Promise.reject('not implemented')
+    }
   }
 }

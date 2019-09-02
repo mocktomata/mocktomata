@@ -49,11 +49,31 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
     const spyRecorder = declare(spy)
     return spy
   },
-  createStub({ declare }, meta) {
+  createStub({ declare, getStub }, subject) {
+    // for the spec subject,
+    // it can contain additional property for callbacks,
+    // so need to access the input subject.
+    // e.g.
+    // const subject = Object.assign(function () { }, { callback() { } })
+    // class Foo { static callback() { } }
+    // const subject = { ajax() { }, callback() { } }
     const stub = function (this: any, ...args: any[]) {
+      const invocationResponder = stubRecorder.invoke(args, { transform: arg => getStub(arg) })
+      const result = invocationResponder.getResult()
 
+      // the responder will handle the the stub and imitate automatically.
+      // so we may not need to do anything in the plugin,
+      // and `getResult()` will already return the right stub/imitator.
+      if (result.type === 'return') {
+        return result.value
+        // return invocationResponder.returns(result.value)
+      }
+      else {
+        throw result.value
+        // throw invocationResponder.throws(result.value)
+      }
     }
-    const stubPlayer = declare(stub)
+    const stubRecorder = declare(stub)
     return stub
     // const stub = function (this: any, ...args: any[]) {
     //   const invocation = stubPlayer.invoke(args)
