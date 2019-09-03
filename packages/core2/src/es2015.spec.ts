@@ -27,4 +27,14 @@ describe('function', () => {
       await spec.done()
     })
   })
+  k.trio('primitive inputs, simple result', (title, spec) => {
+    test(title, async () => {
+      const s = await spec.mock((x: number, y: number) => x + y)
+      const actual = s(1, 2)
+
+      expect(actual).toBe(3)
+
+      await spec.done()
+    })
+  })
 })

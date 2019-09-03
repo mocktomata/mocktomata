@@ -4,7 +4,7 @@ import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInvokeAction, logReturnAction, logThrowAction } from './logs';
-import { ActionId, InvokeAction, SpyInvokeOptions, Meta, ReferenceId, ReturnAction, Spec, SpecOptions, SpyContext, SpyOptions, SpyRecorder, ThrowAction } from './types';
+import { ActionId, InvokeAction, SpyInvokeOptions, Meta, ReferenceId, ReturnAction, Spec, SpecOptions, SpyContext, SpyOptions, SpyRecorder, ThrowAction, DeclareOptions } from './types';
 
 export async function createSaveSpec(context: SpecContext, id: string, options: SpecOptions): Promise<Spec> {
 
@@ -43,7 +43,7 @@ function createSpy<S>(record: SpyRecord, subject: S, options: SpyOptions): S | u
  */
 function createSpyContext<S>(record: SpyRecord, plugin: string, subject: S, options: SpyOptions): SpyContext<S> {
   return {
-    declare: (spy: S, meta?: Meta) => createSpyRecorder<S>({ record, plugin, options }, subject, spy, meta),
+    declare: (spy: S, declareOptions?: DeclareOptions) => createSpyRecorder<S>({ record, plugin, options }, subject, spy, declareOptions),
     getSpy: <A>(subject: A, options: SpyOptions) => getSpy<A>(record, subject, options)
   }
 }
@@ -52,9 +52,9 @@ function createSpyRecorder<S>(
   { record, plugin, options: { mode } }: { record: SpyRecord, plugin: string, options: SpyOptions },
   subject: S,
   spy: S,
-  meta: Meta | undefined
+  declareOptions: DeclareOptions = {}
 ): SpyRecorder<S> {
-  const ref = record.addRef({ plugin, subject, testDouble: spy, mode, meta })
+  const ref = record.addRef({ plugin, subject, testDouble: spy, mode, meta: declareOptions.meta })
 
   logCreateSpy({ plugin, ref }, subject)
 
@@ -94,7 +94,7 @@ function expressionReturns(
   const action: Except<ReturnAction, 'tick'> = {
     type: 'return',
     ref: id,
-    payload: record.findRefId(spy) || value
+    payload: spy !== value ? record.findRefId(spy) : value
   }
   const returnId = record.addAction(action)
   logReturnAction({ plugin, ref }, id, returnId, value)

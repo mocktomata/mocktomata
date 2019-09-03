@@ -1,4 +1,4 @@
-import { Omit } from 'type-plus';
+import { Omit, pick } from 'type-plus';
 import { createTimeTracker } from './createTimeTracker';
 import { logRecordingTimeout } from './logs';
 import { addAction, addRef, findTestDouble, getRef, findRefId } from './mockRecordFns';
@@ -20,7 +20,10 @@ export function createSpyRecord(options: SpecOptions) {
     findRefId: (spy: any) => findRefId(refs, spy),
     getSubject: (ref: string | number) => getRef({ refs, actions }, ref)!.subject,
     findTestDouble: <S>(subject: S) => findTestDouble(refs, subject),
-    getSpecRecord: () => ({ refs, actions }),
+    getSpecRecord: () => ({
+      refs: refs.map(r => pick(r, 'plugin', 'mode', 'meta')),
+      actions
+    }),
     end: () => { time.stop() },
   }
 }

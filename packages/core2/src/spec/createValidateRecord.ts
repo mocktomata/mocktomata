@@ -27,7 +27,7 @@ export function createValidateRecord(id: string, original: SpecRecord, options: 
      * NOTE: not expected to return undefined.
      */
     getRef: (ref: ReferenceId | ActionId) => getRef(received, ref)!,
-    getSubject: (ref: ReferenceId | ActionId) => getSubject(received, ref),
+    getSubject: (ref: ReferenceId | ActionId) => getSubject(original, received, ref),
     addAction: (action: SpecActionBase) => {
       assertNotAddingWhenEnded(id, received, ended, action)
       const expected = record.getExpectedAction()

@@ -4,10 +4,10 @@ import { functionPlugin } from './function';
 // import { objectPlugin } from './object';
 import { SpecPluginActivationContext } from './spec';
 // import { promisePlugin } from './promise';
-// import { stringPlugin } from './string';
+import { stringPlugin } from './string';
 
 export function activate(context: SpecPluginActivationContext) {
-  // context.register(stringPlugin)
+  context.register(stringPlugin)
   // context.register(objectPlugin)
   // context.register(arrayPlugin)
   context.register(functionPlugin)

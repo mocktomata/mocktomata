@@ -38,6 +38,12 @@ export function createTestHarness(options?: Partial<{ level: number, showLog: bo
     async getSpec(id: string): Promise<SpecRecord> {
       return io.readSpec(id)
     },
+    logSpec(title: string) {
+      const specId = title.slice(0, title.lastIndexOf(':'))
+      for (const e of io.getAllSpecs()) {
+        if (e[0] === specId) console.info(`${e[0]}:\n`, e[1])
+      }
+    },
     logSpecs() {
       for (const e of io.getAllSpecs()) {
         console.info(`${e[0]}:\n`, e[1])
