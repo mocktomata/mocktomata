@@ -1,16 +1,9 @@
 import a from 'assertron';
 import { NotSpecable, spec, SpecIDCannotBeEmpty, SpecNotFound } from '..';
-import k, {
-  TestHarness
-} from '../test-utils';
-import * as es5Module from '../es5'
-import { loadPlugins } from './loadPlugins';
+import k from '../test-utils';
 
-let harness: TestHarness
 beforeAll(async () => {
-  harness = k.createTestHarness()
-  harness.io.addPluginModule('@komondor-lab/es5', es5Module)
-  await loadPlugins(harness)
+  k.createTestHarness()
 })
 
 test('spec id cannot be empty', async () => {
@@ -35,17 +28,5 @@ k.save('array is not specable', (title, spec) => {
 test('simulate throws if spec record does not exist', async () => {
   await a.throws(spec.simulate('not exist').then(s => s.mock((x: any) => x)), SpecNotFound)
 })
-
-describe('function', () => {
-  k.duo('no input no result', (title, spec) => {
-    test(title, async () => {
-      const s = await spec.mock(() => { })
-      expect(s()).toBeUndefined()
-
-      await spec.done()
-    })
-  })
-})
-
 
 test.todo('plugin with passive spy (same as subject spy)')

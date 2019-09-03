@@ -90,11 +90,15 @@ function expressionReturns(
   value: any,
   options: SpyInvokeOptions = {}
 ) {
-  const action: Except<ReturnAction, 'tick'> = { type: 'return', ref: id, payload: undefined }
+  const spy = options.transform ? options.transform(value) : undefined
+  const action: Except<ReturnAction, 'tick'> = {
+    type: 'return',
+    ref: id,
+    payload: record.findRefId(spy) || value
+  }
   const returnId = record.addAction(action)
-  const spy = options.transform ? options.transform(value) : value
   logReturnAction({ plugin, ref }, id, returnId, value)
-  return spy
+  return spy || value
 }
 
 function expressionThrows(
