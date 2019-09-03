@@ -2,7 +2,7 @@ import { logLevel, shouldLog } from 'standard-log';
 import { tersify } from 'tersify';
 import { KomondorError } from '../errors';
 import { log } from '../log';
-import { SpecActionBase, SpecReference } from './types';
+import { SpecReference } from './types';
 
 export class SpecIDCannotBeEmpty extends KomondorError {
   // istanbul ignore next
@@ -72,7 +72,7 @@ ${tersifyReference(actual)}`)
   }
 }
 
-export type MismatchActionModel = SpecActionBase & { plugin: string }
+export type MismatchActionModel = { type: string, plugin?: string }
 
 export class ActionMismatch extends KomondorError {
   // istanbul ignore next
@@ -94,7 +94,8 @@ function tersifyAction(action: MismatchActionModel | undefined): string {
     return tersify(action, { maxLength: Infinity })
   }
   else {
-    return `${['a', 'e', 'i', 'o', 'u'].some(x => action.plugin.startsWith(x)) ? 'an' : 'a'} ${action.plugin} ${action.type} action`
+    const name = action.plugin ? `${action.plugin} ${action.type}` : action.type
+    return `${['a', 'e', 'i', 'o', 'u'].some(x => name.startsWith(x)) ? 'an' : 'a'} ${name} action`
   }
 }
 

@@ -6,3 +6,7 @@ export function findPlugin<S>(subject: S): RequiredPick<SpecPlugin<S, any>, 'nam
   const plugins = store.value.plugins
   return plugins.find(p => p.support(subject))
 }
+
+export function getPlugin(plugin: string) {
+  return store.value.plugins.find(p => p.name === plugin)
+}

@@ -1,7 +1,7 @@
 import { Meta } from './Meta';
 import { ActionMode } from './SpecRecord';
 
-export interface SpecPlugin<S = any, M extends Record<string, any> = never> {
+export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
   /**
    * Name of the plugin. This is needed only if there are multiple plugins in a package.
    */
@@ -23,18 +23,18 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = never> {
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
   createStub(context: StubContext<S>, meta: M): S,
-  recreateSubject?(context: {}, meta: M): S
+  recreateSubject?(context: {}, meta: M): S,
   // /**
   //  *
   //  */
   // createAutomaton(): void,
-  // /**
-  //  * Creates an imitator that simulates the behavior of the original subject.
-  //  * Imitator is used when the subject is created during the spec.
-  //  * Since the original subject does not come from the spec caller,
-  //  * the imitator is created to imitate the original subject.
-  //  */
-  // createImitator(context: any, meta: M): void,
+  /**
+   * Creates an imitator that simulates the behavior of the original subject.
+   * Imitator is used when the subject is created during the spec.
+   * Since the original subject does not come from the spec caller,
+   * the imitator is created to imitate the original subject.
+   */
+  createImitator?(context: any, meta: M): S,
 }
 
 export type DeclareOptions = {

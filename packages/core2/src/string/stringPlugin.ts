@@ -11,7 +11,7 @@ export const stringPlugin: SpecPlugin<string> = {
     declare(subject)
     return subject
   },
-  recreateSubject(_, meta) {
+  createImitator(_, meta) {
     return meta
   }
 }

@@ -1,10 +1,10 @@
-import { Omit, pick } from 'type-plus';
+import { Omit } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { createValidateRecord, ValidateRecord } from './createValidateRecord';
-import { findPlugin } from './findPlugin';
+import { findPlugin, getPlugin } from './findPlugin';
 import { logCreateStub, logInvokeAction } from './logs';
-import { InvocationResponder, Meta, ReferenceId, Spec, SpecOptions, SpyInvokeOptions, StubContext, StubInvokeOptions, StubRecorder, InvokeAction, ReturnAction, ThrowAction } from './types';
+import { InvocationResponder, InvokeAction, Meta, ReferenceId, ReturnAction, Spec, SpecOptions, SpyInvokeOptions, StubContext, StubInvokeOptions, StubRecorder, ThrowAction } from './types';
 
 export async function createSimulateSpec(context: SpecContext, id: string, options: SpecOptions): Promise<Spec> {
   const loaded = await context.io.readSpec(id)
@@ -75,10 +75,33 @@ function createInvocationResponder(
   logInvokeAction({ record, plugin, ref }, id, args)
   return {
     getResult: () => {
-      const next = record.getExpectedAction()! as ReturnAction | ThrowAction
-      return {
-        ...pick(next, 'type', 'meta'),
-        value: record.getSubject(next.payload) || next.payload
+      const expected = record.getExpectedAction() as ReturnAction | ThrowAction
+      // const actual = { type: 'return' }
+      // if (!expected || expected.type !== 'return') throw new ActionMismatch(record.id, actual, expected)
+
+
+      if (typeof expected.payload !== 'string') {
+        return {
+          type: expected.type,
+          value: expected.payload
+        }
+      }
+
+      const reference = record.getOriginalRef(expected.payload)!
+      // TODO: if there is source, get the value from source.
+      // if no source, create imitator.
+      if (reference.source || reference.meta === undefined) {
+        return {
+          type: expected.type,
+          value: expected.payload // TODO
+        }
+      }
+      else {
+        const plugin = getPlugin(reference.plugin)!
+        return {
+          type: expected.type,
+          value: plugin.createImitator!({}, reference.meta!)
+        }
       }
     },
     getResultAsync: () => {

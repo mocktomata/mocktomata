@@ -1,10 +1,10 @@
-import { Except } from 'type-plus';
+import { Omit } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInvokeAction, logReturnAction, logThrowAction } from './logs';
-import { ActionId, InvokeAction, SpyInvokeOptions, Meta, ReferenceId, ReturnAction, Spec, SpecOptions, SpyContext, SpyOptions, SpyRecorder, ThrowAction, DeclareOptions } from './types';
+import { ActionId, DeclareOptions, InvokeAction, ReferenceId, ReturnAction, Spec, SpecOptions, SpyContext, SpyInvokeOptions, SpyOptions, SpyRecorder, ThrowAction } from './types';
 
 export async function createSaveSpec(context: SpecContext, id: string, options: SpecOptions): Promise<Spec> {
 
@@ -71,7 +71,7 @@ function createInvocationRecorder(
   options: SpyInvokeOptions = {}
 ) {
   const reference = record.getRef(ref)
-  const action: Except<InvokeAction, 'tick'> = { type: 'invoke', ref, mode: options.mode || reference.mode } as any
+  const action: Omit<InvokeAction, 'tick'> = { type: 'invoke', ref, mode: options.mode || reference.mode } as any
   const id = record.addAction(action)
   // TODO: seems like I can transform the argas directly above, because the reference of the invoking subject has already been created,
   // and declare is no longer an action.
@@ -90,15 +90,15 @@ function expressionReturns(
   value: any,
   options: SpyInvokeOptions = {}
 ) {
-  const spy = options.transform ? options.transform(value) : undefined
-  const action: Except<ReturnAction, 'tick'> = {
+  const result = options.transform ? options.transform(value) : value
+  const action: Omit<ReturnAction, 'tick'> = {
     type: 'return',
     ref: id,
-    payload: spy !== value ? record.findRefId(spy) : value
+    payload: record.findRefId(result) || value
   }
   const returnId = record.addAction(action)
   logReturnAction({ plugin, ref }, id, returnId, value)
-  return spy || value
+  return result
 }
 
 function expressionThrows(
@@ -106,9 +106,13 @@ function expressionThrows(
   value: any,
   options: SpyInvokeOptions = {}
 ) {
-  const action: Except<ThrowAction, 'tick'> = { type: 'throw', ref: id, payload: undefined }
-  const returnId = record.addAction(action)
-  const spy = options.transform ? options.transform(value) : value
-  logThrowAction({ plugin, ref }, id, returnId, value)
-  return spy
+  const result = options.transform ? options.transform(value) : value
+  const action: Omit<ThrowAction, 'tick'> = {
+    type: 'throw',
+    ref: id,
+    payload: record.findRefId(result) || value
+  }
+  const throwId = record.addAction(action)
+  logThrowAction({ plugin, ref }, id, throwId, value)
+  return result
 }

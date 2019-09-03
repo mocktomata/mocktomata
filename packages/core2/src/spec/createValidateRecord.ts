@@ -1,4 +1,4 @@
-import { Omit, PartialExcept, Pick } from 'type-plus';
+import { PartialExcept, Pick } from 'type-plus';
 import { assertMatchingAction } from './assertMatchingAction';
 import { createTimeTracker } from './createTimeTracker';
 import { ActionMismatch, ReferenceMismatch } from './errors';
@@ -14,6 +14,7 @@ export function createValidateRecord(id: string, original: SpecRecord, options: 
 
   let ended = false
   const record = {
+    id,
     addRef: (ref: PartialExcept<SpecReference, 'plugin'>) => {
       assertNotAddingExtraReference(id, original.refs, received.refs, ref)
       const origRef = getExpectedReference(original.refs, received.refs)
@@ -22,7 +23,7 @@ export function createValidateRecord(id: string, original: SpecRecord, options: 
       return addRef(received.refs, { ...ref, mode: origRef.mode })
     },
     getExpectedReference: () => getExpectedReference(original.refs, received.refs),
-    getOriginalRef: (ref: ReferenceId) => getRef(original, ref),
+    getOriginalRef: (ref: ReferenceId | ActionId) => getRef(original, ref),
     /**
      * NOTE: not expected to return undefined.
      */
