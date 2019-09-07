@@ -40,14 +40,16 @@ export function createTestHarness(options?: Partial<{ level: number, showLog: bo
     },
     logSpec(title: string) {
       const specId = title.slice(0, title.lastIndexOf(':'))
-      for (const e of io.getAllSpecs()) {
-        if (e[0] === specId) console.info(`${e[0]}:\n`, e[1])
-      }
+      logSpecs(io.getAllSpecs(), e => e[0] === specId)
     },
     logSpecs() {
-      for (const e of io.getAllSpecs()) {
-        console.info(`${e[0]}:\n`, e[1])
-      }
+      logSpecs(io.getAllSpecs())
     }
+  }
+}
+
+function logSpecs(specs: IterableIterator<[string, string]>, predicate: (entry: [string, string]) => boolean = () => true) {
+  for (const e of specs) {
+    if (predicate(e)) console.info(`${e[0]}:\n`, e[1])
   }
 }
