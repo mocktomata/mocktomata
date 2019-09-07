@@ -39,7 +39,7 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       // Assuming any functions or functions within object are callbacks to be called by the subject.
       const invocation = spyRecorder.invoke(args, { transform: arg => getSpy(arg, { mode: 'autonomous' }) })
       try {
-        const result = subject.apply(this, args)
+        const result = subject.apply(this, invocation.args)
         return invocation.returns(result, { transform: result => getSpy(result, { mode: 'passive' }) })
       }
       catch (err) {
@@ -58,9 +58,9 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
     // class Foo { static callback() { } }
     // const subject = { ajax() { }, callback() { } }
     const stub = function (this: any, ...args: any[]) {
-      const invocationResponder = stubRecorder.invoke(args, { transform: arg => getStub(arg) })
+      // No transform. The creation of stub/imitator is handled by the framework.
+      const invocationResponder = stubRecorder.invoke(args)
       const result = invocationResponder.getResult()
-
       // the responder will handle the the stub and imitate automatically.
       // so we may not need to do anything in the plugin,
       // and `getResult()` will already return the right stub/imitator.

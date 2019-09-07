@@ -25,7 +25,7 @@ export function findRefId(refs: SpecReference[], testDouble: any) {
   return id === -1 ? undefined : String(id)
 }
 
-export function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, ref: ReferenceId | ActionId) {
+export function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, ref: ReferenceId | ActionId): ReferenceId {
   while (typeof ref === 'number') ref = actions[ref].ref
   return ref
 }

@@ -11,17 +11,17 @@ export function createSpyRecord(options: SpecOptions) {
   const refs: SpecReference[] = []
   const actions: SpecAction[] = []
   return {
-    addAction: (action: Omit<SpecAction, 'tick'>) => addAction(actions, { ...action, tick: time.elaspe() }),
     addRef: (ref: SpecReference) => addRef(refs, ref),
     /**
      * NOTE: not expected to return undefined.
      */
-    getRef: (ref: ReferenceId | ActionId) => getRef({ refs, actions }, ref)!,
+    getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!,
     findRefId: (spy: any) => findRefId(refs, spy),
-    getSubject: (ref: string | number) => getRef({ refs, actions }, ref)!.subject,
+    addAction: (action: Omit<SpecAction, 'tick'>) => addAction(actions, { ...action, tick: time.elaspe() }),
+    getSubject: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!.subject,
     findTestDouble: <S>(subject: S) => findTestDouble(refs, subject),
     getSpecRecord: () => ({
-      refs: refs.map(r => pick(r, 'plugin', 'mode', 'meta')),
+      refs: refs.map(r => pick(r, 'plugin', 'mode', 'meta', 'source')),
       actions
     }),
     end: () => { time.stop() },

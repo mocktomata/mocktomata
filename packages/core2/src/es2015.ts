@@ -7,6 +7,7 @@ import { SpecPluginActivationContext } from './spec';
 import { stringPlugin } from './string';
 
 export function activate(context: SpecPluginActivationContext) {
+  // context.register(undefinedPlugin)
   context.register(stringPlugin)
   // context.register(objectPlugin)
   // context.register(arrayPlugin)

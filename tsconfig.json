@@ -7,6 +7,12 @@
     {
       "path": "packages/core2/tsconfig.esnext.json"
     },
+    {
+      "path": "packages/moctomata/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/moctomata/tsconfig.esnext.json"
+    },
     // {
     //   "path": "packages/core/tsconfig.es5.json"
     // },

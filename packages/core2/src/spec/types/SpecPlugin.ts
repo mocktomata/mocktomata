@@ -66,6 +66,7 @@ export type SpyInvokeOptions = {
 }
 
 export type InvocationRecorder = {
+  args: any[],
   returns<V>(value: V, options?: SpyInvokeOptions): V,
   throws<E>(err: E, options?: SpyInvokeOptions): E
 }

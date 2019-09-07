@@ -1,4 +1,4 @@
-import { Omit } from 'type-plus';
+import { Omit, Except } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
@@ -13,7 +13,7 @@ export async function createSaveSpec(context: SpecContext, id: string, options: 
   return {
     mock: subject => {
       assertMockable(subject)
-      return getSpy(record, subject, { mode: 'passive' })!
+      return getSpy({ record }, subject, { mode: 'passive' })!
     },
     async done() {
       record.end()
@@ -22,34 +22,37 @@ export async function createSaveSpec(context: SpecContext, id: string, options: 
     }
   }
 }
+export type SpyContextInternal = {
+  record: Except<SpyRecord, 'getSpecRecord'>
+}
 
-function getSpy<S>(record: SpyRecord, subject: S, options: SpyOptions): S {
+export function getSpy<S>({ record }: SpyContextInternal, subject: S, options: SpyOptions): S {
   const spy = record.findTestDouble(subject)
   if (spy) return spy
 
-  return createSpy(record, subject, options) || subject
+  return createSpy({ record }, subject, options) || subject
 }
 
-function createSpy<S>(record: SpyRecord, subject: S, options: SpyOptions): S | undefined {
+function createSpy<S>({ record }: SpyContextInternal, subject: S, options: SpyOptions): S | undefined {
   const plugin = findPlugin(subject)
   if (!plugin) return undefined
 
-  const context = createSpyContext<S>(record, plugin.name, subject, options)
+  const context = createSpyContext<S>({ record }, plugin.name, subject, options)
   return plugin.createSpy(context, subject)
 }
 
 /**
  * SpyContext is used by plugin.createSpy().
  */
-function createSpyContext<S>(record: SpyRecord, plugin: string, subject: S, options: SpyOptions): SpyContext<S> {
+function createSpyContext<S>({ record }: SpyContextInternal, plugin: string, subject: S, options: SpyOptions): SpyContext<S> {
   return {
     declare: (spy: S, declareOptions?: DeclareOptions) => createSpyRecorder<S>({ record, plugin, options }, subject, spy, declareOptions),
-    getSpy: <A>(subject: A, options: SpyOptions) => getSpy<A>(record, subject, options)
+    getSpy: <A>(subject: A, options: SpyOptions) => getSpy<A>({ record }, subject, options)
   }
 }
 
 function createSpyRecorder<S>(
-  { record, plugin, options: { mode } }: { record: SpyRecord, plugin: string, options: SpyOptions },
+  { record, plugin, options: { mode } }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string, options: SpyOptions },
   subject: S,
   spy: S,
   declareOptions: DeclareOptions = {}
@@ -65,28 +68,33 @@ function createSpyRecorder<S>(
 }
 
 function createInvocationRecorder(
-  { record, plugin }: { record: SpyRecord, plugin: string },
+  { record, plugin }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string },
   ref: ReferenceId,
   args: any[],
   options: SpyInvokeOptions = {}
 ) {
+  const spiedArgs = options.transform ? args.map(options.transform) : args
   const reference = record.getRef(ref)
-  const action: Omit<InvokeAction, 'tick'> = { type: 'invoke', ref, mode: options.mode || reference.mode } as any
+  const action: Omit<InvokeAction, 'tick'> = {
+    type: 'invoke',
+    ref,
+    mode: options.mode || reference.mode,
+    payload: []
+  }
   const id = record.addAction(action)
-  // TODO: seems like I can transform the argas directly above, because the reference of the invoking subject has already been created,
-  // and declare is no longer an action.
-  action.payload = options.transform ? args.map(options.transform) : args
+  action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
 
   logInvokeAction({ record, plugin, ref }, id, args)
 
   return {
+    args: spiedArgs,
     returns: (value: any, options?: SpyInvokeOptions) => expressionReturns({ record, plugin, ref, id }, value, options),
     throws: (err: any, options?: SpyInvokeOptions) => expressionThrows({ record, plugin, ref, id }, err, options)
   }
 }
 
 function expressionReturns(
-  { record, plugin, ref, id }: { record: SpyRecord, plugin: string, ref: ReferenceId, id: ActionId },
+  { record, plugin, ref, id }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string, ref: ReferenceId, id: ActionId },
   value: any,
   options: SpyInvokeOptions = {}
 ) {
@@ -102,7 +110,7 @@ function expressionReturns(
 }
 
 function expressionThrows(
-  { record, plugin, ref, id }: { record: SpyRecord, plugin: string, ref: ReferenceId, id: ActionId },
+  { record, plugin, ref, id }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string, ref: ReferenceId, id: ActionId },
   value: any,
   options: SpyInvokeOptions = {}
 ) {

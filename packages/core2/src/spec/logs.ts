@@ -2,6 +2,7 @@ import { logLevel } from 'standard-log';
 import { tersify } from 'tersify';
 import { log } from '../log';
 import { SpyRecord } from './createSpyRecord';
+import { SpecReference } from './types';
 
 export type ActionLoggingContext = {
   record: Pick<SpyRecord, 'getSubject'>,
@@ -31,4 +32,12 @@ export function logRecordingTimeout(timeout: number) {
 
 export function logCreateStub({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, subject: any) {
   log.on(logLevel.debug, log => log(`${plugin} ${ref}: create stub\n${tersify(subject)}`))
+}
+
+export function logAutoInvokeAction(ref: SpecReference, refId: string, id: number, args: any[]) {
+  log.on(logLevel.debug, log => log(`${ref.plugin} ref/action (${refId}/${id}): auto invoke with ${tersify(args)}\n${tersify(ref.subject)}`))
+}
+
+export function logAutoGetAction(ref: SpecReference, refId: string, id: number, name: string | number) {
+  log.on(logLevel.debug, log => log(`${ref.plugin} ref/action (${refId}/${id}): auto get ${typeof name === 'string' ? `'${name}'` : name}\n${tersify(ref.subject)}`))
 }

@@ -3,47 +3,56 @@ import { assertMatchingAction } from './assertMatchingAction';
 import { createTimeTracker } from './createTimeTracker';
 import { ActionMismatch, ReferenceMismatch } from './errors';
 import { logRecordingTimeout } from './logs';
-import { addAction, addRef, findTestDouble, getRef, getSubject } from './mockRecordFns';
-import { ActionId, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference } from './types';
+import { addAction, addRef, findTestDouble, getRef, getSubject, resolveRefId, findRefId } from './mockRecordFns';
+import { ActionId, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference, InvokeAction } from './types';
 
 export type ValidateRecord = ReturnType<typeof createValidateRecord>
 
 export function createValidateRecord(id: string, original: SpecRecord, options: SpecOptions) {
   const time = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
-  const received: SpecRecord = { refs: [], actions: [] }
+  const actual: SpecRecord = { refs: [], actions: [] }
+  const addActionListeners: Array<() => void> = []
 
   let ended = false
   const record = {
-    id,
     addRef: (ref: PartialExcept<SpecReference, 'plugin'>) => {
-      assertNotAddingExtraReference(id, original.refs, received.refs, ref)
-      const origRef = getExpectedReference(original.refs, received.refs)
-      assertMatchingReference(id, ref, origRef)
+      assertNotAddingExtraReference(id, original.refs, actual.refs, ref)
+      const nextRef = getExpectedReference(original.refs, actual.refs)
+      assertMatchingReference(id, ref, nextRef)
 
-      return addRef(received.refs, { ...ref, mode: origRef.mode })
+      return addRef(actual.refs, { ...ref, mode: nextRef.mode })
     },
-    getExpectedReference: () => getExpectedReference(original.refs, received.refs),
-    getOriginalRef: (ref: ReferenceId | ActionId) => getRef(original, ref),
     /**
      * NOTE: not expected to return undefined.
      */
-    getRef: (ref: ReferenceId | ActionId) => getRef(received, ref)!,
-    getSubject: (ref: ReferenceId | ActionId) => getSubject(original, received, ref),
+    getRef: (id: ReferenceId | ActionId) => getRef(actual, id)!,
+    findRefId: (spy: any) => findRefId(actual.refs, spy),
+    getExpectedReference: () => getExpectedReference(original.refs, actual.refs),
+    getOriginalRef: (id: ReferenceId | ActionId) => getRef(original, id),
     addAction: (action: SpecActionBase) => {
-      assertNotAddingWhenEnded(id, received, ended, action)
+      assertNotAddingWhenEnded(id, actual, ended, action)
       const expected = record.getExpectedAction()
-      assertMatchingAction(id, received, action, expected)
+      assertMatchingAction(id, actual, action, expected)
 
       const mergedAction = { ...expected, ...action, tick: time.elaspe() } as SpecAction
-      return addAction(received.actions, mergedAction)
+      const actionId = addAction(actual.actions, mergedAction)
+      addActionListeners.forEach(l => l())
+
+      return actionId
     },
-    getExpectedAction: () => getExpectedAction(original, received),
+    onAddAction: (listener: () => void) => {
+      addActionListeners.push(listener)
+    },
+    getExpectedAction: () => getExpectedAction(original, actual),
+    getExpectedActionId: () => actual.actions.length,
+    getSubject: (id: ReferenceId | ActionId) => getSubject(original, actual, id),
+    findTestDouble: <S>(subject: S) => findTestDouble(actual.refs, subject),
+    resolveRefId: (ref: ReferenceId | ActionId) => resolveRefId(actual, ref),
     end() {
       ended = true
       time.stop()
-      assertReceivedAllExpectedActions(id, original, received)
+      assertReceivedAllExpectedActions(id, original, actual)
     },
-    findTestDouble: <S>(subject: S) => findTestDouble(received.refs, subject),
   }
 
   return record
@@ -56,8 +65,8 @@ function assertMatchingReference(specId: string, actual: Pick<SpecReference, 'pl
   if (actual.plugin !== expected.plugin) throw new ReferenceMismatch(specId, expected, actual)
 }
 
-function getExpectedReference(loadedRefs: SpecReference[], receviedRefs: SpecReference[]) {
-  return loadedRefs[receviedRefs.length]
+function getExpectedReference(expected: SpecReference[], actual: SpecReference[]) {
+  return expected[actual.length]
 }
 
 function assertNotAddingWhenEnded(specId: string, received: SpecRecord, ended: boolean, action: SpecActionBase) {
@@ -77,4 +86,11 @@ function assertReceivedAllExpectedActions(specId: string, original: SpecRecord, 
 
 function getExpectedAction(original: SpecRecord, received: SpecRecord) {
   return original.actions[received.actions.length]
+}
+
+export function assertActionType(specId: string, type: SpecAction['type'], action: SpecAction): action is InvokeAction {
+  if (action.type !== 'invoke') {
+    throw new ActionMismatch(specId, { type: 'invoke' }, action)
+  }
+  return false
 }
