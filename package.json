@@ -19,13 +19,21 @@
     "verify": "yarn lint && yarn depcheck && yarn coverage",
     "watch": "yarn test:watch"
   },
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "dependencies": {},
   "devDependencies": {
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
     "@jest-runner/electron": "2.0.2",
     "@types/ramda": "^0.26.19",
     "@types/rimraf": "^2.0.2",
     "@unional/devpkg-node": "^1.4.0",
     "assertron": "^7.1.2",
+    "husky": "^3.0.5",
     "jest-watch-exec": "^1.4.1",
     "lerna": "^3.16.4",
     "rimraf": "^3.0.0"
