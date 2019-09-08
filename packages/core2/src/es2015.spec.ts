@@ -49,7 +49,7 @@ describe('function', () => {
       await spec.done()
     })
   })
-  k.duo('simple callback success (direct)', (title, spec) => {
+  k.duo('immediate invoke callback', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(simpleCallback.success)
       let actual
@@ -58,6 +58,17 @@ describe('function', () => {
       })
 
       expect(actual).toBe(3)
+
+      await spec.done()
+    })
+  })
+  k.duo('immediate invoke throwing callback', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(simpleCallback.fail)
+
+      const err = await a.throws(simpleCallback.increment(subject, 2))
+
+      expect(err.message).toBe('fail')
 
       await spec.done()
     })

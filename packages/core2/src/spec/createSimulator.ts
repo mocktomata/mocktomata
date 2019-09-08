@@ -1,6 +1,8 @@
 import { ValidateRecord } from './createValidateRecord';
 import { logAutoInvokeAction } from './logs';
 import { InvokeAction, SpecOptions } from './types';
+import { getPlugin } from './findPlugin';
+import { createStubContext } from './createSimulateSpec';
 
 export function createSimulator(record: ValidateRecord, _options: SpecOptions) {
   // use `options` to control which simulator to use.
@@ -35,7 +37,13 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
   const refId = record.resolveRefId(expectedAction.ref)
   if (!refId) return
   const ref = record.getRef(refId)
-  const args = expectedAction.payload.map(a => record.getSubject(a))
+  const args = expectedAction.payload.map(a => {
+    if (typeof a !== 'string') return a
+    const origRef = record.getOriginalRef(a)
+    const plugin = getPlugin(origRef!.plugin)!
+    const context = createStubContext({ record }, plugin.name)
+    return plugin.createStub(context, origRef!.meta)
+  })
   logAutoInvokeAction(ref, refId, record.getExpectedActionId(), args)
   ref.testDouble(...args)
 }

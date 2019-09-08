@@ -19,19 +19,19 @@ export function logInvokeAction({ record, plugin, ref }: ActionLoggingContext, i
 }
 
 export function logReturnAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ref/source/action (${ref}/${sourceId}/${id}): returns ${tersify(value)}`)
+  log.on(logLevel.debug, () => `${plugin} ref/src-action/action (${ref}/${sourceId}/${id}): returns ${tersify(value)}`)
 }
 
 export function logThrowAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ref/source/action (${ref}/${sourceId}/${id}): throws ${tersify(value)}`)
+  log.on(logLevel.debug, () => `${plugin} ref/src-action/action (${ref}/${sourceId}/${id}): throws ${tersify(value)}`)
 }
 
 export function logRecordingTimeout(timeout: number) {
   log.warn(`done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
 }
 
-export function logCreateStub({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, subject: any) {
-  log.on(logLevel.debug, log => log(`${plugin} ${ref}: create stub\n${tersify(subject)}`))
+export function logCreateStub({ plugin, ref }: Omit<ActionLoggingContext, 'record'>) {
+  log.on(logLevel.debug, log => log(`${plugin} ${ref}: create stub`))
 }
 
 export function logAutoInvokeAction(ref: SpecReference, refId: string, id: number, args: any[]) {

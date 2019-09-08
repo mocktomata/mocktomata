@@ -73,7 +73,7 @@ export type InvocationRecorder = {
 
 export type StubContext<S> = {
   declare(stub: S, meta?: Meta): StubRecorder<S>,
-  getStub<A>(subject: A): A,
+  // getStub<A>(subject: A): A,
 }
 
 export type StubRecorder<S> = {
@@ -88,4 +88,6 @@ export type StubInvokeOptions = {
 export type InvocationResponder = {
   getResult(): { type: 'return' | 'throw', value: any },
   getResultAsync(): Promise<{ type: 'return' | 'throw', value: any }>,
+  returns<V>(value: V): V,
+  throws<V>(value: V): V,
 }

@@ -49,56 +49,19 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
     const spyRecorder = declare(spy)
     return spy
   },
-  createStub({ declare, getStub }, subject) {
-    // for the spec subject,
-    // it can contain additional property for callbacks,
-    // so need to access the input subject.
-    // e.g.
-    // const subject = Object.assign(function () { }, { callback() { } })
-    // class Foo { static callback() { } }
-    // const subject = { ajax() { }, callback() { } }
+  createStub({ declare }, _meta) {
     const stub = function (this: any, ...args: any[]) {
       // No transform. The creation of stub/imitator is handled by the framework.
-      const invocationResponder = stubRecorder.invoke(args)
-      const result = invocationResponder.getResult()
-      // the responder will handle the the stub and imitate automatically.
-      // so we may not need to do anything in the plugin,
-      // and `getResult()` will already return the right stub/imitator.
+      const invocation = stubRecorder.invoke(args)
+      const result = invocation.getResult()
       if (result.type === 'return') {
-        return result.value
-        // return invocationResponder.returns(result.value)
+        return invocation.returns(result.value)
       }
       else {
-        throw result.value
-        // throw invocationResponder.throws(result.value)
+        throw invocation.throws(result.value)
       }
     }
     const stubRecorder = declare(stub)
     return stub
-    // const stub = function (this: any, ...args: any[]) {
-    //   const invocation = stubPlayer.invoke(args)
-    //   const result = invocation.getResult()
-    //   if (result.type === 'return') {
-    //     return invocation.returns(result.payload)
-    //   }
-    //   else {
-    //     throw invocation.throws(result.payload)
-    //   }
-    // }
-    // if (representation) {
-    //   Object.assign(stub,
-    //     reduceKey(representation, (p, k) => {
-    //       // p[k] = player.resolve(representation[k])
-    //       return p
-    //     }, {} as Record<string, any>))
-    // }
-    // const stubPlayer = declare()
-    // stubPlayer.setTarget(stub)
-    // if (!subject) {
-    //   // player.on('invoke', args => {
-    //   //   stub(...args)
-    //   // })
-    // }
-    // return stub
   },
 }

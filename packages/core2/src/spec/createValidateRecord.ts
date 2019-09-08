@@ -1,24 +1,29 @@
 import { PartialExcept, Pick } from 'type-plus';
 import { assertMatchingAction } from './assertMatchingAction';
+import { createStubContext } from './createSimulateSpec';
 import { createTimeTracker } from './createTimeTracker';
-import { ActionMismatch, ReferenceMismatch } from './errors';
+import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
+import { findPlugin } from './findPlugin';
 import { logRecordingTimeout } from './logs';
-import { addAction, addRef, findTestDouble, getRef, getSubject, resolveRefId, findRefId } from './mockRecordFns';
-import { ActionId, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference, InvokeAction } from './types';
+import { addAction, addRef, findRefId, findTestDouble, getRef, resolveRefId } from './mockRecordFns';
+import { ActionId, InvokeAction, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference } from './types';
 
 export type ValidateRecord = ReturnType<typeof createValidateRecord>
 
-export function createValidateRecord(id: string, original: SpecRecord, options: SpecOptions) {
+export function createValidateRecord(specId: string, original: SpecRecord, options: SpecOptions) {
   const time = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
   const actual: SpecRecord = { refs: [], actions: [] }
   const addActionListeners: Array<() => void> = []
 
   let ended = false
   const record = {
+    specId,
+    original,
+    actual,
     addRef: (ref: PartialExcept<SpecReference, 'plugin'>) => {
-      assertNotAddingExtraReference(id, original.refs, actual.refs, ref)
-      const nextRef = getExpectedReference(original.refs, actual.refs)
-      assertMatchingReference(id, ref, nextRef)
+      assertNotAddingExtraReference(specId, original.refs, actual.refs, ref)
+      const nextRef = record.getExpectedReference()
+      assertMatchingReference(specId, ref, nextRef)
 
       return addRef(actual.refs, { ...ref, mode: nextRef.mode })
     },
@@ -30,9 +35,9 @@ export function createValidateRecord(id: string, original: SpecRecord, options: 
     getExpectedReference: () => getExpectedReference(original.refs, actual.refs),
     getOriginalRef: (id: ReferenceId | ActionId) => getRef(original, id),
     addAction: (action: SpecActionBase) => {
-      assertNotAddingWhenEnded(id, actual, ended, action)
+      assertNotAddingWhenEnded(specId, actual, ended, action)
       const expected = record.getExpectedAction()
-      assertMatchingAction(id, actual, action, expected)
+      assertMatchingAction(specId, actual, action, expected)
 
       const mergedAction = { ...expected, ...action, tick: time.elaspe() } as SpecAction
       const actionId = addAction(actual.actions, mergedAction)
@@ -45,13 +50,13 @@ export function createValidateRecord(id: string, original: SpecRecord, options: 
     },
     getExpectedAction: () => getExpectedAction(original, actual),
     getExpectedActionId: () => actual.actions.length,
-    getSubject: (id: ReferenceId | ActionId) => getSubject(original, actual, id),
+    getSubject: (id: ReferenceId | ActionId) => getSubject(record, id),
     findTestDouble: <S>(subject: S) => findTestDouble(actual.refs, subject),
     resolveRefId: (ref: ReferenceId | ActionId) => resolveRefId(actual, ref),
     end() {
       ended = true
       time.stop()
-      assertReceivedAllExpectedActions(id, original, actual)
+      assertReceivedAllExpectedActions(specId, original, actual)
     },
   }
 
@@ -59,10 +64,10 @@ export function createValidateRecord(id: string, original: SpecRecord, options: 
 }
 
 function assertNotAddingExtraReference(specId: string, loadedRefs: SpecReference[], receivedRefs: SpecReference[], ref: Pick<SpecReference, 'plugin'>) {
-  if (receivedRefs.length >= loadedRefs.length) throw new ReferenceMismatch(specId, undefined, ref)
+  if (receivedRefs.length >= loadedRefs.length) throw new ReferenceMismatch(specId, ref, undefined)
 }
 function assertMatchingReference(specId: string, actual: Pick<SpecReference, 'plugin'>, expected: Pick<SpecReference, 'plugin'>) {
-  if (actual.plugin !== expected.plugin) throw new ReferenceMismatch(specId, expected, actual)
+  if (actual.plugin !== expected.plugin) throw new ReferenceMismatch(specId, actual, expected)
 }
 
 function getExpectedReference(expected: SpecReference[], actual: SpecReference[]) {
@@ -89,8 +94,28 @@ function getExpectedAction(original: SpecRecord, received: SpecRecord) {
 }
 
 export function assertActionType(specId: string, type: SpecAction['type'], action: SpecAction): action is InvokeAction {
-  if (action.type !== 'invoke') {
-    throw new ActionMismatch(specId, { type: 'invoke' }, action)
+  if (action.type !== type) {
+    throw new ActionMismatch(specId, { type }, action)
   }
   return false
+}
+
+function getSubject(record: ValidateRecord, refOrValue: any) {
+  if (typeof refOrValue !== 'string') return refOrValue
+
+  const receivedRef = record.getRef(refOrValue)
+  if (receivedRef) return receivedRef.subject
+
+  const origRef = record.getOriginalRef(refOrValue)
+  return recreateSubject(record, origRef)
+}
+
+function recreateSubject(record: ValidateRecord, ref: SpecReference | undefined): any {
+  if (ref && ref.meta) {
+    const plugin = findPlugin(ref.plugin)
+    if (!plugin) throw new PluginNotFound(ref.plugin)
+
+    return plugin.createStub(createStubContext({ record }, plugin.name), ref.meta)
+  }
+  return undefined
 }

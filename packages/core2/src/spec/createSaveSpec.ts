@@ -6,31 +6,24 @@ import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInvokeAction, logReturnAction, logThrowAction } from './logs';
 import { ActionId, DeclareOptions, InvokeAction, ReferenceId, ReturnAction, Spec, SpecOptions, SpyContext, SpyInvokeOptions, SpyOptions, SpyRecorder, ThrowAction } from './types';
 
-export async function createSaveSpec(context: SpecContext, id: string, options: SpecOptions): Promise<Spec> {
+export async function createSaveSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
 
-  const record = createSpyRecord(options)
+  const record = createSpyRecord(specId, options)
 
   return {
     mock: subject => {
       assertMockable(subject)
-      return getSpy({ record }, subject, { mode: 'passive' })!
+      return createSpy({ record }, subject, { mode: 'passive' })!
     },
     async done() {
       record.end()
       const sr = record.getSpecRecord()
-      context.io.writeSpec(id, sr)
+      context.io.writeSpec(specId, sr)
     }
   }
 }
 export type SpyContextInternal = {
   record: Except<SpyRecord, 'getSpecRecord'>
-}
-
-export function getSpy<S>({ record }: SpyContextInternal, subject: S, options: SpyOptions): S {
-  const spy = record.findTestDouble(subject)
-  if (spy) return spy
-
-  return createSpy({ record }, subject, options) || subject
 }
 
 function createSpy<S>({ record }: SpyContextInternal, subject: S, options: SpyOptions): S | undefined {
@@ -49,6 +42,16 @@ function createSpyContext<S>({ record }: SpyContextInternal, plugin: string, sub
     declare: (spy: S, declareOptions?: DeclareOptions) => createSpyRecorder<S>({ record, plugin, options }, subject, spy, declareOptions),
     getSpy: <A>(subject: A, options: SpyOptions) => getSpy<A>({ record }, subject, options)
   }
+}
+
+/**
+ * NOTE: the specified subject can be already a test double, passed to the system during simulation.
+ */
+export function getSpy<S>({ record }: SpyContextInternal, subjectOrTestDouble: S, options: SpyOptions): S {
+  const spy = record.findTestDouble(subjectOrTestDouble)
+  if (spy) return spy
+
+  return createSpy({ record }, subjectOrTestDouble, options) || subjectOrTestDouble
 }
 
 function createSpyRecorder<S>(

@@ -61,9 +61,9 @@ export class PluginNotConforming extends KomondorError {
 
 export class ReferenceMismatch extends KomondorError {
   // istanbul ignore next
-  constructor(public specId: string, public expected: Pick<SpecReference, 'plugin'> | undefined, public actual: Pick<SpecReference, 'plugin'>) {
+  constructor(public specId: string, public actual: Pick<SpecReference, 'plugin'>, public expected: Pick<SpecReference, 'plugin'> | undefined) {
     super(`Recorded data for '${specId}' doesn't match with simulation.
-Expecting:
+Expecting reference:
 ${tersifyReference(expected)}
 Received:
 ${tersifyReference(actual)}`)
@@ -78,7 +78,7 @@ export class ActionMismatch extends KomondorError {
   // istanbul ignore next
   constructor(public specId: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
     super(`Recorded data for '${specId}' doesn't match with simulation.
-Expecting:
+Expecting action:
 ${tersifyAction(expected)}
 Received:
 ${tersifyAction(actual)}`)
