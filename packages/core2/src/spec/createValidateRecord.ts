@@ -5,7 +5,7 @@ import { createTimeTracker } from './createTimeTracker';
 import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin } from './findPlugin';
 import { logRecordingTimeout } from './logs';
-import { addAction, addRef, findRefId, findTestDouble, getRef, resolveRefId } from './mockRecordFns';
+import { addAction, addRef, findRefId, findTestDouble, getRef, resolveRefId, findRef } from './mockRecordFns';
 import { ActionId, InvokeAction, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference } from './types';
 
 export type ValidateRecord = ReturnType<typeof createValidateRecord>
@@ -31,6 +31,7 @@ export function createValidateRecord(specId: string, original: SpecRecord, optio
      * NOTE: not expected to return undefined.
      */
     getRef: (id: ReferenceId | ActionId) => getRef(actual, id)!,
+    findRef: (subjectOrTestDouble: any) => findRef(actual.refs, subjectOrTestDouble),
     findRefId: (spy: any) => findRefId(actual.refs, spy),
     getExpectedReference: () => getExpectedReference(original.refs, actual.refs),
     getOriginalRef: (id: ReferenceId | ActionId) => getRef(original, id),

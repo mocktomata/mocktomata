@@ -1,7 +1,7 @@
 import { Omit, pick } from 'type-plus';
 import { createTimeTracker } from './createTimeTracker';
 import { logRecordingTimeout } from './logs';
-import { addAction, addRef, findTestDouble, getRef, findRefId } from './mockRecordFns';
+import { addAction, addRef, findRef, findRefId, findTestDouble, getRef } from './mockRecordFns';
 import { ActionId, ReferenceId, SpecAction, SpecOptions, SpecReference } from './types';
 
 export type SpyRecord = ReturnType<typeof createSpyRecord>
@@ -17,6 +17,7 @@ export function createSpyRecord(specId: string, options: SpecOptions) {
      * NOTE: not expected to return undefined.
      */
     getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!,
+    findRef: (subjectOrTestDouble: any) => findRef(refs, subjectOrTestDouble),
     findRefId: (spy: any) => findRefId(refs, spy),
     addAction: (action: Omit<SpecAction, 'tick'>) => addAction(actions, { ...action, tick: time.elaspe() }),
     getSubject: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!.subject,

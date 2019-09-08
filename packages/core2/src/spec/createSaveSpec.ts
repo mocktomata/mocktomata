@@ -48,8 +48,8 @@ function createSpyContext<S>({ record }: SpyContextInternal, plugin: string, sub
  * NOTE: the specified subject can be already a test double, passed to the system during simulation.
  */
 export function getSpy<S>({ record }: SpyContextInternal, subjectOrTestDouble: S, options: SpyOptions): S {
-  const spy = record.findTestDouble(subjectOrTestDouble)
-  if (spy) return spy
+  const reference = record.findRef(subjectOrTestDouble)
+  if (reference) return reference.testDouble
 
   return createSpy({ record }, subjectOrTestDouble, options) || subjectOrTestDouble
 }

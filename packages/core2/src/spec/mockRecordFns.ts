@@ -4,6 +4,9 @@ export function addAction(actions: SpecAction[], action: SpecAction) {
   return actions.push(action) - 1
 }
 
+export function findRef(refs: SpecReference[], subjectOrTestDouble: any): SpecReference | undefined {
+  return refs.find(r => r.testDouble === subjectOrTestDouble || r.subject === subjectOrTestDouble)
+}
 export function findTestDouble<S>(refs: SpecReference[], subjectOrTestDouble: S): S | undefined {
   const ref = refs.find(r => r.testDouble === subjectOrTestDouble || r.subject === subjectOrTestDouble)
   return ref && ref.testDouble

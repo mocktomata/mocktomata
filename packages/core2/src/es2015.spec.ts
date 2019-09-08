@@ -29,6 +29,14 @@ describe('function', () => {
       await spec.done()
     })
   })
+  k.duo('undefined input, undefined result', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock((_a: any, _b: any) => undefined)
+      const actual = subject(undefined, undefined)
+      expect(actual).toBe(undefined)
+      await spec.done()
+    })
+  })
   k.duo('primitive inputs, simple result', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock((x: number, y: number) => x + y)

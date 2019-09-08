@@ -99,20 +99,11 @@ function createInvocationResponder(
       }
 
       const reference = record.getOriginalRef(expected.payload)!
-      // TODO: if there is source, get the value from source.
-      // if no source, create imitator.
-      if (reference.source || reference.meta === undefined) {
-        return {
-          type: expected.type,
-          value: expected.payload // TODO
-        }
-      }
-      else {
-        const plugin = getPlugin(reference.plugin)!
-        return {
-          type: expected.type,
-          value: plugin.createImitator!({}, reference.meta!)
-        }
+      const plugin = getPlugin(reference.plugin)!
+      const context = createStubContext({ record }, plugin.name)
+      return {
+        type: expected.type,
+        value: plugin.createStub(context, reference.meta)
       }
     },
     getResultAsync: () => {
