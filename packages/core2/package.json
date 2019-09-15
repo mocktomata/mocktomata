@@ -41,7 +41,7 @@
   "dependencies": {
     "async-fp": "^1.2.2",
     "global-store": "^1.0.0-beta.14",
-    "iso-error": "^2.3.0",
+    "iso-error": "^3.1.1",
     "ramda": "^0.26.1",
     "satisfier": "^5.0.2",
     "standard-log": "^3.1.2",

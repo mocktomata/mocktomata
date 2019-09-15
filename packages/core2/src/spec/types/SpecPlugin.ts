@@ -23,6 +23,10 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
   createStub(context: StubContext<S>, meta: M): S,
+  /**
+   * Converts the spy to meta data that can be used during simulation to simulate the behavor.
+   */
+  metarize?(context: { metarize(subject: any): void }, spy: S): M,
   recreateSubject?(context: {}, meta: M): S,
   // /**
   //  *
@@ -41,12 +45,14 @@ export type DeclareOptions = {
   /**
    * Meta used to recreate the subject during simulation.
    */
-  meta?: any
+  meta?: any,
+  transform?: <A>(spy: A) => A,
 }
 
 export type SpyContext<S> = {
-  declare(spy: S, options?: DeclareOptions): SpyRecorder<S>,
-  getSpy<A>(subject: A, options: SpyOptions): A
+  // declare(spy: S, options?: DeclareOptions): SpyRecorder<S>,
+  getSpy<A>(subject: A, options?: SpyOptions): A,
+  invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder,
 }
 
 export type SpyOptions = {
@@ -72,8 +78,9 @@ export type InvocationRecorder = {
 }
 
 export type StubContext<S> = {
-  declare(stub: S, meta?: Meta): StubRecorder<S>,
-  // getStub<A>(subject: A): A,
+  // declare(stub: S, meta?: Meta): StubRecorder<S>,
+  invoke(args: any[], options?: StubInvokeOptions): InvocationResponder,
+  resolve<V>(refIdOrValue: V): V,
 }
 
 export type StubRecorder<S> = {
@@ -86,8 +93,8 @@ export type StubInvokeOptions = {
 }
 
 export type InvocationResponder = {
-  getResult(): { type: 'return' | 'throw', value: any },
-  getResultAsync(): Promise<{ type: 'return' | 'throw', value: any }>,
+  getResult(): { type: 'return' | 'throw', value: any, meta: Meta | undefined },
+  getResultAsync(): Promise<{ type: 'return' | 'throw', value: any, meta: Meta | undefined }>,
   returns<V>(value: V): V,
   throws<V>(value: V): V,
 }

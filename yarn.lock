@@ -6256,10 +6256,15 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
-iso-error@2.3.0, iso-error@^2.0.0, iso-error@^2.2.0, iso-error@^2.3.0:
+iso-error@2.3.0, iso-error@^2.0.0, iso-error@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-2.3.0.tgz#d09d1eb23276650cf7589d29dd3b2348a05af1bb"
   integrity sha512-s9mgbDgrhqU7HvyHHjFZ7q0WJjqOUVv9tp8e+dXrkxG7pByLpfsu7ee0/Y/aoc8OCfyK/CNg6JNgbCjcgBodwQ==
+
+iso-error@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-3.1.1.tgz#2b49f3d1cd009a6f6f3c154111e31952cc1d7134"
+  integrity sha512-m8aSCXya61/KUCAXUMYbj/t7HnAKlLeaolT37Ezu6eNFCE2fl+3dyDlpbf0y9DXxY7sZG8zHiV8DkH+V0e3tSw==
 
 isobject@^2.0.0:
   version "2.1.0"

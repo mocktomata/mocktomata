@@ -1,5 +1,6 @@
 import { Omit, pick } from 'type-plus';
 import { createTimeTracker } from './createTimeTracker';
+import { getPlugin } from './findPlugin';
 import { logRecordingTimeout } from './logs';
 import { addAction, addRef, findRef, findRefId, findTestDouble, getRef } from './mockRecordFns';
 import { ActionId, ReferenceId, SpecAction, SpecOptions, SpecReference } from './types';
@@ -13,17 +14,20 @@ export function createSpyRecord(specId: string, options: SpecOptions) {
   return {
     specId,
     addRef: (ref: SpecReference) => addRef(refs, ref),
-    /**
-     * NOTE: not expected to return undefined.
-     */
-    getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!,
+    getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id),
     findRef: (subjectOrTestDouble: any) => findRef(refs, subjectOrTestDouble),
     findRefId: (spy: any) => findRefId(refs, spy),
     addAction: (action: Omit<SpecAction, 'tick'>) => addAction(actions, { ...action, tick: time.elaspe() }),
     getSubject: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!.subject,
     findTestDouble: <S>(subjectOrTestDouble: S) => findTestDouble(refs, subjectOrTestDouble),
     getSpecRecord: () => ({
-      refs: refs.map(r => pick(r, 'plugin', 'mode', 'meta', 'source')),
+      refs: refs.map(r => {
+        const plugin = getPlugin(r.plugin)
+        if (plugin.metarize) {
+          r.meta = plugin.metarize({ metarize: subject => findRefId(refs, subject) || subject }, r.testDouble)
+        }
+        return pick(r, 'plugin', 'mode', 'meta', 'source')
+      }),
       actions
     }),
     end: () => { time.stop() },

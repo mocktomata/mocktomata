@@ -7,7 +7,7 @@ export type SpecRecord = {
 }
 export type ReferenceId = string
 
-export type ActionMode = 'autonomous' | 'passive'
+export type ActionMode = 'autonomous' | 'passive' | 'inherit'
 
 export type SpecReference = {
   /**

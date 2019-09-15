@@ -11,7 +11,7 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
 
     return true
   },
-  createSpy: ({ declare, getSpy }, subject) => {
+  createSpy: ({ invoke, getSpy }, subject) => {
     // types of subjects:
     // * the actual spec subject
     // * a supplied function (from arg) that the subject should invoke
@@ -35,9 +35,9 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
     // p.then(() => { // active call
     //
     // })
-    const spy = function (this: any, ...args: any[]) {
+    return function (this: any, ...args: any[]) {
       // Assuming any functions or functions within object are callbacks to be called by the subject.
-      const invocation = spyRecorder.invoke(args, { transform: arg => getSpy(arg, { mode: 'autonomous' }) })
+      const invocation = invoke(args, { transform: arg => getSpy(arg, { mode: 'autonomous' }) })
       try {
         const result = subject.apply(this, invocation.args)
         return invocation.returns(result, { transform: result => getSpy(result, { mode: 'passive' }) })
@@ -46,13 +46,11 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
         throw invocation.throws(err, { transform: err => getSpy(err, { mode: 'passive' }) })
       }
     }
-    const spyRecorder = declare(spy)
-    return spy
   },
-  createStub({ declare }, _meta) {
-    const stub = function (this: any, ...args: any[]) {
+  createStub({ invoke }, _meta) {
+    return function (this: any, ...args: any[]) {
       // No transform. The creation of stub/imitator is handled by the framework.
-      const invocation = stubRecorder.invoke(args)
+      const invocation = invoke(args)
       const result = invocation.getResult()
       if (result.type === 'return') {
         return invocation.returns(result.value)
@@ -61,7 +59,5 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
         throw invocation.throws(result.value)
       }
     }
-    const stubRecorder = declare(stub)
-    return stub
   },
 }

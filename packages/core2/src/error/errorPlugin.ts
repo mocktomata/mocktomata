@@ -1,16 +1,18 @@
-import { SpecPlugin } from '../spec';
+import { IsoError } from 'iso-error'
+import { SpecPlugin } from '../spec'
 
-export const errorPlugin: SpecPlugin<Error, { message: string }> = {
+export const errorPlugin: SpecPlugin<Error, Record<string, any>> = {
   name: 'error',
   support: subject => subject instanceof Error,
-  createSpy: ({ declare }, subject) => {
-    declare(subject, { meta: { message: subject.message } })
+  createSpy: (_, subject) => {
+    // declare(subject, { meta: { message: subject.message } })
     return subject
   },
-  createStub: ({ declare }, meta) => {
-    const err = new Error(meta.message)
-    declare(err)
-    return err
+  createStub: (_, meta) => {
+    return IsoError.fromSerializable(meta)
+  },
+  metarize: (_, spy) => {
+    return IsoError.toSerializable(spy)
   },
   createImitator: (_, meta) => {
     const err = new Error(meta.message)

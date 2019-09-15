@@ -1,1 +1,2 @@
-export * from './hasPropertyInPrototype'
+export * from './getPropertyNames';
+export * from './hasPropertyInPrototype';

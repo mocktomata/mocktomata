@@ -1,11 +1,9 @@
 import { PartialExcept, Pick } from 'type-plus';
 import { assertMatchingAction } from './assertMatchingAction';
-import { createStubContext } from './createSimulateSpec';
 import { createTimeTracker } from './createTimeTracker';
-import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
-import { findPlugin } from './findPlugin';
+import { ActionMismatch, ReferenceMismatch } from './errors';
 import { logRecordingTimeout } from './logs';
-import { addAction, addRef, findRefId, findTestDouble, getRef, resolveRefId, findRef } from './mockRecordFns';
+import { addAction, addRef, findRef, findRefId, findTestDouble, getRef, resolveRefId } from './mockRecordFns';
 import { ActionId, InvokeAction, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference } from './types';
 
 export type ValidateRecord = ReturnType<typeof createValidateRecord>
@@ -25,12 +23,11 @@ export function createValidateRecord(specId: string, original: SpecRecord, optio
       const nextRef = record.getExpectedReference()
       assertMatchingReference(specId, ref, nextRef)
 
-      return addRef(actual.refs, { ...ref, mode: nextRef.mode })
+      ref.mode = nextRef.mode
+      return addRef(actual.refs, ref as any)
     },
-    /**
-     * NOTE: not expected to return undefined.
-     */
-    getRef: (id: ReferenceId | ActionId) => getRef(actual, id)!,
+    getRef: (id: ReferenceId | ActionId) => getRef(actual, id),
+    getRefId: (ref: SpecReference) => String(actual.refs.findIndex(r => r === ref)),
     findRef: (subjectOrTestDouble: any) => findRef(actual.refs, subjectOrTestDouble),
     findRefId: (spy: any) => findRefId(actual.refs, spy),
     getExpectedReference: () => getExpectedReference(original.refs, actual.refs),
@@ -107,16 +104,17 @@ function getSubject(record: ValidateRecord, refOrValue: any) {
   const receivedRef = record.getRef(refOrValue)
   if (receivedRef) return receivedRef.subject
 
-  const origRef = record.getOriginalRef(refOrValue)
-  return recreateSubject(record, origRef)
-}
-
-function recreateSubject(record: ValidateRecord, ref: SpecReference | undefined): any {
-  if (ref && ref.meta) {
-    const plugin = findPlugin(ref.plugin)
-    if (!plugin) throw new PluginNotFound(ref.plugin)
-
-    return plugin.createStub(createStubContext({ record }, plugin.name), ref.meta)
-  }
   return undefined
+  // const origRef = record.getOriginalRef(refOrValue)
+  // return recreateSubject({ record, contextTracker }, origRef)
 }
+
+// function recreateSubject({ record, contextTracker }: StubContextInternal, ref: SpecReference | undefined): any {
+//   if (ref && ref.meta) {
+//     const plugin = findPlugin(ref.plugin)
+//     if (!plugin) throw new PluginNotFound(ref.plugin)
+//     const refId = record.getRefId(ref)
+//     return plugin.createStub(createStubContext({ record, contextTracker }, plugin.name, refId), ref.meta)
+//   }
+//   return undefined
+// }

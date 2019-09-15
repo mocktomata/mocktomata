@@ -1,19 +1,20 @@
-import { Omit, Except } from 'type-plus';
+import { Except, Omit } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
+import { createContextTracker } from './createContextTracker';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInvokeAction, logReturnAction, logThrowAction } from './logs';
-import { ActionId, DeclareOptions, InvokeAction, ReferenceId, ReturnAction, Spec, SpecOptions, SpyContext, SpyInvokeOptions, SpyOptions, SpyRecorder, ThrowAction } from './types';
+import { ActionId, InvokeAction, ReferenceId, ReturnAction, Spec, SpecOptions, SpecReference, SpyContext, SpyInvokeOptions, SpyOptions, ThrowAction } from './types';
 
 export async function createSaveSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
 
   const record = createSpyRecord(specId, options)
-
+  const contextTracker = createContextTracker()
   return {
     mock: subject => {
       assertMockable(subject)
-      return createSpy({ record }, subject, { mode: 'passive' })!
+      return createSpy({ record, contextTracker }, subject, { mode: 'passive' })!
     },
     async done() {
       record.end()
@@ -23,61 +24,69 @@ export async function createSaveSpec(context: SpecContext, specId: string, optio
   }
 }
 export type SpyContextInternal = {
-  record: Except<SpyRecord, 'getSpecRecord'>
+  record: Except<SpyRecord, 'getSpecRecord'>,
+  contextTracker: ReturnType<typeof createContextTracker>,
 }
 
-function createSpy<S>({ record }: SpyContextInternal, subject: S, options: SpyOptions): S | undefined {
+function createSpy<S>({ record, contextTracker }: SpyContextInternal, subject: S, options: SpyOptions): S | undefined {
   const plugin = findPlugin(subject)
   if (!plugin) return undefined
 
-  const context = createSpyContext<S>({ record }, plugin.name, subject, options)
-  return plugin.createSpy(context, subject)
+  const reference: SpecReference = { plugin: plugin.name, subject, mode: options.mode }
+
+  const ref = record.addRef(reference)
+  const context = createSpyContext<S>({ record, contextTracker }, plugin.name, ref, options)
+  reference.testDouble = plugin.createSpy(context, subject)
+  logCreateSpy({ plugin: plugin.name, ref }, subject)
+  return reference.testDouble
 }
 
 /**
  * SpyContext is used by plugin.createSpy().
  */
-function createSpyContext<S>({ record }: SpyContextInternal, plugin: string, subject: S, options: SpyOptions): SpyContext<S> {
+function createSpyContext<S>({ record, contextTracker }: SpyContextInternal, plugin: string, ref: ReferenceId, options: SpyOptions): SpyContext<S> {
   return {
-    declare: (spy: S, declareOptions?: DeclareOptions) => createSpyRecorder<S>({ record, plugin, options }, subject, spy, declareOptions),
-    getSpy: <A>(subject: A, options: SpyOptions) => getSpy<A>({ record }, subject, options)
+    // declare: (spy: S, declareOptions?: DeclareOptions) => createSpyRecorder<S>({ record, plugin, options }, subject, spy, declareOptions),
+    getSpy: <A>(subject: A, newOptions: SpyOptions = options) => getSpy<A>({ record, contextTracker }, subject, newOptions),
+    invoke: (args: any[], options?: SpyInvokeOptions) => createInvocationRecorder({ record, contextTracker }, plugin, ref, args, options),
   }
 }
 
 /**
  * NOTE: the specified subject can be already a test double, passed to the system during simulation.
  */
-export function getSpy<S>({ record }: SpyContextInternal, subjectOrTestDouble: S, options: SpyOptions): S {
+export function getSpy<S>({ record, contextTracker }: SpyContextInternal, subjectOrTestDouble: S, options: SpyOptions): S {
   const reference = record.findRef(subjectOrTestDouble)
   if (reference) return reference.testDouble
 
-  return createSpy({ record }, subjectOrTestDouble, options) || subjectOrTestDouble
+  return createSpy({ record, contextTracker }, subjectOrTestDouble, options) || subjectOrTestDouble
 }
 
-function createSpyRecorder<S>(
-  { record, plugin, options: { mode } }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string, options: SpyOptions },
-  subject: S,
-  spy: S,
-  declareOptions: DeclareOptions = {}
-): SpyRecorder<S> {
-  const ref = record.addRef({ plugin, subject, testDouble: spy, mode, meta: declareOptions.meta })
+// function createSpyRecorder<S>(
+//   { record, plugin, options: { mode } }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string, options: SpyOptions },
+//   subject: S,
+//   spy: S,
+//   declareOptions: DeclareOptions = {}
+// ): SpyRecorder<S> {
+//   const ref = record.addRef({ plugin, subject, testDouble: spy, mode, meta: declareOptions.meta })
 
-  logCreateSpy({ plugin, ref }, subject)
+//   logCreateSpy({ plugin, ref }, subject)
 
-  return {
-    spy,
-    invoke: (args: any[], options?: SpyInvokeOptions) => createInvocationRecorder({ record, plugin }, ref, args, options),
-  }
-}
+//   return {
+//     spy,
+//     invoke: (args: any[], options?: SpyInvokeOptions) => createInvocationRecorder({ record, plugin }, ref, args, options),
+//   }
+// }
 
 function createInvocationRecorder(
-  { record, plugin }: { record: Except<SpyRecord, 'getSpecRecord'>, plugin: string },
+  { record, contextTracker }: SpyContextInternal,
+  plugin: string,
   ref: ReferenceId,
   args: any[],
   options: SpyInvokeOptions = {}
 ) {
   const spiedArgs = options.transform ? args.map(options.transform) : args
-  const reference = record.getRef(ref)
+  const reference = record.getRef(ref)!
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref,
