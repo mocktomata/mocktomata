@@ -9,7 +9,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>> = {
     const propertyNames = getPropertyNames(subject)
     return propertyNames.reduce((p, name) => {
       const value = subject[name]
-      p[name] = getSpy(value)
+      p[name] = getSpy(value, { sourceSite: [name] })
       // const valueType = typeof value
       // if (valueType === 'function' || (valueType === 'object' && valueType !== null)) {
       //   p[name] = getSpy(value)

@@ -1,22 +1,11 @@
 # Design
 
+## mode: passive | autonomous
 
-```ts
-
-function subject(callback: Function) {
-  callback()
-}
-```
-
-- `subject()`:  `createSpy()` -> `{ withSource: true }` fake: receive actual calls and get results from record.
-- `callback()`: `createSpy()` -> `{ withSource: true, doNotStub: true }` => invoke source function (`createSpy()` to replay action?)
-
-```ts
-
-function subject() {
-  return Promise.resolve(() => 1)
-}
-```
-
-- `Promise()`: `{ withSource: false }`: get behavior (resolve/reject) from record, and call the right result.
-- `() => 1`: `{ withSource: false }` need to completely simulate => fake: receive actual calls and get results from record.
+- can we set `passive` as default and skip saving it to the file?
+- is there a way for the plugin to indicate `mode` does not apply?
+  If we are not doing `get/set`,
+  then `invoke` and `instantiate` are the only known operations that will be performed by the simulator.
+  Thus `mode` applies "only" to `functionPlugin` and `classPlugin`.
+  Can other plugins utilize this?
+  I cannot think of a scenario at the moment.

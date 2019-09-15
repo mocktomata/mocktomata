@@ -23,6 +23,22 @@ describe('function', () => {
       await spec.done()
     })
   })
+  k.duo('string input no result', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock((_x: string) => { })
+      expect(subject('abc')).toBeUndefined()
+
+      await spec.done()
+    })
+  })
+  k.duo('string input returns same string', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock((x: string) => x)
+      expect(subject('abc')).toEqual('abc')
+
+      await spec.done()
+    })
+  })
   k.duo('no input, string result', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(() => 'abc')
@@ -216,7 +232,7 @@ describe('object', () => {
       await spec.done()
     })
   })
-  k.save('primitive method', (title, spec) => {
+  k.duo('primitive method', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock({ echo: (x: number) => x })
       const actual = subject.echo(3)
@@ -226,7 +242,7 @@ describe('object', () => {
       await spec.done()
     })
   })
-  k.save('primitive method throws error', (title, spec) => {
+  k.duo('primitive method throws error', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock({ echo: (x: string) => { throw new Error(x) } })
       const err = a.throws(() => subject.echo('abc'))
@@ -236,9 +252,8 @@ describe('object', () => {
       await spec.done()
     })
   })
-  k.save('callback method success', (title, spec) => {
-    test.skip(title, async () => {
-      harness.showLog()
+  k.duo('callback method success', (title, spec) => {
+    test(title, async () => {
       const subject = await spec.mock({
         inc(x: number, cb: (x: number) => void) {
           cb(x + 1)
@@ -250,7 +265,6 @@ describe('object', () => {
       expect(actual!).toBe(4)
 
       await spec.done()
-      harness.logSpecs()
     })
   })
 })
@@ -296,10 +310,8 @@ describe('promise', () => {
   k.save('resolve with no value', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(noReturn.success)
-      return noReturn.doSomething(subject)
-        .then(async () => {
-          await spec.done()
-        })
+      await noReturn.doSomething(subject).then(() => spec.done())
+      harness.logSpec(title)
     })
   })
 

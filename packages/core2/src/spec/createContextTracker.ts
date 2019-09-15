@@ -1,5 +1,11 @@
-export type ContextTracker = ReturnType<typeof createContextTracker>
+import { ReferenceId, ActionId } from './types'
 
-export function createContextTracker() {
-  return {}
+export type ContextTracker = {
+  sourceId: ReferenceId | ActionId,
+  sourceSite: Array<string | number>,
+}
+// export type ContextTracker = ReturnType<typeof createContextTracker>
+
+export function createContextTracker(): ContextTracker {
+  return {} as any
 }

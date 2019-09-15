@@ -51,12 +51,13 @@ export type DeclareOptions = {
 
 export type SpyContext<S> = {
   // declare(spy: S, options?: DeclareOptions): SpyRecorder<S>,
-  getSpy<A>(subject: A, options?: SpyOptions): A,
+  getSpy<A>(subject: A, options?: Partial<SpyOptions>): A,
   invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder,
 }
 
 export type SpyOptions = {
   mode: ActionMode,
+  sourceSite: Array<string | number>
   // meta?: Meta
 }
 

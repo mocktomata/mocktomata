@@ -55,13 +55,19 @@ export function createStubContext({ record, contextTracker }: StubContextInterna
 
       const reference = record.getRef(refOrValue)
       if (reference) return reference.testDouble
-      // const stubReference = record.getRef(refId)
-      // console.log('stubref', stubReference)
-      return undefined
+
+      const origRef = record.getOriginalRef(refOrValue)
+      const sourceRef = record.getRef(origRef!.source!.ref)
+      const subject = getByPath(sourceRef!.subject, origRef!.source!.site)
+      return createStub({ record, contextTracker }, subject)
     }
     // declare: <S>(stub: S) => createStubRecorder<S>({ record, plugin }, stub),
     // getStub: <A>(subject: A) => getStub<A>({ record }, subject)
   }
+}
+
+function getByPath(subject: any, sitePath: Array<string | number>) {
+  return sitePath.reduce((p, s) => p[s], subject)
 }
 
 // function getStub<S>({ record }: { record: ValidateRecord }, subject: S): S {
@@ -95,7 +101,7 @@ function createInvocationResponder(
   assertActionType(record.specId, 'invoke', expected)
   const expectedArgs = expected.payload as any[]
   // It is ok if the actual is passing more args than expected.
-  const payload = expectedArgs.map((ea, i) => typeof ea === 'string' ? getSpy({ record, contextTracker }, args[i], { mode: 'passive' }) : args[i])
+  const payload = expectedArgs.map((ea, i) => typeof ea === 'string' ? getSpy({ record, contextTracker }, args[i], { mode: 'passive', sourceSite: [i] }) : args[i])
   const action: Omit<InvokeAction, 'tick' | 'mode'> = {
     type: 'invoke',
     ref,

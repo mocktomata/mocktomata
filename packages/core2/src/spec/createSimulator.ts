@@ -1,8 +1,7 @@
-import { ValidateRecord } from './createValidateRecord';
+import { createStubContext, StubContextInternal } from './createSimulateSpec';
+import { getPlugin } from './findPlugin';
 import { logAutoInvokeAction } from './logs';
 import { InvokeAction, SpecOptions } from './types';
-import { getPlugin } from './findPlugin';
-import { createStubContext, StubContextInternal } from './createSimulateSpec';
 
 export function createSimulator(context: StubContextInternal, _options: SpecOptions) {
   // use `options` to control which simulator to use.

@@ -27,7 +27,7 @@ export type SpecReference = {
   meta?: Meta,
 
   source?: {
-    ref: ActionId,
+    ref: ReferenceId | ActionId,
     site: Array<string | number>
   }
 }
