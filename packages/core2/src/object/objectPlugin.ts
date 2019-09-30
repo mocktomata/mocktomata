@@ -2,28 +2,20 @@ import { reduceKey } from 'type-plus';
 import { SpecPlugin } from '../spec';
 import { getPropertyNames } from '../utils';
 
-export const objectPlugin: SpecPlugin<Record<string | number, any>> = {
+export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<string | number, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
   createSpy: ({ getSpy }, subject) => {
     const propertyNames = getPropertyNames(subject)
     return propertyNames.reduce((p, name) => {
-      const value = subject[name]
-      p[name] = getSpy(value, { sourceSite: [name] })
-      // const valueType = typeof value
-      // if (valueType === 'function' || (valueType === 'object' && valueType !== null)) {
-      //   p[name] = getSpy(value)
-      // }
-      // else {
-      //   p[name] = value
-      // }
+      p[name] = getSpy(subject[name], { site: [name] })
       return p
     }, {} as any)
   },
   createStub: ({ resolve }, meta) => {
     // console.log('createStub meta', meta)
     const stub = reduceKey(meta, (p, k) => {
-      p[k] = resolve(meta[k])
+      p[k] = resolve(meta[k], { site: [k] })
       return p
     }, {} as any)
     // console.log('stub', stub   )

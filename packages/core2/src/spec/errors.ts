@@ -1,7 +1,5 @@
-import { logLevel, shouldLog } from 'standard-log';
 import { tersify } from 'tersify';
 import { KomondorError } from '../errors';
-import { log } from '../log';
 import { SpecReference } from './types';
 
 export class SpecIDCannotBeEmpty extends KomondorError {
@@ -61,7 +59,7 @@ export class PluginNotConforming extends KomondorError {
 
 export class ReferenceMismatch extends KomondorError {
   // istanbul ignore next
-  constructor(public specId: string, public actual: Pick<SpecReference, 'plugin'>, public expected: Pick<SpecReference, 'plugin'> | undefined) {
+  constructor(public specId: string, public actual: Partial<SpecReference>, public expected: Partial<SpecReference> | undefined) {
     super(`Recorded data for '${specId}' doesn't match with simulation.
 Expecting reference:
 ${tersifyReference(expected)}
@@ -90,22 +88,11 @@ ${tersifyAction(actual)}`)
 function tersifyAction(action: MismatchActionModel | undefined): string {
   if (!action) return 'none'
 
-  if (shouldLog(logLevel.debug, log.level)) {
-    return tersify(action, { maxLength: Infinity })
-  }
-  else {
-    const name = action.plugin ? `${action.plugin} ${action.type}` : action.type
-    return `${['a', 'e', 'i', 'o', 'u'].some(x => name.startsWith(x)) ? 'an' : 'a'} ${name} action`
-  }
+  return tersify(action, { maxLength: Infinity })
 }
 
-function tersifyReference(reference: Pick<SpecReference, 'plugin'> | undefined): string {
+function tersifyReference(reference: Partial<SpecReference> | undefined): string {
   if (!reference) return 'none'
 
-  if (shouldLog(logLevel.debug, log.level)) {
-    return tersify(reference, { maxLength: Infinity })
-  }
-  else {
-    return `${['a', 'e', 'i', 'o', 'u'].some(x => reference.plugin.startsWith(x)) ? 'an' : 'a'} ${reference.plugin} reference`
-  }
+  return tersify(reference, { maxLength: Infinity })
 }

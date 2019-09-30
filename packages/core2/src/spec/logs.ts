@@ -18,12 +18,8 @@ export function logInvokeAction({ record, plugin, ref }: ActionLoggingContext, i
   log.on(logLevel.debug, log => log(`${plugin} ref/action (${ref}/${id}): invoke with ${tersify(args)}\n${tersify(record.getSubject(ref))}`))
 }
 
-export function logReturnAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ref/src-action/action (${ref}/${sourceId}/${id}): returns ${tersify(value)}`)
-}
-
-export function logThrowAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, sourceId: number, id: number, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ref/src-action/action (${ref}/${sourceId}/${id}): throws ${tersify(value)}`)
+export function logResultAction({ plugin, ref }: Omit<ActionLoggingContext, 'record'>, type: string, sourceId: number, id: number, value: any) {
+  log.on(logLevel.debug, () => `${plugin} ref/src-action/action (${ref}/${sourceId}/${id}): ${type} ${tersify(value)}`)
 }
 
 export function logRecordingTimeout(timeout: number) {

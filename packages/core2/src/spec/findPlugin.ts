@@ -1,9 +1,8 @@
-import { RequiredPick } from 'type-plus';
 import { store } from '../store';
-import { SpecPlugin } from './types';
 import { PluginNotFound } from './errors';
+import { SpecPluginInstance } from './types-internal';
 
-export function findPlugin<S>(subject: S): RequiredPick<SpecPlugin<S, any>, 'name'> | undefined {
+export function findPlugin<S>(subject: S): SpecPluginInstance<S> | undefined {
   const plugins = store.value.plugins
   return plugins.find(p => p.support(subject))
 }

@@ -11,30 +11,32 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
 
     return true
   },
+  /**
+   * types of subjects:
+   * * the actual spec subject
+   * * a supplied function (from arg) that the subject should invoke
+   * * a supplied function (from arg) that the caller should invoke
+   * * a function created by the subject that is
+   * *   returned or thrown, or
+   * *   added to the argument (out param, modifying the input directly), and
+   * *   the subject should invoke, or
+   * *   the caller should invoke.
+   * * for object/instance, the properties can be in or out location.
+   * func foo({ cb }) {
+   *   cb() // active call
+   *   return { body }
+   * }
+   * const r = foo(...)
+   * r.body() // passive call
+   * func prom() {
+   *   return Promise.resolve()
+   * }
+   * const p = prom()
+   * p.then(() => { // active call
+   *
+   * })
+   */
   createSpy: ({ invoke, getSpy }, subject) => {
-    // types of subjects:
-    // * the actual spec subject
-    // * a supplied function (from arg) that the subject should invoke
-    // * a supplied function (from arg) that the caller should invoke
-    // * a function created by the subject that is
-    // *   returned or thrown, or
-    // *   added to the argument (out param, modifying the input directly), and
-    // *   the subject should invoke, or
-    // *   the caller should invoke.
-    // * for object/instance, the properties can be in or out location.
-    // func foo({ cb }) {
-    //   cb() // active call
-    //   return { body }
-    // }
-    // const r = foo(...)
-    // r.body() // passive call
-    // func prom() {
-    //   return Promise.resolve()
-    // }
-    // const p = prom()
-    // p.then(() => { // active call
-    //
-    // })
     return function (this: any, ...args: any[]) {
       // Assuming any functions or functions within object are callbacks to be called by the subject.
       const invocation = invoke(args, { transform: arg => getSpy(arg, { mode: 'autonomous' }) })
@@ -47,10 +49,10 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       }
     }
   },
-  createStub({ invoke }, _meta) {
+  createStub({ invoke, getSpy }, _meta) {
     return function (this: any, ...args: any[]) {
       // No transform. The creation of stub/imitator is handled by the framework.
-      const invocation = invoke(args)
+      const invocation = invoke(args, { transform: arg => getSpy(arg) })
       const result = invocation.getResult()
       if (result.type === 'return') {
         return invocation.returns(result.value)

@@ -7,7 +7,12 @@ export type SpecRecord = {
 }
 export type ReferenceId = string
 
-export type ActionMode = 'autonomous' | 'passive' | 'inherit'
+export type ReferenceSource = {
+  ref: ReferenceId | ActionId,
+  site: Array<string | number> | undefined
+}
+
+export type ActionMode = 'autonomous' | 'passive' | 'plugin-invoked' | undefined
 
 export type SpecReference = {
   /**
@@ -26,10 +31,7 @@ export type SpecReference = {
    */
   meta?: Meta,
 
-  source?: {
-    ref: ReferenceId | ActionId,
-    site: Array<string | number>
-  }
+  source?: ReferenceSource
 }
 
 export type ActionId = number
@@ -58,9 +60,11 @@ export type InstantiateAction = {
 
 export type InvokeAction = {
   type: 'invoke',
-  ref: ReferenceId | ActionId,
+  // Invoke action ref can only be ActionId if we handle getter/setter.
+  ref: ReferenceId, // | ActionId,
   tick: number,
   mode: ActionMode,
+  site?: Array<string | number>,
   payload: any[],
   meta?: Meta
 }

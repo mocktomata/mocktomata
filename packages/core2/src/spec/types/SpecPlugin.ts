@@ -50,14 +50,13 @@ export type DeclareOptions = {
 }
 
 export type SpyContext<S> = {
-  // declare(spy: S, options?: DeclareOptions): SpyRecorder<S>,
-  getSpy<A>(subject: A, options?: Partial<SpyOptions>): A,
   invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder,
+  getSpy<A>(subject: A, options?: Partial<SpyOptions>): A,
 }
 
 export type SpyOptions = {
-  mode: ActionMode,
-  sourceSite: Array<string | number>
+  mode?: ActionMode,
+  site?: Array<string | number>
   // meta?: Meta
 }
 
@@ -69,7 +68,19 @@ export type SpyRecorder<S> = {
 export type SpyInvokeOptions = {
   mode?: ActionMode,
   transform?: <A>(arg: A) => A,
-  meta?: Meta
+  // TODO: the invoke site probably should not be number (as least the last element).
+  // because if last element is a number, it means that (should) be an element in an array,
+  // and that means that element should have its own spy and should not need this site.
+  // Currently, this is used only by promisePlugin to invoke the `then` method.
+  // I don't see other usage of it yet.
+  site?: Array<string | number>,
+  meta?: Meta,
+}
+
+export type SpyResultOptions = {
+  transform?: <A>(arg: A) => A,
+  // site?: Array<string | number>,
+  meta?: Meta,
 }
 
 export type InvocationRecorder = {
@@ -78,10 +89,15 @@ export type InvocationRecorder = {
   throws<E>(err: E, options?: SpyInvokeOptions): E
 }
 
+export type StubOptions = {
+  site?: Array<string | number>
+  // meta?: Meta
+}
+
 export type StubContext<S> = {
-  // declare(stub: S, meta?: Meta): StubRecorder<S>,
   invoke(args: any[], options?: StubInvokeOptions): InvocationResponder,
-  resolve<V>(refIdOrValue: V): V,
+  getSpy<A>(subject: A, options?: Partial<SpyOptions>): A,
+  resolve<V>(refIdOrValue: V, options?: StubOptions): V,
 }
 
 export type StubRecorder<S> = {
@@ -91,6 +107,7 @@ export type StubRecorder<S> = {
 
 export type StubInvokeOptions = {
   transform?: <A>(arg: A) => A,
+  site?: Array<string | number>,
 }
 
 export type InvocationResponder = {

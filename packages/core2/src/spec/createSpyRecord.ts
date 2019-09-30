@@ -17,7 +17,9 @@ export function createSpyRecord(specId: string, options: SpecOptions) {
     getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id),
     findRef: (subjectOrTestDouble: any) => findRef(refs, subjectOrTestDouble),
     findRefId: (spy: any) => findRefId(refs, spy),
+    getNextActionId: () => actions.length,
     addAction: (action: Omit<SpecAction, 'tick'>) => addAction(actions, { ...action, tick: time.elaspe() }),
+    getAction: (id: ActionId) => actions[id]!,
     getSubject: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id)!.subject,
     findTestDouble: <S>(subjectOrTestDouble: S) => findTestDouble(refs, subjectOrTestDouble),
     getSpecRecord: () => ({

@@ -31,7 +31,7 @@ describe('function', () => {
       await spec.done()
     })
   })
-  k.duo('string input returns same string', (title, spec) => {
+  k.save('string input returns same string', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock((x: string) => x)
       expect(subject('abc')).toEqual('abc')
@@ -122,7 +122,7 @@ describe('function', () => {
   })
   k.duo('callback in object literal success', (title, spec) => {
     test(title, async () => {
-      const subject = await spec.mock(callbackInObjLiteral.success)
+     const subject = await spec.mock(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(subject, 2)).toBe(3)
 
@@ -307,15 +307,14 @@ describe('promise', () => {
     }
   }
 
-  k.save('resolve with no value', (title, spec) => {
+  k.duo('resolve with no value', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(noReturn.success)
       await noReturn.doSomething(subject).then(() => spec.done())
-      harness.logSpec(title)
     })
   })
 
-  k.save('resolve with value', (title, spec) => {
+  k.duo('resolve with value', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(promise.success)
       // not using `await` to make sure the return value is a promise.
@@ -328,19 +327,19 @@ describe('promise', () => {
     })
   })
 
-  k.save('reject with error', (title, spec) => {
+  k.duo('reject with error', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(promise.fail)
       return promise.increment(subject, 2)
         .then(() => { throw new Error('should not reach') })
-        .catch((e: Error) => {
+        .catch(async (e: Error) => {
           expect(e.message).toBe('expected error')
-          return spec.done()
+          await spec.done()
         })
     })
   })
 
-  k.save('promise with callback in between', (title, spec) => {
+  k.duo('promise with callback in between', (title, spec) => {
     test(title, async () => {
       function foo(x: number, cb: Function) {
         return new Promise(a => {
@@ -367,8 +366,8 @@ describe('promise', () => {
     })
   })
 
-  k.save('promise/returns/function', (title, spec) => {
-    test.skip(title, async () => {
+  k.duo('promise resolves to function', (title, spec) => {
+    test(title, async () => {
       const subject = await spec.mock(promiseChain.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.

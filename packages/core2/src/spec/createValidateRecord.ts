@@ -32,7 +32,8 @@ export function createValidateRecord(specId: string, original: SpecRecord, optio
     findRefId: (spy: any) => findRefId(actual.refs, spy),
     getExpectedReference: () => getExpectedReference(original.refs, actual.refs),
     getOriginalRef: (id: ReferenceId | ActionId) => getRef(original, id),
-    addAction: (action: SpecActionBase) => {
+    getNextActionId: () => actual.actions.length,
+    addAction: (action: Omit<SpecAction, 'tick'>) => {
       assertNotAddingWhenEnded(specId, actual, ended, action)
       const expected = record.getExpectedAction()
       assertMatchingAction(specId, actual, action, expected)
@@ -46,6 +47,7 @@ export function createValidateRecord(specId: string, original: SpecRecord, optio
     onAddAction: (listener: () => void) => {
       addActionListeners.push(listener)
     },
+    getAction: (id: ActionId) => actual.actions[id]!,
     getExpectedAction: () => getExpectedAction(original, actual),
     getExpectedActionId: () => actual.actions.length,
     getSubject: (id: ReferenceId | ActionId) => getSubject(record, id),
