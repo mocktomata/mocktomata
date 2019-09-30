@@ -1,4 +1,3 @@
-import { tersify } from 'tersify';
 import { Omit } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
@@ -10,7 +9,6 @@ import { findPlugin, getPlugin } from './findPlugin';
 import { logCreateStub, logInvokeAction, logResultAction } from './logs';
 import { InvocationResponder, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecReference, SpyOptions, StubContext, StubInvokeOptions, StubOptions, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
-import { Return } from 'ts-toolbelt/out/types/src/Function/_api';
 
 export async function createSimulateSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
   const loaded = await context.io.readSpec(specId)
