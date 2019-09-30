@@ -49,6 +49,7 @@ jobs:
           paths:
             - node_modules
             - packages/*/node_modules
+      - run: yarn bootstrap
       - run: yarn commitlint-circle
       - run: yarn lint
       - run: yarn build
