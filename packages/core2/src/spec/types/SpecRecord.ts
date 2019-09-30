@@ -12,7 +12,7 @@ export type ReferenceSource = {
   site: Array<string | number> | undefined
 }
 
-export type ActionMode = 'autonomous' | 'passive' | 'plugin-invoked' | undefined
+export type ActionMode = 'autonomous' | 'passive' | 'plugin-invoked' | 'instantiate' | undefined
 
 export type SpecReference = {
   /**
@@ -55,6 +55,7 @@ export type InstantiateAction = {
   ref: ReferenceId,
   tick: number,
   mode: ActionMode,
+  instanceId: ReferenceId,
   payload: any[],
   meta?: Meta
 }

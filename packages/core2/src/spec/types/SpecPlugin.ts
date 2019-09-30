@@ -15,14 +15,14 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
    * @param context Provides tools needed to record the subject's behavior.
    * @param subject The subject to spy.
    */
-  createSpy(context: SpyContext<S>, subject: S): S,
+  createSpy(context: SpyContext, subject: S): S,
   /**
    * Creates a stub in place of the specified subject.
    * @param context Provides tools needed to reproduce the subject's behavior.
    * @param meta Meta data of the subject.
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
-  createStub(context: StubContext<S>, meta: M): S,
+  createStub(context: StubContext, subject: S, meta: M): S,
   /**
    * Converts the spy to meta data that can be used during simulation to simulate the behavor.
    */
@@ -41,13 +41,12 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
   createImitator?(context: any, meta: M): S,
 }
 
-export type SpyContext<S> = {
+export type SpyContext = {
   id: ReferenceId,
   getSpy<A>(id: ReferenceId | ActionId, subject: A, options?: Partial<SpyOptions>): A,
-  invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder,
-  instantiate(args: any[], options?: SpyInstanceOptions): InstanceRecorder,
+  invoke(id: ReferenceId, args: any[], options?: SpyInvokeOptions): InvocationRecorder,
+  instantiate(id: ReferenceId, args: any[], options?: SpyInstanceOptions): InstanceRecorder,
 }
-
 
 export type SpyOptions = {
   mode?: ActionMode,
@@ -87,6 +86,7 @@ export type InvocationRecorder = {
 
 export type InstanceRecorder = {
   args: any[],
+  setInstance(instance: any): ReferenceId
 }
 
 export type StubOptions = {
@@ -94,10 +94,12 @@ export type StubOptions = {
   // meta?: Meta
 }
 
-export type StubContext<S> = {
-  invoke(args: any[], options?: StubInvokeOptions): InvocationResponder,
+export type StubContext = {
+  id: ReferenceId,
+  invoke(id: ReferenceId, args: any[], options?: StubInvokeOptions): InvocationResponder,
   getSpy<A>(id: ActionId, subject: A, options?: Partial<SpyOptions>): A,
   resolve<V>(refIdOrValue: V, options?: StubOptions): V,
+  instantiate(id: ReferenceId, args: any[], options?: SpyInstanceOptions): InstanceRecorder,
 }
 
 export type StubRecorder<S> = {

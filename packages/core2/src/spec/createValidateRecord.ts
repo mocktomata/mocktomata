@@ -47,7 +47,7 @@ export function createValidateRecord(specId: string, original: SpecRecord, optio
     onAddAction: (listener: () => void) => {
       addActionListeners.push(listener)
     },
-    getAction: (id: ActionId) => actual.actions[id]!,
+    getAction: <A = SpecAction>(id: ActionId): A => actual.actions[id]! as any as A,
     getExpectedAction: () => getExpectedAction(original, actual),
     getExpectedActionId: () => actual.actions.length,
     getSubject: (id: ReferenceId | ActionId) => getSubject(record, id),

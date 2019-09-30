@@ -2,7 +2,7 @@ import { stubContext } from './createSimulateSpec';
 import { ValidateRecord } from './createValidateRecord';
 import { getPlugin } from './findPlugin';
 import { logAutoInvokeAction, logCreateStub } from './logs';
-import { InvokeAction, SpecOptions, SpecReference } from './types';
+import { InvokeAction, SpecOptions, SpecReference, InstantiateAction } from './types';
 
 export function createSimulator(record: ValidateRecord, _options: SpecOptions) {
   // use `options` to control which simulator to use.
@@ -22,6 +22,9 @@ function createSpecImmediateSimulator(record: ValidateRecord) {
       switch (expectedAction.type) {
         case 'invoke':
           processInvoke(record, expectedAction)
+          break
+        case 'instantiate':
+          processInstantiate(record, expectedAction)
           break
         // case 'get':
         //   processGet(record, expectedAction)
@@ -48,7 +51,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     logCreateStub({ plugin: plugin.name, id: id })
 
     const context = stubContext({ record, plugin, ref, id, source })
-    ref.testDouble = plugin.createStub(context, origRef.meta)
+    ref.testDouble = plugin.createStub(context, undefined, origRef.meta)
     return
   }
   const ref = record.getRef(id)
@@ -75,7 +78,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
 
     const plugin = getPlugin(origRef.plugin)
     const context = stubContext({ record, plugin, ref, id, source: origRef.source })
-    return plugin.createStub(context, origRef!.meta)
+    return plugin.createStub(context, origRef.subject, origRef.meta)
   })
 
   logAutoInvokeAction(ref, id, record.getExpectedActionId(), args)
@@ -91,6 +94,12 @@ function getInvokeSubject(subject: any, site: Array<string | number> | undefined
 
   const target = site.reduce((p, v) => p[v], subject)
   return target[methodName].bind(target)
+}
+
+function processInstantiate(record: ValidateRecord, expectedAction: InstantiateAction) {
+  const classReference = record.getRef(expectedAction.ref)!
+  // TODO: get spy/stub from payload
+  return new classReference.testDouble(...expectedAction.payload)
 }
 
 // function processGet(record: ValidateRecord, action: GetAction) {

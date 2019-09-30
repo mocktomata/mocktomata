@@ -397,7 +397,7 @@ describe('class', () => {
   //   }
   // }
 
-  k.save('invoke declared method', (title, spec) => {
+  k.duo('invoke declared method', (title, spec) => {
     test(title, async () => {
       const s = await spec.mock(Foo)
       const instance = new s(1)

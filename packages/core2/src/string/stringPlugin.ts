@@ -9,7 +9,7 @@ export const stringPlugin: SpecPlugin<string> = {
   metarize(_, spy) {
     return spy
   },
-  createStub: (_, meta) => {
+  createStub: (_, _subject, meta) => {
     return meta
   },
   createImitator(_, meta) {

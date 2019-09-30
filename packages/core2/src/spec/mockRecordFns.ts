@@ -1,6 +1,6 @@
 import { ActionId, ReferenceId, SpecAction, SpecRecord, SpecReference } from './types';
 
-export function addAction(actions: SpecAction[], action: SpecAction) {
+export function addAction(actions: SpecAction[], action: any) {
   return actions.push(action) - 1
 }
 

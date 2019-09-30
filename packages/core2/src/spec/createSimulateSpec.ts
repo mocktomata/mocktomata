@@ -1,13 +1,13 @@
 import { Omit } from 'type-plus';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
-import { getSpy } from './createSaveSpec';
+import { getSpy, instanceRecorder } from './createSaveSpec';
 import { createSimulator } from './createSimulator';
 import { assertActionType, createValidateRecord, ValidateRecord } from './createValidateRecord';
 import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logCreateStub, logInvokeAction, logResultAction } from './logs';
-import { InvocationResponder, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecReference, SpyOptions, StubContext, StubInvokeOptions, StubOptions, ThrowAction, ActionId } from './types';
+import { InvocationResponder, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecReference, SpyOptions, StubContext, StubInvokeOptions, StubOptions, ThrowAction, ActionId, SpyInstanceOptions } from './types';
 import { SpecPluginInstance } from './types-internal';
 
 export async function createSimulateSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
@@ -54,7 +54,7 @@ function createStub<S>({ record, subject, source }: CreateStubOptions<S>): S {
 
   logCreateStub({ plugin: plugin.name, id })
   const context = stubContext({ record, plugin, ref, id, source: { site: undefined } })
-  ref.testDouble = plugin.createStub(context, expected.meta)
+  ref.testDouble = plugin.createStub(context, subject, expected.meta)
   return ref.testDouble
 }
 
@@ -66,9 +66,10 @@ export type StubContextOptions = {
   source: { site?: Array<string | number> },
 }
 
-export function stubContext(options: StubContextOptions): StubContext<any> {
+export function stubContext(options: StubContextOptions): StubContext {
   return {
-    invoke: (args: any[], invokeOptions: StubInvokeOptions = {}) => invocationResponder(options, args, invokeOptions),
+    id: options.id,
+    invoke: (id: ReferenceId, args: any[], invokeOptions: StubInvokeOptions = {}) => invocationResponder(options, id, args, invokeOptions),
     getSpy: <A>(id: ActionId, subject: A, getOptions: SpyOptions = {}) => getSpy(options, id, subject, getOptions),
     resolve: <V>(refOrValue: V, resolveOptions: StubOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
@@ -90,7 +91,8 @@ export function stubContext(options: StubContextOptions): StubContext<any> {
       const sourceRef = record.getRef(origRef.source.ref)!
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
       return createStub<V>({ record, subject, source: { ref: id, site } })
-    }
+    },
+    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpyInstanceOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
     // declare: <S>(stub: S) => createStubRecorder<S>({ record, plugin }, stub),
     // getStub: <A>(subject: A) => getStub<A>({ record }, subject)
   }
@@ -147,7 +149,8 @@ function getByPath(subject: any, sitePath: Array<string | number>) {
 // }
 
 function invocationResponder(
-  { record, plugin, ref, id, source }: StubContextOptions,
+  { record, plugin, ref, source }: StubContextOptions,
+  id: ReferenceId,
   args: any[],
   { transform, site }: StubInvokeOptions
 ): InvocationResponder {
@@ -231,7 +234,7 @@ function getResult(record: ValidateRecord, expected: ReturnAction | ThrowAction)
   const context = stubContext({ record, plugin, ref, id, source: {} })
 
   logCreateStub({ plugin: plugin.name, id })
-  ref.testDouble = plugin.createStub(context, expectedReference.meta)
+  ref.testDouble = plugin.createStub(context, expectedReference.subject, expectedReference.meta)
 
   return {
     type: expected.type,

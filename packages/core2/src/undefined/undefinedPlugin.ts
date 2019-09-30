@@ -7,7 +7,7 @@ export const undefinedPlugin: SpecPlugin<string> = {
     // declare(subject, { meta: subject })
     return subject
   },
-  createStub: (_, meta) => {
+  createStub: (_, _subject, meta) => {
     return meta
   },
   createImitator(_, meta) {

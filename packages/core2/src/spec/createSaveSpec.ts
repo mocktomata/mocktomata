@@ -4,7 +4,7 @@ import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInvokeAction, logResultAction, logInstantiateAction } from './logs';
-import { ActionId, ActionMode, InvokeAction, ReferenceSource, ReturnAction, Spec, SpecOptions, SpecReference, SpyContext, SpyInvokeOptions, SpyOptions, SpyResultOptions, ThrowAction, ReferenceId, SpyInstanceOptions, InstantiateAction } from './types';
+import { ActionId, ActionMode, InvokeAction, ReferenceSource, ReturnAction, Spec, SpecOptions, SpecReference, SpyContext, SpyInvokeOptions, SpyOptions, SpyResultOptions, ThrowAction, ReferenceId, SpyInstanceOptions, InstantiateAction, InstanceRecorder } from './types';
 import { SpecPluginInstance } from './types-internal';
 
 export async function createSaveSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
@@ -37,7 +37,7 @@ function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions<S>): S
   const id = record.addRef(ref)
 
   logCreateSpy({ plugin: plugin.name, id }, subject)
-  return ref.testDouble = plugin.createSpy(spyContext<S>({ record, plugin, ref, id, source: {  } }), subject)
+  return ref.testDouble = plugin.createSpy(spyContext({ record, plugin, ref, id, source: {} }), subject)
 }
 
 type SpyContextOptions = {
@@ -51,21 +51,23 @@ type SpyContextOptions = {
 /**
  * SpyContext is used by plugin.createSpy().
  */
-function spyContext<S>(options: SpyContextOptions): SpyContext<S> {
+function spyContext(options: SpyContextOptions): SpyContext {
   return {
     id: options.id,
     getSpy: <A>(id: ActionId, subject: A, getOptions: SpyOptions = {}) => getSpy(options, id, subject, getOptions),
-    invoke: (args: any[], invokeOptions: SpyInvokeOptions = {}) => invocationRecorder(options, args, invokeOptions),
-    instantiate: (args: any[], instanceOptions: SpyInstanceOptions = {}) => instanceRecorder(options, args, instanceOptions)
+    invoke: (id: ReferenceId, args: any[], invokeOptions: SpyInvokeOptions = {}) => invocationRecorder(options, id, args, invokeOptions),
+    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpyInstanceOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
   }
 }
 
-function instanceRecorder(
-  { record, plugin, ref, id, source }: SpyContextOptions,
+export function instanceRecorder(
+  { record, plugin, ref, source }: SpyContextOptions,
+  id: ReferenceId,
   args: any[],
   { mode, transform, meta }: SpyInstanceOptions
-) {
-  const action: Omit<InstantiateAction, 'tick'> = {
+): InstanceRecorder {
+
+  const action: Omit<InstantiateAction, 'tick' | 'instanceId'> = {
     type: 'instantiate',
     ref: id,
     mode: mode || ref.mode,
@@ -83,13 +85,20 @@ function instanceRecorder(
 
   logInstantiateAction({ record, plugin: plugin.name, id }, instantiateId, args)
 
+  let instanceId: ReferenceId
   return {
     args: spiedArgs,
+    setInstance: instance => {
+      const reference: SpecReference = { plugin: plugin.name, mode: 'instantiate', testDouble: instance }
+      instanceId = record.addRef(reference)
+      return record.getAction<InstantiateAction>(instantiateId).instanceId = instanceId
+    }
   }
 }
 
 function invocationRecorder(
-  { record, plugin, ref, id, source }: SpyContextOptions,
+  { record, plugin, ref, source }: SpyContextOptions,
+  id: ReferenceId,
   args: any[],
   { mode, transform, site, meta }: SpyInvokeOptions
 ) {

@@ -12,7 +12,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
       return p
     }, {} as any)
   },
-  createStub: ({ resolve }, meta) => {
+  createStub: ({ resolve }, _subject, meta) => {
     // console.log('createStub meta', meta)
     const stub = reduceKey(meta, (p, k) => {
       p[k] = resolve(meta[k], { site: [k] })
