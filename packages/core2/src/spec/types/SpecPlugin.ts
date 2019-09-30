@@ -1,5 +1,5 @@
 import { Meta } from './Meta';
-import { ActionMode } from './SpecRecord';
+import { ActionId, ActionMode, ReferenceId } from './SpecRecord';
 
 export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
   /**
@@ -41,18 +41,13 @@ export interface SpecPlugin<S = any, M extends Record<string, any> = any> {
   createImitator?(context: any, meta: M): S,
 }
 
-export type DeclareOptions = {
-  /**
-   * Meta used to recreate the subject during simulation.
-   */
-  meta?: any,
-  transform?: <A>(spy: A) => A,
+export type SpyContext<S> = {
+  id: ReferenceId,
+  getSpy<A>(id: ReferenceId | ActionId, subject: A, options?: Partial<SpyOptions>): A,
+  invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder,
+  instantiate(args: any[], options?: SpyInstanceOptions): InstanceRecorder,
 }
 
-export type SpyContext<S> = {
-  invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder,
-  getSpy<A>(subject: A, options?: Partial<SpyOptions>): A,
-}
 
 export type SpyOptions = {
   mode?: ActionMode,
@@ -60,14 +55,9 @@ export type SpyOptions = {
   // meta?: Meta
 }
 
-export type SpyRecorder<S> = {
-  spy: S,
-  invoke(args: any[], options?: SpyInvokeOptions): InvocationRecorder
-}
-
 export type SpyInvokeOptions = {
   mode?: ActionMode,
-  transform?: <A>(arg: A) => A,
+  transform?: <A>(id: ActionId, arg: A) => A,
   // TODO: the invoke site probably should not be number (as least the last element).
   // because if last element is a number, it means that (should) be an element in an array,
   // and that means that element should have its own spy and should not need this site.
@@ -77,8 +67,14 @@ export type SpyInvokeOptions = {
   meta?: Meta,
 }
 
+export type SpyInstanceOptions = {
+  mode?: ActionMode,
+  transform?: <A>(id: ActionId, arg: A) => A,
+  meta?: Meta,
+}
+
 export type SpyResultOptions = {
-  transform?: <A>(arg: A) => A,
+  transform?: <A>(id: ActionId, arg: A) => A,
   // site?: Array<string | number>,
   meta?: Meta,
 }
@@ -89,6 +85,10 @@ export type InvocationRecorder = {
   throws<E>(err: E, options?: SpyInvokeOptions): E
 }
 
+export type InstanceRecorder = {
+  args: any[],
+}
+
 export type StubOptions = {
   site?: Array<string | number>
   // meta?: Meta
@@ -96,7 +96,7 @@ export type StubOptions = {
 
 export type StubContext<S> = {
   invoke(args: any[], options?: StubInvokeOptions): InvocationResponder,
-  getSpy<A>(subject: A, options?: Partial<SpyOptions>): A,
+  getSpy<A>(id: ActionId, subject: A, options?: Partial<SpyOptions>): A,
   resolve<V>(refIdOrValue: V, options?: StubOptions): V,
 }
 
@@ -106,7 +106,7 @@ export type StubRecorder<S> = {
 }
 
 export type StubInvokeOptions = {
-  transform?: <A>(arg: A) => A,
+  transform?: <A>(id: ActionId, arg: A) => A,
   site?: Array<string | number>,
 }
 

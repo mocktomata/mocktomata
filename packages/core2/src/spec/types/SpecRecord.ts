@@ -54,6 +54,7 @@ export type InstantiateAction = {
   type: 'instantiate',
   ref: ReferenceId,
   tick: number,
+  mode: ActionMode,
   payload: any[],
   meta?: Meta
 }

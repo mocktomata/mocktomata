@@ -36,24 +36,24 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
 
   // TODO: this is likely not needed because invokeAction.ref can only be ReferenceId,
   // if we don't support getter/setter.
-  const refId = record.resolveRefId(expectedAction.ref)
-  if (!refId) return
+  const id = record.resolveRefId(expectedAction.ref)
+  if (!id) return
 
   if (expectedAction.mode === 'plugin-invoked') {
-    const origRef = record.getOriginalRef(refId)!
+    const origRef = record.getOriginalRef(id)!
     const plugin = getPlugin(origRef.plugin)
     const source = { ref: expectedAction.ref, site: undefined }
     const ref: SpecReference = { plugin: plugin.name, subject: undefined, source, mode: 'plugin-invoked' }
     record.addRef(ref)
-    logCreateStub({ plugin: plugin.name, ref: refId })
+    logCreateStub({ plugin: plugin.name, id: id })
 
-    const context = stubContext({ record, plugin, ref, source })
+    const context = stubContext({ record, plugin, ref, id, source })
     ref.testDouble = plugin.createStub(context, origRef.meta)
     return
   }
-  const ref = record.getRef(refId)
+  const ref = record.getRef(id)
   if (!ref) {
-    throw new Error(`simulator.processInvoke can't find reference for ${refId}`)
+    throw new Error(`simulator.processInvoke can't find reference for ${id}`)
   }
 
   // console.log('exp', expectedAction, ref)
@@ -74,11 +74,11 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     }
 
     const plugin = getPlugin(origRef.plugin)
-    const context = stubContext({ record, plugin, ref, source: origRef.source })
+    const context = stubContext({ record, plugin, ref, id, source: origRef.source })
     return plugin.createStub(context, origRef!.meta)
   })
 
-  logAutoInvokeAction(ref, refId, record.getExpectedActionId(), args)
+  logAutoInvokeAction(ref, id, record.getExpectedActionId(), args)
   // console.log('before auto', record.original)
   // console.log('before auto', record.actual)
   const invokeSubject = getInvokeSubject(ref.testDouble, expectedAction.site)

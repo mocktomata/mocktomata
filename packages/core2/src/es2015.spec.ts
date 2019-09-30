@@ -122,7 +122,7 @@ describe('function', () => {
   })
   k.duo('callback in object literal success', (title, spec) => {
     test(title, async () => {
-     const subject = await spec.mock(callbackInObjLiteral.success)
+      const subject = await spec.mock(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(subject, 2)).toBe(3)
 
@@ -376,6 +376,44 @@ describe('promise', () => {
           expect(actualFn()).toBe(3)
           await spec.done()
         })
+    })
+  })
+})
+
+describe('class', () => {
+  class Foo {
+    constructor(public x: any) { }
+    getValue() {
+      return this.x
+    }
+    doThrow() {
+      throw new Error('throwing')
+    }
+  }
+
+  // class Boo extends Foo {
+  //   getPlusOne() {
+  //     return this.getValue() + 1
+  //   }
+  // }
+
+  k.save('invoke declared method', (title, spec) => {
+    test(title, async () => {
+      const s = await spec.mock(Foo)
+      const instance = new s(1)
+      expect(instance.getValue()).toBe(1)
+      await spec.done()
+      harness.logSpec(title)
+    })
+  })
+
+  k.save('invoke inherited method', (title, spec) => {
+    test.skip(title, async () => {
+      const s = await spec.mock(Foo)
+
+      const instance = new s(1)
+      expect(instance.toString()).toBe('Foo()')
+      await spec.done()
     })
   })
 })

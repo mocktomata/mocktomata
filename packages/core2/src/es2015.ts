@@ -1,9 +1,10 @@
 import { arrayPlugin } from './array';
+import { classPlugin } from './class';
 import { errorPlugin } from './error';
 import { functionPlugin } from './function';
 import { objectPlugin } from './object';
-import { SpecPluginActivationContext } from './spec';
 import { promisePlugin } from './promise';
+import { SpecPluginActivationContext } from './spec';
 import { stringPlugin } from './string';
 import { undefinedPlugin } from './undefined';
 
@@ -15,4 +16,5 @@ export function activate(context: SpecPluginActivationContext) {
   context.register(functionPlugin)
   context.register(errorPlugin)
   context.register(promisePlugin)
+  context.register(classPlugin)
 }

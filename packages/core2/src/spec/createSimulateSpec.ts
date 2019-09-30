@@ -7,7 +7,7 @@ import { assertActionType, createValidateRecord, ValidateRecord } from './create
 import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logCreateStub, logInvokeAction, logResultAction } from './logs';
-import { InvocationResponder, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecReference, SpyOptions, StubContext, StubInvokeOptions, StubOptions, ThrowAction } from './types';
+import { InvocationResponder, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecReference, SpyOptions, StubContext, StubInvokeOptions, StubOptions, ThrowAction, ActionId } from './types';
 import { SpecPluginInstance } from './types-internal';
 
 export async function createSimulateSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
@@ -50,10 +50,10 @@ function createStub<S>({ record, subject, source }: CreateStubOptions<S>): S {
     throw new ReferenceMismatch(record.specId, ref, expected)
   }
 
-  const refId = record.addRef(ref)
+  const id = record.addRef(ref)
 
-  logCreateStub({ plugin: plugin.name, ref: refId })
-  const context = stubContext({ record, plugin, ref, source: { ref: refId, site: [] } })
+  logCreateStub({ plugin: plugin.name, id })
+  const context = stubContext({ record, plugin, ref, id, source: { site: undefined } })
   ref.testDouble = plugin.createStub(context, expected.meta)
   return ref.testDouble
 }
@@ -62,16 +62,17 @@ export type StubContextOptions = {
   record: ValidateRecord,
   plugin: SpecPluginInstance,
   ref: SpecReference,
-  source: ReferenceSource,
+  id: ReferenceId,
+  source: { site?: Array<string | number> },
 }
 
 export function stubContext(options: StubContextOptions): StubContext<any> {
   return {
     invoke: (args: any[], invokeOptions: StubInvokeOptions = {}) => invocationResponder(options, args, invokeOptions),
-    getSpy: <A>(subject: A, getOptions: SpyOptions = {}) => getSpy(options, subject, getOptions),
+    getSpy: <A>(id: ActionId, subject: A, getOptions: SpyOptions = {}) => getSpy(options, id, subject, getOptions),
     resolve: <V>(refOrValue: V, resolveOptions: StubOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
-      const { record, source } = options
+      const { record, id } = options
 
       const reference = record.getRef(refOrValue)
       if (reference) return reference.testDouble
@@ -88,7 +89,7 @@ export function stubContext(options: StubContextOptions): StubContext<any> {
       }
       const sourceRef = record.getRef(origRef.source.ref)!
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
-      return createStub<V>({ record, subject, source: { ref: source.ref, site } })
+      return createStub<V>({ record, subject, source: { ref: id, site } })
     }
     // declare: <S>(stub: S) => createStubRecorder<S>({ record, plugin }, stub),
     // getStub: <A>(subject: A) => getStub<A>({ record }, subject)
@@ -146,23 +147,21 @@ function getByPath(subject: any, sitePath: Array<string | number>) {
 // }
 
 function invocationResponder(
-  { record, plugin, ref, source }: StubContextOptions,
+  { record, plugin, ref, id, source }: StubContextOptions,
   args: any[],
   { transform, site }: StubInvokeOptions
 ): InvocationResponder {
   const expected = record.getExpectedAction()
-  const origSourceRef = source.ref
-  const invokeId = source.ref = record.getNextActionId()
+  const invokeId = record.getNextActionId()
 
   const stubArgs = transform ? args.map((a, i) => {
     source.site = [i]
-    return transform(a)
+    return transform(invokeId, a)
   }) : args
-  source.ref = origSourceRef
 
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
-    ref: source.ref as ReferenceId,
+    ref: id,
     mode: ref.mode,
     payload: stubArgs.map(a => record.findRefId(a) || a),
     site,
@@ -172,7 +171,7 @@ function invocationResponder(
     throw new ActionMismatch(record.specId, action, expected)
   }
 
-  logInvokeAction({ record, plugin: plugin.name, ref: source.ref }, invokeId, args)
+  logInvokeAction({ record, plugin: plugin.name, id }, invokeId, args)
   record.addAction(action)
 
   return {
@@ -193,14 +192,14 @@ function invocationResponder(
     returns(value: any) {
       const expected = record.getExpectedAction()
       assertActionType(record.specId, 'return', expected)
-      logResultAction({ plugin: plugin.name, ref: source.ref }, 'return', invokeId, record.getNextActionId(), value)
+      logResultAction({ plugin: plugin.name, id }, 'return', invokeId, record.getNextActionId(), value)
       record.addAction({ type: 'return', ref: invokeId, payload: record.findRefId(value) || value })
       return value
     },
     throws(value: any) {
       const expected = record.getExpectedAction()
       assertActionType(record.specId, 'throw', expected)
-      logResultAction({ plugin: plugin.name, ref: source.ref }, 'throw', invokeId, record.getNextActionId(), value)
+      logResultAction({ plugin: plugin.name, id }, 'throw', invokeId, record.getNextActionId(), value)
       record.addAction({ type: 'throw', ref: invokeId, payload: record.findRefId(value) || value })
       return value
     },
@@ -228,10 +227,10 @@ function getResult(record: ValidateRecord, expected: ReturnAction | ThrowAction)
 
   const plugin = getPlugin(expectedReference.plugin)
   const ref: SpecReference = { plugin: plugin.name, mode: expectedReference.mode, source: expectedReference.source }
-  const refId = record.addRef(ref)
-  const context = stubContext({ record, plugin, ref, source: { ref: refId, site: undefined } })
+  const id = record.addRef(ref)
+  const context = stubContext({ record, plugin, ref, id, source: {} })
 
-  logCreateStub({ plugin: plugin.name, ref: refId })
+  logCreateStub({ plugin: plugin.name, id })
   ref.testDouble = plugin.createStub(context, expectedReference.meta)
 
   return {

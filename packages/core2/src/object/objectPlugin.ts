@@ -5,10 +5,10 @@ import { getPropertyNames } from '../utils';
 export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<string | number, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
-  createSpy: ({ getSpy }, subject) => {
+  createSpy: ({ id, getSpy }, subject) => {
     const propertyNames = getPropertyNames(subject)
     return propertyNames.reduce((p, name) => {
-      p[name] = getSpy(subject[name], { site: [name] })
+      p[name] = getSpy(id, subject[name], { site: [name] })
       return p
     }, {} as any)
   },
