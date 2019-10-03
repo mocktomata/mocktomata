@@ -1,8 +1,9 @@
+import { CircularTracker } from './createSaveSpec';
 import { stubContext } from './createSimulateSpec';
 import { ValidateRecord } from './createValidateRecord';
 import { getPlugin } from './findPlugin';
 import { logAutoInvokeAction, logCreateStub } from './logs';
-import { InvokeAction, SpecOptions, SpecReference, InstantiateAction } from './types';
+import { InstantiateAction, InvokeAction, SpecOptions, SpecReference } from './types';
 
 export function createSimulator(record: ValidateRecord, _options: SpecOptions) {
   // use `options` to control which simulator to use.
@@ -45,13 +46,17 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
   if (expectedAction.mode === 'plugin-invoked') {
     const origRef = record.getOriginalRef(id)!
     const plugin = getPlugin(origRef.plugin)
-    const source = { ref: expectedAction.ref, site: undefined }
-    const ref: SpecReference = { plugin: plugin.name, subject: undefined, source, mode: 'plugin-invoked' }
+    const tracker: CircularTracker = {}
+    const ref: SpecReference = { plugin: plugin.name, subject: undefined, source: { ref: expectedAction.ref, site: undefined }, mode: 'plugin-invoked' }
     record.addRef(ref)
     logCreateStub({ plugin: plugin.name, id: id })
 
-    const context = stubContext({ record, plugin, ref, id, source })
+    const context = stubContext({ record, plugin, ref, id, tracker })
     ref.testDouble = plugin.createStub(context, undefined, origRef.meta)
+    if (tracker.site && tracker.site.length > 0) {
+      const site = tracker.site.pop()!
+      tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
+    }
     return
   }
   const ref = record.getRef(id)
@@ -77,8 +82,18 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     }
 
     const plugin = getPlugin(origRef.plugin)
-    const context = stubContext({ record, plugin, ref, id, source: origRef.source })
-    return plugin.createStub(context, origRef.subject, origRef.meta)
+    const tracker: CircularTracker = {}
+    const ref: SpecReference = { plugin: plugin.name, subject: undefined, source: { ref: expectedAction.ref, site: undefined }, mode: 'plugin-invoked' }
+    record.addRef(ref)
+    logCreateStub({ plugin: plugin.name, id })
+
+    const context = stubContext({ record, plugin, ref, id, tracker })
+    ref.testDouble = plugin.createStub(context, undefined, origRef.meta)
+    if (tracker.site && tracker.site.length > 0) {
+      const site = tracker.site.pop()!
+      tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
+    }
+    return ref.testDouble
   })
 
   logAutoInvokeAction(ref, id, record.getExpectedActionId(), args)
@@ -97,6 +112,8 @@ function getInvokeSubject(subject: any, site: Array<string | number> | undefined
 }
 
 function processInstantiate(record: ValidateRecord, expectedAction: InstantiateAction) {
+  if (expectedAction.mode === 'passive') return
+
   const classReference = record.getRef(expectedAction.ref)!
   // TODO: get spy/stub from payload
   return new classReference.testDouble(...expectedAction.payload)

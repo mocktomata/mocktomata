@@ -1,8 +1,8 @@
 import a from 'assertron';
 import * as es2015 from './es2015';
 import { loadPlugins } from './spec/loadPlugins';
+import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 import k, { TestHarness } from './test-utils';
-import { simpleCallback, delayed, callbackInObjLiteral, callbackInDeepObjLiteral, synchronous, recursive, postReturn } from './test-artifacts';
 
 let harness: TestHarness
 beforeAll(async () => {
@@ -382,37 +382,289 @@ describe('promise', () => {
 
 describe('class', () => {
   class Foo {
-    constructor(public x: any) { }
+    constructor(public x: number) { }
     getValue() {
       return this.x
     }
-    doThrow() {
-      throw new Error('throwing')
+  }
+
+  class Boo extends Foo {
+    getPlusOne() {
+      return this.getValue() + 1
     }
   }
 
-  // class Boo extends Foo {
-  //   getPlusOne() {
-  //     return this.getValue() + 1
-  //   }
-  // }
-
   k.duo('invoke declared method', (title, spec) => {
     test(title, async () => {
-      const s = await spec.mock(Foo)
-      const instance = new s(1)
+      const Subject = await spec.mock(Foo)
+      const instance = new Subject(1)
       expect(instance.getValue()).toBe(1)
       await spec.done()
-      harness.logSpec(title)
     })
   })
 
-  k.save('invoke inherited method', (title, spec) => {
-    test.skip(title, async () => {
-      const s = await spec.mock(Foo)
+  k.duo('invoke inherited method', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(Boo)
 
-      const instance = new s(1)
-      expect(instance.toString()).toBe('Foo()')
+      const instance = new Subject(1)
+      expect(instance.getPlusOne()).toBe(2)
+      await spec.done()
+    })
+  })
+
+  k.duo('invoke parent method', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(Boo)
+
+      const instance = new Subject(1)
+      expect(instance.getValue()).toBe(1)
+      await spec.done()
+    })
+  })
+
+  k.duo('create multiple instances of the same class', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(Foo)
+      const f1 = new Subject(1)
+      const f2 = new Subject(2)
+      expect(f1.getValue()).toBe(1)
+      expect(f2.getValue()).toBe(2)
+      await spec.done()
+    })
+  })
+
+  k.free('ok to use super/sub-class as long as behavior is the same', (title, spec) => {
+    // It is ok to use diff
+    test(title, async () => {
+      const save = spec.save()
+      const bs = await save.mock(Boo)
+      const boo = new bs(2)
+      expect(boo.getValue()).toBe(2)
+      await save.done()
+
+      const sim = spec.simulate()
+      const fs = await sim.mock(Foo)
+      const foo = new fs(2)
+      expect(foo.getValue()).toBe(2)
+      await sim.done()
+    })
+  })
+
+  class WithCallback {
+    callback(cb: (value: number) => void) {
+      setImmediate(() => {
+        cb(1)
+      })
+    }
+    justDo(x: any) {
+      return x
+    }
+  }
+  k.save('class method with callback', (title, spec) => {
+    test(title, async () => {
+      const s = await spec.mock(WithCallback)
+      const cb = new s()
+
+      expect(cb.justDo(1)).toBe(1)
+      expect(await new Promise(a => {
+        let total = 0
+        cb.callback(v => total += v)
+        cb.callback(v => a(total + v))
+      })).toBe(2)
+      await spec.done()
+    })
+  })
+
+  class Throwing {
+    doThrow() {
+      throw new Error('thrown')
+    }
+  }
+
+  k.duo('invoke method throws', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(Throwing)
+      const foo = new Subject()
+      a.throws(() => foo.doThrow(), e => e.message === 'thrown')
+      await spec.done()
+    })
+  })
+
+  class ResolvedPromise {
+    increment(x: number) {
+      return Promise.resolve(x + 1)
+    }
+  }
+
+  class DelayedPromise {
+    increment(x: number) {
+      return new Promise(a => {
+        setImmediate(() => a(x + 1))
+      })
+    }
+  }
+  k.duo('method return resolved promise', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(ResolvedPromise)
+      const p = new Subject()
+      expect(await p.increment(3)).toBe(4)
+
+      await spec.done()
+    })
+  })
+
+  k.duo('method returns delayed promise', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(DelayedPromise)
+      const p = new Subject()
+      expect(await p.increment(3)).toBe(4)
+
+      await spec.done()
+    })
+  })
+
+  k.duo('invoke method returns delayed promise multiple times', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(DelayedPromise)
+      const p = new Subject()
+      expect(await Promise.all([p.increment(1), p.increment(3), p.increment(7)])).toEqual([2, 4, 8])
+
+      await spec.done()
+    })
+  })
+
+  class InvokeInternal {
+    do() {
+      return this.internal()
+    }
+    internal() {
+      return 'data'
+    }
+  }
+
+  k.duo('method invokes internal method', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(InvokeInternal)
+      const a = new Subject()
+      expect(a.do()).toBe('data')
+
+      await spec.done()
+    })
+  })
+
+  class DelayedInvokeInternal {
+    getDelayedInner(delay = 0) {
+      return new Promise(a => {
+        setTimeout(() => {
+          a(this.inner())
+        }, delay)
+      })
+    }
+    inner() {
+      return 'inner'
+    }
+  }
+
+  k.duo('method delay invokes internal method', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(DelayedInvokeInternal)
+      const a = new Subject()
+      expect(await a.getDelayedInner()).toBe('inner')
+      expect(a.inner()).toBe('inner')
+
+      await spec.done()
+    })
+  })
+
+  class DIIThrow {
+    getDelayedInner() {
+      throw new Error('should not call')
+    }
+  }
+
+  k.free('actual method is not invoked during simulation', (title, spec) => {
+    test(title, async () => {
+      const save = spec.save()
+      const Subject = await save.mock(DelayedInvokeInternal)
+      const dii = new Subject()
+
+      expect(await dii.getDelayedInner()).toBe('inner')
+      await save.done()
+
+      const sim = spec.simulate()
+      const BadSubject = await sim.mock(DIIThrow)
+      const bad = new BadSubject()
+      expect(await bad.getDelayedInner()).toBe('inner')
+      await sim.done()
+    })
+  })
+
+  class RejectLeak {
+    reject(x: number) {
+      return new Promise((_, r) => {
+        setImmediate(() => r(x))
+      })
+    }
+  }
+
+  k.duo('run away promise will not be leaked and break another test', (title, spec) => {
+    test(`${title}: setup`, async () => {
+      const MockRejector = await spec.mock(RejectLeak)
+      const e = new MockRejector()
+      await a.throws(e.reject(300), v => v === 300)
+      await spec.done()
+    })
+    test(`${title}: should not fail`, () => {
+      return new Promise(a => setImmediate(() => a()))
+    })
+  })
+
+  class WithCircular {
+    value: any
+    cirRef: WithCircular
+    constructor() {
+      this.cirRef = this
+    }
+  }
+
+  class ClassWithCircular {
+    channel: WithCircular
+    constructor() {
+      this.channel = new WithCircular()
+    }
+    exec(cmd: string, cb: Function) {
+      this.channel.value = cmd
+      cb(this.channel)
+    }
+  }
+
+  k.duo('can use class with circular reference', (title, spec) => {
+    test(title, async () => {
+      const Subject = await spec.mock(ClassWithCircular)
+      const f = new Subject()
+
+      let actual
+      f.exec('echo', (data: any) => {
+        actual = data.value
+      })
+
+      expect(actual).toBe('echo')
+      await spec.done()
+    })
+  })
+
+  k.duo('class with circular reference accessing', (title, spec) => {
+    test.skip(title, async () => {
+      const Subject = await spec.mock(ClassWithCircular)
+      const f = new Subject()
+
+      let actual
+      f.exec('echo', (channel: WithCircular) => {
+        actual = channel.cirRef.value
+      })
+
+      expect(actual).toBe('echo')
       await spec.done()
     })
   })

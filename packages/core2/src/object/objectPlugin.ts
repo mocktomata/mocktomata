@@ -7,10 +7,12 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
   support: subject => subject !== null && typeof subject === 'object',
   createSpy: ({ id, getSpy }, subject) => {
     const propertyNames = getPropertyNames(subject)
-    return propertyNames.reduce((p, name) => {
+    const result = propertyNames.reduce((p, name) => {
       p[name] = getSpy(id, subject[name], { site: [name] })
       return p
     }, {} as any)
+
+    return result
   },
   createStub: ({ resolve }, _subject, meta) => {
     // console.log('createStub meta', meta)

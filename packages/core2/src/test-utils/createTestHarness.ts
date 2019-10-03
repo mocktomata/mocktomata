@@ -39,7 +39,8 @@ export function createTestHarness(options?: Partial<{ level: number, showLog: bo
       return io.readSpec(id)
     },
     logSpec(title: string) {
-      const specId = title.slice(0, title.lastIndexOf(':'))
+      const colonIndex = title.lastIndexOf(':')
+      const specId = colonIndex === -1 ? title : title.slice(0, colonIndex)
       logSpecs(io.getAllSpecs(), e => e[0] === specId)
     },
     logSpecs() {

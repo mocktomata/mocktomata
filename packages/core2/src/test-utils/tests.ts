@@ -1,4 +1,4 @@
-import { spec, Spec, CreateSpec } from '../spec';
+import { CreateSpec, spec, Spec } from '../spec';
 
 export type KomondorTestHandler = (
   title: string,
@@ -39,10 +39,19 @@ export function testSimulate(title: string, handler: KomondorTestHandler) {
     handler(simTitle, createTestSpec(spec.simulate, title))
   }
 }
+
+export function testFree(title: string, handler: (title: string, spec: { save(): TestSpec, simulate(): TestSpec }) => void) {
+  handler(title, {
+    save: () => createTestSpec(spec.save, title),
+    simulate: () => createTestSpec(spec.simulate, title),
+  })
+}
+
 export type TestSpec = {
   mock<S>(subject: S): Promise<S>,
   done(): Promise<void>
 }
+
 function createTestSpec(specFn: CreateSpec, title: string): TestSpec {
   return {
     mock: subject => getSpec().then(s => s.mock(subject)),

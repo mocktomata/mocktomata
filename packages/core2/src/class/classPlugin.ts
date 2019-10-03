@@ -1,15 +1,15 @@
 // import { isPromise } from '../promise/isPromise';
-import { SpecPlugin, SpyContext, InstanceRecorder, ReferenceId } from '../spec';
+import { InstanceRecorder, ReferenceId, SpecPlugin, SpyContext } from '../spec';
 import { getInheritedPropertyNames } from '../utils';
 import { isClass } from './isClass';
-import { createConsoleLogReporter } from 'standard-log';
+import { isPromise } from '../promise/isPromise';
 
 function classTracker<S>({ id, instantiate, getSpy }: SpyContext, _subject: S) {
   let instanceRecorder: InstanceRecorder
   return {
     instantiate(args: any[]) {
       instanceRecorder = instantiate(id, args, {
-        transform: (id, arg) => getSpy(id, arg, { mode: 'autonomous' })
+        transform: (id, arg) => getSpy(id, arg)
       })
       return instanceRecorder.args
     },
@@ -26,77 +26,56 @@ export const classPlugin: SpecPlugin = {
     const tracker = classTracker(context, subject)
     const { invoke, getSpy } = context
     const SpiedClass = class extends subject {
-      __komondorInstanceRecorder: InstanceRecorder
-      __komondorInstanceId: ReferenceId
+      __komondor: { pending: boolean, instanceId: ReferenceId, publicMethods: string[] }
       constructor(...args: any[]) {
         super(...tracker.instantiate(args))
-        this.__komondorInstanceRecorder = tracker.getInstanceRecorder()
-        this.__komondorInstanceId = this.__komondorInstanceRecorder.setInstance(this)
+        this.__komondor = {
+          pending: false,
+          publicMethods: [],
+          instanceId: tracker.getInstanceRecorder().setInstance(this)
+        }
       }
     }
     getInheritedPropertyNames(SpiedClass).forEach(p => {
       const method = SpiedClass.prototype[p]
       SpiedClass.prototype[p] = function (this: InstanceType<typeof SpiedClass>, ...args: any[]) {
-        // console.log(`invoke`, args)
-        const invocation = invoke(this.__komondorInstanceId, args, {
-          transform: (id, arg) => getSpy(id, arg, { mode: 'autonomous' }),
-          site: [p],
-        })
-        try {
-          const result = method.apply(this, invocation.args)
-          return invocation.returns(result, { transform: (id, result) => getSpy(id, result, { mode: 'passive' }) })
+        if (!this.__komondor.pending || this.__komondor.publicMethods.indexOf(p) >= 0) {
+          this.__komondor.pending = true
+          if (this.__komondor.publicMethods.indexOf(p) === -1) {
+            this.__komondor.publicMethods.push(p)
+          }
+
+          const invocation = invoke(this.__komondor.instanceId, args, {
+            transform: (id, arg) => getSpy(id, arg, { mode: 'autonomous' }),
+            site: [p],
+          })
+
+          try {
+            const result = method.apply(this, invocation.args)
+            const spiedResult = invocation.returns(result, { transform: (id, result) => getSpy(id, result, { mode: 'passive' }) })
+            if (isPromise(spiedResult)) {
+              spiedResult.then(
+                () => this.__komondor.pending = false,
+                () => this.__komondor.pending = false
+              )
+              return spiedResult
+            }
+            else {
+              this.__komondor.pending = false
+              return spiedResult
+            }
+          }
+          catch (err) {
+            const thrown = invocation.throws(err, { transform: (id, err) => getSpy(id, err, { mode: 'passive' }) })
+            this.__komondor.pending = false
+            throw thrown
+          }
         }
-        catch (err) {
-          throw invocation.throws(err, { transform: (id, err) => getSpy(id, err, { mode: 'passive' }) })
+        else {
+          return method.apply(this, args)
         }
       }
     })
-
-    return SpiedClass
-    // const SpiedClass = class extends subject {
-    //   __komondorInstanceTracker: any
-    //   constructor(...args: any[]) {
-    //     super(...tracker.instantiate(args))
-    //     this.__komondorInstanceTracker = tracker.getInstanceTracker()
-    //   }
-    // }
-    // const propertyNames = getPropertyNames(SpiedClass)
-    // propertyNames.forEach(p => {
-    //   const method = SpiedClass.prototype[p]
-    //   SpiedClass.prototype[p] = function (this: InstanceType<typeof SpiedClass>, ...args: any[]) {
-    //     const invoking = this.__komondor.invoking
-    //     const instance: any = this.__komondor.instance
-    //     if (!invoking) {
-    //       this.__komondor.invoking = true
-    //       const invocation = instance.invoke(args, {
-    //         transform: arg => context.getSpy(arg, { mode: 'autonomous' }),
-    //         site: [p]
-    //       })
-    //       let result
-    //       try {
-    //         result = method.apply(this, invocation.args)
-    //       }
-    //       catch (err) {
-    //         const thrown = invocation.throw(err)
-    //         this.__komondor.invoking = false
-    //         throw thrown
-    //       }
-    //       const returnValue = invocation.return(result)
-
-    //       // TODO: rethink SpyCall implmentation to avoid mixing promise and class logic together
-    //       // This is not ideal as it mixes concerns.
-    //       if (isPromise(returnValue)) {
-    //         returnValue.then(() => this.__komondor.invoking = false)
-    //       }
-    //       else
-    //         this.__komondor.invoking = false
-    //       return returnValue
-    //     }
-    //     else {
-    //       return method.apply(this, args)
-    //     }
-    //   }
-    // })
 
     return SpiedClass
   },
@@ -112,17 +91,15 @@ export const classPlugin: SpecPlugin = {
     }
 
     const StubClass = class extends subject {
-      __komondorInstanceRecorder: InstanceRecorder
-      __komondorInstanceId: ReferenceId
+      __komondor: { instanceId: ReferenceId }
       constructor(...args: any[]) {
         super(...tracker.instantiate(args))
-        this.__komondorInstanceRecorder = instanceRecorder
-        this.__komondorInstanceId = instanceRecorder.setInstance(this)
+        this.__komondor = { instanceId: instanceRecorder.setInstance(this) }
       }
     }
     getInheritedPropertyNames(StubClass).forEach(p => {
       StubClass.prototype[p] = function (this: InstanceType<typeof StubClass>, ...args: any[]) {
-        const invocation = invoke(this.__komondorInstanceId, args, {
+        const invocation = invoke(this.__komondor.instanceId, args, {
           transform: (id, arg) => getSpy(id, arg),
           site: [p]
         })
@@ -137,7 +114,4 @@ export const classPlugin: SpecPlugin = {
     })
     return StubClass
   },
-  // createStub: (_, meta) => {
-  //   return meta
-  // },
 }
