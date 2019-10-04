@@ -1,12 +1,12 @@
 import { Except, Omit } from 'type-plus';
+import { notDefined } from '../constants';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
-import { logCreateSpy, logInvokeAction, logResultAction, logInstantiateAction } from './logs';
-import { ActionId, ActionMode, InvokeAction, ReferenceSource, ReturnAction, Spec, SpecOptions, SpecReference, SpyContext, SpyInvokeOptions, SpyOptions, SpyResultOptions, ThrowAction, ReferenceId, SpyInstanceOptions, InstantiateAction, InstanceRecorder } from './types';
+import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
+import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
-import { notDefined } from '../constants';
 
 export async function createSaveSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
   const record = createSpyRecord(specId, options)
@@ -61,12 +61,12 @@ type SpyContextOptions = {
 /**
  * SpyContext is used by plugin.createSpy().
  */
-function spyContext(options: SpyContextOptions): SpyContext {
+function spyContext(options: SpyContextOptions): SpecPlugin.CreateSpyContext {
   return {
     id: options.id,
-    getSpy: <A>(id: ActionId, subject: A, getOptions: SpyOptions = {}) => getSpy(options, id, subject, getOptions),
-    invoke: (id: ReferenceId, args: any[], invokeOptions: SpyInvokeOptions = {}) => invocationRecorder(options, id, args, invokeOptions),
-    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpyInstanceOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
+    getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(options, id, subject, getOptions),
+    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.SpyInvokeOptions = {}) => invocationRecorder(options, id, args, invokeOptions),
+    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.SpyInstanceOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
   }
 }
 
@@ -74,8 +74,8 @@ export function instanceRecorder(
   { record, plugin, ref, tracker: source }: SpyContextOptions,
   id: ReferenceId,
   args: any[],
-  { mode, transform, meta }: SpyInstanceOptions
-): InstanceRecorder {
+  { mode, processArguments, meta }: SpecPlugin.SpyInstanceOptions
+): SpecPlugin.InstanceRecorder {
 
   const action: Omit<InstantiateAction, 'tick' | 'instanceId'> = {
     type: 'instantiate',
@@ -86,9 +86,9 @@ export function instanceRecorder(
   }
   const instantiateId = record.addAction(action)
 
-  const spiedArgs = transform ? args.map((a, i) => {
+  const spiedArgs = processArguments ? args.map((a, i) => {
     source.site = [i]
-    return transform(instantiateId, a)
+    return processArguments(instantiateId, a)
   }) : args
 
   action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
@@ -110,7 +110,7 @@ function invocationRecorder(
   { record, plugin, ref, tracker }: SpyContextOptions,
   id: ReferenceId,
   args: any[],
-  { mode, transform, site, meta }: SpyInvokeOptions
+  { mode, processArguments, site, meta }: SpecPlugin.SpyInvokeOptions
 ) {
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
@@ -122,9 +122,9 @@ function invocationRecorder(
   }
   const invokeId = record.addAction(action)
 
-  const spiedArgs = transform ? args.map((a, i) => {
+  const spiedArgs = processArguments ? args.map((a, i) => {
     tracker.site = [i]
-    return transform(invokeId, a)
+    return processArguments(invokeId, a)
   }) : args
 
   action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
@@ -133,8 +133,8 @@ function invocationRecorder(
 
   return {
     args: spiedArgs,
-    returns: (value: any, options?: SpyInvokeOptions) => processInvokeResult({ record, plugin, ref, id, tracker }, 'return', invokeId, value, options),
-    throws: (err: any, options?: SpyResultOptions) => processInvokeResult({ record, plugin, ref, id, tracker }, 'throw', invokeId, err, options)
+    returns: (value: any, options?: SpecPlugin.SpyInvokeOptions) => processInvokeResult({ record, plugin, ref, id, tracker }, 'return', invokeId, value, options),
+    throws: (err: any, options?: SpecPlugin.SpyResultOptions) => processInvokeResult({ record, plugin, ref, id, tracker }, 'throw', invokeId, err, options)
   }
 }
 
@@ -143,12 +143,12 @@ function processInvokeResult(
   type: 'return' | 'throw',
   invokeId: ActionId,
   value: any,
-  { transform, meta }: SpyResultOptions = {}
+  { processArgument, meta }: SpecPlugin.SpyResultOptions = {}
 ) {
 
   const returnId = record.getNextActionId()
   tracker.site = undefined
-  const result = transform ? transform(returnId, value) : value
+  const result = processArgument ? processArgument(returnId, value) : value
   const action: Omit<ReturnAction | ThrowAction, 'tick'> = {
     type,
     ref: invokeId,
@@ -167,7 +167,7 @@ function processInvokeResult(
 export function getSpy<S>(
   { record, ref, tracker }: SpyContextOptions,
   id: ActionId,
-  subjectOrTestDouble: S, options: SpyOptions
+  subjectOrTestDouble: S, options: SpecPlugin.GetSpyOptions
 ): S {
   const reference = record.findRef(subjectOrTestDouble)
   if (reference) {
