@@ -72,10 +72,10 @@ export type StubContextOptions = {
   tracker: CircularTracker,
 }
 
-export function stubContext(options: StubContextOptions): SpecPlugin.StubContext {
+export function stubContext(options: StubContextOptions): SpecPlugin.CreateStubContext {
   return {
     id: options.id,
-    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.StubInvokeOptions = {}) => invocationResponder(options, id, args, invokeOptions),
+    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(options, id, args, invokeOptions),
     getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(options, id, subject, getOptions),
     resolve: <V>(refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
@@ -98,7 +98,7 @@ export function stubContext(options: StubContextOptions): SpecPlugin.StubContext
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
       return createStub<V>({ record, subject, source: { ref: id, site } })
     },
-    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.SpyInstanceOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
+    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
     // declare: <S>(stub: S) => createStubRecorder<S>({ record, plugin }, stub),
     // getStub: <A>(subject: A) => getStub<A>({ record }, subject)
   }
@@ -158,7 +158,7 @@ function invocationResponder(
   { record, plugin, ref, tracker: source }: StubContextOptions,
   id: ReferenceId,
   args: any[],
-  { processArguments, site }: SpecPlugin.StubInvokeOptions
+  { processArguments, site }: SpecPlugin.InvokeOptions
 ): SpecPlugin.InvocationResponder {
   const expected = record.getExpectedAction()
   const invokeId = record.getNextActionId()

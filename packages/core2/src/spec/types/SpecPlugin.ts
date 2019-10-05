@@ -22,7 +22,7 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
    * @param meta Meta data of the subject.
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
-  createStub(context: SpecPlugin.StubContext, subject: S, meta: M): S,
+  createStub(context: SpecPlugin.CreateStubContext, subject: S, meta: M): S,
   /**
    * Converts the spy to meta data that can be used during simulation to simulate the behavor.
    */
@@ -42,18 +42,18 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
 }
 export namespace SpecPlugin {
   export type CreateSpyContext = {
-    getSpy<A>(id: ReferenceId | ActionId, subject: A, options?: GetSpyOptions): A,
+    getSpy<S>(id: ReferenceId | ActionId, subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
-    invoke(id: ReferenceId, args: any[], options?: SpyInvokeOptions): InvocationRecorder,
-    instantiate(id: ReferenceId, args: any[], options?: SpyInstanceOptions): InstanceRecorder,
+    invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationRecorder,
+    instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
   }
 
-  export type StubContext = {
-    getSpy<A>(id: ActionId, subject: A, options?: GetSpyOptions): A,
+  export type CreateStubContext = {
+    getSpy<S>(id: ActionId, subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
-    invoke(id: ReferenceId, args: any[], options?: StubInvokeOptions): InvocationResponder,
+    invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationResponder,
     resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
-    instantiate(id: ReferenceId, args: any[], options?: SpyInstanceOptions): InstanceRecorder,
+    instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
   }
 
   export type GetSpyOptions = {
@@ -75,7 +75,7 @@ export namespace SpecPlugin {
     site?: Array<string | number>
   }
 
-  export type SpyInvokeOptions = {
+  export type InvokeOptions = {
     mode?: ActionMode,
     processArguments?: <A>(id: ActionId, arg: A) => A,
     site?: Array<string | number>,
@@ -93,15 +93,6 @@ export namespace SpecPlugin {
     throws<E>(err: E, options?: SpyResultOptions): E
   }
 
-  export type StubInvokeOptions = {
-    processArguments?: <A>(id: ActionId, arg: A) => A,
-    site?: Array<string | number>,
-  }
-  export type StubRecorder<S> = {
-    stub: S,
-    invoke(args: any[], options?: StubInvokeOptions): InvocationResponder
-  }
-
   export type InvocationResponder = {
     getResult(): { type: 'return' | 'throw', value: any, meta: Meta | undefined },
     getResultAsync(): Promise<{ type: 'return' | 'throw', value: any, meta: Meta | undefined }>,
@@ -109,13 +100,13 @@ export namespace SpecPlugin {
     throws<V>(value: V): V,
   }
 
-  export type SpyInstanceOptions = {
+  export type InstantiateOptions = {
     mode?: ActionMode,
     processArguments?: <A>(id: ActionId, arg: A) => A,
     meta?: Meta,
   }
 
-  export type InstanceRecorder = {
+  export type InstantiationRecorder = {
     args: any[],
     setInstance(instance: any): ReferenceId
   }

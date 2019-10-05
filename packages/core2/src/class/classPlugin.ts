@@ -5,7 +5,7 @@ import { isClass } from './isClass';
 import { isPromise } from '../promise/isPromise';
 
 function classTracker<S>({ id, instantiate, getSpy }: SpecPlugin.CreateSpyContext, _subject: S) {
-  let instanceRecorder: SpecPlugin.InstanceRecorder
+  let instanceRecorder: SpecPlugin.InstantiationRecorder
   return {
     instantiate(args: any[]) {
       instanceRecorder = instantiate(id, args, {
@@ -80,7 +80,7 @@ export const classPlugin: SpecPlugin = {
     return SpiedClass
   },
   createStub({ instantiate, id, invoke, getSpy }, subject, _meta) {
-    let instanceRecorder: SpecPlugin.InstanceRecorder
+    let instanceRecorder: SpecPlugin.InstantiationRecorder
     const tracker = {
       instantiate(args: any[]) {
         instanceRecorder = instantiate(id, args, {
