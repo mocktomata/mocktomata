@@ -63,7 +63,7 @@
     "aurelia-logging-color": "^0.5.16",
     "aurelia-logging-memory": "^0.3.2",
     "codecov": "^3.1.0",
-    "cucumber": "^4.2.1",
+    "cucumber": "^6.0.0",
     "delay": "^3.1.0",
     "dependency-check": "^3.2.1",
     "eslint": "^5.16.0",
