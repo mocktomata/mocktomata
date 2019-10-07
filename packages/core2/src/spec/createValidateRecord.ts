@@ -32,6 +32,7 @@ export function createValidateRecord(specId: string, original: SpecRecord, optio
     findRefId: (spy: any) => findRefId(actual.refs, spy),
     getExpectedReference: () => getExpectedReference(original.refs, actual.refs),
     getOriginalRef: (id: ReferenceId | ActionId) => getRef(original, id),
+    getOriginalRefId: (id: ReferenceId | ActionId) => getRef(original, id),
     getNextActionId: () => actual.actions.length,
     addAction: (action: Omit<SpecAction, 'tick'>) => {
       assertNotAddingWhenEnded(specId, actual, ended, action)

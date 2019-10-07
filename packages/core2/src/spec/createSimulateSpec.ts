@@ -2,14 +2,16 @@ import { Omit } from 'type-plus';
 import { notDefined } from '../constants';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
-import { CircularTracker, getSpy, instanceRecorder } from './createSaveSpec';
+import { getSpy, instanceRecorder } from './createSaveSpec';
 import { createSimulator } from './createSimulator';
 import { assertActionType, createValidateRecord, ValidateRecord } from './createValidateRecord';
 import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
+import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 import { logCreateStub, logInvokeAction, logResultAction } from './logs';
 import { ActionId, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
+import { referenceMismatch, siteMismatch, arrayMismatch } from './validations';
 
 export async function createSimulateSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
   const loaded = await context.io.readSpec(specId)
@@ -45,44 +47,55 @@ function createStub<S>({ record, subject, source }: CreateStubOptions<S>): S {
     throw new PluginNotFound(expected.plugin)
   }
 
-  const ref: SpecReference = { plugin: plugin.name, subject, testDouble: notDefined, source, mode: expected.mode }
-
-  if (referenceMismatch(ref, expected)) {
-    throw new ReferenceMismatch(record.specId, ref, expected)
+  const ref: SpecReference = {
+    plugin: plugin.name,
+    subject,
+    testDouble: notDefined,
+    source,
+    mode: expected.mode
   }
-
-  const id = record.addRef(ref)
-
-  logCreateStub({ plugin: plugin.name, id })
-  const tracker: CircularTracker = {}
-  const context = stubContext({ record, plugin, ref, id, tracker })
-  ref.testDouble = plugin.createStub(context, subject, expected.meta)
-  if (tracker.site && tracker.site.length > 0) {
-    const site = tracker.site.pop()!
-    tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
-  }
+  if (referenceMismatch(ref, expected)) throw new ReferenceMismatch(record.specId, ref, expected)
+  const refId = record.addRef(ref)
+  logCreateStub({ plugin: plugin.name, id: refId })
+  const circularRefs: CircularReference[] = []
+  ref.testDouble = plugin.createStub(
+    createPluginStubContext({ record, plugin, ref, refId, circularRefs }),
+    subject,
+    expected.meta)
+  fixCircularReferences(record, refId, circularRefs)
   return ref.testDouble
 }
 
-export type StubContextOptions = {
+export type StubContext = {
   record: ValidateRecord,
+  /**
+   * This need to be passed to all spy contexts,
+   * to every getSpy/createSpy.
+   * NOTE: that means it probably can be absorbed into `record`.
+   */
+  circularRefs: CircularReference[],
   plugin: SpecPluginInstance,
+  refId: ReferenceId,
   ref: SpecReference,
-  id: ReferenceId,
-  tracker: CircularTracker,
+  site?: Array<keyof any>,
 }
 
-export function stubContext(options: StubContextOptions): SpecPlugin.CreateStubContext {
+export function createPluginStubContext(context: StubContext): SpecPlugin.CreateStubContext {
   return {
-    id: options.id,
-    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(options, id, args, invokeOptions),
-    getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(options, id, subject, getOptions),
-    resolve: <V>(refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
+    id: context.refId,
+    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(context, id, args, invokeOptions),
+    getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, id, subject, getOptions),
+    resolve: <V>(id: ReferenceId, refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
-      const { record, id } = options
+      const { record } = context
 
       const reference = record.getRef(refOrValue)
-      if (reference) return reference.testDouble
+      if (reference) {
+        if (reference.testDouble === notDefined) {
+          context.circularRefs.push({ sourceId: id, sourceSite: resolveOptions.site || [], subjectId: refOrValue })
+        }
+        return reference.testDouble
+      }
 
       // ref is from saved record, so the original reference must exists.
       const origRef = record.getOriginalRef(refOrValue)!
@@ -98,37 +111,12 @@ export function stubContext(options: StubContextOptions): SpecPlugin.CreateStubC
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
       return createStub<V>({ record, subject, source: { ref: id, site } })
     },
-    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(options, id, args, instanceOptions)
+    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
     // declare: <S>(stub: S) => createStubRecorder<S>({ record, plugin }, stub),
     // getStub: <A>(subject: A) => getStub<A>({ record }, subject)
   }
 }
 
-function referenceMismatch(actual: SpecReference, expected: SpecReference) {
-  return !(actual.plugin === expected.plugin && !sourceMismatch(actual.source, expected.source))
-}
-
-function sourceMismatch(actual: ReferenceSource | undefined, expected: ReferenceSource | undefined) {
-  if (actual === undefined) {
-    return expected !== undefined
-  }
-  return expected === undefined ||
-    actual.ref !== expected.ref ||
-    siteMismatch(actual.site, expected.site)
-}
-
-function siteMismatch(actual: Array<string | number> | undefined, expected: Array<string | number> | undefined) {
-  return arrayMismatch(actual, expected)
-}
-
-function arrayMismatch(actual: any[] | undefined, expected: any[] | undefined) {
-  if (actual === undefined) {
-    return expected !== undefined
-  }
-  return expected === undefined ||
-    actual.length !== expected.length ||
-    actual.some((v, i) => v !== expected[i])
-}
 function getByPath(subject: any, sitePath: Array<string | number>) {
   return sitePath.reduce((p, s) => p[s], subject)
 }
@@ -155,33 +143,35 @@ function getByPath(subject: any, sitePath: Array<string | number>) {
 // }
 
 function invocationResponder(
-  { record, plugin, ref, tracker: source }: StubContextOptions,
+  context: StubContext,
   id: ReferenceId,
   args: any[],
-  { processArguments, site }: SpecPlugin.InvokeOptions
+  { mode, processArguments, site, meta }: SpecPlugin.InvokeOptions
 ): SpecPlugin.InvocationResponder {
+  const { record, plugin, ref } = context
   const expected = record.getExpectedAction()
-  const invokeId = record.getNextActionId()
-
-  const stubArgs = processArguments ? args.map((a, i) => {
-    source.site = [i]
-    return processArguments(invokeId, a)
-  }) : args
 
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref: id,
-    mode: ref.mode,
-    payload: stubArgs.map(a => record.findRefId(a) || a),
+    mode: mode || ref.mode,
+    payload: [],
     site,
+    meta
   }
+  const invokeId = record.getNextActionId()
 
+  const stubArgs = processArguments ? args.map((a, i) => {
+    context.site = [i]
+    return processArguments(invokeId, a)
+  }) : args
+
+  action.payload.push(...stubArgs.map(a => record.findRefId(a) || a))
   if (actionMismatch(action, expected)) {
     throw new ActionMismatch(record.specId, action, expected)
   }
-
-  logInvokeAction({ record, plugin: plugin.name, id }, invokeId, args)
   record.addAction(action)
+  logInvokeAction({ record, plugin: plugin.name, id }, invokeId, args)
 
   return {
     getResult: () => {
@@ -235,17 +225,15 @@ function getResult(record: ValidateRecord, expected: ReturnAction | ThrowAction)
   }
 
   const plugin = getPlugin(expectedReference.plugin)
-  const tracker: CircularTracker = {}
   const ref: SpecReference = { plugin: plugin.name, mode: expectedReference.mode, testDouble: notDefined, source: expectedReference.source }
-  const id = record.addRef(ref)
-  const context = stubContext({ record, plugin, ref, id, tracker })
+  const refId = record.addRef(ref)
 
-  logCreateStub({ plugin: plugin.name, id })
+  const circularRefs: CircularReference[] = []
+  const context = createPluginStubContext({ record, plugin, ref, refId: refId, circularRefs })
+
+  logCreateStub({ plugin: plugin.name, id: refId })
   ref.testDouble = plugin.createStub(context, expectedReference.subject, expectedReference.meta)
-  if (tracker.site && tracker.site.length > 0) {
-    const site = tracker.site.pop()!
-    tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
-  }
+  fixCircularReferences(record, refId, circularRefs)
 
   return {
     type: expected.type,

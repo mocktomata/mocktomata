@@ -1,11 +1,16 @@
-import { CircularTracker } from './createSaveSpec';
-import { stubContext } from './createSimulateSpec';
+import { notDefined } from '../constants';
+import { createPluginStubContext } from './createSimulateSpec';
 import { ValidateRecord } from './createValidateRecord';
+import { ReferenceMismatch } from './errors';
 import { getPlugin } from './findPlugin';
+import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 import { logAutoInvokeAction, logCreateStub } from './logs';
 import { InstantiateAction, InvokeAction, SpecOptions, SpecReference } from './types';
+import { referenceMismatch } from './validations';
 
-export function createSimulator(record: ValidateRecord, _options: SpecOptions) {
+export type Simulator = { run(): void }
+
+export function createSimulator(record: ValidateRecord, _options: SpecOptions): Simulator {
   // use `options` to control which simulator to use.
   // currently only one.
   return createSpecImmediateSimulator(record)
@@ -40,63 +45,67 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
 
   // TODO: this is likely not needed because invokeAction.ref can only be ReferenceId,
   // if we don't support getter/setter.
-  const id = record.resolveRefId(expectedAction.ref)
-  if (!id) return
+  const refId = record.resolveRefId(expectedAction.ref)
+  if (!refId) return
 
   if (expectedAction.mode === 'plugin-invoked') {
-    const origRef = record.getOriginalRef(id)!
+    const origRef = record.getOriginalRef(refId)!
     const plugin = getPlugin(origRef.plugin)
-    const tracker: CircularTracker = {}
     const ref: SpecReference = { plugin: plugin.name, subject: undefined, source: { ref: expectedAction.ref, site: undefined }, mode: 'plugin-invoked' }
     record.addRef(ref)
-    logCreateStub({ plugin: plugin.name, id: id })
+    logCreateStub({ plugin: plugin.name, id: refId })
 
-    const context = stubContext({ record, plugin, ref, id, tracker })
+    const circularRefs: CircularReference[] = []
+    const context = createPluginStubContext({ record, plugin, ref, refId, circularRefs })
     ref.testDouble = plugin.createStub(context, undefined, origRef.meta)
-    if (tracker.site && tracker.site.length > 0) {
-      const site = tracker.site.pop()!
-      tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
-    }
+    fixCircularReferences(record, refId, circularRefs)
     return
   }
-  const ref = record.getRef(id)
+
+  const ref = record.getRef(refId)
   if (!ref) {
-    throw new Error(`simulator.processInvoke can't find reference for ${id}`)
+    throw new Error(`simulator.processInvoke can't find reference for ${refId}`)
   }
 
   // console.log('exp', expectedAction, ref)
   // console.log('expectedAction', expectedAction, record.actual)
-  const args = expectedAction.payload.map(a => {
-    if (typeof a !== 'string') return a
+  const args = expectedAction.payload.map(arg => {
+    if (typeof arg !== 'string') return arg
 
-    const reference = record.getRef(a)
+    const reference = record.getRef(arg)
     if (reference) return reference.testDouble
 
-    const origRef = record.getOriginalRef(a)
+    const origRef = record.getOriginalRef(arg)
     if (!origRef) {
-      throw new Error(`Can't find reference of ${a}`)
+      throw new Error(`Can't find reference of ${arg}`)
     }
 
     if (!origRef.source) {
-      throw new Error(`no source found for ${a}`)
+      throw new Error(`no source found for ${arg}`)
     }
-
     const plugin = getPlugin(origRef.plugin)
-    const tracker: CircularTracker = {}
-    const ref: SpecReference = { plugin: plugin.name, subject: undefined, source: { ref: expectedAction.ref, site: undefined }, mode: 'plugin-invoked' }
-    record.addRef(ref)
-    logCreateStub({ plugin: plugin.name, id })
-
-    const context = stubContext({ record, plugin, ref, id, tracker })
-    ref.testDouble = plugin.createStub(context, undefined, origRef.meta)
-    if (tracker.site && tracker.site.length > 0) {
-      const site = tracker.site.pop()!
-      tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
+    const expectedActionId = record.getNextActionId()
+    const ref: SpecReference = {
+      plugin: plugin.name,
+      subject: undefined,
+      testDouble: notDefined,
+      source: { ref: expectedActionId, site: undefined },
+      mode: origRef.mode
     }
+    if (referenceMismatch(ref, origRef)) throw new ReferenceMismatch(record.specId, ref, origRef)
+    record.addRef(ref)
+    logCreateStub({ plugin: plugin.name, id: refId })
+
+    const circularRefs: CircularReference[] = []
+    ref.testDouble = plugin.createStub(
+      createPluginStubContext({ record, plugin, ref, refId: arg, circularRefs }),
+      undefined,
+      origRef.meta)
+    fixCircularReferences(record, arg, circularRefs)
     return ref.testDouble
   })
 
-  logAutoInvokeAction(ref, id, record.getExpectedActionId(), args)
+  logAutoInvokeAction(ref, refId, record.getExpectedActionId(), args)
   // console.log('before auto', record.original)
   // console.log('before auto', record.actual)
   const invokeSubject = getInvokeSubject(ref.testDouble, expectedAction.site)

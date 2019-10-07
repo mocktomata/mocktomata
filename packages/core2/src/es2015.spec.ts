@@ -655,7 +655,7 @@ describe('class', () => {
   })
 
   k.duo('class with circular reference accessing', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec.mock(ClassWithCircular)
       const f = new Subject()
 

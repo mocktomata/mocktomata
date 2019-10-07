@@ -21,8 +21,8 @@ export function getRef(record: SpecRecord, ref: ReferenceId | ActionId): SpecRef
   return record.refs[Number(refId)]
 }
 
-export function findRefId(refs: SpecReference[], testDouble: any) {
-  const id = refs.findIndex(r => r.testDouble === testDouble)
+export function findRefId(refs: SpecReference[], subjectOrTestDouble: any) {
+  const id = refs.findIndex(r => r.testDouble === subjectOrTestDouble || r.subject === subjectOrTestDouble)
   return id === -1 ? undefined : String(id)
 }
 

@@ -7,6 +7,7 @@ import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
 import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
+import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 
 export async function createSaveSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
   const record = createSpyRecord(specId, options)
@@ -35,28 +36,29 @@ function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions<S>): S
   if (!plugin) return undefined
 
   const ref: SpecReference = { plugin: plugin.name, subject, testDouble: notDefined, source, mode }
-  const id = record.addRef(ref)
+  const refId = record.addRef(ref)
 
-  logCreateSpy({ plugin: plugin.name, id }, subject)
-  const tracker: CircularTracker = {}
-  const context = { record, plugin, ref, id, tracker }
-  ref.testDouble = plugin.createSpy(createPluginSpyContext(context), subject)
-  if (tracker.site && tracker.site.length > 0) {
-    const site = tracker.site.pop()!
-    tracker.site.reduce((p, v) => p[v], ref.testDouble)[site] = ref.testDouble
-  }
+  logCreateSpy({ plugin: plugin.name, id: refId }, subject)
+  const circularRefs: CircularReference[] = []
+  ref.testDouble = plugin.createSpy(
+    createPluginSpyContext({ record, plugin, ref, refId, circularRefs }),
+    subject)
+  fixCircularReferences(record, refId, circularRefs)
   return ref.testDouble
-}
-export type CircularTracker = {
-  site?: Array<string | number>
 }
 
 type SpyContext = {
   record: Except<SpyRecord, 'getSpecRecord'>,
+  /**
+   * This need to be passed to all spy contexts,
+   * to every getSpy/createSpy.
+   * NOTE: that means it probably can be absorbed into `record`.
+   */
+  circularRefs: CircularReference[],
   plugin: SpecPluginInstance,
+  refId: ReferenceId,
   ref: SpecReference,
-  id: ReferenceId,
-  tracker: CircularTracker,
+  site?: Array<keyof any>,
 }
 
 /**
@@ -64,7 +66,7 @@ type SpyContext = {
  */
 function createPluginSpyContext(context: SpyContext): SpecPlugin.CreateSpyContext {
   return {
-    id: context.id,
+    id: context.refId,
     getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, id, subject, getOptions),
     invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder(context, id, args, invokeOptions),
     instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
@@ -77,7 +79,7 @@ export function instanceRecorder(
   args: any[],
   { mode, processArguments, meta }: SpecPlugin.InstantiateOptions
 ): SpecPlugin.InstantiationRecorder {
-  const { record, plugin, ref, tracker } = context
+  const { record, plugin, ref } = context
 
   const action: Omit<InstantiateAction, 'tick' | 'instanceId'> = {
     type: 'instantiate',
@@ -86,15 +88,15 @@ export function instanceRecorder(
     payload: [],
     meta
   }
-  const instantiateId = record.addAction(action)
+  const instantiateId = record.getNextActionId()
 
   const spiedArgs = processArguments ? args.map((a, i) => {
-    tracker.site = [i]
+    context.site = [i]
     return processArguments(instantiateId, a)
   }) : args
 
   action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
-
+  record.addAction(action)
   logInstantiateAction({ record, plugin: plugin.name, id }, instantiateId, args)
 
   let instanceId: ReferenceId
@@ -114,7 +116,7 @@ function invocationRecorder(
   args: any[],
   { mode, processArguments, site, meta }: SpecPlugin.InvokeOptions
 ) {
-  const { record, plugin, ref, tracker } = context
+  const { record, plugin, ref } = context
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref: id,
@@ -123,15 +125,15 @@ function invocationRecorder(
     site,
     meta
   }
-  const invokeId = record.addAction(action)
+  const invokeId = record.getNextActionId()
 
   const spiedArgs = processArguments ? args.map((a, i) => {
-    tracker.site = [i]
+    context.site = [i]
     return processArguments(invokeId, a)
   }) : args
 
   action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
-
+  record.addAction(action)
   logInvokeAction({ record, plugin: plugin.name, id }, invokeId, args)
 
   return {
@@ -149,9 +151,9 @@ function processInvokeResult(
   value: any,
   { processArgument, meta }: SpecPlugin.SpyResultOptions = {}
 ) {
-  const { record, plugin, tracker } = context
+  const { record, plugin } = context
   const returnId = record.getNextActionId()
-  tracker.site = undefined
+  context.site = undefined
   const result = processArgument ? processArgument(returnId, value) : value
   const action: Omit<ReturnAction | ThrowAction, 'tick'> = {
     type,
@@ -169,14 +171,19 @@ function processInvokeResult(
  * NOTE: the specified subject can be already a test double, passed to the system during simulation.
  */
 export function getSpy<S>(
-  { record, ref, tracker }: SpyContext,
+  context: SpyContext,
   id: ActionId,
-  subjectOrTestDouble: S, options: SpecPlugin.GetSpyOptions
+  subjectOrTestDouble: S,
+  options: SpecPlugin.GetSpyOptions
 ): S {
+  const { record, ref } = context
   const reference = record.findRef(subjectOrTestDouble)
   if (reference) {
+    // todo: may not need
+    context.site = options.site
     if (reference.testDouble === notDefined) {
-      tracker.site = options.site
+      const subjectId = record.findRefId(subjectOrTestDouble)!
+      context.circularRefs.push({ sourceId: context.refId, sourceSite: options.site || [], subjectId })
     }
     return reference.testDouble
   }

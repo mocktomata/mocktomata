@@ -52,7 +52,7 @@ export namespace SpecPlugin {
     getSpy<S>(id: ActionId, subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
     invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationResponder,
-    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
+    resolve<V>(id: ReferenceId, refIdOrValue: V, options?: ResolveOptions): V,
     instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
   }
 
