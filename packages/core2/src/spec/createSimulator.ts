@@ -94,7 +94,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     }
     if (referenceMismatch(ref, origRef)) throw new ReferenceMismatch(record.specId, ref, origRef)
     record.addRef(ref)
-    logCreateStub({ plugin: plugin.name, id: refId })
+    logCreateStub({ plugin: plugin.name, id: arg })
 
     const circularRefs: CircularReference[] = []
     ref.testDouble = plugin.createStub(
