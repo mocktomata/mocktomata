@@ -112,6 +112,5 @@ export namespace SpecPlugin {
   }
   export type ResolveOptions = {
     site?: Array<string | number>
-    // meta?: Meta
   }
 }

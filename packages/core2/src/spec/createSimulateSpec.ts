@@ -105,15 +105,13 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
 
       const site = resolveOptions.site
       if (siteMismatch(site, origRef.source.site)) {
-        throw new ReferenceMismatch(record.specId, { ...origRef, source: { ...origRef.source, site } }, origRef)
+        throw new ReferenceMismatch(record.specId, { ...origRef, source: { ref: origRef.source.ref, site } }, origRef)
       }
       const sourceRef = record.getRef(origRef.source.ref)!
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
       return createStub<V>({ record, subject, source: { ref: id, site } })
     },
     instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
-    // declare: <S>(stub: S) => createStubRecorder<S>({ record, plugin }, stub),
-    // getStub: <A>(subject: A) => getStub<A>({ record }, subject)
   }
 }
 
@@ -122,26 +120,6 @@ function getByPath(subject: any, sitePath: Array<string | number>) {
   return sitePath.reduce((p, s) => p[s], subject)
 }
 
-// function getStub<S>({ record }: { record: ValidateRecord }, subject: S): S {
-//   const stub = record.findTestDouble(subject)
-//   if (stub) return stub
-
-//   return createStub({ record }, subject) || subject
-// }
-
-// function createStubRecorder<S>(
-//   { record, plugin }: RecorderContext,
-//   stub: S
-// ): StubRecorder<S> {
-//   const ref = record.addRef({ plugin, testDouble: stub })
-
-//   logCreateStub({ plugin, ref })
-
-//   return {
-//     stub,
-//     invoke: (args: any[]) => createInvocationResponder({ record, plugin }, ref, args)
-//   }
-// }
 
 function invocationResponder(
   context: StubContext,
