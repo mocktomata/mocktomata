@@ -7,6 +7,7 @@ import { CircularReference, fixCircularReferences } from './fixCircularReference
 import { logAutoInvokeAction, logCreateStub } from './logs';
 import { InstantiateAction, InvokeAction, SpecOptions, SpecReference } from './types';
 import { referenceMismatch } from './validations';
+import { log } from '../log';
 
 export type Simulator = { run(): void }
 
@@ -42,7 +43,7 @@ function createSpecImmediateSimulator(record: ValidateRecord) {
 
 function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
   if (expectedAction.mode === 'passive') return
-
+  log.debug('simulator processInvoke() starts', expectedAction)
   // TODO: this is likely not needed because invokeAction.ref can only be ReferenceId,
   // if we don't support getter/setter.
   const refId = record.resolveRefId(expectedAction.ref)

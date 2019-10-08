@@ -10,9 +10,6 @@ beforeAll(async () => {
   harness.io.addPluginModule('@komondor-lab/es2015', es2015)
   await loadPlugins(harness)
 })
-// afterAll(() => {
-//   harness.logSpecs()
-// })
 
 describe('function', () => {
   k.duo('no input no result', (title, spec) => {
@@ -204,6 +201,16 @@ describe('function', () => {
 
       expect(actual.name).toBe('node')
       expect(actual.args).toEqual(['--version'])
+
+      await spec.done()
+    })
+  })
+  k.duo('function with static prop', (title, spec) => {
+    test(title, async () => {
+      const fn = Object.assign(function () { }, { a: 1 })
+
+      const mock = await spec.mock(fn)
+      expect(mock.a).toBe(1)
 
       await spec.done()
     })
@@ -668,4 +675,96 @@ describe('class', () => {
       await spec.done()
     })
   })
+
+  class Channel {
+    listeners: any[] = []
+    stdio: any
+    constructor() {
+      this.stdio = this
+    }
+    on(listener: any) {
+      this.listeners.push(listener)
+    }
+    emit(data: any) {
+      this.listeners.forEach(l => l(data))
+    }
+  }
+
+  class Ssh {
+    channel: Channel
+    constructor() {
+      this.channel = new Channel()
+    }
+    exec(cmd: string, cb: Function) {
+      cb(this.channel)
+      this.channel.stdio.emit(cmd)
+    }
+  }
+
+  // TODO: throws NotSupported error for callback with complex object.
+  // This gives indication to the user that a plugin is need to support this subject
+  // To fix this, I need to:
+  // 1. get property key and value from object without invoking getter.
+  // 2. Add GetAction SetAction back
+  k.duo('callback with complex object', (title, spec) => {
+    test.skip(title, async () => {
+      const Subject = await spec.mock(Ssh)
+      const f = new Subject()
+
+      let actual
+      f.exec('echo', (channel: any) => {
+        // can't create channel with stdio.on() from data
+        // unless start doing new Function(...)
+        channel.stdio.on((data: any) => actual = data)
+      })
+
+      expect(actual).toBe('echo')
+      await spec.done()
+      harness.logSpec(title)
+      harness.showLog()
+    })
+  })
+
+  k.duo('class/callbackWithComposite', (title, spec) => {
+    test(title, async () => {
+      class Foo {
+        on(compositeFn: any) {
+          return this.internal(compositeFn)
+        }
+        internal(input: any) {
+          expect(input.value).toBe('xyz')
+          return input
+        }
+      }
+      const fn = Object.assign(
+        function () { return },
+        {
+          value: 'xyz'
+        }
+      )
+      const s = await spec.mock(Foo)
+      const f = new s()
+      const actual = f.on(fn)
+
+      expect(actual.value).toBe('xyz')
+
+      await spec.done()
+    })
+  })
+
+    k.duo('class/withProperty', (title, spec) => {
+      class WithProperty {
+        y = 1
+        do(x: any) { return x }
+      }
+      test(title, async () => {
+        const s = await spec.mock(WithProperty)
+        const p = new s()
+        expect(p.do(2)).toBe(2)
+        expect(p.y).toBe(1)
+        p.y = 3
+        expect(p.y).toBe(3)
+        await spec.done()
+      })
+    })
 })

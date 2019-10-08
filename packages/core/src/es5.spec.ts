@@ -383,65 +383,6 @@ describe('promise', () => {
 
 // describe('es5/class', () => {
 
-//   k.trio('class with circular reference accessing', (title, spec) => {
-//     test(title, async () => {
-//       const s = await spec(ClassWithCircular)
-//       const f = new s.subject()
-
-//       let actual
-//       f.exec('echo', (data: any) => {
-//         actual = data.cirRef.value
-//       })
-
-//       t.strictEqual(actual, 'echo')
-//       await s.done()
-//     })
-//   })
-
-//   class Channel {
-//     listeners: any[] = []
-//     stdio: any
-//     constructor() {
-//       this.stdio = this
-//     }
-//     on(listener: any) {
-//       this.listeners.push(listener)
-//     }
-//     emit(data: any) {
-//       this.listeners.forEach(l => l(data))
-//     }
-//   }
-
-//   class Ssh {
-//     channel: Channel
-//     constructor() {
-//       this.channel = new Channel()
-//     }
-//     exec(cmd: string, cb: Function) {
-//       cb(this.channel)
-//       this.channel.stdio.emit(cmd)
-//     }
-//   }
-
-//   // TODO: throws NotSupported error for callback with complex object.
-//   // This gives indication to the user that a plugin is need to support this subject
-//   k.trio('callback with complex object', (title, spec) => {
-//     test.skip(title, async () => {
-//       const s = await spec(Ssh)
-//       const f = new s.subject()
-
-//       let actual
-//       f.exec('echo', (channel: any) => {
-//         // can't create channel with stdio.on() from data
-//         // unless start doing new Function(...)
-//         channel.stdio.on((data: any) => actual = data)
-//       })
-
-//       t.strictEqual(actual, 'echo')
-//       await s.done()
-//     })
-//   })
-
 //   k.trio('class/callbackWithComposite', (title, spec) => {
 //     test(title, async () => {
 //       class Foo {

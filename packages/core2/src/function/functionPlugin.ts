@@ -1,6 +1,7 @@
 // import { reduceKey } from 'type-plus';
 import { SpecPlugin } from '../spec';
-import { hasPropertyInPrototype } from '../utils';
+import { hasPropertyInPrototype, getPropertyNames } from '../utils';
+import { reduceKey } from 'type-plus';
 
 export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
   name: 'function',
@@ -37,7 +38,7 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
    * })
    */
   createSpy: ({ id, invoke, getSpy }, subject) => {
-    return function (this: any, ...args: any[]) {
+    return Object.assign(function (this: any, ...args: any[]) {
       // Assuming any functions or functions within object are callbacks to be called by the subject.
       const invocation = invoke(id, args, { processArguments: (id, arg) => getSpy(id, arg, { mode: 'autonomous' }) })
       try {
@@ -47,10 +48,13 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       catch (err) {
         throw invocation.throws(err, { processArgument: (id, err) => getSpy(id, err, { mode: 'passive' }) })
       }
-    }
+    }, reduceKey(subject, (p, v) => {
+      p[v] = getSpy(id, subject[v])
+      return p
+    }, {} as any))
   },
-  createStub({ id, invoke, getSpy }, _subject, _meta) {
-    return function (this: any, ...args: any[]) {
+  createStub({ id, invoke, getSpy }, _subject, meta) {
+    return Object.assign(function (this: any, ...args: any[]) {
       // No transform. The creation of stub/imitator is handled by the framework.
       const invocation = invoke(id, args, { processArguments: (id, arg) => getSpy(id, arg) })
       const result = invocation.getResult()
@@ -60,6 +64,15 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       else {
         throw invocation.throws(result.value)
       }
-    }
+    }, reduceKey(meta, (p,v) => {
+      p[v] = getSpy(id, meta[v])
+      return p
+    }, {} as any))
   },
+  metarize({ metarize }, spy) {
+    return reduceKey(spy, (p, v) => {
+      p[v] = metarize(spy[v])
+      return p
+    }, {} as any)
+  }
 }

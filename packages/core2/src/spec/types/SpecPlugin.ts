@@ -49,7 +49,7 @@ export namespace SpecPlugin {
   }
 
   export type CreateStubContext = {
-    getSpy<S>(id: ActionId, subject: S, options?: GetSpyOptions): S,
+    getSpy<S>(id: ReferenceId | ActionId, subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
     invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationResponder,
     resolve<V>(id: ReferenceId, refIdOrValue: V, options?: ResolveOptions): V,

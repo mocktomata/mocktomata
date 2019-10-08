@@ -118,6 +118,7 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
 }
 
 function getByPath(subject: any, sitePath: Array<string | number>) {
+  if (subject === undefined) return subject
   return sitePath.reduce((p, s) => p[s], subject)
 }
 
