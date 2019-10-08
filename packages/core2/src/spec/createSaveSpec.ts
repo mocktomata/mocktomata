@@ -41,7 +41,7 @@ function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions<S>): S
   logCreateSpy({ plugin: plugin.name, id: refId }, subject)
   const circularRefs: CircularReference[] = []
   ref.testDouble = plugin.createSpy(
-    createPluginSpyContext({ record, plugin, ref, refId, circularRefs }),
+    createPluginSpyContext({ record, plugin, ref, refId, circularRefs, currentId: refId }),
     subject)
   fixCircularReferences(record, refId, circularRefs)
   return ref.testDouble
@@ -58,6 +58,7 @@ type SpyContext = {
   plugin: SpecPluginInstance,
   refId: ReferenceId,
   ref: SpecReference,
+  currentId: ReferenceId | ActionId,
   site?: Array<keyof any>,
 }
 
@@ -67,7 +68,7 @@ type SpyContext = {
 function createPluginSpyContext(context: SpyContext): SpecPlugin.CreateSpyContext {
   return {
     id: context.refId,
-    getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, id, subject, getOptions),
+    getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
     invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder(context, id, args, invokeOptions),
     instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
   }
@@ -89,7 +90,7 @@ export function instanceRecorder(
     meta
   }
   const instantiateId = record.getNextActionId()
-
+  context.currentId = instantiateId
   const spiedArgs = processArguments ? args.map((a, i) => {
     context.site = [i]
     return processArguments(instantiateId, a)
@@ -105,6 +106,7 @@ export function instanceRecorder(
     setInstance: instance => {
       const reference: SpecReference = { plugin: plugin.name, mode: 'instantiate', testDouble: instance, subject: notDefined }
       instanceId = record.addRef(reference)
+      context.currentId = instanceId
       return record.getAction<InstantiateAction>(instantiateId).instanceId = instanceId
     }
   }
@@ -117,6 +119,7 @@ function invocationRecorder(
   { mode, processArguments, site, meta }: SpecPlugin.InvokeOptions
 ) {
   const { record, plugin, ref } = context
+
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref: id,
@@ -126,10 +129,10 @@ function invocationRecorder(
     meta
   }
   const invokeId = record.getNextActionId()
-
+  context.currentId = invokeId
   const spiedArgs = processArguments ? args.map((a, i) => {
     context.site = [i]
-    return processArguments(invokeId, a)
+    return processArguments(a)
   }) : args
 
   action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
@@ -153,8 +156,9 @@ function processInvokeResult(
 ) {
   const { record, plugin } = context
   const returnId = record.getNextActionId()
+  context.currentId = returnId
   context.site = undefined
-  const result = processArgument ? processArgument(returnId, value) : value
+  const result = processArgument ? processArgument(value) : value
   const action: Omit<ReturnAction | ThrowAction, 'tick'> = {
     type,
     ref: invokeId,
@@ -172,15 +176,12 @@ function processInvokeResult(
  */
 export function getSpy<S>(
   context: SpyContext,
-  id: ActionId,
   subjectOrTestDouble: S,
   options: SpecPlugin.GetSpyOptions
 ): S {
   const { record, ref } = context
   const reference = record.findRef(subjectOrTestDouble)
   if (reference) {
-    // todo: may not need
-    context.site = options.site
     if (reference.testDouble === notDefined) {
       const subjectId = record.findRefId(subjectOrTestDouble)!
       context.circularRefs.push({ sourceId: context.refId, sourceSite: options.site || [], subjectId })
@@ -189,5 +190,5 @@ export function getSpy<S>(
   }
   const mode = options.mode || ref.mode
   const site = options.site
-  return createSpy({ record, source: { ref: id, site }, mode, subject: subjectOrTestDouble }) || subjectOrTestDouble
+  return createSpy({ record, source: { ref: context.currentId, site }, mode, subject: subjectOrTestDouble }) || subjectOrTestDouble
 }

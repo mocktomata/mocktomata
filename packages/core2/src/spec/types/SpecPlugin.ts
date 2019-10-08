@@ -28,10 +28,6 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
    */
   metarize?(context: { metarize(subject: any): void }, spy: S): M,
   recreateSubject?(context: {}, meta: M): S,
-  // /**
-  //  *
-  //  */
-  // createAutomaton(): void,
   /**
    * Creates an imitator that simulates the behavior of the original subject.
    * Imitator is used when the subject is created during the spec.
@@ -42,14 +38,14 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
 }
 export namespace SpecPlugin {
   export type CreateSpyContext = {
-    getSpy<S>(id: ReferenceId | ActionId, subject: S, options?: GetSpyOptions): S,
+    getSpy<S>(subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
     invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationRecorder,
     instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
   }
 
   export type CreateStubContext = {
-    getSpy<S>(id: ReferenceId | ActionId, subject: S, options?: GetSpyOptions): S,
+    getSpy<S>(subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
     invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationResponder,
     resolve<V>(id: ReferenceId, refIdOrValue: V, options?: ResolveOptions): V,
@@ -77,13 +73,13 @@ export namespace SpecPlugin {
 
   export type InvokeOptions = {
     mode?: ActionMode,
-    processArguments?: <A>(id: ActionId, arg: A) => A,
+    processArguments?: <A>(arg: A) => A,
     site?: Array<string | number>,
     meta?: Meta,
   }
 
   export type SpyResultOptions = {
-    processArgument?: <A>(id: ActionId, arg: A) => A,
+    processArgument?: <A>(arg: A) => A,
     meta?: Meta,
   }
 

@@ -59,7 +59,7 @@ function createStub<S>({ record, subject, source }: CreateStubOptions<S>): S {
   logCreateStub({ plugin: plugin.name, id: refId })
   const circularRefs: CircularReference[] = []
   ref.testDouble = plugin.createStub(
-    createPluginStubContext({ record, plugin, ref, refId, circularRefs }),
+    createPluginStubContext({ record, plugin, ref, refId, circularRefs, currentId: refId }),
     subject,
     expected.meta)
   fixCircularReferences(record, refId, circularRefs)
@@ -77,6 +77,7 @@ export type StubContext = {
   plugin: SpecPluginInstance,
   refId: ReferenceId,
   ref: SpecReference,
+  currentId: ReferenceId | ActionId,
   site?: Array<keyof any>,
 }
 
@@ -84,7 +85,7 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
   return {
     id: context.refId,
     invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(context, id, args, invokeOptions),
-    getSpy: <A>(id: ActionId, subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, id, subject, getOptions),
+    getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
     resolve: <V>(id: ReferenceId, refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
       const { record } = context
@@ -139,10 +140,10 @@ function invocationResponder(
     meta
   }
   const invokeId = record.getNextActionId()
-
+  context.currentId = invokeId
   const stubArgs = processArguments ? args.map((a, i) => {
     context.site = [i]
-    return processArguments(invokeId, a)
+    return processArguments(a)
   }) : args
 
   action.payload.push(...stubArgs.map(a => record.findRefId(a) || a))
@@ -208,7 +209,7 @@ function getResult(record: ValidateRecord, expected: ReturnAction | ThrowAction)
   const refId = record.addRef(ref)
 
   const circularRefs: CircularReference[] = []
-  const context = createPluginStubContext({ record, plugin, ref, refId: refId, circularRefs })
+  const context = createPluginStubContext({ record, plugin, ref, refId, circularRefs, currentId: refId })
 
   logCreateStub({ plugin: plugin.name, id: refId })
   ref.testDouble = plugin.createStub(context, expectedReference.subject, expectedReference.meta)

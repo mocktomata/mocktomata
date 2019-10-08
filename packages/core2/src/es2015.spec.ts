@@ -239,6 +239,15 @@ describe('object', () => {
       await spec.done()
     })
   })
+  k.duo('update primitive property', (title, spec) => {
+    test.skip(title, async () => {
+      const subject = await spec.mock({ a: 1 })
+      expect(subject.a).toBe(1)
+      subject.a = 2
+      expect(subject.a).toBe(2)
+      await spec.done()
+    })
+  })
   k.duo('primitive method', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock({ echo: (x: number) => x })
@@ -468,7 +477,7 @@ describe('class', () => {
       return x
     }
   }
-  k.save('class method with callback', (title, spec) => {
+  k.duo('class method with callback', (title, spec) => {
     test(title, async () => {
       const s = await spec.mock(WithCallback)
       const cb = new s()
@@ -712,11 +721,7 @@ describe('class', () => {
       const f = new Subject()
 
       let actual
-      f.exec('echo', (channel: any) => {
-        // can't create channel with stdio.on() from data
-        // unless start doing new Function(...)
-        channel.stdio.on((data: any) => actual = data)
-      })
+      f.exec('echo', (channel: any) => channel.stdio.on((data: any) => actual = data))
 
       expect(actual).toBe('echo')
       await spec.done()
@@ -752,19 +757,19 @@ describe('class', () => {
     })
   })
 
-    k.duo('class/withProperty', (title, spec) => {
-      class WithProperty {
-        y = 1
-        do(x: any) { return x }
-      }
-      test(title, async () => {
-        const s = await spec.mock(WithProperty)
-        const p = new s()
-        expect(p.do(2)).toBe(2)
-        expect(p.y).toBe(1)
-        p.y = 3
-        expect(p.y).toBe(3)
-        await spec.done()
-      })
+  k.duo('class/withProperty', (title, spec) => {
+    class WithProperty {
+      y = 1
+      do(x: any) { return x }
+    }
+    test(title, async () => {
+      const s = await spec.mock(WithProperty)
+      const p = new s()
+      expect(p.do(2)).toBe(2)
+      expect(p.y).toBe(1)
+      p.y = 3
+      expect(p.y).toBe(3)
+      await spec.done()
     })
+  })
 })

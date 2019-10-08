@@ -9,13 +9,13 @@ export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rej
     const spy = subject.then(
       result => {
         return call.returns(result, {
-          processArgument: (id, v) => getSpy(id, v),
+          processArgument: getSpy,
           meta: { state: 'fulfilled' }
         })
       },
       err => {
         throw call.returns(err, {
-          processArgument: (id, v) => getSpy(id, v),
+          processArgument: getSpy,
           meta: { state: 'rejected' }
         })
       })

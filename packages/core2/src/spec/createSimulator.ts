@@ -57,7 +57,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     logCreateStub({ plugin: plugin.name, id: refId })
 
     const circularRefs: CircularReference[] = []
-    const context = createPluginStubContext({ record, plugin, ref, refId, circularRefs })
+    const context = createPluginStubContext({ record, plugin, ref, refId, circularRefs, currentId: refId })
     ref.testDouble = plugin.createStub(context, undefined, origRef.meta)
     fixCircularReferences(record, refId, circularRefs)
     return
@@ -99,7 +99,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
 
     const circularRefs: CircularReference[] = []
     ref.testDouble = plugin.createStub(
-      createPluginStubContext({ record, plugin, ref, refId: arg, circularRefs }),
+      createPluginStubContext({ record, plugin, ref, refId: arg, circularRefs, currentId: arg }),
       undefined,
       origRef.meta)
     fixCircularReferences(record, arg, circularRefs)

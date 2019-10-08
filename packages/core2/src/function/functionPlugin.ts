@@ -1,7 +1,7 @@
 // import { reduceKey } from 'type-plus';
-import { SpecPlugin } from '../spec';
-import { hasPropertyInPrototype, getPropertyNames } from '../utils';
 import { reduceKey } from 'type-plus';
+import { SpecPlugin } from '../spec';
+import { hasPropertyInPrototype } from '../utils';
 
 export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
   name: 'function',
@@ -40,23 +40,23 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
   createSpy: ({ id, invoke, getSpy }, subject) => {
     return Object.assign(function (this: any, ...args: any[]) {
       // Assuming any functions or functions within object are callbacks to be called by the subject.
-      const invocation = invoke(id, args, { processArguments: (id, arg) => getSpy(id, arg, { mode: 'autonomous' }) })
+      const invocation = invoke(id, args, { processArguments: arg => getSpy(arg, { mode: 'autonomous' }) })
       try {
         const result = subject.apply(this, invocation.args)
-        return invocation.returns(result, { processArgument: (id, result) => getSpy(id, result, { mode: 'passive' }) })
+        return invocation.returns(result, { processArgument: result => getSpy(result, { mode: 'passive' }) })
       }
       catch (err) {
-        throw invocation.throws(err, { processArgument: (id, err) => getSpy(id, err, { mode: 'passive' }) })
+        throw invocation.throws(err, { processArgument: err => getSpy(err, { mode: 'passive' }) })
       }
     }, reduceKey(subject, (p, v) => {
-      p[v] = getSpy(id, subject[v])
+      p[v] = getSpy(subject[v])
       return p
     }, {} as any))
   },
   createStub({ id, invoke, getSpy }, _subject, meta) {
     return Object.assign(function (this: any, ...args: any[]) {
       // No transform. The creation of stub/imitator is handled by the framework.
-      const invocation = invoke(id, args, { processArguments: (id, arg) => getSpy(id, arg) })
+      const invocation = invoke(id, args, { processArguments: getSpy })
       const result = invocation.getResult()
       if (result.type === 'return') {
         return invocation.returns(result.value)
@@ -64,8 +64,8 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       else {
         throw invocation.throws(result.value)
       }
-    }, reduceKey(meta, (p,v) => {
-      p[v] = getSpy(id, meta[v])
+    }, reduceKey(meta, (p, v) => {
+      p[v] = getSpy(meta[v])
       return p
     }, {} as any))
   },
