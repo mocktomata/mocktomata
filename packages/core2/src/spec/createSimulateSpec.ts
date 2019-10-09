@@ -1,4 +1,4 @@
-import { Omit } from 'type-plus';
+import { Omit, RequiredPick } from 'type-plus';
 import { notDefined } from '../constants';
 import { SpecContext } from '../context';
 import { assertMockable } from './assertMockable';
@@ -41,12 +41,15 @@ export type StubContextInternal = {
 
 function createStub<S>({ record, subject, source }: CreateStubOptions<S>): S {
   const expected = record.getExpectedReference()
-
   const plugin = findPlugin(subject)
   if (!plugin) {
     throw new PluginNotFound(expected.plugin)
   }
 
+  return createStubInternal(record, plugin, subject, expected, source)
+}
+
+function createStubInternal(record: ValidateRecord, plugin: RequiredPick<SpecPlugin, 'name'>, subject: any, expected: SpecReference, source: any) {
   const ref: SpecReference = {
     plugin: plugin.name,
     subject,
@@ -89,28 +92,29 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
     resolve: <V>(id: ReferenceId, refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
       const { record } = context
-
+      const site = resolveOptions.site
       const reference = record.getRef(refOrValue)
       if (reference) {
         if (reference.testDouble === notDefined) {
-          context.circularRefs.push({ sourceId: id, sourceSite: resolveOptions.site || [], subjectId: refOrValue })
+          context.circularRefs.push({ sourceId: id, sourceSite: site || [], subjectId: refOrValue })
         }
         return reference.testDouble
       }
 
       // ref is from saved record, so the original reference must exists.
       const origRef = record.getOriginalRef(refOrValue)!
+
       if (!origRef.source) {
         throw new Error(`no source found for ${refOrValue}`)
       }
 
-      const site = resolveOptions.site
       if (siteMismatch(site, origRef.source.site)) {
         throw new ReferenceMismatch(record.specId, { ...origRef, source: { ref: origRef.source.ref, site } }, origRef)
       }
       const sourceRef = record.getRef(origRef.source.ref)!
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
-      return createStub<V>({ record, subject, source: { ref: id, site } })
+      const plugin = getPlugin(origRef.plugin)
+      return createStubInternal(record, plugin, subject, origRef, { ref: id, site })
     },
     instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
   }
@@ -205,7 +209,13 @@ function getResult(record: ValidateRecord, expected: ReturnAction | ThrowAction)
   }
 
   const plugin = getPlugin(expectedReference.plugin)
-  const ref: SpecReference = { plugin: plugin.name, mode: expectedReference.mode, testDouble: notDefined, source: expectedReference.source }
+  const ref: SpecReference = {
+    plugin: plugin.name,
+    mode: expectedReference.mode,
+    subject: notDefined,
+    testDouble: notDefined,
+    source: expectedReference.source
+  }
   const refId = record.addRef(ref)
 
   const circularRefs: CircularReference[] = []

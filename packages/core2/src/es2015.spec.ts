@@ -63,6 +63,15 @@ describe('function', () => {
       await spec.done()
     })
   })
+  k.duo('no input, array output', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(() => [1, 2, 'c'])
+      const actual = subject()
+      expect(actual).toEqual([1, 2, 'c'])
+
+      await spec.done()
+    })
+  })
   k.duo('throwing error', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(() => { throw new Error('failed') })
