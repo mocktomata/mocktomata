@@ -38,18 +38,18 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
 }
 export namespace SpecPlugin {
   export type CreateSpyContext = {
-    getSpy<S>(subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
     invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationRecorder,
     instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
+    getSpy<S>(subject: S, options?: GetSpyOptions): S,
   }
 
   export type CreateStubContext = {
-    getSpy<S>(subject: S, options?: GetSpyOptions): S,
     id: ReferenceId,
     invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationResponder,
-    resolve<V>(id: ReferenceId, refIdOrValue: V, options?: ResolveOptions): V,
     instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
+    getSpy<S>(subject: S, options?: GetSpyOptions): S,
+    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
   }
 
   export type GetSpyOptions = {

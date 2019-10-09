@@ -14,9 +14,9 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
 
     return result
   },
-  createStub: ({ id, resolve }, _subject, meta) => {
+  createStub: ({ resolve }, _subject, meta) => {
     const stub = reduceKey(meta, (p, k) => {
-      p[k] = resolve(id, meta[k], { site: [k] })
+      p[k] = resolve(meta[k], { site: [k] })
       return p
     }, {} as any)
     return stub

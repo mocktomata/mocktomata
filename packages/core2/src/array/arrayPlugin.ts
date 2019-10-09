@@ -7,8 +7,8 @@ export const arrayPlugin: SpecPlugin<any[], any[]> = {
     subject.forEach((s, i) => subject[i] = getSpy(s, { site: [i] }))
     return subject
   },
-  createStub({ id, resolve }, _, meta) {
-    return meta.map((x, i) => resolve(id, x, { site: [i] }))
+  createStub({ resolve }, _, meta) {
+    return meta.map((x, i) => resolve(x, { site: [i] }))
   },
   metarize({ metarize }, spy) {
     return spy.map(metarize)

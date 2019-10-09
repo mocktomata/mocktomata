@@ -89,14 +89,14 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
     id: context.refId,
     invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(context, id, args, invokeOptions),
     getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
-    resolve: <V>(id: ReferenceId, refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
+    resolve: <V>(refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
       const { record } = context
       const site = resolveOptions.site
       const reference = record.getRef(refOrValue)
       if (reference) {
         if (reference.testDouble === notDefined) {
-          context.circularRefs.push({ sourceId: id, sourceSite: site || [], subjectId: refOrValue })
+          context.circularRefs.push({ sourceId: context.currentId, sourceSite: site || [], subjectId: refOrValue })
         }
         return reference.testDouble
       }
@@ -114,7 +114,7 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
       const sourceRef = record.getRef(origRef.source.ref)!
       const subject = getByPath(sourceRef.subject, origRef.source.site || [])
       const plugin = getPlugin(origRef.plugin)
-      return createStubInternal(record, plugin, subject, origRef, { ref: id, site })
+      return createStubInternal(record, plugin, subject, origRef, { ref: context.currentId, site })
     },
     instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
   }

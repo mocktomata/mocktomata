@@ -1,8 +1,8 @@
 import { SpyRecord } from './createSpyRecord'
-import { ReferenceId } from './types'
+import { ReferenceId, ActionId } from './types'
 
 export type CircularReference = {
-  sourceId: ReferenceId,
+  sourceId: ReferenceId | ActionId,
   sourceSite: Array<keyof any>,
   subjectId: ReferenceId,
 }
