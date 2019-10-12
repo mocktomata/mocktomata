@@ -6,7 +6,7 @@ export function getPropertyNames(target: any): string[] {
 }
 
 function isBaseObject(value: any) {
-  return value.__proto__ === null && value.constructor.name === 'Object'
+  return value === null || value.__proto__ === null && value.constructor.name === 'Object'
 }
 
 export function getInheritedPropertyNames(subjectClass: new () => any): string[] {
