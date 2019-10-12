@@ -822,7 +822,7 @@ describe('class', () => {
     })
   })
 
-  k.duo('class/callbackWithComposite', (title, spec) => {
+  k.duo('use composite callback function', (title, spec) => {
     test(title, async () => {
       class Foo {
         on(compositeFn: any) {
@@ -849,7 +849,7 @@ describe('class', () => {
     })
   })
 
-  k.duo('class/withProperty', (title, spec) => {
+  k.duo('class with property', (title, spec) => {
     class WithProperty {
       y = 1
       do(x: any) { return x }
