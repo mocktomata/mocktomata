@@ -1,7 +1,7 @@
 import a from 'assertron';
 import * as es2015 from './es2015';
 import { loadPlugins } from './spec/loadPlugins';
-import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
+import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, postReturn, recursive, simpleCallback, synchronous, fetch } from './test-artifacts';
 import k, { TestHarness } from './test-utils';
 
 let harness: TestHarness
@@ -72,6 +72,15 @@ describe('function', () => {
       await spec.done()
     })
   })
+  k.duo('array inputs', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(function takeArray(name: string, args: string[]) { return { name, args } })
+      const actual = subject('node', ['--version'])
+
+      a.satisfies(actual, { name: 'node', args: ['--version'] })
+      await spec.done()
+    })
+  })
   k.duo('throwing error', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(() => { throw new Error('failed') })
@@ -79,6 +88,26 @@ describe('function', () => {
 
       expect(err.message).toBe('failed')
 
+      await spec.done()
+    })
+  })
+  k.duo('throwing custom error', (title, spec) => {
+    test(title, async () => {
+      class CustomError extends Error {
+        constructor(message: string) {
+          super(message)
+
+          Object.setPrototypeOf(this, new.target.prototype)
+        }
+        x = 'x'
+        one = 1
+      }
+      const subject = await spec.mock(() => { throw new CustomError('failed') })
+      const err = a.throws<CustomError>(() => subject())
+
+      expect(err.message).toBe('failed')
+      expect(err.x).toBe('x')
+      expect(err.one).toBe(1)
       await spec.done()
     })
   })
@@ -92,6 +121,31 @@ describe('function', () => {
 
       expect(actual).toBe(3)
 
+      await spec.done()
+    })
+  })
+  function echo(value: any, callback: (v: any) => void) {
+    callback(value)
+  }
+
+  k.duo('callback receiving undefined', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(echo)
+      let actual: any
+      subject(undefined, v => actual = v)
+
+      expect(actual).toBeUndefined()
+      await spec.done()
+    })
+  })
+
+  k.duo('callback receiving null', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(echo)
+      let actual: any
+      subject(null, v => actual = v)
+
+      expect(actual).toBeNull()
       await spec.done()
     })
   })
@@ -203,6 +257,22 @@ describe('function', () => {
       await spec.done()
     })
   })
+  k.duo('invoke fetch style: with options and callback', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(fetch.success)
+      const actual = await fetch.add(subject, 1, 2)
+      expect(actual).toBe(3)
+      await spec.done()
+    })
+  })
+  k.duo('invoke fetch style: receive error in callback', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.mock(fetch.fail)
+      const actual = await a.throws(fetch.add(subject, 1, 2))
+      expect(actual).toEqual({ message: 'fail' })
+      await spec.done()
+    })
+  })
   k.duo('function with array arguments', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(function takeArray(name: string, args: string[]) { return { name, args } })
@@ -224,7 +294,18 @@ describe('function', () => {
       await spec.done()
     })
   })
-  test.todo('function with static prop')
+
+  k.duo('return out of scope value', (title, spec) => {
+    function scopingSpec(expected: number) {
+      return spec.mock(() => expected)
+    }
+
+    test(title, async () => {
+      await scopingSpec(1).then(subject => expect(subject()).toBe(1))
+      await scopingSpec(3).then(subject => expect(subject()).toBe(3))
+      await spec.done()
+    })
+  })
 })
 
 describe('object', () => {
@@ -335,7 +416,10 @@ describe('promise', () => {
   k.duo('resolve with no value', (title, spec) => {
     test(title, async () => {
       const subject = await spec.mock(noReturn.success)
-      await noReturn.doSomething(subject).then(() => spec.done())
+      await noReturn.doSomething(subject).then((v: any) => {
+        expect(v).toBeUndefined()
+        return spec.done()
+      })
     })
   })
 
@@ -428,7 +512,7 @@ describe('class', () => {
     })
   })
 
-  k.duo('invoke inherited method', (title, spec) => {
+  k.duo('invoke sub-class method', (title, spec) => {
     test(title, async () => {
       const Subject = await spec.mock(Boo)
 
@@ -590,7 +674,6 @@ describe('class', () => {
       return 'inner'
     }
   }
-
   k.duo('method delay invokes internal method', (title, spec) => {
     test(title, async () => {
       const Subject = await spec.mock(DelayedInvokeInternal)
@@ -633,7 +716,7 @@ describe('class', () => {
     }
   }
 
-  k.duo('run away promise will not be leaked and break another test', (title, spec) => {
+  k.duo('runaway promise will not be leaked and break another test', (title, spec) => {
     test(`${title}: setup`, async () => {
       const MockRejector = await spec.mock(RejectLeak)
       const e = new MockRejector()

@@ -50,28 +50,6 @@ k.trio('CustomError properties are kept', 'spec/errorCustomProperty', (title, sp
   })
 })
 
-// test('spec id containing invalid path character should throws InvalidID', () => {
-//   return Promise.all([
-//     'a > b',
-//     'new: some-condition'
-//   ].map(p => {
-//     return Promise.all([
-//       a.throws(() => spec(p, () => ({})), InvalidID),
-//       a.throws(() => spec.save(p, () => ({})), InvalidID),
-//       a.throws(() => spec.simulate(p, () => ({})), InvalidID)
-//     ])
-//   }))
-// })
-
-// test('spec id containing path should work', () => {
-//   return Promise.all([
-//     'spec/done',
-//     'spec\\done'
-//   ].map(p => {
-//     return spec(p, () => ({}))
-//   }))
-// })
-
 export function echo(a, callback) {
   callback(a)
 }
@@ -90,30 +68,6 @@ test('changes in artifact value is ignored in simulation', async () => {
   s2.subject(server2.host, host => actualHost = host)
   // tslint:disable-next-line:triple-equals
   t(actualHost == server.host)
-})
-
-k.trio('spec/undefined', (title, spec) => {
-  test.skip(title, async () => {
-    const s = await spec(echo)
-    let actual = 1
-    s.subject(undefined, a => actual = a)
-
-    t.strictEqual(actual, undefined)
-
-    await s.done()
-  })
-})
-
-k.trio('spec/null', (title, spec) => {
-  test(title, async () => {
-    const s = await spec(echo)
-    let actual = 1
-    s.subject(null, a => actual = a)
-
-    t.strictEqual(actual, null)
-
-    await s.done()
-  })
 })
 
 describe('on()', () => {

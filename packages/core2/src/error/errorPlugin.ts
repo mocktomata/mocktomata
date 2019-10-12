@@ -4,10 +4,7 @@ import { SpecPlugin } from '../spec'
 export const errorPlugin: SpecPlugin<Error, Record<string, any>> = {
   name: 'error',
   support: subject => subject instanceof Error,
-  createSpy: (_, subject) => {
-    // declare(subject, { meta: { message: subject.message } })
-    return subject
-  },
+  createSpy: (_, subject) => subject,
   createStub: (_, _subject, meta) => {
     return IsoError.fromSerializable(meta)
   },
