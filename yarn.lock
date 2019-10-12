@@ -2486,6 +2486,11 @@ acorn@^7.0.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.0.0.tgz#26b8d1cd9a9b700350b71c0905546f64d1284e7a"
   integrity sha512-PaF/MduxijYYt7unVGRuds1vBC9bFxbNf+VWqhOClfdgy7RlVkQqt610ig1/yxTgsDIfW1cWDel5EBbOy3jdtQ==
 
+acorn@^7.1.0:
+  version "7.1.0"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.1.0.tgz#949d36f2c292535da602283586c2477c57eb2d6c"
+  integrity sha512-kL5CuoXA/dgxlBbVrflsflzQ3PAas7RYZB52NOm/6839iVYJgKMJ3cQJD+t2i5+qFa8h3MDpEOJiS64E8JLnSQ==
+
 after@0.8.2:
   version "0.8.2"
   resolved "https://registry.yarnpkg.com/after/-/after-0.8.2.tgz#fedb394f9f0e02aa9768e702bda23b505fae7e1f"
@@ -6027,6 +6032,11 @@ is-buffer@^2.0.3, is-buffer@~2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.3.tgz#4ecf3fcf749cbd1e472689e109ac66261a25e725"
   integrity sha512-U15Q7MXTuZlrbymiz95PJpZxu8IlipAp4dtS3wOdgPXx3mqBnslrWU14kxfHB+Py/+2PVKSr37dMAgM2A4uArw==
+
+is-buffer@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/is-buffer/-/is-buffer-2.0.4.tgz#3e572f23c8411a5cfd9557c849e3665e0b290623"
+  integrity sha512-Kq1rokWXOPXWuaMAqZiJW4XxsmD9zGx9q4aePabbn3qCRGedtH7Cm+zV8WETitMfu1wdh+Rvd6w5egwSngUX2A==
 
 is-callable@^1.1.4:
   version "1.1.4"
@@ -10339,7 +10349,7 @@ terser@^4.1.2:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-tersify@^3.0.0, tersify@^3.0.1, tersify@^3.0.2, tersify@^3.0.4:
+tersify@^3.0.0, tersify@^3.0.1, tersify@^3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/tersify/-/tersify-3.0.4.tgz#945476b7f32a3e17505af48c2aed87f9c2ec5373"
   integrity sha512-wwY7ISFJ8d2xtykNLiALMpEZ0z7siScrgjPsEWNrUF5I9Horhu3yux98jMe2a+n0Bh/bgVQIYKZ0AVtCt0+VUQ==
@@ -10348,6 +10358,16 @@ tersify@^3.0.0, tersify@^3.0.1, tersify@^3.0.2, tersify@^3.0.4:
     acorn-bigint "^0.4.0"
     is-buffer "^2.0.3"
     unpartial "^0.6.1"
+
+tersify@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/tersify/-/tersify-3.0.6.tgz#c873d2f566623248973557eddf8e42a557816c2e"
+  integrity sha512-u28xDK+0yXvmexMaLVVXs5O66VPIUQAHsUilcbvwlYIShHYX9lvVoMvjZF9TeIdHiUx0wmT99GURlLG780/2yA==
+  dependencies:
+    acorn "^7.1.0"
+    acorn-bigint "^0.4.0"
+    is-buffer "^2.0.4"
+    unpartial "^0.6.3"
 
 test-exclude@^5.2.3:
   version "5.2.3"

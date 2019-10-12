@@ -45,7 +45,7 @@
     "ramda": "^0.26.1",
     "satisfier": "^5.0.2",
     "standard-log": "^3.1.2",
-    "tersify": "^3.0.4",
+    "tersify": "^3.0.6",
     "type-plus": "^1.27.0"
   },
   "devDependencies": {
