@@ -81,6 +81,7 @@ jobs:
       - checkout
       # - attach_workspace:
       #     at: '.'
+      - run: yarn
       - run: yarn build
       - run: yarn coverage --maxWorkers=2
       - store_test_results:
@@ -92,6 +93,7 @@ jobs:
       - checkout
       # - attach_workspace:
       #     at: '.'
+      - run: yarn
       - run: yarn build
       - run: yarn coverage --maxWorkers=2
       - store_test_results:
@@ -105,6 +107,7 @@ jobs:
       #     at: '.'
       - run: git config user.email $GIT_CONFIG_EMAIL
       - run: git config user.name $GIT_CONFIG_NAME
+      - run: yarn
       - run: yarn build
       - run:
           name: Authenticate with registry
