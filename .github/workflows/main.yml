@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - vnext
+
+jobs:
+  build:
+
+runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - uses: Borales/actions-yarn@master
+    - uses: Borales/actions-yarn@master
+      args: yarn bootstrap
+    - uses: Borales/actions-yarn@master
+      args: yarn commitlint-circle
+    - uses: Borales/actions-yarn@master
+      args: yarn lint
+    - uses: Borales/actions-yarn@master
+      args: yarn build
+    - uses: Borales/actions-yarn@master
+      args: yarn depcheck
+    - uses: Borales/actions-yarn@master
+      args: yarn coverage --maxWorkers=2
