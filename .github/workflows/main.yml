@@ -1,19 +1,28 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - vnext
+on: [push]
 jobs:
-  build:
+  node-latest:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: actions/npm@master
     - run: yarn
-    - run: yarn bootstrap
     - run: yarn commitlint-circle
     - run: yarn lint
     - run: yarn build
     - run: yarn depcheck
+    - run: yarn coverage --maxWorkers=2
+    - run: codecov
+  node-others:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [8.x, 10.x, 11.x]
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: yarn
     - run: yarn coverage --maxWorkers=2
