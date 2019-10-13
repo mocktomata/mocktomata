@@ -36,19 +36,13 @@ jobs:
       - checkout
       - restore_cache:
           name: Restore node_modules cache
-          key: node_modules-{{ checksum "yarn.lock" }}
+          key: yarn-{{ checksum "yarn.lock" }}
       - run:
           name: Install Dependencies
           command: |
             if [ ! -d node_modules ]; then
               yarn
             fi
-      - save_cache:
-          name: Save node modules cache
-          key: node_modules-{{ checksum "yarn.lock" }}
-          paths:
-            - node_modules
-            - packages/*/node_modules
       - run: yarn bootstrap
       - run: yarn commitlint-circle
       - run: yarn lint
@@ -57,6 +51,12 @@ jobs:
       - run: yarn coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
+      - save_cache:
+          name: Save node modules cache
+          key: yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules
+            - packages/*/node_modules
       - persist_to_workspace:
           root: '.'
           paths:
