@@ -70,8 +70,11 @@ jobs:
       - image: 'circleci/node:11'
     steps:
       - checkout
-      - attach_workspace:
-          at: '.'
+      # - attach_workspace:
+      #     at: '.'
+      - run: yarn
+      - run: yarn bootstrap
+      - run: yarn build
       - run: yarn coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
@@ -83,7 +86,7 @@ jobs:
       - attach_workspace:
           at: '.'
       - run: yarn coverage --maxWorkers=2
-      - run: npx codecov
+      - run: yarn codecov
       - store_test_results:
           path: .reports/junit
   node8:
