@@ -40,7 +40,7 @@ test('duration returns total duration since first elaspe() call', async () => {
 
   timeTracker.stop()
   expect(actual).toBeGreaterThanOrEqual(10)
-  expect(actual).toBeLessThanOrEqual(30)
+  expect(actual).toBeLessThanOrEqual(100)
 })
 
 test('elaspe() returns time passed since last elaspe() call', async () => {

@@ -83,8 +83,9 @@ jobs:
       - image: 'circleci/node:10'
     steps:
       - checkout
-      - attach_workspace:
-          at: '.'
+      # - attach_workspace:
+      #     at: '.'
+      - run: yarn build
       - run: yarn coverage --maxWorkers=2
       - run: yarn codecov
       - store_test_results:
@@ -94,8 +95,9 @@ jobs:
       - image: 'circleci/node:8'
     steps:
       - checkout
-      - attach_workspace:
-          at: '.'
+      # - attach_workspace:
+      #     at: '.'
+      - run: yarn build
       - run: yarn coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
@@ -104,10 +106,11 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout
-      - attach_workspace:
-          at: '.'
+      # - attach_workspace:
+      #     at: '.'
       - run: git config user.email $GIT_CONFIG_EMAIL
       - run: git config user.name $GIT_CONFIG_NAME
+      - run: yarn build
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
