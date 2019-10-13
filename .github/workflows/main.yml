@@ -10,30 +10,24 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: install
-    - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: bootstrap
-    - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: commitlint-circle
-    - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: lint
-    - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: build
-    - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: depcheck
-    - uses: actions/npm@master
-      runs: yarn
+    - run: yarn
       with:
         args: coverage --maxWorkers=2
