@@ -10,6 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - uses: Borales/actions-yarn@master
+      with:
+        args: install
     - uses: Borales/actions-yarn@master
       with:
         args: bootstrap
