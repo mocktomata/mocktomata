@@ -12,7 +12,7 @@ jobs:
     - run: yarn build
     - run: yarn depcheck
     - run: yarn coverage --maxWorkers=2
-    - run: codecov
+    - run: yarn codecov
   node-others:
     runs-on: ubuntu-latest
     strategy:
