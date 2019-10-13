@@ -11,23 +11,9 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/npm@master
     - run: yarn
-      with:
-        args: install
-    - run: yarn
-      with:
-        args: bootstrap
-    - run: yarn
-      with:
-        args: commitlint-circle
-    - run: yarn
-      with:
-        args: lint
-    - run: yarn
-      with:
-        args: build
-    - run: yarn
-      with:
-        args: depcheck
-    - run: yarn
-      with:
-        args: coverage --maxWorkers=2
+    - run: yarn bootstrap
+    - run: yarn commitlint-circle
+    - run: yarn lint
+    - run: yarn build
+    - run: yarn depcheck
+    - run: yarn coverage --maxWorkers=2
