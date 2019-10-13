@@ -26,7 +26,7 @@ test('read existing spec', async () => {
 test('write spec', async () => {
   const io = createIO()
 
-  const record: SpecRecord = { refs: [], actions: [{ type: 'instantiate', payload: [], ref: '1', tick: 0 }] }
+  const record: SpecRecord = { refs: [], actions: [] }
   await io.writeSpec('new spec', record)
 
   const repo = context.value.repository

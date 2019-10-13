@@ -1,4 +1,4 @@
-import { IO, SpecRecord, SpecNotFound, ScenarioNotFound } from '@komondor-lab/core';
+import { SpecIO, ScenarioIO, SpecRecord, SpecNotFound, ScenarioNotFound, SpecPluginModuleIO } from '@komondor-lab/core';
 import { createFileRepository } from '@komondor-lab/io-fs';
 import { context } from './context';
 
@@ -6,7 +6,7 @@ export type CreateIOOptions = {
   cwd: string
 }
 
-export function createIO(options?: CreateIOOptions): IO {
+export function createIO(options?: CreateIOOptions): SpecIO & SpecPluginModuleIO & ScenarioIO {
   const repo = options ?
     context.value.repository = createFileRepository(options.cwd) :
     context.value.repository

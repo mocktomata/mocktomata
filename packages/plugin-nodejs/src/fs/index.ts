@@ -1,7 +1,7 @@
-import { PluginActivationContext } from '@komondor-lab/core'
+import { SpecPluginActivationContext } from '@komondor-lab/core'
 import { readStreamPlugin } from './readStreamPlugin'
 
-export default function activate(context: PluginActivationContext) {
+export default function activate(context: SpecPluginActivationContext) {
   context.register(readStreamPlugin)
 }
 

@@ -1,4 +1,4 @@
-import { PluginModule } from '@komondor-lab/core';
+import { SpecPluginModule } from '@komondor-lab/core';
 import path from 'path';
 import { getConfig } from './config';
 import { createPluginRepository } from './plugin';
@@ -11,7 +11,7 @@ export type Repository = {
   readScenario(id: string): Promise<string>,
   writeScenario(id: string, data: string): Promise<void>,
   getPluginList(): Promise<string[]>,
-  loadPlugin(name: string): Promise<PluginModule>
+  loadPlugin(name: string): Promise<SpecPluginModule>
 }
 
 export function createFileRepository(cwd: string): Repository {

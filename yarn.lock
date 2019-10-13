@@ -2089,7 +2089,7 @@
   resolved "https://registry.yarnpkg.com/@types/podium/-/podium-1.0.0.tgz#bfaa2151be2b1d6109cc69f7faa9dac2cba3bb20"
   integrity sha1-v6ohUb4rHWEJzGn3+qnawsujuyA=
 
-"@types/ramda@^0.26.18", "@types/ramda@^0.26.19":
+"@types/ramda@^0.26.19":
   version "0.26.19"
   resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.26.19.tgz#400580597566c016e9743f17c1c48bf4671cda81"
   integrity sha512-lJuMZDXqZ8W2hl0Gz+wEPUhXcf/tZRuaO5vrxFD3Dv2XMqgTZVw+bvfS6iQAsio9XQV+uhkggtT4eLhDmUpI5g==
@@ -6313,7 +6313,7 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha1-6PvzdNxVb/iUehDcsFctYz8s+hA=
 
-iso-error@2.3.0, iso-error@^2.0.0, iso-error@^2.2.0:
+iso-error@2.3.0, iso-error@^2.2.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-2.3.0.tgz#d09d1eb23276650cf7589d29dd3b2348a05af1bb"
   integrity sha512-s9mgbDgrhqU7HvyHHjFZ7q0WJjqOUVv9tp8e+dXrkxG7pByLpfsu7ee0/Y/aoc8OCfyK/CNg6JNgbCjcgBodwQ==
@@ -9982,7 +9982,7 @@ stack-utils@^1.0.1:
   resolved "https://registry.yarnpkg.com/stack-utils/-/stack-utils-1.0.2.tgz#33eba3897788558bebfc2db059dc158ec36cebb8"
   integrity sha512-MTX+MeG5U994cazkjd/9KNAapsHnibjMLnfXodlkXw76JEea0UiNzrqidzo1emMwk7w5Qhc9jd4Bn9TBb1MFwA==
 
-standard-log-color@^1.5.3:
+standard-log-color@^1.5.6:
   version "1.5.6"
   resolved "https://registry.yarnpkg.com/standard-log-color/-/standard-log-color-1.5.6.tgz#5ff5bd5a580d00c52612a45e1c942327aed4c804"
   integrity sha512-Z/X+kX4bCC57ZOn5JlODegU72vWejX7y+JyTKIGqiEIqnfueu5jyi0W+LYomqD9eI7J/Q6ziFwZciK5ieV5cEQ==
@@ -9991,7 +9991,7 @@ standard-log-color@^1.5.3:
     standard-log "^3.1.3"
     unpartial "^0.6.3"
 
-standard-log@^3.1.1, standard-log@^3.1.2, standard-log@^3.1.3:
+standard-log@^3.1.2, standard-log@^3.1.3:
   version "3.1.3"
   resolved "https://registry.yarnpkg.com/standard-log/-/standard-log-3.1.3.tgz#1bdbf7a819a3e6e93ea079156e53fc91246e14ef"
   integrity sha512-eE05NIH44ZE7+6xVQHRoZP+88OYAZT7mon+lurL2K3CV3LkOA/ZCBtuIBeI9mx9E2nSVFIMJOw3B83c1OskzbQ==
@@ -10349,7 +10349,7 @@ terser@^4.1.2:
     source-map "~0.6.1"
     source-map-support "~0.5.12"
 
-tersify@^3.0.0, tersify@^3.0.1, tersify@^3.0.2:
+tersify@^3.0.0, tersify@^3.0.1:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/tersify/-/tersify-3.0.4.tgz#945476b7f32a3e17505af48c2aed87f9c2ec5373"
   integrity sha512-wwY7ISFJ8d2xtykNLiALMpEZ0z7siScrgjPsEWNrUF5I9Horhu3yux98jMe2a+n0Bh/bgVQIYKZ0AVtCt0+VUQ==

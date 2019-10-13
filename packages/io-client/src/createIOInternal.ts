@@ -1,10 +1,10 @@
-import { IO, PluginModule, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@komondor-lab/core';
+import { KomondorIO, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecPluginModule, SpecRecord } from '@komondor-lab/core';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
 import { CreateIOOptions } from './types';
 import { Context } from './typesInternal';
 
-export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<IO> {
+export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<KomondorIO> {
   const info = await getServerInfo({ fetch, location }, options)
   return {
     async readSpec(id: string): Promise<SpecRecord> {
@@ -38,7 +38,7 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
     async getPluginList() {
       return info.plugins
     },
-    async loadPlugin(name: string): Promise<PluginModule> {
+    async loadPlugin(name: string): Promise<SpecPluginModule> {
       return import(name)
     },
     // async loadConfig() {

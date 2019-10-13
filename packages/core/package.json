@@ -49,6 +49,7 @@
     "type-plus": "^1.27.0"
   },
   "devDependencies": {
-    "@types/ramda": "^0.26.19"
+    "@types/ramda": "^0.26.19",
+    "standard-log-color": "^1.5.6"
   }
 }

@@ -37,11 +37,6 @@
     "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
     "watch": "yarn test:watch"
   },
-  "workspaces": {
-    "nohoist": [
-      "@komondor-lab/plugin-fixture*"
-    ]
-  },
   "dependencies": {
     "@komondor-lab/core": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
@@ -52,7 +47,7 @@
     "@komondor-lab/plugin-fixture-dummy": "^1.0.3",
     "@komondor-lab/plugin-fixture-no-activate": "^1.0.0",
     "@types/tmp": "^0.1.0",
-    "assertron": "^7.0.2",
+    "assertron": "^7.1.2",
     "tmp": "^0.1.0"
   },
   "engines": {
