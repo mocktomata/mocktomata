@@ -9,24 +9,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: install
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: bootstrap
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: commitlint-circle
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: lint
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: build
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: depcheck
-    - uses: Borales/actions-yarn@master
+    - uses: actions/npm@master
+      runs: yarn
       with:
         args: coverage --maxWorkers=2
