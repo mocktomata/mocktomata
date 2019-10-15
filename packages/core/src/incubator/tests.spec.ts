@@ -1,5 +1,5 @@
 import { AssertOrder } from 'assertron';
-import k from '.';
+import { incubator } from '.';
 
 // beforeAll(async () => {
 //   const harness = k.createTestHarness()
@@ -10,7 +10,7 @@ test('KOMONDOR_TEST_MODE=simulate will only run the simulate test', async () => 
   const o = new AssertOrder(1)
   let actual = ''
   process.env.KOMONDOR_TEST_MODE = 'simulate'
-  k.trio('only simulate', (title) => {
+  incubator.trio('only simulate', (title) => {
     o.once(1)
     actual = title
   })
@@ -23,7 +23,7 @@ test('KOMONDOR_TEST_MODE=save will only run the save test', async () => {
   const o = new AssertOrder(1)
   let actual = ''
   process.env.KOMONDOR_TEST_MODE = 'save'
-  k.trio('only save', (title) => {
+  incubator.trio('only save', (title) => {
     o.once(1)
     actual = title
   })
@@ -36,7 +36,7 @@ test('KOMONDOR_TEST_MODE=live will only run the live test', async () => {
   const o = new AssertOrder(1)
   let actual = ''
   process.env.KOMONDOR_TEST_MODE = 'live'
-  k.trio('only live', (title) => {
+  incubator.trio('only live', (title) => {
     o.once(1)
     actual = title
   })

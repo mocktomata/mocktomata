@@ -7,5 +7,5 @@
 // // language and platform support will change over time.
 // start({ io, libs: [] })
 
-export { komondorTest, spec, Spec, SpecAction } from '@komondor-lab/core';
+export {  spec, Spec, SpecAction } from '@komondor-lab/core';
 

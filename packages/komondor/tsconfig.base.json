@@ -12,9 +12,6 @@
       "path": "../core"
     },
     {
-      "path": "../plugin"
-    },
-    {
       "path": "../io-client"
     },
     {

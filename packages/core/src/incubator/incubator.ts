@@ -1,8 +1,8 @@
-import { createTestHarness, TestHarness } from './createTestHarness';
+import { createTestHarness } from './createTestHarness';
 import { ensureDirNotExists, ensureFileNotExists } from './ensures';
-import { testLive, testSave, testSimulate, testTrio, testDuo, testFree } from './tests';
+import { testDuo, testFree, testLive, testSave, testSimulate, testTrio } from './tests';
 
-const komondorTest = {
+export const incubator = {
   live: testLive,
   save: testSave,
   simulate: testSimulate,
@@ -13,6 +13,3 @@ const komondorTest = {
   ensureDirNotExists,
   ensureFileNotExists
 }
-
-export default komondorTest
-export { TestHarness }

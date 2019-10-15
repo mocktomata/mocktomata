@@ -1,4 +1,4 @@
-# komondor
+# moctomata
 
 ![unstable][unstable-image]
 [![NPM version][npm-image]][npm-url]
@@ -14,11 +14,13 @@
 [![Visual Studio Code][vscode-image]][vscode-url]
 [![Wallaby.js][wallaby-image]][wallaby-url]
 
-[![komondor](images/komondor.jpg)](https://github.com/unional/komondor)
+[`moctomata`](https://github.com/moctomata/mocktomata) is a behavior captural and simulation system.
+
+It can capture and simulate the behavior of a part of your system,
+so that you can write test and run them in a controlled manner.
+
 
 `komondor` is your friendly guard dog for writing tests across boundaries.
-
-Check out my [pair programming schedule](docs/schedule.md) if you are interested in working together on this project.
 
 ## The problem
 
