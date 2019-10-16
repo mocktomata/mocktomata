@@ -1,4 +1,4 @@
-import { createFileRepository } from '@komondor-lab/io-fs';
+import { createFileRepository } from '@moctomata/io-fs';
 import t from 'assert';
 import a from 'assertron';
 import fetch from 'node-fetch';

@@ -43,7 +43,7 @@
   "devDependencies": {
     "@moctomata/framework": "^7.0.0-alpha",
     "@komondor-lab/file-server": "^7.0.0-alpha",
-    "@komondor-lab/io-fs": "^7.0.0-alpha",
+    "@moctomata/io-fs": "^7.0.0-alpha",
     "assertron": "^7.0.2",
     "type-plus": "^1.18.1"
   },

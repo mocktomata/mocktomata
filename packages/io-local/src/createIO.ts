@@ -1,5 +1,5 @@
 import { SpecIO, ScenarioIO, SpecRecord, SpecNotFound, ScenarioNotFound, SpecPluginModuleIO } from '@moctomata/framework';
-import { createFileRepository } from '@komondor-lab/io-fs';
+import { createFileRepository } from '@moctomata/io-fs';
 import { context } from './context';
 
 export type CreateIOOptions = {

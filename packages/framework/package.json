@@ -1,14 +1,14 @@
 {
   "name": "@moctomata/framework",
   "version": "7.0.0-alpha",
-  "description": "moctomata framework library",
-  "homepage": "https://github.com/unional/moctomata",
+  "description": "moctomata framework package",
+  "homepage": "https://github.com/moctomata/moctomata",
   "bugs": {
-    "url": "https://github.com/unional/moctomata/issues"
+    "url": "https://github.com/moctomata/moctomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/unional/moctomata.git"
+    "url": "https://github.com/moctomata/moctomata.git"
   },
   "license": "MIT",
   "author": {

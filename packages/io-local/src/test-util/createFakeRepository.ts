@@ -1,4 +1,4 @@
-import { createFileRepository } from '@komondor-lab/io-fs';
+import { createFileRepository } from '@moctomata/io-fs';
 import path from 'path'
 
 export function createFakeRepository() {

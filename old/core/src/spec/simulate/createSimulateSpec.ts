@@ -1,4 +1,4 @@
-// import { SpecNotFound } from '@komondor-lab/io-fs';
+// import { SpecNotFound } from '@moctomata/io-fs';
 // import { findPlugin, PluginInstance } from '@komondor-lab/plugin';
 // import { NotSpecable } from '../errors';
 // import { Spec } from '../interfaces';

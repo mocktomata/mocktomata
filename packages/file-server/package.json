@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@komondor-lab/io-fs": "^7.0.0-alpha",
+    "@moctomata/io-fs": "^7.0.0-alpha",
     "boom": "^7.3.0",
     "global-store": "^1.0.0-beta.11",
     "hapi": "^18.1.0",

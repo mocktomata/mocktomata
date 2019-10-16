@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@moctomata/framework": "^7.0.0-alpha",
-    "@komondor-lab/io-fs": "^7.0.0-alpha",
+    "@moctomata/io-fs": "^7.0.0-alpha",
     "global-store": "^1.0.0-beta.11"
   },
   "devDependencies": {

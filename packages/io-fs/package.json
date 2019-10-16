@@ -1,14 +1,14 @@
 {
-  "name": "@komondor-lab/io-fs",
+  "name": "@moctomata/io-fs",
   "version": "7.0.0-alpha",
-  "description": "komondor file system IO package",
-  "homepage": "https://github.com/unional/komondor",
+  "description": "moctomata file system IO package",
+  "homepage": "https://github.com/moctomata/moctomata",
   "bugs": {
-    "url": "https://github.com/unional/komondor/issues"
+    "url": "https://github.com/moctomata/moctomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/unional/komondor.git"
+    "url": "https://github.com/moctomata/moctomata.git"
   },
   "license": "MIT",
   "author": {
@@ -50,8 +50,8 @@
     "@types/md5": "^2.1.33",
     "@types/mkdirp": "^0.5.2",
     "@types/tmp": "^0.1.0",
-    "assertron": "^7.0.2",
-    "memfs": "^2.15.2",
+    "assertron": "^7.1.2",
+    "memfs": "^2.15.5",
     "tmp": "^0.1.0"
   },
   "engines": {

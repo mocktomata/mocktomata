@@ -1,4 +1,4 @@
-import { createFileRepository, Repository } from '@komondor-lab/io-fs';
+import { createFileRepository, Repository } from '@moctomata/io-fs';
 import { createStore } from 'global-store';
 
 export type Context = {
