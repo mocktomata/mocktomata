@@ -1,6 +1,6 @@
 # @komondor-lab/plugin-node-fetch
 
-[`komondor`](http://github.com/unional/komondor) plugin for [`node-fetch`](https://github.com/bitinn/node-fetch).
+[`komondor`](http://github.com/moctomata/moctomata) plugin for [`node-fetch`](https://github.com/bitinn/node-fetch).
 
 ## installation and setup
 

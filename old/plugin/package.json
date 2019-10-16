@@ -2,13 +2,13 @@
   "name": "@komondor/plugin",
   "version": "1.7.7",
   "description": "komondor plugin system",
-  "homepage": "https://github.com/unional/komondor",
+  "homepage": "https://github.com/moctomata/moctomata",
   "bugs": {
-    "url": "https://github.com/unional/komondor/issues"
+    "url": "https://github.com/moctomata/moctomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/unional/komondor.git"
+    "url": "https://github.com/moctomata/moctomata.git"
   },
   "license": "MIT",
   "author": {

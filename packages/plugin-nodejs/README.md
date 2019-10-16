@@ -1,6 +1,6 @@
 # @komondor-lab/plugin-nodejs
 
-[`komondor`](http://github.com/unional/komondor) plugin for NodeJS.
+[`komondor`](http://github.com/moctomata/moctomata) plugin for NodeJS.
 
 ## installation
 

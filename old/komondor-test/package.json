@@ -25,12 +25,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/unional/komondor-test.git"
+    "url": "https://github.com/moctomata/moctomata-test.git"
   },
   "bugs": {
-    "url": "https://github.com/unional/komondor-test/issues"
+    "url": "https://github.com/moctomata/moctomata-test/issues"
   },
-  "homepage": "https://github.com/unional/komondor-test",
+  "homepage": "https://github.com/moctomata/moctomata-test",
   "author": {
     "name": "Homa Wong",
     "email": "homawong@gmail.com"

@@ -1,4 +1,4 @@
-import { start } from '@komondor-lab/file-server';
+import { start } from '@moctomata/file-server';
 import chalk from 'chalk';
 import { CliArgs, CliCommand } from 'clibuilder';
 import { validate } from './validate';

@@ -200,10 +200,10 @@ function spec.simulate<T>(name: string, subject: T): Promise<Spec<T>>
 
 `komondor` supports plugins to spec on subjects other than basic function, class, and promise.
 
-- [`komondor-plugin-node`](https://github.com/unional/komondor-plugin-node)
-- [`komondor-plugin-ws`](https://github.com/unional/komondor-plugin-ws)
+- [`komondor-plugin-node`](https://github.com/moctomata/moctomata-plugin-node)
+- [`komondor-plugin-ws`](https://github.com/moctomata/moctomata-plugin-ws)
 
-To create a plugin, please check [`komondor-plugin`](https://github.com/unional/komondor-plugin)
+To create a plugin, please check [`komondor-plugin`](https://github.com/moctomata/moctomata-plugin)
 
 ## Security
 
@@ -387,22 +387,22 @@ npm run build
 npm run lint
 ```
 
-[circleci-image]: https://circleci.com/gh/unional/komondor/tree/master.svg?style=shield
-[circleci-url]: https://circleci.com/gh/unional/komondor/tree/master
+[circleci-image]: https://circleci.com/gh/moctomata/moctomata/tree/master.svg?style=shield
+[circleci-url]: https://circleci.com/gh/moctomata/moctomata/tree/master
 [codecov-image]: https://codecov.io/gh/unional/satisfier/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/unional/satisfier
-[coveralls-image]: https://coveralls.io/repos/github/unional/komondor/badge.svg
-[coveralls-url]: https://coveralls.io/github/unional/komondor
+[coveralls-image]: https://coveralls.io/repos/github/moctomata/moctomata/badge.svg
+[coveralls-url]: https://coveralls.io/github/moctomata/moctomata
 [downloads-image]: https://img.shields.io/npm/dm/komondor.svg?style=flat
 [downloads-url]: https://npmjs.org/package/komondor
-[greenkeeper-image]: https://badges.greenkeeper.io/unional/komondor.svg
+[greenkeeper-image]: https://badges.greenkeeper.io/moctomata/moctomata.svg
 [greenkeeper-url]: https://greenkeeper.io/
 [npm-image]: https://img.shields.io/npm/v/komondor.svg?style=flat
 [npm-url]: https://npmjs.org/package/komondor
 [semantic-release-image]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 [semantic-release-url]: https://github.com/semantic-release/semantic-release
-[travis-image]: https://img.shields.io/travis/unional/komondor/master.svg?style=flat
-[travis-url]: https://travis-ci.org/unional/komondor?branch=master
+[travis-image]: https://img.shields.io/travis/moctomata/moctomata/master.svg?style=flat
+[travis-url]: https://travis-ci.org/moctomata/moctomata?branch=master
 [unstable-image]: https://img.shields.io/badge/stability-unstable-yellow.svg
 [vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
 [vscode-url]: https://code.visualstudio.com/

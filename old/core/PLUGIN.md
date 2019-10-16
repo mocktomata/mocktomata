@@ -59,7 +59,7 @@ Set `declaration` to false.
 
 ## Helper
 
-When writing your plugin, you can consider using [`komondor-test`](https://github.com/unional/komondor-test) to help testing your plugin.
+When writing your plugin, you can consider using [`komondor-test`](https://github.com/moctomata/moctomata-test) to help testing your plugin.
 
 When testing your plugin,
 you can use `speced.satisfy([...])` instead of `speced.done()` to ensure the actions are recorded properly.

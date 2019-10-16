@@ -6,7 +6,7 @@ export type Context = {
 }
 
 export const context = createStore<Context>({
-  moduleName: '@komondor-lab/file-server',
+  moduleName: '@moctomata/file-server',
   key: 'context:515e574f-70e3-42a5-b354-47ee8d8925d4',
   version: '7.0.0',
   initializer: current => ({ repository: createFileRepository(process.cwd()), ...current })

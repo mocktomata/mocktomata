@@ -26,12 +26,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/unional/komondor-plugin-node.git"
+    "url": "https://github.com/moctomata/moctomata-plugin-node.git"
   },
   "bugs": {
-    "url": "https://github.com/unional/komondor-plugin-node/issues"
+    "url": "https://github.com/moctomata/moctomata-plugin-node/issues"
   },
-  "homepage": "https://github.com/unional/komondor-plugin-node",
+  "homepage": "https://github.com/moctomata/moctomata-plugin-node",
   "author": {
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
