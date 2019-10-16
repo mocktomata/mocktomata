@@ -1,4 +1,4 @@
-import { SpecPluginModule } from '@moctomata/framework';
+import { SpecPluginModule } from '@mocktomata/framework';
 import path from 'path';
 import { getConfig } from './config';
 import { createPluginRepository } from './plugin';

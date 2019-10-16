@@ -1,4 +1,4 @@
-import { findPlugin } from '@komondor-lab/plugin';
+import { findPlugin } from '@mocktomata/plugin';
 import { createSatisfier } from 'satisfier';
 import { reduceKey } from 'type-plus';
 import { artifactKey } from './constants';

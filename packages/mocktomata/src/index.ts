@@ -1,4 +1,4 @@
-// import { createIO } from '@komondor-lab/io-local';
+// import { createIO } from '@mocktomata/io-local';
 
 // const io = createIO()
 
@@ -7,5 +7,5 @@
 // // language and platform support will change over time.
 // start({ io, libs: [] })
 
-export {  spec, Spec, SpecAction } from '@moctomata/framework';
+export {  spec, Spec, SpecAction } from '@mocktomata/framework';
 

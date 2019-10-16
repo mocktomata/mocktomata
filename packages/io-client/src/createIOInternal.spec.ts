@@ -1,4 +1,4 @@
-import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@moctomata/framework';
+import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework';
 import a from 'assertron';
 import { createIOInternal } from './createIOInternal';
 import { createFakeServerFetch } from './test-util';
@@ -64,7 +64,7 @@ describe('getPluginList()', () => {
     const io = await createIOInternal({ fetch, location })
 
     const list = await io.getPluginList()
-    expect(list).toEqual(['@komondor-lab/plugin-fixture-dummy'])
+    expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
   })
 })
 
@@ -73,7 +73,7 @@ describe('loadPlugin()', () => {
     const fetch = createFakeServerFetch()
     const io = await createIOInternal({ fetch, location })
 
-    const p = await io.loadPlugin(`@komondor-lab/plugin-fixture-dummy`)
+    const p = await io.loadPlugin(`@mocktomata/plugin-fixture-dummy`)
 
     expect(typeof p.activate).toBe('function')
   })

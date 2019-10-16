@@ -1,4 +1,4 @@
-import { findPlugin } from '@komondor-lab/plugin';
+import { findPlugin } from '@mocktomata/plugin';
 import { unpartial } from 'unpartial';
 import { unartifactify } from '../artifactify';
 import { artifactKey } from '../constants';

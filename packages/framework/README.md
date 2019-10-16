@@ -1,21 +1,21 @@
-# @moctomata/framework
+# @mocktomata/framework
 
-Framework of [`moctomata`](https://www.npmjs.com/package/moctomata).
+Framework of [`mocktomata`](https://www.npmjs.com/package/mocktomata).
 
 In normal circumstances,
-you should use the main module [`moctomata`](https://www.npmjs.com/package/moctomata).
+you should use the main module [`mocktomata`](https://www.npmjs.com/package/mocktomata).
 
 You only need to use this directly if you are developing a plugin.
 
 This module exposes an `incubator` for writing plugin,
-which is not exposed in [`moctomata`](https://www.npmjs.com/package/moctomata).
+which is not exposed in [`mocktomata`](https://www.npmjs.com/package/mocktomata).
 
 ## Installation
 
 ```sh
-npm install -D @moctomata/framework
+npm install -D @mocktomata/framework
 // or
-yarn add -D @moctomata/framework
+yarn add -D @mocktomata/framework
 ```
 
 ## Usage
@@ -25,7 +25,7 @@ you can use the types provided by the library to help making it easier.
 
 ```ts
 // index.ts
-import { SpecPluginActivationContext } from '@moctomata/framework`
+import { SpecPluginActivationContext } from '@mocktomata/framework`
 import { yourPlugin } from './yourPlugin'
 
 export function activate(context: SpecPluginActivationContext) {
@@ -33,7 +33,7 @@ export function activate(context: SpecPluginActivationContext) {
 }
 
 // yourPlugin.ts
-import { SpecPlugin } from '@moctomata/framework'
+import { SpecPlugin } from '@mocktomata/framework'
 
 export const yourPlugin: SpecPlugin<YourSubject, YourMeta> = {
   name: 'your-plugin',
@@ -47,7 +47,7 @@ You can use `incubator` to help writing tests for your plugin.
 
 ```ts
 // yourPlugin.spec.ts
-import { es2015, incubator, loadPlugins, TestHarness } from '@moctomata/framework`
+import { es2015, incubator, loadPlugins, TestHarness } from '@mocktomata/framework`
 import { yourPlugin } from './yourPlugin'
 
 let harness: TestHarness

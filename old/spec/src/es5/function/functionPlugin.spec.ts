@@ -12,7 +12,7 @@ let harness: ReturnType<typeof createTestHarness>
 
 beforeAll(() => {
   harness = createTestHarness()
-  harness.io.addPlugin('@komondor-lab/es5', primitivePlugin, errorPlugin, functionPlugin)
+  harness.io.addPlugin('@mocktomata/es5', primitivePlugin, errorPlugin, functionPlugin)
   return loadPlugins(harness)
 })
 

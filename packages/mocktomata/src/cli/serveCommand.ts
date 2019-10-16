@@ -1,4 +1,4 @@
-import { start } from '@moctomata/file-server';
+import { start } from '@mocktomata/file-server';
 import chalk from 'chalk';
 import { CliArgs, CliCommand } from 'clibuilder';
 import { validate } from './validate';

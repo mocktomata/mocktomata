@@ -1,4 +1,4 @@
-import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@moctomata/framework';
+import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework';
 import t from 'assert';
 import a from 'assertron';
 import { context } from './context';
@@ -64,21 +64,21 @@ describe('getPluginList()', () => {
     const io = createIO()
 
     const list = await io.getPluginList()
-    expect(list).toEqual(['@komondor-lab/plugin-fixture-dummy'])
+    expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
   })
 })
 
 describe('loadPlugin()', () => {
   test('load npm plugin package', async () => {
     const io = createIO()
-    const actual = await io.loadPlugin('@komondor-lab/plugin-fixture-dummy')
+    const actual = await io.loadPlugin('@mocktomata/plugin-fixture-dummy')
 
     t.strictEqual(typeof actual.activate, 'function')
   })
 
   test('can load plugin using deep link', async () => {
     const io = createIO()
-    const actual = await io.loadPlugin('@komondor-lab/plugin-fixture-deep-link/pluginA')
+    const actual = await io.loadPlugin('@mocktomata/plugin-fixture-deep-link/pluginA')
 
     t.strictEqual(typeof actual.activate, 'function')
   })

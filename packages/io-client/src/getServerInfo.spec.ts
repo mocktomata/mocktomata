@@ -15,7 +15,7 @@ test('will try to search for server', async () => {
           return Promise.resolve({
             name: 'komondor',
             url: 'http://localhost:3712',
-            plugins: ['@komondor-lab/plugin-fixture-dummy']
+            plugins: ['@mocktomata/plugin-fixture-dummy']
           })
         }
       } as any)
@@ -26,7 +26,7 @@ test('will try to search for server', async () => {
   a.satisfies(info, {
     name: 'komondor',
     url: 'http://localhost:3712',
-    plugins: ['@komondor-lab/plugin-fixture-dummy']
+    plugins: ['@mocktomata/plugin-fixture-dummy']
   })
 })
 
@@ -50,7 +50,7 @@ test('remote', async () => {
         return Promise.resolve({
           name: 'komondor',
           url: 'http://komondor.com',
-          plugins: ['@komondor-lab/plugin-fixture-dummy']
+          plugins: ['@mocktomata/plugin-fixture-dummy']
         })
       }
     } as any)

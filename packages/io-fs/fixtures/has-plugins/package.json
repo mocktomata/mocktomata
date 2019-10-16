@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@komondor-lab/plugin-fixture-deep-link": "^1.0.2",
-    "@komondor-lab/plugin-fixture-dummy": "^1.0.3"
+    "@mocktomata/plugin-fixture-deep-link": "^1.0.2",
+    "@mocktomata/plugin-fixture-dummy": "^1.0.3"
   }
 }

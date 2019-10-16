@@ -1,5 +1,5 @@
 {
   "devDependencies": {
-    "@komondor-lab/plugin-fixture-dummy": "^1.0.3"
+    "@mocktomata/plugin-fixture-dummy": "^1.0.3"
   }
 }

@@ -1,4 +1,4 @@
-import { SpecPlugin } from '@moctomata/framework'
+import { SpecPlugin } from '@mocktomata/framework'
 import fs from 'fs'
 
 export const readStreamPlugin: SpecPlugin<fs.ReadStream> = {

@@ -1,4 +1,4 @@
-import { PluginActivationContext } from '@komondor-lab/plugin';
+import { PluginActivationContext } from '@mocktomata/plugin';
 import { valuePlugin } from './valuePlugin';
 
 export function activate(activationContext: PluginActivationContext) {

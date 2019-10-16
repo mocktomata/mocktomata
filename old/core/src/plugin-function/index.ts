@@ -1,4 +1,4 @@
-import { PluginActivationContext } from '@komondor-lab/plugin';
+import { PluginActivationContext } from '@mocktomata/plugin';
 import { SpyContext } from '../spec';
 
 export function activate(context: PluginActivationContext) {

@@ -1,4 +1,4 @@
-import { KomondorIO, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecPluginModule, SpecRecord } from '@moctomata/framework';
+import { KomondorIO, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecPluginModule, SpecRecord } from '@mocktomata/framework';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
 import { CreateIOOptions } from './types';

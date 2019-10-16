@@ -25,12 +25,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata-test.git"
+    "url": "https://github.com/mocktomata/mocktomata-test.git"
   },
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata-test/issues"
+    "url": "https://github.com/mocktomata/mocktomata-test/issues"
   },
-  "homepage": "https://github.com/moctomata/moctomata-test",
+  "homepage": "https://github.com/mocktomata/mocktomata-test",
   "author": {
     "name": "Homa Wong",
     "email": "homawong@gmail.com"

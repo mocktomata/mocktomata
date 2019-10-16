@@ -1,4 +1,4 @@
-// import { findSupportingPlugin } from '@komondor-lab/plugin';
+// import { findSupportingPlugin } from '@mocktomata/plugin';
 // import { createSatisfier } from 'satisfier';
 // import { tersify } from 'tersify';
 // import { unpartial } from 'unpartial';

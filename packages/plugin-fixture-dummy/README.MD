@@ -1,3 +1,3 @@
-# @komondor-lab/plugin-fixture-dummy
+# @mocktomata/plugin-fixture-dummy
 
-komondor dummy plugin for internal testing.
+mocktomata dummy plugin for internal testing.

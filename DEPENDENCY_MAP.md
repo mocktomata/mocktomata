@@ -13,7 +13,7 @@ This file shows the relationship between various `komondor` packages
   - More complex cases are IOS and Android, etc.
   - Application acceptance tests should be done at this level.
 - `komondor-cli`
-- `@moctomata/framework` contains the core logic of `komondor`.
+- `@mocktomata/framework` contains the core logic of `komondor`.
   - It should not depends on lower level detail packages, such as `io-local`.
   - Since it should not depends on other packages, include the specific plugins (this could cause circular reference in TypeScript compiler, causing many problems),
   - that's why acceptance tests is done at top level (`komondor`)

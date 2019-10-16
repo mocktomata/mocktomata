@@ -1,5 +1,5 @@
 import { IO } from '../io';
-import { PluginNotFound } from '@komondor-lab/plugin';
+import { PluginNotFound } from '@mocktomata/plugin';
 import { ScenarioNotFound } from '../scenario';
 import { SpecNotFound } from '../spec';
 

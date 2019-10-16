@@ -16,7 +16,7 @@ export function createFakeServerFetch() {
         return new f.Response(JSON.stringify({
           url: 'http://localhost:3999',
           version: '1.0',
-          plugins: ['@komondor-lab/plugin-fixture-dummy']
+          plugins: ['@mocktomata/plugin-fixture-dummy']
         }))
       }
       else if (uri.startsWith('komondor/specs/')) {

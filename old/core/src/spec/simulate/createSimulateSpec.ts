@@ -1,5 +1,5 @@
-// import { SpecNotFound } from '@moctomata/io-fs';
-// import { findPlugin, PluginInstance } from '@komondor-lab/plugin';
+// import { SpecNotFound } from '@mocktomata/io-fs';
+// import { findPlugin, PluginInstance } from '@mocktomata/plugin';
 // import { NotSpecable } from '../errors';
 // import { Spec } from '../interfaces';
 // import { SpecAction } from '../specAction';

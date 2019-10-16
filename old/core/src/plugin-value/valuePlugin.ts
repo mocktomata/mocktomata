@@ -1,4 +1,4 @@
-import { KomondorPlugin } from '@komondor-lab/plugin'
+import { KomondorPlugin } from '@mocktomata/plugin'
 
 export const valuePlugin: KomondorPlugin = {
   support: subject => {

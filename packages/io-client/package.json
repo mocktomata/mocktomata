@@ -1,14 +1,14 @@
 {
-  "name": "@komondor-lab/io-client",
+  "name": "@mocktomata/io-client",
   "version": "7.0.0-alpha",
-  "description": "komondor client IO package",
-  "homepage": "https://github.com/moctomata/moctomata",
+  "description": "mocktomata client IO package",
+  "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata/issues"
+    "url": "https://github.com/mocktomata/mocktomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git"
   },
   "license": "MIT",
   "author": {
@@ -41,9 +41,9 @@
     "cross-fetch": "^3.0.2"
   },
   "devDependencies": {
-    "@moctomata/framework": "^7.0.0-alpha",
-    "@moctomata/file-server": "^7.0.0-alpha",
-    "@moctomata/io-fs": "^7.0.0-alpha",
+    "@mocktomata/framework": "^7.0.0-alpha",
+    "@mocktomata/file-server": "^7.0.0-alpha",
+    "@mocktomata/io-fs": "^7.0.0-alpha",
     "assertron": "^7.0.2",
     "type-plus": "^1.18.1"
   },

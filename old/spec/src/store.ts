@@ -7,7 +7,7 @@ export type SpecStore = {
 }
 
 export const store = createStore<SpecStore>(
-  '@komondor-lab/plugin',
+  '@mocktomata/plugin',
   {
     specTypeIds: {},
     plugins: []

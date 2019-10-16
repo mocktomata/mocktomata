@@ -6,7 +6,7 @@ import k from '../testUtil';
 let harness: TestHarness
 beforeEach(async () => {
   harness = createTestHarness()
-  harness.io.addPluginModule('@komondor-lab/es5', es5Module)
+  harness.io.addPluginModule('@mocktomata/es5', es5Module)
   await loadPlugins(harness)
 })
 

@@ -1,4 +1,4 @@
-import { findPlugin, PluginInstance } from '@komondor-lab/plugin';
+import { findPlugin, PluginInstance } from '@mocktomata/plugin';
 import { unpartial } from 'unpartial';
 import { NotSpecable } from '../errors';
 import { Spec } from '../interfaces';

@@ -1,4 +1,4 @@
-// import { komondorTest } from '@moctomata/framework';
+// import { komondorTest } from '@mocktomata/framework';
 // import fetch from 'node-fetch';
 
 

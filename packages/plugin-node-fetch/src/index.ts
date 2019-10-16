@@ -1,4 +1,4 @@
-import { SpecPluginActivationContext } from '@moctomata/framework'
+import { SpecPluginActivationContext } from '@mocktomata/framework'
 import fetch from 'node-fetch'
 
 export function activate(context: SpecPluginActivationContext) {

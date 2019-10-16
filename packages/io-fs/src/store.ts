@@ -5,7 +5,7 @@ export type Store = {
 }
 
 export const store = createStore<Store>({
-  moduleName: '@moctomata/io-fs',
+  moduleName: '@mocktomata/io-fs',
   key: 'a3612524-b212-4485-8145-e14aafb660ae',
   version: '7.0.0',
   initializer: current => ({ config: undefined, ...current })

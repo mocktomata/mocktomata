@@ -1,4 +1,4 @@
-import { PluginIO } from '@komondor-lab/plugin';
+import { PluginIO } from '@mocktomata/plugin';
 import { ScenarioIO } from '../scenario';
 import { SpecIO } from '../spec';
 

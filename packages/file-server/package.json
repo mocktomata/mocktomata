@@ -1,14 +1,14 @@
 {
-  "name": "@moctomata/file-server",
+  "name": "@mocktomata/file-server",
   "version": "7.0.0-alpha",
-  "description": "moctomata file server",
-  "homepage": "https://github.com/moctomata/moctomata",
+  "description": "mocktomata file server",
+  "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata/issues"
+    "url": "https://github.com/mocktomata/mocktomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git"
   },
   "license": "MIT",
   "author": {
@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@moctomata/io-fs": "^7.0.0-alpha",
+    "@mocktomata/io-fs": "^7.0.0-alpha",
     "boom": "^7.3.0",
     "global-store": "^1.0.0-beta.11",
     "hapi": "^18.1.0",

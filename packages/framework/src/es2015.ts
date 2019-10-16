@@ -9,7 +9,7 @@ import { stringPlugin } from './string';
 import { undefinedPlugin } from './undefined';
 
 export const es2015 = {
-  name: '@moctomata/es2015',
+  name: '@mocktomata/es2015',
   activate(context: SpecPluginActivationContext) {
     context.register(undefinedPlugin)
     context.register(stringPlugin)

@@ -1,5 +1,5 @@
-# @moctomata/file-server
+# @mocktomata/file-server
 
-A file server for [`moctomata`](https://www.npmjs.com/package/moctomata).
+A file server for [`mocktomata`](https://www.npmjs.com/package/mocktomata).
 
-The remote [`moctomata`](https://www.npmjs.com/package/moctomata) instance uses [`@moctomata/io-client`](https://www.npmjs.com/package/@moctomata/io-client) to communicate with the server.
+The remote [`mocktomata`](https://www.npmjs.com/package/mocktomata) instance uses [`@mocktomata/io-client`](https://www.npmjs.com/package/@mocktomata/io-client) to communicate with the server.

@@ -1,3 +1,3 @@
-# @komondor-lab/plugin
+# @mocktomata/plugin
 
 Plugin system for `komondor`.

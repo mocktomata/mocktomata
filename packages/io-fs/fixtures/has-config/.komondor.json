@@ -1,5 +1,5 @@
 {
   "plugins": [
-    "@komondor-lab/plugin-fixture-dummy"
+    "@mocktomata/plugin-fixture-dummy"
   ]
 }

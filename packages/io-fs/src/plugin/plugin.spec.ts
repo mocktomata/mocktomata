@@ -20,8 +20,8 @@ test('get both installed plugins when there is no config', async () => {
 
   const io = createFileRepository(cwd)
   expect(await io.getPluginList()).toEqual([
-    '@komondor-lab/plugin-fixture-deep-link',
-    '@komondor-lab/plugin-fixture-dummy'
+    '@mocktomata/plugin-fixture-deep-link',
+    '@mocktomata/plugin-fixture-dummy'
   ])
 })
 
@@ -30,5 +30,5 @@ test('get configured plugin list', async () => {
 
   const io = createFileRepository(cwd)
 
-  expect(await io.getPluginList()).toEqual(['@komondor-lab/plugin-fixture-dummy'])
+  expect(await io.getPluginList()).toEqual(['@mocktomata/plugin-fixture-dummy'])
 })

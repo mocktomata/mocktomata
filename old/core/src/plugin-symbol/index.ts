@@ -1,4 +1,4 @@
-import { PluginActivationContext } from '@komondor-lab/plugin'
+import { PluginActivationContext } from '@mocktomata/plugin'
 export function activate(activationContext: PluginActivationContext) {
   activationContext.register({
     support: subject => {

@@ -4,7 +4,7 @@ const { JSDOM } = jsdom
 // this POS shows it should be possible to use io-server to serve modules to the client.
 new JSDOM(`
 <body>
-  <script src="./komondor/plugins/@komondor-lab/plugin-fixture-dummy"></script>
+  <script src="./komondor/plugins/@mocktomata/plugin-fixture-dummy"></script>
 </body>`, { runScripts: 'dangerously', resources: 'usable', url: 'http://localhost:4123' })
 
 

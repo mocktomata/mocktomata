@@ -1,18 +1,18 @@
-# @komondor-lab/plugin-node-fetch
+# @mocktomata/plugin-node-fetch
 
-[`komondor`](http://github.com/moctomata/moctomata) plugin for [`node-fetch`](https://github.com/bitinn/node-fetch).
+[`komondor`](http://github.com/mocktomata/mocktomata) plugin for [`node-fetch`](https://github.com/bitinn/node-fetch).
 
 ## installation and setup
 
 ```sh
-npm install --save-dev @komondor-lab/plugin-node-fetch
+npm install --save-dev @mocktomata/plugin-node-fetch
 ```
 
 komondor.json
 ```js
 {
   "plugins": [
-    "@komondor-lab/plugin-node-fetch"
+    "@mocktomata/plugin-node-fetch"
   ]
 }
 ```

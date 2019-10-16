@@ -12,12 +12,12 @@ beforeEach(() => {
  */
 test('load plugins in reverse order', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/plugin-fixture-dummy', echoPluginModule)
-  io.addPluginModule('@komondor-lab/plugin-fixture-deep-link/pluginA', pluginModuleA)
+  io.addPluginModule('@mocktomata/plugin-fixture-dummy', echoPluginModule)
+  io.addPluginModule('@mocktomata/plugin-fixture-deep-link/pluginA', pluginModuleA)
 
   await loadPlugins({ io })
   const actual = store.get().plugins
-  a.satisfies(actual.map(p => p.name), ['@komondor-lab/plugin-fixture-deep-link/pluginA/plugin-a', '@komondor-lab/plugin-fixture-dummy'])
+  a.satisfies(actual.map(p => p.name), ['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy'])
 })
 
 test('Not existing plugin throws PluginNotFound', async () => {
@@ -29,7 +29,7 @@ test('Not existing plugin throws PluginNotFound', async () => {
 
 test('registering plugin with the same name throws PluginAlreadyLoaded', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/plugin-fixture-dummy', echoPluginModule)
+  io.addPluginModule('@mocktomata/plugin-fixture-dummy', echoPluginModule)
 
   await loadPlugins({ io })
 
@@ -38,25 +38,25 @@ test('registering plugin with the same name throws PluginAlreadyLoaded', async (
 
 test('plugin without activate function throws', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/no-activate', noActivatePluginModule as any)
+  io.addPluginModule('@mocktomata/no-activate', noActivatePluginModule as any)
   await a.throws(() => loadPlugins({ io }), NoActivate)
 })
 
 test('plugin missing support method throws', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/no-support', missSupportPluginModule as any)
+  io.addPluginModule('@mocktomata/no-support', missSupportPluginModule as any)
   await a.throws(() => loadPlugins({ io }), PluginNotConforming)
 })
 
 test('plugin missing getSpy method throws', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/no-getspy', missGetSpyPluginModule as any)
+  io.addPluginModule('@mocktomata/no-getspy', missGetSpyPluginModule as any)
   await a.throws(() => loadPlugins({ io }), PluginNotConforming)
 })
 
 test('plugin missing getStub method throws', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/no-getstub', missGetStubPluginModule as any)
+  io.addPluginModule('@mocktomata/no-getstub', missGetStubPluginModule as any)
 
   await a.throws(() => loadPlugins({ io }), PluginNotConforming)
 })

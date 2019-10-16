@@ -1,17 +1,17 @@
 {
-  "name": "@komondor-lab/plugin-nodejs",
+  "name": "@mocktomata/plugin-nodejs",
   "version": "0.0.0",
-  "description": "komondor plugin for nodejs",
+  "description": "mocktomata plugin for nodejs",
   "keywords": [
-    "komondor-plugin"
+    "mocktomata-plugin"
   ],
-  "homepage": "https://github.com/moctomata/moctomata",
+  "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata/issues"
+    "url": "https://github.com/mocktomata/mocktomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git"
   },
   "license": "MIT",
   "author": {
@@ -30,11 +30,11 @@
     "build": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
     "clean": "rimraf lib libm .ts",
     "dc": "yarn dependency-check",
-    "dependency-check": "dependency-check . --unused --no-dev -i '@moctomata/framework' && dependency-check . --missing --no-dev",
+    "dependency-check": "dependency-check . --unused --no-dev -i '@mocktomata/framework' && dependency-check . --missing --no-dev",
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
   "dependencies": {
-    "@moctomata/framework": "^7.0.0-alpha"
+    "@mocktomata/framework": "^7.0.0-alpha"
   },
   "engines": {
     "node": ">= 6"

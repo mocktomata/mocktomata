@@ -1,6 +1,6 @@
-// import { SpecMode } from '@moctomata/framework';
-// import { createIO } from '@komondor-lab/io-client';
-// import { loadPlugins, registerPlugin } from '@komondor-lab/plugin';
+// import { SpecMode } from '@mocktomata/framework';
+// import { createIO } from '@mocktomata/io-client';
+// import { loadPlugins, registerPlugin } from '@mocktomata/plugin';
 // import { getLogger, logLevel } from '@unional/logging';
 // import { createContext } from 'async-fp';
 

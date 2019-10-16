@@ -8,12 +8,12 @@ import { dummyPluginModule } from './test-util/dummyPlugin';
  */
 test('load plugins in reverse order', async () => {
   const io = createPluginIO({
-    '@komondor-lab/plugin-fixture-dummy': dummyPluginModule,
-    '@komondor-lab/plugin-fixture-deep-link/pluginA': dummyPluginModule
+    '@mocktomata/plugin-fixture-dummy': dummyPluginModule,
+    '@mocktomata/plugin-fixture-deep-link/pluginA': dummyPluginModule
   })
   await loadPlugins({ io })
   const actual = getPlugins()
-  a.satisfies(actual.map(p => p.name), ['@komondor-lab/plugin-fixture-deep-link/pluginA', '@komondor-lab/plugin-fixture-dummy'])
+  a.satisfies(actual.map(p => p.name), ['@mocktomata/plugin-fixture-deep-link/pluginA', '@mocktomata/plugin-fixture-dummy'])
 })
 
 test('Not existing plugin throws PluginNotFound', async () => {

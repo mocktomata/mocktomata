@@ -26,12 +26,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata-plugin-node.git"
+    "url": "https://github.com/mocktomata/mocktomata-plugin-node.git"
   },
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata-plugin-node/issues"
+    "url": "https://github.com/mocktomata/mocktomata-plugin-node/issues"
   },
-  "homepage": "https://github.com/moctomata/moctomata-plugin-node",
+  "homepage": "https://github.com/mocktomata/mocktomata-plugin-node",
   "author": {
     "name": "Homa Wong",
     "email": "homawong@gmail.com"

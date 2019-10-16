@@ -8,12 +8,6 @@
       "path": "packages/framework/tsconfig.esnext.json"
     },
     {
-      "path": "packages/moctomata/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/moctomata/tsconfig.esnext.json"
-    },
-    {
       "path": "packages/io-fs/tsconfig.es5.json"
     },
     {
@@ -42,6 +36,12 @@
     },
     {
       "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
+    },
+    {
+      "path": "packages/mocktomata/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/mocktomata/tsconfig.esnext.json"
     },
     // {
     //   "path": "packages/plugin-node-fetch/tsconfig.es5.json"

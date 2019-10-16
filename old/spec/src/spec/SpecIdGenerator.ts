@@ -3,7 +3,7 @@ import createStore from 'global-store';
 const store = createStore<{
   instanceIds: Record<string, number>
 }>(
-  '@komondor-lab/spec/instanceId',
+  '@mocktomata/spec/instanceId',
   { instanceIds: {} }
 )
 

@@ -1,4 +1,4 @@
-import { KomondorError } from '@moctomata/framework';
+import { KomondorError } from '@mocktomata/framework';
 
 export class ServerNotAvailable extends KomondorError {
   constructor(public url: string) {

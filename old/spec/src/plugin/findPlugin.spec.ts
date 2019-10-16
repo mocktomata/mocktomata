@@ -8,7 +8,7 @@ test('not supported subject gets undefined', () => {
 
 test('find plugin that handles the subject', async () => {
   const io = createTestIO()
-  io.addPluginModule('@komondor-lab/plugin-fixture-dummy', echoPluginModule)
+  io.addPluginModule('@mocktomata/plugin-fixture-dummy', echoPluginModule)
 
   await loadPlugins({ io })
   const actual = findPlugin({})

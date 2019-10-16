@@ -1,7 +1,7 @@
 {
-  "name": "komondor",
+  "name": "mocktomata",
   "version": "7.0.0-alpha",
-  "description": "Your friendly guard dog for writing tests across boundaries",
+  "description": "A Behavior Tracking and Simulation System",
   "keywords": [
     "boundary",
     "boundary-testing",
@@ -10,13 +10,13 @@
     "testing-framework",
     "testing-tools"
   ],
-  "homepage": "https://github.com/moctomata/moctomata",
+  "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata/issues"
+    "url": "https://github.com/mocktomata/mocktomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git"
   },
   "license": "MIT",
   "author": {
@@ -51,10 +51,10 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@moctomata/framework": "^7.0.0-alpha",
-    "@komondor-lab/io-client": "^7.0.0-alpha",
-    "@komondor-lab/io-local": "^7.0.0-alpha",
-    "@komondor-lab/io-server": "^7.0.0-alpha.0",
+    "@mocktomata/framework": "^7.0.0-alpha",
+    "@mocktomata/io-client": "^7.0.0-alpha",
+    "@mocktomata/io-local": "^7.0.0-alpha",
+    "@mocktomata/file-server": "^7.0.0-alpha",
     "assertron": "^7.1.2",
     "async-fp": "^1.2.3",
     "chalk": "^2.4.2",
@@ -64,8 +64,8 @@
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
-    "@komondor-lab/plugin-fixture-deep-link": "^1.0.2",
-    "@komondor-lab/plugin-fixture-dummy": "^1.0.3",
+    "@mocktomata/plugin-fixture-deep-link": "^1.0.2",
+    "@mocktomata/plugin-fixture-dummy": "^1.0.3",
     "@types/delay": "^3.1.0",
     "@types/tmp": "^0.1.0",
     "@unional/devpkg-node": "^1.4.1",

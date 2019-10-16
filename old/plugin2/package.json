@@ -1,14 +1,14 @@
 {
-  "name": "@komondor-lab/plugin",
+  "name": "@mocktomata/plugin",
   "version": "7.0.0-alpha",
   "description": "Komondor plugin system",
-  "homepage": "https://github.com/moctomata/moctomata",
+  "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
-    "url": "https://github.com/moctomata/moctomata/issues"
+    "url": "https://github.com/mocktomata/mocktomata/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/moctomata/moctomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git"
   },
   "license": "MIT",
   "author": {

@@ -1,4 +1,4 @@
-# @komondor-lab/io-local
+# @mocktomata/io-local
 
 `komondor` io package for loading locally.
 

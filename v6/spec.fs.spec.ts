@@ -12,7 +12,7 @@ k.simulate('spec/fs/readStream/success', (title, spec) => {
         // Simulation does not have information about `chunk => chunks.push(chunk)`
         // To support this, need to save the function into SpecAction instead of serializing it to `null`
         // and recreate and execute it using `new Function()`
-        // related to https://github.com/moctomata/moctomata/issues/36 and https://github.com/moctomata/moctomata/issues/35
+        // related to https://github.com/mocktomata/mocktomata/issues/36 and https://github.com/mocktomata/mocktomata/issues/35
         fileStream.on('data', chunk => chunks.push(chunk))
         fileStream.on('end', () => a(chunks.join()))
       })

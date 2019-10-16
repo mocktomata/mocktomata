@@ -1,3 +1,3 @@
-# @komondor-lab/spec
+# @mocktomata/spec
 
 The spec logic library.

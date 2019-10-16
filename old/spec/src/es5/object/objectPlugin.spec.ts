@@ -7,7 +7,7 @@ import { loadPlugins } from '../../plugin';
 
 beforeAll(async () => {
   const harness = createTestHarness()
-  harness.io.addPluginModule('@komondor-lab/spec/es5', es5Module)
+  harness.io.addPluginModule('@mocktomata/spec/es5', es5Module)
   await loadPlugins(harness)
 })
 

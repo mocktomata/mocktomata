@@ -2,7 +2,7 @@
 
 export function activate(context: any) {
   context.register({
-    name: '@komondor-lab/plugin-fixture-dummy',
+    name: '@mocktomata/plugin-fixture-dummy',
     support() { return false },
     createSpy() { return },
     createStub() { return },

@@ -1,4 +1,4 @@
-import { KomondorPlugin } from '@komondor-lab/plugin'
+import { KomondorPlugin } from '@mocktomata/plugin'
 import { SpyContext } from './interfaces';
 
 // import { unartifactify } from './artifactify';

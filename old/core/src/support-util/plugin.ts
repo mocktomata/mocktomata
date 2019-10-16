@@ -1,1 +1,1 @@
-export { PluginActivationContext, PluginModule, PluginAlreadyLoaded, LoadPluginContext } from '@komondor-lab/plugin'
+export { PluginActivationContext, PluginModule, PluginAlreadyLoaded, LoadPluginContext } from '@mocktomata/plugin'

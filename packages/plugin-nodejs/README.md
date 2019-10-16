@@ -1,8 +1,8 @@
-# @komondor-lab/plugin-nodejs
+# @mocktomata/plugin-nodejs
 
-[`komondor`](http://github.com/moctomata/moctomata) plugin for NodeJS.
+[`mocktomata`](http://github.com/mocktomata/mocktomata) plugin for NodeJS.
 
 ## installation
 
 No installation is needed.
-This plugin is installed automatically along with `komondor`.
+This plugin is installed automatically along with `mocktomata`.

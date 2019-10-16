@@ -1,4 +1,4 @@
-# @komondor-lab/io-client
+# @mocktomata/io-client
 
 komondor IO client package.
 

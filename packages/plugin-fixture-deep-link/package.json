@@ -1,8 +1,8 @@
 {
-  "name": "@komondor-lab/plugin-fixture-deep-link",
+  "name": "@mocktomata/plugin-fixture-deep-link",
   "version": "1.0.2",
   "keywords": [
-    "komondor-plugin"
+    "mocktomata-plugin"
   ],
   "files": [
     "index.js",

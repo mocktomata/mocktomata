@@ -1,6 +1,6 @@
-# @moctomata/io-fs
+# @mocktomata/io-fs
 
-[`moctomata`](https://www.npmjs.com/package/moctomata) file system IO package.
+[`mocktomata`](https://www.npmjs.com/package/mocktomata) file system IO package.
 
 This module provides the implementation to interact with the file system.
 It's signature is string based and not doing any parsing.
