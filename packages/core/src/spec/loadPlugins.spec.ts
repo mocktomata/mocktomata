@@ -1,9 +1,8 @@
 import a from 'assertron';
-import { DuplicatePlugin, NoActivate, PluginNotConforming, PluginNotFound } from '.';
-import { incubator } from '../incubator';
+import { DuplicatePlugin, loadPlugins, NoActivate, PluginNotConforming, PluginNotFound } from '.';
+import { createTestIO } from '../incubator/createTestIO';
 import { store } from '../store';
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts';
-import { loadPlugins } from './loadPlugins';
 
 beforeEach(() => {
   store.reset()
@@ -13,7 +12,7 @@ beforeEach(() => {
  * Plugin order is reversed so that most specific plugin are checked first.
  */
 test('load plugins in reverse order', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('@komondor-lab/plugin-fixture-dummy', echoPluginModule)
   io.addPluginModule('@komondor-lab/plugin-fixture-deep-link/pluginA', pluginModuleA)
 
@@ -23,13 +22,13 @@ test('load plugins in reverse order', async () => {
 })
 
 test('Not existing plugin throws PluginNotFound', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('not-exist', undefined as any)
   await a.throws(() => loadPlugins({ io }), PluginNotFound)
 })
 
 test('registering plugin with the same name throws PluginAlreadyLoaded', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('@komondor-lab/plugin-fixture-dummy', echoPluginModule)
 
   await loadPlugins({ io })
@@ -38,25 +37,25 @@ test('registering plugin with the same name throws PluginAlreadyLoaded', async (
 })
 
 test('plugin without activate function throws', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('@komondor-lab/no-activate', noActivatePluginModule as any)
   await a.throws(() => loadPlugins({ io }), NoActivate)
 })
 
 test('plugin missing support method throws', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('@komondor-lab/no-support', missSupportPluginModule as any)
   await a.throws(() => loadPlugins({ io }), PluginNotConforming)
 })
 
 test('plugin missing getSpy method throws', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('@komondor-lab/no-getspy', missGetSpyPluginModule as any)
   await a.throws(() => loadPlugins({ io }), PluginNotConforming)
 })
 
 test('plugin missing getStub method throws', async () => {
-  const io = incubator.createTestHarness().io
+  const io = createTestIO()
   io.addPluginModule('@komondor-lab/no-getstub', missGetStubPluginModule as any)
 
   await a.throws(() => loadPlugins({ io }), PluginNotConforming)

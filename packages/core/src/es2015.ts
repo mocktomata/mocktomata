@@ -8,13 +8,16 @@ import { SpecPluginActivationContext } from './spec';
 import { stringPlugin } from './string';
 import { undefinedPlugin } from './undefined';
 
-export function activate(context: SpecPluginActivationContext) {
-  context.register(undefinedPlugin)
-  context.register(stringPlugin)
-  context.register(objectPlugin)
-  context.register(arrayPlugin)
-  context.register(functionPlugin)
-  context.register(errorPlugin)
-  context.register(promisePlugin)
-  context.register(classPlugin)
+export const es2015 = {
+  name: '@moctomata/es2015',
+  activate(context: SpecPluginActivationContext) {
+    context.register(undefinedPlugin)
+    context.register(stringPlugin)
+    context.register(objectPlugin)
+    context.register(arrayPlugin)
+    context.register(functionPlugin)
+    context.register(errorPlugin)
+    context.register(promisePlugin)
+    context.register(classPlugin)
+  }
 }

@@ -1,14 +1,11 @@
 import a from 'assertron';
-import * as es2015 from './es2015';
-import { incubator, TestHarness } from './incubator';
-import { loadPlugins } from './spec/loadPlugins';
+import { incubator, TestHarness } from '.';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
 let harness: TestHarness
 beforeAll(async () => {
-  harness = incubator.createTestHarness()
-  harness.io.addPluginModule('@komondor-lab/es2015', es2015)
-  await loadPlugins(harness)
+  harness = incubator.createTestHarness({ target: 'es2015' })
+  await harness.start()
 })
 
 describe('function', () => {
@@ -817,8 +814,8 @@ describe('class', () => {
 
       expect(actual).toBe('echo')
       await spec.done()
-      harness.logSpec(title)
-      harness.showLog()
+      harness.logSpecRecord(title)
+      harness.setLogLevel()
     })
   })
 

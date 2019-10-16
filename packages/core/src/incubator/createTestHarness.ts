@@ -1,48 +1,53 @@
-import { addLogReporter, clearLogReporters, config, createMemoryLogReporter, logLevel, LogReporter, setLogLevel } from 'standard-log';
+import { clearLogReporters, config, createMemoryLogReporter, logLevel, LogReporter, setLogLevel } from 'standard-log';
 import { createColorLogReporter } from 'standard-log-color';
 import { required } from 'type-plus';
 import { context } from '../context';
-import { SpecRecord } from '../spec';
+import { es2015 } from '../es2015';
+import { loadPlugins } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
+import { TestHarness } from './types';
 
-export function createTestHarness(options?: Partial<{ level: number, showLog: boolean }>) {
-  const opts = required({ level: logLevel.info, showLog: false }, options)
-  const level = opts.level
+export type CreateTestHarnessOptions = {
+  target: 'es2015',
+  logLevel?: number,
+}
+
+export function createTestHarness(options?: CreateTestHarnessOptions): TestHarness {
+  const opts = required<Required<CreateTestHarnessOptions>>({ target: 'es2015', logLevel: logLevel.none }, options)
+  const level = opts.logLevel
 
   const reporter = createMemoryLogReporter()
-  const reporters: LogReporter[] = [reporter]
-
-  if (opts.showLog) reporters.push(createColorLogReporter())
+  const reporters: LogReporter[] = [reporter, createColorLogReporter()]
   config({ mode: 'test', reporters, logLevel: level })
   const io = createTestIO()
   context.set({ io })
   store.reset()
 
+  switch (opts.target) {
+    case 'es2015':
+      io.addPluginModule(es2015.name, es2015)
+  }
+
   return {
-    io,
     reporter,
-    showLog(level = Infinity) {
-      if (!opts.showLog) {
-        addLogReporter(createColorLogReporter())
-        opts.showLog = true
-      }
+    addPluginModule(pluginName, pluginModule) {
+      io.addPluginModule(pluginName, pluginModule)
+    },
+    setLogLevel(level = logLevel.all) {
       setLogLevel(level)
     },
     reset() {
       context.clear()
       clearLogReporters()
     },
-    async getSpec(id: string): Promise<SpecRecord> {
-      return io.readSpec(id)
-    },
-    logSpec(title: string) {
+    logSpecRecord(title: string) {
       const colonIndex = title.lastIndexOf(':')
       const specId = colonIndex === -1 ? title : title.slice(0, colonIndex)
       logSpecs(io.getAllSpecs(), e => e[0] === specId)
     },
-    logSpecs() {
-      logSpecs(io.getAllSpecs())
+    start() {
+      return loadPlugins({ io })
     }
   }
 }

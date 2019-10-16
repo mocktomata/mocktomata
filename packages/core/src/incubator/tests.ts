@@ -53,12 +53,12 @@ export type TestSpec = {
 }
 
 function createTestSpec(specFn: CreateSpec, title: string): TestSpec {
+  let s: Spec
   return {
     mock: subject => getSpec().then(s => s.mock(subject)),
     done: () => getSpec().then(s => s.done())
   }
 
-  let s: Spec
   async function getSpec() {
     if (s) return s
 

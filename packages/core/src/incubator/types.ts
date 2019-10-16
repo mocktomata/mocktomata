@@ -1,5 +1,5 @@
-import { SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO, SpecRecord } from '../spec/types';
-import { MemoryLogReporter } from 'standard-log';
+import { LogLevel, MemoryLogReporter } from 'standard-log';
+import { SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO } from '../spec/types';
 
 export type TestIO = {
   getAllSpecs(): IterableIterator<[string, string]>,
@@ -8,11 +8,10 @@ export type TestIO = {
 } & SpecIO & SpecPluginModuleIO
 
 export type TestHarness = {
-  io: TestIO,
   reporter: MemoryLogReporter,
-  showLog(level?: number): void,
+  addPluginModule(pluginName: string, pluginModule: SpecPluginModule): void,
+  setLogLevel(level?: LogLevel): void,
   reset(): void,
-  getSpec(id: string): Promise<SpecRecord>,
-  logSpec(title: string): void,
-  logSpecs(): void,
+  logSpecRecord(title: string): void,
+  start(): Promise<void>
 }
