@@ -1,5 +1,5 @@
 import a from 'assertron';
-import { incubator, TestHarness } from '.';
+import { incubator, TestHarness } from '../src';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
 let harness: TestHarness
@@ -540,16 +540,16 @@ describe('class', () => {
     })
   })
 
-  incubator.free('ok to use super/sub-class as long as behavior is the same', (title, spec) => {
+  incubator.sequence('ok to use super/sub-class as long as behavior is the same', (title, specs) => {
     // It is ok to use diff
     test(title, async () => {
-      const save = spec.save()
+      const save = specs.save
       const bs = await save.mock(Boo)
       const boo = new bs(2)
       expect(boo.getValue()).toBe(2)
       await save.done()
 
-      const sim = spec.simulate()
+      const sim = specs.simulate
       const fs = await sim.mock(Foo)
       const foo = new fs(2)
       expect(foo.getValue()).toBe(2)
@@ -688,16 +688,16 @@ describe('class', () => {
     }
   }
 
-  incubator.free('actual method is not invoked during simulation', (title, spec) => {
+  incubator.sequence('actual method is not invoked during simulation', (title, specs) => {
     test(title, async () => {
-      const save = spec.save()
+      const save = specs.save
       const Subject = await save.mock(DelayedInvokeInternal)
       const dii = new Subject()
 
       expect(await dii.getDelayedInner()).toBe('inner')
       await save.done()
 
-      const sim = spec.simulate()
+      const sim = specs.simulate
       const BadSubject = await sim.mock(DIIThrow)
       const bad = new BadSubject()
       expect(await bad.getDelayedInner()).toBe('inner')

@@ -1,5 +1,5 @@
 import a from 'assertron';
-import { DuplicatePlugin, loadPlugins, NoActivate, PluginNotConforming, PluginNotFound } from '.';
+import { DuplicatePlugin, loadPlugins, NoActivate, PluginNotConforming, PluginNotFound } from '../spec';
 import { createTestIO } from '../incubator/createTestIO';
 import { store } from '../store';
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts';

@@ -1,4 +1,4 @@
-import { KomondorIO } from '@komondor-lab/core';
+import { KomondorIO } from '@moctomata/framework';
 import fetch from 'cross-fetch';
 import { createIOInternal } from './createIOInternal';
 import { CreateIOOptions } from './types';

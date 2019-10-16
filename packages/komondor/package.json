@@ -51,7 +51,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@komondor-lab/core": "^7.0.0-alpha",
+    "@moctomata/framework": "^7.0.0-alpha",
     "@komondor-lab/io-client": "^7.0.0-alpha",
     "@komondor-lab/io-local": "^7.0.0-alpha",
     "@komondor-lab/io-server": "^7.0.0-alpha.0",

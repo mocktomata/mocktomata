@@ -1,4 +1,4 @@
-import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@komondor-lab/core';
+import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@moctomata/framework';
 import a from 'assertron';
 import { createIOInternal } from './createIOInternal';
 import { createFakeServerFetch } from './test-util';

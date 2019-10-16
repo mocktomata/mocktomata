@@ -1,4 +1,4 @@
-import { SpecIO, ScenarioIO, SpecRecord, SpecNotFound, ScenarioNotFound, SpecPluginModuleIO } from '@komondor-lab/core';
+import { SpecIO, ScenarioIO, SpecRecord, SpecNotFound, ScenarioNotFound, SpecPluginModuleIO } from '@moctomata/framework';
 import { createFileRepository } from '@komondor-lab/io-fs';
 import { context } from './context';
 

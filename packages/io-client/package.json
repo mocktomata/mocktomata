@@ -41,7 +41,7 @@
     "cross-fetch": "^3.0.2"
   },
   "devDependencies": {
-    "@komondor-lab/core": "^7.0.0-alpha",
+    "@moctomata/framework": "^7.0.0-alpha",
     "@komondor-lab/file-server": "^7.0.0-alpha",
     "@komondor-lab/io-fs": "^7.0.0-alpha",
     "assertron": "^7.0.2",

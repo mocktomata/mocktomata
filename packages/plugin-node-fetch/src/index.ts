@@ -1,7 +1,7 @@
-import { PluginActivationContext } from '@komondor-lab/core'
+import { SpecPluginActivationContext } from '@moctomata/framework'
 import fetch from 'node-fetch'
 
-export function activate(context: PluginActivationContext) {
+export function activate(context: SpecPluginActivationContext) {
   context.register({
     support(subject) { return subject === fetch },
     createSpy() { return },

@@ -2,10 +2,10 @@
   "files": [],
   "references": [
     {
-      "path": "packages/core/tsconfig.es5.json"
+      "path": "packages/framework/tsconfig.es5.json"
     },
     {
-      "path": "packages/core/tsconfig.esnext.json"
+      "path": "packages/framework/tsconfig.esnext.json"
     },
     {
       "path": "packages/moctomata/tsconfig.es5.json"

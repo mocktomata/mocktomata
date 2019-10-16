@@ -1,4 +1,4 @@
-import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@komondor-lab/core';
+import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@moctomata/framework';
 import t from 'assert';
 import a from 'assertron';
 import { context } from './context';

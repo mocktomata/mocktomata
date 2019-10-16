@@ -1,4 +1,4 @@
-# @komondor-lab/core
+# @moctomata/framework
 
 Core logic library of `komondor`.
 

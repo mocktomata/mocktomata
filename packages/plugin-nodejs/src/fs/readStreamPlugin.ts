@@ -1,4 +1,4 @@
-import { SpecPlugin } from '@komondor-lab/core'
+import { SpecPlugin } from '@moctomata/framework'
 import fs from 'fs'
 
 export const readStreamPlugin: SpecPlugin<fs.ReadStream> = {

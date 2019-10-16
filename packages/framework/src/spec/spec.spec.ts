@@ -1,5 +1,5 @@
 import a from 'assertron';
-import { NotSpecable, spec, SpecIDCannotBeEmpty, SpecNotFound } from '..';
+import { NotSpecable, spec, SpecIDCannotBeEmpty, SpecNotFound } from '../../src';
 import { incubator } from '../incubator';
 
 beforeAll(async () => {
