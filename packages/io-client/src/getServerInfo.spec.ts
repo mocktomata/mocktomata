@@ -13,7 +13,7 @@ test('will try to search for server', async () => {
       return Promise.resolve({
         json() {
           return Promise.resolve({
-            name: 'komondor',
+            name: 'mocktomata',
             url: 'http://localhost:3712',
             plugins: ['@mocktomata/plugin-fixture-dummy']
           })
@@ -24,7 +24,7 @@ test('will try to search for server', async () => {
 
   const info = await getServerInfo({ fetch, location })
   a.satisfies(info, {
-    name: 'komondor',
+    name: 'mocktomata',
     url: 'http://localhost:3712',
     plugins: ['@mocktomata/plugin-fixture-dummy']
   })
@@ -48,8 +48,8 @@ test('remote', async () => {
     return Promise.resolve({
       json() {
         return Promise.resolve({
-          name: 'komondor',
-          url: 'http://komondor.com',
+          name: 'mocktomata',
+          url: 'http://mocktomata.com',
           plugins: ['@mocktomata/plugin-fixture-dummy']
         })
       }
@@ -57,8 +57,8 @@ test('remote', async () => {
   }
   const location = {
     protocol: 'https:',
-    hostname: 'komondor.com'
+    hostname: 'mocktomata.com'
   }
   await getServerInfo({ fetch, location })
-  expect(actual!).toBe('https://komondor.com/komondor/info')
+  expect(actual!).toBe('https://mocktomata.com/mocktomata/info')
 })

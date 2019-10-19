@@ -3,7 +3,6 @@ import a from 'assertron';
 import { createIOInternal } from './createIOInternal';
 import { createFakeServerFetch } from './test-util';
 
-
 test('read not exist spec throws SpecNotFound', async () => {
   const fetch = createFakeServerFetch()
   const io = await createIOInternal({ fetch, location })

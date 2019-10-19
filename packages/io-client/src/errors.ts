@@ -9,6 +9,6 @@ export class ServerNotAvailable extends MocktomataError {
 // istanbul ignore next
 export class ServerNotAvailableAtPortRange extends MocktomataError {
   constructor(public url: string, start: number, end: number) {
-    super(`Unable to find komondor server at ${url} between port ${start} and ${end}`)
+    super(`Unable to find mocktomata server at ${url} between port ${start} and ${end}`)
   }
 }

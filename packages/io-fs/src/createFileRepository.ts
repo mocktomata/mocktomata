@@ -16,9 +16,9 @@ export type Repository = {
 
 export function createFileRepository(cwd: string): Repository {
   const config = getConfig(cwd)
-  const komondorFolder = path.resolve(cwd, config.komondorFolder)
-  const spec = createSpecRepository(komondorFolder)
-  const scenario = createScenarioRepository(komondorFolder)
+  const mocktomataFolder = path.resolve(cwd, config.mocktomataFolder)
+  const spec = createSpecRepository(mocktomataFolder)
+  const scenario = createScenarioRepository(mocktomataFolder)
   const plugin = createPluginRepository({ cwd, config })
   return {
     ...spec,

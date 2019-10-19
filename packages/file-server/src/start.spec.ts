@@ -36,15 +36,15 @@ describe('server behavior', () => {
   })
 
   function buildUrl(path: string) {
-    return `http://localhost:${server.info.port}/komondor/${path}`
+    return `http://localhost:${server.info.port}/mocktomata/${path}`
   }
 
-  test('get komondor info', async () => {
+  test('get mocktomata info', async () => {
     const response = await fetch(buildUrl('info'))
     const actual = await response.text()
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pjson = require('../package.json')
-    t.strictEqual(actual, `{"name":"komondor","version":"${pjson.version}","url":"http://localhost:${server.info.port}","plugins":[]}`)
+    t.strictEqual(actual, `{"name":"mocktomata","version":"${pjson.version}","url":"http://localhost:${server.info.port}","plugins":[]}`)
   })
 
   test('read not exist spec gets 404', async () => {
@@ -93,5 +93,4 @@ describe('server behavior', () => {
 
     expect(actual).toEqual('{ a: 1 }')
   })
-
 })

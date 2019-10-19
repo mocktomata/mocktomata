@@ -1,2 +1,2 @@
-export const KOMONDOR_FOLDER = '.komondor'
-export const KOMONODR_PLUGIN_KEYWORD = 'komondor-plugin'
+export const MOCKTOMATA_FOLDER = '.mocktomata'
+export const MOCKTOMATA_PLUGIN_KEYWORD = 'mocktomata-plugin'

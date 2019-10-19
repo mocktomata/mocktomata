@@ -1,7 +1,7 @@
 {
   "name": "@mocktomata/framework",
   "version": "7.0.0-alpha",
-  "description": "Komondor core library",
+  "description": "mocktomata framework package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
     "url": "https://github.com/mocktomata/mocktomata/issues"

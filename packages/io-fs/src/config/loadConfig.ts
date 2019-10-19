@@ -5,8 +5,8 @@ import { AmbiguousConfig, InvalidConfigFormat } from './errors';
 export function loadConfig(cwd: string) {
   const configs: { [k in string]: Record<string, any> } = {
     pjson: loadPjsonConfig(cwd),
-    kjson: loadKjsonConfig(cwd),
-    kjs: loadKjsConfig(cwd)
+    mjson: loadMjsonConfig(cwd),
+    mjs: loadMjsConfig(cwd)
   }
 
   const names = Object.keys(configs).filter(k => !!configs[k])
@@ -24,33 +24,33 @@ function loadPjsonConfig(cwd: string) {
   if (fs.existsSync(pjsonPath)) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pjson = require(pjsonPath)
-    if (pjson.komondor) return pjson.komondor
+    if (pjson.mocktomata) return pjson.mocktomata
   }
 }
 
-function loadKjsonConfig(cwd: string) {
-  const filepath = path.resolve(cwd, '.komondor.json')
+function loadMjsonConfig(cwd: string) {
+  const filepath = path.resolve(cwd, '.mocktomata.json')
   if (fs.existsSync(filepath)) {
     try {
       return require(filepath)
     }
     catch (e) {
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('.komondor.json')
+        throw new InvalidConfigFormat('.mocktomata.json')
       }
     }
   }
 }
 
-function loadKjsConfig(cwd: string) {
-  const filepath = path.resolve(cwd, '.komondor.js')
+function loadMjsConfig(cwd: string) {
+  const filepath = path.resolve(cwd, '.mocktomata.js')
   if (fs.existsSync(filepath)) {
     try {
       return require(filepath)
     }
     catch (e) {
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('.komondor.js')
+        throw new InvalidConfigFormat('.mocktomata.js')
       }
     }
   }

@@ -1,7 +1,10 @@
 import { createStore } from 'global-store'
 
 export type Store = {
-  config: any
+  config: {
+    mocktomataFolder: string,
+    plugins?: string[],
+  }
 }
 
 export const store = createStore<Store>({

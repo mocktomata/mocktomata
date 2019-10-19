@@ -12,15 +12,15 @@ export function createFakeServerFetch() {
   return Object.assign(
     async (url: RequestInfo, init?: RequestInit) => {
       const uri = extractUri(url as string)
-      if (uri === 'komondor/info') {
+      if (uri === 'mocktomata/info') {
         return new f.Response(JSON.stringify({
           url: 'http://localhost:3999',
           version: '1.0',
           plugins: ['@mocktomata/plugin-fixture-dummy']
         }))
       }
-      else if (uri.startsWith('komondor/specs/')) {
-        const id = /komondor\/specs\/(.*)/.exec(uri)![1]
+      else if (uri.startsWith('mocktomata/specs/')) {
+        const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
         if (init && init.method === 'POST') {
           specs[id] = JSON.parse(init.body as string)
           return new f.Response(undefined)
@@ -32,8 +32,8 @@ export function createFakeServerFetch() {
             return new f.Response(undefined, { status: 404 })
         }
       }
-      else if (uri.startsWith('komondor/scenarios/')) {
-        const id = /komondor\/scenarios\/(.*)/.exec(uri)![1]
+      else if (uri.startsWith('mocktomata/scenarios/')) {
+        const id = /mocktomata\/scenarios\/(.*)/.exec(uri)![1]
         if (init && init.method === 'POST') {
           scenarios[id] = JSON.parse(init.body as string)
           return new f.Response(undefined)

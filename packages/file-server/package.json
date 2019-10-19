@@ -49,11 +49,11 @@
   },
   "devDependencies": {
     "@types/hapi": "^18.0.2",
-    "@types/node-fetch": "^2.3.4",
+    "@types/node-fetch": "^2.5.2",
     "@types/update-notifier": "^2.5.0",
-    "assertron": "^7.0.2",
-    "delay": "^4.2.0",
+    "assertron": "^7.1.2",
+    "delay": "^4.3.0",
     "node-fetch": "^2.6.0",
-    "type-plus": "^1.18.1"
+    "type-plus": "^1.29.0"
   }
 }

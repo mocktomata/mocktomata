@@ -1,8 +1,8 @@
 import path from 'path';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 
-export function createSpecRepository(komondorFolder: string) {
-  const specDir = getSpecFolder(komondorFolder)
+export function createSpecRepository(mocktomataFolder: string) {
+  const specDir = getSpecFolder(mocktomataFolder)
   return {
     async readSpec(id: string) {
       const hash = getHash(id)
@@ -15,6 +15,6 @@ export function createSpecRepository(komondorFolder: string) {
   }
 }
 
-export function getSpecFolder(komondorFolder: string) {
-  return path.resolve(komondorFolder, 'specs')
+export function getSpecFolder(mocktomataFolder: string) {
+  return path.resolve(mocktomataFolder, 'specs')
 }

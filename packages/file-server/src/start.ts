@@ -8,9 +8,7 @@ import { Options } from './types';
 export async function start(options?: Partial<Options>) {
   const o = required<Options>({}, options)
 
-  const server = o.port ?
-    new Server({ port: o.port, routes: { 'cors': true } }) :
-    await tryCreateHapi(3698, 3698, 3708)
+  const server = o.port ? new Server({ port: o.port, routes: { 'cors': true } }) : await tryCreateHapi(3698, 3708)
   defineRoutes(server)
 
   await server.start()
@@ -22,10 +20,10 @@ export async function start(options?: Partial<Options>) {
   }
 }
 
-async function tryCreateHapi(port: number, start: number, end: number): Promise<Server> {
+async function tryCreateHapi(start: number, end: number, port = start): Promise<Server> {
   // istanbul ignore next
   if (port > end) {
-    throw new Error(`Unable to start komondor server using port from ${start} to ${end}`)
+    throw new Error(`Unable to start mocktomata server using port from ${start} to ${end}`)
   }
 
   try {
@@ -35,8 +33,7 @@ async function tryCreateHapi(port: number, start: number, end: number): Promise<
     return server
   }
   catch (e) {
-    // tslint:disable-next-line: no-return-await
-    return await tryCreateHapi(port + 1, start, end)
+    return await tryCreateHapi(start, end, port + 1)
   }
 }
 
@@ -44,12 +41,12 @@ function defineRoutes(server: Server) {
   server.route([
     {
       method: 'GET',
-      path: '/komondor/info',
+      path: '/mocktomata/info',
       handler: async (request) => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const pjson = require(path.resolve(__dirname, '../package.json'))
         return JSON.stringify({
-          name: 'komondor',
+          name: 'mocktomata',
           version: pjson.version,
           url: getReflectiveUrl(request.info, server.info),
           plugins: await context.value.repository.getPluginList()
@@ -58,7 +55,7 @@ function defineRoutes(server: Server) {
     },
     // {
     //   method: 'GET',
-    //   path: '/komondor/config',
+    //   path: '/mocktomata/config',
     //   options: { cors: true },
     //   handler: async (request, h) => {
     //     return JSON.stringify(loadConfig(cwd))
@@ -66,7 +63,7 @@ function defineRoutes(server: Server) {
     // },
     {
       method: 'GET',
-      path: '/komondor/specs/{id}',
+      path: '/mocktomata/specs/{id}',
       handler: async (request) => {
         try {
           return await context.value.repository.readSpec(request.params.id)
@@ -78,7 +75,7 @@ function defineRoutes(server: Server) {
     },
     {
       method: 'POST',
-      path: '/komondor/specs/{id}',
+      path: '/mocktomata/specs/{id}',
       handler: async (request, h) => {
         await context.value.repository.writeSpec(request.params.id, request.payload as string)
         return h.response()
@@ -86,7 +83,7 @@ function defineRoutes(server: Server) {
     },
     {
       method: 'GET',
-      path: '/komondor/scenarios/{id}',
+      path: '/mocktomata/scenarios/{id}',
       handler: async (request) => {
         try {
           return await context.value.repository.readScenario(request.params.id)
@@ -98,7 +95,7 @@ function defineRoutes(server: Server) {
     },
     {
       method: 'POST',
-      path: '/komondor/scenarios/{id}',
+      path: '/mocktomata/scenarios/{id}',
       handler: async (request, h) => {
         await context.value.repository.writeScenario(request.params.id, request.payload as string)
         return h.response()

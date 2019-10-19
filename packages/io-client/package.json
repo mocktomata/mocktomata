@@ -38,14 +38,14 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "cross-fetch": "^3.0.2"
+    "cross-fetch": "^3.0.4"
   },
   "devDependencies": {
     "@mocktomata/framework": "^7.0.0-alpha",
     "@mocktomata/file-server": "^7.0.0-alpha",
     "@mocktomata/io-fs": "^7.0.0-alpha",
-    "assertron": "^7.0.2",
-    "type-plus": "^1.18.1"
+    "assertron": "^7.1.2",
+    "type-plus": "^1.29.0"
   },
   "engines": {
     "node": ">= 6"

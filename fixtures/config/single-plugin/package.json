@@ -1,7 +1,7 @@
 {
-  "komondor": {
+  "mocktomata": {
     "plugins": [
-      "komondor-plugin-single"
+      "mocktomata-plugin-single"
     ]
   }
 }

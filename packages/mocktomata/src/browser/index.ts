@@ -5,7 +5,7 @@
 // import { createContext } from 'async-fp';
 
 // const context = createContext(async () => {
-//   const logger = getLogger('komondor', logLevel.warn)
+//   const logger = getLogger('mocktomata', logLevel.warn)
 
 //   const io = await createIO()
 //   const libs: string[] = []

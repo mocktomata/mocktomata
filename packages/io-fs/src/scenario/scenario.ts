@@ -1,8 +1,8 @@
 import path from 'path';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 
-export function createScenarioRepository(komondorFolder: string) {
-  const dir = getScenarioFolder(komondorFolder)
+export function createScenarioRepository(mocktomataFolder: string) {
+  const dir = getScenarioFolder(mocktomataFolder)
   return {
     async readScenario(id: string) {
       const hash = getHash(id)
@@ -15,6 +15,6 @@ export function createScenarioRepository(komondorFolder: string) {
   }
 }
 
-export function getScenarioFolder(komondorFolder: string) {
-  return path.resolve(komondorFolder, 'scenarios')
+export function getScenarioFolder(mocktomataFolder: string) {
+  return path.resolve(mocktomataFolder, 'scenarios')
 }

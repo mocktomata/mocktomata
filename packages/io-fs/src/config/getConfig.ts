@@ -1,10 +1,10 @@
 import { required } from 'unpartial';
-import { KOMONDOR_FOLDER } from '../constants';
-import { store } from '../store';
+import { MOCKTOMATA_FOLDER } from '../constants';
+import { store, Store } from '../store';
 import { loadConfig } from './loadConfig';
 
-const defaultConfig = {
-  komondorFolder: KOMONDOR_FOLDER
+const defaultConfig: Store['config'] = {
+  mocktomataFolder: MOCKTOMATA_FOLDER
 }
 
 export function getConfig(cwd: string) {

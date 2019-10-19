@@ -16,57 +16,57 @@ test('load from package.json', () => {
   const tmp = dirSync()
 
   const expected = { url: 'http://localhost' };
-  fs.writeFileSync(path.join(tmp.name, 'package.json'), JSON.stringify({ komondor: expected }))
+  fs.writeFileSync(path.join(tmp.name, 'package.json'), JSON.stringify({ mocktomata: expected }))
 
   const actual = loadConfig(tmp.name)
   t.deepStrictEqual(actual, expected)
 })
 
-test('load from .komondor.json', () => {
+test('load from .mocktomata.json', () => {
   const tmp = dirSync()
 
   const expected = { url: 'http://localhost' };
-  fs.writeFileSync(path.join(tmp.name, '.komondor.json'), JSON.stringify(expected))
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.json'), JSON.stringify(expected))
 
   const actual = loadConfig(tmp.name)
   t.deepStrictEqual(actual, expected)
 })
 
-test('if .komondor.json is not a valid json, throws InvalidConfigFormat', () => {
+test('if .mocktomata.json is not a valid json, throws InvalidConfigFormat', () => {
   const tmp = dirSync()
 
-  fs.writeFileSync(path.join(tmp.name, '.komondor.json'), '')
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.json'), '')
   a.throws(() => loadConfig(tmp.name), InvalidConfigFormat)
 })
 
-test('if .komondor.js is not a valid js, throws InvalidConfigFormat', () => {
+test('if .mocktomata.js is not a valid js, throws InvalidConfigFormat', () => {
   const tmp = dirSync()
 
-  fs.writeFileSync(path.join(tmp.name, '.komondor.js'), 'abc def')
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.js'), 'abc def')
   a.throws(() => loadConfig(tmp.name), InvalidConfigFormat)
 })
 
 
-test('if both .komondor.json and .komondor.js exist, throws AmbiguousConfig', () => {
+test('if both .mocktomata.json and .mocktomata.js exist, throws AmbiguousConfig', () => {
   const tmp = dirSync()
 
-  fs.writeFileSync(path.join(tmp.name, '.komondor.json'), '{}')
-  fs.writeFileSync(path.join(tmp.name, '.komondor.js'), 'module.exports={}')
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.json'), '{}')
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.js'), 'module.exports={}')
   a.throws(() => loadConfig(tmp.name), AmbiguousConfig)
 })
 
-test('if both package.json/komondor and .komondor.json, throws AmbiguousConfig', () => {
+test('if both package.json/mocktomata and .mocktomata.json, throws AmbiguousConfig', () => {
   const tmp = dirSync()
 
-  fs.writeFileSync(path.join(tmp.name, 'package.json'), '{ "komondor": {} }')
-  fs.writeFileSync(path.join(tmp.name, '.komondor.json'), '{}')
+  fs.writeFileSync(path.join(tmp.name, 'package.json'), '{ "mocktomata": {} }')
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.json'), '{}')
   a.throws(() => loadConfig(tmp.name), AmbiguousConfig)
 })
 
-test('if both package.json/komondor and .komondor.json, throws AmbiguousConfig', () => {
+test('if both package.json/mocktomata and .mocktomata.json, throws AmbiguousConfig', () => {
   const tmp = dirSync()
 
-  fs.writeFileSync(path.join(tmp.name, 'package.json'), '{ "komondor": {} }')
-  fs.writeFileSync(path.join(tmp.name, '.komondor.js'), 'module.exports={}')
+  fs.writeFileSync(path.join(tmp.name, 'package.json'), '{ "mocktomata": {} }')
+  fs.writeFileSync(path.join(tmp.name, '.mocktomata.js'), 'module.exports={}')
   a.throws(() => loadConfig(tmp.name), AmbiguousConfig)
 })

@@ -19,5 +19,5 @@ test('display started message', async () => {
   await cmd.run(args, argv)
 
   const message = generateDisplayedMessage(ui.display.infoLogs)
-  t(/komondor server started/.test(message))
+  t(/mocktomata server started/.test(message))
 })

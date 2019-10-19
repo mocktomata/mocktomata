@@ -30,7 +30,7 @@ export const serveCommand: CliCommand = {
       const msg = `      ${chalk.magenta(`${server.info.protocol}://localhost:${server.info.port}`)}`
       const bar = '-'.repeat(msg.length)
       this.ui.info(`
-komondor server started.
+mocktomata server started.
 ${bar}
 ${msg}
 ${bar}
