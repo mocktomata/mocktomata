@@ -1,6 +1,6 @@
-import { KomondorError } from '../errors';
+import { MocktomataError } from '../errors';
 
-export class ScenarioNotFound extends KomondorError {
+export class ScenarioNotFound extends MocktomataError {
   constructor(id: string) {
     super(`Cannot find scenario '${id}'`)
   }

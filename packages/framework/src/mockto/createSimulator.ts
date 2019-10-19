@@ -5,13 +5,13 @@ import { ReferenceMismatch } from './errors';
 import { getPlugin } from './findPlugin';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 import { logAutoInvokeAction, logCreateStub } from './logs';
-import { InstantiateAction, InvokeAction, SpecOptions, SpecReference } from './types';
+import { InstantiateAction, InvokeAction, MocktoOptions, SpecReference } from './types';
 import { referenceMismatch } from './validations';
 import { log } from '../log';
 
 export type Simulator = { run(): void }
 
-export function createSimulator(record: ValidateRecord, _options: SpecOptions): Simulator {
+export function createSimulator(record: ValidateRecord, _options: MocktoOptions): Simulator {
   // use `options` to control which simulator to use.
   // currently only one.
   return createSpecImmediateSimulator(record)

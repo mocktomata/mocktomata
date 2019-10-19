@@ -9,24 +9,26 @@ import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 import { logCreateStub, logInvokeAction, logResultAction } from './logs';
-import { ActionId, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, SpecOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
+import { ActionId, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecAction, MocktoOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
 import { referenceMismatch, siteMismatch, arrayMismatch } from './validations';
 
-export async function createSimulateSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
+export async function createSimulateSpec(context: SpecContext, specId: string, options: MocktoOptions): Promise<Spec> {
   const loaded = await context.io.readSpec(specId)
 
   const record = createValidateRecord(specId, loaded, options)
   const simulator = createSimulator(record, options)
   record.onAddAction(simulator.run)
 
-  return {
-    mock: subject => {
+  return Object.assign(
+    async (subject: any) => {
       assertMockable(subject)
       return createStub({ record, subject })
-    },
-    async done() { }
-  }
+    }, {
+    async done() {
+      record.end()
+    }
+  })
 }
 type CreateStubOptions<S> = {
   record: ValidateRecord,

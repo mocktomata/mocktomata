@@ -1,5 +1,5 @@
 import { reduceKey } from 'type-plus';
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../mockto';
 import { getPropertyNames } from '../utils';
 
 export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<string | number, any>> = {

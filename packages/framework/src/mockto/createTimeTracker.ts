@@ -1,8 +1,8 @@
-import { SpecOptions } from './types';
+import { MocktoOptions } from './types';
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
 
-export function createTimeTracker({ timeout }: Pick<SpecOptions, 'timeout'>, callback: (timeout: number) => void) {
+export function createTimeTracker({ timeout }: Pick<MocktoOptions, 'timeout'>, callback: (timeout: number) => void) {
   let handle: NodeJS.Timeout
   let startTick: number
   let endTick: number

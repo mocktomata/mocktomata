@@ -1,5 +1,5 @@
 import { createContext } from 'async-fp';
-import { SpecPluginModuleIO, SpecIO } from './spec';
+import { SpecPluginModuleIO, SpecIO } from './mockto';
 
 export type SpecContext = {
   io: SpecIO & SpecPluginModuleIO

@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../mockto';
 
 export const undefinedPlugin: SpecPlugin<string> = {
   name: 'undefined',

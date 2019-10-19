@@ -4,11 +4,11 @@ import { createTimeTracker } from './createTimeTracker';
 import { ActionMismatch, ReferenceMismatch } from './errors';
 import { logRecordingTimeout } from './logs';
 import { addAction, addRef, findRef, findRefId, findTestDouble, getRef, resolveRefId } from './mockRecordFns';
-import { ActionId, InvokeAction, ReferenceId, SpecAction, SpecActionBase, SpecOptions, SpecRecord, SpecReference } from './types';
+import { ActionId, InvokeAction, ReferenceId, SpecAction, SpecActionBase, MocktoOptions, SpecRecord, SpecReference } from './types';
 
 export type ValidateRecord = ReturnType<typeof createValidateRecord>
 
-export function createValidateRecord(specId: string, original: SpecRecord, options: SpecOptions) {
+export function createValidateRecord(specId: string, original: SpecRecord, options: MocktoOptions) {
   const time = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
   const actual: SpecRecord = { refs: [], actions: [] }
   const addActionListeners: Array<() => void> = []

@@ -1,8 +1,8 @@
 import { tersify } from 'tersify';
-import { KomondorError } from '../errors';
+import { MocktomataError } from '../errors';
 import { SpecReference } from './types';
 
-export class SpecIDCannotBeEmpty extends KomondorError {
+export class SpecIDCannotBeEmpty extends MocktomataError {
   // istanbul ignore next
   constructor() {
     super(`The spec id cannot be an empty string. It should uniquely identify the spec.`)
@@ -11,7 +11,7 @@ export class SpecIDCannotBeEmpty extends KomondorError {
   }
 }
 
-export class SpecNotFound extends KomondorError {
+export class SpecNotFound extends MocktomataError {
   // istanbul ignore next
   constructor(public specId: string, public reason?: Error) {
     super(`Unable to find the spec record for '${specId}'${reason ? `due to: ${reason}` : ''}`)
@@ -20,7 +20,7 @@ export class SpecNotFound extends KomondorError {
   }
 }
 
-export class NotSpecable extends KomondorError {
+export class NotSpecable extends MocktomataError {
   // istanbul ignore next
   constructor(public subject: any) {
     super(`The ${typeof subject === 'string' ? subject : `subject ${tersify(subject, { maxLength: 50 })}`} is not supported by any loaded plugins`)
@@ -29,35 +29,35 @@ export class NotSpecable extends KomondorError {
   }
 }
 
-export class PluginNotFound extends KomondorError {
+export class PluginNotFound extends MocktomataError {
   // istanbul ignore next
   constructor(public pluginName: string) {
     super(`Could not locate plugin '${pluginName}'`)
   }
 }
 
-export class DuplicatePlugin extends KomondorError {
+export class DuplicatePlugin extends MocktomataError {
   // istanbul ignore next
   constructor(public pluginName: string) {
     super(`A plugin with the name '${pluginName}' has already been loaded.`)
   }
 }
 
-export class NoActivate extends KomondorError {
+export class NoActivate extends MocktomataError {
   // istanbul ignore next
   constructor(public moduleName: string) {
     super(`${moduleName} does not export an 'activate()' function`)
   }
 }
 
-export class PluginNotConforming extends KomondorError {
+export class PluginNotConforming extends MocktomataError {
   // istanbul ignore next
   constructor(public pluginName: string) {
     super(`${pluginName} is not a plugin.`)
   }
 }
 
-export class ReferenceMismatch extends KomondorError {
+export class ReferenceMismatch extends MocktomataError {
   // istanbul ignore next
   constructor(public specId: string, public actual: Partial<SpecReference>, public expected: Partial<SpecReference> | undefined) {
     super(`Recorded data for '${specId}' doesn't match with simulation.
@@ -72,7 +72,7 @@ ${tersifyReference(actual)}`)
 
 export type MismatchActionModel = { type: string, plugin?: string }
 
-export class ActionMismatch extends KomondorError {
+export class ActionMismatch extends MocktomataError {
   // istanbul ignore next
   constructor(public specId: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
     super(`Recorded data for '${specId}' doesn't match with simulation.

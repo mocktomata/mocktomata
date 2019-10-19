@@ -1,6 +1,6 @@
 // import { reduceKey } from 'type-plus';
 import { reduceKey } from 'type-plus';
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../mockto';
 import { hasPropertyInPrototype } from '../utils';
 
 export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {

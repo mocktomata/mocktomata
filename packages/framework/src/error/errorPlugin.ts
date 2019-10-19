@@ -1,5 +1,5 @@
 import { IsoError } from 'iso-error'
-import { SpecPlugin } from '../spec'
+import { SpecPlugin } from '../mockto'
 
 export const errorPlugin: SpecPlugin<Error, Record<string, any>> = {
   name: 'error',

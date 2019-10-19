@@ -5,23 +5,23 @@ import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
 import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
-import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, SpecOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
+import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spec, MocktoOptions, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 
-export async function createSaveSpec(context: SpecContext, specId: string, options: SpecOptions): Promise<Spec> {
+export async function createSaveSpec(context: SpecContext, specId: string, options: MocktoOptions): Promise<Spec> {
   const record = createSpyRecord(specId, options)
-  return {
-    mock: subject => {
+  return Object.assign(
+    async (subject: any) => {
       assertMockable(subject)
       return createSpy({ record, subject, mode: 'passive' })!
-    },
+    }, {
     async done() {
       record.end()
       const sr = record.getSpecRecord()
       context.io.writeSpec(specId, sr)
     }
-  }
+  })
 }
 
 type CreateSpyOptions<S> = {

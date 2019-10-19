@@ -3,11 +3,11 @@ import { createTimeTracker } from './createTimeTracker';
 import { getPlugin } from './findPlugin';
 import { logRecordingTimeout } from './logs';
 import { addAction, addRef, findRef, findRefId, findTestDouble, getRef } from './mockRecordFns';
-import { ActionId, ReferenceId, SpecAction, SpecOptions, SpecReference } from './types';
+import { ActionId, ReferenceId, SpecAction, MocktoOptions, SpecReference } from './types';
 
 export type SpyRecord = ReturnType<typeof createSpyRecord>
 
-export function createSpyRecord(specId: string, options: SpecOptions) {
+export function createSpyRecord(specId: string, options: MocktoOptions) {
   const time = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
   const refs: SpecReference[] = []
   const actions: SpecAction[] = []

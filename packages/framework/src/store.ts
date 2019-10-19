@@ -1,5 +1,5 @@
 import { createStore } from 'global-store';
-import { SpecPluginInstance } from './spec/types-internal';
+import { SpecPluginInstance } from './mockto/types-internal';
 
 export type SpecStore = {
   specTypeIds: Record<string, number>,

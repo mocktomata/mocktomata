@@ -1,5 +1,5 @@
 
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../mockto';
 import { isPromise } from './isPromise';
 
 export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rejected' }> = {

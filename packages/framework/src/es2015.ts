@@ -4,7 +4,7 @@ import { errorPlugin } from './error';
 import { functionPlugin } from './function';
 import { objectPlugin } from './object';
 import { promisePlugin } from './promise';
-import { SpecPluginActivationContext } from './spec';
+import { SpecPluginActivationContext } from './mockto';
 import { stringPlugin } from './string';
 import { undefinedPlugin } from './undefined';
 
