@@ -6,6 +6,7 @@ import { dirSync } from 'tmp';
 import { PromiseValue } from 'type-plus';
 import { start } from '.';
 import { context } from './context';
+import { btoa } from './base64';
 
 test('automatically find a port between 3698 and 3798', async () => {
   const server = await start()
@@ -26,7 +27,7 @@ describe('server behavior', () => {
   beforeAll(async () => {
     const tmp = dirSync()
     const repository = createFileRepository(tmp.name)
-    await repository.writeSpec('exist', '{ "spec": "exist" }')
+    await repository.writeSpec('exist', '', '{ "spec": "exist" }')
     await repository.writeScenario('exist', '{ "scenario": "exist" }')
     context.value.repository = repository
     server = await start()
@@ -48,24 +49,23 @@ describe('server behavior', () => {
   })
 
   test('read not exist spec gets 404', async () => {
-    const response = await fetch(buildUrl('specs/not exist'))
+    const response = await fetch(buildUrl(`specs/${buildId('not exist')}`))
 
     expect(response.status).toBe(404)
   })
-
   test('read spec', async () => {
-    const response = await fetch(buildUrl('specs/exist'))
+    const response = await fetch(buildUrl(`specs/${buildId('exist')}`))
 
     expect(response.status).toBe(200)
     expect(await response.text()).toEqual('{ "spec": "exist" }')
   })
 
   test('write spec', async () => {
-    const response = await fetch(buildUrl('specs/abc'), { method: 'POST', body: '{ a: 1 }' })
+    const response = await fetch(buildUrl(`specs/${buildId('abc')}`), { method: 'POST', body: '{ a: 1 }' })
 
     expect(response.status).toBe(200)
     const repository = context.value.repository
-    const actual = await repository.readSpec('abc')
+    const actual = await repository.readSpec('abc', '')
 
     expect(actual).toEqual('{ a: 1 }')
   })
@@ -94,3 +94,7 @@ describe('server behavior', () => {
     expect(actual).toEqual('{ a: 1 }')
   })
 })
+
+function buildId(title: string, invokePath = '') {
+  return btoa(JSON.stringify({ title, invokePath }))
+}

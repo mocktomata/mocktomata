@@ -7,14 +7,16 @@ import { Context } from './typesInternal';
 export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<MocktomataIO> {
   const info = await getServerInfo({ fetch, location }, options)
   return {
-    async readSpec(id: string): Promise<SpecRecord> {
+    async readSpec(title: string, invokePath: string): Promise<SpecRecord> {
+      const id = btoa(JSON.stringify({ title, invokePath }))
       const response = await fetch(buildUrl(info.url, `specs/${id}`))
       if (response.status === 404) {
         throw new SpecNotFound(id)
       }
       return response.json()
     },
-    async writeSpec(id: string, record: SpecRecord) {
+    async writeSpec(title: string, invokePath: string, record: SpecRecord) {
+      const id = btoa(JSON.stringify({ title, invokePath }))
       const response = await fetch(buildUrl(info.url, `specs/${id}`), { method: 'POST', body: JSON.stringify(record) })
       // istanbul ignore next
       if (!response.ok) {

@@ -1,8 +1,8 @@
 import { Meta } from './Meta';
 
 export type SpecIO = {
-  readSpec(ref: string): Promise<SpecRecord>,
-  writeSpec(ref: string, record: SpecRecord): Promise<void>
+  readSpec(title: string, invokePath: string ): Promise<SpecRecord>,
+  writeSpec(title: string, invokePath: string, record: SpecRecord): Promise<void>
 }
 
 // May need to expand this and specialize it for Spy and Stub

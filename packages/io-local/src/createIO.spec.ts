@@ -12,13 +12,13 @@ beforeAll(async () => {
 test('read not exist spec throws SpecNotFound', async () => {
   const io = createIO()
 
-  await a.throws(io.readSpec('not exist'), SpecNotFound)
+  await a.throws(io.readSpec('not exist', ''), SpecNotFound)
 })
 
 test('read existing spec', async () => {
   const io = createIO()
 
-  const actual = await io.readSpec('exist')
+  const actual = await io.readSpec('exist', '')
 
   expect(actual).toEqual({ actions: [] })
 })
@@ -27,10 +27,10 @@ test('write spec', async () => {
   const io = createIO()
 
   const record: SpecRecord = { refs: [], actions: [] }
-  await io.writeSpec('new spec', record)
+  await io.writeSpec('new spec', __filename, record)
 
   const repo = context.value.repository
-  const spec = await repo.readSpec('new spec')
+  const spec = await repo.readSpec('new spec', __filename)
   expect(spec).toEqual(JSON.stringify(record))
 })
 

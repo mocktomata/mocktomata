@@ -4,6 +4,7 @@ import path from 'path';
 import { required } from 'unpartial';
 import { context } from './context';
 import { Options } from './types';
+import { atob } from './base64';
 
 export async function start(options?: Partial<Options>) {
   const o = required<Options>({}, options)
@@ -66,7 +67,8 @@ function defineRoutes(server: Server) {
       path: '/mocktomata/specs/{id}',
       handler: async (request) => {
         try {
-          return await context.value.repository.readSpec(request.params.id)
+          const { title, invokePath } = JSON.parse(atob(request.params.id))
+          return await context.value.repository.readSpec(title, invokePath)
         }
         catch (e) {
           throw boom.notFound(e.message)
@@ -77,7 +79,8 @@ function defineRoutes(server: Server) {
       method: 'POST',
       path: '/mocktomata/specs/{id}',
       handler: async (request, h) => {
-        await context.value.repository.writeSpec(request.params.id, request.payload as string)
+        const { title, invokePath } = JSON.parse(atob(request.params.id))
+        await context.value.repository.writeSpec(title, invokePath, request.payload as string)
         return h.response()
       }
     },

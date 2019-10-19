@@ -1,6 +1,6 @@
 import { Except, Omit } from 'type-plus';
 import { notDefined } from '../constants';
-import { SpecContext } from '../context';
+import { MocktomataContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { createSpyRecord, SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
@@ -9,8 +9,8 @@ import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, Ref
 import { SpecPluginInstance } from './types-internal';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 
-export async function createSaveSpec(context: SpecContext, specId: string, options: MocktoOptions): Promise<Spec> {
-  const record = createSpyRecord(specId, options)
+export async function createSaveSpec(context: MocktomataContext, specTitle: string, specPath: string, options: MocktoOptions): Promise<Spec> {
+  const record = createSpyRecord(specTitle, options)
   return Object.assign(
     async (subject: any) => {
       assertMockable(subject)
@@ -19,7 +19,7 @@ export async function createSaveSpec(context: SpecContext, specId: string, optio
     async done() {
       record.end()
       const sr = record.getSpecRecord()
-      context.io.writeSpec(specId, sr)
+      context.io.writeSpec(specTitle, specPath, sr)
     }
   })
 }

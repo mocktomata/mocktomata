@@ -1,9 +1,9 @@
 import { createContext } from 'async-fp';
-import { SpecPluginModuleIO, SpecIO } from './mockto';
+import { SpecIO, SpecPluginModuleIO } from './mockto/types';
 
-export type SpecContext = {
-  io: SpecIO & SpecPluginModuleIO
+export type MocktomataContext = {
+  io: SpecIO & SpecPluginModuleIO,
+
 }
 
-export const context = createContext<SpecContext>()
-
+export const context = createContext<MocktomataContext>()

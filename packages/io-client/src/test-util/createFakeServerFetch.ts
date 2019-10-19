@@ -21,13 +21,14 @@ export function createFakeServerFetch() {
       }
       else if (uri.startsWith('mocktomata/specs/')) {
         const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
+        const { title } = JSON.parse(atob(id))
         if (init && init.method === 'POST') {
-          specs[id] = JSON.parse(init.body as string)
+          specs[title] = JSON.parse(init.body as string)
           return new f.Response(undefined)
         }
         else {
-          if (specs[id])
-            return new f.Response(JSON.stringify(specs[id]))
+          if (specs[title])
+            return new f.Response(JSON.stringify(specs[title]))
           else
             return new f.Response(undefined, { status: 404 })
         }
@@ -48,9 +49,9 @@ export function createFakeServerFetch() {
       console.error(url)
       return new f.Response(undefined, { status: 404 })
     }, {
-      specs,
-      scenarios
-    }
+    specs,
+    scenarios
+  }
   )
 }
 

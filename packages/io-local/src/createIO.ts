@@ -11,17 +11,17 @@ export function createIO(options?: CreateIOOptions): SpecIO & SpecPluginModuleIO
     context.value.repository = createFileRepository(options.cwd) :
     context.value.repository
   return {
-    async readSpec(id: string): Promise<SpecRecord> {
+    async readSpec(title: string, invokePath: string): Promise<SpecRecord> {
       try {
-        const specStr = await repo.readSpec(id)
+        const specStr = await repo.readSpec(title, invokePath)
         return JSON.parse(specStr)
       }
       catch (e) {
-        throw new SpecNotFound(id)
+        throw new SpecNotFound(title)
       }
     },
-    async writeSpec(id: string, record: SpecRecord) {
-      return repo.writeSpec(id, JSON.stringify(record))
+    async writeSpec(title: string, invokePath: string, record: SpecRecord) {
+      return repo.writeSpec(title, invokePath, JSON.stringify(record))
     },
     async readScenario(id: string): Promise<any> {
       try {

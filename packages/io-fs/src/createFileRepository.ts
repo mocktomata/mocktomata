@@ -6,8 +6,8 @@ import { createScenarioRepository } from './scenario';
 import { createSpecRepository } from './spec';
 
 export type Repository = {
-  readSpec(id: string): Promise<string>,
-  writeSpec(id: string, data: string): Promise<void>,
+  readSpec(title: string, invokePath: string): Promise<string>,
+  writeSpec(title: string, invokePath: string, data: string): Promise<void>,
   readScenario(id: string): Promise<string>,
   writeScenario(id: string, data: string): Promise<void>,
   getPluginList(): Promise<string[]>,

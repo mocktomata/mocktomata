@@ -1,6 +1,6 @@
 import { Omit, RequiredPick } from 'type-plus';
 import { notDefined } from '../constants';
-import { SpecContext } from '../context';
+import { MocktomataContext } from '../context';
 import { assertMockable } from './assertMockable';
 import { getSpy, instanceRecorder } from './createSaveSpec';
 import { createSimulator } from './createSimulator';
@@ -13,10 +13,11 @@ import { ActionId, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, Spe
 import { SpecPluginInstance } from './types-internal';
 import { referenceMismatch, siteMismatch, arrayMismatch } from './validations';
 
-export async function createSimulateSpec(context: SpecContext, specId: string, options: MocktoOptions): Promise<Spec> {
-  const loaded = await context.io.readSpec(specId)
+export async function createSimulateSpec(context: MocktomataContext, specTitle: string, specPath: string, options: MocktoOptions): Promise<Spec> {
 
-  const record = createValidateRecord(specId, loaded, options)
+  const loaded = await context.io.readSpec(specTitle, specPath)
+
+  const record = createValidateRecord(specTitle, loaded, options)
   const simulator = createSimulator(record, options)
   record.onAddAction(simulator.run)
 

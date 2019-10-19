@@ -14,14 +14,14 @@ export function createFakeRepository() {
   const scenarios: Record<string, string> = {
     'exist': '{ "scenario": "exist" }'
   }
-  repo.writeSpec = (id, data) => {
+  repo.writeSpec = (id, _invokePath, data) => {
     specs[id] = data
     return Promise.resolve()
   }
 
-  repo.readSpec = (id) => {
+  repo.readSpec = (id, invokePath) => {
     if (specs[id]) return Promise.resolve(specs[id])
-    return readSpec(id)
+    return readSpec(id, invokePath)
   }
 
   repo.writeScenario = (id, data) => {

@@ -1,10 +1,11 @@
-import { context, SpecContext } from '../context';
+import { context, MocktomataContext } from '../context';
 import { createLiveSpec } from './createLiveSpec';
 import { createSaveSpec } from './createSaveSpec';
 import { createSimulateSpec } from './createSimulateSpec';
 import { SpecIDCannotBeEmpty, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
 import { CreateSpec, MocktoHandler, MocktoMode, MocktoOptions, Spec } from './types';
+import { getCallerRelativePath } from './getCallerRelativePath';
 
 export type Mockto = CreateSpec & {
   live: CreateSpec,
@@ -21,65 +22,67 @@ export const mockto: Mockto = Object.assign(
 )
 
 export function createSpec(defaultMode: MocktoMode): CreateSpec {
-  return (...args: any[]): any => {
-    const { id, options = { timeout: 3000 }, handler } = resolveCreateSpecArguments(args)
-    assertSpecID(id)
+  const fn = (...args: any[]): any => {
+    const { title, options = { timeout: 3000 }, handler } = resolveCreateSpecArguments(args)
+    assertSpecTitle(title)
 
-    const mode = getEffectiveSpecMode(id, defaultMode)
+    const specPath = getCallerRelativePath(fn)
+    const mode = getEffectiveSpecMode(title, defaultMode)
     let s: Promise<Spec>
     function createSpecWithHandler() {
       if (s) return s
-      return s = createActualSpec(id, mode, options)
+      return s = createActualSpec(title, specPath, mode, options)
     }
     if (handler) {
-      handler(id, Object.assign(
+      handler(title, Object.assign(
         (subject: any) => createSpecWithHandler().then(spec => spec(subject)), {
         done: () => createSpecWithHandler().then(spec => spec.done())
       }))
       return
     }
     else {
-      return createActualSpec(id, mode, options)
+      return createActualSpec(title, specPath, mode, options)
     }
   }
+  return fn
 }
 
-async function createActualSpec(id: string, mode: MocktoMode, options: MocktoOptions): Promise<Spec> {
+async function createActualSpec(title: string, specPath: string, mode: MocktoMode, options: MocktoOptions): Promise<Spec> {
   const ctx = await context.get()
   switch (mode) {
     case 'auto':
-      return createAutoSpec(ctx, id, options)
+      return createAutoSpec(ctx, title, specPath, options)
     case 'live':
       return createLiveSpec()
     case 'save':
-      return createSaveSpec(ctx, id, options)
+      return createSaveSpec(ctx, title, specPath, options)
     case 'simulate':
-      return createSimulateSpec(ctx, id, options)
+      return createSimulateSpec(ctx, title, specPath, options)
   }
 }
 
-function resolveCreateSpecArguments(args: any[]): { id: string, options: MocktoOptions | undefined, handler: MocktoHandler | undefined } {
+function resolveCreateSpecArguments(args: any[]): { title: string, options: MocktoOptions | undefined, handler: MocktoHandler | undefined } {
   if (args.length === 3) {
-    return { id: args[0], options: args[1], handler: args[2] }
+    return { title: args[0], options: args[1], handler: args[2] }
   }
   else if (typeof args[1] === 'function') {
-    return { id: args[0], options: undefined, handler: args[1] }
+    return { title: args[0], options: undefined, handler: args[1] }
   }
   else {
-    return { id: args[0], options: args[1], handler: undefined }
+    return { title: args[0], options: args[1], handler: undefined }
   }
 }
 
-function assertSpecID(id: string) {
+function assertSpecTitle(id: string) {
   if (id === '') throw new SpecIDCannotBeEmpty()
 }
 
-async function createAutoSpec(context: SpecContext, id: string, options: MocktoOptions): Promise<Spec> {
+async function createAutoSpec(context: MocktomataContext, title: string, specPath: string, options: MocktoOptions): Promise<Spec> {
   try {
-    return await createSimulateSpec(context, id, options)
+    return await createSimulateSpec(context, title, specPath, options)
   }
   catch (e) {
-    if (e instanceof SpecNotFound) return createSaveSpec(context, id, options)
+    if (e instanceof SpecNotFound) return createSaveSpec(context, title, specPath, options)
     else throw e
   }
 }

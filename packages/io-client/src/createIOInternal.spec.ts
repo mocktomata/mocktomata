@@ -7,14 +7,14 @@ test('read not exist spec throws SpecNotFound', async () => {
   const fetch = createFakeServerFetch()
   const io = await createIOInternal({ fetch, location })
 
-  await a.throws(io.readSpec('not exist'), SpecNotFound)
+  await a.throws(io.readSpec('not exist', __filename), SpecNotFound)
 })
 
 test('read existing spec', async () => {
   const fetch = createFakeServerFetch()
   const io = await createIOInternal({ fetch, location })
 
-  const actual = await io.readSpec('exist')
+  const actual = await io.readSpec('exist', __filename)
 
   expect(actual).toEqual({ actions: [] })
 })
@@ -24,7 +24,7 @@ test('write spec', async () => {
   const io = await createIOInternal({ fetch, location })
 
   const record: SpecRecord = { refs: [], actions: [{ type: 'invoke', mode: 'autonomous', payload: [], ref: '1', tick: 0 }] }
-  await io.writeSpec('new spec', record)
+  await io.writeSpec('new spec', __filename, record)
 
   const spec = fetch.specs['new spec']
   expect(spec).toEqual(record)

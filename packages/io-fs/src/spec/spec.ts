@@ -2,15 +2,17 @@ import path from 'path';
 import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
 
 export function createSpecRepository(mocktomataFolder: string) {
-  const specDir = getSpecFolder(mocktomataFolder)
+  const baseDir = getSpecFolder(mocktomataFolder)
   return {
-    async readSpec(id: string) {
-      const hash = getHash(id)
-      return readByHash(specDir, id, hash)
+    async readSpec(title: string, invokePath: string) {
+      const hash = getHash(title)
+      const specDir = path.join(baseDir, invokePath)
+      return readByHash(specDir, title, hash)
     },
-    async writeSpec(id: string, data: string) {
+    async writeSpec(title: string, invokePath: string, data: string) {
+      const specDir = path.join(baseDir, invokePath)
       ensureFolderCreated(specDir)
-      writeTo(specDir, id, data)
+      writeTo(specDir, title, data)
     }
   }
 }

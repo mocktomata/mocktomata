@@ -9,13 +9,13 @@ export function createTestIO(): TestIO {
     getAllSpecs() {
       return specStore.entries()
     },
-    readSpec(id) {
-      const record = specStore.get(id)
-      if (!record) return Promise.reject(new SpecNotFound(id))
+    readSpec(title) {
+      const record = specStore.get(title)
+      if (!record) return Promise.reject(new SpecNotFound(title))
       return Promise.resolve(JSON.parse(record))
     },
-    async writeSpec(id, record) {
-      specStore.set(id, `{
+    async writeSpec(title, _specPath, record) {
+      specStore.set(title, `{
   "refs": [
     ${record.refs.map(r => JSON.stringify(r)).join(',\n    ')}
   ],
