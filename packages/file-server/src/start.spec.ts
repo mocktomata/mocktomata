@@ -28,7 +28,6 @@ describe('server behavior', () => {
     const tmp = dirSync()
     const repository = createFileRepository(tmp.name)
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
-    await repository.writeScenario('exist', '{ "scenario": "exist" }')
     context.value.repository = repository
     server = await start()
   })
@@ -66,30 +65,6 @@ describe('server behavior', () => {
     expect(response.status).toBe(200)
     const repository = context.value.repository
     const actual = await repository.readSpec('abc', '')
-
-    expect(actual).toEqual('{ a: 1 }')
-  })
-
-
-  test('read not exist scenario gets 404', async () => {
-    const response = await fetch(buildUrl('scenarios/not exist'))
-
-    expect(response.status).toBe(404)
-  })
-
-  test('read scenario', async () => {
-    const response = await fetch(buildUrl('scenarios/exist'))
-
-    expect(response.status).toBe(200)
-    expect(await response.text()).toEqual('{ "scenario": "exist" }')
-  })
-
-  test('write scenario', async () => {
-    const response = await fetch(buildUrl('scenarios/abc'), { method: 'POST', body: '{ a: 1 }' })
-
-    expect(response.status).toBe(200)
-    const repository = context.value.repository
-    const actual = await repository.readScenario('abc')
 
     expect(actual).toEqual('{ a: 1 }')
   })

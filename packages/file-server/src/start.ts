@@ -84,26 +84,6 @@ function defineRoutes(server: Server) {
         return h.response()
       }
     },
-    {
-      method: 'GET',
-      path: '/mocktomata/scenarios/{id}',
-      handler: async (request) => {
-        try {
-          return await context.value.repository.readScenario(request.params.id)
-        }
-        catch (e) {
-          throw boom.notFound(e.message)
-        }
-      }
-    },
-    {
-      method: 'POST',
-      path: '/mocktomata/scenarios/{id}',
-      handler: async (request, h) => {
-        await context.value.repository.writeScenario(request.params.id, request.payload as string)
-        return h.response()
-      }
-    }
   ])
 }
 

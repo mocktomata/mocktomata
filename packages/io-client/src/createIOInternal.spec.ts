@@ -1,4 +1,4 @@
-import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework';
+import { SpecNotFound, SpecRecord } from '@mocktomata/framework';
 import a from 'assertron';
 import { createIOInternal } from './createIOInternal';
 import { createFakeServerFetch } from './test-util';
@@ -27,33 +27,6 @@ test('write spec', async () => {
   await io.writeSpec('new spec', __filename, record)
 
   const spec = fetch.specs['new spec']
-  expect(spec).toEqual(record)
-})
-
-test('read not exist scenario throws ScenarioNotFound', async () => {
-  const fetch = createFakeServerFetch()
-  const io = await createIOInternal({ fetch, location })
-
-  await a.throws(io.readScenario('not exist'), ScenarioNotFound)
-})
-
-test('read existing scenario', async () => {
-  const fetch = createFakeServerFetch()
-  const io = await createIOInternal({ fetch, location })
-
-  const actual = await io.readScenario('exist')
-
-  expect(actual).toEqual({ scenario: 'exist' })
-})
-
-test('write Scenario', async () => {
-  const fetch = createFakeServerFetch()
-  const io = await createIOInternal({ fetch, location })
-
-  const record: ScenarioRecord = { actions: [{ name: 'construct', instanceId: 1, plugin: '', payload: [] }] }
-  await io.writeScenario('new scenario', record)
-
-  const spec = fetch.scenarios['new scenario']
   expect(spec).toEqual(record)
 })
 

@@ -1,4 +1,4 @@
-import { ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework';
+import { SpecNotFound, SpecRecord } from '@mocktomata/framework';
 import t from 'assert';
 import a from 'assertron';
 import { context } from './context';
@@ -32,31 +32,6 @@ test('write spec', async () => {
   const repo = context.value.repository
   const spec = await repo.readSpec('new spec', __filename)
   expect(spec).toEqual(JSON.stringify(record))
-})
-
-test('read not exist scenario throws ScenarioNotFound', async () => {
-  const io = createIO()
-
-  await a.throws(io.readScenario('not exist'), ScenarioNotFound)
-})
-
-test('read existing scenario', async () => {
-  const io = createIO()
-
-  const actual = await io.readScenario('exist')
-
-  expect(actual).toEqual({ scenario: 'exist' })
-})
-
-test('write Scenario', async () => {
-  const io = createIO()
-
-  const record: ScenarioRecord = { actions: [{ name: 'construct', instanceId: 1, plugin: '', payload: [] }] }
-  await io.writeScenario('new scenario', record)
-
-  const repo = context.value.repository
-  const scenario = await repo.readScenario('new scenario')
-  expect(scenario).toEqual(JSON.stringify(record))
 })
 
 describe('getPluginList()', () => {

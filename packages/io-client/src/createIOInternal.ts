@@ -1,4 +1,4 @@
-import { MocktomataIO, ScenarioNotFound, ScenarioRecord, SpecNotFound, SpecPluginModule, SpecRecord } from '@mocktomata/framework';
+import { MocktomataIO, SpecNotFound, SpecPluginModule, SpecRecord } from '@mocktomata/framework';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
 import { CreateIOOptions } from './types';
@@ -21,20 +21,6 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
       // istanbul ignore next
       if (!response.ok) {
         throw new Error(`failed to write spec: ${response.statusText}`)
-      }
-    },
-    async readScenario(id: string) {
-      const response = await fetch(buildUrl(info.url, `scenarios/${id}`))
-      if (response.status === 404) {
-        throw new ScenarioNotFound(id)
-      }
-      return response.json()
-    },
-    async writeScenario(id: string, record: ScenarioRecord) {
-      const response = await fetch(buildUrl(info.url, `scenarios/${id}`), { method: 'POST', body: JSON.stringify(record) })
-      // istanbul ignore next
-      if (!response.ok) {
-        throw new Error(`failed to write scenario: ${response.statusText}`)
       }
     },
     async getPluginList() {
