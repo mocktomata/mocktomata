@@ -35,6 +35,7 @@ function loadMjsonConfig(cwd: string) {
       return require(filepath)
     }
     catch (e) {
+      // istanbul ignore next
       if (e.name === 'SyntaxError') {
         throw new InvalidConfigFormat('.mocktomata.json')
       }
@@ -49,6 +50,7 @@ function loadMjsConfig(cwd: string) {
       return require(filepath)
     }
     catch (e) {
+      // istanbul ignore next
       if (e.name === 'SyntaxError') {
         throw new InvalidConfigFormat('.mocktomata.js')
       }

@@ -2721,7 +2721,7 @@ assertion-error@^1.1.0:
   resolved "https://registry.yarnpkg.com/assertion-error/-/assertion-error-1.1.0.tgz#e60b6b0e8f301bd97e5375215bda406c85118c0b"
   integrity sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==
 
-assertron@^7.0.2, assertron@^7.1.2:
+assertron@^7.1.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/assertron/-/assertron-7.1.2.tgz#6c111e0b249dd805ced12b92f420def8af581816"
   integrity sha512-jsys8WRQ7axCtwg+RMswx37KFbtxfVfAh5LzxlzbOaWfcuDoNhH27ZZQ9FebI3UyDfxlGZ3xVQfn2RjqWYwOHQ==
@@ -3923,7 +3923,7 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
-cross-fetch@^3.0.2:
+cross-fetch@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.4.tgz#7bef7020207e684a7638ef5f2f698e24d9eb283c"
   integrity sha512-MSHgpjQqgbT/94D4CyADeNoYh52zMkCX4pcJvPP5WqPsLFMKjr2TCMg381ox5qI0ii2dPwaLx/00477knXqXVw==
@@ -10621,7 +10621,7 @@ type-name@^2.0.1:
   resolved "https://registry.yarnpkg.com/type-name/-/type-name-2.0.2.tgz#efe7d4123d8ac52afff7f40c7e4dec5266008fb4"
   integrity sha1-7+fUEj2KxSr/9/QMfk3sUmYAj7Q=
 
-type-plus@^1.18.1, type-plus@^1.26.2, type-plus@^1.29.0:
+type-plus@^1.26.2, type-plus@^1.29.0:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.29.0.tgz#b4cd7b1a25151378f051ead678beb31bbf15ed9d"
   integrity sha512-YwkR5pwuKHS6WuQMmng/6LvE4Y92ObV9OkCZYrUJ5ypHJuaKMS2EEy8octHHnVeNStpFebX+aYgyUcpTB2lGmg==

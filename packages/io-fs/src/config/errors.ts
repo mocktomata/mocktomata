@@ -1,6 +1,6 @@
-import { BaseError } from 'make-error';
+import { MocktomataError } from '@mocktomata/framework'
 
-export class InvalidConfigFormat extends BaseError {
+export class InvalidConfigFormat extends MocktomataError {
   // istanbul ignore next
   constructor(public filename: string) {
     super(`The ${filename} does not contain a valid configuration`)
@@ -9,7 +9,7 @@ export class InvalidConfigFormat extends BaseError {
   }
 }
 
-export class AmbiguousConfig extends BaseError {
+export class AmbiguousConfig extends MocktomataError {
   // istanbul ignore next
   constructor(public configs: string[]) {
     super(`Multiple configuration detected (${configs.join(', ')}). Please consolidate to one config.`)
@@ -18,7 +18,7 @@ export class AmbiguousConfig extends BaseError {
   }
 }
 
-export class MissingConfigForFeature extends BaseError {
+export class MissingConfigForFeature extends MocktomataError {
   // istanbul ignore next
   constructor(public feature: string, public configPath: string) {
     super(`Configuring ${configPath} is required to use ${feature}.`)
@@ -27,7 +27,7 @@ export class MissingConfigForFeature extends BaseError {
   }
 }
 
-export class ConfigPropertyIsInvalid extends BaseError {
+export class ConfigPropertyIsInvalid extends MocktomataError {
   // istanbul ignore next
   constructor(public property: string, public cause: string) {
     super(`The property '${property}' is invalid: ${cause}`)
@@ -37,7 +37,7 @@ export class ConfigPropertyIsInvalid extends BaseError {
 }
 
 
-export class ConfigPropertyNotRecognized extends BaseError {
+export class ConfigPropertyNotRecognized extends MocktomataError {
   // istanbul ignore next
   constructor(public property: string) {
     super(`The property '${property}' is not a valid komondor option.`)
