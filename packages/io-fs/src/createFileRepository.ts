@@ -13,7 +13,7 @@ export type Repository = {
 
 export function createFileRepository(cwd: string): Repository {
   const config = getConfig(cwd)
-  const mocktomataFolder = path.resolve(cwd, config.mocktomataFolder)
+  const mocktomataFolder = path.resolve(cwd, config.folder)
   const spec = createSpecRepository(mocktomataFolder)
   const plugin = createPluginRepository({ cwd, config })
   return {

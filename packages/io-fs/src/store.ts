@@ -2,7 +2,7 @@ import { createStore } from 'global-store'
 
 export type Store = {
   config: {
-    mocktomataFolder: string,
+    folder: string,
     plugins?: string[],
   }
 }

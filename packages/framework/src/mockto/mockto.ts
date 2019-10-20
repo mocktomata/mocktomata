@@ -1,11 +1,12 @@
 import { context, MocktomataContext } from '../context';
+import { store } from '../store';
 import { createLiveSpec } from './createLiveSpec';
 import { createSaveSpec } from './createSaveSpec';
 import { createSimulateSpec } from './createSimulateSpec';
 import { SpecIDCannotBeEmpty, SpecNotFound } from './errors';
-import { getEffectiveSpecMode } from './getEffectiveSpecMode';
-import { CreateSpec, MocktoHandler, SpecMode, MocktoOptions, Spec } from './types';
 import { getCallerRelativePath } from './getCallerRelativePath';
+import { getEffectiveSpecMode } from './getEffectiveSpecMode';
+import { CreateSpec, MocktoHandler, MocktoOptions, Spec, SpecMode } from './types';
 
 export type Mockto = CreateSpec & {
   live: CreateSpec,
@@ -27,7 +28,7 @@ export function createSpec(defaultMode: SpecMode): CreateSpec {
     assertSpecTitle(specName)
 
     const invokePath = getCallerRelativePath(fn)
-    const mode = getEffectiveSpecMode(specName, invokePath, defaultMode)
+    const mode = getEffectiveSpecMode(store.value, defaultMode, specName, invokePath)
     let s: Promise<Spec>
     function createSpecWithHandler() {
       if (s) return s

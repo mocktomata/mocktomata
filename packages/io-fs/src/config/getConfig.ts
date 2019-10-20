@@ -4,7 +4,7 @@ import { store, Store } from '../store';
 import { loadConfig } from './loadConfig';
 
 const defaultConfig: Store['config'] = {
-  mocktomataFolder: MOCKTOMATA_FOLDER
+  folder: MOCKTOMATA_FOLDER
 }
 
 export function getConfig(cwd: string) {
