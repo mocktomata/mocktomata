@@ -1,11 +1,6 @@
 import path from 'path';
 import { dirSync } from 'tmp';
 import { createFileRepository } from '..';
-import { resetStore } from '../store';
-
-beforeEach(() => {
-  resetStore()
-})
 
 test('gets empty plugin list in empty folder', async () => {
   const tmpdir = dirSync()
@@ -15,7 +10,7 @@ test('gets empty plugin list in empty folder', async () => {
   expect(await io.getPluginList()).toEqual([])
 })
 
-test('get both installed plugins when there is no config', async () => {
+test.only('get both installed plugins when there is no config', async () => {
   const cwd = path.resolve(__dirname, '../../fixtures/has-plugins')
 
   const io = createFileRepository(cwd)

@@ -1,18 +1,12 @@
-import { SpecPluginModule } from '@mocktomata/framework';
 import path from 'path';
+import { required } from 'type-plus';
 import { getConfig } from './config';
 import { createPluginRepository } from './plugin';
 import { createSpecRepository } from './spec';
+import { FileRepositoryOptions, Repository } from './types';
 
-export type Repository = {
-  readSpec(title: string, invokePath: string): Promise<string>,
-  writeSpec(title: string, invokePath: string, data: string): Promise<void>,
-  getPluginList(): Promise<string[]>,
-  loadPlugin(name: string): Promise<SpecPluginModule>
-}
-
-export function createFileRepository(cwd: string): Repository {
-  const config = getConfig(cwd)
+export function createFileRepository(cwd: string, options?: Partial<FileRepositoryOptions>): Repository {
+  const config = required(getConfig(cwd), options)
   const mocktomataFolder = path.resolve(cwd, config.folder)
   const spec = createSpecRepository(mocktomataFolder)
   const plugin = createPluginRepository({ cwd, config })
