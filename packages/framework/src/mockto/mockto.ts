@@ -4,7 +4,7 @@ import { createSaveSpec } from './createSaveSpec';
 import { createSimulateSpec } from './createSimulateSpec';
 import { SpecIDCannotBeEmpty, SpecNotFound } from './errors';
 import { getEffectiveSpecMode } from './getEffectiveSpecMode';
-import { CreateSpec, MocktoHandler, MocktoMode, MocktoOptions, Spec } from './types';
+import { CreateSpec, MocktoHandler, SpecMode, MocktoOptions, Spec } from './types';
 import { getCallerRelativePath } from './getCallerRelativePath';
 
 export type Mockto = CreateSpec & {
@@ -21,33 +21,33 @@ export const mockto: Mockto = Object.assign(
 }
 )
 
-export function createSpec(defaultMode: MocktoMode): CreateSpec {
+export function createSpec(defaultMode: SpecMode): CreateSpec {
   const fn = (...args: any[]): any => {
-    const { title, options = { timeout: 3000 }, handler } = resolveCreateSpecArguments(args)
-    assertSpecTitle(title)
+    const { specName, options = { timeout: 3000 }, handler } = resolveCreateSpecArguments(args)
+    assertSpecTitle(specName)
 
-    const specPath = getCallerRelativePath(fn)
-    const mode = getEffectiveSpecMode(title, defaultMode)
+    const invokePath = getCallerRelativePath(fn)
+    const mode = getEffectiveSpecMode(specName, invokePath, defaultMode)
     let s: Promise<Spec>
     function createSpecWithHandler() {
       if (s) return s
-      return s = createActualSpec(title, specPath, mode, options)
+      return s = createActualSpec(specName, invokePath, mode, options)
     }
     if (handler) {
-      handler(title, Object.assign(
+      handler(specName, Object.assign(
         (subject: any) => createSpecWithHandler().then(spec => spec(subject)), {
         done: () => createSpecWithHandler().then(spec => spec.done())
       }))
       return
     }
     else {
-      return createActualSpec(title, specPath, mode, options)
+      return createActualSpec(specName, invokePath, mode, options)
     }
   }
   return fn
 }
 
-async function createActualSpec(title: string, specPath: string, mode: MocktoMode, options: MocktoOptions): Promise<Spec> {
+async function createActualSpec(title: string, specPath: string, mode: SpecMode, options: MocktoOptions): Promise<Spec> {
   const ctx = await context.get()
   switch (mode) {
     case 'auto':
@@ -61,15 +61,15 @@ async function createActualSpec(title: string, specPath: string, mode: MocktoMod
   }
 }
 
-function resolveCreateSpecArguments(args: any[]): { title: string, options: MocktoOptions | undefined, handler: MocktoHandler | undefined } {
+function resolveCreateSpecArguments(args: any[]): { specName: string, options: MocktoOptions | undefined, handler: MocktoHandler | undefined } {
   if (args.length === 3) {
-    return { title: args[0], options: args[1], handler: args[2] }
+    return { specName: args[0], options: args[1], handler: args[2] }
   }
   else if (typeof args[1] === 'function') {
-    return { title: args[0], options: undefined, handler: args[1] }
+    return { specName: args[0], options: undefined, handler: args[1] }
   }
   else {
-    return { title: args[0], options: args[1], handler: undefined }
+    return { specName: args[0], options: args[1], handler: undefined }
   }
 }
 

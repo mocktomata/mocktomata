@@ -1,9 +1,12 @@
 import { createStore } from 'global-store';
+import { SpecMode } from './mockto/types';
 import { SpecPluginInstance } from './mockto/types-internal';
 
 export type SpecStore = {
   specTypeIds: Record<string, number>,
-  plugins: SpecPluginInstance[]
+  plugins: SpecPluginInstance[],
+  specOverrides: any[],
+  specDefaultMode: SpecMode
 }
 
 export const store = createStore<SpecStore>({
@@ -14,6 +17,7 @@ export const store = createStore<SpecStore>({
     return {
       specTypeIds: {},
       plugins: [],
+      specOverrides: [],
       ...current
     } as SpecStore
   }

@@ -1,15 +1,15 @@
 
-export type MocktoMode = 'live' | 'save' | 'simulate' | 'auto'
-
 export interface CreateSpec {
-  (id: string, options?: MocktoOptions): Promise<Spec>,
-  (id: string, handler: MocktoHandler): void,
-  (id: string, options: MocktoOptions, handler: MocktoHandler): void,
+  (specName: string, options?: MocktoOptions): Promise<Spec>,
+  (specName: string, handler: MocktoHandler): void,
+  (specName: string, options: MocktoOptions, handler: MocktoHandler): void,
 }
 
 export type MocktoOptions = {
   timeout: number
 }
+
+export type SpecMode = 'live' | 'save' | 'simulate' | 'auto'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,
@@ -17,6 +17,6 @@ export type Spec = {
 }
 
 export type MocktoHandler = (
-  title: string,
+  specName: string,
   spec: Spec
 ) => void | Promise<any>

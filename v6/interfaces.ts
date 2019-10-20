@@ -1,7 +1,7 @@
 import { SpecAction, SpecMode } from 'komondor-plugin'
 import { ArrayEntryExpectation } from 'satisfier'
 
-export type GivenMode = 'live' | 'save' | 'simulate'
+export type GivenMode = 'live' | 'specName' | 'simulate'
 
 export interface KomondorOptions {
   plugins?: string[]
