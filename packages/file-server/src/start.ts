@@ -1,16 +1,24 @@
+import { createFileRepository, FileRepositoryOptions, Repository } from '@mocktomata/io-fs';
 import boom from 'boom';
 import { RequestInfo, Server, ServerInfo } from 'hapi';
-import path from 'path';
 import { required } from 'unpartial';
-import { context } from './context';
-import { Options } from './types';
 import { atob } from './base64';
 
-export async function start(options?: Partial<Options>) {
-  const o = required<Options>({}, options)
+export type StartOptions = {
+  /**
+   * Port number the server will run on.
+   */
+  port: number,
+  cwd: string,
+  repoOptions: Partial<FileRepositoryOptions>
+}
 
-  const server = o.port ? new Server({ port: o.port, routes: { 'cors': true } }) : await tryCreateHapi(3698, 3708)
-  defineRoutes(server)
+export async function start(options: Partial<StartOptions> = {}) {
+  const { port, cwd, repoOptions } = required({ cwd: process.cwd() }, options)
+
+  const server = port ? new Server({ port, routes: { 'cors': true } }) : await tryCreateHapi(3698, 3708)
+  const repo = createFileRepository(cwd, repoOptions)
+  defineRoutes(server, repo)
 
   await server.start()
   return {
@@ -34,23 +42,24 @@ async function tryCreateHapi(start: number, end: number, port = start): Promise<
     return server
   }
   catch (e) {
+    // istanbul ignore next
     return await tryCreateHapi(start, end, port + 1)
   }
 }
 
-function defineRoutes(server: Server) {
+function defineRoutes(server: Server, repo: Repository) {
   server.route([
     {
       method: 'GET',
       path: '/mocktomata/info',
       handler: async (request) => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const pjson = require(path.resolve(__dirname, '../package.json'))
+        const pjson = require('mocktomata/package.json')
         return JSON.stringify({
           name: 'mocktomata',
           version: pjson.version,
           url: getReflectiveUrl(request.info, server.info),
-          plugins: await context.value.repository.getPluginList()
+          plugins: await repo.getPluginList()
         })
       }
     },
@@ -67,8 +76,8 @@ function defineRoutes(server: Server) {
       path: '/mocktomata/specs/{id}',
       handler: async (request) => {
         try {
-          const { title, invokePath } = JSON.parse(atob(request.params.id))
-          return await context.value.repository.readSpec(title, invokePath)
+          const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
+          return await repo.readSpec(specName, specRelativePath)
         }
         catch (e) {
           throw boom.notFound(e.message)
@@ -79,8 +88,8 @@ function defineRoutes(server: Server) {
       method: 'POST',
       path: '/mocktomata/specs/{id}',
       handler: async (request, h) => {
-        const { title, invokePath } = JSON.parse(atob(request.params.id))
-        await context.value.repository.writeSpec(title, invokePath, request.payload as string)
+        const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
+        await repo.writeSpec(specName, specRelativePath, request.payload as string)
         return h.response()
       }
     },
@@ -90,10 +99,10 @@ function defineRoutes(server: Server) {
 /**
  * If request is calling from local, return as localhost.
  */
+// istanbul ignore next
 function getReflectiveUrl(requestInfo: RequestInfo, serverInfo: ServerInfo) {
   if (requestInfo.remoteAddress === '127.0.0.1') {
     return `${serverInfo.protocol}://localhost:${serverInfo.port}`
   }
-  // istanbul ignore next
   return serverInfo.uri
 }

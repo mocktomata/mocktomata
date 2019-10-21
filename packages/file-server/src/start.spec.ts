@@ -1,11 +1,10 @@
-import { createFileRepository } from '@mocktomata/io-fs';
+import { createFileRepository, Repository } from '@mocktomata/io-fs';
 import t from 'assert';
 import a from 'assertron';
 import fetch from 'node-fetch';
 import { dirSync } from 'tmp';
 import { PromiseValue } from 'type-plus';
 import { start } from '.';
-import { context } from './context';
 import { btoa } from './base64';
 
 test('automatically find a port between 3698 and 3798', async () => {
@@ -24,12 +23,12 @@ test('if a port is specified and not available, will throw an error', async () =
 
 describe('server behavior', () => {
   let server: PromiseValue<ReturnType<typeof start>>
+  let repository: Repository
   beforeAll(async () => {
     const tmp = dirSync()
-    const repository = createFileRepository(tmp.name)
+    repository = createFileRepository(tmp.name)
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
-    context.value.repository = repository
-    server = await start()
+    server = await start({ cwd: tmp.name })
   })
   afterAll(() => {
     return server.stop()
@@ -63,13 +62,12 @@ describe('server behavior', () => {
     const response = await fetch(buildUrl(`specs/${buildId('abc')}`), { method: 'POST', body: '{ a: 1 }' })
 
     expect(response.status).toBe(200)
-    const repository = context.value.repository
     const actual = await repository.readSpec('abc', '')
 
     expect(actual).toEqual('{ a: 1 }')
   })
 })
 
-function buildId(title: string, invokePath = '') {
-  return btoa(JSON.stringify({ title, invokePath }))
+function buildId(specName: string, specRelativePath = '') {
+  return btoa(JSON.stringify({ specName, specRelativePath }))
 }

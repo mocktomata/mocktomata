@@ -31,7 +31,7 @@
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint --ext=js,ts .",
     "test": "jest --reporters=default",
     "test:watch": "jest --watch",
     "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
@@ -40,7 +40,6 @@
   "dependencies": {
     "@mocktomata/io-fs": "^7.0.0-alpha",
     "boom": "^7.3.0",
-    "global-store": "^1.0.0-beta.11",
     "hapi": "^18.1.0",
     "unpartial": "^0.6.3"
   },
