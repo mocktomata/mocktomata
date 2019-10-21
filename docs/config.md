@@ -23,11 +23,9 @@ here is what can be configured and their default values:
 ```json
 {
   // Controls how the files are saved locally.
-  "fileOptions": {
-    // Specify the root folder for all `mocktomata` data.
-    // Note that you should check in this file in your source control.
-    "folder": ".mocktomata"
-  },
+  // Specify the root folder for all `mocktomata` data.
+  // Note that you should check in this file in your source control.
+  "folder": ".mocktomata",
   // Optional. The list of plugins used by `mocktomata`.
   // If not specified, `mocktomata` will check all dependncies specified in `package.json` for installed plugins.
   // If there are conflicts between plugins and you need the plugins to load in certain order,
@@ -74,7 +72,7 @@ config({
   // configuration only apply when running in the browser.
   "client": {
     // Optional. Server URL.
-    // default to `http://localhost:3698` and will try the next 10 ports up to 3708
+    // default to `http(s)://localhost:3698` and will try the next 10 ports up to 3707
     "url": "<server url>"
   },
   // this only apply when running in NodeJS

@@ -19,20 +19,19 @@ export const mockto: Mockto = Object.assign(
   live: createSpec('live'),
   save: createSpec('save'),
   simulate: createSpec('simulate')
-}
-)
+})
 
 export function createSpec(defaultMode: SpecMode): CreateSpec {
   const fn = (...args: any[]): any => {
     const { specName, options = { timeout: 3000 }, handler } = resolveCreateSpecArguments(args)
     assertSpecTitle(specName)
 
-    const invokePath = getCallerRelativePath(fn)
-    const mode = getEffectiveSpecMode(store.value, defaultMode, specName, invokePath)
+    const specRelativePath = getCallerRelativePath(fn)
+    const mode = getEffectiveSpecMode(store.value, defaultMode, specName, specRelativePath)
     let s: Promise<Spec>
     function createSpecWithHandler() {
       if (s) return s
-      return s = createActualSpec(specName, invokePath, mode, options)
+      return s = createActualSpec(specName, specRelativePath, mode, options)
     }
     if (handler) {
       handler(specName, Object.assign(
@@ -42,7 +41,7 @@ export function createSpec(defaultMode: SpecMode): CreateSpec {
       return
     }
     else {
-      return createActualSpec(specName, invokePath, mode, options)
+      return createActualSpec(specName, specRelativePath, mode, options)
     }
   }
   return fn

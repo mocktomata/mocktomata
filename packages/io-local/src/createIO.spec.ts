@@ -1,42 +1,43 @@
 import { SpecNotFound, SpecRecord } from '@mocktomata/framework';
 import t from 'assert';
 import a from 'assertron';
-import { context } from './context';
+import path from 'path';
+import { dirSync } from 'tmp';
 import { createIO } from './createIO';
-import { createFakeRepository } from './test-util';
-
-beforeAll(async () => {
-  context.value.repository = createFakeRepository()
-})
+import { gitRootDir } from './test-util';
 
 test('read not exist spec throws SpecNotFound', async () => {
   const io = createIO()
 
-  await a.throws(io.readSpec('not exist', ''), SpecNotFound)
+  await a.throws(io.readSpec('not exist', __filename), SpecNotFound)
 })
 
 test('read existing spec', async () => {
-  const io = createIO()
+  const rootDir = gitRootDir(process.cwd())!
+  const cwd = path.join(rootDir, 'fixtures/io-local/with-spec')
+  const io = createIO({ cwd })
 
-  const actual = await io.readSpec('exist', '')
+  const specRelativePath = path.relative(rootDir, __filename)
+  const actual = await io.readSpec('exist', specRelativePath)
 
-  expect(actual).toEqual({ actions: [] })
+  expect(actual).toEqual({ refs: [], actions: [] })
 })
 
 test('write spec', async () => {
-  const io = createIO()
+  const tmp = dirSync()
+  const io = createIO({ cwd: tmp.name })
 
   const record: SpecRecord = { refs: [], actions: [] }
-  await io.writeSpec('new spec', __filename, record)
+  const specRelativePath = path.relative(process.cwd(), __filename)
+  await io.writeSpec('new spec', specRelativePath, record)
 
-  const repo = context.value.repository
-  const spec = await repo.readSpec('new spec', __filename)
-  expect(spec).toEqual(JSON.stringify(record))
+  const spec = await io.readSpec('new spec', specRelativePath)
+  expect(spec).toEqual({ refs: [], actions: [] })
 })
 
 describe('getPluginList()', () => {
   test('returns installed plugin', async () => {
-    const io = createIO()
+    const io = createIO({ cwd: path.join(gitRootDir(process.cwd())!, 'fixtures/io-local/with-plugin') })
 
     const list = await io.getPluginList()
     expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])

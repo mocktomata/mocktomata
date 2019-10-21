@@ -1,10 +1,11 @@
+import { SpecMode } from './mockto/types'
+
 export type MocktomataOptions = {
-  /**
-   * Specify plugins to load.
-   */
-  plugins: string[]
+  overrideMode?: SpecMode,
+  filePathFilter?: RegExp,
+  specNameFilter?: RegExp
 }
 
-export const config = function (_options: MocktomataOptions) {
+export const config = function (options: MocktomataOptions) {
 
 }
