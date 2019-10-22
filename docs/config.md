@@ -26,6 +26,7 @@ here is what can be configured and their default values:
   // Specify the root folder for all `mocktomata` data.
   // Note that you should check in this file in your source control.
   "folder": ".mocktomata",
+  "target": "es2015",
   // Optional. The list of plugins used by `mocktomata`.
   // If not specified, `mocktomata` will check all dependncies specified in `package.json` for installed plugins.
   // If there are conflicts between plugins and you need the plugins to load in certain order,

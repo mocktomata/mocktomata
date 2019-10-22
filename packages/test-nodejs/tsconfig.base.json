@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.settings.json",
+  "compilerOptions": {
+    "lib": [
+      "es2015"
+    ],
+    "rootDir": "src"
+  },
+  "references": [
+    {
+      "path": "../mocktomata"
+    }
+  ],
+  "include": [
+    "src",
+    "typings"
+  ]
+}
