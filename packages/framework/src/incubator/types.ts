@@ -1,5 +1,5 @@
 import { LogLevel, MemoryLogReporter } from 'standard-log';
-import { SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO } from '../mockto/types';
+import { SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO } from '../spec/types';
 
 export type TestIO = {
   getAllSpecs(): IterableIterator<[string, string]>,

@@ -1,6 +1,6 @@
 import { createStore } from 'global-store';
-import { SpecMode } from './mockto/types';
-import { SpecPluginInstance } from './mockto/types-internal';
+import { SpecMode } from './spec/types';
+import { SpecPluginInstance } from './spec/types-internal';
 
 export type SpecStore = {
   plugins: SpecPluginInstance[],

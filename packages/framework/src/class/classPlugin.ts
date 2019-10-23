@@ -1,5 +1,5 @@
 // import { isPromise } from '../promise/isPromise';
-import { ReferenceId, SpecPlugin } from '../mockto';
+import { ReferenceId, SpecPlugin } from '../spec';
 import { getInheritedPropertyNames } from '../utils';
 import { isClass } from './isClass';
 import { isPromise } from '../promise/isPromise';

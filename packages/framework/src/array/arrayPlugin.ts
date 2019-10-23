@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../mockto'
+import { SpecPlugin } from '../spec'
 
 export const arrayPlugin: SpecPlugin<any[], any[]> = {
   name: 'array',

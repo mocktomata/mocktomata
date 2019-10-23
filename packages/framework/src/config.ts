@@ -1,4 +1,4 @@
-import { SpecMode } from './mockto/types'
+import { SpecMode } from './spec/types'
 
 export type MocktomataOptions = {
   overrideMode?: SpecMode,

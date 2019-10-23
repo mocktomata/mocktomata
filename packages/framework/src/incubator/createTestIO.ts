@@ -1,4 +1,4 @@
-import { SpecNotFound, SpecPlugin, SpecPluginModule } from '../mockto';
+import { SpecNotFound, SpecPlugin, SpecPluginModule } from '../spec';
 import { TestIO } from './types';
 
 

@@ -3,7 +3,7 @@ import { createColorLogReporter } from 'standard-log-color';
 import { required } from 'type-plus';
 import { context } from '../context';
 import { es2015 } from '../es2015';
-import { loadPlugins } from '../mockto';
+import { loadPlugins } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
 import { TestHarness } from './types';

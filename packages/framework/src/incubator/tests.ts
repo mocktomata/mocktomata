@@ -1,7 +1,7 @@
 import { context } from '../context';
-import { createSaveSpec } from '../mockto/createSaveSpec';
-import { createSimulateSpec } from '../mockto/createSimulateSpec';
-import { Spec, SpecHandler, SpecOptions } from '../mockto/types';
+import { createSaveSpec } from '../spec/createSaveSpec';
+import { createSimulateSpec } from '../spec/createSimulateSpec';
+import { Spec, SpecHandler, SpecOptions } from '../spec/types';
 
 /**
  * Run spec in both save and simulate mode

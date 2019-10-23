@@ -1,4 +1,4 @@
-import { SpecPluginModule, SpecPlugin } from '../mockto/types';
+import { SpecPluginModule, SpecPlugin } from '../spec/types';
 
 // istanbul ignore next
 export const echoPluginModule: SpecPluginModule = {
