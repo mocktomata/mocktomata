@@ -1,70 +1,48 @@
-import { CreateSpec, mockto, MocktoHandler, MocktoOptions, Spec } from '../mockto';
+import { context } from '../context';
+import { createSaveSpec } from '../mockto/createSaveSpec';
+import { createSimulateSpec } from '../mockto/createSimulateSpec';
+import { Spec, SpecHandler, SpecOptions } from '../mockto/types';
 
 /**
  * Run spec in both save and simulate mode
  */
-export function testDuo(title: string, options: MocktoOptions, handler: MocktoHandler): void
-export function testDuo(title: string, handler: MocktoHandler): void
-export function testDuo(title: string, arg1: any, arg2?: any) {
-  if (arg2) {
-    const options: MocktoOptions = arg1
-    const handler: MocktoHandler = arg2
-    testSave(title, options, handler)
-    testSimulate(title, options, handler)
+export const testDuo: TestSpecFn = (...args: any[]) => {
+  const { specName, options, handler } = resolveTestSpecFnArgs(args)
+  if (options) {
+    testSave(specName, options, handler)
+    testSimulate(specName, options, handler)
   }
   else {
-    const handler: MocktoHandler = arg1
-    testSave(title, handler)
-    testSimulate(title, handler)
+    testSave(specName, handler)
+    testSimulate(specName, handler)
   }
 }
 
-export function testSave(title: string, options: MocktoOptions, handler: MocktoHandler): void
-export function testSave(title: string, handler: MocktoHandler): void
-export function testSave(title: string, arg1: any, arg2?: any) {
-  const saveTitle = `${title}: save`
-  if (arg2) {
-    const options: MocktoOptions = arg1
-    const handler: MocktoHandler = arg2
-    handler(saveTitle, createTestSpec(mockto.save, title, options))
-  }
-  else {
-    const handler: MocktoHandler = arg1
-    handler(saveTitle, createTestSpec(mockto.save, title))
-  }
+export const testSave: TestSpecFn = (...args: any[]) => {
+  const { specName, options, handler } = resolveTestSpecFnArgs(args)
+  const title = `${specName}: save`
+  handler(title, createTestSpec(createSaveSpec, specName, options))
 }
 
-export function testSimulate(title: string, options: MocktoOptions, handler: MocktoHandler): void
-export function testSimulate(title: string, handler: MocktoHandler): void
-export function testSimulate(title: string, arg1: any, arg2?: any) {
-  const simTitle = `${title}: simulate`
-  if (arg2) {
-    const options: MocktoOptions = arg1
-    const handler: MocktoHandler = arg2
-    handler(simTitle, createTestSpec(mockto.simulate, title, options))
-  }
-  else {
-    const handler: MocktoHandler = arg1
-    handler(simTitle, createTestSpec(mockto.simulate, title))
-  }
+export const testSimulate: TestSpecFn = (...args: any[]) => {
+  const { specName, options, handler } = resolveTestSpecFnArgs(args)
+  const title = `${specName}: simulate`
+  handler(title, createTestSpec(createSimulateSpec, specName, options))
 }
 
 export type SequenceHandler = (title: string, specs: { save: Spec, simulate: Spec }) => void
 /**
  * Runs save and simulate in different sequence.
  */
-export function testSequence(title: string, options: MocktoOptions, handler: SequenceHandler): void
-export function testSequence(title: string, handler: SequenceHandler): void
-export function testSequence(title: string, arg1: any, arg2?: any) {
-  const options: MocktoOptions | undefined = arg2 ? arg1 : undefined
-  const handler: SequenceHandler = arg2 ? arg2 : arg1
-  handler(title, {
-    save: createTestSpec(mockto.save, title, options),
-    simulate: createTestSpec(mockto.simulate, title, options)
+export const testSequence: TestSpecFn<SequenceHandler> = (...args: any[]) => {
+  const { specName, options, handler } = resolveTestSpecFnArgs<SequenceHandler>(args)
+  handler(specName, {
+    save: createTestSpec(createSaveSpec, specName, options),
+    simulate: createTestSpec(createSimulateSpec, specName, options)
   })
 }
 
-function createTestSpec(specFn: CreateSpec, title: string, options?: MocktoOptions): Spec {
+function createTestSpec(specFn: typeof createSaveSpec, specName: string, options: SpecOptions = { timeout: 3000 }): Spec {
   let s: Spec
   return Object.assign(
     (subject: any) => getSpec().then(s => s(subject)), {
@@ -73,8 +51,22 @@ function createTestSpec(specFn: CreateSpec, title: string, options?: MocktoOptio
 
   async function getSpec() {
     if (s) return s
-
+    const ctx = await context.get()
     // eslint-disable-next-line require-atomic-updates
-    return s = await specFn(title, options)
+    return s = await specFn(ctx, specName, '', options)
   }
+}
+
+function resolveTestSpecFnArgs<H = SpecHandler>(args: any[]): { specName: string, options: SpecOptions | undefined, handler: H } {
+  if (args.length === 3) {
+    return { specName: args[0], options: args[1], handler: args[2] }
+  }
+  else {
+    return { specName: args[0], options: undefined, handler: args[1] }
+  }
+}
+
+export interface TestSpecFn<H = SpecHandler> {
+  (specName: string, handler: H): void,
+  (specName: string, options: SpecOptions, handler: H): void,
 }

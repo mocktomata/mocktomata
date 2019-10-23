@@ -1,6 +1,7 @@
 import a from 'assertron';
-import { mockto, NotSpecable, SpecIDCannotBeEmpty, SpecNotFound } from '..';
-import { incubator } from '../incubator';
+import { incubator, SpecIDCannotBeEmpty, NotSpecable, SpecNotFound } from '@mocktomata/framework';
+import { mockto } from './mockto';
+
 
 beforeAll(() => {
   const harness = incubator.createTestHarness({ target: 'es2015' })
@@ -8,10 +9,9 @@ beforeAll(() => {
 })
 
 test('spec id cannot be empty', async () => {
-  await a.throws(() => mockto(''), SpecIDCannotBeEmpty)
-  await a.throws(() => mockto.live(''), SpecIDCannotBeEmpty)
-  await a.throws(() => mockto.save(''), SpecIDCannotBeEmpty)
-  await a.throws(() => mockto.simulate(''), SpecIDCannotBeEmpty)
+  await a.throws(mockto(''), SpecIDCannotBeEmpty)
+  await a.throws(mockto.save(''), SpecIDCannotBeEmpty)
+  await a.throws(mockto.simulate(''), SpecIDCannotBeEmpty)
 })
 
 incubator.save(`primitive type '%s' is not specable`, (title, spec) => {

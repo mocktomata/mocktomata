@@ -44,9 +44,6 @@
       "path": "packages/mocktomata/tsconfig.esnext.json"
     },
     {
-      "path": "packages/test-nodejs/tsconfig.es5.json"
-    },
-    {
       "path": "packages/test-nodejs/tsconfig.esnext.json"
     },
     // {

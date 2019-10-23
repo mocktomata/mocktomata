@@ -1,5 +1,5 @@
-import { SpyRecord } from './createSpyRecord'
-import { ReferenceId, ActionId } from './types'
+import { SpyRecord } from './createSpyRecord';
+import { ActionId, ReferenceId } from './types';
 
 export type CircularReference = {
   sourceId: ReferenceId | ActionId,

@@ -21,27 +21,14 @@ export function createFakeServerFetch() {
       }
       else if (uri.startsWith('mocktomata/specs/')) {
         const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
-        const { title } = JSON.parse(atob(id))
+        const { specName } = JSON.parse(atob(id))
         if (init && init.method === 'POST') {
-          specs[title] = JSON.parse(init.body as string)
+          specs[specName] = JSON.parse(init.body as string)
           return new f.Response(undefined)
         }
         else {
-          if (specs[title])
-            return new f.Response(JSON.stringify(specs[title]))
-          else
-            return new f.Response(undefined, { status: 404 })
-        }
-      }
-      else if (uri.startsWith('mocktomata/scenarios/')) {
-        const id = /mocktomata\/scenarios\/(.*)/.exec(uri)![1]
-        if (init && init.method === 'POST') {
-          scenarios[id] = JSON.parse(init.body as string)
-          return new f.Response(undefined)
-        }
-        else {
-          if (scenarios[id])
-            return new f.Response(JSON.stringify(scenarios[id]))
+          if (specs[specName])
+            return new f.Response(JSON.stringify(specs[specName]))
           else
             return new f.Response(undefined, { status: 404 })
         }

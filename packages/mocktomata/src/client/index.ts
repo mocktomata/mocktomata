@@ -1,6 +1,4 @@
-// // This is komonodor exposed as window.komondor. Used by developer to control komondor behavior.
-// // developer can control spec and scenario behaviors, but not config.
-// // config is done by the application startup code.
+export * from './config'
 // import { SpecMode } from '@mocktomata/framework';
 // import { createIO } from '@mocktomata/io-client';
 // import { loadPlugins, registerPlugin } from '@mocktomata/plugin';
@@ -8,7 +6,7 @@
 // import { createContext } from 'async-fp';
 
 // const context = createContext(async () => {
-//   const logger = getLogger('komondor', logLevel.warn)
+//   const logger = getLogger('mocktomata', logLevel.warn)
 
 //   const io = await createIO()
 //   const libs: string[] = []
@@ -19,7 +17,7 @@
 
 //   return { logger, io }
 // })
-export const dummy = 0
+
 
 // export const config = {
 //   spec(mode: SpecMode, ...filters: (string | RegExp)[]) {
