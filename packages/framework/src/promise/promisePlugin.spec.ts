@@ -8,7 +8,3 @@ test('support promise object', () => {
   const prom = Promise.resolve()
   expect(promisePlugin.support(prom)).toBe(true)
 })
-
-test('', () => {
-  
-})

@@ -28,7 +28,7 @@ async function tryLoad({ io }: LoadPluginContext, name: string) {
   }
 }
 
-function addPluginModule(moduleName: string, pluginModule: SpecPluginModule) {
+export function addPluginModule(moduleName: string, pluginModule: SpecPluginModule) {
   assertModuleConfirming(moduleName, pluginModule)
 
   pluginModule.activate({

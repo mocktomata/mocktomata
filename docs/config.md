@@ -86,7 +86,7 @@ config({
   },
   "spec": {
     // Specify the mode used by `mockto()`
-    "mode": "auto",
+    "mode": "<live | save | simulate>",
     "filename": "<regex for file-name>",
     "specname": "<regex for spec-name>",
   }

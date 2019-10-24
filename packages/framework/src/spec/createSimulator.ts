@@ -6,7 +6,7 @@ import { getPlugin } from './findPlugin';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 import { logAutoInvokeAction, logCreateStub } from './logs';
 import { createPluginStubContext } from './stubing';
-import { InstantiateAction, InvokeAction, SpecOptions, SpecReference } from './types';
+import { InstantiateAction, InvokeAction, SpecOptions, SpecReference, ReferenceId } from './types';
 import { referenceMismatch } from './validations';
 
 export type Simulator = { run(): void }
@@ -48,7 +48,6 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
   // if we don't support getter/setter.
   const refId = record.resolveRefId(expectedAction.ref)
   if (!refId) return
-
   if (expectedAction.mode === 'plugin-invoked') {
     const origRef = record.getOriginalRef(refId)!
     const plugin = getPlugin(origRef.plugin)
@@ -63,9 +62,13 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     return
   }
 
-  const ref = record.getRef(refId)
+  let ref = record.getRef(refId)
   if (!ref) {
-    throw new Error(`simulator.processInvoke can't find reference for ${refId}`)
+    if (resolveReference(record, refId)) {
+      ref = record.getRef(refId)!
+    }
+    else
+      throw new Error(`simulator.processInvoke can't find reference for ${refId}`)
   }
 
   // console.log('exp', expectedAction, ref)
@@ -109,11 +112,39 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
   logAutoInvokeAction(ref, refId, record.getExpectedActionId(), args)
   // console.log('before auto', record.original)
   // console.log('before auto', record.actual)
-  const invokeSubject = getInvokeSubject(ref.testDouble, expectedAction.site)
+  const invokeSubject = getInvokeSubjectAtSite(ref.testDouble, expectedAction.site)
   invokeSubject(...args)
 }
 
-function getInvokeSubject(subject: any, site: Array<string | number> | undefined) {
+function resolveReference(record: ValidateRecord, refId: ReferenceId) {
+  const origRef = record.getOriginalRef(refId)!
+  return resolveSource(record, origRef.source)
+}
+
+function resolveSource(record: ValidateRecord, source: SpecReference['source']): boolean {
+  if (!source) return false
+
+  let sourceRef = record.getRef(source.ref)
+  if (!sourceRef) {
+    const origRef = record.getOriginalRef(source.ref)!
+    if (resolveSource(record, origRef.source)) {
+      sourceRef = record.getRef(source.ref)
+    }
+  }
+
+  if (sourceRef && sourceRef.testDouble) {
+    getSubjectAtSite(sourceRef.testDouble, source.site)
+    return true
+  }
+  return false
+}
+
+function getSubjectAtSite(subject: any, site: Array<string | number> | undefined) {
+  if (!site || site.length === 0) return subject
+  return site.reduce((p, v) => p[v], subject)
+}
+
+function getInvokeSubjectAtSite(subject: any, site: Array<string | number> | undefined) {
   if (!site || site.length === 0) return subject
   const methodName = site.pop()!
 

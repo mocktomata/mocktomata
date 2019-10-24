@@ -34,7 +34,7 @@ export function createTestHarness(options?: CreateTestHarnessOptions): TestHarne
     addPluginModule(pluginName, pluginModule) {
       io.addPluginModule(pluginName, pluginModule)
     },
-    setLogLevel(level = logLevel.all) {
+    logMessages(level = logLevel.all) {
       setLogLevel(level)
     },
     reset() {

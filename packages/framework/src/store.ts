@@ -1,12 +1,8 @@
 import { createStore } from 'global-store';
-import { SpecMode } from './spec/types';
 import { SpecPluginInstance } from './spec/types-internal';
 
 export type SpecStore = {
-  plugins: SpecPluginInstance[],
-  overrideMode?: SpecMode,
-  filePathFilter?: RegExp,
-  specNameFilter?: RegExp
+  plugins: SpecPluginInstance[]
 }
 
 export const store = createStore<SpecStore>({

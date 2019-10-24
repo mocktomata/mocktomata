@@ -1,6 +1,7 @@
-import { createSpec, Spec, SpecMode, SpecOptions, SpecHandler } from '@mocktomata/framework'
+import { createSpec, Spec, SpecHandler, SpecMode, SpecOptions } from '@mocktomata/framework'
 import { getCallerRelativePath } from './getCallerRelativePath'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
+import { initializeContext } from './initializeContext'
 import { store } from './store'
 
 export type Mockto = SpecFn & {
@@ -24,6 +25,7 @@ export const mockto: Mockto = Object.assign(
 
 export function createSpecFn(defaultMode: SpecMode): SpecFn {
   const fn = (...args: any[]): any => {
+    initializeContext()
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(fn)
     const mode = getEffectiveSpecMode(store.value, defaultMode, specName, specRelativePath)

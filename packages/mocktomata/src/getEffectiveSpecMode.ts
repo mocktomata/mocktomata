@@ -6,7 +6,7 @@ import { MocktomataStore } from './store'
  * @param mode The SpecMode to return if SpecMode is not changed by config.
  */
 export function getEffectiveSpecMode(
-  storeValue: MocktomataStore,
+  storeValue: Pick<MocktomataStore, 'overrideMode' | 'filePathFilter' | 'specNameFilter'>,
   mode: SpecMode,
   specName: string,
   invokePath: string,
