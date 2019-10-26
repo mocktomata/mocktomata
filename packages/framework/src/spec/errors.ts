@@ -15,8 +15,6 @@ export class SpecNotFound extends MocktomataError {
   // istanbul ignore next
   constructor(public specId: string, public reason?: Error) {
     super(`Unable to find the spec record for '${specId}'${reason ? `due to: ${reason}` : ''}`)
-
-    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
@@ -24,8 +22,6 @@ export class NotSpecable extends MocktomataError {
   // istanbul ignore next
   constructor(public subject: any) {
     super(`The ${typeof subject === 'string' ? subject : `subject ${tersify(subject, { maxLength: 50 })}`} is not supported by any loaded plugins`)
-
-    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
@@ -65,8 +61,6 @@ Expecting reference:
 ${tersifyReference(expected)}
 Received:
 ${tersifyReference(actual)}`)
-
-    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
@@ -80,8 +74,6 @@ Expecting action:
 ${tersifyAction(expected)}
 Received:
 ${tersifyAction(actual)}`)
-
-    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 
