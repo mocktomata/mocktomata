@@ -2,6 +2,12 @@
   "files": [],
   "references": [
     {
+      "path": "packages/plugin-fixture-dummy/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
+    },
+    {
       "path": "packages/framework/tsconfig.es5.json"
     },
     {
@@ -30,12 +36,6 @@
     },
     {
       "path": "packages/io-local/tsconfig.esnext.json"
-    },
-    {
-      "path": "packages/plugin-fixture-dummy/tsconfig.es5.json"
-    },
-    {
-      "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
     },
     {
       "path": "packages/mocktomata/tsconfig.es5.json"

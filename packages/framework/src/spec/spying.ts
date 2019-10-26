@@ -6,6 +6,7 @@ import { fixCircularReferences, CircularReference } from './fixCircularReference
 import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
 import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
+import { MocktomataError } from '../errors';
 
 export type CreateSpyOptions<S> = {
   record: Except<SpyRecord, 'getSpecRecord'>,
@@ -98,6 +99,10 @@ function processInvokeResult(
   value: any,
   { processArgument, meta }: SpecPlugin.SpyResultOptions = {}
 ) {
+  // if the value is MocktomataError,
+  // it is generated internally thus short circuit the process
+  if (value instanceof MocktomataError) return value
+
   const { record, plugin } = context
   const returnId = record.getNextActionId()
   context.currentId = returnId

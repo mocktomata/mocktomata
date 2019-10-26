@@ -4,7 +4,6 @@
 // // language and platform support will change over time.
 // start({ io, libs: [] })
 
-export { SpecAction } from '@mocktomata/framework';
 export * from './mockto';
 
 export function config() {

@@ -34,12 +34,8 @@ export function createTestHarness(options?: CreateTestHarnessOptions): TestHarne
     addPluginModule(pluginName, pluginModule) {
       io.addPluginModule(pluginName, pluginModule)
     },
-    logMessages(level = logLevel.all) {
+    enableLog(level = logLevel.all) {
       setLogLevel(level)
-    },
-    reset() {
-      context.clear()
-      clearLogReporters()
     },
     logSpecRecord(title: string) {
       const colonIndex = title.lastIndexOf(':')
@@ -48,7 +44,11 @@ export function createTestHarness(options?: CreateTestHarnessOptions): TestHarne
     },
     start() {
       return loadPlugins({ io })
-    }
+    },
+    reset() {
+      context.clear()
+      clearLogReporters()
+    },
   }
 }
 

@@ -110,8 +110,6 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
   })
 
   logAutoInvokeAction(ref, refId, record.getExpectedActionId(), args)
-  // console.log('before auto', record.original)
-  // console.log('before auto', record.actual)
   const invokeSubject = getInvokeSubjectAtSite(ref.testDouble, expectedAction.site)
   invokeSubject(...args)
 }

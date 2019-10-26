@@ -1,3 +1,4 @@
+export * from './context'
 export * from './errors'
 export * from './es2015'
 export * from './incubator'

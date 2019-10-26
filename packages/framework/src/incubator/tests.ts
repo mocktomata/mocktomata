@@ -1,3 +1,4 @@
+import { LogLevel } from 'standard-log';
 import { context } from '../context';
 import { createSaveSpec } from '../spec/createSaveSpec';
 import { createSimulateSpec } from '../spec/createSimulateSpec';
@@ -46,7 +47,9 @@ function createTestSpec(specFn: typeof createSaveSpec, specName: string, options
   let s: Spec
   return Object.assign(
     (subject: any) => getSpec().then(s => s(subject)), {
-    done: () => getSpec().then(s => s.done())
+    done: () => getSpec().then(s => s.done()),
+    enableLog: (level: LogLevel) => getSpec().then(s => s.enableLog(level)),
+    logSpecRecord: () => getSpec().then(s => s.logSpecRecord()),
   })
 
   async function getSpec() {

@@ -1,5 +1,4 @@
-import { addPluginModule, es2015 } from '@mocktomata/framework'
-import { context } from '@mocktomata/framework/lib/context'
+import { addPluginModule, context, es2015 } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/io-local'
 import { store } from './store'
 
@@ -7,7 +6,6 @@ import { store } from './store'
 // handle config
 export function initializeContext() {
   if (store.value.initialized) return
-
   addPluginModule(es2015.name, es2015)
   const io = createIO()
   context.set({ io })

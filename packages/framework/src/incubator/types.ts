@@ -10,7 +10,7 @@ export type TestIO = {
 export type TestHarness = {
   reporter: MemoryLogReporter,
   addPluginModule(pluginName: string, pluginModule: SpecPluginModule): void,
-  logMessages(level?: LogLevel): void,
+  enableLog(level?: LogLevel): void,
   reset(): void,
   logSpecRecord(title: string): void,
   start(): Promise<void>

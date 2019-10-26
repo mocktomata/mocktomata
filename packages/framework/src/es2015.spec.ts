@@ -815,7 +815,7 @@ describe('class', () => {
       expect(actual).toBe('echo')
       await spec.done()
       harness.logSpecRecord(title)
-      harness.logMessages()
+      harness.enableLog()
     })
   })
 

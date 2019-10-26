@@ -6,8 +6,6 @@ export class SpecIDCannotBeEmpty extends MocktomataError {
   // istanbul ignore next
   constructor() {
     super(`The spec id cannot be an empty string. It should uniquely identify the spec.`)
-
-    Object.setPrototypeOf(this, new.target.prototype)
   }
 }
 

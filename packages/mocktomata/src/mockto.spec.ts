@@ -14,15 +14,17 @@ test('spec id cannot be empty', async () => {
   await a.throws(mockto.simulate(''), SpecIDCannotBeEmpty)
 })
 
-incubator.save(`primitive type '%s' is not specable`, (title, spec) => {
-  test.each([undefined, null, 1, true, Symbol(), 'str'])(title, async (value) => {
+mockto.save(`type %s is not specable`, (title, spec) => {
+  test.each<[any, any]>([
+    ['undefined', undefined],
+    ['null', null],
+    ['number', 1],
+    ['boolean', true],
+    ['symbol', Symbol()],
+    ['string', 'string'],
+    ['array', []]
+  ])(title, async ([, value]) => {
     await a.throws(() => spec(value), NotSpecable)
-  })
-})
-
-incubator.save('array is not specable', (title, spec) => {
-  test(title, async () => {
-    await a.throws(() => spec([]), NotSpecable)
   })
 })
 
@@ -37,7 +39,6 @@ mockto.save('calling handler without options', (title, spec) => {
     expect(title).toEqual('calling handler without options')
     const subject = await spec((x: number) => x)
     expect(subject(3)).toBe(3)
-    await spec.done()
   })
 })
 
@@ -46,6 +47,5 @@ mockto.save('calling handler with options', { timeout: 100 }, (title, spec) => {
     expect(title).toEqual('calling handler with options')
     const subject = await spec((x: number) => x)
     expect(subject(3)).toBe(3)
-    await spec.done()
   })
 })

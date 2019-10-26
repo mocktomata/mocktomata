@@ -1,3 +1,5 @@
+import { LogLevel } from 'standard-log'
+
 export type SpecHandler = (
   specName: string,
   spec: Spec
@@ -12,4 +14,6 @@ export type SpecMode = 'live' | 'save' | 'simulate' | 'auto'
 export type Spec = {
   <S>(subject: S): Promise<S>,
   done(): Promise<void>,
+  enableLog(level?: LogLevel): void,
+  logSpecRecord(): void,
 }

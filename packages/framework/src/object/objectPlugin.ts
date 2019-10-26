@@ -9,7 +9,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
     return new Proxy(subject, {
       get(target, property: string) {
         if (Object.getOwnPropertyNames(target).indexOf(property) === -1) return undefined
-        return getSpy(target[property as any], { site: [property as any] })
+        return getSpy(target[property], { site: [property] })
       },
     })
     // const propertyNames = getPropertyNames(subject)
@@ -22,8 +22,8 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
   },
   createStub: ({ resolve }, _subject, meta) => {
     return new Proxy(meta, {
-      get(target, property) {
-        return resolve(target[property as any], { site: [property as any] })
+      get(target, property: string) {
+        return resolve(target[property], { site: [property] })
       }
     })
     // const stub = reduceKey(meta, (p, k) => {

@@ -1,5 +1,6 @@
 import { SpecNotFound, SpecPlugin, SpecPluginModule } from '../spec';
 import { TestIO } from './types';
+import { prettyPrintSpecRecord } from '../spec/prettyPrintSpecRecord';
 
 
 export function createTestIO(): TestIO {
@@ -15,14 +16,7 @@ export function createTestIO(): TestIO {
       return Promise.resolve(JSON.parse(record))
     },
     async writeSpec(title, _specPath, record) {
-      specStore.set(title, `{
-  "refs": [
-    ${record.refs.map(r => JSON.stringify(r)).join(',\n    ')}
-  ],
-  "actions": [
-    ${record.actions.map(a => JSON.stringify(a)).join(',\n    ')}
-  ]
-}`)
+      specStore.set(title, prettyPrintSpecRecord(record))
     },
     addPluginModule(moduleName: string, pluginModule: SpecPluginModule) {
       plugins[moduleName] = pluginModule
