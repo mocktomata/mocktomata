@@ -6,13 +6,10 @@ export const stringPlugin: SpecPlugin<string> = {
   createSpy: (_, subject) => {
     return subject
   },
-  metarize(_, spy) {
-    return spy
-  },
   createStub: (_, _subject, meta) => {
     return meta
   },
-  createImitator(_, meta) {
-    return meta
-  }
+  metarize(_, spy) {
+    return spy
+  },
 }

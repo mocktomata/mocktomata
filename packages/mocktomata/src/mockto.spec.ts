@@ -3,10 +3,7 @@ import { incubator, SpecIDCannotBeEmpty, NotSpecable, SpecNotFound } from '@mock
 import { mockto } from './mockto';
 
 
-beforeAll(() => {
-  const harness = incubator.createTestHarness({ target: 'es2015' })
-  return harness.start()
-})
+beforeAll(() => incubator.start({ target: 'es2015' }))
 
 test('spec id cannot be empty', async () => {
   await a.throws(mockto(''), SpecIDCannotBeEmpty)

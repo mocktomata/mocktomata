@@ -31,7 +31,7 @@ export const testSimulate: TestSpecFn = (...args: any[]) => {
   handler(title, createTestSpec(createSimulateSpec, specName, options))
 }
 
-export type SequenceHandler = (title: string, specs: { save: Spec, simulate: Spec }) => void
+export type SequenceHandler<S = Spec> = (title: string, specs: { save: S, simulate: S }) => void
 /**
  * Runs save and simulate in different sequence.
  */
@@ -49,6 +49,7 @@ function createTestSpec(specFn: typeof createSaveSpec, specName: string, options
     (subject: any) => getSpec().then(s => s(subject)), {
     done: () => getSpec().then(s => s.done()),
     enableLog: (level: LogLevel) => getSpec().then(s => s.enableLog(level)),
+    getSpecRecord: () => getSpec().then(s => s.getSpecRecord()),
     logSpecRecord: () => getSpec().then(s => s.logSpecRecord()),
   })
 
@@ -60,7 +61,7 @@ function createTestSpec(specFn: typeof createSaveSpec, specName: string, options
   }
 }
 
-function resolveTestSpecFnArgs<H = SpecHandler>(args: any[]): { specName: string, options: SpecOptions | undefined, handler: H } {
+export function resolveTestSpecFnArgs<H = SpecHandler>(args: any[]): { specName: string, options: SpecOptions | undefined, handler: H } {
   if (args.length === 3) {
     return { specName: args[0], options: args[1], handler: args[2] }
   }
@@ -69,7 +70,7 @@ function resolveTestSpecFnArgs<H = SpecHandler>(args: any[]): { specName: string
   }
 }
 
-export interface TestSpecFn<H = SpecHandler> {
+export type TestSpecFn<H = SpecHandler> = {
   (specName: string, handler: H): void,
   (specName: string, options: SpecOptions, handler: H): void,
 }

@@ -24,6 +24,7 @@ export async function createSaveSpec(context: SpecContext, specName: string, inv
       context.io.writeSpec(specName, invokePath, sr)
     },
     enableLog,
+    getSpecRecord: () => Promise.resolve(record.getSpecRecord()),
     logSpecRecord() { log.info(prettyPrintSpecRecord(record.getSpecRecord())) }
   })
 }

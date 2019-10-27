@@ -1,12 +1,8 @@
 import a from 'assertron';
-import { incubator, TestHarness } from '../src';
+import { incubator } from '../src';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
-let harness: TestHarness
-beforeAll(async () => {
-  harness = incubator.createTestHarness({ target: 'es2015' })
-  await harness.start()
-})
+beforeAll(() => incubator.start({ target: 'es2015' }))
 
 describe('function', () => {
   incubator.duo('no input no result', (title, spec) => {
@@ -306,6 +302,15 @@ describe('function', () => {
 })
 
 describe('object', () => {
+  incubator.sequence('save: get primitive property', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec.save({ a: 1 })
+      expect(subject.a).toBe(1)
+      await spec.save.done()
+      // const record = await spec.save.getSpecRecord()
+      // a.satisfies(spec.record, {})
+    })
+  })
   incubator.duo('get primitive property', (title, spec) => {
     test(title, async () => {
       const subject = await spec({ a: 1 })
@@ -314,6 +319,7 @@ describe('object', () => {
       expect(actual).toBe(1)
 
       await spec.done()
+      spec.logSpecRecord()
     })
   })
   incubator.duo('set primitive property', (title, spec) => {
@@ -814,8 +820,6 @@ describe('class', () => {
 
       expect(actual).toBe('echo')
       await spec.done()
-      harness.logSpecRecord(title)
-      harness.enableLog()
     })
   })
 

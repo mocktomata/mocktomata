@@ -41,6 +41,9 @@ export function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions
   ref.testDouble = plugin.createSpy(
     createPluginSpyContext({ record, plugin, ref, refId, circularRefs, currentId: refId }),
     subject)
+  // if (plugin.metarize) {
+  //   ref.meta = plugin.metarize({ metarize: subject => record.findRefId(subject) || subject }, ref.testDouble)
+  // }
   fixCircularReferences(record, refId, circularRefs)
   return ref.testDouble
 }
@@ -52,6 +55,7 @@ function createPluginSpyContext(context: SpyContext): SpecPlugin.CreateSpyContex
   return {
     id: context.refId,
     getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
+    // getProperty: (id: ReferenceId, ) => {},
     invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder(context, id, args, invokeOptions),
     instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
   }

@@ -27,6 +27,7 @@ export async function createSimulateSpec(context: SpecContext, specName: string,
       record.end()
     },
     enableLog,
+    getSpecRecord: () => Promise.resolve(record.actual),
     logSpecRecord() {
       log.info('loaded\n', prettyPrintSpecRecord(loaded))
       log.info('actual\n', prettyPrintSpecRecord(record.actual))

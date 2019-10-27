@@ -5,13 +5,13 @@ import { Calculator } from './Calculator'
 // import delay from 'delay'
 
 beforeAll(() => {
-  mockto.start({ logOptions: { mode: 'test' } })
+  // mockto.start({ logOptions: { mode: 'test' } })
 })
 
 mockto.save('1 + 1 = 2', (specName, spec) => {
   test(specName, async () => {
-    spec.enableLog()
-    spec.logSpecRecord()
+    // spec.enableLog()
+    // spec.logSpecRecord()
 
     // axios.get = () => {}
     const subject = await spec(axios)

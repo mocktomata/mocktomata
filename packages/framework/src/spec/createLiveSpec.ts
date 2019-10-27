@@ -6,6 +6,7 @@ export async function createLiveSpec(): Promise<Spec> {
     async (subject: any) => subject, {
     async done() { },
     enableLog,
+    getSpecRecord: () => Promise.resolve({ refs: [], actions: [] }),
     logSpecRecord() { },
   })
 }

@@ -1,8 +1,9 @@
 import { LogLevel } from 'standard-log'
+import { SpecRecord } from './SpecRecord'
 
-export type SpecHandler = (
+export type SpecHandler<S = Spec> = (
   specName: string,
-  spec: Spec
+  spec: S
 ) => void | Promise<any>
 
 export type SpecOptions = {
@@ -15,5 +16,6 @@ export type Spec = {
   <S>(subject: S): Promise<S>,
   done(): Promise<void>,
   enableLog(level?: LogLevel): void,
+  getSpecRecord(): Promise<SpecRecord>,
   logSpecRecord(): void,
 }

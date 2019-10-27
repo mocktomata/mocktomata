@@ -46,6 +46,7 @@ function createSpecFn(defaultMode: SpecMode): Mockto.SpecFn {
         (subject: any) => createSpecWithHandler().then(spec => spec(subject)), {
         done: () => createSpecWithHandler().then(spec => spec.done()),
         enableLog: (level: LogLevel) => createSpecWithHandler().then(s => s.enableLog(level)),
+        getSpecRecord: () => createSpecWithHandler().then(s => s.getSpecRecord()),
         logSpecRecord: () => createSpecWithHandler().then(s => s.logSpecRecord()),
       }))
       return

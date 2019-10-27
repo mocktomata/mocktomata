@@ -11,8 +11,4 @@ export const errorPlugin: SpecPlugin<Error, Record<string, any>> = {
   metarize: (_, spy) => {
     return IsoError.toSerializable(spy)
   },
-  createImitator: (_, meta) => {
-    const err = new Error(meta.message)
-    return err
-  },
 }

@@ -6,7 +6,7 @@ import { es2015 } from '../es2015';
 import { loadPlugins } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
-import { TestHarness } from './types';
+import { TestHarness, TestIO } from './types';
 
 export type CreateTestHarnessOptions = {
   target: 'es2015',
@@ -37,10 +37,15 @@ export function createTestHarness(options?: CreateTestHarnessOptions): TestHarne
     enableLog(level = logLevel.all) {
       setLogLevel(level)
     },
+    getSpecRecord(title: string) {
+      const entry = getSpecEntry(io, title)
+      if (!entry) throw new Error(`Unable to find SpecRecord for: ${title}`)
+      return JSON.parse(entry[1])
+    },
     logSpecRecord(title: string) {
-      const colonIndex = title.lastIndexOf(':')
-      const specId = colonIndex === -1 ? title : title.slice(0, colonIndex)
-      logSpecs(io.getAllSpecs(), e => e[0] === specId)
+      const entry = getSpecEntry(io, title)
+      if (!entry) throw new Error(`Unable to find SpecRecord for: ${title}`)
+      console.info(`${entry[0]}:\n`, entry[1])
     },
     start() {
       return loadPlugins({ io })
@@ -52,8 +57,11 @@ export function createTestHarness(options?: CreateTestHarnessOptions): TestHarne
   }
 }
 
-function logSpecs(specs: IterableIterator<[string, string]>, predicate: (entry: [string, string]) => boolean = () => true) {
+function getSpecEntry(io: TestIO, title: string) {
+  const colonIndex = title.lastIndexOf(':')
+  const specId = colonIndex === -1 ? title : title.slice(0, colonIndex)
+  const specs = io.getAllSpecs()
   for (const e of specs) {
-    if (predicate(e)) console.info(`${e[0]}:\n`, e[1])
+    if (e[0] === specId) return e
   }
 }
