@@ -1,4 +1,4 @@
-import { clearLogReporters, config, createMemoryLogReporter, logLevel, LogReporter, setLogLevel } from 'standard-log';
+import { clearLogReporters, config, logLevel, setLogLevel } from 'standard-log';
 import { createColorLogReporter } from 'standard-log-color';
 import { required } from 'type-plus';
 import { context } from '../context';
@@ -14,12 +14,10 @@ export type CreateTestHarnessOptions = {
 }
 
 export function createTestHarness(options?: CreateTestHarnessOptions): TestHarness {
-  const opts = required<Required<CreateTestHarnessOptions>>({ target: 'es2015', logLevel: logLevel.none }, options)
+  const opts = required<Required<CreateTestHarnessOptions>>({ target: 'es2015', logLevel: logLevel.info }, options)
   const level = opts.logLevel
 
-  const reporter = createMemoryLogReporter()
-  const reporters: LogReporter[] = [reporter, createColorLogReporter()]
-  config({ mode: 'test', reporters, logLevel: level })
+  config({ mode: 'test', reporters: [createColorLogReporter()], logLevel: level })
   const io = createTestIO()
   context.set({ io })
   store.reset()
@@ -30,7 +28,6 @@ export function createTestHarness(options?: CreateTestHarnessOptions): TestHarne
   }
 
   return {
-    reporter,
     addPluginModule(pluginName, pluginModule) {
       io.addPluginModule(pluginName, pluginModule)
     },

@@ -1,4 +1,4 @@
-import { LogLevel, MemoryLogReporter } from 'standard-log';
+import { LogLevel } from 'standard-log';
 import { SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO, SpecRecord } from '../spec/types';
 
 export type TestIO = {
@@ -8,7 +8,6 @@ export type TestIO = {
 } & SpecIO & SpecPluginModuleIO
 
 export type TestHarness = {
-  reporter: MemoryLogReporter,
   addPluginModule(pluginName: string, pluginModule: SpecPluginModule): void,
   enableLog(level?: LogLevel): void,
   reset(): void,

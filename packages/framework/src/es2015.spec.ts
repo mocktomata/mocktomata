@@ -302,13 +302,17 @@ describe('function', () => {
 })
 
 describe('object', () => {
-  incubator.sequence('save: get primitive property', (title, spec) => {
-    test(title, async () => {
+  incubator.sequence('get primitive property sequence', (title, spec) => {
+    test.skip(title, async () => {
       const subject = await spec.save({ a: 1 })
       expect(subject.a).toBe(1)
       await spec.save.done()
-      // const record = await spec.save.getSpecRecord()
-      // a.satisfies(spec.record, {})
+      const record = await spec.save.getSpecRecord()
+      a.satisfies(record, { actions: [{
+        type: 'get',
+        ref: '0',
+        payload: ['a', 1]
+      }] })
     })
   })
   incubator.duo('get primitive property', (title, spec) => {
@@ -319,7 +323,6 @@ describe('object', () => {
       expect(actual).toBe(1)
 
       await spec.done()
-      spec.logSpecRecord()
     })
   })
   incubator.duo('set primitive property', (title, spec) => {

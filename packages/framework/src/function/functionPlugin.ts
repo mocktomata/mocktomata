@@ -37,11 +37,11 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
    *
    * })
    */
-  createSpy: ({ id, invoke, getSpy }, subject) => {
+  createSpy: ({ invoke, getSpy }, subject) => {
     return new Proxy(function () { }, {
       apply(_, thisArg, argumentsList) {
         // Assuming any functions or functions within object are callbacks to be called by the subject.
-        const invocation = invoke(id, argumentsList, { processArguments: arg => getSpy(arg, { mode: 'autonomous' }) })
+        const invocation = invoke(argumentsList, { processArguments: arg => getSpy(arg, { mode: 'autonomous' }) })
         try {
           const result = subject.apply(thisArg, invocation.args)
           return invocation.returns(result, { processArgument: result => getSpy(result, { mode: 'passive' }) })
@@ -56,11 +56,11 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       }
     })
   },
-  createStub({ id, invoke, getSpy, resolve }, subject: any, meta) {
+  createStub({ invoke, getSpy, resolve }, subject: any, meta) {
     return new Proxy(function () { }, {
       apply: function (_target, _thisArg, argumentsList) {
         // No transform. The creation of stub/imitator is handled by the framework.
-        const invocation = invoke(id, argumentsList, { processArguments: getSpy })
+        const invocation = invoke(argumentsList, { processArguments: getSpy })
         const result = invocation.getResult()
         if (result.type === 'return') {
           return invocation.returns(result.value)

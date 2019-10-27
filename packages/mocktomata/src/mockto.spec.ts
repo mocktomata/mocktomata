@@ -2,7 +2,6 @@ import a from 'assertron';
 import { incubator, SpecIDCannotBeEmpty, NotSpecable, SpecNotFound } from '@mocktomata/framework';
 import { mockto } from './mockto';
 
-
 beforeAll(() => incubator.start({ target: 'es2015' }))
 
 test('spec id cannot be empty', async () => {

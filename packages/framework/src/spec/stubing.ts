@@ -4,9 +4,9 @@ import { assertActionType, ValidateRecord } from './createValidateRecord';
 import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
-import { logCreateStub, logInvokeAction, logResultAction } from './logs';
-import { getSpy, instanceRecorder } from './spying';
-import { ActionId, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecAction, SpecPlugin, SpecReference, ThrowAction } from './types';
+import { logCreateStub, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
+import { getSpy } from './spying';
+import { ActionId, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecAction, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
 import { arrayMismatch, referenceMismatch, siteMismatch } from './validations';
 
@@ -68,8 +68,7 @@ export type StubContext = {
 
 export function createPluginStubContext(context: StubContext): SpecPlugin.CreateStubContext {
   return {
-    id: context.refId,
-    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(context, id, args, invokeOptions),
+    invoke: (args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(context, args, invokeOptions),
     getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
     resolve: <V>(refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
       if (typeof refOrValue !== 'string') return refOrValue
@@ -98,7 +97,7 @@ export function createPluginStubContext(context: StubContext): SpecPlugin.Create
       const plugin = getPlugin(origRef.plugin)
       return createStubInternal(record, plugin, subject, origRef, { ref: context.currentId, site })
     },
-    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
+    instantiate: (args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceResponder(context, args, instanceOptions)
   }
 }
 
@@ -110,17 +109,16 @@ function getByPath(subject: any, sitePath: Array<string | number>) {
 
 function invocationResponder(
   context: StubContext,
-  id: ReferenceId,
   args: any[],
   { mode, processArguments, site, meta }: SpecPlugin.InvokeOptions
 ): SpecPlugin.InvocationResponder {
-  const { record, plugin, ref } = context
+  const { record, plugin, ref, refId: id } = context
   const expected = record.getExpectedAction()
 
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref: id,
-    mode: mode || ref.mode,
+    mode: mode || ref.mode === 'instantiate' ? 'passive' : ref.mode,
     payload: [],
     site,
     meta
@@ -218,4 +216,43 @@ function actionMismatch(actual: Omit<SpecAction, 'tick'>, expected: SpecAction) 
   return actual.type !== expected.type ||
     actual.ref !== expected.ref ||
     arrayMismatch(actual.payload, expected.payload)
+}
+
+function instanceResponder(
+  context: StubContext,
+  args: any[],
+  { mode, processArguments, meta }: SpecPlugin.InstantiateOptions
+): SpecPlugin.InstantiationResponder {
+  const { record, plugin, ref, refId: id } = context
+
+  const action: Omit<InstantiateAction, 'tick' | 'instanceId'> = {
+    type: 'instantiate',
+    ref: id,
+    mode: mode || ref.mode,
+    payload: [],
+    meta
+  }
+  const instantiateId = record.getNextActionId()
+  context.currentId = instantiateId
+  const spiedArgs = processArguments ? args.map((a, i) => {
+    context.site = [i]
+    return processArguments(instantiateId, a)
+  }) : args
+
+  action.payload.push(...spiedArgs.map(a => record.findRefId(a) || a))
+  record.addAction(action)
+  logInstantiateAction({ record, plugin: plugin.name, id }, instantiateId, args)
+
+  let instanceRef: SpecReference
+  let instanceId: ReferenceId
+  return {
+    args: spiedArgs,
+    setInstance: instance => {
+      instanceRef = { plugin: plugin.name, mode: 'instantiate', testDouble: instance, subject: notDefined }
+      instanceId = record.addRef(instanceRef)
+      context.currentId = instanceId
+      return record.getAction<InstantiateAction>(instantiateId).instanceId = instanceId
+    },
+    invoke: (args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder({ ...context, ref: instanceRef!, refId: instanceId! }, args, invokeOptions),
+  }
 }

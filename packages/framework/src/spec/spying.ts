@@ -1,12 +1,12 @@
 import { Except, Omit } from 'type-plus';
 import { notDefined } from '../constants';
+import { MocktomataError } from '../errors';
 import { SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
-import { fixCircularReferences, CircularReference } from './fixCircularReferences';
+import { CircularReference, fixCircularReferences } from './fixCircularReferences';
 import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
 import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecPlugin, SpecReference, ThrowAction } from './types';
 import { SpecPluginInstance } from './types-internal';
-import { MocktomataError } from '../errors';
 
 export type CreateSpyOptions<S> = {
   record: Except<SpyRecord, 'getSpecRecord'>,
@@ -53,26 +53,23 @@ export function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions
  */
 function createPluginSpyContext(context: SpyContext): SpecPlugin.CreateSpyContext {
   return {
-    id: context.refId,
     getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
     // getProperty: (id: ReferenceId, ) => {},
-    invoke: (id: ReferenceId, args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder(context, id, args, invokeOptions),
-    instantiate: (id: ReferenceId, args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, id, args, instanceOptions)
+    invoke: (args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder(context, args, invokeOptions),
+    instantiate: (args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, args, instanceOptions)
   }
 }
 
 function invocationRecorder(
   context: SpyContext,
-  id: ReferenceId,
   args: any[],
   { mode, processArguments, site, meta }: SpecPlugin.InvokeOptions
 ) {
-  const { record, plugin, ref } = context
-
+  const { record, plugin, ref, refId: id } = context
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref: id,
-    mode: mode || ref.mode,
+    mode: mode || (ref.mode === 'instantiate' ? 'passive' : ref.mode),
     payload: [],
     site,
     meta
@@ -148,11 +145,10 @@ export function getSpy<S>(
 
 export function instanceRecorder(
   context: SpyContext,
-  id: ReferenceId,
   args: any[],
   { mode, processArguments, meta }: SpecPlugin.InstantiateOptions
 ): SpecPlugin.InstantiationRecorder {
-  const { record, plugin, ref } = context
+  const { record, plugin, ref, refId: id } = context
 
   const action: Omit<InstantiateAction, 'tick' | 'instanceId'> = {
     type: 'instantiate',
@@ -172,14 +168,16 @@ export function instanceRecorder(
   record.addAction(action)
   logInstantiateAction({ record, plugin: plugin.name, id }, instantiateId, args)
 
+  let instanceRef: SpecReference
   let instanceId: ReferenceId
   return {
     args: spiedArgs,
     setInstance: instance => {
-      const reference: SpecReference = { plugin: plugin.name, mode: 'instantiate', testDouble: instance, subject: notDefined }
-      instanceId = record.addRef(reference)
+      instanceRef = { plugin: plugin.name, mode: 'instantiate', testDouble: instance, subject: notDefined }
+      instanceId = record.addRef(instanceRef)
       context.currentId = instanceId
       return record.getAction<InstantiateAction>(instantiateId).instanceId = instanceId
-    }
+    },
+    invoke: (args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder({ ...context, ref: instanceRef!, refId: instanceId! }, args, invokeOptions),
   }
 }

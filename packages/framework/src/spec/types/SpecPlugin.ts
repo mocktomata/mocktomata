@@ -38,16 +38,14 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
 }
 export namespace SpecPlugin {
   export type CreateSpyContext = {
-    id: ReferenceId,
-    invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationRecorder,
-    instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
+    invoke(args: any[], options?: InvokeOptions): InvocationRecorder,
+    instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
     getSpy<S>(subject: S, options?: GetSpyOptions): S,
   }
 
   export type CreateStubContext = {
-    id: ReferenceId,
-    invoke(id: ReferenceId, args: any[], options?: InvokeOptions): InvocationResponder,
-    instantiate(id: ReferenceId, args: any[], options?: InstantiateOptions): InstantiationRecorder,
+    invoke(args: any[], options?: InvokeOptions): InvocationResponder,
+    instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
     getSpy<S>(subject: S, options?: GetSpyOptions): S,
     resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
   }
@@ -104,8 +102,16 @@ export namespace SpecPlugin {
 
   export type InstantiationRecorder = {
     args: any[],
-    setInstance(instance: any): ReferenceId
+    setInstance(instance: any): ReferenceId,
+    invoke(args: any[], options?: InvokeOptions): InvocationRecorder,
   }
+
+  export type InstantiationResponder = {
+    args: any[],
+    setInstance(instance: any): ReferenceId,
+    invoke(args: any[], options?: InvokeOptions): InvocationResponder,
+  }
+
   export type ResolveOptions = {
     site?: Array<string | number>
   }
