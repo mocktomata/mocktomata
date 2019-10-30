@@ -1,1 +1,0 @@
-{"version":3,"file":"testSimulateSpec.js","sourceRoot":"","sources":["../../src/support-util/testSimulateSpec.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,IAAI,EAAE,MAAM,SAAS,CAAC;AAG/B,MAAM,UAAU,gBAAgB,CAAC,MAAc,EAAE,OAAoB;IACnE,OAAO,CAAC,GAAG,MAAM,YAAY,EAAE,CAAC,CAAC,EAAE,CAAC,IAAI,CAAC,QAAQ,CAAC,MAAM,EAAE,CAAC,CAAC,CAAC,CAAA;AAC/D,CAAC"}
