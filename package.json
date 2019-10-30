@@ -8,7 +8,7 @@
     "bootstrap": "lerna bootstrap",
     "build": "tsc -b",
     "build:watch": "tsc -b -w",
-    "clean": "lerna run clean && rimraf .tsbuildinfo",
+    "clean": "lerna run clean",
     "coverage": "jest --coverage",
     "depcheck": "lerna run depcheck",
     "lint": "eslint --ext=js,ts .",
