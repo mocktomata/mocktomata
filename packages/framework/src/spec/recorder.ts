@@ -3,9 +3,9 @@ import { notDefined } from '../constants';
 import { MocktomataError } from '../errors';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { findPlugin } from './findPlugin';
-import { logCreateSpy, logGetAction, logInvokeAction, logRecordingTimeout, logResultAction } from './logs';
+import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
 import { createSpyingRecord, SpyRecord } from './record';
-import { ActionId, ActionMode, ReferenceId, SpecOptions, SpecPlugin, SpecRecord, SpecReference, SupportedKeyTypes } from './types';
+import { ActionId, ActionMode, GetAction, InvokeAction, ReferenceId, ReturnAction, SpecOptions, SpecPlugin, SpecRecord, SpecReference, SupportedKeyTypes, ThrowAction } from './types';
 
 export namespace Recorder {
   export type SpyOptions = {
@@ -47,7 +47,7 @@ function createSpy<S>(context: Recorder.Context, subject: S, { mode }: Recorder.
   const ref: SpecReference = { plugin: plugin.name, subject, testDouble: notDefined, mode }
   const id = context.record.addRef(ref)
   const state = { ...context.state, id, plugin: plugin.name }
-  logCreateSpy(state, subject, mode)
+  logCreateSpy(state, mode, subject)
   ref.testDouble = plugin.createSpy(
     createPluginSpyContext({ ...context, state }),
     subject)
@@ -82,13 +82,15 @@ function getSpy<S>(context: Recorder.Context, subject: S, options: SpecPlugin.Ge
   return createSpy({ ...context, state: required(state, { site }) }, subject, { mode }) || subject
 }
 
-function getProperty<P>(context: Recorder.Context, property: SupportedKeyTypes, value: P, options: SpecPlugin.GetPropertyOptions) {
+function getProperty<P>(context: Recorder.Context, property: SupportedKeyTypes, value: P, _options: SpecPlugin.GetPropertyOptions) {
   const { record, state, timeTracker } = context
   const ref = record.findRefBySubjectOrTestDouble(value)
   let result = value
+  let subject = value
   let payload: P | ReferenceId = value
   const site = [property]
   if (ref) {
+    subject = ref.subject
     if (!ref.source) {
       ref.source = { ref: state.id, site }
     }
@@ -96,8 +98,9 @@ function getProperty<P>(context: Recorder.Context, property: SupportedKeyTypes, 
     payload = record.getRefId(ref)
   }
 
-  const actionId = record.addAction({ type: 'get', ref: state.id, payload, site, tick: timeTracker.elaspe() })
-  logGetAction(state, actionId, property, ref ? ref.subject : value)
+  const action: GetAction = { type: 'get', ref: state.id, payload, site, tick: timeTracker.elaspe() }
+  const actionId = record.addAction(action)
+  logAction(state, actionId, { ...action, payload: subject })
 
   return result
 }
@@ -107,16 +110,17 @@ function invocationRecorder(context: Recorder.Context, args: any[], { mode, site
 
   const payload = args.map(arg => record.findRefBySubjectOrTestDouble(arg) || arg)
   const ref = record.getRef(state.id)!
-  const invokeId = record.addAction({
+  const action: InvokeAction = {
     type: 'invoke',
     ref: state.id as ReferenceId,
     payload,
     site,
     mode: mode || (ref.mode === 'instantiate' ? 'passive' : ref.mode),
     tick: timeTracker.elaspe()
-  })
+  }
+  const invokeId = record.addAction(action)
   const subjects = payload.map(value => typeof value === 'string' ? record.getRef(value)!.subject : value)
-  logInvokeAction(state, invokeId, subjects)
+  logAction(state, invokeId, { ...action, payload: subjects })
 
   return {
     returns: (value: any, options?: SpecPlugin.InvokeOptions) => processInvokeResult(context, 'return', invokeId, value, options),
@@ -137,17 +141,22 @@ function processInvokeResult(
 
   const { record, state, timeTracker } = context
 
-  const returnId = record.addAction({
+  const ref = record.findRefBySubjectOrTestDouble(value)
+
+  const action: ReturnAction | ThrowAction = {
     type,
     ref: invokeId,
-    payload: record.findRefBySubjectOrTestDouble(value) || value,
+    payload: ref ? record.getRefId(ref) : value,
     meta,
     tick: timeTracker.elaspe()
-  })
+  }
+  const returnId = record.addAction(action)
 
-  logResultAction(state, type, invokeId, returnId, value)
+  const subject = ref ? ref.subject : value
+  logAction(state, returnId, { ...action, payload: subject })
   return value
 }
+
 function instanceRecorder(context: Recorder.Context, args: any[], options: SpecPlugin.InstantiateOptions) {
   return {} as any
 }

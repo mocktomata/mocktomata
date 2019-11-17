@@ -115,7 +115,10 @@ function getProperty(context: StubContext, property: SupportedKeyTypes) {
   // Those calls will not be record and simply ignored.
   // The one I have indentified is `then` check,
   // properly by TypeScript for checking if the object is a promise
-  if (!expected || expected.type !== 'get' || expected.site[0] !== property) return undefined
+  if (!expected ||
+    expected.type !== 'get' ||
+    expected.site[0] !== property
+  ) return undefined
 
   const refOrValue = expected.payload
   const nextId = record.getNextActionId()
@@ -159,7 +162,11 @@ function getProperty(context: StubContext, property: SupportedKeyTypes) {
   }
   const sourceRef = record.getRef(origRef.source.ref)!
   const subject = getByPath(sourceRef.subject, origRef.source.site || [])
-  const result = createStubInternal(record, getPlugin(origRef.plugin), subject, origRef, { ref: context.currentId, site })
+  const result = createStubInternal(record,
+    getPlugin(origRef.plugin),
+    subject,
+    origRef,
+    { ref: context.currentId, site })
 
   // const resultRef = record.findRef(result)
 

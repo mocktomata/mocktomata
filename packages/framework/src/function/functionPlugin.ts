@@ -55,11 +55,10 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
       }
     })
   },
-  createStub({ invoke, getSpy, getProperty }, subject: any, meta) {
+  createStub({ invoke, getSpy, getProperty }, _subject, _meta) {
     return new Proxy(function () { }, {
-      apply: function (_target, _thisArg, argumentsList) {
-        // No transform. The creation of stub/imitator is handled by the framework.
-        const invocation = invoke(argumentsList, { processArguments: getSpy })
+      apply: function (_target, _thisArg, argumentsList: any[] = []) {
+        const invocation = invoke(argumentsList.map(arg => getSpy(arg)))
         const result = invocation.getResult()
         if (result.type === 'return') {
           return invocation.returns(result.value)

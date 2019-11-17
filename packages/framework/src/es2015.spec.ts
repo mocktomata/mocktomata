@@ -1,7 +1,6 @@
 import a from 'assertron';
 import { incubator } from '../src';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
-import { logLevels } from 'standard-log';
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })

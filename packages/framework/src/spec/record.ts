@@ -28,10 +28,13 @@ export function createValidatingRecord(specName: string, expected: SpecRecord) {
     refs,
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
-    getNextExpectedReference(): SpecReference | undefined {
+    getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id),
+    getExpectedRef: (id: ReferenceId) => getRef(expected, id),
+    getNextExpectedRef(): SpecReference | undefined {
       return expected.refs[refs.length]
     },
     addRef: (ref: SpecReference) => addRef(refs, ref),
+    findRefBySubjectOrTestDouble: (value: any) => findRefBySubjectOrTestDouble(refs, value),
     getNextExpectedAction(): SpecAction | undefined { return expected.actions[actions.length] },
     getNextActionId() { return actions.length },
     addAction: (action: SpecAction) => addAction(actions, action),

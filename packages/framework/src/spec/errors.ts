@@ -1,6 +1,8 @@
 import { tersify } from 'tersify';
 import { MocktomataError } from '../errors';
 import { SpecReference, SpecAction } from './types';
+import { prettifyAction } from './prettifyAction';
+import { Recorder } from './recorder';
 
 export class SpecIDCannotBeEmpty extends MocktomataError {
   // istanbul ignore next
@@ -71,8 +73,13 @@ export class ExtraReference extends MocktomataError {
 
 export type MismatchActionModel = Partial<SpecAction> & { plugin?: string }
 
+export class ExtraAction extends MocktomataError {
+  constructor(public specName: string, state: Pick<Recorder.State, 'id' | 'plugin'>, public actionId: number, public action: SpecAction) {
+    super(`Recorded data for '${specName}' does not expect ${prettifyAction(state, actionId, action)}`)
+  }
+}
+
 export class ActionMismatch extends MocktomataError {
-  // istanbul ignore next
   constructor(public specName: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
     super(`Recorded data for '${specName}' doesn't match with simulation.
 Expecting action:
