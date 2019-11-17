@@ -1,5 +1,5 @@
 import { Meta } from './Meta';
-import { ActionId, ActionMode, ReferenceId } from './SpecRecord';
+import { ActionId, ActionMode, ReferenceId, SupportedKeyTypes } from './SpecRecord';
 
 export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
   /**
@@ -15,16 +15,19 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
    * @param context Provides tools needed to record the subject's behavior.
    * @param subject The subject to spy.
    */
-  createSpy(context: SpecPlugin.CreateSpyContext, subject: S): S,
+  createSpy(context: SpecPlugin.SpyContext, subject: S): S,
   /**
    * Creates a stub in place of the specified subject.
    * @param context Provides tools needed to reproduce the subject's behavior.
    * @param meta Meta data of the subject.
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
-  createStub(context: SpecPlugin.CreateStubContext, subject: S, meta: M): S,
+  createStub(context: SpecPlugin.StubContext, subject: S, meta: M): S,
   /**
-   * Converts the spy to meta data that can be used during simulation to simulate the behavor.
+   * If provided, allow you to create an additional `meta` data.
+   * This `meta` data will be available when `createStub()` is called.
+   * Note that this `meta` is useful only for static information,
+   * i.e. information that did not change throughout the simulation.
    */
   metarize?(context: { metarize(subject: any): void }, spy: S): M,
   recreateSubject?(context: {}, meta: M): S,
@@ -37,17 +40,29 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
   createImitator?(context: any, meta: M): S,
 }
 export namespace SpecPlugin {
-  export type CreateSpyContext = {
+  export type SpyContext = {
+    getSpy<S>(subject: S, options?: GetSpyOptions): S,
+    getProperty<V = any>(property: SupportedKeyTypes, value: V, options?: GetPropertyOptions): V,
     invoke(args: any[], options?: InvokeOptions): InvocationRecorder,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
-    getSpy<S>(subject: S, options?: GetSpyOptions): S,
+    /**
+     * Update the `meta` data.
+     * The `meta` data will be available when the stub is created during simulation.
+     * Use this at any time during the life cycle of the spy (except for class instance).
+     */
+    // updateMeta(handler: (meta: Meta) => Meta): void,
   }
 
-  export type CreateStubContext = {
+  export type DeclareOptions = {
+    mode?: ActionMode
+  }
+
+  export type StubContext = {
+    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
+    getSpy<S>(subject: S, options?: GetSpyOptions): S,
+    getProperty(property: SupportedKeyTypes): any,
     invoke(args: any[], options?: InvokeOptions): InvocationResponder,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
-    getSpy<S>(subject: S, options?: GetSpyOptions): S,
-    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
   }
 
   export type GetSpyOptions = {
@@ -81,8 +96,18 @@ export namespace SpecPlugin {
     meta?: Meta,
   }
 
+  export type GetPropertyOptions = {
+    // processArgument?: <A>(arg: A) => A,
+    /**
+     * this is not used at the moment.
+     * the use case for this is when the specific plugin do not want the property to be spied,
+     * but need to capture additional information so that it can be constructed and simulated correctly.
+     */
+    meta?: Meta
+  }
+
   export type InvocationRecorder = {
-    args: any[],
+    // args: any[],
     returns<V>(value: V, options?: SpyResultOptions): V,
     throws<E>(err: E, options?: SpyResultOptions): E
   }

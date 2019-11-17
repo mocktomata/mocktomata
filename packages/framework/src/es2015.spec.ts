@@ -1,20 +1,32 @@
 import a from 'assertron';
 import { incubator } from '../src';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
+import { logLevels } from 'standard-log';
 
-beforeAll(() => incubator.start({ target: 'es2015' }))
+beforeAll(() => {
+  return incubator.start({ target: 'es2015' })
+})
 
 describe('function', () => {
   incubator.duo('no input no result', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
+      spec.enableLog()
       const subject = await spec(() => { })
       expect(subject()).toBeUndefined()
 
       await spec.done()
+      a.satisfies(await spec.getSpecRecord(), {
+        refs: [{ plugin: '@mocktomata/es2015/function', 'mode': 'passive' }],
+        actions: [{
+          type: 'invoke',
+          ref: '0',
+          payload: []
+        }]
+      })
     })
   })
   incubator.duo('string input no result', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec((_x: string) => { })
       expect(subject('abc')).toBeUndefined()
 
@@ -22,7 +34,7 @@ describe('function', () => {
     })
   })
   incubator.save('string input returns same string', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec((x: string) => x)
       expect(subject('abc')).toEqual('abc')
 
@@ -30,7 +42,7 @@ describe('function', () => {
     })
   })
   incubator.duo('no input, string result', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(() => 'abc')
       const actual = subject()
       expect(actual).toBe('abc')
@@ -39,7 +51,7 @@ describe('function', () => {
     })
   })
   incubator.duo('undefined input, undefined result', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec((_a: any, _b: any) => undefined)
       const actual = subject(undefined, undefined)
       expect(actual).toBe(undefined)
@@ -47,7 +59,7 @@ describe('function', () => {
     })
   })
   incubator.duo('primitive inputs, simple result', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec((x: number, y: number) => x + y)
       const actual = subject(1, 2)
 
@@ -57,7 +69,7 @@ describe('function', () => {
     })
   })
   incubator.duo('no input, array output', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(() => [1, 2, 'c'])
       const actual = subject()
       expect(actual).toEqual([1, 2, 'c'])
@@ -66,7 +78,7 @@ describe('function', () => {
     })
   })
   incubator.duo('array inputs', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', ['--version'])
 
@@ -75,7 +87,7 @@ describe('function', () => {
     })
   })
   incubator.duo('throwing error', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(() => { throw new Error('failed') })
       const err = a.throws(() => subject())
 
@@ -85,7 +97,7 @@ describe('function', () => {
     })
   })
   incubator.duo('throwing custom error', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       class CustomError extends Error {
         constructor(message: string) {
           super(message)
@@ -105,7 +117,7 @@ describe('function', () => {
     })
   })
   incubator.duo('immediate invoke callback', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(simpleCallback.success)
       let actual
       subject(2, (_, result) => {
@@ -122,7 +134,7 @@ describe('function', () => {
   }
 
   incubator.duo('callback receiving undefined', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(echo)
       let actual: any
       subject(undefined, v => actual = v)
@@ -133,7 +145,7 @@ describe('function', () => {
   })
 
   incubator.duo('callback receiving null', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(echo)
       let actual: any
       subject(null, v => actual = v)
@@ -143,7 +155,7 @@ describe('function', () => {
     })
   })
   incubator.duo('immediate invoke throwing callback', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(simpleCallback.fail)
 
       const err = await a.throws(simpleCallback.increment(subject, 2))
@@ -154,7 +166,7 @@ describe('function', () => {
     })
   })
   incubator.duo('simple callback invoked multiple times', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(simpleCallback.success)
 
       expect(await simpleCallback.increment(subject, 2)).toBe(3)
@@ -164,7 +176,7 @@ describe('function', () => {
     })
   })
   incubator.duo('delayed callback invocation', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(delayed.success)
 
       expect(await delayed.increment(subject, 2)).toBe(3)
@@ -174,7 +186,7 @@ describe('function', () => {
     })
   })
   incubator.duo('callback in object literal success', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(subject, 2)).toBe(3)
@@ -183,7 +195,7 @@ describe('function', () => {
     })
   })
   incubator.duo('callback in object literal fail', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(callbackInObjLiteral.fail)
 
       const err = await a.throws(callbackInObjLiteral.increment(subject, 2), Error)
@@ -194,7 +206,7 @@ describe('function', () => {
     })
   })
   incubator.duo('callback in deep object literal success', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(callbackInDeepObjLiteral.success)
 
       expect(await callbackInDeepObjLiteral.increment(subject, 2)).toBe(3)
@@ -204,7 +216,7 @@ describe('function', () => {
     })
   })
   incubator.duo('synchronous callback success', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(synchronous.success)
 
       expect(synchronous.increment(subject, 3)).toBe(4)
@@ -213,7 +225,7 @@ describe('function', () => {
     })
   })
   incubator.duo('synchronous callback throws', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(synchronous.fail)
 
       const err = a.throws(() => synchronous.increment(subject, 3))
@@ -224,7 +236,7 @@ describe('function', () => {
     })
   })
   incubator.duo('recursive two calls success', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(recursive.success)
 
       const actual = await recursive.decrementToZero(subject, 2)
@@ -235,7 +247,7 @@ describe('function', () => {
     })
   })
   incubator.duo('invoke callback after returns', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(postReturn.fireEvent)
 
       await new Promise(a => {
@@ -251,7 +263,7 @@ describe('function', () => {
     })
   })
   incubator.duo('invoke fetch style: with options and callback', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(fetch.success)
       const actual = await fetch.add(subject, 1, 2)
       expect(actual).toBe(3)
@@ -259,7 +271,7 @@ describe('function', () => {
     })
   })
   incubator.duo('invoke fetch style: receive error in callback', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(fetch.fail)
       const actual = await a.throws(fetch.add(subject, 1, 2))
       expect(actual).toEqual({ message: 'fail' })
@@ -267,7 +279,7 @@ describe('function', () => {
     })
   })
   incubator.duo('function with array arguments', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', ['--version'])
 
@@ -278,7 +290,7 @@ describe('function', () => {
     })
   })
   incubator.duo('function with static prop', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const fn = Object.assign(function () { }, { a: 1 })
 
       const mock = await spec(fn)
@@ -293,7 +305,7 @@ describe('function', () => {
       return spec(() => expected)
     }
 
-    test(title, async () => {
+    test.skip(title, async () => {
       await scopingSpec(1).then(subject => expect(subject()).toBe(1))
       await scopingSpec(3).then(subject => expect(subject()).toBe(3))
       await spec.done()
@@ -302,19 +314,6 @@ describe('function', () => {
 })
 
 describe('object', () => {
-  incubator.sequence('get primitive property sequence', (title, spec) => {
-    test.skip(title, async () => {
-      const subject = await spec.save({ a: 1 })
-      expect(subject.a).toBe(1)
-      await spec.save.done()
-      const record = await spec.save.getSpecRecord()
-      a.satisfies(record, { actions: [{
-        type: 'get',
-        ref: '0',
-        payload: ['a', 1]
-      }] })
-    })
-  })
   incubator.duo('get primitive property', (title, spec) => {
     test(title, async () => {
       const subject = await spec({ a: 1 })
@@ -336,7 +335,7 @@ describe('object', () => {
     })
   })
   incubator.duo('update primitive property', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec({ a: 1 })
       expect(subject.a).toBe(1)
       subject.a = 2
@@ -344,8 +343,12 @@ describe('object', () => {
       await spec.done()
     })
   })
-  incubator.duo('primitive method', (title, spec) => {
+
+  // TODO: add test for change property type from value to function
+
+  incubator.save('primitive method', (title, spec) => {
     test(title, async () => {
+      spec.enableLog()
       const subject = await spec({ echo: (x: number) => x })
       const actual = subject.echo(3)
 
@@ -355,7 +358,7 @@ describe('object', () => {
     })
   })
   incubator.duo('primitive method throws error', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
       const err = a.throws(() => subject.echo('abc'))
 
@@ -365,7 +368,7 @@ describe('object', () => {
     })
   })
   incubator.duo('callback method success', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec({
         inc(x: number, cb: (x: number) => void) {
           cb(x + 1)
@@ -420,7 +423,7 @@ describe('promise', () => {
   }
 
   incubator.duo('resolve with no value', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(noReturn.success)
       await noReturn.doSomething(subject).then((v: any) => {
         expect(v).toBeUndefined()
@@ -430,7 +433,7 @@ describe('promise', () => {
   })
 
   incubator.duo('resolve with value', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(promise.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
@@ -443,7 +446,7 @@ describe('promise', () => {
   })
 
   incubator.duo('reject with error', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(promise.fail)
       return promise.increment(subject, 2)
         .then(() => { throw new Error('should not reach') })
@@ -455,7 +458,7 @@ describe('promise', () => {
   })
 
   incubator.duo('promise with callback in between', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       function foo(x: number, cb: Function) {
         return new Promise(a => {
           setTimeout(() => {
@@ -482,7 +485,7 @@ describe('promise', () => {
   })
 
   incubator.duo('promise resolves to function', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const subject = await spec(promiseChain.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
@@ -510,7 +513,7 @@ describe('class', () => {
   }
 
   incubator.duo('invoke declared method', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(Foo)
       const instance = new Subject(1)
       expect(instance.getValue()).toBe(1)
@@ -519,7 +522,7 @@ describe('class', () => {
   })
 
   incubator.duo('invoke sub-class method', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(Boo)
 
       const instance = new Subject(1)
@@ -529,7 +532,7 @@ describe('class', () => {
   })
 
   incubator.duo('invoke parent method', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(Boo)
 
       const instance = new Subject(1)
@@ -539,7 +542,7 @@ describe('class', () => {
   })
 
   incubator.duo('create multiple instances of the same class', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(Foo)
       const f1 = new Subject(1)
       const f2 = new Subject(2)
@@ -551,7 +554,7 @@ describe('class', () => {
 
   incubator.sequence('ok to use super/sub-class as long as behavior is the same', (title, specs) => {
     // It is ok to use diff
-    test(title, async () => {
+    test.skip(title, async () => {
       const save = specs.save
       const bs = await save(Boo)
       const boo = new bs(2)
@@ -577,7 +580,7 @@ describe('class', () => {
     }
   }
   incubator.duo('class method with callback', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const s = await spec(WithCallback)
       const cb = new s()
 
@@ -598,7 +601,7 @@ describe('class', () => {
   }
 
   incubator.duo('invoke method throws', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(Throwing)
       const foo = new Subject()
       a.throws(() => foo.doThrow(), e => e.message === 'thrown')
@@ -620,7 +623,7 @@ describe('class', () => {
     }
   }
   incubator.duo('method return resolved promise', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(ResolvedPromise)
       const p = new Subject()
       expect(await p.increment(3)).toBe(4)
@@ -630,7 +633,7 @@ describe('class', () => {
   })
 
   incubator.duo('method returns delayed promise', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(DelayedPromise)
       const p = new Subject()
       expect(await p.increment(3)).toBe(4)
@@ -640,7 +643,7 @@ describe('class', () => {
   })
 
   incubator.duo('invoke method returns delayed promise multiple times', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(DelayedPromise)
       const p = new Subject()
       expect(await Promise.all([p.increment(1), p.increment(3), p.increment(7)])).toEqual([2, 4, 8])
@@ -659,7 +662,7 @@ describe('class', () => {
   }
 
   incubator.duo('method invokes internal method', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(InvokeInternal)
       const a = new Subject()
       expect(a.do()).toBe('data')
@@ -681,7 +684,7 @@ describe('class', () => {
     }
   }
   incubator.duo('method delay invokes internal method', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(DelayedInvokeInternal)
       const a = new Subject()
       expect(await a.getDelayedInner()).toBe('inner')
@@ -698,7 +701,7 @@ describe('class', () => {
   }
 
   incubator.sequence('actual method is not invoked during simulation', (title, specs) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const save = specs.save
       const Subject = await save(DelayedInvokeInternal)
       const dii = new Subject()
@@ -723,13 +726,13 @@ describe('class', () => {
   }
 
   incubator.duo('runaway promise will not be leaked and break another test', (title, spec) => {
-    test(`${title}: setup`, async () => {
+    test.skip(`${title}: setup`, async () => {
       const MockRejector = await spec(RejectLeak)
       const e = new MockRejector()
       await a.throws(e.reject(300), v => v === 300)
       await spec.done()
     })
-    test(`${title}: should not fail`, () => {
+    test.skip(`${title}: should not fail`, () => {
       return new Promise(a => setImmediate(() => a()))
     })
   })
@@ -754,7 +757,7 @@ describe('class', () => {
   }
 
   incubator.duo('can use class with circular reference', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(ClassWithCircular)
       const f = new Subject()
 
@@ -769,7 +772,7 @@ describe('class', () => {
   })
 
   incubator.duo('class with circular reference accessing', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       const Subject = await spec(ClassWithCircular)
       const f = new Subject()
 
@@ -827,7 +830,7 @@ describe('class', () => {
   })
 
   incubator.duo('use composite callback function', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       class Foo {
         on(compositeFn: any) {
           return this.internal(compositeFn)
@@ -858,7 +861,7 @@ describe('class', () => {
       y = 1
       do(x: any) { return x }
     }
-    test(title, async () => {
+    test.skip(title, async () => {
       const s = await spec(WithProperty)
       const p = new s()
       expect(p.do(2)).toBe(2)

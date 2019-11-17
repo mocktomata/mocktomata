@@ -85,7 +85,7 @@ export type InvokeAction = {
   ref: ReferenceId, // | ActionId,
   tick: number,
   mode: ActionMode,
-  site?: Array<string | number>,
+  site?: Array<SupportedKeyTypes>,
   payload: any[],
   meta?: Meta
 }
@@ -110,7 +110,8 @@ export type GetAction = {
   type: 'get',
   ref: ReferenceId | ActionId,
   tick: number,
-  payload: SupportedKeyTypes,
+  payload: any,
+  site: Array<SupportedKeyTypes>,
 }
 
 export type SetAction = {

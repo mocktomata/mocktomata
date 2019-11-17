@@ -1,4 +1,4 @@
-import { LogLevel } from 'standard-log';
+import { LogLevel, logLevels } from 'standard-log';
 import { context } from '../context';
 import { createSaveSpec } from '../spec/createSaveSpec';
 import { createSimulateSpec } from '../spec/createSimulateSpec';
@@ -45,19 +45,30 @@ export const testSequence: TestSpecFn<SequenceHandler> = (...args: any[]) => {
 
 function createTestSpec(specFn: typeof createSaveSpec, specName: string, options: SpecOptions = { timeout: 3000 }): Spec {
   let s: Spec
+  const initState: { enableLog: boolean, logLevel?: LogLevel } = { enableLog: false }
   return Object.assign(
-    (subject: any) => getSpec().then(s => s(subject)), {
-    done: () => getSpec().then(s => s.done()),
-    enableLog: (level: LogLevel) => getSpec().then(s => s.enableLog(level)),
-    getSpecRecord: () => getSpec().then(s => s.getSpecRecord()),
-    logSpecRecord: () => getSpec().then(s => s.logSpecRecord()),
+    (subject: any) => getSpec(initState).then(s => s(subject)), {
+    done: () => getSpec(initState).then(s => s.done()),
+    enableLog: (level?: LogLevel) => {
+      if (s) s.enableLog(level)
+      else {
+        initState.enableLog = true
+        initState.logLevel = level
+      }
+    },
+    getSpecRecord: () => s.getSpecRecord(),
   })
 
-  async function getSpec() {
+  async function getSpec(initState: { enableLog: boolean, logLevel?: LogLevel }) {
     if (s) return s
     const ctx = await context.get()
     // eslint-disable-next-line require-atomic-updates
-    return s = await specFn(ctx, specName, '', options)
+    s = await specFn(ctx, specName, '', options)
+    if (initState.enableLog) {
+      s.enableLog(initState.logLevel)
+    }
+
+    return s
   }
 }
 

@@ -1,6 +1,19 @@
 {
   "breadcrumbs.enabled": true,
   "eslint.enable": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/old": true,
+    "**/v6": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/old/**": true,
+    "**/v6/**": true
+  },
   "json.schemas": [
     {
       "fileMatch": [

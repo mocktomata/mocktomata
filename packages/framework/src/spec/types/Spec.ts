@@ -16,6 +16,5 @@ export type Spec = {
   <S>(subject: S): Promise<S>,
   done(): Promise<void>,
   enableLog(level?: LogLevel): void,
-  getSpecRecord(): Promise<SpecRecord>,
-  logSpecRecord(): void,
+  getSpecRecord(): SpecRecord,
 }

@@ -4,9 +4,9 @@ import { assertActionType, ValidateRecord } from './createValidateRecord';
 import { ActionMismatch, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
-import { logCreateStub, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
+import { logCreateStub, logInstantiateAction, logInvokeAction, logResultAction, logGetAction } from './logs';
 import { getSpy } from './spying';
-import { ActionId, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecAction, SpecPlugin, SpecReference, ThrowAction } from './types';
+import { ActionId, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecAction, SpecPlugin, SpecReference, ThrowAction, SupportedKeyTypes, GetAction } from './types';
 import { SpecPluginInstance } from './types-internal';
 import { arrayMismatch, referenceMismatch, siteMismatch } from './validations';
 
@@ -63,49 +63,118 @@ export type StubContext = {
   refId: ReferenceId,
   ref: SpecReference,
   currentId: ReferenceId | ActionId,
-  site?: Array<keyof any>,
+  site?: Array<SupportedKeyTypes>,
 }
 
-export function createPluginStubContext(context: StubContext): SpecPlugin.CreateStubContext {
+export function createPluginStubContext(context: StubContext): SpecPlugin.StubContext {
   return {
     invoke: (args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationResponder(context, args, invokeOptions),
+    getProperty: (property) => getProperty(context, property),
     getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
-    resolve: <V>(refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => {
-      if (typeof refOrValue !== 'string') return refOrValue
-      const { record } = context
-      const site = resolveOptions.site
-      const reference = record.getRef(refOrValue)
-      if (reference) {
-        if (reference.testDouble === notDefined) {
-          context.circularRefs.push({ sourceId: context.currentId, sourceSite: site || [], subjectId: refOrValue })
-        }
-        return reference.testDouble
-      }
-
-      // ref is from saved record, so the original reference must exists.
-      const origRef = record.getOriginalRef(refOrValue)!
-
-      if (!origRef.source) {
-        throw new Error(`no source found for ${refOrValue}`)
-      }
-
-      if (siteMismatch(site, origRef.source.site)) {
-        throw new ReferenceMismatch(record.specId, { ...origRef, source: { ref: origRef.source.ref, site } }, origRef)
-      }
-      const sourceRef = record.getRef(origRef.source.ref)!
-      const subject = getByPath(sourceRef.subject, origRef.source.site || [])
-      const plugin = getPlugin(origRef.plugin)
-      return createStubInternal(record, plugin, subject, origRef, { ref: context.currentId, site })
-    },
+    resolve: <V>(refOrValue: V, resolveOptions: SpecPlugin.ResolveOptions = {}) => resolve(context, refOrValue, resolveOptions),
     instantiate: (args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceResponder(context, args, instanceOptions)
   }
 }
 
+function resolve(context: StubContext, refOrValue: any, resolveOptions: SpecPlugin.ResolveOptions) {
+  if (typeof refOrValue !== 'string') return refOrValue
+  const { record } = context
+  const site = resolveOptions.site
+  const reference = record.getRef(refOrValue)
+  if (reference) {
+    if (reference.testDouble === notDefined) {
+      context.circularRefs.push({ sourceId: context.currentId, sourceSite: site || [], subjectId: refOrValue })
+    }
+    return reference.testDouble
+  }
+
+  // ref is from saved record, so the original reference must exists.
+  const origRef = record.getOriginalRef(refOrValue)!
+
+  if (!origRef.source) {
+    throw new Error(`no source found for ${refOrValue}`)
+  }
+
+  if (siteMismatch(site, origRef.source.site)) {
+    throw new ReferenceMismatch(record.specId, { ...origRef, source: { ref: origRef.source.ref, site } }, origRef)
+  }
+  const sourceRef = record.getRef(origRef.source.ref)!
+  const subject = getByPath(sourceRef.subject, origRef.source.site || [])
+  const plugin = getPlugin(origRef.plugin)
+  return createStubInternal(record, plugin, subject, origRef, { ref: context.currentId, site })
+}
 function getByPath(subject: any, sitePath: Array<string | number>) {
   if (subject === undefined) return subject
   return sitePath.reduce((p, s) => p[s], subject)
 }
 
+function getProperty(context: StubContext, property: SupportedKeyTypes) {
+  const { record, plugin, refId } = context
+  const expected = record.getExpectedAction() as GetAction
+  // The current getProperty call may be caused by framework access.
+  // Those calls will not be record and simply ignored.
+  // The one I have indentified is `then` check,
+  // properly by TypeScript for checking if the object is a promise
+  if (!expected || expected.type !== 'get' || expected.site[0] !== property) return undefined
+
+  const refOrValue = expected.payload
+  const nextId = record.getNextActionId()
+  const site = [property]
+
+  if (typeof refOrValue !== 'string') {
+    const action: Omit<GetAction, 'tick'> = {
+      type: 'get',
+      ref: refId,
+      payload: refOrValue,
+      site
+    }
+    record.addAction(action)
+    logGetAction({ plugin: plugin.name, id: refId }, nextId, property, refOrValue)
+    return refOrValue
+  }
+
+  const reference = record.getRef(refOrValue)
+  if (reference) {
+    if (!reference.source || reference.source.ref !== refId || !siteMismatch(site, reference.source.site)) return undefined
+
+    if (reference.testDouble === notDefined) {
+      context.circularRefs.push({ sourceId: context.currentId, sourceSite: site || [], subjectId: refOrValue })
+    }
+
+    const action: Omit<GetAction, 'tick'> = {
+      type: 'get',
+      ref: refId,
+      payload: reference.testDouble,
+      site
+    }
+    record.addAction(action)
+    logGetAction({ plugin: plugin.name, id: refId }, nextId, property, reference.subject)
+    return reference.testDouble
+  }
+
+  // ref is from saved record, so the original reference must exists.
+  const origRef = record.getOriginalRef(refOrValue)!
+  if (!origRef.source || origRef.source.ref !== refId || siteMismatch(site, origRef.source.site)) {
+    return undefined
+  }
+  const sourceRef = record.getRef(origRef.source.ref)!
+  const subject = getByPath(sourceRef.subject, origRef.source.site || [])
+  const result = createStubInternal(record, getPlugin(origRef.plugin), subject, origRef, { ref: context.currentId, site })
+
+  // const resultRef = record.findRef(result)
+
+  const value = expected.payload[1]
+
+  const action: Omit<GetAction, 'tick'> = {
+    type: 'get',
+    ref: refId,
+    payload: value,
+    site
+  }
+  record.addAction(action)
+  logGetAction({ plugin: plugin.name, id: refId }, nextId, property, value)
+  return result
+}
 
 function invocationResponder(
   context: StubContext,
@@ -118,7 +187,7 @@ function invocationResponder(
   const action: Omit<InvokeAction, 'tick'> = {
     type: 'invoke',
     ref: id,
-    mode: mode || ref.mode === 'instantiate' ? 'passive' : ref.mode,
+    mode: mode || (ref.mode === 'instantiate' ? 'passive' : ref.mode),
     payload: [],
     site,
     meta

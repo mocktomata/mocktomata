@@ -45,12 +45,12 @@
     "ramda": "^0.26.1",
     "satisfier": "^5.0.2",
     "stack-utils": "^1.0.2",
-    "standard-log": "^3.2.1",
-    "standard-log-color": "^1.5.8",
+    "standard-log": "^4.0.0",
+    "standard-log-color": "^1.5.12",
     "tersify": "^3.0.6",
     "type-plus": "^1.29.0"
   },
   "devDependencies": {
-    "@types/ramda": "^0.26.33"
+    "@types/ramda": "^0.26.34"
   }
 }

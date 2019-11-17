@@ -4,7 +4,7 @@ import { SpecPlugin } from '../spec';
 import { getInheritedPropertyNames } from '../utils';
 import { isClass } from './isClass';
 
-function classTracker<S>({ instantiate, getSpy }: SpecPlugin.CreateSpyContext, _subject: S) {
+function classTracker<S>({ instantiate, getSpy }: SpecPlugin.SpyContext, _subject: S) {
   let instanceRecorder: SpecPlugin.InstantiationRecorder
   return {
     instantiate(args: any[]) {

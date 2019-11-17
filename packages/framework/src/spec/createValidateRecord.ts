@@ -78,7 +78,7 @@ function getExpectedReference(expected: SpecReference[], actual: SpecReference[]
 function assertNotAddingWhenEnded(specId: string, received: SpecRecord, ended: boolean, action: SpecActionBase) {
   if (ended) {
     const plugin = getRef(received, action.ref)!.plugin
-    throw new ActionMismatch(specId, { ...action, plugin }, undefined)
+    throw new ActionMismatch(specId, { ...action, plugin } as any, undefined)
   }
 }
 
@@ -96,7 +96,7 @@ function getExpectedAction(original: SpecRecord, received: SpecRecord) {
 
 export function assertActionType(specId: string, type: SpecAction['type'], action: SpecAction): action is InvokeAction {
   if (action.type !== type) {
-    throw new ActionMismatch(specId, { type }, action)
+    throw new ActionMismatch(specId, { type } as any, action)
   }
   return false
 }

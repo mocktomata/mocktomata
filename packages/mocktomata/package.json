@@ -61,7 +61,7 @@
     "clibuilder": "^5.0.4",
     "is-node": "^1.0.2",
     "stack-utils": "^1.0.2",
-    "standard-log-color": "^1.5.8",
+    "standard-log-color": "^1.5.12",
     "type-plus": "^1.29.0",
     "validate.js": "^0.13.1"
   },

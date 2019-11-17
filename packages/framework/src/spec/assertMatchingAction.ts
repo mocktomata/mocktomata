@@ -8,7 +8,7 @@ export function assertMatchingAction(id: string, received: SpecRecord, actual: S
   if (!isMismatchAction(actual, expected)) {
     const aplugin = getRef(received, actual.ref)!.plugin
     const eplugin = getRef(received, expected.ref)!.plugin
-    throw new ActionMismatch(id, { ...actual, plugin: aplugin }, { ...expected, plugin: eplugin })
+    throw new ActionMismatch(id, { ...actual, plugin: aplugin } as any, { ...expected, plugin: eplugin } as any)
   }
 }
 

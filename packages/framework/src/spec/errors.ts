@@ -1,6 +1,6 @@
 import { tersify } from 'tersify';
 import { MocktomataError } from '../errors';
-import { SpecReference } from './types';
+import { SpecReference, SpecAction } from './types';
 
 export class SpecIDCannotBeEmpty extends MocktomataError {
   // istanbul ignore next
@@ -11,8 +11,8 @@ export class SpecIDCannotBeEmpty extends MocktomataError {
 
 export class SpecNotFound extends MocktomataError {
   // istanbul ignore next
-  constructor(public specId: string, public reason?: Error) {
-    super(`Unable to find the spec record for '${specId}'${reason ? `due to: ${reason}` : ''}`)
+  constructor(public specName: string, public reason?: Error) {
+    super(`Unable to find the spec record for '${specName}'${reason ? `due to: ${reason}` : ''}`)
   }
 }
 
@@ -53,8 +53,8 @@ export class PluginNotConforming extends MocktomataError {
 
 export class ReferenceMismatch extends MocktomataError {
   // istanbul ignore next
-  constructor(public specId: string, public actual: Partial<SpecReference>, public expected: Partial<SpecReference> | undefined) {
-    super(`Recorded data for '${specId}' doesn't match with simulation.
+  constructor(public specName: string, public actual: Partial<SpecReference>, public expected: Partial<SpecReference> | undefined) {
+    super(`Recorded data for '${specName}' doesn't match with simulation.
 Expecting reference:
 ${tersifyReference(expected)}
 Received:
@@ -62,12 +62,19 @@ ${tersifyReference(actual)}`)
   }
 }
 
-export type MismatchActionModel = { type: string, plugin?: string }
+export class ExtraReference extends MocktomataError {
+  // istanbul ignore next
+  constructor(public specName: string, public subject: any) {
+    super(`Recorded data for '${specName}' does not expect a new reference to be created: ${tersify(subject, { maxLength: 50 })}`)
+  }
+}
+
+export type MismatchActionModel = Partial<SpecAction> & { plugin?: string }
 
 export class ActionMismatch extends MocktomataError {
   // istanbul ignore next
-  constructor(public specId: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
-    super(`Recorded data for '${specId}' doesn't match with simulation.
+  constructor(public specName: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
+    super(`Recorded data for '${specName}' doesn't match with simulation.
 Expecting action:
 ${tersifyAction(expected)}
 Received:

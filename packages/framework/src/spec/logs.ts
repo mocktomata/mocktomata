@@ -2,7 +2,8 @@ import { logLevel } from 'standard-log';
 import { tersify } from 'tersify';
 import { log } from '../log';
 import { SpyRecord } from './createSpyRecord';
-import { SpecReference, ActionId, ReferenceId } from './types';
+import { ActionId, ActionMode, ReferenceId, SpecReference, SupportedKeyTypes } from './types';
+import { Recorder } from './recorder';
 
 export type ActionLoggingContext = {
   record: Pick<SpyRecord, 'getSubject'>,
@@ -10,16 +11,20 @@ export type ActionLoggingContext = {
   id: ReferenceId | ActionId;
 }
 
-export function logCreateSpy({ plugin, id }: Omit<ActionLoggingContext, 'record'>, subject: any) {
-  log.on(logLevel.debug, log => log(`${plugin} ${id}: create spy\n${tersify(subject)}`))
+export function logCreateSpy({ plugin, id }: Pick<Recorder.State, 'id' | 'plugin'>, subject: any, mode: ActionMode) {
+  log.on(logLevel.debug, log => log(`${plugin} create ${mode} spy (ref:${id}): ${tersify(subject)}`))
 }
 
-export function logInvokeAction({ record, plugin, id }: ActionLoggingContext, actionId: ActionId, args: any[]) {
-  log.on(logLevel.debug, log => log(`${plugin} ref/action (${id}/${actionId}): invoke with ${tersify(args)}\n${tersify(record.getSubject(id))}`))
+export function logGetAction({ plugin, id }: Pick<Recorder.State, 'id' | 'plugin'>, actionId: ActionId, property: SupportedKeyTypes, value: any) {
+  log.on(logLevel.debug, () => `${plugin} get (act:${actionId}): (ref:${id}).${property} -> ${tersify(value)}`)
 }
 
-export function logResultAction({ plugin, id }: Omit<ActionLoggingContext, 'record'>, type: string, sourceId: ActionId, actionId: ActionId, value: any) {
-  log.on(logLevel.debug, () => `${plugin} ref/src-action/action (${id}/${sourceId}/${actionId}): ${type} ${tersify(value)}`)
+export function logInvokeAction({ plugin, id }: Pick<Recorder.State, 'id' | 'plugin'>, actionId: ActionId, args: any[]) {
+  log.on(logLevel.debug, () => `${plugin} invoke (act:${actionId}): (ref:${id})(${args.map(arg => tersify(arg)).join(',')})`)
+}
+
+export function logResultAction({ plugin, id }: Pick<Recorder.State, 'id' | 'plugin'>, type: string, sourceId: ActionId, actionId: ActionId, value: any) {
+  log.on(logLevel.debug, () => `${plugin} ${type} (act:${actionId}): (ref:${id} act:${sourceId}) -> ${tersify(value)}`)
 }
 
 export function logInstantiateAction({ record, plugin, id }: ActionLoggingContext, actionId: ActionId, args: any[]) {

@@ -4,8 +4,8 @@ import { MocktomataError } from '../errors';
 import { SpyRecord } from './createSpyRecord';
 import { findPlugin } from './findPlugin';
 import { CircularReference, fixCircularReferences } from './fixCircularReferences';
-import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction } from './logs';
-import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecPlugin, SpecReference, ThrowAction } from './types';
+import { logCreateSpy, logInstantiateAction, logInvokeAction, logResultAction, logGetAction } from './logs';
+import { ActionId, ActionMode, InstantiateAction, InvokeAction, ReferenceId, ReferenceSource, ReturnAction, SpecPlugin, SpecReference, ThrowAction, GetAction, SupportedKeyTypes } from './types';
 import { SpecPluginInstance } from './types-internal';
 
 export type CreateSpyOptions<S> = {
@@ -27,7 +27,7 @@ export type SpyContext = {
   refId: ReferenceId,
   ref: SpecReference,
   currentId: ReferenceId | ActionId,
-  site?: Array<keyof any>,
+  site?: Array<SupportedKeyTypes>,
 }
 export function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions<S>): S | undefined {
   const plugin = findPlugin(subject)
@@ -36,7 +36,7 @@ export function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions
   const ref: SpecReference = { plugin: plugin.name, subject, testDouble: notDefined, source, mode }
   const refId = record.addRef(ref)
 
-  logCreateSpy({ plugin: plugin.name, id: refId }, subject)
+  logCreateSpy({ plugin: plugin.name, id: refId }, subject, mode)
   const circularRefs: CircularReference[] = []
   ref.testDouble = plugin.createSpy(
     createPluginSpyContext({ record, plugin, ref, refId, circularRefs, currentId: refId }),
@@ -51,13 +51,31 @@ export function createSpy<S>({ record, subject, mode, source }: CreateSpyOptions
 /**
  * SpyContext is used by plugin.createSpy().
  */
-function createPluginSpyContext(context: SpyContext): SpecPlugin.CreateSpyContext {
+function createPluginSpyContext(context: SpyContext): SpecPlugin.SpyContext {
   return {
     getSpy: <A>(subject: A, getOptions: SpecPlugin.GetSpyOptions = {}) => getSpy(context, subject, getOptions),
-    // getProperty: (id: ReferenceId, ) => {},
+    getProperty: (id, value, options = {}) => getProperty(context, id, value, options),
     invoke: (args: any[], invokeOptions: SpecPlugin.InvokeOptions = {}) => invocationRecorder(context, args, invokeOptions),
     instantiate: (args: any[], instanceOptions: SpecPlugin.InstantiateOptions = {}) => instanceRecorder(context, args, instanceOptions)
   }
+}
+
+function getProperty(context: SpyContext, id: SupportedKeyTypes, value: any, { processArgument }: any) {
+  const { record, plugin, refId } = context
+  const nextId = record.getNextActionId()
+  const site = [id]
+  context.currentId = refId
+  context.site = site
+  const result = processArgument ? processArgument(value) : value
+  const action: Omit<GetAction, 'tick'> = {
+    type: 'get',
+    ref: refId,
+    payload: record.findRefId(value) || value,
+    site
+  }
+  record.addAction(action)
+  logGetAction({ plugin: plugin.name, id: refId }, nextId, id, value)
+  return result
 }
 
 function invocationRecorder(
@@ -139,7 +157,7 @@ export function getSpy<S>(
     return reference.testDouble
   }
   const mode = options.mode || ref.mode
-  const site = options.site
+  const site = options.site || context.site
   return createSpy({ record, source: { ref: context.currentId, site }, mode, subject: subjectOrTestDouble }) || subjectOrTestDouble
 }
 

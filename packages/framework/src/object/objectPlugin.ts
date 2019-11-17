@@ -1,16 +1,19 @@
-import { reduceKey } from 'type-plus';
 import { SpecPlugin } from '../spec';
+import { getPropertyNames } from '../utils';
 // import { getPropertyNames } from '../utils';
 
 export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<string | number, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
-  createSpy: ({ getSpy }, subject) => {
-    return new Proxy(subject, {
-      get(target, property: string) {
-        if (Object.getOwnPropertyNames(target).indexOf(property) === -1) return undefined
-        return getSpy(target[property], { site: [property] })
+  createSpy: ({ getSpy, getProperty }, subject) => {
+    return new Proxy({}, {
+      get(_, property: string) {
+        if (getPropertyNames(subject).indexOf(property) === -1) return undefined
+        return getProperty(property, getSpy(subject[property]))
       },
+      set(_, property: string, value: any) {
+        return subject[property] = value
+      }
     })
     // const propertyNames = getPropertyNames(subject)
     // const result = propertyNames.reduce((p, name) => {
@@ -20,10 +23,11 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
 
     // return result
   },
-  createStub: ({ resolve }, _subject, meta) => {
-    return new Proxy(meta, {
-      get(target, property: string) {
-        return resolve(target[property], { site: [property] })
+  createStub: ({ getProperty }) => {
+    return new Proxy({}, {
+      get(_, property: string) {
+        return getProperty(property)
+        // return resolve(target[property], { site: [property] })
       }
     })
     // const stub = reduceKey(meta, (p, k) => {
@@ -32,11 +36,11 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
     // }, {} as any)
     // return stub
   },
-  metarize({ metarize }, spy) {
-    const meta = reduceKey(spy, (p, k) => {
-      p[k] = metarize(spy[k])
-      return p
-    }, {} as any)
-    return meta
-  }
+  // metarize({ metarize }, spy) {
+  //   const meta = reduceKey(spy, (p, k) => {
+  //     p[k] = metarize(spy[k])
+  //     return p
+  //   }, {} as any)
+  //   return meta
+  // }
 }
