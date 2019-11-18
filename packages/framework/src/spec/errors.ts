@@ -79,6 +79,18 @@ export class ExtraAction extends MocktomataError {
   }
 }
 
+export class MissingResultAction extends MocktomataError {
+  constructor(public specName: string, state: Pick<Recorder.State, 'id' | 'plugin'>, public actionId: number, public action: SpecAction) {
+    super(`Recorded data for '${specName}' does not have result recorded for ${prettifyAction(state, actionId, action)}\nDid you forget to wait for the result?`)
+  }
+}
+
+export class ActionTypeMismatch extends MocktomataError {
+  constructor(public specName: string, state: Pick<Recorder.State, 'id' | 'plugin'>, public actionId: number, public action: SpecAction, public receivedType: string) {
+    super(`Recorded data for '${specName}' expecting ${prettifyAction(state, actionId, action)} but received a ${receivedType} action`)
+  }
+}
+
 export class ActionMismatch extends MocktomataError {
   constructor(public specName: string, public actual: MismatchActionModel | undefined, public expected: MismatchActionModel | undefined) {
     super(`Recorded data for '${specName}' doesn't match with simulation.

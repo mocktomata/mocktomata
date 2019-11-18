@@ -64,7 +64,7 @@ function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContex
   }
 }
 
-function getSpy<S>(context: Recorder.Context, subject: S, options: SpecPlugin.GetSpyOptions) {
+export function getSpy<S>(context: Recorder.Context, subject: S, options: SpecPlugin.GetSpyOptions) {
   const { record, state } = context
   const ref = record.findRefBySubjectOrTestDouble(subject)
   if (ref) {
@@ -108,7 +108,20 @@ function getProperty<P>(context: Recorder.Context, property: SupportedKeyTypes, 
 function invocationRecorder(context: Recorder.Context, args: any[], { mode, site }: SpecPlugin.InvokeOptions) {
   const { record, state, timeTracker } = context
 
-  const payload = args.map(arg => record.findRefBySubjectOrTestDouble(arg) || arg)
+  const payload: any[] = []
+  const subjects: any[] = []
+
+  args.forEach(arg => {
+    const ref = record.findRefBySubjectOrTestDouble(arg)
+    if (ref) {
+      payload.push(record.getRefId(ref))
+      subjects.push(ref.subject)
+    }
+    else {
+      payload.push(arg)
+      subjects.push(arg)
+    }
+  })
   const ref = record.getRef(state.id)!
   const action: InvokeAction = {
     type: 'invoke',
@@ -119,7 +132,6 @@ function invocationRecorder(context: Recorder.Context, args: any[], { mode, site
     tick: timeTracker.elaspe()
   }
   const invokeId = record.addAction(action)
-  const subjects = payload.map(value => typeof value === 'string' ? record.getRef(value)!.subject : value)
   logAction(state, invokeId, { ...action, payload: subjects })
 
   return {

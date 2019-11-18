@@ -1,9 +1,84 @@
 import a from 'assertron';
 import { incubator } from '../src';
+import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, ReferenceMismatch } from './spec';
 import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })
+})
+
+describe('mismatch simulation', () => {
+  incubator.sequence('extra reference', (title, { save, simulate }) => {
+    test(title, async () => {
+      await save.done()
+      await a.throws(simulate({}), ExtraReference)
+    })
+  })
+
+  incubator.sequence('mismatch reference', (title, { save, simulate }) => {
+    test(title, async () => {
+      await save({})
+      await save.done()
+      await a.throws(simulate(() => { }), ReferenceMismatch)
+    })
+  })
+
+  incubator.sequence('extra action', (title, { save, simulate }) => {
+    test(title, async () => {
+      await save(() => { })
+      await save.done()
+      const stub = await simulate(() => { })
+      a.throws(() => stub(), ExtraAction)
+    })
+  })
+
+  incubator.sequence('mismatch get action', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = { a: 1, b: () => { } }
+      const spy = await save(subject)
+      expect(spy.a).toBe(1)
+      await save.done()
+
+      const stub = await simulate(subject)
+      a.throws(() => stub.b, ActionMismatch)
+    })
+  })
+
+  incubator.sequence('mismatch invoke action', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = () => { }
+      const spy = await save(subject)
+      spy()
+      await save.done()
+
+      const stub = await simulate(subject)
+      a.throws(() => stub.length, ActionMismatch)
+    })
+  })
+
+  incubator.sequence('expecting extra action before return', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save((v: any) => v.v)
+      spy({ v: 1 })
+      await save.done()
+
+      const stub = await simulate((v: any) => v)
+      a.throws(() => stub({ v: 1 }), ActionTypeMismatch)
+    })
+  })
+
+  // incubator.sequence('missing result action on save', (title, { save, simulate }) => {
+  //   test.only(title, async () => {
+  //     const subject = () => new Promise(a => { setTimeout(a, 100) })
+  //     const spy = await save(subject)
+  //     spy()
+  //     await save.done()
+
+  //     const stub = await simulate(subject)
+  //     a.throws(() => stub(), MissingResultAction)
+
+  //   })
+  // })
 })
 
 describe('function', () => {
@@ -345,7 +420,7 @@ describe('object', () => {
 
   // TODO: add test for change property type from value to function
 
-  incubator.save('primitive method', (title, spec) => {
+  incubator.duo('primitive method', (title, spec) => {
     test(title, async () => {
       spec.enableLog()
       const subject = await spec({ echo: (x: number) => x })

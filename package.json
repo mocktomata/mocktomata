@@ -31,7 +31,7 @@
     "@jest-runner/electron": "2.0.2",
     "@types/ramda": "^0.26.33",
     "@types/rimraf": "^2.0.2",
-    "@unional/devpkg-node": "^1.4.1",
+    "@unional/devpkg-node": "^1.4.2",
     "assertron": "^7.1.2",
     "codecov": "^3.6.1",
     "commitlint-circle": "^1.0.0",

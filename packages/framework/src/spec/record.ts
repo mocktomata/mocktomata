@@ -1,5 +1,6 @@
 import { pick } from 'type-plus';
-import { SpecAction, SpecRecord, SpecReference, ReferenceId, ActionId } from './types';
+import { ActionMismatch } from './errors';
+import { ActionId, ReferenceId, SpecAction, SpecRecord, SpecReference } from './types';
 
 export function createSpyingRecord(specName: string) {
   const refs: SpecReference[] = []
@@ -35,6 +36,8 @@ export function createValidatingRecord(specName: string, expected: SpecRecord) {
     },
     addRef: (ref: SpecReference) => addRef(refs, ref),
     findRefBySubjectOrTestDouble: (value: any) => findRefBySubjectOrTestDouble(refs, value),
+    getRefId: (ref: SpecReference) => getRefId(refs, ref),
+    findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
     getNextExpectedAction(): SpecAction | undefined { return expected.actions[actions.length] },
     getNextActionId() { return actions.length },
     addAction: (action: SpecAction) => addAction(actions, action),
@@ -67,6 +70,14 @@ function findRefBySubjectOrTestDouble(refs: SpecReference[], value: any) {
   return refs.find(r => r.testDouble === value || r.subject === value)
 }
 
+function findRefIdBySubjectOrTestDouble(refs: SpecReference[], value: any) {
+  const i = refs.findIndex(r => r.testDouble === value || r.subject === value)
+  if (i !== -1) {
+    return String(i)
+  }
+  return undefined
+}
+
 function getRefId(refs: SpecReference[], ref: SpecReference) {
   return String(refs.indexOf(ref))
 }
@@ -74,3 +85,12 @@ function getRefId(refs: SpecReference[], ref: SpecReference) {
 function addAction(actions: SpecAction[], action: SpecAction) {
   return actions.push(action) - 1
 }
+
+export function assertActionType<T extends SpecAction>(specId: string, type: SpecAction['type'], action: SpecAction | undefined): action is T {
+  if (!action || action.type !== type) {
+    throw new ActionMismatch(specId, { type } as any, action)
+  }
+  // workaround before asserts modifier can be used with eslint
+  return false
+}
+

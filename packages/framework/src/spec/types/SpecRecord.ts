@@ -81,8 +81,7 @@ export type InstantiateAction = {
 
 export type InvokeAction = {
   type: 'invoke',
-  // Invoke action ref can only be ActionId if we handle getter/setter.
-  ref: ReferenceId, // | ActionId,
+  ref: ReferenceId | ActionId,
   tick: number,
   mode: ActionMode,
   site?: Array<SupportedKeyTypes>,
