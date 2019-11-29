@@ -7,7 +7,7 @@ module.exports = {
       'diagnostics': false,
       'tsConfig': {
         'module': 'esnext',
-        "target": "esnext",
+        'target': 'esnext',
       }
     }
   },

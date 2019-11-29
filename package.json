@@ -11,6 +11,7 @@
     "clean": "lerna run clean",
     "coverage": "jest --coverage",
     "depcheck": "lerna run depcheck",
+    "dev": "yarn test:watch",
     "lint": "eslint --ext=js,ts .",
     "nuke": "yarn clean && lerna clean -y && rimraf node_modules",
     "release": "lerna publish --amend",

@@ -6,12 +6,7 @@ import { es2015 } from '../es2015';
 import { loadPlugins } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
-import { TestHarness, TestIO } from './types';
-
-export type CreateTestHarnessOptions = {
-  target: 'es2015',
-  logLevel?: number,
-}
+import { CreateTestHarnessOptions, TestHarness, TestIO } from './types';
 
 export function createTestHarness(options?: CreateTestHarnessOptions): TestHarness {
   const opts = required<Required<CreateTestHarnessOptions>>({ target: 'es2015', logLevel: logLevel.info }, options)

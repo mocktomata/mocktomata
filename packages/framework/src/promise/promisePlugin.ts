@@ -5,25 +5,35 @@ import { isPromise } from './isPromise';
 export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rejected' }> = {
   name: 'promise',
   support: isPromise,
-  createSpy({ invoke, getSpy }, subject) {
-    const spy = subject.then(
+  createSpy({ setMeta, getProperty }, subject) {
+    return getProperty(['then'], () => subject.then(
       result => {
-        return call.returns(result, {
-          processArgument: getSpy,
-          meta: { state: 'fulfilled' }
-        })
+        setMeta({ state: 'fulfilled' })
+        return result
       },
       err => {
-        throw call.returns(err, {
-          processArgument: getSpy,
-          meta: { state: 'rejected' }
-        })
-      })
+        setMeta({ state: 'rejected' })
+        throw err
+      }
+    ), { mode: 'autonomous' /* or plugin-invoked? */ })
+    // const spy = subject.then(
+    //   result => {
+    //     return call.returns(result, {
+    //       processArgument: getSpy,
+    //       meta: { state: 'fulfilled' }
+    //     })
+    //   },
+    //   err => {
+    //     throw call.returns(err, {
+    //       processArgument: getSpy,
+    //       meta: { state: 'rejected' }
+    //     })
+    //   })
 
-    // This `invoke()` indicates that during simulation the `then()` will be invoked by the plugin.
-    // So that the result we recorded will be passed to the simulated promise and returned to the caller.
-    const call = invoke([], { site: ['then'], mode: 'plugin-invoked' })
-    return spy
+    // // This `invoke()` indicates that during simulation the `then()` will be invoked by the plugin.
+    // // So that the result we recorded will be passed to the simulated promise and returned to the caller.
+    // const call = invoke([], { site: ['then'], mode: 'plugin-invoked' })
+    // return spy
   },
   createStub({ invoke }, _subject, _meta) {
     return new Promise((resolve, reject) => {

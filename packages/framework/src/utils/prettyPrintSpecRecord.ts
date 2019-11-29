@@ -1,4 +1,4 @@
-import { SpecRecord } from './types';
+import { SpecRecord } from '../spec/types';
 
 export function prettyPrintSpecRecord(record: SpecRecord) {
   return `{

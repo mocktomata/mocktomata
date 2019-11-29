@@ -1,7 +1,6 @@
 import { SpecNotFound, SpecPlugin, SpecPluginModule } from '../spec';
 import { TestIO } from './types';
-import { prettyPrintSpecRecord } from '../spec/prettyPrintSpecRecord';
-
+import { prettyPrintSpecRecord } from '../utils';
 
 export function createTestIO(): TestIO {
   const specStore = new Map<string, string>()

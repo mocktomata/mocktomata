@@ -1,5 +1,5 @@
 import { SpecPlugin } from '../spec';
-import { getPropertyNames, hasPropertyInPrototype } from '../utils';
+import { hasProperty, hasPropertyInPrototype } from '../utils';
 
 export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
   name: 'function',
@@ -35,37 +35,45 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
    *
    * })
    */
-  createSpy: ({ invoke, getSpy, getProperty }, subject: any) => {
+  createSpy: ({ invoke, getProperty }, subject: any) => {
     return new Proxy(function () { }, {
-      apply(_, thisArg, args?: any[]) {
-        // set to autonomous mode assuming any functions or functions within object are callbacks to be called by the subject.
-        const spiedArgs = args ? args.map(arg => getSpy(arg, { mode: 'autonomous' })) : []
-        const invocation = invoke(spiedArgs)
-        try {
-          const result = subject.apply(thisArg, spiedArgs)
-          return invocation.returns(getSpy(result, { mode: 'passive' }))
-        }
-        catch (err) {
-          throw invocation.throws(getSpy(err, { mode: 'passive' }))
-        }
+      apply(_, thisArg, args: any[] = []) {
+        return invoke(({ withThisArg, withArgs }) => {
+          const spiedArgs = withArgs(args)
+          return subject.apply(withThisArg(thisArg), spiedArgs)
+        })
       },
       get(_: any, property: string) {
-        if (getPropertyNames(subject).indexOf(property) === -1) return undefined
-        return getProperty(property, getSpy(subject[property]))
+        if (!hasProperty(subject, property)) return undefined
+        return getProperty([property], () => subject[property])
+      },
+      set(_, property: string, value: any) {
+        return subject[property] = value
       }
     })
   },
-  createStub({ invoke, getSpy, getProperty }, _subject, _meta) {
+  createStub({ invoke, getProperty }, _subject, _meta) {
     return new Proxy(function () { }, {
-      apply: function (_target, _thisArg, argumentsList: any[] = []) {
-        const invocation = invoke(argumentsList.map(arg => getSpy(arg)))
-        const result = invocation.getResult()
-        if (result.type === 'return') {
-          return invocation.returns(result.value)
-        }
-        else {
-          throw invocation.throws(result.value)
-        }
+      apply: function (_target, thisArg, args: any[] = []) {
+        return invoke(({ getSpy, withArgs, withThisArg, getResult }) => {
+          const spiedArgs = args ? args.map(arg => getSpy(arg, { mode: 'autonomous' })) : []
+          withArgs(spiedArgs)
+          withThisArg(thisArg)
+          try {
+            return getSpy(getResult(), { mode: 'passive' })
+          }
+          catch (err) {
+            throw getSpy(err, { mode: 'passive' })
+          }
+        })
+        // const invocation = invoke(argumentsList.map(arg => getSpy(arg)))
+        // const result = invocation.getResult()
+        // if (result.type === 'return') {
+        //   return invocation.returns(result.value)
+        // }
+        // else {
+        //   throw invocation.throws(result.value)
+        // }
       },
       get(_, property: string) {
         return getProperty(property)

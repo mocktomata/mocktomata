@@ -1,76 +1,77 @@
 import { pick } from 'type-plus';
 import { ActionMismatch } from './errors';
-import { ActionId, ReferenceId, SpecAction, SpecRecord, SpecReference } from './types';
+import { SpecRecord } from './types';
 
 export function createSpyingRecord(specName: string) {
-  const refs: SpecReference[] = []
-  const actions: SpecAction[] = []
+  const refs: SpecRecord.Reference[] = []
+  const actions: SpecRecord.Action[] = []
   return {
     specName,
     refs,
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
-    getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id),
-    addRef: (ref: SpecReference) => addRef(refs, ref),
-    findRefBySubjectOrTestDouble: (value: any) => findRefBySubjectOrTestDouble(refs, value),
-    getRefId: (ref: SpecReference) => getRefId(refs, ref),
-    addAction: (action: SpecAction) => addAction(actions, action),
+    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
+    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
+    findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
+    findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
+    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
+    addAction: (action: SpecRecord.Action) => addAction(actions, action),
   }
 }
 
 export type SpyRecord = ReturnType<typeof createSpyingRecord>
 
 export function createValidatingRecord(specName: string, expected: SpecRecord) {
-  const refs: SpecReference[] = []
-  const actions: SpecAction[] = []
+  const refs: SpecRecord.Reference[] = []
+  const actions: SpecRecord.Action[] = []
 
   return {
     specName,
     refs,
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
-    getRef: (id: ReferenceId | ActionId) => getRef({ refs, actions }, id),
-    getExpectedRef: (id: ReferenceId) => getRef(expected, id),
-    getNextExpectedRef(): SpecReference | undefined {
+    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
+    getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(expected, id),
+    getNextExpectedRef(): SpecRecord.Reference | undefined {
       return expected.refs[refs.length]
     },
-    addRef: (ref: SpecReference) => addRef(refs, ref),
-    findRefBySubjectOrTestDouble: (value: any) => findRefBySubjectOrTestDouble(refs, value),
-    getRefId: (ref: SpecReference) => getRefId(refs, ref),
+    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
+    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
+    findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
     findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
-    getNextExpectedAction(): SpecAction | undefined { return expected.actions[actions.length] },
+    getNextExpectedAction(): SpecRecord.Action | undefined { return expected.actions[actions.length] },
     getNextActionId() { return actions.length },
-    addAction: (action: SpecAction) => addAction(actions, action),
+    addAction: (action: SpecRecord.Action) => addAction(actions, action),
   }
 }
 
 export type ValidatingRecord = ReturnType<typeof createValidatingRecord>
 
-function getSpecRecord(refs: SpecReference[], actions: SpecAction[]) {
+function getSpecRecord(refs: SpecRecord.Reference[], actions: SpecRecord.Action[]): SpecRecord {
   return {
-    refs: refs.map(ref => pick(ref, 'plugin', 'mode', 'source')),
+    refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta')),
     actions
   }
 }
 
-function getRef(record: SpecRecord, ref: ReferenceId | ActionId): SpecReference | undefined {
+function getRef(record: SpecRecord, ref: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.Reference | undefined {
   const refId = typeof ref === 'string' ? ref : resolveRefId(record, ref)
   return record.refs[Number(refId)]
 }
 
-function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, ref: ReferenceId | ActionId): ReferenceId {
+function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, ref: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.ReferenceId {
   while (typeof ref === 'number') ref = actions[ref].ref
   return ref
 }
-function addRef(refs: SpecReference[], ref: SpecReference) {
+function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
   return String(refs.push(ref) - 1)
 }
 
-function findRefBySubjectOrTestDouble(refs: SpecReference[], value: any) {
+function findRefBySubjectOrTestDouble(refs: SpecRecord.Reference[], value: any) {
   return refs.find(r => r.testDouble === value || r.subject === value)
 }
 
-function findRefIdBySubjectOrTestDouble(refs: SpecReference[], value: any) {
+function findRefIdBySubjectOrTestDouble(refs: SpecRecord.Reference[], value: any) {
   const i = refs.findIndex(r => r.testDouble === value || r.subject === value)
   if (i !== -1) {
     return String(i)
@@ -78,19 +79,17 @@ function findRefIdBySubjectOrTestDouble(refs: SpecReference[], value: any) {
   return undefined
 }
 
-function getRefId(refs: SpecReference[], ref: SpecReference) {
+function getRefId(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
   return String(refs.indexOf(ref))
 }
 
-function addAction(actions: SpecAction[], action: SpecAction) {
+function addAction(actions: SpecRecord.Action[], action: SpecRecord.Action) {
   return actions.push(action) - 1
 }
 
-export function assertActionType<T extends SpecAction>(specId: string, type: SpecAction['type'], action: SpecAction | undefined): action is T {
+export function assertActionType<T extends SpecRecord.Action>(specId: string, type: SpecRecord.Action['type'], action: SpecRecord.Action | undefined): asserts action is T {
   if (!action || action.type !== type) {
     throw new ActionMismatch(specId, { type } as any, action)
   }
-  // workaround before asserts modifier can be used with eslint
-  return false
 }
 

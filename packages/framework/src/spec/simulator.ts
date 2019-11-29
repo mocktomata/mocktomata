@@ -3,26 +3,19 @@ import { PartialPick, pick } from 'type-plus';
 import { notDefined } from '../constants';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, PluginNotFound, ReferenceMismatch } from './errors';
-import { findPlugin } from './findPlugin';
+import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateStub, logRecordingTimeout } from './logs';
-import { createValidatingRecord, ValidatingRecord, assertActionType } from './record';
-import { getSpy } from './recorder';
-import { ActionId, ActionMode, GetAction, InvokeAction, ReferenceId, SpecAction, SpecOptions, SpecPlugin, SpecRecord, SpecReference, SupportedKeyTypes, ReturnAction } from './types';
+import { assertActionType, createValidatingRecord, ValidatingRecord } from './record';
+import { Recorder } from './recorder';
+import { getDefaultPerformer } from './subjectProfile';
+import { SpecOptions, SpecPlugin, SpecRecord } from './types';
 import { referenceMismatch, siteMismatch } from './validations';
 
 export namespace Simulator {
-  export type StubOptions = {
-    mode?: ActionMode,
-  }
-  export type Context = {
+  export type Context<S = Recorder.State> = {
     timeTracker: TimeTracker,
     record: ValidatingRecord,
-    state: State
-  }
-  export type State = {
-    plugin: string,
-    id: ReferenceId | ActionId,
-    site: SupportedKeyTypes[]
+    state: S
   }
 }
 
@@ -32,16 +25,13 @@ export function createSimulator(specName: string, expected: SpecRecord, options:
   const context = { record, timeTracker }
 
   return {
-    createStub: <S>(subject: S, options: Simulator.StubOptions) => createStub(context, subject, options),
-    end() {
-      timeTracker.stop()
-    },
-    getSpecRecord(): SpecRecord {
-      return record.getSpecRecord()
-    }
+    createStub: <S>(subject: S) => createStub(context, subject, { profile: 'target' }),
+    end: () => timeTracker.stop(),
+    getSpecRecord: () => record.getSpecRecord()
   }
 }
-function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject: S, options: Simulator.StubOptions) {
+
+function createStub<S>(context: PartialPick<Simulator.Context<Recorder.ActionState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
   const { record } = context
   const expected = record.getNextExpectedRef()
   if (!expected) throw new ExtraReference(record.specName, subject)
@@ -49,68 +39,52 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
   return createStubInternal(context, expected, subject, options)
 }
 
-function createStubInternal(context: PartialPick<Simulator.Context, 'state'>, expected: SpecReference, subject: any, options: Simulator.StubOptions) {
+function createStubInternal(context: PartialPick<Simulator.Context<Recorder.ActionState>, 'state'>, expected: SpecRecord.Reference, subject: any, options: SpecPlugin.getSpy.Options) {
   const { record } = context
 
-  const plugin = findPlugin(subject)
+  const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
   if (!plugin) {
     throw new PluginNotFound(expected.plugin)
   }
 
-  const mode = options.mode || expected.mode
-  const source = context.state ? { ref: context.state.id, site: context.state.site } : undefined
-  const ref: SpecReference = {
-    plugin: plugin.name,
-    subject,
-    testDouble: notDefined,
-    mode,
-    source
-  }
+  const profile = options.profile || context.state!.ref.profile
+
+  const source = context.state ? { ref: context.state.actionId, site: options.site } : undefined
+  const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
+
   if (referenceMismatch(ref, expected)) throw new ReferenceMismatch(record.specName, ref, expected)
-  const id = context.record.addRef(ref)
-  const state = { id, plugin: plugin.name, site: context.state ? context.state.site : [] }
-  logCreateStub(state, mode, expected.meta)
+
+  const refId = context.record.addRef(ref)
+  const state = { ref, refId, spyOptions: [] }
+  logCreateStub(state, profile, expected.meta)
   // const circularRefs: CircularReference[] = []
-  ref.testDouble = plugin.createStub(
-    createPluginStubContext({ ...context, state }),
-    subject,
-    expected.meta)
+  ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, expected.meta)
   // fixCircularReferences(record, refId, circularRefs)
   return ref.testDouble
 }
 
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
   return {
-    getProperty: (property) => getProperty(context, property),
-    resolve: (refIdOrValue, options = {}) => resolve(context, refIdOrValue, options),
-    getSpy: (subject, getOptions = {}) => getSpy(context, subject, getOptions),
+    getProperty: (site) => getProperty(context, site),
     invoke: (args, invokeOptions = {}) => invocationResponder(context, args, invokeOptions),
+    resolve: (refIdOrValue, options = {}) => resolve(context, refIdOrValue, options),
     instantiate: (args, instanceOptions = {}) => instanceRecorder(context, args, instanceOptions)
   }
 }
 
-function getProperty(context: Simulator.Context, property: SupportedKeyTypes) {
-  const { record, timeTracker, state } = context
+function getProperty(context: Simulator.Context, site: SpecRecord.SupportedKeyTypes[]) {
+  const { record, timeTracker } = context
   const expected = record.getNextExpectedAction()
   // getProperty calls may be caused by framework access.
   // Those calls will not be record and simply ignored.
   // The one I have indentified is `then` check,
   // probably by TypeScript or async/await for checking if the object is a promise
-  if (property === 'then' && notGetThenAction(expected)) return undefined
-
-  const site = [property]
-  const action: GetAction = {
-    type: 'get',
-    ref: state.id,
-    payload: undefined,
-    site,
-    tick: timeTracker.elaspe()
-  }
-
-  if (!expected) {
-    // const plugin = record.getRef(state.id)!.plugin
-    throw new ExtraAction(record.specName, state, record.getNextActionId(), action)
-  }
+  if (site.length === 1 && site[0] === 'then' && notGetThenAction(expected)) return undefined
+  const performer = getDefaultPerformer(context.state.ref.profile)
+  const action: SpecRecord.GetAction = { type: 'get', ref: context.state.refId, performer, tick: timeTracker.elaspe(), payload: undefined, site }
+  const actionId = record.getNextActionId()
+  const state = { ...context.state, actionId }
+  if (!expected) throw new ExtraAction(record.specName, state, actionId, action)
 
   if (!satisfies(expected, pick(action, 'type', 'ref', 'site'))) {
     throw new ActionMismatch(record.specName, action, expected)
@@ -129,7 +103,7 @@ function getProperty(context: Simulator.Context, property: SupportedKeyTypes) {
       // using `!` because ref is from saved record, so the original reference must exists.
       const origRef = record.getExpectedRef(refOrValue)!
       if (!origRef.source ||
-        origRef.source.ref !== state.id ||
+        origRef.source.ref !== state.refId ||
         siteMismatch(site, origRef.source.site)
       ) {
         // why not throwing?
@@ -143,7 +117,7 @@ function getProperty(context: Simulator.Context, property: SupportedKeyTypes) {
   }
 
 
-  const actionId = record.addAction(action)
+  record.addAction(action)
   logAction(state, actionId, { ...action, payload: subject })
   return result
 }
@@ -152,14 +126,14 @@ function resolve(context: Simulator.Context, refIdOrValue: any, options: SpecPlu
   return undefined as any
 }
 
-function invocationResponder(context: Simulator.Context, args: any[], options: SpecPlugin.InvokeOptions) {
+function invocationResponder(context: Simulator.Context, args: any[], options: SpecPlugin.invoke.Options) {
   const { record, timeTracker, state } = context
   const expected = record.getNextExpectedAction()
 
   const subjects: any[] = []
   const payload: any[] = []
   args.forEach(arg => {
-    const ref = record.findRefBySubjectOrTestDouble(arg)
+    const ref = record.findRef(arg)
     if (ref) {
       payload.push(record.getRefId(ref))
       subjects.push(ref.subject)
@@ -169,14 +143,14 @@ function invocationResponder(context: Simulator.Context, args: any[], options: S
       payload.push(arg)
     }
   })
-  const ref = record.getRef(state.id)!
-  const action: InvokeAction = {
+
+  const site = options.site
+  const action: SpecRecord.InvokeAction = {
     type: 'invoke',
-    ref: state.id,
-    mode: options.mode || (ref.mode === 'instantiate' ? 'passive' : ref.mode),
+    ref: state.refId,
+    performer: options.performer || getDefaultPerformer(state.ref.profile),
     payload,
-    site: options.site,
-    meta: options.meta,
+    site,
     tick: timeTracker.elaspe()
   }
   const actionId = record.getNextActionId()
@@ -184,7 +158,7 @@ function invocationResponder(context: Simulator.Context, args: any[], options: S
     throw new ExtraAction(record.specName, state, actionId, { ...action, payload: subjects })
   }
 
-  if (!satisfies(expected, pick(action, 'type', 'ref', 'payload', 'mode'))) {
+  if (!satisfies(expected, pick(action, 'type', 'ref', 'payload', 'performer'))) {
     throw new ActionMismatch(record.specName, action, expected)
   }
   record.addAction(action)
@@ -199,8 +173,8 @@ function invocationResponder(context: Simulator.Context, args: any[], options: S
     },
     returns(value: any) {
       const expected = record.getNextExpectedAction()
-      assertActionType(record.specName, 'return', expected)
-      const action: ReturnAction = {
+      assertActionType<SpecRecord.ReturnAction>(record.specName, 'return', expected)
+      const action: SpecRecord.ReturnAction = {
         type: 'return',
         ref: actionId,
         payload: record.findRefId(value) || value,
@@ -222,23 +196,40 @@ function getByPath(subject: any, sitePath: Array<string | number>) {
   return sitePath.reduce((p, s) => p[s], subject)
 }
 
-function notGetThenAction(action: SpecAction | undefined) {
+function notGetThenAction(action: SpecRecord.Action | undefined) {
   return !(action && action.type === 'get' && action.site.length === 1 && action.site[0] === 'then')
 }
 
-function getResult(context: Simulator.Context, expected: SpecAction) {
+function getResult(context: Simulator.Context<Recorder.ActionState>, expected: SpecRecord.Action) {
   const { record, state } = context
   // TODO check for action mismatch
   if (expected.type !== 'return' && expected.type !== 'throw') {
     const actionId = record.getNextActionId()
     throw new ActionTypeMismatch(record.specName, state, actionId, expected, 'return or throw')
   }
-
+  console.log(expected)
   if (typeof expected.payload !== 'string') {
     return {
       type: expected.type,
       value: expected.payload,
       meta: expected.meta
     }
+  }
+  const actualReference = record.getRef(expected.payload)
+  if (actualReference) {
+    return {
+      type: expected.type,
+      value: actualReference.testDouble,
+      meta: expected.meta
+    }
+  }
+
+  const expectedReference = record.getExpectedRef(expected.payload)!
+
+  console.log('state', state)
+  return {
+    type: expected.type,
+    valeu: createStubInternal({ ...context, state: { ...context.state, site: [] } }, expectedReference, notDefined, {}),
+    meta: expected.meta
   }
 }

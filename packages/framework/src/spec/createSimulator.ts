@@ -53,7 +53,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     const plugin = getPlugin(origRef.plugin)
     const ref: SpecReference = { plugin: plugin.name, subject: undefined, source: { ref: expectedAction.ref, site: undefined }, mode: 'plugin-invoked' }
     record.addRef(ref)
-    logCreateStub({ plugin: plugin.name, id: refId })
+    logCreateStub({ plugin: plugin.name, actionId: refId })
 
     const circularRefs: CircularReference[] = []
     const context = createPluginStubContext({ record, plugin, ref, refId, circularRefs, currentId: refId })
@@ -98,7 +98,7 @@ function processInvoke(record: ValidateRecord, expectedAction: InvokeAction) {
     }
     if (referenceMismatch(ref, origRef)) throw new ReferenceMismatch(record.specId, ref, origRef)
     record.addRef(ref)
-    logCreateStub({ plugin: plugin.name, id: arg })
+    logCreateStub({ plugin: plugin.name, actionId: arg })
 
     const circularRefs: CircularReference[] = []
     ref.testDouble = plugin.createStub(

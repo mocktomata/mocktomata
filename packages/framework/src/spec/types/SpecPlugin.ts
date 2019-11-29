@@ -1,5 +1,6 @@
 import { Meta } from './Meta';
-import { ActionId, ActionMode, ReferenceId, SupportedKeyTypes } from './SpecRecord';
+import { ActionId, ActionMode, ReferenceId, SupportedKeyTypes, SubjectProfile, Performer } from './SpecRecord';
+import { JSONTypes } from 'type-plus';
 
 export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
   /**
@@ -39,18 +40,74 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
    */
   createImitator?(context: any, meta: M): S,
 }
+
 export namespace SpecPlugin {
   export type SpyContext = {
-    getSpy<S>(subject: S, options?: GetSpyOptions): S,
-    getProperty<V = any>(property: SupportedKeyTypes, value: V, options?: GetPropertyOptions): V,
-    invoke(args: any[], options?: InvokeOptions): InvocationRecorder,
-    instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
+    setSpyOptions: setSpyOptions,
     /**
-     * Update the `meta` data.
+     * Set the `meta` data of the spy.
      * The `meta` data will be available when the stub is created during simulation.
-     * Use this at any time during the life cycle of the spy (except for class instance).
+     * Use this at any time during the lifetime of the spy except for class instance.
+     * For class instance, use its own `setMeta()`
+     * @returns the input meta.
      */
-    // updateMeta(handler: (meta: Meta) => Meta): void,
+    setMeta<M extends JSONTypes>(meta: M): M,
+    getProperty<V = any>(site: SupportedKeyTypes[], handler: getProperty.Handler<V>, options?: getProperty.Options): V,
+    invoke<V = any>(handler: invoke.Handler<V>, options?: invoke.Options): V,
+    instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
+  }
+
+  export type setSpyOptions = <S>(subject: S, options: setSpyOptions.Options) => void
+  export namespace setSpyOptions {
+    export type Options = {
+      plugin?: string,
+      profile?: SubjectProfile,
+      site?: SupportedKeyTypes[]
+    }
+  }
+
+  export type getSpy = <S>(subject: S, options?: getSpy.Options) => S
+
+  export namespace getSpy {
+    export type Options = {
+      /**
+       * Specifies the action mode fo the spy.
+       *
+       * If specified, this mode will be used instead of the one specified by the spy's plugin.
+       *
+       * This allows the current plugin to describe how the spy is being used in the current context.
+       */
+      profile?: SubjectProfile,
+      /**
+       * Specifies where the spy is located from the current subject.
+       *
+       * This can only be specified when `getSpy()` is called in the plugin context.
+       *
+       * i.e. not within the `processArgument(s)` callbacks.
+       */
+      site?: SupportedKeyTypes[]
+    }
+  }
+
+  export namespace getProperty {
+    export type Handler<V> = (context: Context) => V
+    export type Context = {
+      setSpyOptions: setSpyOptions,
+    }
+    export type Options = { performer?: Performer }
+  }
+
+  export namespace invoke {
+    export type Handler<V> = (context: {
+      setSpyOptions: setSpyOptions,
+      withThisArg<T>(thisArg: T): T,
+      withArgs<A extends any[]>(args: A): A,
+    }) => V
+
+    export type Options = {
+      site?: SupportedKeyTypes[],
+      performer?: Performer,
+    }
   }
 
   export type DeclareOptions = {
@@ -59,40 +116,18 @@ export namespace SpecPlugin {
 
   export type StubContext = {
     resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
-    getSpy<S>(subject: S, options?: GetSpyOptions): S,
-    getProperty(property: SupportedKeyTypes): any,
+    getProperty(site: SupportedKeyTypes[]): any,
     invoke(args: any[], options?: InvokeOptions): InvocationResponder,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
   }
 
-  export type GetSpyOptions = {
-    /**
-     * Specifies the action mode fo the spy.
-     *
-     * If specified, this mode will be used instead of the one specified by the spy's plugin.
-     *
-     * This allows the current plugin to describe how the spy is being used in the current context.
-     */
-    mode?: ActionMode,
-    /**
-     * Specifies where the spy is located from the current subject.
-     *
-     * This can only be specified when `getSpy()` is called in the plugin context.
-     *
-     * i.e. not within the `processArgument(s)` callbacks.
-     */
-    site?: Array<string | number>
-  }
-
   export type InvokeOptions = {
     mode?: ActionMode,
-    processArguments?: <A>(arg: A) => A,
     site?: Array<string | number>,
     meta?: Meta,
   }
 
   export type SpyResultOptions = {
-    processArgument?: <A>(arg: A) => A,
     meta?: Meta,
   }
 

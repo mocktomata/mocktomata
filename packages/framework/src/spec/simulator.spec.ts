@@ -8,14 +8,14 @@ test('create not expected stub throws', () => {
     { refs: [], actions: [] },
     { timeout: 10 })
 
-  a.throws(() => sim.createStub({}, {}), ExtraReference)
+  a.throws(() => sim.createStub({}), ExtraReference)
 })
 
 test('simulate without plugin install throws', () => {
   const sim = createSimulator(
     'no plugin',
-    { refs: [{ plugin: 'not-installed', mode: 'passive' }], actions: [] },
+    { refs: [{ plugin: 'not-installed', profile: 'target' }], actions: [] },
     { timeout: 10 })
 
-  a.throws(() => sim.createStub({}, {}), PluginNotFound)
+  a.throws(() => sim.createStub({}), PluginNotFound)
 })

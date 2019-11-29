@@ -1,10 +1,11 @@
 import { logLevel } from 'standard-log';
 import { tersify } from 'tersify';
+import { JSONTypes } from 'type-plus';
 import { log } from '../log';
 import { SpyRecord } from './createSpyRecord';
 import { prettifyAction } from './prettifyAction';
 import { Recorder } from './recorder';
-import { ActionId, ActionMode, Meta, ReferenceId, SpecAction, SpecReference } from './types';
+import { ActionId, ReferenceId, SpecAction, SpecReference, SubjectProfile } from './types';
 
 export type ActionLoggingContext = {
   record: Pick<SpyRecord, 'getSubject'>,
@@ -12,11 +13,11 @@ export type ActionLoggingContext = {
   id: ReferenceId | ActionId;
 }
 
-export function logCreateSpy({ plugin, id }: Pick<Recorder.State, 'id' | 'plugin'>, mode: ActionMode, subject: any) {
-  log.on(logLevel.debug, log => log(`${plugin} create ${mode} spy (ref:${id}): ${tersify(subject)}`))
+export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SubjectProfile, subject: any) {
+  log.on(logLevel.debug, log => log(`${ref.plugin} create ${profile} spy <ref:${refId}>: ${tersify(subject)}`))
 }
 
-export function logAction(state: Pick<Recorder.State, 'id' | 'plugin'>, actionId: ActionId, action: SpecAction) {
+export function logAction(state: Pick<Recorder.ActionState, 'ref' | 'actionId'>, actionId: ActionId, action: SpecAction) {
   log.on(logLevel.debug, () => prettifyAction(state, actionId, action))
 }
 
@@ -28,8 +29,8 @@ export function logRecordingTimeout(timeout: number) {
   log.warn(`done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
 }
 
-export function logCreateStub({ plugin, id }: Pick<Recorder.State, 'id' | 'plugin'>, mode: ActionMode, meta?: Meta) {
-  log.on(logLevel.debug, log => log(`${plugin} create ${mode} stub (ref:${id})${meta ? `: ${tersify(meta)}` : ''}`))
+export function logCreateStub({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SubjectProfile, meta?: JSONTypes) {
+  log.on(logLevel.debug, log => log(`${ref.plugin} create ${profile} stub (ref:${refId})${meta ? `: ${tersify(meta)}` : ''}`))
 }
 
 export function logAutoInvokeAction(ref: SpecReference, refId: string, actionId: ActionId, args: any[]) {

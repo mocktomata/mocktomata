@@ -7,7 +7,7 @@ beforeAll(() => {
   return incubator.start({ target: 'es2015' })
 })
 
-describe('mismatch simulation', () => {
+describe.skip('mismatch simulation', () => {
   incubator.sequence('extra reference', (title, { save, simulate }) => {
     test(title, async () => {
       await save.done()
@@ -79,6 +79,79 @@ describe('mismatch simulation', () => {
 
   //   })
   // })
+})
+
+describe('object', () => {
+  incubator.duo('get primitive property', (title, spec) => {
+    test.only(title, async () => {
+      spec.enableLog()
+      const subject = await spec({ a: 1 })
+      const actual = subject.a
+
+      expect(actual).toBe(1)
+
+      await spec.done()
+    })
+  })
+  incubator.duo('set primitive property', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec({ a: 1 })
+      const actual = subject.a = 2
+
+      expect(actual).toBe(2)
+
+      await spec.done()
+    })
+  })
+  incubator.duo('update primitive property', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec({ a: 1 })
+      expect(subject.a).toBe(1)
+      subject.a = 2
+      expect(subject.a).toBe(2)
+      await spec.done()
+    })
+  })
+
+  // TODO: add test for change property type from value to function
+
+  incubator.duo('primitive method', (title, spec) => {
+    test(title, async () => {
+      spec.enableLog()
+      const subject = await spec({ echo: (x: number) => x })
+      const actual = subject.echo(3)
+
+      expect(actual).toBe(3)
+
+      await spec.done()
+    })
+  })
+  incubator.duo('primitive method throws error', (title, spec) => {
+    test(title, async () => {
+      spec.enableLog()
+      const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
+      const err = a.throws(() => subject.echo('abc'))
+
+      expect(err.message).toBe('abc')
+
+      await spec.done()
+    })
+  })
+  incubator.duo('callback method success', (title, spec) => {
+    test.skip(title, async () => {
+      const subject = await spec({
+        inc(x: number, cb: (x: number) => void) {
+          cb(x + 1)
+        }
+      })
+      let actual: number
+      subject.inc(3, x => actual = x)
+
+      expect(actual!).toBe(4)
+
+      await spec.done()
+    })
+  })
 })
 
 describe('function', () => {
@@ -382,77 +455,6 @@ describe('function', () => {
     test.skip(title, async () => {
       await scopingSpec(1).then(subject => expect(subject()).toBe(1))
       await scopingSpec(3).then(subject => expect(subject()).toBe(3))
-      await spec.done()
-    })
-  })
-})
-
-describe('object', () => {
-  incubator.duo('get primitive property', (title, spec) => {
-    test(title, async () => {
-      const subject = await spec({ a: 1 })
-      const actual = subject.a
-
-      expect(actual).toBe(1)
-
-      await spec.done()
-    })
-  })
-  incubator.duo('set primitive property', (title, spec) => {
-    test(title, async () => {
-      const subject = await spec({ a: 1 })
-      const actual = subject.a = 2
-
-      expect(actual).toBe(2)
-
-      await spec.done()
-    })
-  })
-  incubator.duo('update primitive property', (title, spec) => {
-    test(title, async () => {
-      const subject = await spec({ a: 1 })
-      expect(subject.a).toBe(1)
-      subject.a = 2
-      expect(subject.a).toBe(2)
-      await spec.done()
-    })
-  })
-
-  // TODO: add test for change property type from value to function
-
-  incubator.duo('primitive method', (title, spec) => {
-    test(title, async () => {
-      spec.enableLog()
-      const subject = await spec({ echo: (x: number) => x })
-      const actual = subject.echo(3)
-
-      expect(actual).toBe(3)
-
-      await spec.done()
-    })
-  })
-  incubator.duo('primitive method throws error', (title, spec) => {
-    test.skip(title, async () => {
-      const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
-      const err = a.throws(() => subject.echo('abc'))
-
-      expect(err.message).toBe('abc')
-
-      await spec.done()
-    })
-  })
-  incubator.duo('callback method success', (title, spec) => {
-    test.skip(title, async () => {
-      const subject = await spec({
-        inc(x: number, cb: (x: number) => void) {
-          cb(x + 1)
-        }
-      })
-      let actual: number
-      subject.inc(3, x => actual = x)
-
-      expect(actual!).toBe(4)
-
       await spec.done()
     })
   })

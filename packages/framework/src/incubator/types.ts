@@ -1,5 +1,5 @@
 import { LogLevel } from 'standard-log';
-import { SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO, SpecRecord } from '../spec/types';
+import { Spec, SpecIO, SpecPlugin, SpecPluginModule, SpecPluginModuleIO, SpecRecord } from '../spec/types';
 
 export type TestIO = {
   getAllSpecs(): IterableIterator<[string, string]>,
@@ -14,4 +14,11 @@ export type TestHarness = {
   logSpecRecord(title: string): void,
   getSpecRecord(title: string): SpecRecord,
   start(): Promise<void>
+}
+
+export type SequenceHandler<S = Spec> = (specName: string, specs: { save: S, simulate: S }) => void
+
+export type CreateTestHarnessOptions = {
+  target: 'es2015',
+  logLevel?: number,
 }
