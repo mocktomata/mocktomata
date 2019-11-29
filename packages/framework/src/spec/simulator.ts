@@ -5,7 +5,7 @@ import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateStub, logRecordingTimeout } from './logs';
-import { assertActionType, createValidatingRecord, ValidatingRecord } from './record';
+import { assertActionType, createValidatingRecord, ValidatingRecord, createRecord } from './record';
 import { Recorder } from './recorder';
 import { getDefaultPerformer } from './subjectProfile';
 import { SpecOptions, SpecPlugin, SpecRecord } from './types';
@@ -19,9 +19,11 @@ export namespace Simulator {
   }
 }
 
-export function createSimulator(specName: string, expected: SpecRecord, options: SpecOptions) {
+export function createSimulator(specName: string, loaded: SpecRecord, options: SpecOptions) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
-  const record = createValidatingRecord(specName, expected)
+  const original = createRecord(specName, loaded)
+
+  const record = createValidatingRecord(specName, loaded)
   const context = { record, timeTracker }
 
   return {

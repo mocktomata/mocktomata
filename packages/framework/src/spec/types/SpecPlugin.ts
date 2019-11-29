@@ -1,6 +1,6 @@
 import { Meta } from './Meta';
-import { ActionId, ActionMode, ReferenceId, SupportedKeyTypes, SubjectProfile, Performer } from './SpecRecord';
 import { JSONTypes } from 'type-plus';
+import { SpecRecord } from './SpecRecord';
 
 export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
   /**
@@ -52,7 +52,7 @@ export namespace SpecPlugin {
      * @returns the input meta.
      */
     setMeta<M extends JSONTypes>(meta: M): M,
-    getProperty<V = any>(site: SupportedKeyTypes[], handler: getProperty.Handler<V>, options?: getProperty.Options): V,
+    getProperty<V = any>(site: SpecRecord.SupportedKeyTypes[], handler: getProperty.Handler<V>, options?: getProperty.Options): V,
     invoke<V = any>(handler: invoke.Handler<V>, options?: invoke.Options): V,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
   }
@@ -61,8 +61,8 @@ export namespace SpecPlugin {
   export namespace setSpyOptions {
     export type Options = {
       plugin?: string,
-      profile?: SubjectProfile,
-      site?: SupportedKeyTypes[]
+      profile?: SpecRecord.SubjectProfile,
+      site?: SpecRecord.SupportedKeyTypes[]
     }
   }
 
@@ -77,7 +77,7 @@ export namespace SpecPlugin {
        *
        * This allows the current plugin to describe how the spy is being used in the current context.
        */
-      profile?: SubjectProfile,
+      profile?: SpecRecord.SubjectProfile,
       /**
        * Specifies where the spy is located from the current subject.
        *
@@ -85,7 +85,7 @@ export namespace SpecPlugin {
        *
        * i.e. not within the `processArgument(s)` callbacks.
        */
-      site?: SupportedKeyTypes[]
+      site?: SpecRecord.SupportedKeyTypes[]
     }
   }
 
@@ -94,7 +94,7 @@ export namespace SpecPlugin {
     export type Context = {
       setSpyOptions: setSpyOptions,
     }
-    export type Options = { performer?: Performer }
+    export type Options = { performer?: SpecRecord.Performer }
   }
 
   export namespace invoke {
@@ -105,25 +105,25 @@ export namespace SpecPlugin {
     }) => V
 
     export type Options = {
-      site?: SupportedKeyTypes[],
-      performer?: Performer,
+      site?: SpecRecord.SupportedKeyTypes[],
+      performer?: SpecRecord.Performer,
     }
   }
 
   export type DeclareOptions = {
-    mode?: ActionMode
+    performer?: SpecRecord.Performer
   }
 
   export type StubContext = {
     resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
-    getProperty(site: SupportedKeyTypes[]): any,
+    getProperty(site: SpecRecord.SupportedKeyTypes[]): any,
     invoke(args: any[], options?: InvokeOptions): InvocationResponder,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
   }
 
   export type InvokeOptions = {
-    mode?: ActionMode,
-    site?: Array<string | number>,
+    performer?: SpecRecord.Performer,
+    site?: SpecRecord.SupportedKeyTypes[],
     meta?: Meta,
   }
 
@@ -155,20 +155,20 @@ export namespace SpecPlugin {
   }
 
   export type InstantiateOptions = {
-    mode?: ActionMode,
-    processArguments?: <A>(id: ActionId, arg: A) => A,
+    performer?: SpecRecord.Performer,
+    processArguments?: <A>(id: SpecRecord.ActionId, arg: A) => A,
     meta?: Meta,
   }
 
   export type InstantiationRecorder = {
     args: any[],
-    setInstance(instance: any): ReferenceId,
+    setInstance(instance: any): SpecRecord.ReferenceId,
     invoke(args: any[], options?: InvokeOptions): InvocationRecorder,
   }
 
   export type InstantiationResponder = {
     args: any[],
-    setInstance(instance: any): ReferenceId,
+    setInstance(instance: any): SpecRecord.ReferenceId,
     invoke(args: any[], options?: InvokeOptions): InvocationResponder,
   }
 

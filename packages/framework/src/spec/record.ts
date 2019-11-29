@@ -2,24 +2,22 @@ import { pick } from 'type-plus';
 import { ActionMismatch } from './errors';
 import { SpecRecord } from './types';
 
-export function createSpyingRecord(specName: string) {
-  const refs: SpecRecord.Reference[] = []
-  const actions: SpecRecord.Action[] = []
+export function createRecord(specName: string, { refs, actions }: SpecRecord = { refs: [], actions: [] }) {
   return {
     specName,
     refs,
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
+    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
     addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
     findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
     findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
-    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
     addAction: (action: SpecRecord.Action) => addAction(actions, action),
   }
 }
 
-export type SpyRecord = ReturnType<typeof createSpyingRecord>
+export type Record = ReturnType<typeof createRecord>
 
 export function createValidatingRecord(specName: string, expected: SpecRecord) {
   const refs: SpecRecord.Reference[] = []

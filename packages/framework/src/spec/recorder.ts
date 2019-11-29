@@ -6,14 +6,14 @@ import { log } from '../log';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { findPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
-import { createSpyingRecord, SpyRecord } from './record';
+import { createRecord, Record } from './record';
 import { getDefaultPerformer } from './subjectProfile';
 import { SpecOptions, SpecPlugin, SpecRecord } from './types';
 
 export namespace Recorder {
   export type Context<S = State> = {
     timeTracker: TimeTracker,
-    record: SpyRecord,
+    record: Record,
     state: S
   }
 
@@ -31,7 +31,7 @@ export namespace Recorder {
 
 export function createRecorder(specName: string, options: SpecOptions) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
-  const record = createSpyingRecord(specName)
+  const record = createRecord(specName)
   const context = { record, timeTracker }
 
   return {
@@ -47,12 +47,12 @@ function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.ActionState
   // istanbul ignore next
   if (!plugin) return undefined
 
-  // `context.state` can only be undefined at `createRecorder()`. At that time `options.mode` is default to `passive`
+  // `context.state` can only be undefined at `createRecorder()`. At that time `options.profile` is default to `target`
   // so `context.state` will always be defined in this line.
   const profile = options.profile || context.state!.ref.profile
 
   // Possible sources:
-  // subject: undefined
+  // spec subject: undefined
   // getProperty on object/function/class/instance.promise: { ref: getId, site: [propertyName] }
   // getProperty on complex plugin: { ref: getId, site: [...propPath] }
   // invoke argument: { ref: invokeId, site: [argIndex] }
