@@ -36,11 +36,22 @@ export namespace SpecRecord {
    */
   export type SubjectProfile = 'target' | 'input' | 'output'
 
-  export type Action = InvokeAction | InstantiateAction | GetAction | ReturnAction | ThrowAction
+  export type Action = GetAction | InvokeAction | InstantiateAction | ReturnAction | ThrowAction
+
+  export type CauseActions = GetAction | InvokeAction | InstantiateAction
+
+  export type GetAction = {
+    type: 'get',
+    refId: ReferenceId,
+    performer: Performer,
+    tick: number,
+    site: SupportedKeyTypes[],
+    meta: Meta,
+  }
 
   export type InstantiateAction = {
     type: 'instantiate',
-    ref: ReferenceId,
+    refId: ReferenceId,
     instanceId: ReferenceId,
     performer: Performer,
     tick: number,
@@ -50,7 +61,7 @@ export namespace SpecRecord {
 
   export type InvokeAction = {
     type: 'invoke',
-    ref: ReferenceId | ActionId,
+    refId: ReferenceId,
     performer: Performer,
     tick: number,
     payload: any[],
@@ -60,27 +71,16 @@ export namespace SpecRecord {
 
   export type ReturnAction = {
     type: 'return',
-    ref: ActionId,
+    actionId: ActionId,
     tick: number,
     payload: any,
-    meta?: Meta,
   }
 
   export type ThrowAction = {
     type: 'throw',
-    ref: ActionId,
+    actionId: ActionId,
     tick: number,
     payload: any,
-    meta?: Meta,
-  }
-
-  export type GetAction = {
-    type: 'get',
-    ref: ReferenceId | ActionId,
-    performer: Performer,
-    tick: number,
-    payload: any,
-    site: SupportedKeyTypes[],
   }
 
   export type ActionId = number

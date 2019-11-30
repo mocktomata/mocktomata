@@ -1,4 +1,4 @@
-import { pick } from 'type-plus';
+import { pick, Pick } from 'type-plus';
 import { ActionMismatch, ExtraReference, ReferenceMismatch, PluginsNotLoaded } from './errors';
 import { SpecRecord } from './types';
 import { referenceMismatch } from './validations';
@@ -98,15 +98,20 @@ function getSpecRecord(refs: SpecRecord.Reference[], actions: SpecRecord.Action[
   }
 }
 
-function getRef(record: SpecRecord, ref: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.Reference | undefined {
-  const refId = typeof ref === 'string' ? ref : resolveRefId(record, ref)
+function getRef(record: SpecRecord, id: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.Reference | undefined {
+  const refId = typeof id === 'string' ? id : resolveRefId(record, id)
   return record.refs[Number(refId)]
 }
 
-function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, ref: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.ReferenceId {
-  while (typeof ref === 'number') ref = actions[ref].ref
-  return ref
+function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, id: SpecRecord.ActionId): SpecRecord.ReferenceId {
+  const action = actions[id]
+  return action.type === 'return' || action.type === 'throw' ? getCauseAction({ actions }, id).refId : action.refId
 }
+
+function getCauseAction({ actions }: { actions: SpecRecord.Action[] }, id: SpecRecord.ActionId) {
+  return (actions[id] as SpecRecord.CauseActions)
+}
+
 function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
   return String(refs.push(ref) - 1)
 }

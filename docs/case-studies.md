@@ -50,9 +50,9 @@ ref3.then(ref4 => {
 ```ts
 // <ref:0> create target stub: { ajax() { ... } }
 // <act:0> you access <ref:0>.ajax
-// <act:1> <ref:0 act:0> -> <ref:1>
 // ... should we collect `thisArg` here and use that in case invoke does not provide `thisArg`?
 // <ref:1> create target stub: ajax() { ... }
+// <act:1> <ref:0 act:0> -> <ref:1>
 // ... remaining is the same as the next example
 (await spec($)).ajax({ ... })
 

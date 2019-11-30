@@ -114,8 +114,8 @@ describe('object', () => {
 
   // TODO: add test for change property type from value to function
 
-  incubator.duo('primitive method', (title, spec) => {
-    test.skip(title, async () => {
+  incubator.save('primitive method', (title, spec) => {
+    test.only(title, async () => {
       spec.enableLog()
       const subject = await spec({ echo: (x: number) => x })
       const actual = subject.echo(3)

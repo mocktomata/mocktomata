@@ -1,4 +1,4 @@
-import { LogLevel } from 'standard-log';
+import { LogLevel, logLevels } from 'standard-log';
 import { context } from '../context';
 import { createSaveSpec } from '../spec/createSaveSpec';
 import { createSimulateSpec } from '../spec/createSimulateSpec';
@@ -51,7 +51,7 @@ function createTestSpec(specFn: typeof createSaveSpec, specName: string, options
     (subject: any) => getSpec(initState).then(s => s(subject)),
     {
       done: () => getSpec(initState).then(s => s.done()),
-      enableLog: (level?: LogLevel) => {
+      enableLog: (level: LogLevel = logLevels.all) => {
         if (s) s.enableLog(level)
         else {
           initState.enableLog = true

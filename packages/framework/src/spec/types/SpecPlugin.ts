@@ -43,26 +43,50 @@ export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
 
 export namespace SpecPlugin {
   export type SpyContext = {
-    setSpyOptions: setSpyOptions,
     /**
      * Set the `meta` data of the spy.
      * The `meta` data will be available when the stub is created during simulation.
-     * Use this at any time during the lifetime of the spy except for class instance.
-     * For class instance, use its own `setMeta()`
+     * If you want to record `meta` data for the action being performed,
+     * use the `setMeta()` provided by each action instead of this function.
      * @returns the input meta.
      */
-    setMeta<M extends JSONTypes>(meta: M): M,
-    getProperty<V = any>(site: SpecRecord.SupportedKeyTypes[], handler: getProperty.Handler<V>, options?: getProperty.Options): V,
-    invoke<V = any>(handler: invoke.Handler<V>, options?: invoke.Options): V,
+    setMeta: SpyContext.setMeta,
+    setSpyOptions: SpyContext.setSpyOptions,
+    getProperty: SpyContext.getProperty,
+    invoke: SpyContext.invoke,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
   }
+  export namespace SpyContext {
+    export type setMeta = <M extends Meta>(meta: M) => M
+    export type setSpyOptions = <S>(subject: S, options: setSpyOptions.Options) => void
+    export namespace setSpyOptions {
+      export type Options = {
+        plugin?: string,
+        profile?: SpecRecord.SubjectProfile,
+      }
+    }
 
-  export type setSpyOptions = <S>(subject: S, options: setSpyOptions.Options) => void
-  export namespace setSpyOptions {
-    export type Options = {
-      plugin?: string,
-      profile?: SpecRecord.SubjectProfile,
-      site?: SpecRecord.SupportedKeyTypes[]
+    export type getProperty = <V = any>(options: getProperty.Options, handler: getProperty.Handler<V>) => V
+    export namespace getProperty {
+      export type Options = {
+        site: SpecRecord.SupportedKeyTypes[],
+        performer?: SpecRecord.Performer,
+        meta?: Meta
+      }
+      export type Handler<V> = () => V
+    }
+    export type invoke = <V = any>(handler: invoke.Handler<V>, options?: invoke.Options) => V
+    export namespace invoke {
+      export type Handler<V> = (context: {
+        setMeta: setMeta,
+        withThisArg<T>(thisArg: T): T,
+        withArgs<A extends any[]>(args: A): A,
+      }) => V
+
+      export type Options = {
+        performer?: SpecRecord.Performer,
+        site?: SpecRecord.SupportedKeyTypes[],
+      }
     }
   }
 
@@ -89,34 +113,13 @@ export namespace SpecPlugin {
     }
   }
 
-  export namespace getProperty {
-    export type Handler<V> = (context: Context) => V
-    export type Context = {
-      setSpyOptions: setSpyOptions,
-    }
-    export type Options = { performer?: SpecRecord.Performer }
-  }
-
-  export namespace invoke {
-    export type Handler<V> = (context: {
-      setSpyOptions: setSpyOptions,
-      withThisArg<T>(thisArg: T): T,
-      withArgs<A extends any[]>(args: A): A,
-    }) => V
-
-    export type Options = {
-      site?: SpecRecord.SupportedKeyTypes[],
-      performer?: SpecRecord.Performer,
-    }
-  }
-
   export type DeclareOptions = {
     performer?: SpecRecord.Performer
   }
 
   export type StubContext = {
-    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
     getProperty(site: SpecRecord.SupportedKeyTypes[]): any,
+    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
     invoke(args: any[], options?: InvokeOptions): InvocationResponder,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
   }

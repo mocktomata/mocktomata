@@ -100,8 +100,8 @@ function createStub<S>(context: PartialPick<Simulator.Context<Recorder.ActionSta
 
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
   return {
-    getProperty: (site) => getProperty(context, site),
-    invoke: (args, invokeOptions = {}) => invocationResponder(context, args, invokeOptions),
+    getProperty: (site, getOptions = {}) => getProperty(context, site, getOptions),
+    invoke: (args, invokeOptions = {}) => invoke(context, args, invokeOptions),
     resolve: (refIdOrValue, options = {}) => resolve(context, refIdOrValue, options),
     instantiate: (args, instanceOptions = {}) => instanceRecorder(context, args, instanceOptions)
   }
@@ -161,7 +161,7 @@ function resolve(context: Simulator.Context, refIdOrValue: any, options: SpecPlu
   return undefined as any
 }
 
-function invocationResponder(context: Simulator.Context, args: any[], options: SpecPlugin.invoke.Options) {
+function invoke(context: Simulator.Context, args: any[], options: SpecPlugin.invoke.Options) {
   const { record, timeTracker, state } = context
   const expected = record.getNextExpectedAction()
 
