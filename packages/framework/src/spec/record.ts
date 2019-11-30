@@ -1,25 +1,10 @@
 import { pick } from 'type-plus';
-import { ActionMismatch } from './errors';
+import { ActionMismatch, ExtraReference, ReferenceMismatch, PluginsNotLoaded } from './errors';
 import { SpecRecord } from './types';
+import { referenceMismatch } from './validations';
+import { getPlugin } from './findPlugin';
 
-export function createRecord(specName: string, { refs, actions }: SpecRecord = { refs: [], actions: [] }) {
-  return {
-    specName,
-    refs,
-    actions,
-    getSpecRecord: () => getSpecRecord(refs, actions),
-    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
-    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
-    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
-    findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
-    findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
-    addAction: (action: SpecRecord.Action) => addAction(actions, action),
-  }
-}
-
-export type Record = ReturnType<typeof createRecord>
-
-export function createValidatingRecord(specName: string, expected: SpecRecord) {
+export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecord.Reference[] = []
   const actions: SpecRecord.Action[] = []
 
@@ -29,21 +14,82 @@ export function createValidatingRecord(specName: string, expected: SpecRecord) {
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
-    getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(expected, id),
-    getNextExpectedRef(): SpecRecord.Reference | undefined {
-      return expected.refs[refs.length]
-    },
-    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
+    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
     findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
     findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
-    getNextExpectedAction(): SpecRecord.Action | undefined { return expected.actions[actions.length] },
+    addAction: (action: SpecRecord.Action) => addAction(actions, action),
+  }
+}
+
+export type SpecRecorderBuilder = ReturnType<typeof createSpecRecordBuilder>
+
+function assertPluginsLoaded(specName: string, refs: SpecRecord.Reference[]) {
+  const pluginsInUse = refs.reduce<string[]>((p, v) => {
+    if (p.indexOf(v.plugin) === -1) p.push(v.plugin)
+    return p
+  }, [])
+
+  const pluginsMissing = pluginsInUse.filter(p => {
+    try { return !getPlugin(p) }
+    catch (e) { return true }
+  })
+  if (pluginsMissing.length > 0) {
+    throw new PluginsNotLoaded(specName, pluginsMissing)
+  }
+}
+export function createSpecRecordValidator(specName: string, loaded: SpecRecord) {
+  assertPluginsLoaded(specName, loaded.refs)
+
+
+  const refs: SpecRecord.Reference[] = []
+  const actions: SpecRecord.Action[] = []
+
+  return {
+    specName,
+    refs,
+    actions,
+    getSpecRecord: () => getSpecRecord(refs, actions),
+    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
+    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
+    addRef: (ref: SpecRecord.Reference) => {
+      const expected = findNextExpectedRefForPlugin(loaded.refs, refs, ref.plugin)
+      if (referenceMismatch(ref, expected)) throw new ReferenceMismatch(specName, ref, expected)
+
+      return addRef(refs, ref)
+    },
+    findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
+    findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
+
+    findNextExpectedRefForPlugin: (plugin: string) => findNextExpectedRefForPlugin(loaded.refs, refs, plugin),
+    findLoadedRef: (value: any) => {
+      const ref = findRefBySubjectOrTestDouble(loaded.refs, value)
+      if (!ref) throw new ExtraReference(specName, value)
+      return ref
+    },
+
+    getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(loaded, id),
+    getNextExpectedRef(): SpecRecord.Reference | undefined {
+      return loaded.refs[refs.length]
+    },
+    getNextExpectedAction(): SpecRecord.Action | undefined { return loaded.actions[actions.length] },
     getNextActionId() { return actions.length },
     addAction: (action: SpecRecord.Action) => addAction(actions, action),
   }
 }
 
-export type ValidatingRecord = ReturnType<typeof createValidatingRecord>
+export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
+
+function findNextExpectedRefForPlugin(loadedRefs: SpecRecord.Reference[], refs: SpecRecord.Reference[], plugin: string) {
+  let count = refs.reduce((p, v) => {
+    if (v.plugin === plugin) p++
+    return p
+  }, 0)
+  return loadedRefs.find(r => {
+    if (r.plugin !== plugin) return false
+    return --count
+  })
+}
 
 function getSpecRecord(refs: SpecRecord.Reference[], actions: SpecRecord.Action[]): SpecRecord {
   return {

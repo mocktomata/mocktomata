@@ -2,10 +2,10 @@ import { satisfies } from 'satisfier';
 import { PartialPick, pick } from 'type-plus';
 import { notDefined } from '../constants';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
-import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, PluginNotFound, ReferenceMismatch } from './errors';
+import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, PluginNotFound, ReferenceMismatch, NoSupportedPlugin } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateStub, logRecordingTimeout } from './logs';
-import { assertActionType, createValidatingRecord, ValidatingRecord, createRecord } from './record';
+import { assertActionType, createSpecRecordValidator, SpecRecordValidator, createSpecRecordBuilder, SpecRecorderBuilder } from './record';
 import { Recorder } from './recorder';
 import { getDefaultPerformer } from './subjectProfile';
 import { SpecOptions, SpecPlugin, SpecRecord } from './types';
@@ -14,35 +14,68 @@ import { referenceMismatch, siteMismatch } from './validations';
 export namespace Simulator {
   export type Context<S = Recorder.State> = {
     timeTracker: TimeTracker,
-    record: ValidatingRecord,
+    record: SpecRecordValidator,
     state: S
   }
 }
 
 export function createSimulator(specName: string, loaded: SpecRecord, options: SpecOptions) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
-  const original = createRecord(specName, loaded)
-
-  const record = createValidatingRecord(specName, loaded)
+  const record = createSpecRecordValidator(specName, loaded)
   const context = { record, timeTracker }
 
   return {
-    createStub: <S>(subject: S) => createStub(context, subject, { profile: 'target' }),
+    createStub: <S>(subject: S) => createStub2(context, subject, { profile: 'target' }),
     end: () => timeTracker.stop(),
     getSpecRecord: () => record.getSpecRecord()
   }
 }
 
-function createStub<S>(context: PartialPick<Simulator.Context<Recorder.ActionState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
+function createStub2<S>(context: PartialPick<Simulator.Context<Recorder.ActionState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options): S {
   const { record } = context
-  const expected = record.getNextExpectedRef()
-  if (!expected) throw new ExtraReference(record.specName, subject)
 
-  return createStubInternal(context, expected, subject, options)
+  // const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
+  const plugin = findPlugin(subject)
+
+  // this is a valid case when user change their implementation to use some new features in JavaScript which existing plugins do not support.
+  // istanbul ignore next
+  if (!plugin) throw new NoSupportedPlugin(subject)
+
+  const expected = record.findNextExpectedRefForPlugin(plugin.name)
+
+  if (!expected) {
+    // TODO spy on extra target if the profile is `target` or `input`
+    // the code is using something new compare to what was recorded.
+    // maybe we can spy on those and collect the actions,
+    // as long as at the end they still produce the same result.
+    // we may emit a warning at `spec.done()`
+    // For now, throw an error.
+    throw new ExtraReference(record.specName, subject)
+  }
+
+  // `context.state` can only be undefined at `createSimulator()`. At that time `options.profile` is default to `target`
+  // so `context.state` will always be defined in this line.
+  const profile = options.profile || context.state!.ref.profile
+
+  // const source = context.state ? { ref: context.state.actionId, site: options.site } : undefined
+  const source = undefined
+  const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
+  const refId = record.addRef(ref)
+  const state = { ref, refId, spyOptions: [] }
+  logCreateStub(state, profile, expected.meta)
+
+  // const circularRefs: CircularReference[] = []
+  ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, expected.meta)
+  // fixCircularReferences(record, refId, circularRefs)
+  return ref.testDouble
 }
 
-function createStubInternal(context: PartialPick<Simulator.Context<Recorder.ActionState>, 'state'>, expected: SpecRecord.Reference, subject: any, options: SpecPlugin.getSpy.Options) {
+
+function createStub<S>(context: PartialPick<Simulator.Context<Recorder.ActionState>, 'state'>, subject: S | typeof notDefined, options: SpecPlugin.getSpy.Options) {
   const { record } = context
+
+  const expected = record.getNextExpectedRef()
+  if (!expected) throw new ExtraReference(record.specName, subject)
 
   const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
   if (!plugin) {
@@ -114,7 +147,7 @@ function getProperty(context: Simulator.Context, site: SpecRecord.SupportedKeyTy
 
       const sourceRef = record.getRef(origRef.source.ref)!
       subject = getByPath(sourceRef.subject, origRef.source.site || [])
-      result = createStubInternal({ ...context, state: { ...state, site } }, origRef, subject, {})
+      result = createStub({ ...context, state: { ...state, site } }, subject, {})
     }
   }
 
@@ -231,7 +264,7 @@ function getResult(context: Simulator.Context<Recorder.ActionState>, expected: S
   console.log('state', state)
   return {
     type: expected.type,
-    valeu: createStubInternal({ ...context, state: { ...context.state, site: [] } }, expectedReference, notDefined, {}),
+    valeu: createStub({ ...context, state: { ...context.state, site: [] } }, expectedReference, notDefined, {}),
     meta: expected.meta
   }
 }

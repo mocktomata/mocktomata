@@ -6,14 +6,14 @@ import { log } from '../log';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { findPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
-import { createRecord, Record } from './record';
+import { createSpecRecordBuilder, SpecRecorderBuilder } from './record';
 import { getDefaultPerformer } from './subjectProfile';
 import { SpecOptions, SpecPlugin, SpecRecord } from './types';
 
 export namespace Recorder {
   export type Context<S = State> = {
     timeTracker: TimeTracker,
-    record: Record,
+    record: SpecRecorderBuilder,
     state: S
   }
 
@@ -31,7 +31,7 @@ export namespace Recorder {
 
 export function createRecorder(specName: string, options: SpecOptions) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
-  const record = createRecord(specName)
+  const record = createSpecRecordBuilder(specName)
   const context = { record, timeTracker }
 
   return {

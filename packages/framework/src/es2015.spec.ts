@@ -83,8 +83,7 @@ describe.skip('mismatch simulation', () => {
 
 describe('object', () => {
   incubator.duo('get primitive property', (title, spec) => {
-    test.only(title, async () => {
-      spec.enableLog()
+    test(title, async () => {
       const subject = await spec({ a: 1 })
       const actual = subject.a
 
@@ -116,7 +115,7 @@ describe('object', () => {
   // TODO: add test for change property type from value to function
 
   incubator.duo('primitive method', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       spec.enableLog()
       const subject = await spec({ echo: (x: number) => x })
       const actual = subject.echo(3)
@@ -127,7 +126,7 @@ describe('object', () => {
     })
   })
   incubator.duo('primitive method throws error', (title, spec) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       spec.enableLog()
       const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
       const err = a.throws(() => subject.echo('abc'))
