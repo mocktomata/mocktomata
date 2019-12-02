@@ -1,5 +1,4 @@
 import { Meta } from './Meta';
-import { JSONTypes } from 'type-plus';
 import { SpecRecord } from './SpecRecord';
 
 export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
@@ -54,7 +53,7 @@ export namespace SpecPlugin {
     setSpyOptions: SpyContext.setSpyOptions,
     getProperty: SpyContext.getProperty,
     invoke: SpyContext.invoke,
-    instantiate(args: any[], options?: InstantiateOptions): InstantiationRecorder,
+    instantiate: SpyContext.instantiate,
   }
   export namespace SpyContext {
     export type setMeta = <M extends Meta>(meta: M) => M
@@ -65,68 +64,71 @@ export namespace SpecPlugin {
         profile?: SpecRecord.SubjectProfile,
       }
     }
-
     export type getProperty = <V = any>(options: getProperty.Options, handler: getProperty.Handler<V>) => V
     export namespace getProperty {
       export type Options = {
-        site: SpecRecord.SupportedKeyTypes[],
+        site: SpecRecord.SupportedKeyTypes,
         performer?: SpecRecord.Performer,
-        meta?: Meta
       }
       export type Handler<V> = () => V
     }
-    export type invoke = <V = any>(handler: invoke.Handler<V>, options?: invoke.Options) => V
+    export type invoke = <V = any>(options: invoke.Options | undefined, handler: invoke.Handler<V>) => V
     export namespace invoke {
-      export type Handler<V> = (context: {
+      export type Options = {
+        performer?: SpecRecord.Performer,
+        site?: SpecRecord.SupportedKeyTypes,
+      }
+      export type Handler<V> = (context: Context) => V
+      export type Context = {
         setMeta: setMeta,
         withThisArg<T>(thisArg: T): T,
         withArgs<A extends any[]>(args: A): A,
-      }) => V
-
+      }
+    }
+    export type instantiate = <V = any>(options: instantiate.Options | undefined, hander: instantiate.Handler<V>) => any
+    export namespace instantiate {
       export type Options = {
         performer?: SpecRecord.Performer,
-        site?: SpecRecord.SupportedKeyTypes[],
+      }
+      export type Handler<V> = (context: Context) => V
+      export type Context = {
+        setMeta: setMeta,
+        withArgs<A extends any[]>(args: A): A,
       }
     }
   }
 
-  export type getSpy = <S>(subject: S, options?: getSpy.Options) => S
-
-  export namespace getSpy {
-    export type Options = {
-      /**
-       * Specifies the action mode fo the spy.
-       *
-       * If specified, this mode will be used instead of the one specified by the spy's plugin.
-       *
-       * This allows the current plugin to describe how the spy is being used in the current context.
-       */
-      profile?: SpecRecord.SubjectProfile,
-      /**
-       * Specifies where the spy is located from the current subject.
-       *
-       * This can only be specified when `getSpy()` is called in the plugin context.
-       *
-       * i.e. not within the `processArgument(s)` callbacks.
-       */
-      site?: SpecRecord.SupportedKeyTypes[]
-    }
-  }
-
-  export type DeclareOptions = {
-    performer?: SpecRecord.Performer
-  }
-
   export type StubContext = {
-    getProperty(site: SpecRecord.SupportedKeyTypes[]): any,
-    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
-    invoke(args: any[], options?: InvokeOptions): InvocationResponder,
+    getProperty: StubContext.getProperty,
+    invoke: StubContext.invoke,
     instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
+    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
+  }
+
+  export namespace StubContext {
+    export type getProperty = (options: getProperty.Options) => any
+    export namespace getProperty {
+      export type Options = {
+        site: SpecRecord.SupportedKeyTypes,
+        performer?: SpecRecord.Performer,
+      }
+    }
+    export type invoke = <V = any>(options: invoke.Options | undefined, handler?: invoke.Handler<V>) => V
+    export namespace invoke {
+      export type Options = {
+        performer?: SpecRecord.Performer,
+        site?: SpecRecord.SupportedKeyTypes,
+      }
+      export type Handler<V> = (context: {
+        meta: Meta | undefined,
+        value: V
+      }) => V
+    }
   }
 
   export type InvokeOptions = {
     performer?: SpecRecord.Performer,
-    site?: SpecRecord.SupportedKeyTypes[],
+    site?: SpecRecord.SupportedKeyTypes,
     meta?: Meta,
   }
 
@@ -177,5 +179,31 @@ export namespace SpecPlugin {
 
   export type ResolveOptions = {
     site?: Array<string | number>
+  }
+  export type getSpy = <S>(subject: S, options?: getSpy.Options) => S
+
+  export namespace getSpy {
+    export type Options = {
+      /**
+       * Specifies the action mode fo the spy.
+       *
+       * If specified, this mode will be used instead of the one specified by the spy's plugin.
+       *
+       * This allows the current plugin to describe how the spy is being used in the current context.
+       */
+      profile?: SpecRecord.SubjectProfile,
+      /**
+       * Specifies where the spy is located from the current subject.
+       *
+       * This can only be specified when `getSpy()` is called in the plugin context.
+       *
+       * i.e. not within the `processArgument(s)` callbacks.
+       */
+      site?: SpecRecord.SupportedKeyTypes
+    }
+  }
+
+  export type DeclareOptions = {
+    performer?: SpecRecord.Performer
   }
 }

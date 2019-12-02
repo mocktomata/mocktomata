@@ -4,7 +4,7 @@ import { JSONTypes, RequiredPick } from 'type-plus';
 import { log } from '../log';
 import { prettifyAction } from './prettifyAction';
 import { Recorder } from './recorder';
-import { SpecRecord } from './types';
+import { SpecRecord, Meta } from './types';
 
 export type ActionLoggingContext = {
   record: Pick<SpyRecord, 'getSubject'>,
@@ -21,7 +21,7 @@ export function logActionSetMeta({ ref, actionId }: Pick<Recorder.ActionState, '
 }
 
 export function logGetAction({ ref, refId, actionId, site }: RequiredPick<Recorder.ActionState, 'site'>, performer: SpecRecord.Performer) {
-  log.on(logLevels.debug, log => log(`${ref.plugin} <act:${actionId}> ${prettifyPerformer(performer)} access <ref:${refId}>.${site.join('.')}`))
+  log.on(logLevels.debug, log => log(`${ref.plugin} <act:${actionId}> ${prettifyPerformer(performer)} access <ref:${refId}>.${site}`))
 }
 
 export function logReturnAction(state: Pick<Recorder.ActionState, 'ref' | 'refId' | 'actionId'>, actionId: SpecRecord.ActionId, payload: any) {
@@ -44,8 +44,8 @@ export function logRecordingTimeout(timeout: number) {
   log.warn(`done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
 }
 
-export function logCreateStub({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SubjectProfile, meta?: JSONTypes) {
-  log.on(logLevels.debug, log => log(`${ref.plugin} create ${profile} stub <ref:${refId}>${meta ? `: ${tersify(meta)}` : ''}`))
+export function logCreateStub({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subjectOrMeta: any) {
+  log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${tersify(subjectOrMeta)}`))
 }
 
 export function logAutoInvokeAction(ref: SpecReference, refId: string, actionId: ActionId, args: any[]) {

@@ -5,17 +5,17 @@ import { isPromise } from './isPromise';
 export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rejected' }> = {
   name: 'promise',
   support: isPromise,
-  createSpy({ setMeta, getProperty }, subject) {
-    return getProperty(['then'], () => subject.then(
+  createSpy({ invoke }, subject) {
+    return invoke({ site: 'then', performer: 'plugin' }, ({ setMeta }) => subject.then(
       result => {
-        setMeta({ state: 'fulfilled' })
+        setMeta(true)
         return result
       },
       err => {
-        setMeta({ state: 'rejected' })
+        setMeta(false)
         throw err
       }
-    ), { mode: 'autonomous' /* or plugin-invoked? */ })
+    ))
     // const spy = subject.then(
     //   result => {
     //     return call.returns(result, {
@@ -37,15 +37,12 @@ export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rej
   },
   createStub({ invoke }, _subject, _meta) {
     return new Promise((resolve, reject) => {
-      const call = invoke([], { site: ['then'] })
-      call.getResultAsync().then(result => {
-        if (result.type === 'return') {
-          if (result.meta!.state === 'fulfilled') {
-            resolve(call.returns(result.value))
-          }
-          else {
-            reject(call.returns(result.value))
-          }
+      return invoke({ site: 'then', performer: 'plugin' }, ({ meta, value }) => {
+        if (meta) {
+          resolve(value)
+        }
+        else {
+          reject(value)
         }
       })
     })

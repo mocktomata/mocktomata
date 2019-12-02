@@ -1,20 +1,20 @@
-import { SpecReference, ReferenceSource } from './types';
+import { SpecRecord } from './types'
 
-export function referenceMismatch(actual: SpecReference, expected: SpecReference) {
+export function referenceMismatch(actual: SpecRecord.Reference, expected: SpecRecord.Reference) {
   return !(actual.plugin === expected.plugin && !sourceMismatch(actual.source, expected.source))
 }
 
-function sourceMismatch(actual: ReferenceSource | undefined, expected: ReferenceSource | undefined) {
+function sourceMismatch(actual: SpecRecord.ReferenceSource | undefined, expected: SpecRecord.ReferenceSource | undefined) {
   if (actual === undefined) {
     return expected !== undefined
   }
   return expected === undefined ||
-    actual.ref !== expected.ref ||
+    actual.actionId !== expected.actionId ||
     siteMismatch(actual.site, expected.site)
 }
 
-export function siteMismatch(actual: Array<string | number> | undefined, expected: Array<string | number> | undefined) {
-  return arrayMismatch(actual, expected)
+export function siteMismatch(actual: SpecRecord.SupportedKeyTypes | undefined, expected: SpecRecord.SupportedKeyTypes | undefined) {
+  return actual === expected
 }
 
 export function arrayMismatch(actual: any[] | undefined, expected: any[] | undefined) {

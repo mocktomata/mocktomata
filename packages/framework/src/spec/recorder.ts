@@ -1,14 +1,14 @@
 import { logLevels } from 'standard-log';
 import { tersify } from 'tersify';
-import { JSONTypes, PartialPick, required } from 'type-plus';
+import { PartialPick, required } from 'type-plus';
 import { notDefined } from '../constants';
 import { log } from '../log';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { findPlugin } from './findPlugin';
-import { logAction, logCreateSpy, logGetAction, logRecordingTimeout, logReturnAction, logThrowsAction, logActionSetMeta } from './logs';
+import { logAction, logCreateSpy, logGetAction, logRecordingTimeout, logReturnAction, logThrowsAction } from './logs';
 import { createSpecRecordBuilder, SpecRecorderBuilder } from './record';
 import { getDefaultPerformer } from './subjectProfile';
-import { SpecOptions, SpecPlugin, SpecRecord } from './types';
+import { Meta, SpecOptions, SpecPlugin, SpecRecord } from './types';
 
 export namespace Recorder {
   export type Context<S = State> = {
@@ -25,7 +25,7 @@ export namespace Recorder {
 
   export type ActionState = State & {
     actionId: SpecRecord.ActionId,
-    site?: SpecRecord.SupportedKeyTypes[]
+    site?: SpecRecord.SupportedKeyTypes
   }
 }
 
@@ -51,15 +51,16 @@ function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.ActionState
   // so `context.state` will always be defined in this line.
   const profile = options.profile || context.state!.ref.profile
 
+  const site = options.site || context.state?.site
   // Possible sources:
   // spec subject: undefined
-  // getProperty on object/function/class/instance.promise: { ref: getId, site: [propertyName] }
-  // getProperty on complex plugin: { ref: getId, site: [...propPath] }
-  // invoke argument: { ref: invokeId, site: [argIndex] }
-  // invoke return: { ref: returnId }
-  // invoke throw: { ref: throwId }
-  // instantiate argument: { ref: instantiateId, site: [argIndex] }
-  const source = context.state ? { ref: context.state.actionId, site: options.site } : undefined
+  // getProperty on object/function/class/instance.promise: { actionId: getId, site: [propertyName] }
+  // getProperty on complex plugin: { actionId: getId, site: [...propPath] }
+  // invoke argument: { actionId: invokeId, site: [argIndex] }
+  // invoke return: { actionId: returnId }
+  // invoke throw: { actionId: throwId }
+  // instantiate argument: { actionId: instantiateId, site: [argIndex] }
+  const source = context.state ? { actionId: context.state.actionId, site } : undefined
   const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
   const refId = context.record.addRef(ref)
   const state = { ref, refId, spyOptions: [] }
@@ -74,14 +75,14 @@ function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContex
     setSpyOptions: (subject, options) => setSpyOptions(context, subject, options),
     setMeta: meta => setMeta(context, meta),
     getProperty: (options, handler) => getProperty(context, options, handler),
-    invoke: (handler, options = {}) => invoke(context, handler, options),
-    instantiate: (args, instanceOptions = {}) => instanceRecorder(context, args, instanceOptions)
+    invoke: (options, handler) => invoke(context, options, handler),
+    instantiate: (options, handler) => instantiate(context, options, handler)
   }
 }
 
 function getProperty<V>(
   context: Recorder.Context,
-  { site, performer, meta }: SpecPlugin.SpyContext.getProperty.Options,
+  { site, performer }: SpecPlugin.SpyContext.getProperty.Options,
   handler: SpecPlugin.SpyContext.getProperty.Handler<V>
 ): V {
   const { record, timeTracker, state } = context
@@ -92,19 +93,19 @@ function getProperty<V>(
     performer,
     tick: timeTracker.elaspe(),
     site,
-    meta
   }
+
   const actionId = record.addAction(action)
 
-  const newContext = {
+  const getActionContext = {
     ...context,
     state: { ...context.state, actionId, site }
   }
-  logGetAction(newContext.state, performer)
+  logGetAction(getActionContext.state, performer)
 
   try {
     const result = handler()
-    const spy = getSpy(newContext, result, {})
+    const spy = getSpy(getActionContext, result, {})
     const refId = record.findRefId(spy)
     const returnAction: SpecRecord.ReturnAction = {
       type: 'return',
@@ -113,11 +114,11 @@ function getProperty<V>(
       payload: refId !== undefined ? refId : result,
     }
     const returnActionId = record.addAction(returnAction)
-    logReturnAction(newContext.state, returnActionId, returnAction.payload)
+    logReturnAction(getActionContext.state, returnActionId, returnAction.payload)
     return spy
   }
   catch (e) {
-    const spy = getSpy(newContext, e, {})
+    const spy = getSpy(getActionContext, e, {})
     const refId = record.findRefId(spy)
     const throwAction: SpecRecord.ThrowAction = {
       type: 'throw',
@@ -126,8 +127,8 @@ function getProperty<V>(
       payload: refId !== undefined ? refId : e,
     }
     const throwActionId = record.addAction(throwAction)
-    logThrowsAction(newContext.state, throwActionId, throwAction.payload)
-    return spy
+    logThrowsAction(getActionContext.state, throwActionId, throwAction.payload)
+    throw spy
   }
 }
 
@@ -135,7 +136,7 @@ function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlu
   context.state.spyOptions.push({ subject, options })
 }
 
-function setMeta<M extends JSONTypes>({ state }: Recorder.Context, meta: M) {
+function setMeta<M extends Meta>({ state }: Recorder.Context, meta: M) {
   const ref = state.ref
   state.ref.meta = meta
   log.on(logLevels.trace, () => `${ref.plugin} <ref:${state.refId}> set meta: ${tersify(meta)}`)
@@ -286,6 +287,9 @@ function invoke<V>(context: Recorder.Context, handler: SpecPlugin.invoke.Handler
 //   return value
 // }
 
-function instanceRecorder(context: Recorder.Context, args: any[], options: SpecPlugin.InstantiateOptions) {
+function instantiate(
+  context: Recorder.Context,
+  options: SpecPlugin.SpyContext.instantiate.Options | undefined,
+  handler: SpecPlugin.SpyContext.instantiate.Handler<any>) {
   return {} as any
 }

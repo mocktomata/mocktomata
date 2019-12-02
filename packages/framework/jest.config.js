@@ -4,6 +4,7 @@ module.exports = {
   ...base,
   'globals': {
     'ts-jest': {
+      babelConfig: true,
       'diagnostics': false,
       'tsConfig': {
         'module': 'esnext',

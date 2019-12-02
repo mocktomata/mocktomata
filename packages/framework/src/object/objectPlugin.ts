@@ -18,11 +18,11 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
 
     return new Proxy(meta.callable ? function () { } : {}, {
       apply(_, thisArg, args: any[] = []) {
-        return invoke(({ withThisArg, withArgs }) => subject.apply(withThisArg(thisArg), withArgs(args)))
+        return invoke(undefined, ({ withThisArg, withArgs }) => subject.apply(withThisArg(thisArg), withArgs(args)))
       },
       get(_, property: string) {
         if (!hasProperty(subject, property)) return undefined
-        return getProperty({ site: [property] }, () => subject[property])
+        return getProperty({ site: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
         return subject[property] = value
@@ -32,7 +32,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
   createStub: ({ getProperty, invoke }, _, meta) => {
     return new Proxy(meta.callable ? function () { } : {}, {
       apply: function (_target, thisArg, args: any[] = []) {
-        return invoke(({ withArgs, withThisArg, getResult }) => {
+        return invoke(undefined, ({ withArgs, withThisArg, getResult }) => {
           const spiedArgs = args ? args.map(arg => getSpy(arg, { mode: 'autonomous' })) : []
           withArgs(spiedArgs)
           withThisArg(thisArg)
@@ -45,7 +45,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
         })
       },
       get(_, property: string) {
-        return getProperty([property])
+        return getProperty({ site: property })
       }
     })
   }
