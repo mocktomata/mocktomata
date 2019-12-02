@@ -4,7 +4,7 @@ import { notDefined } from '../constants';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, NoSupportedPlugin, PluginNotFound, ReferenceMismatch } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
-import { logAction, logCreateStub, logRecordingTimeout, logGetAction, logReturnAction } from './logs';
+import { logAction, logCreateStub, logRecordingTimeout, logGetAction, logReturnAction, logThrowsAction } from './logs';
 import { assertActionType, createSpecRecordValidator, SpecRecordValidator } from './record';
 import { Recorder } from './recorder';
 import { getDefaultPerformer } from './subjectProfile';
@@ -142,22 +142,38 @@ function getProperty(
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
+  let result = resultAction.payload
   if (typeof resultAction.payload === 'string') {
-    const ref = record.findRef(resultAction.payload)!
+    const ref = record.getRef(resultAction.payload)!
     if (ref.testDouble === notDefined) {
       buildTestDouble(context, ref)
     }
 
-    logReturnAction(newState, resultActionId, ref.subject !== notDefined ? ref.subject : ref.meta)
-    return ref.testDouble
+    result = ref.testDouble
   }
 
-  logReturnAction(newState, resultActionId, resultAction.payload)
-  return resultAction.payload
+  if (resultAction.type === 'return') {
+    logReturnAction(newState, resultActionId, resultAction.payload)
+    return result
+  }
+  else {
+    logThrowsAction(newState, resultActionId, resultAction.payload)
+    throw result
+  }
 }
 
-function buildTestDouble(context: Simulator.COntext, ref: SpecRecord.Reference) {
+function buildTestDouble(context: Simulator.Context, ref: SpecRecord.Reference) {
+  const { record } = context
+  const plugin = getPlugin(ref.plugin)
+  const profile = ref.profile
+  const subject = ref.subject
+  const refId = record.getRefId(ref)
+  const state = { ref, refId, spyOptions: [] }
+  logCreateStub(state, profile, subject !== notDefined ? subject : ref.meta)
 
+  // const circularRefs: CircularReference[] = []
+  ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
+  // fixCircularReferences(record, refId, circularRefs)
 }
 
 function resolve(context: Simulator.Context, refIdOrValue: any, options: SpecPlugin.ResolveOptions) {

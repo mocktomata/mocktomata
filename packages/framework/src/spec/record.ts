@@ -90,7 +90,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
       return loaded.actions.some(a => a.type === 'get' && a.refId === refId && a.site === 'then')
     },
 
-    getExpectedResultAction: (actionId: SpecRecord.ActionId) => loaded.actions.find(a => a.type == 'return' || a.type === 'throw' && a.actionId === actionId) as SpecRecord.ResultActions | undefined,
+    getExpectedResultAction: (actionId: SpecRecord.ActionId) => loaded.actions.find(a => (a.type == 'return' || a.type === 'throw') && a.actionId === actionId) as SpecRecord.ResultActions | undefined,
     addAction: (action: SpecRecord.Action) => {
       return addAction(actions, action)
     },
