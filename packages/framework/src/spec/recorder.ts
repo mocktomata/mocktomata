@@ -3,31 +3,13 @@ import { tersify } from 'tersify';
 import { PartialPick, required } from 'type-plus';
 import { notDefined } from '../constants';
 import { log } from '../log';
-import { createTimeTracker, TimeTracker } from './createTimeTracker';
+import { createTimeTracker } from './createTimeTracker';
 import { findPlugin } from './findPlugin';
-import { logAction, logCreateSpy, logGetAction, logRecordingTimeout, logReturnAction, logThrowsAction } from './logs';
-import { createSpecRecordBuilder, SpecRecorderBuilder } from './record';
+import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
+import { createSpecRecordBuilder } from './record';
 import { getDefaultPerformer } from './subjectProfile';
 import { Meta, SpecOptions, SpecPlugin, SpecRecord } from './types';
-
-export namespace Recorder {
-  export type Context<S = State> = {
-    timeTracker: TimeTracker,
-    record: SpecRecorderBuilder,
-    state: S
-  }
-
-  export type State = {
-    ref: SpecRecord.Reference,
-    refId: SpecRecord.ReferenceId,
-    spyOptions: Array<{ subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options }>,
-  }
-
-  export type ActionState = State & {
-    actionId: SpecRecord.ActionId,
-    site?: SpecRecord.SupportedKeyTypes
-  }
-}
+import { Recorder } from './types-internal';
 
 export function createRecorder(specName: string, options: SpecOptions) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
@@ -41,7 +23,7 @@ export function createRecorder(specName: string, options: SpecOptions) {
   }
 }
 
-function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.ActionState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
+function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.CauseActionsState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
   const plugin = findPlugin(subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
   // istanbul ignore next
@@ -82,7 +64,7 @@ function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContex
 
 function getProperty<V>(
   context: Recorder.Context,
-  { site, performer }: SpecPlugin.SpyContext.getProperty.Options,
+  { key, performer }: SpecPlugin.SpyContext.getProperty.Options,
   handler: SpecPlugin.SpyContext.getProperty.Handler<V>
 ): V {
   const { record, timeTracker, state } = context
@@ -92,44 +74,18 @@ function getProperty<V>(
     refId: state.refId,
     performer,
     tick: timeTracker.elaspe(),
-    site,
+    key,
   }
 
   const actionId = record.addAction(action)
 
   const getActionContext = {
     ...context,
-    state: { ...context.state, actionId, site }
+    state: { ...context.state, actionId, site: { type: 'property' as const, key } }
   }
-  logGetAction(getActionContext.state, performer)
+  logAction(getActionContext.state, actionId, action)
 
-  try {
-    const result = handler()
-    const spy = getSpy(getActionContext, result, {})
-    const refId = record.findRefId(spy)
-    const returnAction: SpecRecord.ReturnAction = {
-      type: 'return',
-      actionId,
-      tick: timeTracker.elaspe(),
-      payload: refId !== undefined ? refId : result,
-    }
-    const returnActionId = record.addAction(returnAction)
-    logReturnAction(getActionContext.state, returnActionId, returnAction.payload)
-    return spy
-  }
-  catch (e) {
-    const spy = getSpy(getActionContext, e, {})
-    const refId = record.findRefId(spy)
-    const throwAction: SpecRecord.ThrowAction = {
-      type: 'throw',
-      actionId,
-      tick: timeTracker.elaspe(),
-      payload: refId !== undefined ? refId : e,
-    }
-    const throwActionId = record.addAction(throwAction)
-    logThrowsAction(getActionContext.state, throwActionId, throwAction.payload)
-    throw spy
-  }
+  return handleResult(getActionContext, actionId, handler)
 }
 
 function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options) {
@@ -143,7 +99,7 @@ function setMeta<M extends Meta>({ state }: Recorder.Context, meta: M) {
   return meta
 }
 
-export function getSpy<S>(context: Recorder.Context<Recorder.ActionState>, subject: S, options: SpecPlugin.getSpy.Options) {
+export function getSpy<S>(context: Recorder.Context<Recorder.CauseActionsState>, subject: S, options: { site: SpecRecord.Site, profile?: SpecRecord.SubjectProfile }) {
   const { record, state } = context
   const ref = record.findRef(subject)
   if (ref) {
@@ -161,15 +117,21 @@ export function getSpy<S>(context: Recorder.Context<Recorder.ActionState>, subje
   return createSpy({ ...context, state: required(state, { site }) }, subject, { profile }) || subject
 }
 
-
-
-function invoke<V>(context: Recorder.Context, handler: SpecPlugin.invoke.Handler<V>, options: SpecPlugin.invoke.Options) {
+function invoke<V, T, A extends any[]>(
+  context: Recorder.Context,
+  { thisArg, args, performer }: SpecPlugin.SpyContext.invoke.Options<T, A>,
+  handler: SpecPlugin.SpyContext.invoke.Handler<V, T, A>) {
   const { record, timeTracker, state } = context
 
-  const performer = options.performer || getDefaultPerformer(state.ref.profile)
-  const payload: any[] = []
-  const subjects: any[] = []
-  const action: SpecRecord.InvokeAction = { type: 'invoke', ref: state.refId, tick: timeTracker.elaspe(), payload, performer }
+  performer = performer || getDefaultPerformer(state.ref.profile)
+  const action: SpecRecord.InvokeAction = {
+    type: 'invoke',
+    refId: state.refId,
+    performer,
+    thisArg: notDefined,
+    payload: [],
+    tick: timeTracker.elaspe(),
+  }
   const actionId = record.addAction(action)
 
   const newContext = {
@@ -177,26 +139,54 @@ function invoke<V>(context: Recorder.Context, handler: SpecPlugin.invoke.Handler
     state: { ...context.state, actionId }
   }
 
-  const result = handler({
-    withArgs: args => args.map(arg => {
-      const ref = record.findRef(arg)
-      if (ref) {
-        payload.push(record.getRefId(ref))
-        subjects.push(ref.subject)
-      }
-      else {
-        payload.push(arg)
-        subjects.push(arg)
-      }
-      return arg
-    }) as typeof args,
-    // TODO: support scope
-    withThisArg: arg => arg,
+  const spiedThisArg = getSpy(newContext, thisArg, { site: { type: 'this' } })
+  action.thisArg = record.findRefId(spiedThisArg) || thisArg
+
+  const spiedArgs = args.map((arg, i) => {
+    const spiedArg = getSpy(newContext, arg, { site: { type: 'property', key: i } })
+    action.payload.push(record.findRefId(spiedArg) || arg)
+    return spiedArg
   })
 
-  logAction(newContext.state, actionId, { ...action, payload: subjects })
+  logAction(newContext.state, actionId, action)
 
-  return result
+  return handleResult(newContext, actionId, () => handler({
+    // TODO: support scope
+    thisArg: action.thisArg,
+    args: spiedArgs as A,
+  }))
+}
+
+function handleResult(context: Recorder.Context<Recorder.CauseActionsState>, actionId: SpecRecord.ActionId, handler: () => any) {
+  const { record, timeTracker } = context
+
+  try {
+    const result = handler()
+    const spy = getSpy(context, result, { site: { type: 'result' } })
+    const refId = record.findRefId(spy)
+    const returnAction: SpecRecord.ReturnAction = {
+      type: 'return',
+      actionId,
+      tick: timeTracker.elaspe(),
+      payload: refId !== undefined ? refId : result,
+    }
+    const returnActionId = record.addAction(returnAction)
+    logAction(context.state, returnActionId, returnAction)
+    return spy
+  }
+  catch (e) {
+    const spy = getSpy(context, e, { site: { type: 'result' } })
+    const refId = record.findRefId(spy)
+    const throwAction: SpecRecord.ThrowAction = {
+      type: 'throw',
+      actionId,
+      tick: timeTracker.elaspe(),
+      payload: refId !== undefined ? refId : e,
+    }
+    const throwActionId = record.addAction(throwAction)
+    logAction(context.state, throwActionId, throwAction)
+    throw spy
+  }
 }
 
 // function getPropertyOld<P>(context: Recorder.Context, property: SpecRecord.SupportedKeyTypes, value: P, _options: SpecPlugin.GetPropertyOptions) {

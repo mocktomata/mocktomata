@@ -1,8 +1,8 @@
 import { tersify } from 'tersify';
 import { MocktomataError } from '../errors';
 import { prettifyAction } from './prettifyAction';
-import { Recorder } from './recorder';
 import { SpecRecord } from './types';
+import { Recorder } from './types-internal';
 
 export class SpecIDCannotBeEmpty extends MocktomataError {
   // istanbul ignore next
@@ -39,7 +39,7 @@ export class NoSupportedPlugin extends MocktomataError {
 }
 
 export class PluginsNotLoaded extends MocktomataError {
-  constructor(public specName: string, public plugins: string[]){
+  constructor(public specName: string, public plugins: string[]) {
     super(`The following plugins are usec in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`)
   }
 }
@@ -86,19 +86,19 @@ export class ExtraReference extends MocktomataError {
 export type MismatchActionModel = Partial<SpecRecord.Action> & { plugin?: string }
 
 export class ExtraAction extends MocktomataError {
-  constructor(public specName: string, state: Pick<Recorder.ActionState, 'ref' | 'actionId'>, public actionId: number, public action: SpecRecord.Action) {
-    super(`Recorded data for '${specName}' does not expect ${prettifyAction(state, actionId, action)}`)
+  constructor(public specName: string, public state: Recorder.State, public actionId: number, public action: SpecRecord.Action) {
+    super(`Recorded data for '${specName}' does not expect action ${actionId}: ${prettifyAction(state, actionId, action)}`)
   }
 }
 
 export class MissingResultAction extends MocktomataError {
-  constructor(public specName: string, state: Pick<Recorder.ActionState, 'ref' | 'actionId'>, public actionId: number, public action: SpecRecord.Action) {
+  constructor(public specName: string, state: Recorder.State, public actionId: number, public action: SpecRecord.Action) {
     super(`Recorded data for '${specName}' does not have result recorded for ${prettifyAction(state, actionId, action)}\nDid you forget to wait for the result?`)
   }
 }
 
 export class ActionTypeMismatch extends MocktomataError {
-  constructor(public specName: string, state: Pick<Recorder.ActionState, 'ref' | 'actionId'>, public actionId: number, public action: SpecRecord.Action, public receivedType: string) {
+  constructor(public specName: string, state: Recorder.State, public actionId: number, public action: SpecRecord.Action, public receivedType: string) {
     super(`Recorded data for '${specName}' expecting ${prettifyAction(state, actionId, action)} but received a ${receivedType} action`)
   }
 }

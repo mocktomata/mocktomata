@@ -1,6 +1,9 @@
 import a from 'assertron'
-import { ExtraReference, PluginNotFound } from './errors'
+import { incubator } from '../incubator'
+import { ExtraReference, PluginsNotLoaded } from './errors'
 import { createSimulator } from './simulator'
+
+beforeAll(() => incubator.start({ target: 'es2015' }))
 
 test('create not expected stub throws', () => {
   const sim = createSimulator(
@@ -12,10 +15,8 @@ test('create not expected stub throws', () => {
 })
 
 test('simulate without plugin install throws', () => {
-  const sim = createSimulator(
+  a.throws(() => createSimulator(
     'no plugin',
     { refs: [{ plugin: 'not-installed', profile: 'target' }], actions: [] },
-    { timeout: 10 })
-
-  a.throws(() => sim.createStub({}), PluginNotFound)
+    { timeout: 10 }), PluginsNotLoaded)
 })

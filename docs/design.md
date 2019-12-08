@@ -12,11 +12,17 @@ Subject profile descibes the behavior of the subject.
   - get: `user`
     - result: `target`
   - invoke: `user`
+    - thisArg: `input`
     - arguments: `input`
     - result: `output`
   - instantiate: `user`
     - arguments: `input`
     - result: `output`
+
+Since the source of `target` is `input`,
+theoretically it is possible to make the system more resilient by executing actions when they are not recorded,
+so that minor changes to the code will not break the test,
+it is not a good idea because `target` is what we want to mock and allowing this could mean making unintended calls to remote services.
 
 `input` are inputs comes from the user.
 For example, arguments when invoking functions,
@@ -28,10 +34,11 @@ or return values of callbacks.
   - get: `mockto`
     - result: `input`
   - invoke: `mockto`
-    - arguments: `output`
+    - thisArg: `output` or `target` (depends)
+    - arguments: `output` (depends)
     - result: `input`
   - instantiate: `mockto`
-    - arguments: `output`
+    - arguments: `output` (depends)
     - result: `input`
 
 `output` are subjects that is recorded and recreated during simulation.
@@ -42,10 +49,11 @@ or return values of callbacks.
   - get: `user`
     - result: `output`
   - invoke: `user`
-    - arguments: `input`
+    - thisArg: `input` (depends)
+    - arguments: `input` (depends)
     - result: `output`
   - instantiate: `user`
-    - arguments: `input`
+    - arguments: `input` (depends)
     - result: `output`
 - special cases:
   - `promosePlugin` will do an `invoke` and override the performer as `plugin`

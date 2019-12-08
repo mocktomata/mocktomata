@@ -27,7 +27,7 @@ export namespace SpecRecord {
 
   export type ReferenceSource = {
     actionId: ActionId,
-    site: SupportedKeyTypes | undefined
+    site: Site | undefined
   }
 
   /**
@@ -40,13 +40,20 @@ export namespace SpecRecord {
 
   export type CauseActions = GetAction | InvokeAction | InstantiateAction
   export type ResultActions = ReturnAction | ThrowAction
+  export type Site = ThisSite | ResultSite | PropertySite
+  export type ThisSite = { type: 'this' }
+  export type PropertySite = {
+    type: 'property',
+    key: SupportedKeyTypes
+  }
+  export type ResultSite = { type: 'result' }
 
   export type GetAction = {
     type: 'get',
     refId: ReferenceId,
     performer: Performer,
     tick: number,
-    site: SupportedKeyTypes,
+    key: SupportedKeyTypes,
   }
 
   export type InstantiateAction = {
@@ -64,8 +71,9 @@ export namespace SpecRecord {
     refId: ReferenceId,
     performer: Performer,
     tick: number,
+    thisArg: any,
     payload: any[],
-    site?: SupportedKeyTypes,
+    site?: Site,
     meta?: Meta,
   }
 

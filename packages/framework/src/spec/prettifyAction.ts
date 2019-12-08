@@ -1,5 +1,5 @@
 import { tersify } from 'tersify';
-import { Recorder } from './recorder';
+import { Recorder } from './types-internal';
 import { SpecRecord } from './types';
 
 export namespace prettifyAction {
@@ -12,14 +12,31 @@ export namespace prettifyAction {
   }
 }
 
-export function prettifyAction(state: Pick<Recorder.ActionState, 'ref' | 'actionId'>, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
+export function prettifyAction(state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
   switch (action.type) {
     case 'get':
-      return `${state.ref.plugin} get <act:${actionId}>: <ref:${action.ref}>.${action.site.join('.')}${action.payload === undefined ? '' : ` -> ${tersify(action.payload)}`}`
-    case 'invoke':
-      return `${state.ref.plugin} invoke <act:${actionId}>: <ref:${action.ref}>(${action.payload.map(arg => tersify(arg)).join(',')})`
+      return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} access <ref:${state.refId}>.${action.key}`
+    case 'invoke': {
+      const argsStr = action.payload.length === 0 ?
+        '' :
+        `, ${action.payload.map(tersifyValue).join(', ')}`
+      return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} invoke <ref:${state.refId}>(this:${tersifyValue(action.thisArg)}${argsStr})`
+    }
     case 'return':
+      return `${state.ref.plugin} <act:${actionId}> <ref:${state.refId} act:${(state as Recorder.CauseActionsState).actionId}> -> ${typeof action.payload === 'string' ? `<ref:${action.payload}>` : tersify(action.payload)}`
     case 'throw':
-      return `${state.ref.plugin} ${action.type} <act:${actionId}>: <ref:${action.ref} act:${actionId}> -> ${tersify(action.payload)}`
+      return `${state.ref.plugin} <act:${actionId}> <ref:${state.refId} act:${(state as Recorder.CauseActionsState).actionId}> throws ${typeof action.payload === 'string' ? `<ref:${action.payload}>` : tersify(action.payload)}`
   }
+}
+
+function prettifyPerformer(performer: SpecRecord.Performer) {
+  switch (performer) {
+    case 'user': return 'you'
+    case 'mockto': return 'I'
+    default: return performer
+  }
+}
+
+function tersifyValue(value: any) {
+  return typeof value === 'string' ? `<ref:${value}>` : value
 }

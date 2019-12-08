@@ -92,6 +92,7 @@ describe('object', () => {
       await spec.done()
     })
   })
+
   incubator.duo('set primitive property', (title, spec) => {
     test(title, async () => {
       const subject = await spec({ a: 1 })
@@ -102,6 +103,7 @@ describe('object', () => {
       await spec.done()
     })
   })
+
   incubator.duo('update primitive property', (title, spec) => {
     test(title, async () => {
       const subject = await spec({ a: 1 })
@@ -120,11 +122,10 @@ describe('object', () => {
     })
   })
 
-  // TODO: add test for change property type from value to function
+  test.todo('handles property changes type from value to function')
 
-  incubator.save('primitive method', (title, spec) => {
-    test.skip(title, async () => {
-      spec.enableLog()
+  incubator.duo('primitive method', (title, spec) => {
+    test(title, async () => {
       const subject = await spec({ echo: (x: number) => x })
       const actual = subject.echo(3)
 
@@ -134,8 +135,7 @@ describe('object', () => {
     })
   })
   incubator.duo('primitive method throws error', (title, spec) => {
-    test.skip(title, async () => {
-      spec.enableLog()
+    test(title, async () => {
       const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
       const err = a.throws(() => subject.echo('abc'))
 
@@ -144,6 +144,23 @@ describe('object', () => {
       await spec.done()
     })
   })
+
+  incubator.sequence('object property is mocked', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save({ a: { do() { return 1 } } })
+
+      expect(spy.a.do()).toBe(1)
+
+      await save.done()
+
+      const stub = await simulate({ a: { do() { throw new Error('should not reach') } } })
+
+      expect(stub.a.do()).toBe(1)
+
+      await simulate.done()
+    })
+  })
+
   incubator.duo('callback method success', (title, spec) => {
     test.skip(title, async () => {
       const subject = await spec({

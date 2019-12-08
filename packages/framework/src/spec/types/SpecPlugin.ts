@@ -67,27 +67,30 @@ export namespace SpecPlugin {
     export type getProperty = <V = any>(options: getProperty.Options, handler: getProperty.Handler<V>) => V
     export namespace getProperty {
       export type Options = {
-        site: SpecRecord.SupportedKeyTypes,
+        key: SpecRecord.SupportedKeyTypes,
         performer?: SpecRecord.Performer,
       }
       export type Handler<V> = () => V
     }
-    export type invoke = <V = any>(options: invoke.Options | undefined, handler: invoke.Handler<V>) => V
+    export type invoke = <V = any, T = any, A extends any[] = any[]>(options: invoke.Options<T, A>, handler: invoke.Handler<V, T, A>) => V
     export namespace invoke {
-      export type Options = {
+      export type Options<T, A extends any[]> = {
+        thisArg: T,
+        args: A,
         performer?: SpecRecord.Performer,
         site?: SpecRecord.SupportedKeyTypes,
       }
-      export type Handler<V> = (context: Context) => V
-      export type Context = {
-        setMeta: setMeta,
-        withThisArg<T>(thisArg: T): T,
-        withArgs<A extends any[]>(args: A): A,
+      export type Handler<V, T, A> = (context: Context<T, A>) => V
+      export type Context<T, A> = {
+        thisArg: T,
+        args: A,
+        // setMeta: setMeta,
       }
     }
     export type instantiate = <V = any>(options: instantiate.Options | undefined, hander: instantiate.Handler<V>) => any
     export namespace instantiate {
       export type Options = {
+        args: any[],
         performer?: SpecRecord.Performer,
       }
       export type Handler<V> = (context: Context) => V
@@ -101,8 +104,7 @@ export namespace SpecPlugin {
   export type StubContext = {
     getProperty: StubContext.getProperty,
     invoke: StubContext.invoke,
-    instantiate(args: any[], options?: InstantiateOptions): InstantiationResponder,
-    resolve<V>(refIdOrValue: V, options?: ResolveOptions): V,
+    instantiate: StubContext.instantiate,
   }
 
   export namespace StubContext {
@@ -113,16 +115,22 @@ export namespace SpecPlugin {
         performer?: SpecRecord.Performer,
       }
     }
-    export type invoke = <V = any>(options: invoke.Options | undefined, handler?: invoke.Handler<V>) => V
+    export type invoke = (options: invoke.Options) => any
     export namespace invoke {
       export type Options = {
+        thisArg: any,
+        args: any[],
         performer?: SpecRecord.Performer,
         site?: SpecRecord.SupportedKeyTypes,
       }
-      export type Handler<V> = (context: {
-        meta: Meta | undefined,
-        value: V
-      }) => V
+    }
+
+    export type instantiate = (options: instantiate.Options) => any
+    export namespace instantiate {
+      export type Options = {
+        args: any[],
+        performer?: SpecRecord.Performer,
+      }
     }
   }
 
@@ -199,7 +207,7 @@ export namespace SpecPlugin {
        *
        * i.e. not within the `processArgument(s)` callbacks.
        */
-      site?: SpecRecord.SupportedKeyTypes
+      site?: SpecRecord.Site
     }
   }
 

@@ -1,10 +1,9 @@
 import { logLevels } from 'standard-log';
 import { tersify } from 'tersify';
-import { JSONTypes, RequiredPick } from 'type-plus';
 import { log } from '../log';
 import { prettifyAction } from './prettifyAction';
-import { Recorder } from './recorder';
-import { SpecRecord, Meta } from './types';
+import { SpecRecord } from './types';
+import { Recorder } from './types-internal';
 
 export type ActionLoggingContext = {
   record: Pick<SpyRecord, 'getSubject'>,
@@ -16,27 +15,15 @@ export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId
   log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject)}`))
 }
 
-export function logActionSetMeta({ ref, actionId }: Pick<Recorder.ActionState, 'ref' | 'actionId'>, meta: any) {
+export function logActionSetMeta({ ref, actionId }: Pick<Recorder.CauseActionsState, 'ref' | 'actionId'>, meta: any) {
   log.on(logLevels.trace, () => `${ref.plugin} <act:${actionId}> set meta: ${tersify(meta)}`)
 }
 
-export function logGetAction({ ref, refId, actionId, site }: RequiredPick<Recorder.ActionState, 'site'>, performer: SpecRecord.Performer) {
-  log.on(logLevels.debug, log => log(`${ref.plugin} <act:${actionId}> ${prettifyPerformer(performer)} access <ref:${refId}>.${site}`))
-}
-
-export function logReturnAction(state: Pick<Recorder.ActionState, 'ref' | 'refId' | 'actionId'>, actionId: SpecRecord.ActionId, payload: any) {
-  log.on(logLevels.debug, log => log(`${state.ref.plugin} <act:${actionId}> <ref:${state.refId} act:${state.actionId}> -> ${typeof payload === 'string' ? `<ref:${payload}>` : tersify(payload)}`))
-}
-
-export function logThrowsAction(state: Pick<Recorder.ActionState, 'ref' | 'refId' | 'actionId'>, actionId: SpecRecord.ActionId, payload: any) {
-  log.on(logLevels.debug, log => log(`${state.ref.plugin} <act:${actionId}> <ref:${state.refId} act:${state.actionId}> throws ${typeof payload === 'string' ? `<ref:${payload}>` : tersify(payload)}`))
-}
-
-export function logAction(state: Pick<Recorder.ActionState, 'ref' | 'actionId'>, actionId: ActionId, action: SpecAction) {
+export function logAction(state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
   log.on(logLevels.debug, () => prettifyAction(state, actionId, action))
 }
 
-export function logInstantiateAction({ record, plugin, id }: ActionLoggingContext, actionId: ActionId, args: any[]) {
+export function logInstantiateAction({ record, plugin, id }: ActionLoggingContext, actionId: SpecRecord.ActionId, args: any[]) {
   log.on(logLevels.debug, log => log(`${plugin} ref/action (${id}/${actionId}): instantiate with ${tersify(args)}\n${tersify(record.getSubject(id))}`))
 }
 
@@ -48,11 +35,11 @@ export function logCreateStub({ ref, refId }: Pick<Recorder.State, 'ref' | 'refI
   log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${tersify(subjectOrMeta)}`))
 }
 
-export function logAutoInvokeAction(ref: SpecReference, refId: string, actionId: ActionId, args: any[]) {
+export function logAutoInvokeAction(ref: SpecRecord.Reference, refId: string, actionId: SpecRecord.ActionId, args: any[]) {
   log.on(logLevels.debug, log => log(`${ref.plugin} ref/action (${refId}/${actionId}): auto invoke with ${tersify(args)}\n${tersify(ref.subject)}`))
 }
 
-export function logAutoGetAction(ref: SpecReference, refId: string, actionId: ActionId, name: string | number) {
+export function logAutoGetAction(ref: SpecRecord.Reference, refId: string, actionId: SpecRecord.ActionId, name: string | number) {
   log.on(logLevels.debug, log => log(`${ref.plugin} ref/action (${refId}/${actionId}): auto get ${typeof name === 'string' ? `'${name}'` : name}\n${tersify(ref.subject)}`))
 }
 
@@ -62,4 +49,8 @@ function prettifyPerformer(performer: SpecRecord.Performer) {
     case 'mockto': return 'I'
     default: return performer
   }
+}
+
+function tersifyValue(value: any) {
+  return typeof value === 'string' ? `<ref:${value}>` : value
 }

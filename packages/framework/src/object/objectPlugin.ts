@@ -18,11 +18,11 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
 
     return new Proxy(meta.callable ? function () { } : {}, {
       apply(_, thisArg, args: any[] = []) {
-        return invoke(undefined, ({ withThisArg, withArgs }) => subject.apply(withThisArg(thisArg), withArgs(args)))
+        return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
       },
       get(_, property: string) {
         if (!hasProperty(subject, property)) return undefined
-        return getProperty({ site: property }, () => subject[property])
+        return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
         return subject[property] = value
@@ -31,18 +31,8 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
   },
   createStub: ({ getProperty, invoke }, _, meta) => {
     return new Proxy(meta.callable ? function () { } : {}, {
-      apply: function (_target, thisArg, args: any[] = []) {
-        return invoke(undefined, ({ withArgs, withThisArg, getResult }) => {
-          const spiedArgs = args ? args.map(arg => getSpy(arg, { mode: 'autonomous' })) : []
-          withArgs(spiedArgs)
-          withThisArg(thisArg)
-          try {
-            return getSpy(getResult(), { mode: 'passive' })
-          }
-          catch (err) {
-            throw getSpy(err, { mode: 'passive' })
-          }
-        })
+      apply: function (_, thisArg, args: any[] = []) {
+        return invoke({ thisArg, args })
       },
       get(_, property: string) {
         return getProperty({ site: property })

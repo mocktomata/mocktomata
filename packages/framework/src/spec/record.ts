@@ -71,9 +71,11 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
       let ref = findRefBySubjectOrTestDouble(refs, value)
       if (ref) return ref
 
-      // plugin can be undefined only if through `createStub()`.
-      // assuming it willl prooperly throw error before calling `findRef()`
-      const plugin = findPlugin(value)!
+      const plugin = findPlugin(value)
+      if (!plugin) {
+        // `value` is primitive
+        return undefined
+      }
 
       ref = refs.find(r => r.plugin === plugin.name && !r.claimed)
       if (ref) {
@@ -87,7 +89,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
 
     hasExpectedGetThenAction: (refId: SpecRecord.ReferenceId) => {
-      return loaded.actions.some(a => a.type === 'get' && a.refId === refId && a.site === 'then')
+      return loaded.actions.some(a => a.type === 'get' && a.refId === refId && a.key === 'then')
     },
 
     getExpectedResultAction: (actionId: SpecRecord.ActionId) => loaded.actions.find(a => (a.type == 'return' || a.type === 'throw') && a.actionId === actionId) as SpecRecord.ResultActions | undefined,
@@ -99,13 +101,13 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     findNextExpectedGetAction: (
       refId: SpecRecord.ReferenceId,
       performer: SpecRecord.Performer,
-      site: SpecRecord.SupportedKeyTypes
+      key: SpecRecord.SupportedKeyTypes
     ) => {
       const getActions = loaded.actions.filter(a =>
         a.type === 'get' &&
         a.refId === refId &&
         a.performer === performer &&
-        a.site === site
+        a.key === key
       ) as SpecRecord.GetAction[]
 
       if (getActions.length === 0) return undefined
@@ -122,7 +124,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     getNextExpectedRef(): SpecRecord.Reference | undefined {
       return record.refs[refs.length]
     },
-    getNextExpectedAction(): SpecRecord.Action | undefined { return record.actions[actions.length] },
+    getNextExpectedAction(): SpecRecord.Action | undefined { return loaded.actions[actions.length] },
     getNextActionId() { return actions.length },
   }
 }
@@ -157,7 +159,7 @@ function findNextExpectedGetAction(
     a.type === 'get' &&
     a.refId === origRefId &&
     a.performer === performer &&
-    !siteMismatch(site, a.site)
+    !siteMismatch(site, a.key)
   ) as SpecRecord.GetAction[]
   const resultActions = getActions.map(a => getResultAction(loaded.actions, getActionId(loaded.actions, a)))
 
