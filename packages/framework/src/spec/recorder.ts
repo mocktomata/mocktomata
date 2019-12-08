@@ -52,7 +52,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.CauseAction
   return ref.testDouble
 }
 
-function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContext {
+export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContext {
   return {
     setSpyOptions: (subject, options) => setSpyOptions(context, subject, options),
     setMeta: meta => setMeta(context, meta),
@@ -85,7 +85,7 @@ function getProperty<V>(
   }
   logAction(getActionContext.state, actionId, action)
 
-  return handleResult(getActionContext, actionId, handler)
+  return handleResult(getActionContext, actionId, action.type, handler)
 }
 
 function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options) {
@@ -139,30 +139,60 @@ function invoke<V, T, A extends any[]>(
     state: { ...context.state, actionId }
   }
 
-  const spiedThisArg = getSpy(newContext, thisArg, { site: { type: 'this' } })
+  const spiedThisArg = getSpy(newContext, thisArg, {
+    // TODO: if performer is overridden, this might change
+    profile: getProfileForInvokeThis(state.ref.profile),
+    site: { type: 'this' }
+  })
   action.thisArg = record.findRefId(spiedThisArg) || thisArg
 
   const spiedArgs = args.map((arg, i) => {
-    const spiedArg = getSpy(newContext, arg, { site: { type: 'property', key: i } })
+    const spiedArg = getSpy(newContext, arg, {
+      profile: getProfileForInvokeArgument(state.ref.profile),
+      site: { type: 'property', key: i }
+    })
     action.payload.push(record.findRefId(spiedArg) || arg)
     return spiedArg
   })
 
   logAction(newContext.state, actionId, action)
 
-  return handleResult(newContext, actionId, () => handler({
+  return handleResult(newContext, actionId, action.type, () => handler({
     // TODO: support scope
     thisArg: action.thisArg,
     args: spiedArgs as A,
   }))
 }
 
-function handleResult(context: Recorder.Context<Recorder.CauseActionsState>, actionId: SpecRecord.ActionId, handler: () => any) {
+function getProfileForInvokeThis(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {
+  switch (parentProfile) {
+    case 'target': return 'input'
+    case 'input': return 'output'
+    case 'output': return 'input'
+  }
+}
+
+function getProfileForInvokeArgument(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {
+  switch (parentProfile) {
+    case 'target': return 'input'
+    case 'input': return 'output'
+    case 'output': return 'input'
+  }
+}
+
+function handleResult(
+  context: Recorder.Context<Recorder.CauseActionsState>,
+  actionId: SpecRecord.ActionId,
+  actionType: SpecRecord.CauseActions['type'],
+  handler: () => any) {
   const { record, timeTracker } = context
 
   try {
     const result = handler()
-    const spy = getSpy(context, result, { site: { type: 'result' } })
+    const spy = getSpy(context, result, {
+      profile: getProfileForInvokeResult(context.state.ref.profile, actionType),
+      site: { type: 'result' }
+    })
     const refId = record.findRefId(spy)
     const returnAction: SpecRecord.ReturnAction = {
       type: 'return',
@@ -189,6 +219,16 @@ function handleResult(context: Recorder.Context<Recorder.CauseActionsState>, act
   }
 }
 
+function getProfileForInvokeResult(
+  parentProfile: SpecRecord.SubjectProfile,
+  actionType: SpecRecord.CauseActions['type'],
+): SpecRecord.SubjectProfile {
+  switch (parentProfile) {
+    case 'target': return actionType === 'get' ? 'target' : 'output'
+    case 'input': return 'input'
+    case 'output': return 'output'
+  }
+}
 // function getPropertyOld<P>(context: Recorder.Context, property: SpecRecord.SupportedKeyTypes, value: P, _options: SpecPlugin.GetPropertyOptions) {
 //   const { record, state, timeTracker } = context
 //   const ref = record.findRef(value)

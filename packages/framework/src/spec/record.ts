@@ -4,6 +4,7 @@ import { ActionMismatch, ExtraReference, PluginsNotLoaded } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { SpecRecord } from './types';
 import { siteMismatch } from './validations';
+import { createConsoleLogReporter } from 'standard-log';
 
 export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecord.Reference[] = []
@@ -45,7 +46,7 @@ type ValidateRecord = {
   actions: Array<SpecRecord.Action & {}>,
 }
 
-type ValidateReference = SpecRecord.Reference & { claimed?: boolean }
+export type ValidateReference = SpecRecord.Reference & { claimed?: boolean }
 
 export function createSpecRecordValidator(specName: string, loaded: ValidateRecord) {
   assertPluginsLoaded(specName, loaded.refs)
@@ -64,7 +65,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     refs,
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
-    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
+    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id) as ValidateReference | undefined,
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
     addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
     findRef: (value: any) => {

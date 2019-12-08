@@ -2,14 +2,15 @@ import { PartialPick } from 'type-plus';
 import { notDefined } from '../constants';
 import { actionMatches } from './actionMatches';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
-import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, NoSupportedPlugin } from './errors';
+import { ActionMismatch, ActionTypeMismatch, ExtraReference, NoSupportedPlugin } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
-import { logAction, logCreateStub, logRecordingTimeout } from './logs';
-import { createSpecRecordValidator, SpecRecordValidator } from './record';
+import { logAction, logCreateStub, logRecordingTimeout, logCreateSpy } from './logs';
+import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
 import { getDefaultPerformer } from './subjectProfile';
 import { SpecOptions, SpecPlugin, SpecRecord } from './types';
 import { Recorder } from './types-internal';
 import { referenceMismatch } from './validations';
+import { createPluginSpyContext } from './recorder';
 
 export namespace Simulator {
   export type Context<S = Recorder.State> = {
@@ -146,18 +147,24 @@ function getProperty(
   }
 }
 
-function buildTestDouble(context: Simulator.Context, ref: SpecRecord.Reference) {
+function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const { record } = context
   const plugin = getPlugin(ref.plugin)
   const profile = ref.profile
   const subject = ref.subject
   const refId = record.getRefId(ref)
   const state = { ref, refId, spyOptions: [] }
-  logCreateStub(state, profile, subject !== notDefined ? subject : ref.meta)
-
-  // const circularRefs: CircularReference[] = []
-  ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
-  // fixCircularReferences(record, refId, circularRefs)
+  if (profile === 'input') {
+    logCreateSpy(state, profile, subject)
+    ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
+  }
+  else {
+    logCreateStub(state, profile, subject !== notDefined ? subject : ref.meta)
+    // const circularRefs: CircularReference[] = []
+    ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
+    // fixCircularReferences(record, refId, circularRefs)
+  }
+  ref.claimed = true
 }
 
 function invoke(context: Simulator.Context,
@@ -193,9 +200,12 @@ function invoke(context: Simulator.Context,
   }
   action.thisArg = record.getRefId(thisArgRef)
 
-  const spiedArgs = args.map(arg => {
+  args.map(arg => {
     const ref = record.findRef(arg)
     if (ref) {
+      if (ref.testDouble === notDefined) {
+        buildTestDouble(context, ref)
+      }
       action.payload.push(record.getRefId(ref))
     }
     else {
@@ -204,10 +214,11 @@ function invoke(context: Simulator.Context,
     return arg
   })
   logAction(newState, actionId, action)
-  if (state.ref.profile === 'input') {
-    // TODO: need to process next action?
-    return newState.ref.testDouble.apply(thisArg, spiedArgs)
-  }
+  // if (state.ref.profile === 'input') {
+  //   console.log('called??')
+  //   // TODO: need to process next action?
+  //   return newState.ref.testDouble.apply(thisArg, spiedArgs)
+  // }
 
   processNextAction(context)
 
@@ -282,7 +293,6 @@ function getResult(context: Simulator.Context<Recorder.CauseActionsState>, expec
   }
 }
 
-
 function processNextAction(context: Simulator.Context) {
   const { record } = context
   const nextAction = record.getNextExpectedAction()
@@ -304,6 +314,11 @@ function processNextAction(context: Simulator.Context) {
     if (action.performer !== 'mockto') return
 
     const ref = record.getRef(action.refId)
+    const thisArgRef = record.getRef(action.thisArg)!
+    if (thisArgRef.testDouble === notDefined) {
+
+      buildTestDouble(context, thisArgRef)
+    }
     const args = action.payload.map(arg => {
       if (typeof arg === 'string') {
         const ref = record.getRef(arg)
@@ -316,7 +331,7 @@ function processNextAction(context: Simulator.Context) {
         return arg
       }
     })
-    return ref?.testDouble.apply(ref.subject, args)
+    return ref?.testDouble.apply(thisArgRef.testDouble, args)
   }
 }
 

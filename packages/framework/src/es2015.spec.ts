@@ -162,7 +162,7 @@ describe('object', () => {
   })
 
   incubator.duo('callback method success', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec({
         inc(x: number, cb: (x: number) => void) {
           cb(x + 1)
@@ -180,32 +180,33 @@ describe('object', () => {
 
 describe('function', () => {
   incubator.duo('no input no result', (title, spec) => {
-    test.skip(title, async () => {
-      spec.enableLog()
+    test(title, async () => {
       const subject = await spec(() => { })
       expect(subject()).toBeUndefined()
 
       await spec.done()
       a.satisfies(await spec.getSpecRecord(), {
-        refs: [{ plugin: '@mocktomata/es2015/function', 'mode': 'passive' }],
-        actions: [{
-          type: 'invoke',
-          ref: '0',
-          payload: []
-        }]
+        refs: [
+          { 'plugin': '@mocktomata/es2015/object', 'profile': 'target', 'meta': { 'callable': true } },
+          { 'plugin': '@mocktomata/es2015/undefined', 'profile': 'input', 'source': { 'actionId': 0, 'site': { 'type': 'this' } } }
+        ],
+        actions: [
+          { 'type': 'invoke', 'refId': '0', 'performer': 'user', 'thisArg': '1', 'payload': [] },
+          { 'type': 'return', 'actionId': 0, 'payload': '1' }
+        ]
       })
     })
   })
   incubator.duo('string input no result', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec((_x: string) => { })
       expect(subject('abc')).toBeUndefined()
 
       await spec.done()
     })
   })
-  incubator.save('string input returns same string', (title, spec) => {
-    test.skip(title, async () => {
+  incubator.duo('string input returns same string', (title, spec) => {
+    test(title, async () => {
       const subject = await spec((x: string) => x)
       expect(subject('abc')).toEqual('abc')
 
@@ -213,7 +214,7 @@ describe('function', () => {
     })
   })
   incubator.duo('no input, string result', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(() => 'abc')
       const actual = subject()
       expect(actual).toBe('abc')
@@ -222,7 +223,7 @@ describe('function', () => {
     })
   })
   incubator.duo('undefined input, undefined result', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec((_a: any, _b: any) => undefined)
       const actual = subject(undefined, undefined)
       expect(actual).toBe(undefined)
@@ -230,7 +231,7 @@ describe('function', () => {
     })
   })
   incubator.duo('primitive inputs, simple result', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec((x: number, y: number) => x + y)
       const actual = subject(1, 2)
 

@@ -20,8 +20,11 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
       },
-      get(_, property: string) {
+      get(target: any, property: string) {
         if (!hasProperty(subject, property)) return undefined
+        if (meta.callable && property === 'apply') {
+          return target[property]
+        }
         return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
@@ -34,7 +37,10 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
       apply: function (_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args })
       },
-      get(_, property: string) {
+      get(target: any, property: string) {
+        if (meta.callable && property === 'apply') {
+          return target[property]
+        }
         return getProperty({ site: property })
       }
     })
