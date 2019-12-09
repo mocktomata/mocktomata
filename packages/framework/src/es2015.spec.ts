@@ -389,7 +389,7 @@ describe('function', () => {
     })
   })
   incubator.duo('synchronous callback success', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(synchronous.success)
 
       expect(synchronous.increment(subject, 3)).toBe(4)
@@ -398,7 +398,7 @@ describe('function', () => {
     })
   })
   incubator.duo('synchronous callback throws', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(synchronous.fail)
 
       const err = a.throws(() => synchronous.increment(subject, 3))
@@ -409,7 +409,7 @@ describe('function', () => {
     })
   })
   incubator.duo('recursive two calls success', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(recursive.success)
 
       const actual = await recursive.decrementToZero(subject, 2)
@@ -452,7 +452,7 @@ describe('function', () => {
     })
   })
   incubator.duo('function with array arguments', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', ['--version'])
 
@@ -463,7 +463,7 @@ describe('function', () => {
     })
   })
   incubator.duo('function with static prop', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const fn = Object.assign(function () { }, { a: 1 })
 
       const mock = await spec(fn)
@@ -478,7 +478,7 @@ describe('function', () => {
       return spec(() => expected)
     }
 
-    test.skip(title, async () => {
+    test(title, async () => {
       await scopingSpec(1).then(subject => expect(subject()).toBe(1))
       await scopingSpec(3).then(subject => expect(subject()).toBe(3))
       await spec.done()

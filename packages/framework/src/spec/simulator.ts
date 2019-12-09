@@ -4,13 +4,13 @@ import { actionMatches } from './actionMatches';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { ActionMismatch, ActionTypeMismatch, ExtraReference, NoSupportedPlugin } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
-import { logAction, logCreateStub, logRecordingTimeout, logCreateSpy } from './logs';
+import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs';
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
+import { createPluginSpyContext } from './recorder';
 import { getDefaultPerformer } from './subjectProfile';
-import { SpecOptions, SpecPlugin, SpecRecord, SpecPluginActivationContext } from './types';
+import { SpecOptions, SpecPlugin, SpecRecord } from './types';
 import { Recorder } from './types-internal';
 import { referenceMismatch } from './validations';
-import { createPluginSpyContext } from './recorder';
 
 export namespace Simulator {
   export type Context<S = Recorder.State> = {
