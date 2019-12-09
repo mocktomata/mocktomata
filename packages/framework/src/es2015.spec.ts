@@ -260,7 +260,7 @@ describe('function', () => {
     })
   })
   incubator.duo('throwing error', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(() => { throw new Error('failed') })
       const err = a.throws(() => subject())
 
@@ -270,7 +270,7 @@ describe('function', () => {
     })
   })
   incubator.duo('throwing custom error', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       class CustomError extends Error {
         constructor(message: string) {
           super(message)
@@ -290,7 +290,7 @@ describe('function', () => {
     })
   })
   incubator.duo('immediate invoke callback', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(simpleCallback.success)
       let actual
       subject(2, (_, result) => {
@@ -307,7 +307,7 @@ describe('function', () => {
   }
 
   incubator.duo('callback receiving undefined', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(echo)
       let actual: any
       subject(undefined, v => actual = v)
@@ -318,7 +318,7 @@ describe('function', () => {
   })
 
   incubator.duo('callback receiving null', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(echo)
       let actual: any
       subject(null, v => actual = v)
@@ -328,7 +328,7 @@ describe('function', () => {
     })
   })
   incubator.duo('immediate invoke throwing callback', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(simpleCallback.fail)
 
       const err = await a.throws(simpleCallback.increment(subject, 2))
@@ -339,7 +339,7 @@ describe('function', () => {
     })
   })
   incubator.duo('simple callback invoked multiple times', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(simpleCallback.success)
 
       expect(await simpleCallback.increment(subject, 2)).toBe(3)
