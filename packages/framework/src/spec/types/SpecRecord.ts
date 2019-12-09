@@ -36,9 +36,9 @@ export namespace SpecRecord {
    */
   export type SubjectProfile = 'target' | 'input' | 'output'
 
-  export type Action = GetAction | InvokeAction | InstantiateAction | ReturnAction | ThrowAction
+  export type Action = GetAction | SetAction | InvokeAction | InstantiateAction | ReturnAction | ThrowAction
 
-  export type CauseActions = GetAction | InvokeAction | InstantiateAction
+  export type CauseActions = GetAction | SetAction | InvokeAction | InstantiateAction
   export type ResultActions = ReturnAction | ThrowAction
   export type Site = ThisSite | ResultSite | PropertySite
   export type ThisSite = { type: 'this' }
@@ -54,6 +54,15 @@ export namespace SpecRecord {
     performer: Performer,
     tick: number,
     key: SupportedKeyTypes,
+  }
+
+  export type SetAction = {
+    type: 'set',
+    refId: ReferenceId,
+    performer: Performer,
+    tick: number,
+    key: SupportedKeyTypes,
+    value: any
   }
 
   export type InstantiateAction = {

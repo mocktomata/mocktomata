@@ -41,7 +41,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
         if (meta.callable && property === 'apply') {
           return target[property]
         }
-        return getProperty({ site: property })
+        return getProperty({ key: property })
       }
     })
   }

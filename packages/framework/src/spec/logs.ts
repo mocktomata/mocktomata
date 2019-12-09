@@ -42,15 +42,3 @@ export function logAutoInvokeAction(ref: SpecRecord.Reference, refId: string, ac
 export function logAutoGetAction(ref: SpecRecord.Reference, refId: string, actionId: SpecRecord.ActionId, name: string | number) {
   log.on(logLevels.debug, log => log(`${ref.plugin} ref/action (${refId}/${actionId}): auto get ${typeof name === 'string' ? `'${name}'` : name}\n${tersify(ref.subject)}`))
 }
-
-function prettifyPerformer(performer: SpecRecord.Performer) {
-  switch (performer) {
-    case 'user': return 'you'
-    case 'mockto': return 'I'
-    default: return performer
-  }
-}
-
-function tersifyValue(value: any) {
-  return typeof value === 'string' ? `<ref:${value}>` : value
-}

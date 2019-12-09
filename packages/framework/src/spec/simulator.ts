@@ -7,7 +7,7 @@ import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateStub, logRecordingTimeout, logCreateSpy } from './logs';
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
 import { getDefaultPerformer } from './subjectProfile';
-import { SpecOptions, SpecPlugin, SpecRecord } from './types';
+import { SpecOptions, SpecPlugin, SpecRecord, SpecPluginActivationContext } from './types';
 import { Recorder } from './types-internal';
 import { referenceMismatch } from './validations';
 import { createPluginSpyContext } from './recorder';
@@ -76,15 +76,34 @@ function createStub<S>(context: PartialPick<Simulator.Context<Recorder.CauseActi
 
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
   return {
-    getProperty: (options) => getProperty(context, options),
-    invoke: (options) => invoke(context, options),
-    instantiate: (options) => instantiate(context, options)
+    resolve: value => resolve(context, value),
+    getProperty: options => getProperty(context, options),
+    setProperty: options => setProperty(context, options),
+    invoke: options => invoke(context, options),
+    instantiate: options => instantiate(context, options)
   }
+}
+
+function resolve<V = any>(
+  context: Simulator.Context,
+  value: V
+) {
+  const { record } = context
+
+  if (typeof value === 'string') {
+    const ref = record.getRef(value)!
+    if (ref.testDouble === notDefined) {
+      buildTestDouble(context, ref)
+    }
+
+    return ref.testDouble
+  }
+  return value
 }
 
 function getProperty(
   context: Simulator.Context,
-  { site, performer }: SpecPlugin.StubContext.getProperty.Options
+  { key, performer }: SpecPlugin.StubContext.getProperty.Options
 ) {
   const { record, timeTracker, state } = context
   performer = performer || getDefaultPerformer(state.ref.profile)
@@ -96,7 +115,7 @@ function getProperty(
     refId: state.refId,
     performer,
     tick: timeTracker.elaspe(),
-    key: site,
+    key,
   }
 
   if (!actionMatches(action, expected)) {
@@ -105,7 +124,7 @@ function getProperty(
 
     // The one I have indentified is `then` check,
     // probably by TypeScript or async/await for checking if the object is a promise
-    if (typeof site === 'symbol' || (site === 'then' &&
+    if (typeof key === 'symbol' || (key === 'then' &&
       state.ref.plugin !== '@mocktomata/es2015/promise' &&
       !record.hasExpectedGetThenAction(state.refId)
     )) return undefined
@@ -116,7 +135,7 @@ function getProperty(
     throw new ActionMismatch(record.specName, action, expected)
   }
 
-
+  const site: SpecRecord.PropertySite = { type: 'property', key }
   const actionId = record.addAction(action)
   const newState = { ...state, actionId, site }
 
@@ -147,6 +166,69 @@ function getProperty(
   }
 }
 
+function setProperty<V = any>(
+  context: Simulator.Context,
+  { key, value, performer }: SpecPlugin.StubContext.setProperty.Options<V>
+) {
+  // value can be:
+  //   `user`: actual value or spy/stub if user uses a value returned to him.
+  //   `mockto`: spy/stub (`mockto` should not perform on stub under basic usage)
+  //   `plugin`: actual value or spy/stub, just like `user`
+  const { record, timeTracker, state } = context
+  const expected = record.getNextExpectedAction()
+
+  performer = performer || getDefaultPerformer(state.ref.profile)
+  const action: SpecRecord.SetAction = {
+    type: 'set',
+    refId: state.refId,
+    performer,
+    tick: timeTracker.elaspe(),
+    key,
+    value: notDefined
+  }
+
+  if (!actionMatches(action, expected)) {
+    throw new ActionMismatch(record.specName, action, expected)
+  }
+
+  const actionId = record.addAction(action)
+  const newState = { ...state, actionId }
+
+  const valueRef = record.findRef(value)
+  if (valueRef) {
+    if (valueRef.testDouble === notDefined) {
+      buildTestDouble(context, valueRef)
+    }
+    action.value = record.getRefId(valueRef)
+  }
+  else {
+    action.value = value
+  }
+  logAction(newState, actionId, action)
+  processNextAction(context)
+  const resultAction = record.getExpectedResultAction(actionId)
+  if (!resultAction) return undefined
+
+  const resultActionId = record.addAction(resultAction)
+  let result = resultAction.payload
+  if (typeof resultAction.payload === 'string') {
+    const ref = record.getRef(resultAction.payload)!
+    if (ref.testDouble === notDefined) {
+      buildTestDouble(context, ref)
+    }
+
+    result = ref.testDouble
+  }
+
+  if (resultAction.type === 'return') {
+    logAction(newState, resultActionId, resultAction)
+    return result
+  }
+  else {
+    logAction(newState, resultActionId, resultAction)
+    throw result
+  }
+}
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const { record } = context
   const plugin = getPlugin(ref.plugin)

@@ -16,6 +16,8 @@ export function prettifyAction(state: Recorder.State, actionId: SpecRecord.Actio
   switch (action.type) {
     case 'get':
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} access <ref:${state.refId}>.${action.key}`
+    case 'set':
+      return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} set <ref:${state.refId}>.${action.key} = ${action.value}`
     case 'invoke': {
       const argsStr = action.payload.length === 0 ?
         '' :

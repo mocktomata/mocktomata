@@ -51,7 +51,9 @@ export namespace SpecPlugin {
      */
     setMeta: SpyContext.setMeta,
     setSpyOptions: SpyContext.setSpyOptions,
+    getSpyId: SpyContext.getSpyId,
     getProperty: SpyContext.getProperty,
+    setProperty: SpyContext.setProperty,
     invoke: SpyContext.invoke,
     instantiate: SpyContext.instantiate,
   }
@@ -64,6 +66,13 @@ export namespace SpecPlugin {
         profile?: SpecRecord.SubjectProfile,
       }
     }
+
+    /**
+     * gets the reference id of the value if it is supported by a plugin,
+     * else the value itself will be returned.
+     */
+    export type getSpyId = <V = any>(value: V) => SpecRecord.ReferenceId | V
+
     export type getProperty = <V = any>(options: getProperty.Options, handler: getProperty.Handler<V>) => V
     export namespace getProperty {
       export type Options = {
@@ -72,6 +81,18 @@ export namespace SpecPlugin {
       }
       export type Handler<V> = () => V
     }
+
+    export type setProperty = <V = any, R = any>(options: setProperty.Options<V>, handler: setProperty.Handler<V, R>) => R
+    export namespace setProperty {
+      export type Options<V> = {
+        key: SpecRecord.SupportedKeyTypes,
+        value: V,
+        performer?: SpecRecord.Performer,
+      }
+      export type Handler<V, R> = (value: V) => R
+    }
+
+
     export type invoke = <V = any, T = any, A extends any[] = any[]>(options: invoke.Options<T, A>, handler: invoke.Handler<V, T, A>) => V
     export namespace invoke {
       export type Options<T, A extends any[]> = {
@@ -102,19 +123,33 @@ export namespace SpecPlugin {
   }
 
   export type StubContext = {
+    resolve: StubContext.resolve,
     getProperty: StubContext.getProperty,
+    setProperty: StubContext.setProperty,
     invoke: StubContext.invoke,
     instantiate: StubContext.instantiate,
   }
 
   export namespace StubContext {
+    export type resolve = (value: any) => any
+
     export type getProperty = (options: getProperty.Options) => any
     export namespace getProperty {
       export type Options = {
-        site: SpecRecord.SupportedKeyTypes,
+        key: SpecRecord.SupportedKeyTypes,
         performer?: SpecRecord.Performer,
       }
     }
+
+    export type setProperty = <V = any>(options: setProperty.Options<V>) => V
+    export namespace setProperty {
+      export type Options<V> = {
+        key: SpecRecord.SupportedKeyTypes,
+        value: V,
+        performer?: SpecRecord.Performer,
+      }
+    }
+
     export type invoke = (options: invoke.Options) => any
     export namespace invoke {
       export type Options = {

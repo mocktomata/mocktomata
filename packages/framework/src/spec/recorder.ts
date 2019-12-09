@@ -23,7 +23,7 @@ export function createRecorder(specName: string, options: SpecOptions) {
   }
 }
 
-function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.CauseActionsState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
+function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
   const plugin = findPlugin(subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
   // istanbul ignore next
@@ -42,7 +42,8 @@ function createSpy<S>(context: PartialPick<Recorder.Context<Recorder.CauseAction
   // invoke return: { actionId: returnId }
   // invoke throw: { actionId: throwId }
   // instantiate argument: { actionId: instantiateId, site: [argIndex] }
-  const source = context.state ? { actionId: context.state.actionId, site } : undefined
+  // getSpyId from array: no source
+  const source = context.state && context.state.actionId !== undefined ? { actionId: context.state.actionId, site } : undefined
   const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
   const refId = context.record.addRef(ref)
   const state = { ref, refId, spyOptions: [] }
@@ -56,10 +57,18 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
   return {
     setSpyOptions: (subject, options) => setSpyOptions(context, subject, options),
     setMeta: meta => setMeta(context, meta),
+    getSpyId: value => getSpyId(context, value),
     getProperty: (options, handler) => getProperty(context, options, handler),
+    setProperty: (options, handler) => setProperty(context, options, handler),
     invoke: (options, handler) => invoke(context, options, handler),
     instantiate: (options, handler) => instantiate(context, options, handler)
   }
+}
+
+function getSpyId<V>(context: Recorder.Context, value: V) {
+  const { record } = context
+  const spy = getSpy(context, value, {})
+  return record.findRefId(spy) || value
 }
 
 function getProperty<V>(
@@ -83,9 +92,45 @@ function getProperty<V>(
     ...context,
     state: { ...context.state, actionId, site: { type: 'property' as const, key } }
   }
+
   logAction(getActionContext.state, actionId, action)
 
   return handleResult(getActionContext, actionId, action.type, handler)
+}
+
+function setProperty<V, R>(
+  context: Recorder.Context,
+  { key, value, performer }: SpecPlugin.SpyContext.setProperty.Options<V>,
+  handler: SpecPlugin.SpyContext.setProperty.Handler<V, R>
+): R {
+  const { record, timeTracker, state } = context
+  performer = performer || getDefaultPerformer(state.ref.profile)
+  const action: SpecRecord.SetAction = {
+    type: 'set',
+    refId: state.refId,
+    performer,
+    tick: timeTracker.elaspe(),
+    key,
+    value: notDefined
+  }
+
+  const actionId = record.addAction(action)
+
+  const newContext = {
+    ...context,
+    state: { ...context.state, actionId, site: { type: 'property' as const, key } }
+  }
+
+  const spiedValue = getSpy(newContext, value, {
+    // TODO: if performer is overridden, this might change
+    profile: getProfileForInvokeThis(state.ref.profile),
+    site: { type: 'this' }
+  })
+  action.value = record.findRefId(spiedValue) || value
+
+  logAction(newContext.state, actionId, action)
+
+  return handleResult(newContext, actionId, action.type, () => handler(spiedValue))
 }
 
 function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options) {
@@ -99,7 +144,7 @@ function setMeta<M extends Meta>({ state }: Recorder.Context, meta: M) {
   return meta
 }
 
-export function getSpy<S>(context: Recorder.Context<Recorder.CauseActionsState>, subject: S, options: { site: SpecRecord.Site, profile?: SpecRecord.SubjectProfile }) {
+export function getSpy<S>(context: Recorder.Context, subject: S, options: { site?: SpecRecord.Site, profile?: SpecRecord.SubjectProfile }): S {
   const { record, state } = context
   const ref = record.findRef(subject)
   if (ref) {
@@ -184,7 +229,8 @@ function handleResult(
   context: Recorder.Context<Recorder.CauseActionsState>,
   actionId: SpecRecord.ActionId,
   actionType: SpecRecord.CauseActions['type'],
-  handler: () => any) {
+  handler: () => any
+) {
   const { record, timeTracker } = context
 
   try {

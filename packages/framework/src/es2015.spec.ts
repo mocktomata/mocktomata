@@ -185,6 +185,7 @@ describe('function', () => {
       expect(subject()).toBeUndefined()
 
       await spec.done()
+
       a.satisfies(await spec.getSpecRecord(), {
         refs: [
           { 'plugin': '@mocktomata/es2015/object', 'profile': 'target', 'meta': { 'callable': true } },
@@ -241,7 +242,7 @@ describe('function', () => {
     })
   })
   incubator.duo('no input, array output', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(() => [1, 2, 'c'])
       const actual = subject()
       expect(actual).toEqual([1, 2, 'c'])
@@ -250,7 +251,7 @@ describe('function', () => {
     })
   })
   incubator.duo('array inputs', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', ['--version'])
 
