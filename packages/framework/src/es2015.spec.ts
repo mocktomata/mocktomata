@@ -259,6 +259,19 @@ describe('function', () => {
       await spec.done()
     })
   })
+
+  incubator.duo('insert value to input array', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec(function passthroughArray(value: string[]) {
+        value.push('c')
+        return value
+      })
+      const actual = subject(['a', 'b'])
+      expect(actual).toEqual(['a', 'b', 'c'])
+      await spec.done()
+    })
+  })
+
   incubator.duo('throwing error', (title, spec) => {
     test(title, async () => {
       const subject = await spec(() => { throw new Error('failed') })
@@ -350,6 +363,7 @@ describe('function', () => {
   })
   incubator.duo('delayed callback invocation', (title, spec) => {
     test.skip(title, async () => {
+      spec.enableLog()
       const subject = await spec(delayed.success)
 
       expect(await delayed.increment(subject, 2)).toBe(3)

@@ -76,29 +76,12 @@ function createStub<S>(context: PartialPick<Simulator.Context<Recorder.CauseActi
 
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
   return {
-    resolve: value => resolve(context, value),
+    resolve: value => resolveValue(context, value),
     getProperty: options => getProperty(context, options),
     setProperty: options => setProperty(context, options),
     invoke: options => invoke(context, options),
     instantiate: options => instantiate(context, options)
   }
-}
-
-function resolve<V = any>(
-  context: Simulator.Context,
-  value: V
-) {
-  const { record } = context
-
-  if (typeof value === 'string') {
-    const ref = record.getRef(value)!
-    if (ref.testDouble === notDefined) {
-      buildTestDouble(context, ref)
-    }
-
-    return ref.testDouble
-  }
-  return value
 }
 
 function getProperty(
@@ -146,15 +129,7 @@ function getProperty(
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  let result = resultAction.payload
-  if (typeof resultAction.payload === 'string') {
-    const ref = record.getRef(resultAction.payload)!
-    if (ref.testDouble === notDefined) {
-      buildTestDouble(context, ref)
-    }
-
-    result = ref.testDouble
-  }
+  const result = resolveValue(context, resultAction.payload)
 
   if (resultAction.type === 'return') {
     logAction(newState, resultActionId, resultAction)
@@ -194,31 +169,15 @@ function setProperty<V = any>(
   const actionId = record.addAction(action)
   const newState = { ...state, actionId }
 
-  const valueRef = record.findRef(value)
-  if (valueRef) {
-    if (valueRef.testDouble === notDefined) {
-      buildTestDouble(context, valueRef)
-    }
-    action.value = record.getRefId(valueRef)
-  }
-  else {
-    action.value = value
-  }
+  action.value = resolveValue(context, value)
+
   logAction(newState, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  let result = resultAction.payload
-  if (typeof resultAction.payload === 'string') {
-    const ref = record.getRef(resultAction.payload)!
-    if (ref.testDouble === notDefined) {
-      buildTestDouble(context, ref)
-    }
-
-    result = ref.testDouble
-  }
+  const result = resolveValue(context, resultAction.payload)
 
   if (resultAction.type === 'return') {
     logAction(newState, resultActionId, resultAction)
@@ -308,15 +267,7 @@ function invoke(context: Simulator.Context,
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  let result = resultAction.payload
-  if (typeof resultAction.payload === 'string') {
-    const ref = record.getRef(resultAction.payload)!
-    if (ref.testDouble === notDefined) {
-      buildTestDouble(context, ref)
-    }
-
-    result = ref.testDouble
-  }
+  const result = resolveValue(context, resultAction.payload)
 
   if (resultAction.type === 'return') {
     logAction(newState, resultActionId, resultAction)
@@ -383,6 +334,9 @@ function processNextAction(context: Simulator.Context) {
     case 'get':
       processGet(context, nextAction)
       break
+    case 'set':
+      processSet(context, nextAction)
+      break
     case 'invoke':
       if (nextAction.performer !== 'mockto') return
       processInvoke(context, nextAction)
@@ -396,24 +350,9 @@ function processNextAction(context: Simulator.Context) {
     if (action.performer !== 'mockto') return
 
     const ref = record.getRef(action.refId)
-    const thisArgRef = record.getRef(action.thisArg)!
-    if (thisArgRef.testDouble === notDefined) {
-
-      buildTestDouble(context, thisArgRef)
-    }
-    const args = action.payload.map(arg => {
-      if (typeof arg === 'string') {
-        const ref = record.getRef(arg)
-        if (ref?.testDouble === notDefined) {
-          buildTestDouble(context, ref)
-        }
-        return ref?.testDouble
-      }
-      else {
-        return arg
-      }
-    })
-    return ref?.testDouble.apply(thisArgRef.testDouble, args)
+    const thisArg = resolveValue(context, action.refId)
+    const args = action.payload.map(arg => resolveValue(context, arg))
+    return ref?.testDouble.apply(thisArg, args)
   }
 }
 
@@ -424,4 +363,25 @@ function processGet(context: Simulator.Context, nextAction: SpecRecord.GetAction
   if (nextAction.performer !== 'mockto') return
   const ref = record.getRef(nextAction.refId)
   ref?.testDouble[nextAction.key]
+}
+
+function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction) {
+  const { record } = context
+  if (nextAction.performer !== 'mockto') return
+  const ref = record.getRef(nextAction.refId)
+
+  ref!.testDouble[nextAction.key] = resolveValue(context, nextAction.value)
+}
+
+function resolveValue(context: Simulator.Context, value: any) {
+  const valueRef = typeof value === 'string' ? context.record.getRef(value) : undefined
+  if (valueRef) {
+    if (valueRef.testDouble === notDefined) {
+      buildTestDouble(context, valueRef)
+    }
+    return valueRef.testDouble
+  }
+  else {
+    return value
+  }
 }
