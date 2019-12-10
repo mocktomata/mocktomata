@@ -14,15 +14,6 @@ test('supports object literal', () => {
   expect(objectPlugin.support({ a: 1 })).toBe(true)
 })
 
-test('support simple function', () => {
-  expect(objectPlugin.support(function foo() { return })).toBeTruthy()
-  expect(objectPlugin.support(function () { return })).toBeTruthy()
-})
-
-test('support arrow function', () => {
-  expect(objectPlugin.support(() => false)).toBeTruthy()
-})
-
 test('not support class', () => {
   expect(objectPlugin.support(Dummy)).toBeFalsy()
 })

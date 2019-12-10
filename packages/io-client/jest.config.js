@@ -4,8 +4,4 @@ module.exports = {
   ...base,
   displayName: 'io-client',
   testEnvironment: 'jsdom',
-  moduleNameMapper: {
-    '@mocktomata/(.*)/(.*)': '<rootDir>/../$1/src/$2',
-    '@mocktomata/(.*)': '<rootDir>/../$1/src'
-  }
 }

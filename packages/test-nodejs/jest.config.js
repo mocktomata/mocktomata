@@ -4,6 +4,7 @@ module.exports = {
   ...base,
   displayName: 'test-nodejs',
   moduleNameMapper: {
+    '@mocktomata/(.*)/(.*)': '<rootDir>/../$1/src/$2',
     '@mocktomata/(.*)': '<rootDir>/../$1/src',
     'mocktomata': '<rootDir>/../mocktomata/src'
   }

@@ -1,9 +1,17 @@
 module.exports = {
-  globals: {
+  'globals': {
     'ts-jest': {
-      diagnostics: false,
-      tsConfig: '<rootDir>/tsconfig.jest.json'
+      babelConfig: true,
+      'diagnostics': false,
+      'tsConfig': {
+        'module': 'esnext',
+        'target': 'esnext',
+      }
     }
+  },
+  moduleNameMapper: {
+    '@mocktomata/(.*)/(.*)': '<rootDir>/../$1/src/$2',
+    '@mocktomata/(.*)': '<rootDir>/../$1/src'
   },
   preset: 'ts-jest',
   roots: [
