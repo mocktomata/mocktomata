@@ -188,7 +188,7 @@ describe('function', () => {
 
       a.satisfies(await spec.getSpecRecord(), {
         refs: [
-          { 'plugin': '@mocktomata/es2015/object', 'profile': 'target', 'meta': { 'callable': true } },
+          { 'plugin': '@mocktomata/es2015/function', 'profile': 'target' },
           { 'plugin': '@mocktomata/es2015/undefined', 'profile': 'input', 'source': { 'actionId': 0, 'site': { 'type': 'this' } } }
         ],
         actions: [
@@ -361,7 +361,7 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator.duo('delayed callback invocation', (title, spec) => {
+  incubator.save('delayed callback invocation', (title, spec) => {
     test.skip(title, async () => {
       spec.enableLog()
       const subject = await spec(delayed.success)

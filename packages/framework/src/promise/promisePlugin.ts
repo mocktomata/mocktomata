@@ -6,7 +6,13 @@ export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rej
   name: 'promise',
   support: isPromise,
   createSpy({ invoke }, subject) {
-    return invoke({ site: 'then', performer: 'plugin' }, ({ setMeta }) => subject.then(
+    return subject.then(value => {
+      value
+      // return invoke({ performer: 'plugin', thisArg: undefined, args: [] })
+    }, err => {
+      err
+    })
+    return invoke({ performer: 'plugin', thisArg: undefined, args: [], site: 'then' }, ({ setMeta }) => subject.then(
       result => {
         setMeta(true)
         return result

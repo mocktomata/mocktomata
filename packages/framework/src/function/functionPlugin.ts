@@ -1,7 +1,7 @@
 import { SpecPlugin } from '../spec';
 import { hasProperty, hasPropertyInPrototype } from '../utils';
 
-export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
+export const functionPlugin: SpecPlugin<Function & Record<any, any>, Record<string, any>> = {
   name: 'function',
   support: subject => {
     if (typeof subject !== 'function') return false
@@ -35,55 +35,30 @@ export const functionPlugin: SpecPlugin<Function, Record<string, any>> = {
    *
    * })
    */
-  createSpy: ({ invoke, getProperty }, subject: any) => {
+  createSpy: ({ getProperty, invoke }, subject) => {
     return new Proxy(function () { }, {
       apply(_, thisArg, args: any[] = []) {
-        return invoke(({ withThisArg, withArgs }) => {
-          const spiedArgs = withArgs(args)
-          return subject.apply(withThisArg(thisArg), spiedArgs)
-        })
+        return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
       },
-      get(_: any, property: string) {
+      get(target: any, property: string) {
         if (!hasProperty(subject, property)) return undefined
-        return getProperty([property], () => subject[property])
+        if (property === 'apply') return target[property]
+        return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
         return subject[property] = value
       }
     })
   },
-  createStub({ invoke, getProperty }, _subject, _meta) {
+  createStub: ({ getProperty, invoke }) => {
     return new Proxy(function () { }, {
-      apply: function (_target, thisArg, args: any[] = []) {
-        return invoke(({ getSpy, withArgs, withThisArg, getResult }) => {
-          const spiedArgs = args ? args.map(arg => getSpy(arg, { mode: 'autonomous' })) : []
-          withArgs(spiedArgs)
-          withThisArg(thisArg)
-          try {
-            return getSpy(getResult(), { mode: 'passive' })
-          }
-          catch (err) {
-            throw getSpy(err, { mode: 'passive' })
-          }
-        })
-        // const invocation = invoke(argumentsList.map(arg => getSpy(arg)))
-        // const result = invocation.getResult()
-        // if (result.type === 'return') {
-        //   return invocation.returns(result.value)
-        // }
-        // else {
-        //   throw invocation.throws(result.value)
-        // }
+      apply: function (_, thisArg, args: any[] = []) {
+        return invoke({ thisArg, args })
       },
-      get(_, property: string) {
-        return getProperty(property)
+      get(target: any, property: string) {
+        if (property === 'apply') return target[property]
+        return getProperty({ key: property })
       }
     })
-  },
-  // metarize({ metarize }, spy) {
-  //   return reduceKey(spy, (p, v) => {
-  //     p[v] = metarize(spy[v])
-  //     return p
-  //   }, {} as any)
-  // }
+  }
 }
