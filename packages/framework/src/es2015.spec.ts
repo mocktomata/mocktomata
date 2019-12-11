@@ -539,7 +539,7 @@ describe('promise', () => {
   }
 
   incubator.duo('resolve with no value', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(noReturn.success)
       await noReturn.doSomething(subject).then((v: any) => {
         expect(v).toBeUndefined()
@@ -549,7 +549,7 @@ describe('promise', () => {
   })
 
   incubator.duo('resolve with value', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(promise.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
@@ -562,7 +562,7 @@ describe('promise', () => {
   })
 
   incubator.duo('reject with error', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(promise.fail)
       return promise.increment(subject, 2)
         .then(() => { throw new Error('should not reach') })
@@ -601,7 +601,7 @@ describe('promise', () => {
   })
 
   incubator.duo('promise resolves to function', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(promiseChain.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
