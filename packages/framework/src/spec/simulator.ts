@@ -13,10 +13,10 @@ import { Recorder } from './types-internal';
 import { referenceMismatch } from './validations';
 
 export namespace Simulator {
-  export type Context<S = Recorder.State> = {
+  export type Context = {
     timeTracker: TimeTracker,
     record: SpecRecordValidator,
-    state: S
+    state: Recorder.State
   }
 }
 
@@ -32,7 +32,7 @@ export function createSimulator(specName: string, loaded: SpecRecord, options: S
   }
 }
 
-function createStub<S>(context: PartialPick<Simulator.Context<Recorder.CauseActionsState>, 'state'>, subject: S, options: SpecPlugin.getSpy.Options): S {
+function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }): S {
   const { record } = context
 
   // const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
@@ -59,7 +59,7 @@ function createStub<S>(context: PartialPick<Simulator.Context<Recorder.CauseActi
     // so `context.state` will always be defined in this line.
     const profile = options.profile || context.state!.ref.profile
 
-    const source = context.state ? { actionId: context.state.actionId, site: options.site } : undefined
+    const source = context.state?.source
 
     referenceMismatch({ plugin: plugin.name, profile, source }, ref)
     const refId = record.getRefId(ref)
@@ -118,9 +118,8 @@ function getProperty(
     throw new ActionMismatch(record.specName, action, expected)
   }
 
-  const site: SpecRecord.PropertySite = { type: 'property', key }
   const actionId = record.addAction(action)
-  const newState = { ...state, actionId, site }
+  const newState: Recorder.State = { ...state, source: { type: 'property', id: state.refId, key } }
 
   logAction(newState, actionId, action)
   processNextAction(context)
@@ -167,7 +166,7 @@ function setProperty<V = any>(
   }
 
   const actionId = record.addAction(action)
-  const newState = { ...state, actionId }
+  const newState: Recorder.State = { ...state, source: { type: 'property', id: state.refId, key } }
 
   action.value = resolveValue(context, value)
 
@@ -230,22 +229,27 @@ function invoke(context: Simulator.Context,
   }
 
   const actionId = record.addAction(action)
-  const newState = { ...state, actionId }
 
   const thisArgRef = record.findRef(thisArg)
   if (!thisArgRef) {
     throw new ExtraReference(record.specName, thisArg)
   }
   if (thisArgRef.testDouble === notDefined) {
-    buildTestDouble(context, thisArgRef)
+    buildTestDouble({
+      ...context,
+      state: { ...context.state, source: { type: 'this', id: actionId } }
+    }, thisArgRef)
   }
   action.thisArg = record.getRefId(thisArgRef)
 
-  args.map(arg => {
+  args.map((arg, i) => {
     const ref = record.findRef(arg)
     if (ref) {
       if (ref.testDouble === notDefined) {
-        buildTestDouble(context, ref)
+        buildTestDouble({
+          ...context,
+          state: { ...context.state, source: { type: 'argument', id: actionId, key: i } }
+        }, ref)
       }
       action.payload.push(record.getRefId(ref))
     }
@@ -254,7 +258,7 @@ function invoke(context: Simulator.Context,
     }
     return arg
   })
-  logAction(newState, actionId, action)
+  logAction(context.state, actionId, action)
   // if (state.ref.profile === 'input') {
   //   console.log('called??')
   //   // TODO: need to process next action?
@@ -263,18 +267,22 @@ function invoke(context: Simulator.Context,
 
   processNextAction(context)
 
+  const resultContext: Simulator.Context = {
+    ...context,
+    state: { ...context.state, source: { type: 'result', id: actionId } }
+  }
   const resultAction = record.getExpectedResultAction(actionId)
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  const result = resolveValue(context, resultAction.payload)
+  const result = resolveValue(resultContext, resultAction.payload)
 
   if (resultAction.type === 'return') {
-    logAction(newState, resultActionId, resultAction)
+    logAction(resultContext.state, resultActionId, resultAction)
     return result
   }
   else {
-    logAction(newState, resultActionId, resultAction)
+    logAction(resultContext.state, resultActionId, resultAction)
     throw result
   }
 }
@@ -329,6 +337,7 @@ function getResult(context: Simulator.Context<Recorder.CauseActionsState>, expec
 function processNextAction(context: Simulator.Context) {
   const { record } = context
   const nextAction = record.getNextExpectedAction()
+  const actionId = record.getNextActionId()
   if (!nextAction) return
   switch (nextAction.type) {
     case 'get':
@@ -339,19 +348,31 @@ function processNextAction(context: Simulator.Context) {
       break
     case 'invoke':
       if (nextAction.performer !== 'mockto') return
-      processInvoke(context, nextAction)
+      processInvoke(context, actionId, nextAction)
       break
     case 'instantiate':
       if (nextAction.performer !== 'mockto') return
       processInstantiate()
   }
-  function processInvoke(context: Simulator.Context, action: SpecRecord.InvokeAction) {
+  function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
     const { record } = context
     if (action.performer !== 'mockto') return
 
     const ref = record.getRef(action.refId)
-    const thisArg = resolveValue(context, action.refId)
-    const args = action.payload.map(arg => resolveValue(context, arg))
+    const thisArg = resolveValue({
+      ...context,
+      state: {
+        ...context.state,
+        source: { type: 'this', id: actionId }
+      }
+    }, action.refId)
+    const args = action.payload.map((arg, key) => resolveValue({
+      ...context,
+      state: {
+        ...context.state,
+        source: { type: 'argument', id: actionId, key }
+      }
+    }, arg))
     return ref?.testDouble.apply(thisArg, args)
   }
 }
@@ -362,7 +383,9 @@ function processGet(context: Simulator.Context, nextAction: SpecRecord.GetAction
   const { record } = context
   if (nextAction.performer !== 'mockto') return
   const ref = record.getRef(nextAction.refId)
-  ref?.testDouble[nextAction.key]
+  console.log('ref', nextAction, ref)
+  const result = ref?.testDouble[nextAction.key]
+  console.log('result', result)
 }
 
 function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction) {

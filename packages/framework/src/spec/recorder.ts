@@ -23,7 +23,7 @@ export function createRecorder(specName: string, options: SpecOptions) {
   }
 }
 
-function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: SpecPlugin.getSpy.Options) {
+function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }) {
   const plugin = findPlugin(subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
   // istanbul ignore next
@@ -33,7 +33,6 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   // so `context.state` will always be defined in this line.
   const profile = options.profile || context.state!.ref.profile
 
-  const site = options.site || context.state?.site
   // Possible sources:
   // spec subject: undefined
   // getProperty on object/function/class/instance.promise: { actionId: getId, site: [propertyName] }
@@ -43,7 +42,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   // invoke throw: { actionId: throwId }
   // instantiate argument: { actionId: instantiateId, site: [argIndex] }
   // getSpyId from array: no source
-  const source = context.state && context.state.actionId !== undefined ? { actionId: context.state.actionId, site } : undefined
+  const source = context.state?.source
   const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
   const refId = context.record.addRef(ref)
   const state = { ref, refId, spyOptions: [] }
@@ -88,14 +87,14 @@ function getProperty<V>(
 
   const actionId = record.addAction(action)
 
-  const getActionContext = {
+  const newContext = {
     ...context,
-    state: { ...context.state, actionId, site: { type: 'property' as const, key } }
+    state: { ...context.state, site: { type: 'property' as const, key } }
   }
 
-  logAction(getActionContext.state, actionId, action)
+  logAction(newContext.state, actionId, action)
 
-  return handleResult(getActionContext, actionId, action.type, handler)
+  return handleResult(newContext, actionId, action.type, handler)
 }
 
 function setProperty<V, R>(
@@ -124,7 +123,7 @@ function setProperty<V, R>(
   const spiedValue = getSpy(newContext, value, {
     // TODO: if performer is overridden, this might change
     profile: getProfileForInvokeThis(state.ref.profile),
-    site: { type: 'this' }
+    source: { type: 'this', id: actionId }
   })
   action.value = record.findRefId(spiedValue) || value
 
@@ -144,7 +143,7 @@ function setMeta<M extends Meta>({ state }: Recorder.Context, meta: M) {
   return meta
 }
 
-export function getSpy<S>(context: Recorder.Context, subject: S, options: { site?: SpecRecord.Site, profile?: SpecRecord.SubjectProfile }): S {
+export function getSpy<S>(context: Recorder.Context, subject: S, options: { source?: SpecRecord.ReferenceSource, profile?: SpecRecord.SubjectProfile }): S {
   const { record, state } = context
   const ref = record.findRef(subject)
   if (ref) {
@@ -156,10 +155,9 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: { site
   }
   const sourceRef = state.ref
   const profile = options.profile || sourceRef.profile
-  const site = options.site || state.site
 
   // console.log('beofre create spy from getspy')
-  return createSpy({ ...context, state: required(state, { site }) }, subject, { profile }) || subject
+  return createSpy({ ...context, state: required(state, { source: options.source ?? state.source }) }, subject, { profile }) || subject
 }
 
 function invoke<V, T, A extends any[]>(
@@ -187,14 +185,14 @@ function invoke<V, T, A extends any[]>(
   const spiedThisArg = getSpy(newContext, thisArg, {
     // TODO: if performer is overridden, this might change
     profile: getProfileForInvokeThis(state.ref.profile),
-    site: { type: 'this' }
+    source: { type: 'this', id: actionId }
   })
   action.thisArg = record.findRefId(spiedThisArg) || thisArg
 
   const spiedArgs = args.map((arg, i) => {
     const spiedArg = getSpy(newContext, arg, {
       profile: getProfileForInvokeArgument(state.ref.profile),
-      site: { type: 'property', key: i }
+      source: { type: 'argument', id: actionId, key: i }
     })
     action.payload.push(record.findRefId(spiedArg) || arg)
     return spiedArg
@@ -226,7 +224,7 @@ function getProfileForInvokeArgument(parentProfile: SpecRecord.SubjectProfile): 
 }
 
 function handleResult(
-  context: Recorder.Context<Recorder.CauseActionsState>,
+  context: Recorder.Context,
   actionId: SpecRecord.ActionId,
   actionType: SpecRecord.CauseActions['type'],
   handler: () => any
@@ -235,31 +233,35 @@ function handleResult(
 
   try {
     const result = handler()
-    const spy = getSpy(context, result, {
-      profile: getProfileForInvokeResult(context.state.ref.profile, actionType),
-      site: { type: 'result' }
-    })
-    const refId = record.findRefId(spy)
     const returnAction: SpecRecord.ReturnAction = {
       type: 'return',
       actionId,
       tick: timeTracker.elaspe(),
-      payload: refId !== undefined ? refId : result,
+      payload: notDefined
     }
     const returnActionId = record.addAction(returnAction)
+    const spy = getSpy(context, result, {
+      profile: getProfileForInvokeResult(context.state.ref.profile, actionType),
+      source: { type: 'result', id: returnActionId }
+    })
+    const refId = record.findRefId(spy)
+    returnAction.payload = refId !== undefined ? refId : result
+
     logAction(context.state, returnActionId, returnAction)
     return spy
   }
   catch (e) {
-    const spy = getSpy(context, e, { site: { type: 'result' } })
-    const refId = record.findRefId(spy)
     const throwAction: SpecRecord.ThrowAction = {
       type: 'throw',
       actionId,
       tick: timeTracker.elaspe(),
-      payload: refId !== undefined ? refId : e,
+      payload: notDefined
     }
     const throwActionId = record.addAction(throwAction)
+    const spy = getSpy(context, e, { source: { type: 'result', id: throwActionId } })
+    const refId = record.findRefId(spy)
+    throwAction.payload = refId !== undefined ? refId : e
+
     logAction(context.state, throwActionId, throwAction)
     throw spy
   }
@@ -275,93 +277,6 @@ function getProfileForInvokeResult(
     case 'output': return 'output'
   }
 }
-// function getPropertyOld<P>(context: Recorder.Context, property: SpecRecord.SupportedKeyTypes, value: P, _options: SpecPlugin.GetPropertyOptions) {
-//   const { record, state, timeTracker } = context
-//   const ref = record.findRef(value)
-//   let result = value
-//   let subject = value
-//   const payload: P | SpecRecord.ReferenceId = value
-//   const site = [property]
-
-//   const action: GetAction = { type: 'get', ref: state.actionId, payload, site, tick: timeTracker.elaspe() }
-//   const actionId = record.addAction(action)
-//   if (ref) {
-//     subject = ref.subject
-//     if (!ref.source) {
-//       ref.source = { ref: actionId, site }
-//     }
-//     result = ref.testDouble
-//     action.payload = record.getRefId(ref)
-//   }
-
-//   logAction(state, actionId, { ...action, payload: subject })
-
-//   return result
-// }
-
-// function invocationRecorder(context: Recorder.Context, args: any[], { mode, site }: SpecPlugin.InvokeOptions) {
-//   const { record, state, timeTracker } = context
-
-//   const payload: any[] = []
-//   const subjects: any[] = []
-
-//   args.forEach(arg => {
-//     const ref = record.findRef(arg)
-//     if (ref) {
-//       payload.push(record.getRefId(ref))
-//       subjects.push(ref.subject)
-//     }
-//     else {
-//       payload.push(arg)
-//       subjects.push(arg)
-//     }
-//   })
-//   const ref = record.getRef(state.actionId)!
-//   const action: InvokeAction = {
-//     type: 'invoke',
-//     ref: state.actionId as SpecRecord.ReferenceId,
-//     payload,
-//     site,
-//     mode: mode || (ref.mode === 'instantiate' ? 'passive' : ref.mode),
-//     tick: timeTracker.elaspe()
-//   }
-//   const invokeId = record.addAction(action)
-//   logAction(state, invokeId, { ...action, payload: subjects })
-
-//   return {
-//     returns: (value: any, options?: SpecPlugin.InvokeOptions) => processInvokeResult(context, 'return', invokeId, value, options),
-//     throws: (err: any, options?: SpecPlugin.SpyResultOptions) => processInvokeResult(context, 'throw', invokeId, err, options)
-//   }
-// }
-
-// function processInvokeResult(
-//   context: Recorder.Context,
-//   type: 'return' | 'throw',
-//   invokeId: SpecRecord.ActionId,
-//   value: any,
-//   { meta }: SpecPlugin.SpyResultOptions = {}
-// ) {
-//   // if the value is MocktomataError,
-//   // it is generated internally thus short circuit the process
-//   if (value instanceof MocktomataError) return value
-
-//   const { record, state, timeTracker } = context
-
-//   const ref = record.findRef(value)
-
-//   const action: ReturnAction | ThrowAction = {
-//     type,
-//     ref: invokeId,
-//     payload: ref ? record.getRefId(ref) : value,
-//     meta,
-//     tick: timeTracker.elaspe()
-//   }
-//   const returnId = record.addAction(action)
-
-//   const subject = ref ? ref.subject : value
-//   logAction(state, returnId, { ...action, payload: subject })
-//   return value
-// }
 
 function instantiate(
   context: Recorder.Context,

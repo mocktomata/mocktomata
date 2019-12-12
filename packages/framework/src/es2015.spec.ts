@@ -134,6 +134,7 @@ describe('object', () => {
       await spec.done()
     })
   })
+
   incubator.duo('primitive method throws error', (title, spec) => {
     test(title, async () => {
       const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
@@ -176,6 +177,36 @@ describe('object', () => {
       await spec.done()
     })
   })
+
+  incubator.duo('same child in two properties', (title, spec) => {
+    test(title, async () => {
+      const child = { a: 1 }
+      const subject = { x: child, y: child }
+      const s = await spec(subject)
+      expect(s.x.a).toBe(1)
+      expect(s.y.a).toBe(1)
+
+      s.x.a = 2
+      expect(s.y.a).toBe(2)
+      await spec.done()
+    })
+  })
+
+  incubator.duo('circular child properties', (title, spec) => {
+    test(title, async () => {
+      const subject: any = { a: 1 }
+      subject.s = subject
+
+      const s = await spec(subject)
+      expect(s.a).toBe(1)
+      expect(s.s.a).toBe(1)
+      expect(s.s.s.a).toBe(1)
+
+      s.a = 2
+      expect(s.s.a).toBe(2)
+      await spec.done()
+    })
+  })
 })
 
 describe('function', () => {
@@ -189,7 +220,7 @@ describe('function', () => {
       a.satisfies(await spec.getSpecRecord(), {
         refs: [
           { 'plugin': '@mocktomata/es2015/function', 'profile': 'target' },
-          { 'plugin': '@mocktomata/es2015/undefined', 'profile': 'input', 'source': { 'actionId': 0, 'site': { 'type': 'this' } } }
+          { 'plugin': '@mocktomata/es2015/undefined', 'profile': 'input', 'source': { 'type': 'this', 'id': 0 } }
         ],
         actions: [
           { 'type': 'invoke', 'refId': '0', 'performer': 'user', 'thisArg': '1', 'payload': [] },
@@ -372,11 +403,13 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator.duo('callback in object literal success', (title, spec) => {
-    test.skip(title, async () => {
+  incubator.save('callback in object literal success', (title, spec) => {
+    test.only(title, async () => {
       const subject = await spec(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(subject, 2)).toBe(3)
+
+      spec.enableLog()
 
       await spec.done()
     })

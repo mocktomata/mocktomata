@@ -25,9 +25,26 @@ export namespace SpecRecord {
   }
   export type ReferenceId = string
 
-  export type ReferenceSource = {
-    actionId: ActionId,
-    site: Site | undefined
+  export type ReferenceSource = PropertySource | ThisSource | ArgumentSource | ResultSource
+  export type ArgumentSource = {
+    type: 'argument',
+    id: SpecRecord.ActionId,
+    key: number,
+  }
+  export type PropertySource = {
+    type: 'property',
+    id: SpecRecord.ReferenceId,
+    key: SupportedKeyTypes,
+  }
+
+  export type ThisSource = {
+    type: 'this',
+    id: SpecRecord.ActionId,
+  }
+
+  export type ResultSource = {
+    type: 'result',
+    id: SpecRecord.ActionId,
   }
 
   /**
