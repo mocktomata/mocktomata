@@ -277,6 +277,8 @@ function invoke(context: Simulator.Context,
   const resultActionId = record.addAction(resultAction)
   const result = resolveValue(resultContext, resultAction.payload)
 
+  setImmediate(() => processNextAction(context))
+
   if (resultAction.type === 'return') {
     logAction(resultContext.state, resultActionId, resultAction)
     return result

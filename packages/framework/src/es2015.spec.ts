@@ -392,9 +392,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator.save('delayed callback invocation', (title, spec) => {
-    test.skip(title, async () => {
-      spec.enableLog()
+  incubator.duo('delayed callback invocation', (title, spec) => {
+    test(title, async () => {
       const subject = await spec(delayed.success)
 
       expect(await delayed.increment(subject, 2)).toBe(3)
@@ -465,7 +464,7 @@ describe('function', () => {
     })
   })
   incubator.duo('invoke callback after returns', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(postReturn.fireEvent)
 
       await new Promise(a => {
@@ -622,8 +621,7 @@ describe('promise', () => {
           expect(msg).toBe('called')
           a()
         })
-      })
-        .then(() => fooing)
+      }).then(() => fooing)
         .then(actual => {
           expect(actual).toBe(3)
           return spec.done()
