@@ -1,7 +1,7 @@
 import { logLevels } from 'standard-log';
 import { tersify } from 'tersify';
 import { log } from '../log';
-import { prettifyAction } from './prettifyAction';
+import { prettifyAction, prettifyId } from './prettifyAction';
 import { SpecRecord } from './types';
 import { Recorder } from './types-internal';
 
@@ -15,8 +15,8 @@ export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId
   log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject)}`))
 }
 
-export function logActionSetMeta({ ref, actionId }: Pick<Recorder.CauseActionsState, 'ref' | 'actionId'>, meta: any) {
-  log.on(logLevels.trace, () => `${ref.plugin} <act:${actionId}> set meta: ${tersify(meta)}`)
+export function logActionSetMeta({ ref, source }: Recorder.State, meta: any) {
+  log.on(logLevels.trace, () => `${ref.plugin} ${prettifyId(source?.id)}> set meta: ${tersify(meta)}`)
 }
 
 export function logAction(state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {

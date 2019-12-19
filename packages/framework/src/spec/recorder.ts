@@ -4,7 +4,7 @@ import { PartialPick, required } from 'type-plus';
 import { notDefined } from '../constants';
 import { log } from '../log';
 import { createTimeTracker } from './createTimeTracker';
-import { findPlugin } from './findPlugin';
+import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
 import { createSpecRecordBuilder } from './record';
 import { getDefaultPerformer } from './subjectProfile';
@@ -45,9 +45,9 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   const source = context.state?.source
   const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
   const refId = context.record.addRef(ref)
-  const state = { ref, refId, spyOptions: [] }
+  const state: Recorder.State = { ref, refId, spyOptions: [], source }
   logCreateSpy(state, profile, subject)
-  ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
+  ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state: { ...state, source: undefined } }), subject)
   // TODO: fix circular reference
   return ref.testDouble
 }
@@ -91,7 +91,6 @@ function getProperty<V>(
     ...context,
     state: { ...context.state, site: { type: 'property' as const, key } }
   }
-
   logAction(newContext.state, actionId, action)
 
   return handleResult(newContext, actionId, action.type, handler)
@@ -147,10 +146,16 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: { sour
   const { record, state } = context
   const ref = record.findRef(subject)
   if (ref) {
-    // if (reference.testDouble === notDefined) {
-    //   const subjectId = record.getRefId(reference)
-    //   state.circularRefs.push({ sourceId: state.id, sourceSite: options.site || [], subjectId })
-    // }
+    if (ref.testDouble === notDefined) {
+      // console.log('getspy ref', ref)
+      // console.log('getspy state.ref', state.ref)
+      // console.log('getspy options', options)
+      const plugin = getPlugin(ref.plugin)
+      ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state: { ...state, source: undefined } }), ref.subject)
+      // ref.testDouble = createSpy({ ...context, state: required(state, { source: options.source ?? state.source }) }, subject, { profile }) || subject
+      //   const subjectId = record.getRefId(reference)
+      //   state.circularRefs.push({ sourceId: state.id, sourceSite: options.site || [], subjectId })
+    }
     return ref.testDouble
   }
   const sourceRef = state.ref
@@ -246,7 +251,6 @@ function handleResult(
     })
     const refId = record.findRefId(spy)
     returnAction.payload = refId !== undefined ? refId : result
-
     logAction(context.state, returnActionId, returnAction)
     return spy
   }

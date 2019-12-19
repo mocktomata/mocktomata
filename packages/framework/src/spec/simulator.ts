@@ -341,39 +341,25 @@ function processNextAction(context: Simulator.Context) {
   if (!nextAction) return
   switch (nextAction.type) {
     case 'get':
+      if (nextAction.performer !== 'mockto') return
       processGet(context, nextAction)
+      processNextAction(context)
       break
     case 'set':
+      if (nextAction.performer !== 'mockto') return
       processSet(context, nextAction)
+      processNextAction(context)
       break
     case 'invoke':
       if (nextAction.performer !== 'mockto') return
       processInvoke(context, actionId, nextAction)
+      processNextAction(context)
       break
     case 'instantiate':
       if (nextAction.performer !== 'mockto') return
       processInstantiate()
-  }
-  function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
-    const { record } = context
-    if (action.performer !== 'mockto') return
-
-    const ref = record.getRef(action.refId)
-    const thisArg = resolveValue({
-      ...context,
-      state: {
-        ...context.state,
-        source: { type: 'this', id: actionId }
-      }
-    }, action.refId)
-    const args = action.payload.map((arg, key) => resolveValue({
-      ...context,
-      state: {
-        ...context.state,
-        source: { type: 'argument', id: actionId, key }
-      }
-    }, arg))
-    return ref?.testDouble.apply(thisArg, args)
+      processNextAction(context)
+      break
   }
 }
 
@@ -381,16 +367,12 @@ function processInstantiate() { }
 
 function processGet(context: Simulator.Context, nextAction: SpecRecord.GetAction) {
   const { record } = context
-  if (nextAction.performer !== 'mockto') return
   const ref = record.getRef(nextAction.refId)
-  console.log('ref', nextAction, ref)
-  const result = ref?.testDouble[nextAction.key]
-  console.log('result', result)
+  ref?.testDouble[nextAction.key]
 }
 
 function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction) {
   const { record } = context
-  if (nextAction.performer !== 'mockto') return
   const ref = record.getRef(nextAction.refId)
 
   ref!.testDouble[nextAction.key] = resolveValue(context, nextAction.value)
@@ -407,4 +389,24 @@ function resolveValue(context: Simulator.Context, value: any) {
   else {
     return value
   }
+}
+function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
+  const { record } = context
+
+  const ref = record.getRef(action.refId)
+  const thisArg = resolveValue({
+    ...context,
+    state: {
+      ...context.state,
+      source: { type: 'this', id: actionId }
+    }
+  }, action.refId)
+  const args = action.payload.map((arg, key) => resolveValue({
+    ...context,
+    state: {
+      ...context.state,
+      source: { type: 'argument', id: actionId, key }
+    }
+  }, arg))
+  return ref?.testDouble.apply(thisArg, args)
 }

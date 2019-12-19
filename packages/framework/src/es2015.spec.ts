@@ -403,19 +403,17 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator.save('callback in object literal success', (title, spec) => {
-    test.only(title, async () => {
+  incubator.duo('callback in object literal success', (title, spec) => {
+    test(title, async () => {
       const subject = await spec(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(subject, 2)).toBe(3)
-
-      spec.enableLog()
 
       await spec.done()
     })
   })
   incubator.duo('callback in object literal fail', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(callbackInObjLiteral.fail)
 
       const err = await a.throws(callbackInObjLiteral.increment(subject, 2), Error)
@@ -426,7 +424,7 @@ describe('function', () => {
     })
   })
   incubator.duo('callback in deep object literal success', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(callbackInDeepObjLiteral.success)
 
       expect(await callbackInDeepObjLiteral.increment(subject, 2)).toBe(3)
@@ -483,7 +481,7 @@ describe('function', () => {
     })
   })
   incubator.duo('invoke fetch style: with options and callback', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const subject = await spec(fetch.success)
       const actual = await fetch.add(subject, 1, 2)
       expect(actual).toBe(3)
