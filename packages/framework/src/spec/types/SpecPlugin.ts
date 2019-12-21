@@ -1,7 +1,7 @@
 import { Meta } from './Meta';
 import { SpecRecord } from './SpecRecord';
 
-export type SpecPlugin<S = any, M extends Record<string, any> = any> = {
+export type SpecPlugin<S = any, M = string> = {
   /**
    * Name of the plugin. This is needed only if there are multiple plugins in a package.
    */

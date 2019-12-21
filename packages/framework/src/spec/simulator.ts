@@ -104,18 +104,7 @@ function getProperty(
   if (!actionMatches(action, expected)) {
     // getProperty calls may be caused by framework access.
     // Those calls will not be record and simply ignored.
-
-    // The one I have indentified is `then` check,
-    // probably by TypeScript or async/await for checking if the object is a promise
-    if (typeof key === 'symbol' || (key === 'then' &&
-      state.ref.plugin !== '@mocktomata/es2015/promise' &&
-      !record.hasExpectedGetThenAction(state.refId)
-    )) return undefined
-
-    if (!expected) {
-      return undefined
-    }
-    throw new ActionMismatch(record.specName, action, expected)
+    return undefined
   }
 
   const actionId = record.addAction(action)

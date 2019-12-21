@@ -1,10 +1,11 @@
 import { SpecPlugin } from '../spec';
-import { hasProperty } from '../utils';
+import { demetarize, hasProperty, metarize } from '../utils';
 
-export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<string | number, any>> = {
+export const objectPlugin: SpecPlugin<Record<string | number, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
-  createSpy: ({ getProperty, setProperty, invoke }, subject) => {
+  createSpy: ({ getProperty, setProperty, invoke, setMeta }, subject) => {
+    setMeta(metarize(subject))
     return new Proxy(subject, {
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
@@ -18,8 +19,8 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
       }
     })
   },
-  createStub: ({ getProperty, setProperty, invoke }) => {
-    return new Proxy({}, {
+  createStub: ({ getProperty, setProperty, invoke }, _, meta) => {
+    return new Proxy(demetarize(meta), {
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args })
       },

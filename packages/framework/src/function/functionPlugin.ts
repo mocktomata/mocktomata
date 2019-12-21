@@ -1,7 +1,7 @@
 import { SpecPlugin } from '../spec';
-import { hasProperty, hasPropertyInPrototype } from '../utils';
+import { hasProperty, hasPropertyInPrototype, metarize, demetarize } from '../utils';
 
-export const functionPlugin: SpecPlugin<Function & Record<any, any>, Record<string, any>> = {
+export const functionPlugin: SpecPlugin<Function & Record<any, any>> = {
   name: 'function',
   support: subject => {
     if (typeof subject !== 'function') return false
@@ -35,7 +35,8 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, Record<stri
    *
    * })
    */
-  createSpy: ({ getProperty, invoke }, subject) => {
+  createSpy: ({ getProperty, invoke, setMeta }, subject) => {
+    setMeta(metarize(subject))
     return new Proxy(subject, {
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
@@ -50,8 +51,8 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, Record<stri
       }
     })
   },
-  createStub: ({ getProperty, invoke }) => {
-    return new Proxy(function () { }, {
+  createStub: ({ getProperty, invoke }, _, meta) => {
+    return new Proxy(demetarize(meta), {
       apply: function (_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args })
       },
