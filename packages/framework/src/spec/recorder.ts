@@ -87,13 +87,9 @@ function getProperty<V>(
 
   const actionId = record.addAction(action)
 
-  const newContext = {
-    ...context,
-    state: { ...context.state, site: { type: 'property' as const, key } }
-  }
-  logAction(newContext.state, actionId, action)
+  logAction(context.state, actionId, action)
 
-  return handleResult(newContext, actionId, action.type, handler)
+  return handleResult({ ...context, state: { ...context.state, source: { type: 'result', id: actionId } } }, actionId, action.type, handler)
 }
 
 function setProperty<V, R>(
@@ -114,21 +110,23 @@ function setProperty<V, R>(
 
   const actionId = record.addAction(action)
 
-  const newContext = {
+  const spiedValue = getSpy({
     ...context,
-    state: { ...context.state, actionId, site: { type: 'property' as const, key } }
-  }
-
-  const spiedValue = getSpy(newContext, value, {
+    state: { ...context.state, source: { type: 'property', id: actionId, key } }
+  }, value, {
     // TODO: if performer is overridden, this might change
     profile: getProfileForInvokeThis(state.ref.profile),
     source: { type: 'this', id: actionId }
   })
   action.value = record.findRefId(spiedValue) || value
 
-  logAction(newContext.state, actionId, action)
+  logAction(context.state, actionId, action)
 
-  return handleResult(newContext, actionId, action.type, () => handler(spiedValue))
+  return handleResult(
+    { ...context, state: { ...context.state, source: { type: 'result', id: actionId } } },
+    actionId,
+    action.type,
+    () => handler(spiedValue))
 }
 
 function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options) {
@@ -182,12 +180,7 @@ function invoke<V, T, A extends any[]>(
   }
   const actionId = record.addAction(action)
 
-  const newContext = {
-    ...context,
-    state: { ...context.state, actionId }
-  }
-
-  const spiedThisArg = getSpy(newContext, thisArg, {
+  const spiedThisArg = getSpy({ ...context, state: { ...context.state, source: { type: 'this', id: actionId } } }, thisArg, {
     // TODO: if performer is overridden, this might change
     profile: getProfileForInvokeThis(state.ref.profile),
     source: { type: 'this', id: actionId }
@@ -195,7 +188,7 @@ function invoke<V, T, A extends any[]>(
   action.thisArg = record.findRefId(spiedThisArg) || thisArg
 
   const spiedArgs = args.map((arg, i) => {
-    const spiedArg = getSpy(newContext, arg, {
+    const spiedArg = getSpy({ ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } }, arg, {
       profile: getProfileForInvokeArgument(state.ref.profile),
       source: { type: 'argument', id: actionId, key: i }
     })
@@ -203,9 +196,9 @@ function invoke<V, T, A extends any[]>(
     return spiedArg
   })
 
-  logAction(newContext.state, actionId, action)
+  logAction(context.state, actionId, action)
 
-  return handleResult(newContext, actionId, action.type, () => handler({
+  return handleResult({ ...context, state: { ...context.state, source: { type: 'result', id: actionId } } }, actionId, action.type, () => handler({
     // TODO: support scope
     thisArg: action.thisArg,
     args: spiedArgs as A,

@@ -33,7 +33,7 @@ export namespace SpecRecord {
   }
   export type PropertySource = {
     type: 'property',
-    id: SpecRecord.ReferenceId,
+    id: SpecRecord.ActionId,
     key: SupportedKeyTypes,
   }
 

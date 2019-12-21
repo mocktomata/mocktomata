@@ -25,7 +25,6 @@ export function prettifyAction(state: Recorder.State, actionId: SpecRecord.Actio
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} invoke <ref:${state.refId}>(this:${tersifyValue(action.thisArg)}${argsStr})`
     }
     case 'return':
-      // console.log(state)
       return `${state.ref.plugin} <act:${actionId}> ${prettifyIdWithRef(state.refId, state.source?.id)} -> ${typeof action.payload === 'string' ? `<ref:${action.payload}>` : tersify(action.payload)}`
     case 'throw':
       return `${state.ref.plugin} <act:${actionId}> ${prettifyIdWithRef(state.refId, state.source?.id)} throws ${typeof action.payload === 'string' ? `<ref:${action.payload}>` : tersify(action.payload)}`
@@ -33,11 +32,11 @@ export function prettifyAction(state: Recorder.State, actionId: SpecRecord.Actio
 }
 
 export function prettifyId(id: SpecRecord.ReferenceId | SpecRecord.ActionId | undefined) {
-  return id ? typeof id === 'string' ? `<ref:${id}>` : `<act:${id}>` : ''
+  return id !== undefined ? typeof id === 'string' ? `<ref:${id}>` : `<act:${id}>` : ''
 }
 
 function prettifyIdWithRef(refId: SpecRecord.ReferenceId, id: SpecRecord.ReferenceId | SpecRecord.ActionId | undefined) {
-  return id ? typeof id === 'string' ? `<ref:${id}>` : `<ref:${refId} act:${id}>` : ''
+  return id !== undefined ? typeof id === 'string' ? `<ref:${id}>` : `<ref:${refId} act:${id}>` : ''
 }
 function prettifyPerformer(performer: SpecRecord.Performer) {
   switch (performer) {

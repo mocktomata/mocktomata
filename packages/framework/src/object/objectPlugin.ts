@@ -4,8 +4,8 @@ import { hasProperty } from '../utils';
 export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<string | number, any>> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
-  createSpy: ({ getProperty, invoke }, subject) => {
-    return new Proxy({}, {
+  createSpy: ({ getProperty, setProperty, invoke }, subject) => {
+    return new Proxy(subject, {
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
       },
@@ -14,17 +14,20 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, Record<strin
         return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
-        return subject[property] = value
+        return setProperty({ key: property, value }, value => subject[property] = value)
       }
     })
   },
-  createStub: ({ getProperty, invoke }) => {
+  createStub: ({ getProperty, setProperty, invoke }) => {
     return new Proxy({}, {
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args })
       },
       get(_: any, property: string) {
         return getProperty({ key: property })
+      },
+      set(_, key: string, value: any) {
+        return setProperty({ key, value })
       }
     })
   }

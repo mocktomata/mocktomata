@@ -487,8 +487,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator.duo('invoke fetch style: receive error in callback', (title, spec) => {
-    test.skip(title, async () => {
+  incubator.save('invoke fetch style: receive error in callback', (title, spec) => {
+    test(title, async () => {
       const subject = await spec(fetch.fail)
       const actual = await a.throws(fetch.add(subject, 1, 2))
       expect(actual).toEqual({ message: 'fail' })

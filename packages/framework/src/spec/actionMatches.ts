@@ -4,6 +4,8 @@ export function actionMatches(actual: SpecRecord.Action, expected: SpecRecord.Ac
   switch (actual.type) {
     case 'get':
       return isMatchingGetAction(actual, expected)
+    case 'set':
+      return isMatchingSetAction(actual, expected)
     case 'invoke':
       return isMatchingInvokeAction(actual, expected)
   }
@@ -14,6 +16,16 @@ function isMatchingGetAction(
   expected: SpecRecord.Action | undefined
 ): actual is SpecRecord.GetAction {
   return !!expected && expected.type === 'get' &&
+    actual.refId === expected.refId &&
+    actual.performer === expected.performer &&
+    actual.key === expected.key
+}
+
+function isMatchingSetAction(
+  actual: SpecRecord.SetAction,
+  expected: SpecRecord.Action | undefined
+): actual is SpecRecord.SetAction {
+  return !!expected && expected.type === 'set' &&
     actual.refId === expected.refId &&
     actual.performer === expected.performer &&
     actual.key === expected.key

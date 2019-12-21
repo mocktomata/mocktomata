@@ -119,7 +119,7 @@ function getProperty(
   }
 
   const actionId = record.addAction(action)
-  const newState: Recorder.State = { ...state, source: { type: 'property', id: state.refId, key } }
+  const newState: Recorder.State = { ...state, source: { type: 'property', id: actionId, key } }
 
   logAction(newState, actionId, action)
   processNextAction(context)
@@ -166,7 +166,7 @@ function setProperty<V = any>(
   }
 
   const actionId = record.addAction(action)
-  const newState: Recorder.State = { ...state, source: { type: 'property', id: state.refId, key } }
+  const newState: Recorder.State = { ...state, source: { type: 'property', id: actionId, key } }
 
   action.value = resolveValue(context, value)
 

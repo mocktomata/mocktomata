@@ -36,7 +36,7 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, Record<stri
    * })
    */
   createSpy: ({ getProperty, invoke }, subject) => {
-    return new Proxy(function () { }, {
+    return new Proxy(subject, {
       apply(_, thisArg, args: any[] = []) {
         return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
       },
