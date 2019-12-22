@@ -604,7 +604,7 @@ describe('promise', () => {
   })
 
   incubator.duo('promise with callback in between', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       function foo(x: number, cb: Function) {
         return new Promise(a => {
           setTimeout(() => {

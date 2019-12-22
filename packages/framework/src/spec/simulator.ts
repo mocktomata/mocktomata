@@ -16,17 +16,21 @@ export namespace Simulator {
   export type Context = {
     timeTracker: TimeTracker,
     record: SpecRecordValidator,
-    state: Recorder.State
+    state: Recorder.State,
+    pendingPluginActions: Array<SpecPlugin.StubContext.PluginAction & { ref: SpecRecord.Reference, refId: SpecRecord.ReferenceId }>
   }
 }
 
 export function createSimulator(specName: string, loaded: SpecRecord, options: SpecOptions) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
   const record = createSpecRecordValidator(specName, loaded)
-  const context = { record, timeTracker }
 
   return {
-    createStub: <S>(subject: S) => createStub(context, subject, { profile: 'target' }),
+    createStub: <S>(subject: S) => createStub({
+      record,
+      timeTracker,
+      pendingPluginActions: []
+    }, subject, { profile: 'target' }),
     end: () => timeTracker.stop(),
     getSpecRecord: () => record.getSpecRecord()
   }
@@ -80,7 +84,8 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
     getProperty: options => getProperty(context, options),
     setProperty: options => setProperty(context, options),
     invoke: options => invoke(context, options),
-    instantiate: options => instantiate(context, options)
+    instantiate: options => instantiate(context, options),
+    on: options => on(context, options),
   }
 }
 
@@ -282,6 +287,10 @@ function instantiate(context: Simulator.Context, options: SpecPlugin.StubContext
   return undefined as any
 }
 
+function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.PluginAction) {
+  context.pendingPluginActions.push({ ...pluginAction, ref: context.state.ref, refId: context.state.refId })
+}
+
 function getByPath(subject: any, sitePath: Array<string | number>) {
   if (subject === undefined) return subject
   return sitePath.reduce((p, s) => p[s], subject)
@@ -291,7 +300,7 @@ function notGetThenAction(action: SpecRecord.Action | undefined) {
   return !(action && action.type === 'get' && action.key.length === 1 && action.key[0] === 'then')
 }
 
-function getResult(context: Simulator.Context<Recorder.CauseActionsState>, expected: SpecRecord.Action) {
+function getResult(context: Simulator.Context, expected: SpecRecord.Action) {
   const { record, state } = context
   // TODO check for action mismatch
   if (expected.type !== 'return' && expected.type !== 'throw') {
@@ -326,30 +335,46 @@ function getResult(context: Simulator.Context<Recorder.CauseActionsState>, expec
 }
 
 function processNextAction(context: Simulator.Context) {
-  const { record } = context
+  const { record, pendingPluginActions } = context
   const nextAction = record.getNextExpectedAction()
   const actionId = record.getNextActionId()
   if (!nextAction) return
   switch (nextAction.type) {
     case 'get':
-      if (nextAction.performer !== 'mockto') return
-      processGet(context, nextAction)
-      processNextAction(context)
+      if (nextAction.performer === 'mockto') {
+        processGet(context, nextAction)
+        processNextAction(context)
+      }
       break
     case 'set':
-      if (nextAction.performer !== 'mockto') return
-      processSet(context, nextAction)
-      processNextAction(context)
+      if (nextAction.performer === 'mockto') {
+        processSet(context, nextAction)
+        processNextAction(context)
+      }
       break
     case 'invoke':
-      if (nextAction.performer !== 'mockto') return
-      processInvoke(context, actionId, nextAction)
-      processNextAction(context)
+      if (nextAction.performer === 'mockto') {
+        processInvoke(context, actionId, nextAction)
+        processNextAction(context)
+      }
+      else if (nextAction.performer === 'plugin') {
+        const pa = pendingPluginActions.find(a => a.type === nextAction.type && a.site === nextAction.site)
+        if (!pa) throw new ActionMismatch(record.specName, undefined, nextAction)
+        invoke({
+          ...context,
+          state: {
+            ...context.state,
+            ref: pa.ref,
+            refId: pa.refId,
+          }
+        }, { thisArg: pa.thisArg, args: pa.args, performer: 'plugin', site: pa.site })
+      }
       break
     case 'instantiate':
-      if (nextAction.performer !== 'mockto') return
-      processInstantiate()
-      processNextAction(context)
+      if (nextAction.performer === 'mockto') {
+        processInstantiate()
+        processNextAction(context)
+      }
       break
   }
 }

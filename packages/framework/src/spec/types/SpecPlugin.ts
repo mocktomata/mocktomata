@@ -128,6 +128,7 @@ export namespace SpecPlugin {
     setProperty: StubContext.setProperty,
     invoke: StubContext.invoke,
     instantiate: StubContext.instantiate,
+    on: StubContext.on,
   }
 
   export namespace StubContext {
@@ -150,13 +151,18 @@ export namespace SpecPlugin {
       }
     }
 
-    export type invoke = (options: invoke.Options) => any
+    export type invoke = (options: invoke.Options, handler?: invoke.Handler) => any
     export namespace invoke {
       export type Options = {
         thisArg: any,
         args: any[],
         performer?: SpecRecord.Performer,
         site?: SpecRecord.SupportedKeyTypes,
+      }
+      export type Handler = (context: Context) => any
+      export type Context = {
+        thisArg: any,
+        args: any[],
       }
     }
 
@@ -166,6 +172,17 @@ export namespace SpecPlugin {
         args: any[],
         performer?: SpecRecord.Performer,
       }
+    }
+
+    export type on = (pluginAction: PluginAction) => any
+
+    export type PluginAction = PluginInvokeAction
+
+    export type PluginInvokeAction = {
+      type: 'invoke',
+      site?: SpecRecord.SupportedKeyTypes,
+      thisArg: any,
+      args: any[]
     }
   }
 

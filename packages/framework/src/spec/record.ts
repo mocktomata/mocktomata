@@ -87,7 +87,24 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
       return undefined
     },
 
-    findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
+    findRefId: (value: any) => {
+      let ref = findRefBySubjectOrTestDouble(refs, value)
+      if (ref) return getRefId(refs, ref)
+
+      const plugin = findPlugin(value)
+      if (!plugin) {
+        // `value` is primitive
+        return undefined
+      }
+
+      ref = refs.find(r => r.plugin === plugin.name && !r.claimed)
+      if (ref) {
+        ref.claimed = true
+        ref.subject = value
+        return getRefId(refs, ref)
+      }
+      return undefined
+    },
 
     hasExpectedGetThenAction: (refId: SpecRecord.ReferenceId) => {
       return loaded.actions.some(a => a.type === 'get' && a.refId === refId && a.key === 'then')

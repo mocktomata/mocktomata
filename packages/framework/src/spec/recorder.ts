@@ -165,7 +165,7 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: { sour
 
 function invoke<V, T, A extends any[]>(
   context: Recorder.Context,
-  { thisArg, args, performer }: SpecPlugin.SpyContext.invoke.Options<T, A>,
+  { thisArg, args, performer, site }: SpecPlugin.SpyContext.invoke.Options<T, A>,
   handler: SpecPlugin.SpyContext.invoke.Handler<V, T, A>) {
   const { record, timeTracker, state } = context
 
@@ -174,6 +174,7 @@ function invoke<V, T, A extends any[]>(
     type: 'invoke',
     refId: state.refId,
     performer,
+    site,
     thisArg: notDefined,
     payload: [],
     tick: timeTracker.elaspe(),

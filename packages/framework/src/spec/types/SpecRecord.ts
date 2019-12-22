@@ -99,7 +99,8 @@ export namespace SpecRecord {
     tick: number,
     thisArg: any,
     payload: any[],
-    site?: Site,
+    site?: SupportedKeyTypes,
+    // site?: Site,
     meta?: Meta,
   }
 
