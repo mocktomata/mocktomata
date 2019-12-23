@@ -1,20 +1,32 @@
-// import { isPromise } from '../promise/isPromise';
-import { isPromise } from '../promise/isPromise';
 import { SpecPlugin } from '../spec';
 import { getInheritedPropertyNames } from '../utils';
 import { isClass } from './isClass';
 
-function classTracker<S>({ instantiate, getSpy }: SpecPlugin.SpyContext, _subject: S) {
-  let instanceRecorder: SpecPlugin.InstantiationRecorder
+// spyHelper is used to get around class.constructor.super must be the first line in the constructor.
+function spyHelper({ instantiate }: SpecPlugin.SpyContext) {
+  let recorder: SpecPlugin.SpyContext.instantiate.Recorder
   return {
     instantiate(args: any[]) {
-      instanceRecorder = instantiate(args, {
-        processArguments: (id, arg) => getSpy(arg)
-      })
-      return instanceRecorder.args
+      let spiedArgs: any[]
+      recorder = instantiate({ args }, ({ args }) => spiedArgs = args)
+      // @ts-ignore
+      return spiedArgs
     },
-    getInstanceRecorder() {
-      return instanceRecorder!
+    getRecorder() {
+      return recorder
+    }
+  }
+}
+
+function stubHelper({ instantiate }: SpecPlugin.StubContext) {
+  let responder: SpecPlugin.StubContext.instantiate.Responder
+  return {
+    instantiate(args: any[]) {
+      responder = instantiate({ args })
+      return args
+    },
+    getResponder() {
+      return responder
     }
   }
 }
@@ -23,13 +35,12 @@ export const classPlugin: SpecPlugin = {
   name: 'class',
   support: isClass,
   createSpy(context, subject) {
-    const tracker = classTracker(context, subject)
-    const { getSpy } = context
+    const helper = spyHelper(context)
     const SpiedClass = class extends subject {
-      __komondor: { pending: boolean, instanceRecorder: SpecPlugin.InstantiationRecorder, publicMethods: string[] }
+      __komondor: { pending: boolean, instanceRecorder: SpecPlugin.SpyContext.instantiate.Recorder, publicMethods: string[] }
       constructor(...args: any[]) {
-        super(...tracker.instantiate(args))
-        const instanceRecorder = tracker.getInstanceRecorder()
+        super(...helper.instantiate(args))
+        const instanceRecorder = helper.getRecorder()
         this.__komondor = {
           pending: false,
           publicMethods: [],
@@ -46,32 +57,33 @@ export const classPlugin: SpecPlugin = {
           if (this.__komondor.publicMethods.indexOf(p) === -1) {
             this.__komondor.publicMethods.push(p)
           }
-
-          const invocation = this.__komondor.instanceRecorder.invoke(args, {
-            processArguments: arg => getSpy(arg, { mode: 'autonomous' }),
-            site: [p],
-          })
-
           try {
-            const result = method.apply(this, invocation.args)
-            const spiedResult = invocation.returns(result, { processArgument: result => getSpy(result, { mode: 'passive' }) })
-            if (isPromise(spiedResult)) {
-              spiedResult.then(
-                () => this.__komondor.pending = false,
-                () => this.__komondor.pending = false
-              )
-              return spiedResult
-            }
-            else {
-              this.__komondor.pending = false
-              return spiedResult
-            }
+            return this.__komondor.instanceRecorder.invoke({ site: p, thisArg: this, args }, ({ args }) => method.apply(this, args))
           }
-          catch (err) {
-            const thrown = invocation.throws(err, { processArgument: err => getSpy(err, { mode: 'passive' }) })
+          finally {
             this.__komondor.pending = false
-            throw thrown
           }
+
+          // try {
+          //   const result = method.apply(this, invocation.args)
+          //   const spiedResult = invocation.returns(result, { processArgument: result => getSpy(result, { mode: 'passive' }) })
+          //   if (isPromise(spiedResult)) {
+          //     spiedResult.then(
+          //       () => this.__komondor.pending = false,
+          //       () => this.__komondor.pending = false
+          //     )
+          //     return spiedResult
+          //   }
+          //   else {
+          //     this.__komondor.pending = false
+          //     return spiedResult
+          //   }
+          // }
+          // catch (err) {
+          //   const thrown = invocation.throws(err, { processArgument: err => getSpy(err, { mode: 'passive' }) })
+          //   this.__komondor.pending = false
+          //   throw thrown
+          // }
         }
         else {
           return method.apply(this, args)
@@ -81,38 +93,21 @@ export const classPlugin: SpecPlugin = {
 
     return SpiedClass
   },
-  createStub({ instantiate, getSpy }, subject, _meta) {
-    let instanceResponder: SpecPlugin.InstantiationResponder
-    const tracker = {
-      instantiate(args: any[]) {
-        instanceResponder = instantiate(args, {
-          processArguments: (id, arg) => getSpy(arg, { mode: 'autonomous' })
-        })
-        return instanceResponder.args
-      },
-    }
+  createStub(context, subject, _meta) {
+    const helper = stubHelper(context)
 
     const StubClass = class extends subject {
-      __komondor: { instanceResponder: SpecPlugin.InstantiationResponder }
+      __komondor: { instanceResponder: SpecPlugin.StubContext.instantiate.Responder }
       constructor(...args: any[]) {
-        super(...tracker.instantiate(args))
+        super(...helper.instantiate(args))
+        const instanceResponder = helper.getResponder()
         this.__komondor = { instanceResponder }
         instanceResponder.setInstance(this)
       }
     }
     getInheritedPropertyNames(StubClass).forEach(p => {
       StubClass.prototype[p] = function (this: InstanceType<typeof StubClass>, ...args: any[]) {
-        const invocation = this.__komondor.instanceResponder.invoke(args, {
-          processArguments: getSpy,
-          site: [p]
-        })
-        const result = invocation.getResult()
-        if (result.type === 'return') {
-          return invocation.returns(result.value)
-        }
-        else {
-          throw invocation.throws(result.value)
-        }
+        return this.__komondor.instanceResponder.invoke({ site: p, thisArg: this, args })
       }
     })
     return StubClass

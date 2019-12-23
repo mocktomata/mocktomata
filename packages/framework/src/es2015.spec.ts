@@ -658,7 +658,7 @@ describe('class', () => {
   }
 
   incubator.duo('invoke declared method', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(Foo)
       const instance = new Subject(1)
       expect(instance.getValue()).toBe(1)
@@ -667,7 +667,7 @@ describe('class', () => {
   })
 
   incubator.duo('invoke sub-class method', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(Boo)
 
       const instance = new Subject(1)
@@ -677,7 +677,7 @@ describe('class', () => {
   })
 
   incubator.duo('invoke parent method', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(Boo)
 
       const instance = new Subject(1)
@@ -687,7 +687,7 @@ describe('class', () => {
   })
 
   incubator.duo('create multiple instances of the same class', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(Foo)
       const f1 = new Subject(1)
       const f2 = new Subject(2)
@@ -699,7 +699,7 @@ describe('class', () => {
 
   incubator.sequence('ok to use super/sub-class as long as behavior is the same', (title, specs) => {
     // It is ok to use diff
-    test.skip(title, async () => {
+    test(title, async () => {
       const save = specs.save
       const bs = await save(Boo)
       const boo = new bs(2)
@@ -725,7 +725,7 @@ describe('class', () => {
     }
   }
   incubator.duo('class method with callback', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const s = await spec(WithCallback)
       const cb = new s()
 
@@ -746,7 +746,7 @@ describe('class', () => {
   }
 
   incubator.duo('invoke method throws', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(Throwing)
       const foo = new Subject()
       a.throws(() => foo.doThrow(), e => e.message === 'thrown')
@@ -768,7 +768,7 @@ describe('class', () => {
     }
   }
   incubator.duo('method return resolved promise', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(ResolvedPromise)
       const p = new Subject()
       expect(await p.increment(3)).toBe(4)
@@ -778,7 +778,7 @@ describe('class', () => {
   })
 
   incubator.duo('method returns delayed promise', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(DelayedPromise)
       const p = new Subject()
       expect(await p.increment(3)).toBe(4)
@@ -788,11 +788,12 @@ describe('class', () => {
   })
 
   incubator.duo('invoke method returns delayed promise multiple times', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(DelayedPromise)
       const p = new Subject()
       expect(await Promise.all([p.increment(1), p.increment(3), p.increment(7)])).toEqual([2, 4, 8])
 
+      spec.enableLog()
       await spec.done()
     })
   })
@@ -807,7 +808,7 @@ describe('class', () => {
   }
 
   incubator.duo('method invokes internal method', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(InvokeInternal)
       const a = new Subject()
       expect(a.do()).toBe('data')
@@ -871,7 +872,7 @@ describe('class', () => {
   }
 
   incubator.duo('runaway promise will not be leaked and break another test', (title, spec) => {
-    test.skip(`${title}: setup`, async () => {
+    test(`${title}: setup`, async () => {
       const MockRejector = await spec(RejectLeak)
       const e = new MockRejector()
       await a.throws(e.reject(300), v => v === 300)
@@ -902,7 +903,7 @@ describe('class', () => {
   }
 
   incubator.duo('can use class with circular reference', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(ClassWithCircular)
       const f = new Subject()
 
@@ -917,7 +918,7 @@ describe('class', () => {
   })
 
   incubator.duo('class with circular reference accessing', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(ClassWithCircular)
       const f = new Subject()
 
@@ -1006,7 +1007,7 @@ describe('class', () => {
       y = 1
       do(x: any) { return x }
     }
-    test.skip(title, async () => {
+    test(title, async () => {
       const s = await spec(WithProperty)
       const p = new s()
       expect(p.do(2)).toBe(2)

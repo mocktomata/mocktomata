@@ -24,6 +24,12 @@ export function prettifyAction(state: Recorder.State, actionId: SpecRecord.Actio
         `, ${action.payload.map(tersifyValue).join(', ')}`
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} invoke <ref:${state.refId}>${action.site ? `.${action.site}` : ''}(this:${tersifyValue(action.thisArg)}${argsStr})`
     }
+    case 'instantiate': {
+      const argsStr = action.payload.length === 0 ?
+        '' :
+        `, ${action.payload.map(tersifyValue).join(', ')}`
+      return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} instantiate <ref:${state.refId}>(${argsStr})`
+    }
     case 'return':
       return `${state.ref.plugin} <act:${actionId}> ${prettifyIdWithRef(state.refId, state.source?.id)} -> ${typeof action.payload === 'string' ? `<ref:${action.payload}>` : tersify(action.payload)}`
     case 'throw':

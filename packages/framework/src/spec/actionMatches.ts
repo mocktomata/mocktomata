@@ -8,6 +8,8 @@ export function actionMatches(actual: SpecRecord.Action, expected: SpecRecord.Ac
       return isMatchingSetAction(actual, expected)
     case 'invoke':
       return isMatchingInvokeAction(actual, expected)
+    case 'instantiate':
+      return isMatchingInstantiateAction(actual, expected)
   }
 }
 
@@ -40,4 +42,13 @@ function isMatchingInvokeAction(
     actual.performer === expected.performer
   // TODO: check thisArg and payload
   // need to see how to compare subject/testDouble/Reference
+}
+
+function isMatchingInstantiateAction(
+  actual: SpecRecord.InstantiateAction,
+  expected: SpecRecord.Action | undefined
+): actual is SpecRecord.InstantiateAction {
+  return !!expected && expected.type === 'instantiate' &&
+    actual.refId === expected.refId &&
+    actual.performer === expected.performer
 }

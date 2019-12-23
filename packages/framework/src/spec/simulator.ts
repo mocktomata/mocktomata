@@ -202,9 +202,9 @@ function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
 }
 
 function invoke(context: Simulator.Context,
-  { thisArg, args, performer }: SpecPlugin.StubContext.invoke.Options,
+  { thisArg, args, performer, site }: SpecPlugin.StubContext.invoke.Options,
 ) {
-  const { record, timeTracker, state } = context
+  const { record, state, timeTracker } = context
 
   const { ref } = state
   const expected = record.getNextExpectedAction()
@@ -214,6 +214,7 @@ function invoke(context: Simulator.Context,
     type: 'invoke',
     refId: state.refId,
     performer,
+    site,
     thisArg: notDefined,
     payload: [],
     tick: timeTracker.elaspe(),
@@ -236,7 +237,7 @@ function invoke(context: Simulator.Context,
   }
   action.thisArg = record.getRefId(thisArgRef)
 
-  args.map((arg, i) => {
+  args.forEach((arg, i) => {
     const ref = record.findRef(arg)
     if (ref) {
       if (ref.testDouble === notDefined) {
@@ -253,22 +254,18 @@ function invoke(context: Simulator.Context,
     return arg
   })
   logAction(context.state, actionId, action)
-  // if (state.ref.profile === 'input') {
-  //   console.log('called??')
-  //   // TODO: need to process next action?
-  //   return newState.ref.testDouble.apply(thisArg, spiedArgs)
-  // }
-
   processNextAction(context)
 
+  const resultAction = record.getExpectedResultAction(actionId)
+  // in what case the resultAction is undefined?
+  // those extra invoke calls by the framework?
+  if (!resultAction) return undefined
+
+  const resultActionId = record.addAction(resultAction)
   const resultContext: Simulator.Context = {
     ...context,
     state: { ...context.state, source: { type: 'result', id: actionId } }
   }
-  const resultAction = record.getExpectedResultAction(actionId)
-  if (!resultAction) return undefined
-
-  const resultActionId = record.addAction(resultAction)
   const result = resolveValue(resultContext, resultAction.payload)
 
   setImmediate(() => processNextAction(context))
@@ -283,8 +280,86 @@ function invoke(context: Simulator.Context,
   }
 }
 
-function instantiate(context: Simulator.Context, options: SpecPlugin.StubContext.instantiate.Options) {
-  return undefined as any
+function instantiate(
+  context: Simulator.Context,
+  { args, performer }: SpecPlugin.StubContext.instantiate.Options
+): SpecPlugin.StubContext.instantiate.Responder {
+  const { record, state, timeTracker } = context
+
+  const { ref } = state
+  const expected = record.getNextExpectedAction()
+  performer = performer || getDefaultPerformer(ref.profile)
+  const action: SpecRecord.InstantiateAction = {
+    type: 'instantiate',
+    refId: state.refId,
+    instanceId: '', // to be filled in by `setInstance()`
+    performer,
+    payload: [],
+    tick: timeTracker.elaspe(),
+  }
+
+  args.forEach((arg, i) => {
+    const ref = record.findRef(arg)
+    if (ref) {
+      if (ref.testDouble === notDefined) {
+        buildTestDouble({
+          ...context,
+          state: { ...context.state, source: { type: 'argument', id: actionId, key: i } }
+        }, ref)
+      }
+      action.payload.push(record.getRefId(ref))
+    }
+    else {
+      action.payload.push(arg)
+    }
+    return arg
+  })
+
+  if (!actionMatches(action, expected)) {
+    throw new ActionMismatch(record.specName, action, expected)
+  }
+
+  const actionId = record.addAction(action)
+  logAction(context.state, actionId, action)
+  processNextAction(context)
+
+  const resultAction = record.getExpectedResultAction(actionId)!
+  // in what case the resultAction is undefined?
+  // those extra invoke calls by the framework?
+  if (!resultAction) new Error('missing result action')
+
+  const resultActionId = record.addAction(resultAction)
+  const resultContext: Simulator.Context = {
+    ...context,
+    state: { ...context.state, source: { type: 'result', id: actionId } }
+  }
+
+  // console.log('resultaction', resultAction)
+  // const result = resolveValue(resultContext, resultAction.payload)
+
+  setImmediate(() => processNextAction(context))
+
+  logAction(resultContext.state, resultActionId, resultAction)
+
+  let newContext: Simulator.Context
+  return {
+    setInstance(instance) {
+      const resultAction = record.getExpectedResultAction(actionId)
+      if (!resultAction) return
+      const ref = record.findRef(instance)!
+      const refId = record.getRefId(ref)
+      action.instanceId = refId
+      newContext = {
+        ...context,
+        state: {
+          ...context.state,
+          ref,
+          refId
+        }
+      }
+    },
+    invoke: (options) => invoke(newContext, options)
+  }
 }
 
 function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.PluginAction) {
@@ -360,6 +435,7 @@ function processNextAction(context: Simulator.Context) {
       else if (nextAction.performer === 'plugin') {
         const pa = pendingPluginActions.find(a => a.type === nextAction.type && a.site === nextAction.site)
         if (!pa) throw new ActionMismatch(record.specName, undefined, nextAction)
+        pendingPluginActions.splice(pendingPluginActions.indexOf(pa), 1)
         invoke({
           ...context,
           state: {
@@ -416,7 +492,7 @@ function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId
       ...context.state,
       source: { type: 'this', id: actionId }
     }
-  }, action.refId)
+  }, action.thisArg)
   const args = action.payload.map((arg, key) => resolveValue({
     ...context,
     state: {

@@ -167,7 +167,7 @@ function invoke<V, T, A extends any[]>(
   context: Recorder.Context,
   { thisArg, args, performer, site }: SpecPlugin.SpyContext.invoke.Options<T, A>,
   handler: SpecPlugin.SpyContext.invoke.Handler<V, T, A>) {
-  const { record, timeTracker, state } = context
+  const { record, state, timeTracker } = context
 
   performer = performer || getDefaultPerformer(state.ref.profile)
   const action: SpecRecord.InvokeAction = {
@@ -276,9 +276,49 @@ function getProfileForInvokeResult(
   }
 }
 
-function instantiate(
+function instantiate<V, A extends any[]>(
   context: Recorder.Context,
-  options: SpecPlugin.SpyContext.instantiate.Options | undefined,
-  handler: SpecPlugin.SpyContext.instantiate.Handler<any>) {
-  return {} as any
+  { args, performer }: SpecPlugin.SpyContext.instantiate.Options<A>,
+  handler: SpecPlugin.SpyContext.instantiate.Handler<V, A>
+): SpecPlugin.SpyContext.instantiate.Recorder {
+  const { record, state, timeTracker } = context
+  performer = performer || getDefaultPerformer(state.ref.profile)
+  const action: SpecRecord.InstantiateAction = {
+    type: 'instantiate',
+    refId: state.refId,
+    instanceId: '', // to be filled in by `setInstance()`
+    performer,
+    payload: [],
+    tick: timeTracker.elaspe(),
+  }
+  const actionId = record.addAction(action)
+  const spiedArgs = args.map((arg, i) => {
+    const spiedArg = getSpy({ ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } }, arg, {
+      profile: getProfileForInvokeArgument(state.ref.profile),
+      source: { type: 'argument', id: actionId, key: i }
+    })
+    action.payload.push(record.findRefId(spiedArg) || arg)
+    return spiedArg
+  }) as A
+  logAction(context.state, actionId, action)
+  handler({ args: spiedArgs })
+
+  let newContext: Recorder.Context
+  return {
+    setInstance(instance) {
+      const spiedInstance = handleResult({ ...context, state: { ...context.state, source: { type: 'result', id: actionId } } }, actionId, action.type, () => instance)
+      const ref = record.findRef(spiedInstance)!
+      const refId = record.getRefId(ref)
+      action.instanceId = refId
+      newContext = {
+        ...context,
+        state: {
+          ...context.state,
+          ref,
+          refId
+        }
+      }
+    },
+    invoke: (options, handler) => invoke(newContext, options, handler)
+  }
 }

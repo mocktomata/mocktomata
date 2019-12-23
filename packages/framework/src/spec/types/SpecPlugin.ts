@@ -50,7 +50,18 @@ export namespace SpecPlugin {
      * @returns the input meta.
      */
     setMeta: SpyContext.setMeta,
+    /**
+     * Tell mockto to treat the specified value in certain way,
+     * instead of the default behavior.
+     */
     setSpyOptions: SpyContext.setSpyOptions,
+    /**
+     * Gets the id of a value.
+     * If the value is a spy, its id is returned.
+     * If not the value itself is returned.
+     * This used mostly during `setMeta()` to get the right meta representation.
+     * During stub, use `resolve` to get the value back.
+     */
     getSpyId: SpyContext.getSpyId,
     getProperty: SpyContext.getProperty,
     setProperty: SpyContext.setProperty,
@@ -108,16 +119,28 @@ export namespace SpecPlugin {
         // setMeta: setMeta,
       }
     }
-    export type instantiate = <V = any>(options: instantiate.Options | undefined, hander: instantiate.Handler<V>) => any
+
+    export type instantiate = <V = any, A extends any[] = any[]>(
+      options: instantiate.Options<A>,
+      hander: instantiate.Handler<V, A>
+    ) => instantiate.Recorder
+
     export namespace instantiate {
-      export type Options = {
-        args: any[],
+      export type Options<A> = {
+        args: A,
         performer?: SpecRecord.Performer,
       }
-      export type Handler<V> = (context: Context) => V
-      export type Context = {
-        setMeta: setMeta,
-        withArgs<A extends any[]>(args: A): A,
+      export type Handler<V, A> = (context: Context<A>) => V
+      export type Context<A> = {
+        args: A
+      }
+
+      export type Recorder = {
+        setInstance(instance: any): void,
+        // setMeta: SpyContext.setMeta,
+        // getProperty: SpyContext.getProperty,
+        // setProperty: SpyContext.setProperty,
+        invoke: SpyContext.invoke,
       }
     }
   }
@@ -151,7 +174,7 @@ export namespace SpecPlugin {
       }
     }
 
-    export type invoke = (options: invoke.Options, handler?: invoke.Handler) => any
+    export type invoke = (options: invoke.Options) => any
     export namespace invoke {
       export type Options = {
         thisArg: any,
@@ -159,18 +182,17 @@ export namespace SpecPlugin {
         performer?: SpecRecord.Performer,
         site?: SpecRecord.SupportedKeyTypes,
       }
-      export type Handler = (context: Context) => any
-      export type Context = {
-        thisArg: any,
-        args: any[],
-      }
     }
 
-    export type instantiate = (options: instantiate.Options) => any
+    export type instantiate = (options: instantiate.Options) => instantiate.Responder
     export namespace instantiate {
       export type Options = {
         args: any[],
         performer?: SpecRecord.Performer,
+      }
+      export type Responder = {
+        setInstance(instance: any): void,
+        invoke: StubContext.invoke,
       }
     }
 
