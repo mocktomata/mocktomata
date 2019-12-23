@@ -793,7 +793,6 @@ describe('class', () => {
       const p = new Subject()
       expect(await Promise.all([p.increment(1), p.increment(3), p.increment(7)])).toEqual([2, 4, 8])
 
-      spec.enableLog()
       await spec.done()
     })
   })
@@ -830,7 +829,7 @@ describe('class', () => {
     }
   }
   incubator.duo('method delay invokes internal method', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const Subject = await spec(DelayedInvokeInternal)
       const a = new Subject()
       expect(await a.getDelayedInner()).toBe('inner')
@@ -847,7 +846,7 @@ describe('class', () => {
   }
 
   incubator.sequence('actual method is not invoked during simulation', (title, specs) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       const save = specs.save
       const Subject = await save(DelayedInvokeInternal)
       const dii = new Subject()
@@ -878,7 +877,7 @@ describe('class', () => {
       await a.throws(e.reject(300), v => v === 300)
       await spec.done()
     })
-    test.skip(`${title}: should not fail`, () => {
+    test(`${title}: should not fail`, () => {
       return new Promise(a => setImmediate(() => a()))
     })
   })
