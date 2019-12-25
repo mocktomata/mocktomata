@@ -1,8 +1,5 @@
-import { logLevels } from 'standard-log';
-import { tersify } from 'tersify';
 import { PartialPick, required } from 'type-plus';
 import { notDefined } from '../constants';
-import { log } from '../log';
 import { createTimeTracker } from './createTimeTracker';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
@@ -135,10 +132,7 @@ function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlu
 }
 
 function setMeta<M extends Meta>({ state }: Recorder.Context, meta: M) {
-  const ref = state.ref
-  state.ref.meta = meta
-  log.on(logLevels.trace, () => `${ref.plugin} <ref:${state.refId}> set meta: ${tersify(meta)}`)
-  return meta
+  return state.ref.meta = meta
 }
 
 export function getSpy<S>(context: Recorder.Context, subject: S, options: { source?: SpecRecord.ReferenceSource, profile?: SpecRecord.SubjectProfile }): S {

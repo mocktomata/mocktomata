@@ -39,9 +39,10 @@ function isMatchingInvokeAction(
 ): actual is SpecRecord.InvokeAction {
   return !!expected && expected.type === 'invoke' &&
     actual.refId === expected.refId &&
-    actual.performer === expected.performer
-  // TODO: check thisArg and payload
-  // need to see how to compare subject/testDouble/Reference
+    actual.performer === expected.performer &&
+    actual.thisArg === expected.thisArg &&
+    actual.payload.length === expected.payload.length &&
+    actual.payload.every((a, i) => a === expected.payload[i])
 }
 
 function isMatchingInstantiateAction(

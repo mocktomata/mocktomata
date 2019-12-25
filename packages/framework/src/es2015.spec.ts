@@ -1,28 +1,13 @@
 import a from 'assertron';
 import { incubator } from '../src';
-import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, ReferenceMismatch } from './spec';
-import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous, Dummy, ChildOfDummy } from './test-artifacts';
+import { ActionMismatch, ExtraAction, MissingAction } from './spec';
+import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })
 })
 
-describe.skip('mismatch simulation', () => {
-  incubator.sequence('extra reference', (title, { save, simulate }) => {
-    test(title, async () => {
-      await save.done()
-      await a.throws(simulate({}), ExtraReference)
-    })
-  })
-
-  incubator.sequence('mismatch reference', (title, { save, simulate }) => {
-    test(title, async () => {
-      await save({})
-      await save.done()
-      await a.throws(simulate(() => { }), ReferenceMismatch)
-    })
-  })
-
+describe('mismatch simulation', () => {
   incubator.sequence('extra action', (title, { save, simulate }) => {
     test(title, async () => {
       await save(() => { })
@@ -32,53 +17,28 @@ describe.skip('mismatch simulation', () => {
     })
   })
 
-  incubator.sequence('mismatch get action', (title, { save, simulate }) => {
-    test(title, async () => {
-      const subject = { a: 1, b: () => { } }
-      const spy = await save(subject)
-      expect(spy.a).toBe(1)
-      await save.done()
-
-      const stub = await simulate(subject)
-      a.throws(() => stub.b, ActionMismatch)
-    })
-  })
-
-  incubator.sequence('mismatch invoke action', (title, { save, simulate }) => {
+  incubator.sequence('missing action', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = () => { }
       const spy = await save(subject)
       spy()
       await save.done()
 
-      const stub = await simulate(subject)
-      a.throws(() => stub.length, ActionMismatch)
+      await simulate(subject)
+      await a.throws(simulate.done(), MissingAction)
     })
   })
 
-  incubator.sequence('expecting extra action before return', (title, { save, simulate }) => {
+  incubator.sequence('invoke with missing argument', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save((v: any) => v.v)
-      spy({ v: 1 })
+      const spy = await save((cb: any) => cb())
+      spy(() => { })
       await save.done()
 
-      const stub = await simulate((v: any) => v)
-      a.throws(() => stub({ v: 1 }), ActionTypeMismatch)
+      const stub = await simulate(() => { })
+      a.throws(() => stub(), ActionMismatch)
     })
   })
-
-  // incubator.sequence('missing result action on save', (title, { save, simulate }) => {
-  //   test.only(title, async () => {
-  //     const subject = () => new Promise(a => { setTimeout(a, 100) })
-  //     const spy = await save(subject)
-  //     spy()
-  //     await save.done()
-
-  //     const stub = await simulate(subject)
-  //     a.throws(() => stub(), MissingResultAction)
-
-  //   })
-  // })
 })
 
 describe('object', () => {

@@ -1,6 +1,7 @@
 import { tersify } from 'tersify';
 import { Recorder } from './types-internal';
 import { SpecRecord } from './types';
+import { notDefined } from '../constants';
 
 export namespace prettifyAction {
   export type Options = OptionsForGetInvoke | OptionsForReturnThrow
@@ -12,7 +13,7 @@ export namespace prettifyAction {
   }
 }
 
-export function prettifyAction(state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
+export function prettifyAction(state: Pick<Recorder.State, 'ref' | 'refId' | 'source'>, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
   switch (action.type) {
     case 'get':
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} access <ref:${state.refId}>.${action.key}`
@@ -51,5 +52,6 @@ function prettifyPerformer(performer: SpecRecord.Performer) {
 }
 
 function tersifyValue(value: any) {
-  return typeof value === 'string' ? `<ref:${value}>` : value
+  return typeof value === 'string' ? `<ref:${value}>` :
+    value === notDefined ? `<unknown>` : value
 }

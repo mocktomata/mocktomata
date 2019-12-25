@@ -98,9 +98,18 @@ export class ExtraAction extends MocktomataError {
   }
 }
 
+export class MissingAction extends MocktomataError {
+  constructor(public specName: string, public state: Pick<Recorder.State, 'ref' | 'refId' | 'source'>, public actionId: number, public action: SpecRecord.Action) {
+    super(`Recorded data for '${specName}' expecting action:
+  ${prettifyAction(state, actionId, action)}`)
+  }
+}
+
 export class MissingResultAction extends MocktomataError {
   constructor(public specName: string, state: Recorder.State, public actionId: number, public action: SpecRecord.Action) {
-    super(`Recorded data for '${specName}' does not have result recorded for ${prettifyAction(state, actionId, action)}\nDid you forget to wait for the result?`)
+    super(`Recorded data for '${specName}' expecting action:
+  ${prettifyAction(state, actionId, action)}
+Did you forget to wait for the result?`)
   }
 }
 

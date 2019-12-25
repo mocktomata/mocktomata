@@ -2,7 +2,7 @@ import { PartialPick } from 'type-plus';
 import { notDefined } from '../constants';
 import { actionMatches } from './actionMatches';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
-import { ActionMismatch, ExtraReference, NoSupportedPlugin, ExtraInstance } from './errors';
+import { ActionMismatch, ExtraReference, NoSupportedPlugin, ExtraInstance, ExtraAction, MissingAction } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs';
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
@@ -31,7 +31,16 @@ export function createSimulator(specName: string, loaded: SpecRecord, options: S
       timeTracker,
       pendingPluginActions: []
     }, subject, { profile: 'target' }),
-    end: () => timeTracker.stop(),
+    end: () => {
+      timeTracker.stop()
+      const action = record.getNextExpectedAction()
+      if (action) {
+        const actionId = record.getNextActionId()
+        const ref = record.getLoadedRef(actionId)!
+        const refId = record.getLoadedRefId(ref)
+        throw new MissingAction(record.specName, { ref, refId }, actionId, action)
+      }
+    },
     getSpecRecord: () => record.getSpecRecord()
   }
 }
@@ -222,16 +231,14 @@ function invoke(context: Simulator.Context,
     payload: [],
     tick: timeTracker.elaspe(),
   }
-  if (!actionMatches(action, expected)) {
-    throw new ActionMismatch(record.specName, action, expected)
-  }
 
   const actionId = record.addAction(action)
 
+  if (!expected) throw new ExtraAction(record.specName, state, actionId, action)
+
   const thisArgRef = record.findRef(thisArg)
-  if (!thisArgRef) {
-    throw new ExtraReference(record.specName, thisArg)
-  }
+  if (!thisArgRef) throw new ExtraReference(record.specName, thisArg)
+
   if (thisArgRef.testDouble === notDefined) {
     buildTestDouble({
       ...context,
@@ -256,6 +263,10 @@ function invoke(context: Simulator.Context,
     }
     return arg
   })
+
+  if (!actionMatches(action, expected)) {
+    throw new ActionMismatch(record.specName, action, expected)
+  }
 
   logAction(context.state, actionId, action)
   processNextAction(context)

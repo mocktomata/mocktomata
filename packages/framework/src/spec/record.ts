@@ -65,6 +65,8 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id) as ValidateReference | undefined,
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
+    getLoadedRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef(loaded, id) as ValidateReference | undefined,
+    getLoadedRefId: (ref: SpecRecord.Reference) => getRefId(loaded.refs, ref),
     addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
     claimNextRef: () => {
       const ref = refs.find(r => !r.claimed)
