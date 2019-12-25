@@ -70,9 +70,7 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
     const state = { ref, refId, spyOptions: [] }
     logCreateStub(state, profile, subject || ref.meta)
 
-    // const circularRefs: CircularReference[] = []
     ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
-    // fixCircularReferences(record, refId, circularRefs)
   }
 
   return ref.testDouble
@@ -259,11 +257,8 @@ function invoke(context: Simulator.Context,
     return arg
   })
 
-  // console.log('before log invoke action')
   logAction(context.state, actionId, action)
-  // console.log('before process next action')
   processNextAction(context)
-  // console.log('after')
   const resultAction = record.getExpectedResultAction(actionId)
   // in what case the resultAction is undefined?
   // those extra invoke calls by the framework?
@@ -348,9 +343,6 @@ function instantiate(
     ...context,
     state: { ...context.state, source: { type: 'result', id: actionId } }
   }
-
-  // console.log('resultaction', resultAction)
-  // const result = resolveValue(resultContext, resultAction.payload)
 
   setImmediate(() => processNextAction(context))
 
@@ -449,49 +441,6 @@ function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.Plu
   context.pendingPluginActions.push({ ...pluginAction, ref: context.state.ref, refId: context.state.refId })
 }
 
-// function getByPath(subject: any, sitePath: Array<string | number>) {
-//   if (subject === undefined) return subject
-//   return sitePath.reduce((p, s) => p[s], subject)
-// }
-
-// function notGetThenAction(action: SpecRecord.Action | undefined) {
-//   return !(action && action.type === 'get' && action.key.length === 1 && action.key[0] === 'then')
-// }
-
-// function getResult(context: Simulator.Context, expected: SpecRecord.Action) {
-//   const { record, state } = context
-//   // TODO check for action mismatch
-//   if (expected.type !== 'return' && expected.type !== 'throw') {
-//     const actionId = record.getNextActionId()
-//     throw new ActionTypeMismatch(record.specName, state, actionId, expected, 'return or throw')
-//   }
-//   console.log(expected)
-//   if (typeof expected.payload !== 'string') {
-//     return {
-//       type: expected.type,
-//       value: expected.payload,
-//       meta: expected.meta
-//     }
-//   }
-//   const actualReference = record.getRef(expected.payload)
-//   if (actualReference) {
-//     return {
-//       type: expected.type,
-//       value: actualReference.testDouble,
-//       meta: expected.meta
-//     }
-//   }
-
-//   const expectedReference = record.getExpectedRef(expected.payload)!
-
-//   console.log('state', state)
-//   return {
-//     type: expected.type,
-//     valeu: createStub({ ...context, state: { ...context.state, site: [] } }, expectedReference, notDefined, {}),
-//     meta: expected.meta
-//   }
-// }
-
 function processNextAction(context: Simulator.Context) {
   const { record, pendingPluginActions } = context
   const nextAction = record.getNextExpectedAction()
@@ -555,11 +504,9 @@ function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction
 
 function resolveValue(context: Simulator.Context, value: any, handler?: () => any) {
   const { record } = context
-  // console.log('resolveValue', value)
   const valueRef = typeof value === 'string' ? record.getRef(value) : undefined
   if (valueRef) {
     if (valueRef.testDouble === notDefined) {
-      // console.log('resolveing test double', valueRef, handler)
       const newContext = {
         ...context,
         state: {
@@ -571,7 +518,6 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
       }
       if (handler) valueRef.subject = handler()
       buildTestDouble(newContext, valueRef)
-
       logCreateStub(newContext.state, valueRef.profile, valueRef.testDouble)
     }
     return valueRef.testDouble
@@ -598,7 +544,5 @@ function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId
       source: { type: 'argument', id: actionId, key }
     }
   }, arg))
-  // console.log('before apply', ref?.testDouble)
-  // console.log('before I invoke', ref?.subject.toString(), thisArg)
   return ref?.testDouble.apply(thisArg, args)
 }

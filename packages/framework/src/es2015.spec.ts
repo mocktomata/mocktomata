@@ -958,8 +958,8 @@ describe('class', () => {
   // To fix this, I need to:
   // 1. get property key and value from object without invoking getter.
   // 2. Add GetAction SetAction back
-  incubator.save('callback with complex object', (title, spec) => {
-    test.skip(title, async () => {
+  incubator.duo('callback with complex object', (title, spec) => {
+    test(title, async () => {
       const Subject = await spec(Ssh)
       const f = new Subject()
 
@@ -967,13 +967,12 @@ describe('class', () => {
       f.exec('echo', (channel: any) => channel.stdio.on((data: any) => actual = data))
 
       expect(actual).toBe('echo')
-      spec.enableLog()
       await spec.done()
     })
   })
 
   incubator.duo('use composite callback function', (title, spec) => {
-    test.skip(title, async () => {
+    test(title, async () => {
       class Foo {
         on(compositeFn: any) {
           return this.internal(compositeFn)
@@ -1004,7 +1003,7 @@ describe('class', () => {
       y = 1
       do(x: any) { return x }
     }
-    test.skip(title, async () => {
+    test(title, async () => {
       const s = await spec(WithProperty)
       const p = new s()
       expect(p.do(2)).toBe(2)
