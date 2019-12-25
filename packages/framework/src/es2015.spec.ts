@@ -1,7 +1,7 @@
 import a from 'assertron';
 import { incubator } from '../src';
 import { ActionMismatch, ActionTypeMismatch, ExtraAction, ExtraReference, ReferenceMismatch } from './spec';
-import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
+import { callbackInDeepObjLiteral, callbackInObjLiteral, delayed, fetch, postReturn, recursive, simpleCallback, synchronous, Dummy, ChildOfDummy } from './test-artifacts';
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })
@@ -839,26 +839,24 @@ describe('class', () => {
     })
   })
 
-  class DIIThrow {
-    getDelayedInner() {
-      throw new Error('should not call')
-    }
-  }
-
-  incubator.sequence('actual method is not invoked during simulation', (title, specs) => {
+  incubator.sequence('actual method is not invoked during simulation', (title, { save, simulate }) => {
     test(title, async () => {
-      const save = specs.save
       const Subject = await save(DelayedInvokeInternal)
       const dii = new Subject()
 
       expect(await dii.getDelayedInner()).toBe('inner')
-      await save.done()
-
-      const sim = specs.simulate
-      const BadSubject = await sim(DIIThrow)
-      const bad = new BadSubject()
-      expect(await bad.getDelayedInner()).toBe('inner')
-      await sim.done()
+      await save.done();
+      {
+        class DelayedInvokeInternal {
+          getDelayedInner() {
+            throw new Error('should not call')
+          }
+        }
+        const BadSubject = await simulate(DelayedInvokeInternal)
+        const bad = new BadSubject()
+        expect(await bad.getDelayedInner()).toBe('inner')
+        await simulate.done()
+      }
     })
   })
 
@@ -907,8 +905,8 @@ describe('class', () => {
       const f = new Subject()
 
       let actual
-      f.exec('echo', (data: any) => {
-        actual = data.value
+      f.exec('echo', (channel: any) => {
+        actual = channel.value
       })
 
       expect(actual).toBe('echo')
@@ -944,7 +942,6 @@ describe('class', () => {
       this.listeners.forEach(l => l(data))
     }
   }
-
   class Ssh {
     channel: Channel
     constructor() {
@@ -961,7 +958,7 @@ describe('class', () => {
   // To fix this, I need to:
   // 1. get property key and value from object without invoking getter.
   // 2. Add GetAction SetAction back
-  incubator.duo('callback with complex object', (title, spec) => {
+  incubator.save('callback with complex object', (title, spec) => {
     test.skip(title, async () => {
       const Subject = await spec(Ssh)
       const f = new Subject()
@@ -970,6 +967,7 @@ describe('class', () => {
       f.exec('echo', (channel: any) => channel.stdio.on((data: any) => actual = data))
 
       expect(actual).toBe('echo')
+      spec.enableLog()
       await spec.done()
     })
   })
@@ -1006,7 +1004,7 @@ describe('class', () => {
       y = 1
       do(x: any) { return x }
     }
-    test(title, async () => {
+    test.skip(title, async () => {
       const s = await spec(WithProperty)
       const p = new s()
       expect(p.do(2)).toBe(2)
@@ -1016,4 +1014,60 @@ describe('class', () => {
       await spec.done()
     })
   })
+
+  test.todo('static property')
+  test.todo('static method')
 })
+
+describe('instance', () => {
+  incubator.duo('passes instanceof test for 1st level class', (title, spec) => {
+    test(title, async () => {
+      const S = await spec(Dummy)
+      const s = new S()
+      expect(s).toBeInstanceOf(Dummy)
+      await spec.done()
+    })
+  })
+
+  incubator.duo('passes instanceof test for sub class', (title, spec) => {
+    test(title, async () => {
+      const S = await spec(ChildOfDummy)
+      const s = new S()
+      expect(s).toBeInstanceOf(ChildOfDummy)
+      expect(s).toBeInstanceOf(Dummy)
+      await spec.done()
+    })
+  })
+
+  // need custom plugin for this case
+  incubator.duo('instanceof for output instance is not supported', (title, spec) => {
+    test.skip(title, async () => {
+      function fool() {
+        return new ChildOfDummy()
+      }
+      const f = await spec(fool)
+      const s = f()
+      expect(s).toBeInstanceOf(ChildOfDummy)
+      expect(s).toBeInstanceOf(Dummy)
+      await spec.done()
+    })
+  })
+
+  incubator.duo('instanceof for output instance if the class was used through input', (title, spec) => {
+    test(title, async () => {
+      const subject = {
+        in(_: any) { return },
+        out() { return new ChildOfDummy() },
+      }
+      const s = await spec(subject)
+      s.in(new ChildOfDummy())
+      const actual = s.out()
+      expect(actual).toBeInstanceOf(ChildOfDummy)
+      expect(actual).toBeInstanceOf(Dummy)
+      await spec.done()
+    })
+  })
+
+  test.todo('getter skips internal method calls')
+  test.todo('setter skips internal method calls')
+});

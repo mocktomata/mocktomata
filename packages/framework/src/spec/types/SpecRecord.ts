@@ -85,7 +85,7 @@ export namespace SpecRecord {
   export type InstantiateAction = {
     type: 'instantiate',
     refId: ReferenceId,
-    instanceId: ReferenceId,
+    instanceId?: ReferenceId,
     performer: Performer,
     tick: number,
     payload: any[],

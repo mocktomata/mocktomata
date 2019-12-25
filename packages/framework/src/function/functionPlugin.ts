@@ -1,7 +1,7 @@
 import { SpecPlugin } from '../spec';
 import { hasProperty, hasPropertyInPrototype, metarize, demetarize } from '../utils';
 
-export const functionPlugin: SpecPlugin<Function & Record<any, any>> = {
+export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
   name: 'function',
   support: subject => {
     if (typeof subject !== 'function') return false
@@ -39,7 +39,11 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>> = {
     setMeta(metarize(subject))
     return new Proxy(subject, {
       apply(_, thisArg, args: any[] = []) {
-        return invoke({ thisArg, args }, ({ thisArg, args }) => subject.apply(thisArg, args))
+        // console.log('being invoked')
+        return invoke({ thisArg, args }, ({ thisArg, args }) => {
+          // console.log('invoke callback', args)
+          return subject.apply(thisArg, args)
+        })
       },
       get(target: any, property: string) {
         if (!hasProperty(subject, property)) return undefined

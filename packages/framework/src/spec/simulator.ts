@@ -2,7 +2,7 @@ import { PartialPick } from 'type-plus';
 import { notDefined } from '../constants';
 import { actionMatches } from './actionMatches';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
-import { ActionMismatch, ActionTypeMismatch, ExtraReference, NoSupportedPlugin } from './errors';
+import { ActionMismatch, ExtraReference, NoSupportedPlugin, ExtraInstance } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs';
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
@@ -85,6 +85,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
     setProperty: options => setProperty(context, options),
     invoke: options => invoke(context, options),
     instantiate: options => instantiate(context, options),
+    instantiate2: (options, handler) => instantiate2(context, options, handler),
     on: options => on(context, options),
   }
 }
@@ -193,10 +194,14 @@ function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
     ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
   }
   else {
-    logCreateStub(state, profile, subject !== notDefined ? subject : ref.meta)
-    // const circularRefs: CircularReference[] = []
-    ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
-    // fixCircularReferences(record, refId, circularRefs)
+    if (subject === notDefined) {
+      logCreateStub(state, profile, ref.meta)
+      ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), undefined, ref.meta)
+    }
+    else {
+      logCreateStub(state, profile, subject)
+      ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
+    }
   }
   ref.claimed = true
 }
@@ -253,9 +258,12 @@ function invoke(context: Simulator.Context,
     }
     return arg
   })
-  logAction(context.state, actionId, action)
-  processNextAction(context)
 
+  // console.log('before log invoke action')
+  logAction(context.state, actionId, action)
+  // console.log('before process next action')
+  processNextAction(context)
+  // console.log('after')
   const resultAction = record.getExpectedResultAction(actionId)
   // in what case the resultAction is undefined?
   // those extra invoke calls by the framework?
@@ -286,17 +294,25 @@ function instantiate(
 ): SpecPlugin.StubContext.instantiate.Responder {
   const { record, state, timeTracker } = context
 
-  const { ref } = state
   const expected = record.getNextExpectedAction()
-  performer = performer || getDefaultPerformer(ref.profile)
+  performer = performer || getDefaultPerformer(state.ref.profile)
+
+  const ref = record.claimNextRef()
+  if (!ref) throw new ExtraInstance(record.specName, context.state.ref.plugin)
+  // TODO check mismatch ref
+
+  const refId = record.getRefId(ref)
+
   const action: SpecRecord.InstantiateAction = {
     type: 'instantiate',
     refId: state.refId,
-    instanceId: '', // to be filled in by `setInstance()`
+    instanceId: refId,
     performer,
     payload: [],
     tick: timeTracker.elaspe(),
   }
+
+  const actionId = record.addAction(action)
 
   args.forEach((arg, i) => {
     const ref = record.findRef(arg)
@@ -319,7 +335,6 @@ function instantiate(
     throw new ActionMismatch(record.specName, action, expected)
   }
 
-  const actionId = record.addAction(action)
   logAction(context.state, actionId, action)
   processNextAction(context)
 
@@ -341,24 +356,92 @@ function instantiate(
 
   logAction(resultContext.state, resultActionId, resultAction)
 
-  let newContext: Simulator.Context
+  const newContext: Simulator.Context = {
+    ...context,
+    state: {
+      ...context.state,
+      ref,
+      refId
+    }
+  }
   return {
     setInstance(instance) {
-      const resultAction = record.getExpectedResultAction(actionId)
-      if (!resultAction) return
-      const ref = record.findRef(instance)!
-      const refId = record.getRefId(ref)
-      action.instanceId = refId
-      newContext = {
-        ...context,
-        state: {
-          ...context.state,
-          ref,
-          refId
-        }
-      }
+      ref.testDouble = instance
     },
     invoke: (options) => invoke(newContext, options)
+  }
+}
+
+function instantiate2(
+  context: Simulator.Context,
+  { args, performer }: SpecPlugin.StubContext.instantiate.Options,
+  handler: SpecPlugin.StubContext.instantiate2.Handler,
+): SpecPlugin.StubContext.instantiate.Responder {
+  const { record, state, timeTracker } = context
+
+  const expected = record.getNextExpectedAction()
+  performer = performer || getDefaultPerformer(state.ref.profile)
+
+  const action: SpecRecord.InstantiateAction = {
+    type: 'instantiate',
+    refId: state.refId,
+    performer,
+    payload: [],
+    tick: timeTracker.elaspe(),
+  }
+
+  const actionId = record.addAction(action)
+
+  const spiedArgs = args.map((arg, i) => {
+    const ref = record.findRef(arg)
+    if (ref) {
+      if (ref.testDouble === notDefined) {
+        buildTestDouble({
+          ...context,
+          state: { ...context.state, source: { type: 'argument', id: actionId, key: i } }
+        }, ref)
+      }
+      action.payload.push(record.getRefId(ref))
+    }
+    else {
+      action.payload.push(arg)
+    }
+    return arg
+  })
+
+  if (!actionMatches(action, expected)) {
+    throw new ActionMismatch(record.specName, action, expected)
+  }
+
+  logAction(context.state, actionId, action)
+  processNextAction(context)
+
+  const resultAction = record.getExpectedResultAction(actionId)!
+  // in what case the resultAction is undefined?
+  // those extra invoke calls by the framework?
+  if (!resultAction) new Error('missing result action')
+
+  const resultActionId = record.addAction(resultAction)
+  const resultContext: Simulator.Context = {
+    ...context,
+    state: {
+      ...context.state,
+
+      source: { type: 'result', id: actionId }
+    }
+  }
+
+  const result = resolveValue(resultContext, resultAction.payload, () => handler({ args: spiedArgs }))
+
+  setImmediate(() => processNextAction(context))
+
+  if (resultAction.type === 'return') {
+    logAction(resultContext.state, resultActionId, resultAction)
+    return result
+  }
+  else {
+    logAction(resultContext.state, resultActionId, resultAction)
+    throw result
   }
 }
 
@@ -366,48 +449,48 @@ function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.Plu
   context.pendingPluginActions.push({ ...pluginAction, ref: context.state.ref, refId: context.state.refId })
 }
 
-function getByPath(subject: any, sitePath: Array<string | number>) {
-  if (subject === undefined) return subject
-  return sitePath.reduce((p, s) => p[s], subject)
-}
+// function getByPath(subject: any, sitePath: Array<string | number>) {
+//   if (subject === undefined) return subject
+//   return sitePath.reduce((p, s) => p[s], subject)
+// }
 
-function notGetThenAction(action: SpecRecord.Action | undefined) {
-  return !(action && action.type === 'get' && action.key.length === 1 && action.key[0] === 'then')
-}
+// function notGetThenAction(action: SpecRecord.Action | undefined) {
+//   return !(action && action.type === 'get' && action.key.length === 1 && action.key[0] === 'then')
+// }
 
-function getResult(context: Simulator.Context, expected: SpecRecord.Action) {
-  const { record, state } = context
-  // TODO check for action mismatch
-  if (expected.type !== 'return' && expected.type !== 'throw') {
-    const actionId = record.getNextActionId()
-    throw new ActionTypeMismatch(record.specName, state, actionId, expected, 'return or throw')
-  }
-  console.log(expected)
-  if (typeof expected.payload !== 'string') {
-    return {
-      type: expected.type,
-      value: expected.payload,
-      meta: expected.meta
-    }
-  }
-  const actualReference = record.getRef(expected.payload)
-  if (actualReference) {
-    return {
-      type: expected.type,
-      value: actualReference.testDouble,
-      meta: expected.meta
-    }
-  }
+// function getResult(context: Simulator.Context, expected: SpecRecord.Action) {
+//   const { record, state } = context
+//   // TODO check for action mismatch
+//   if (expected.type !== 'return' && expected.type !== 'throw') {
+//     const actionId = record.getNextActionId()
+//     throw new ActionTypeMismatch(record.specName, state, actionId, expected, 'return or throw')
+//   }
+//   console.log(expected)
+//   if (typeof expected.payload !== 'string') {
+//     return {
+//       type: expected.type,
+//       value: expected.payload,
+//       meta: expected.meta
+//     }
+//   }
+//   const actualReference = record.getRef(expected.payload)
+//   if (actualReference) {
+//     return {
+//       type: expected.type,
+//       value: actualReference.testDouble,
+//       meta: expected.meta
+//     }
+//   }
 
-  const expectedReference = record.getExpectedRef(expected.payload)!
+//   const expectedReference = record.getExpectedRef(expected.payload)!
 
-  console.log('state', state)
-  return {
-    type: expected.type,
-    valeu: createStub({ ...context, state: { ...context.state, site: [] } }, expectedReference, notDefined, {}),
-    meta: expected.meta
-  }
-}
+//   console.log('state', state)
+//   return {
+//     type: expected.type,
+//     valeu: createStub({ ...context, state: { ...context.state, site: [] } }, expectedReference, notDefined, {}),
+//     meta: expected.meta
+//   }
+// }
 
 function processNextAction(context: Simulator.Context) {
   const { record, pendingPluginActions } = context
@@ -470,11 +553,26 @@ function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction
   ref!.testDouble[nextAction.key] = resolveValue(context, nextAction.value)
 }
 
-function resolveValue(context: Simulator.Context, value: any) {
-  const valueRef = typeof value === 'string' ? context.record.getRef(value) : undefined
+function resolveValue(context: Simulator.Context, value: any, handler?: () => any) {
+  const { record } = context
+  // console.log('resolveValue', value)
+  const valueRef = typeof value === 'string' ? record.getRef(value) : undefined
   if (valueRef) {
     if (valueRef.testDouble === notDefined) {
-      buildTestDouble(context, valueRef)
+      // console.log('resolveing test double', valueRef, handler)
+      const newContext = {
+        ...context,
+        state: {
+          ...context.state,
+          ref: valueRef,
+          refId: record.getRefId(valueRef),
+          source: undefined
+        }
+      }
+      if (handler) valueRef.subject = handler()
+      buildTestDouble(newContext, valueRef)
+
+      logCreateStub(newContext.state, valueRef.profile, valueRef.testDouble)
     }
     return valueRef.testDouble
   }
@@ -500,5 +598,7 @@ function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId
       source: { type: 'argument', id: actionId, key }
     }
   }, arg))
+  // console.log('before apply', ref?.testDouble)
+  // console.log('before I invoke', ref?.subject.toString(), thisArg)
   return ref?.testDouble.apply(thisArg, args)
 }

@@ -3,8 +3,6 @@ import { notDefined } from '../constants';
 import { ActionMismatch, ExtraReference, PluginsNotLoaded } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { SpecRecord } from './types';
-import { siteMismatch } from './validations';
-import { createConsoleLogReporter } from 'standard-log';
 
 export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecord.Reference[] = []
@@ -51,11 +49,11 @@ export type ValidateReference = SpecRecord.Reference & { claimed?: boolean }
 export function createSpecRecordValidator(specName: string, loaded: ValidateRecord) {
   assertPluginsLoaded(specName, loaded.refs)
   const record: ValidateRecord = {
-    refs: [...loaded.refs.map(r => {
+    refs: loaded.refs.map(r => {
       r.testDouble = notDefined
       r.subject = notDefined
       return r
-    })],
+    }),
     actions: []
   }
   const { refs, actions } = record
@@ -68,6 +66,11 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id) as ValidateReference | undefined,
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
     addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
+    claimNextRef: () => {
+      const ref = refs.find(r => !r.claimed)
+      if (ref) ref.claimed = true
+      return ref
+    },
     findRef: (value: any) => {
       let ref = findRefBySubjectOrTestDouble(refs, value)
       if (ref) return ref
@@ -139,9 +142,6 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     },
 
     getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(record, id),
-    getNextExpectedRef(): SpecRecord.Reference | undefined {
-      return record.refs[refs.length]
-    },
     getNextExpectedAction(): SpecRecord.Action | undefined { return loaded.actions[actions.length] },
     getNextActionId() { return actions.length },
   }
@@ -149,50 +149,50 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
 
 export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 
-function findNextExpectedRefForPlugin(loadedRefs: SpecRecord.Reference[], refs: SpecRecord.Reference[], plugin: string) {
-  let count = refs.reduce((p, v) => {
-    if (v.plugin === plugin) p++
-    return p
-  }, 0)
-  return loadedRefs.find(r => {
-    if (r.plugin !== plugin) return false
-    return --count
-  })
-}
-function findNextExpectedGetAction(
-  { loaded, expected, refsMap }: {
-    loaded: SpecRecord,
-    expected: SpecRecord,
-    refsMap: RefsMap
-  }, {
-    refId,
-    performer,
-    site,
-  }: Pick<SpecRecord.GetAction, 'refId' | 'performer' | 'site'>
-) {
-  const origRef = refsMap[refId]
-  if (!origRef) return undefined
-  const origRefId = getRefId(loaded.refs, origRef)
-  const getActions = loaded.actions.filter(a =>
-    a.type === 'get' &&
-    a.refId === origRefId &&
-    a.performer === performer &&
-    !siteMismatch(site, a.key)
-  ) as SpecRecord.GetAction[]
-  const resultActions = getActions.map(a => getResultAction(loaded.actions, getActionId(loaded.actions, a)))
+// function findNextExpectedRefForPlugin(loadedRefs: SpecRecord.Reference[], refs: SpecRecord.Reference[], plugin: string) {
+//   let count = refs.reduce((p, v) => {
+//     if (v.plugin === plugin) p++
+//     return p
+//   }, 0)
+//   return loadedRefs.find(r => {
+//     if (r.plugin !== plugin) return false
+//     return --count
+//   })
+// }
+// function findNextExpectedGetAction(
+//   { loaded, expected, refsMap }: {
+//     loaded: SpecRecord,
+//     expected: SpecRecord,
+//     refsMap: RefsMap
+//   }, {
+//     refId,
+//     performer,
+//     site,
+//   }: Pick<SpecRecord.GetAction, 'refId' | 'performer' | 'site'>
+// ) {
+//   const origRef = refsMap[refId]
+//   if (!origRef) return undefined
+//   const origRefId = getRefId(loaded.refs, origRef)
+//   const getActions = loaded.actions.filter(a =>
+//     a.type === 'get' &&
+//     a.refId === origRefId &&
+//     a.performer === performer &&
+//     !siteMismatch(site, a.key)
+//   ) as SpecRecord.GetAction[]
+//   const resultActions = getActions.map(a => getResultAction(loaded.actions, getActionId(loaded.actions, a)))
 
-  if (getActions.length === 0) return undefined
-  if (getActions.length === 1) return getActions[0]
+//   if (getActions.length === 0) return undefined
+//   if (getActions.length === 1) return getActions[0]
 
-}
+// }
 
-function getActionId(actions: SpecRecord.Action[], action: SpecRecord.Action) {
-  return actions.indexOf(action)
-}
+// function getActionId(actions: SpecRecord.Action[], action: SpecRecord.Action) {
+//   return actions.indexOf(action)
+// }
 
-function getResultAction(actions: SpecRecord.Action[], actionId: SpecRecord.ActionId) {
-  return actions.find((a: any) => a.actionId === actionId)
-}
+// function getResultAction(actions: SpecRecord.Action[], actionId: SpecRecord.ActionId) {
+//   return actions.find((a: any) => a.actionId === actionId)
+// }
 
 function getSpecRecord(refs: SpecRecord.Reference[], actions: SpecRecord.Action[]): SpecRecord {
   return {

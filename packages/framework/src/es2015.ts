@@ -2,6 +2,7 @@ import { arrayPlugin } from './array';
 import { classPlugin } from './class';
 import { errorPlugin } from './error';
 import { functionPlugin } from './function';
+import { instancePlugin } from './instance';
 import { nullPlugin } from './null';
 import { objectPlugin } from './object';
 import { promisePlugin } from './promise';
@@ -17,10 +18,11 @@ export const es2015 = {
     register(nullPlugin)
     register(stringPlugin)
     register(objectPlugin)
-    register(arrayPlugin)
     register(functionPlugin)
+    register(instancePlugin)
+    register(classPlugin)
+    register(arrayPlugin)
     register(errorPlugin)
     register(promisePlugin)
-    register(classPlugin)
   }
 }

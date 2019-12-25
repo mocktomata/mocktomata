@@ -5,14 +5,9 @@ import { prettifyAction, prettifyId } from './prettifyAction';
 import { SpecRecord } from './types';
 import { Recorder } from './types-internal';
 
-export type ActionLoggingContext = {
-  record: Pick<SpyRecord, 'getSubject'>,
-  plugin: string,
-  id: SpecRecord.ReferenceId | SpecRecord.ActionId;
-}
 
 export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subject: any) {
-  log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject)}`))
+  log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject, { maxLength: Infinity })}`))
 }
 
 export function logActionSetMeta({ ref, source }: Recorder.State, meta: any) {
@@ -23,9 +18,9 @@ export function logAction(state: Recorder.State, actionId: SpecRecord.ActionId, 
   log.on(logLevels.debug, () => prettifyAction(state, actionId, action))
 }
 
-export function logInstantiateAction({ record, plugin, id }: ActionLoggingContext, actionId: SpecRecord.ActionId, args: any[]) {
-  log.on(logLevels.debug, log => log(`${plugin} ref/action (${id}/${actionId}): instantiate with ${tersify(args)}\n${tersify(record.getSubject(id))}`))
-}
+// export function logInstantiateAction({ record, plugin, id }: ActionLoggingContext, actionId: SpecRecord.ActionId, args: any[]) {
+//   log.on(logLevels.debug, log => log(`${plugin} ref/action (${id}/${actionId}): instantiate with ${tersify(args)}\n${tersify(record.getSubject(id))}`))
+// }
 
 export function logRecordingTimeout(timeout: number) {
   log.warn(`done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)

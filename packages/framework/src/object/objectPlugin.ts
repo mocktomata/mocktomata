@@ -1,7 +1,7 @@
 import { SpecPlugin } from '../spec';
 import { demetarize, hasProperty, metarize } from '../utils';
 
-export const objectPlugin: SpecPlugin<Record<string | number, any>> = {
+export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
   createSpy: ({ getProperty, setProperty, invoke, setMeta }, subject) => {

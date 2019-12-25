@@ -25,9 +25,7 @@ export function prettifyAction(state: Recorder.State, actionId: SpecRecord.Actio
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} invoke <ref:${state.refId}>${action.site ? `.${action.site}` : ''}(this:${tersifyValue(action.thisArg)}${argsStr})`
     }
     case 'instantiate': {
-      const argsStr = action.payload.length === 0 ?
-        '' :
-        `, ${action.payload.map(tersifyValue).join(', ')}`
+      const argsStr = action.payload.map(tersifyValue).join(', ')
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} instantiate <ref:${state.refId}>(${argsStr})`
     }
     case 'return':

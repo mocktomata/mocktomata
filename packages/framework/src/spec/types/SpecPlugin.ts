@@ -1,7 +1,7 @@
 import { Meta } from './Meta';
 import { SpecRecord } from './SpecRecord';
 
-export type SpecPlugin<S = any, M = string> = {
+export type SpecPlugin<S = any, M = any> = {
   /**
    * Name of the plugin. This is needed only if there are multiple plugins in a package.
    */
@@ -15,7 +15,7 @@ export type SpecPlugin<S = any, M = string> = {
    * @param context Provides tools needed to record the subject's behavior.
    * @param subject The subject to spy.
    */
-  createSpy(context: SpecPlugin.SpyContext, subject: S): S,
+  createSpy(context: SpecPlugin.SpyContext<M>, subject: S): S,
   /**
    * Creates a stub in place of the specified subject.
    * @param context Provides tools needed to reproduce the subject's behavior.
@@ -41,7 +41,7 @@ export type SpecPlugin<S = any, M = string> = {
 }
 
 export namespace SpecPlugin {
-  export type SpyContext = {
+  export type SpyContext<M> = {
     /**
      * Set the `meta` data of the spy.
      * The `meta` data will be available when the stub is created during simulation.
@@ -49,7 +49,7 @@ export namespace SpecPlugin {
      * use the `setMeta()` provided by each action instead of this function.
      * @returns the input meta.
      */
-    setMeta: SpyContext.setMeta,
+    setMeta: SpyContext.setMeta<M>,
     /**
      * Tell mockto to treat the specified value in certain way,
      * instead of the default behavior.
@@ -67,9 +67,10 @@ export namespace SpecPlugin {
     setProperty: SpyContext.setProperty,
     invoke: SpyContext.invoke,
     instantiate: SpyContext.instantiate,
+    instantiate2: SpyContext.instantiate2,
   }
   export namespace SpyContext {
-    export type setMeta = <M extends Meta>(meta: M) => M
+    export type setMeta<M> = (meta: M) => M
     export type setSpyOptions = <S>(subject: S, options: setSpyOptions.Options) => void
     export namespace setSpyOptions {
       export type Options = {
@@ -143,6 +144,20 @@ export namespace SpecPlugin {
         invoke: SpyContext.invoke,
       }
     }
+
+    export type instantiate2 = <V = any, A extends any[] = any[]>(
+      options: instantiate2.Options<A>,
+      hander: instantiate2.Handler<V, A>
+    ) => V
+
+    export namespace instantiate2 {
+      export type Options<A> = {
+        args: A,
+        performer?: SpecRecord.Performer,
+      }
+      export type Handler<V, A> = (context: Context<A>) => V
+      export type Context<A> = { args: A }
+    }
   }
 
   export type StubContext = {
@@ -151,6 +166,7 @@ export namespace SpecPlugin {
     setProperty: StubContext.setProperty,
     invoke: StubContext.invoke,
     instantiate: StubContext.instantiate,
+    instantiate2: StubContext.instantiate2,
     on: StubContext.on,
   }
 
@@ -194,6 +210,15 @@ export namespace SpecPlugin {
         setInstance(instance: any): void,
         invoke: StubContext.invoke,
       }
+    }
+    export type instantiate2 = (options: instantiate2.Options, handler: instantiate2.Handler) => any
+    export namespace instantiate2 {
+      export type Options = {
+        args: any[],
+        performer?: SpecRecord.Performer,
+      }
+      export type Handler = (context: Context) => any
+      export type Context = { args: any[] }
     }
 
     export type on = (pluginAction: PluginAction) => any

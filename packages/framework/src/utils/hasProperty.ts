@@ -1,6 +1,6 @@
-import { SupportedKeyTypes } from '../spec'
+import { SpecRecord } from '../spec'
 
-export function hasProperty(subject: any, property: SupportedKeyTypes): boolean {
+export function hasProperty(subject: any, property: SpecRecord.SupportedKeyTypes): boolean {
   if (typeof property === 'string') {
     const propNames = Object.getOwnPropertyNames(subject)
     if (propNames.indexOf(property) >= 0) return true

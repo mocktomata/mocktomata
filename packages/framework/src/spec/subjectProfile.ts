@@ -1,6 +1,6 @@
-import { SubjectProfile } from './types';
+import { SpecRecord } from './types'
 
-export function getDefaultPerformer(profile: SubjectProfile) {
+export function getDefaultPerformer(profile: SpecRecord.SubjectProfile) {
   switch (profile) {
     case 'target':
     case 'output':

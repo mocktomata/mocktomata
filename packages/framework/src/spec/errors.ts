@@ -83,6 +83,13 @@ export class ExtraReference extends MocktomataError {
   }
 }
 
+export class ExtraInstance extends MocktomataError {
+  // istanbul ignore next
+  constructor(public specName: string, public plugin: string) {
+    super(`Recorded data for '${specName}' does not expect a new reference to be created for plugin: ${plugin}`)
+  }
+}
+
 export type MismatchActionModel = Partial<SpecRecord.Action> & { plugin?: string }
 
 export class ExtraAction extends MocktomataError {

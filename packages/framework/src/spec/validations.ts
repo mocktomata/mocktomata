@@ -9,8 +9,8 @@ function sourceMismatch(actual: SpecRecord.ReferenceSource | undefined, expected
     return expected !== undefined
   }
   return expected === undefined ||
-    actual.actionId !== expected.actionId ||
-    siteMismatch(actual.site, expected.site)
+    actual.id !== expected.id ||
+    (actual as any).key !== (expected as any).key
 }
 
 export function siteMismatch(actual: SpecRecord.SupportedKeyTypes | undefined, expected: SpecRecord.SupportedKeyTypes | undefined) {
