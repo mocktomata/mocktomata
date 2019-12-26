@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/framework",
-  "version": "7.0.0-alpha",
+  "version": "7.0.0-beta",
   "description": "mocktomata framework package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
@@ -42,15 +42,10 @@
     "async-fp": "^1.2.3",
     "global-store": "^1.0.0-beta.14",
     "iso-error": "^3.1.1",
-    "ramda": "^0.26.1",
-    "satisfier": "^5.0.2",
-    "stack-utils": "^1.0.2",
+    "satisfier": "^5.1.0",
     "standard-log": "^4.0.0",
-    "standard-log-color": "^1.5.12",
-    "tersify": "^3.0.6",
+    "standard-log-color": "^1.5.13",
+    "tersify": "^3.5.1",
     "type-plus": "^1.29.0"
-  },
-  "devDependencies": {
-    "@types/ramda": "^0.26.34"
   }
 }
