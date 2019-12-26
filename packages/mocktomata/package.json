@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@mocktomata/file-server": "^7.0.0-alpha",
-    "@mocktomata/framework": "^7.0.0-alpha",
+    "@mocktomata/framework": "^7.0.0-beta",
     "@mocktomata/io-client": "^7.0.0-alpha",
     "@mocktomata/io-local": "^7.0.0-alpha",
     "assertron": "^7.1.2",

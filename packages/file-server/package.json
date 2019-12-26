@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/io-fs": "^7.0.0-alpha",
+    "@mocktomata/io-fs": "^7.0.0-beta",
     "boom": "^7.3.0",
     "hapi": "^18.1.0",
     "unpartial": "^0.6.3"
@@ -47,8 +47,8 @@
     "node": ">= 6"
   },
   "devDependencies": {
-    "@types/hapi": "^18.0.2",
-    "@types/node-fetch": "^2.5.2",
+    "@types/hapi": "^18.0.3",
+    "@types/node-fetch": "^2.5.4",
     "@types/update-notifier": "^2.5.0",
     "assertron": "^7.1.2",
     "delay": "^4.3.0",
