@@ -1,6 +1,6 @@
-import { MocktomataIO, SpecNotFound, SpecRecord } from '@mocktomata/framework';
-import { createFileRepository, FileRepositoryOptions } from '@mocktomata/io-fs';
-import { required } from 'type-plus';
+import { MocktomataIO, SpecNotFound, SpecRecord } from '@mocktomata/framework'
+import { createFileRepository, FileRepositoryOptions } from '@mocktomata/io-fs'
+import { required } from 'type-plus'
 
 export type CreateIOOptions = {
   cwd: string,

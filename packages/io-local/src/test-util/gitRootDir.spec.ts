@@ -1,8 +1,8 @@
 
-import { gitRootDir } from './gitRootDir'
-import { dirSync } from 'tmp'
 import fs from 'fs'
 import path from 'path'
+import { dirSync } from 'tmp'
+import { gitRootDir } from '.'
 
 test('works on repo root', () => {
   const cwd = dirSync().name
