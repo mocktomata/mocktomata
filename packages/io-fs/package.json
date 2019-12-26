@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-fs",
-  "version": "7.0.0-alpha",
+  "version": "7.0.0-beta",
   "description": "mocktomata file system IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
