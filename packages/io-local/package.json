@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-local",
-  "version": "7.0.0-alpha",
+  "version": "7.0.0-beta",
   "description": "mocktomata local IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
