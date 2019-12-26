@@ -136,3 +136,13 @@ export const postReturn = {
     return
   }
 }
+export class WithProperty {
+  y = 1
+  do(x: any) { return x }
+}
+export class WithStaticProp {
+  static x = 1
+}
+export class WithStaticMethod {
+  static do() { return 'foo' }
+}

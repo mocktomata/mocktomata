@@ -1,7 +1,7 @@
 import a from 'assertron';
 import { incubator } from '../src';
 import { ActionMismatch, ExtraAction, MissingAction } from './spec';
-import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous } from './test-artifacts';
+import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithStaticProp, WithStaticMethod, WithProperty } from './test-artifacts';
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })
@@ -966,10 +966,6 @@ describe('class', () => {
   })
 
   incubator.duo('class with property', (title, spec) => {
-    class WithProperty {
-      y = 1
-      do(x: any) { return x }
-    }
     test(title, async () => {
       const s = await spec(WithProperty)
       const p = new s()
@@ -981,8 +977,22 @@ describe('class', () => {
     })
   })
 
-  test.todo('static property')
-  test.todo('static method')
+  incubator.duo('static property', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(WithStaticProp)
+      expect(s.x).toBe(1)
+      expect(s.x = 3).toBe(3)
+      await spec.done()
+    })
+  })
+
+  incubator.duo('static method', (title, spec) => {
+    test(title, async () => {
+      const s = await spec(WithStaticMethod)
+      expect(s.do()).toBe('foo')
+      await spec.done()
+    })
+  })
 })
 
 describe('instance', () => {
@@ -1076,6 +1086,33 @@ describe('instance', () => {
       })
       stub.side = 1
       await simulate.done()
+    })
+  })
+
+  incubator.duo('static property', (title, spec) => {
+    test(title, async () => {
+      WithStaticProp.x = 1
+      function getClass() {
+        return WithStaticProp
+      }
+      const subject = await spec(getClass)
+      const s = subject()
+      expect(s.x).toBe(1)
+      expect(s.x = 3).toBe(3)
+      await spec.done()
+    })
+  })
+
+  incubator.duo('static method', (title, spec) => {
+    test(title, async () => {
+      function getClass() {
+        return WithStaticMethod
+      }
+
+      const subject = await spec(getClass)
+      const s = subject()
+      expect(s.do()).toBe('foo')
+      await spec.done()
     })
   })
 });
