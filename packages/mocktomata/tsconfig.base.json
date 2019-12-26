@@ -12,6 +12,9 @@
       "path": "../framework"
     },
     {
+      "path": "../file-server"
+    },
+    {
       "path": "../io-client"
     },
     {

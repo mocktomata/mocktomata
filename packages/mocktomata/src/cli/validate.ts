@@ -1,4 +1,4 @@
-import { LogPresenter } from 'clibuilder';
+import { LogPresenter } from 'clibuilder'
 import validatejs from 'validate.js'
 
 export function validate({ ui }: { ui: LogPresenter }, value: any, constraints: any) {
