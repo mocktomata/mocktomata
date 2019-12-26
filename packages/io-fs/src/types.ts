@@ -1,4 +1,4 @@
-import { SpecPluginModule } from '@mocktomata/framework';
+import { SpecPluginModule } from '@mocktomata/framework'
 
 export type Repository = {
   readSpec(specName: string, invokePath: string): Promise<string>,

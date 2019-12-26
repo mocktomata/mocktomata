@@ -1,5 +1,6 @@
+import t from 'assert';
 import { getHash } from './getHash';
-import t from 'assert'
+
 test('accepts empty string as id', () => {
   const actual = getHash('')
   is32CharString(actual)

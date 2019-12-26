@@ -1,7 +1,7 @@
-import t from 'assert';
-import { dirSync } from 'tmp';
-import { readByHash } from './readByHash';
-import { writeByHash } from './writeByHash';
+import t from 'assert'
+import { dirSync } from 'tmp'
+import { readByHash } from './readByHash'
+import { writeByHash } from './writeByHash'
 
 test('can read conflicted spec', async () => {
   const tmp = dirSync()

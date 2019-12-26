@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
 export function readByHash(baseDir: string, id: string, hash: string, dupId = 0): string {
   const filename = dupId ? hash + dupId : hash

@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-alpha",
+    "@mocktomata/framework": "^7.0.0-beta",
     "find-installed-packages": "^2.0.1",
     "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
@@ -49,7 +49,7 @@
     "@types/mkdirp": "^0.5.2",
     "@types/tmp": "^0.1.0",
     "assertron": "^7.1.2",
-    "memfs": "^2.15.5",
+    "memfs": "^3.0.3",
     "tmp": "^0.1.0"
   },
   "engines": {

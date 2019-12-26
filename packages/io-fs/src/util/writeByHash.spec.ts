@@ -1,7 +1,7 @@
-import t from 'assert';
-import fs from 'fs';
-import { dirSync } from 'tmp';
-import { writeByHash } from './writeByHash';
+import t from 'assert'
+import fs from 'fs'
+import { dirSync } from 'tmp'
+import { writeByHash } from './writeByHash'
 
 test('conflict id will save in different file', async () => {
   const tmp = dirSync()

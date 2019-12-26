@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import fs from 'fs'
+import path from 'path'
 
 export function writeByHash(baseDir: string, id: string, json: string, hash: string, dupId = 0): void {
   const filename = dupId ? hash + dupId : hash

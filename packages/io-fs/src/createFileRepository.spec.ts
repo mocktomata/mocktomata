@@ -1,7 +1,7 @@
-import { createFileRepository } from '.';
-import { dirSync } from 'tmp';
 import fs from 'fs'
 import path from 'path'
+import { dirSync } from 'tmp'
+import { createFileRepository } from '.'
 
 test('load npm plugin package', async () => {
   const io = createFileRepository('fixtures/has-plugins')

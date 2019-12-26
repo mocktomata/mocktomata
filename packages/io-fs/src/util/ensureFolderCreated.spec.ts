@@ -1,8 +1,8 @@
-import t from 'assert';
-import fs from 'fs';
-import path from 'path';
-import { dirSync } from 'tmp';
-import { ensureFolderCreated } from './ensureFolderCreated';
+import t from 'assert'
+import fs from 'fs'
+import path from 'path'
+import { dirSync } from 'tmp'
+import { ensureFolderCreated } from './ensureFolderCreated'
 
 test('folder exists does nothing', () => {
   const tmp = dirSync()
