@@ -170,7 +170,7 @@ function setProperty<V = any>(
   const actionId = record.addAction(action)
   const newState: Recorder.State = { ...state, source: { type: 'property', id: actionId, key } }
 
-  action.value = resolveValue(context, value)
+  action.value = record.findRefId(resolveValue(context, value)) || value
 
   logAction(newState, actionId, action)
   processNextAction(context)
@@ -529,7 +529,6 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
       }
       if (handler) valueRef.subject = handler()
       buildTestDouble(newContext, valueRef)
-      logCreateStub(newContext.state, valueRef.profile, valueRef.testDouble)
     }
     return valueRef.testDouble
   }

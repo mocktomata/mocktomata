@@ -79,6 +79,11 @@ export namespace SpecRecord {
     performer: Performer,
     tick: number,
     key: SupportedKeyTypes,
+    /**
+     * Value of the set operation.
+     * This is the same as the set operation result,
+     * but that can be different if the set operation throws an error.
+     */
     value: any
   }
 

@@ -18,7 +18,7 @@ export function prettifyAction(state: Pick<Recorder.State, 'ref' | 'refId' | 'so
     case 'get':
       return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} access <ref:${state.refId}>.${action.key}`
     case 'set':
-      return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} set <ref:${state.refId}>.${action.key} = ${action.value}`
+      return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} set <ref:${state.refId}>.${action.key} = ${tersifyValue(action.value)}`
     case 'invoke': {
       const argsStr = action.payload.length === 0 ?
         '' :

@@ -82,7 +82,14 @@ describe('object', () => {
     })
   })
 
-  test.todo('handles property changes type from value to function')
+  incubator.duo('handles property changes type from value to function', (title, spec) => {
+    test(title, async () => {
+      const subject: any = await spec({ do: 1 })
+      subject.do = (v: number) => v
+      expect(subject.do(3)).toBe(3)
+      await spec.done()
+    })
+  })
 
   incubator.duo('primitive method', (title, spec) => {
     test(title, async () => {
@@ -998,8 +1005,7 @@ describe('instance', () => {
     })
   })
 
-  // need custom plugin for this case
-  incubator.duo('instanceof for output instance is not supported', (title, spec) => {
+  incubator.duo('instanceof for output instance is not supported (need custom plugin for this)', (title, spec) => {
     test.skip(title, async () => {
       function fool() {
         return new ChildOfDummy()
@@ -1027,6 +1033,49 @@ describe('instance', () => {
     })
   })
 
-  test.todo('getter skips internal method calls')
-  test.todo('setter skips internal method calls')
+  incubator.sequence('getter skips internal method calls', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save({
+        get side() {
+          this.internalCall()
+          return 'ok'
+        },
+        internalCall() { }
+      })
+      expect(spy.side).toBe('ok')
+      await save.done()
+
+      const stub = await simulate({
+        get side() {
+          this.internalCall()
+          return 'ok'
+        },
+        internalCall() { throw new Error('should not reach') }
+      })
+      expect(stub.side).toBe('ok')
+      await simulate.done()
+    })
+  })
+
+  incubator.sequence('setter skips internal method calls', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save({
+        set side(v: any) {
+          this.internalCall()
+        },
+        internalCall() { }
+      })
+      spy.side = 1
+      await save.done()
+
+      const stub = await simulate({
+        set side(v: any) {
+          this.internalCall()
+        },
+        internalCall() { throw new Error('should not reach') }
+      })
+      stub.side = 1
+      await simulate.done()
+    })
+  })
 });
