@@ -1,4 +1,4 @@
-import { SpecMode } from '@mocktomata/framework'
+import { Spec } from '@mocktomata/framework'
 import { MocktomataStore } from '../browser/store'
 
 /**
@@ -7,10 +7,10 @@ import { MocktomataStore } from '../browser/store'
  */
 export function getEffectiveSpecMode(
   storeValue: Pick<MocktomataStore, 'overrideMode' | 'filePathFilter' | 'specNameFilter'>,
-  mode: SpecMode,
+  mode: Spec.Mode,
   specName: string,
   invokePath: string,
-): SpecMode {
+): Spec.Mode {
   if (mode !== 'auto') return mode
 
   const overrideMode = storeValue.overrideMode

@@ -1,11 +1,11 @@
-import { SpecMode } from '@mocktomata/framework';
+import { Spec } from '@mocktomata/framework';
 import { config, ConfigOptions } from 'standard-log';
 
 export type StartOptions = {
   folder: string,
   libs: string[],
   plugins: string[],
-  mode: SpecMode,
+  mode: Spec.Mode,
   fileName: RegExp,
   specName: RegExp,
   logOptions: Partial<ConfigOptions>,

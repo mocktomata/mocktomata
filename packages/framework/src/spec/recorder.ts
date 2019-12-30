@@ -5,10 +5,10 @@ import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
 import { createSpecRecordBuilder } from './record';
 import { getDefaultPerformer } from './subjectProfile';
-import { Meta, SpecOptions, SpecPlugin, SpecRecord } from './types';
+import { Spec, SpecPlugin, SpecRecord } from './types';
 import { Recorder } from './types-internal';
 
-export function createRecorder(specName: string, options: SpecOptions) {
+export function createRecorder(specName: string, options: Spec.Options) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordBuilder(specName)
   const context = { record, timeTracker }
@@ -58,7 +58,6 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
     setProperty: (options, handler) => setProperty(context, options, handler),
     invoke: (options, handler) => invoke(context, options, handler),
     instantiate: (options, handler) => instantiate(context, options, handler),
-    instantiate2: (options, handler) => instantiate2(context, options, handler),
   }
 }
 
@@ -131,7 +130,7 @@ function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlu
   context.state.spyOptions.push({ subject, options })
 }
 
-function setMeta<M extends Meta>({ state }: Recorder.Context, meta: M) {
+function setMeta<M extends SpecRecord.Meta>({ state }: Recorder.Context, meta: M) {
   return state.ref.meta = meta
 }
 
@@ -261,69 +260,8 @@ function getProfileForInvokeResult(
     case 'output': return 'output'
   }
 }
-function getProfileForInstantiateResult(performer: SpecRecord.Performer): SpecRecord.SubjectProfile {
-  switch (performer) {
-    case 'mockto':
-    case 'plugin':  // no use case yet
-      return 'input'
-    case 'user':
-      return 'output'
-  }
-}
+
 function instantiate<V, A extends any[]>(
-  context: Recorder.Context,
-  { args, performer }: SpecPlugin.SpyContext.instantiate.Options<A>,
-  handler: SpecPlugin.SpyContext.instantiate.Handler<V, A>
-): SpecPlugin.SpyContext.instantiate.Recorder {
-  const { record, state, timeTracker } = context
-  performer = performer || getDefaultPerformer(state.ref.profile)
-  const ref = {
-    plugin: context.state.ref.plugin,
-    profile: getProfileForInstantiateResult(performer),
-    subject: notDefined
-  } as SpecRecord.Reference
-  const refId = record.addRef(ref)
-
-  const action: SpecRecord.InstantiateAction = {
-    type: 'instantiate',
-    refId: state.refId,
-    instanceId: refId,
-    performer,
-    payload: [],
-    tick: timeTracker.elaspe(),
-  }
-  const actionId = record.addAction(action)
-
-  ref.source = { type: 'result', id: actionId }
-
-  const spiedArgs = args.map((arg, i) => {
-    const spiedArg = getSpy({ ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } }, arg, {
-      profile: getProfileForInvokeArgument(state.ref.profile),
-      source: { type: 'argument', id: actionId, key: i }
-    })
-    action.payload.push(record.findRefId(spiedArg) || arg)
-    return spiedArg
-  }) as A
-  logAction(context.state, actionId, action)
-  handler({ args: spiedArgs })
-
-  const newContext: Recorder.Context = {
-    ...context,
-    state: {
-      ...context.state,
-      ref,
-      refId
-    }
-  }
-  return {
-    setInstance(instance) {
-      ref.testDouble = instance
-    },
-    invoke: (options, handler) => invoke(newContext, options, handler)
-  }
-}
-
-function instantiate2<V, A extends any[]>(
   context: Recorder.Context,
   { args, performer }: SpecPlugin.SpyContext.instantiate.Options<A>,
   handler: SpecPlugin.SpyContext.instantiate.Handler<V, A>

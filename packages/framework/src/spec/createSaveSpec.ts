@@ -5,13 +5,13 @@ import { prettyPrintSpecRecord } from '../utils';
 import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { createRecorder } from './recorder';
-import { Spec, SpecContext, SpecOptions } from './types';
+import { Spec, SpecContext } from './types';
 
 export async function createSaveSpec(
   context: Context<SpecContext>,
   specName: string,
   invokePath: string,
-  options: SpecOptions
+  options: Spec.Options
 ): Promise<Spec> {
   assertSpecName(specName)
 

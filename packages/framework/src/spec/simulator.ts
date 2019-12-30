@@ -2,13 +2,13 @@ import { PartialPick } from 'type-plus';
 import { notDefined } from '../constants';
 import { actionMatches } from './actionMatches';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
-import { ActionMismatch, ExtraReference, NoSupportedPlugin, ExtraInstance, ExtraAction, MissingAction } from './errors';
+import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin } from './errors';
 import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs';
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
 import { createPluginSpyContext } from './recorder';
 import { getDefaultPerformer } from './subjectProfile';
-import { SpecOptions, SpecPlugin, SpecRecord } from './types';
+import { Spec, SpecPlugin, SpecRecord } from './types';
 import { Recorder } from './types-internal';
 import { referenceMismatch } from './validations';
 
@@ -21,7 +21,7 @@ export namespace Simulator {
   }
 }
 
-export function createSimulator(specName: string, loaded: SpecRecord, options: SpecOptions) {
+export function createSimulator(specName: string, loaded: SpecRecord, options: Spec.Options) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordValidator(specName, loaded)
 
@@ -92,8 +92,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
     getProperty: options => getProperty(context, options),
     setProperty: options => setProperty(context, options),
     invoke: options => invoke(context, options),
-    instantiate: options => instantiate(context, options),
-    instantiate2: (options, handler) => instantiate2(context, options, handler),
+    instantiate: (options, handler) => instantiate(context, options, handler),
     on: options => on(context, options),
   }
 }
@@ -305,93 +304,8 @@ function invoke(context: Simulator.Context,
 
 function instantiate(
   context: Simulator.Context,
-  { args, performer }: SpecPlugin.StubContext.instantiate.Options
-): SpecPlugin.StubContext.instantiate.Responder {
-  const { record, state, timeTracker } = context
-
-  const expected = record.getNextExpectedAction()
-  performer = performer || getDefaultPerformer(state.ref.profile)
-
-  const ref = record.claimNextRef()
-  if (!ref) {
-    timeTracker.stop()
-    throw new ExtraInstance(record.specName, context.state.ref.plugin)
-  }
-  // TODO check mismatch ref
-
-  const refId = record.getRefId(ref)
-
-  const action: SpecRecord.InstantiateAction = {
-    type: 'instantiate',
-    refId: state.refId,
-    instanceId: refId,
-    performer,
-    payload: [],
-    tick: timeTracker.elaspe(),
-  }
-
-  const actionId = record.addAction(action)
-
-  args.forEach((arg, i) => {
-    const ref = record.findRef(arg)
-    if (ref) {
-      if (ref.testDouble === notDefined) {
-        buildTestDouble({
-          ...context,
-          state: { ...context.state, source: { type: 'argument', id: actionId, key: i } }
-        }, ref)
-      }
-      action.payload.push(record.getRefId(ref))
-    }
-    else {
-      action.payload.push(arg)
-    }
-    return arg
-  })
-
-  if (!actionMatches(action, expected)) {
-    timeTracker.stop()
-    throw new ActionMismatch(record.specName, action, expected)
-  }
-
-  logAction(context.state, actionId, action)
-  processNextAction(context)
-
-  const resultAction = record.getExpectedResultAction(actionId)!
-  // in what case the resultAction is undefined?
-  // those extra invoke calls by the framework?
-  if (!resultAction) new Error('missing result action')
-
-  const resultActionId = record.addAction(resultAction)
-  const resultContext: Simulator.Context = {
-    ...context,
-    state: { ...context.state, source: { type: 'result', id: actionId } }
-  }
-
-  setImmediate(() => processNextAction(context))
-
-  logAction(resultContext.state, resultActionId, resultAction)
-
-  const newContext: Simulator.Context = {
-    ...context,
-    state: {
-      ...context.state,
-      ref,
-      refId
-    }
-  }
-  return {
-    setInstance(instance) {
-      ref.testDouble = instance
-    },
-    invoke: (options) => invoke(newContext, options)
-  }
-}
-
-function instantiate2(
-  context: Simulator.Context,
   { args, performer }: SpecPlugin.StubContext.instantiate.Options,
-  handler: SpecPlugin.StubContext.instantiate2.Handler,
+  handler: SpecPlugin.StubContext.instantiate.Handler,
 ): SpecPlugin.StubContext.instantiate.Responder {
   const { record, state, timeTracker } = context
 

@@ -1,7 +1,7 @@
-import { SpecMode } from '@mocktomata/framework'
+import { Spec } from '@mocktomata/framework'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 
-test.each<SpecMode>([
+test.each<Spec.Mode>([
   'live', 'save', 'simulate'
 ])('%s mode always returns itself', mode => {
   expect(getEffectiveSpecMode({}, mode, '', '')).toBe(mode)

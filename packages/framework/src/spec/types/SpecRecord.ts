@@ -1,4 +1,4 @@
-import { Meta } from './Meta';
+import { JSONTypes } from 'type-plus';
 
 // May need to expand this and specialize it for Spy and Stub
 export type SpecRecord = {
@@ -7,6 +7,13 @@ export type SpecRecord = {
 }
 
 export namespace SpecRecord {
+
+  /**
+   * Meta data.
+   * This is used during spying to save additional information,
+   * and use it during stubbing to reproduce the original behavior.
+   */
+  export type Meta = JSONTypes | undefined
   export type Reference = {
     /**
      * Name of the plugin

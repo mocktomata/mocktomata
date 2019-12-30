@@ -1,10 +1,10 @@
-import { SpecContext, SpecMode } from '@mocktomata/framework'
+import { SpecContext, Spec } from '@mocktomata/framework'
 import { Context } from 'async-fp'
 import { createStore } from 'global-store'
 
 export type MocktomataStore = {
   context: Context<SpecContext> | undefined,
-  overrideMode?: SpecMode,
+  overrideMode?: Spec.Mode,
   filePathFilter?: RegExp,
   specNameFilter?: RegExp
 }

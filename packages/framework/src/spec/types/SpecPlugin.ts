@@ -1,4 +1,3 @@
-import { Meta } from './Meta';
 import { SpecRecord } from './SpecRecord';
 
 export type SpecPlugin<S = any, M = any> = {
@@ -67,7 +66,6 @@ export namespace SpecPlugin {
     setProperty: SpyContext.setProperty,
     invoke: SpyContext.invoke,
     instantiate: SpyContext.instantiate,
-    instantiate2: SpyContext.instantiate2,
   }
   export namespace SpyContext {
     export type setMeta<M> = (meta: M) => M
@@ -124,33 +122,9 @@ export namespace SpecPlugin {
     export type instantiate = <V = any, A extends any[] = any[]>(
       options: instantiate.Options<A>,
       hander: instantiate.Handler<V, A>
-    ) => instantiate.Recorder
-
-    export namespace instantiate {
-      export type Options<A> = {
-        args: A,
-        performer?: SpecRecord.Performer,
-      }
-      export type Handler<V, A> = (context: Context<A>) => V
-      export type Context<A> = {
-        args: A
-      }
-
-      export type Recorder = {
-        setInstance(instance: any): void,
-        // setMeta: SpyContext.setMeta,
-        // getProperty: SpyContext.getProperty,
-        // setProperty: SpyContext.setProperty,
-        invoke: SpyContext.invoke,
-      }
-    }
-
-    export type instantiate2 = <V = any, A extends any[] = any[]>(
-      options: instantiate2.Options<A>,
-      hander: instantiate2.Handler<V, A>
     ) => V
 
-    export namespace instantiate2 {
+    export namespace instantiate {
       export type Options<A> = {
         args: A,
         performer?: SpecRecord.Performer,
@@ -166,7 +140,6 @@ export namespace SpecPlugin {
     setProperty: StubContext.setProperty,
     invoke: StubContext.invoke,
     instantiate: StubContext.instantiate,
-    instantiate2: StubContext.instantiate2,
     on: StubContext.on,
   }
 
@@ -200,8 +173,10 @@ export namespace SpecPlugin {
       }
     }
 
-    export type instantiate = (options: instantiate.Options) => instantiate.Responder
+    export type instantiate = (options: instantiate.Options, handler: instantiate.Handler) => any
     export namespace instantiate {
+      export type Context = { args: any[] }
+      export type Handler = (context: Context) => any
       export type Options = {
         args: any[],
         performer?: SpecRecord.Performer,
@@ -210,15 +185,6 @@ export namespace SpecPlugin {
         setInstance(instance: any): void,
         invoke: StubContext.invoke,
       }
-    }
-    export type instantiate2 = (options: instantiate2.Options, handler: instantiate2.Handler) => any
-    export namespace instantiate2 {
-      export type Options = {
-        args: any[],
-        performer?: SpecRecord.Performer,
-      }
-      export type Handler = (context: Context) => any
-      export type Context = { args: any[] }
     }
 
     export type on = (pluginAction: PluginAction) => any
@@ -236,11 +202,11 @@ export namespace SpecPlugin {
   export type InvokeOptions = {
     performer?: SpecRecord.Performer,
     site?: SpecRecord.SupportedKeyTypes,
-    meta?: Meta,
+    meta?: SpecRecord.Meta,
   }
 
   export type SpyResultOptions = {
-    meta?: Meta,
+    meta?: SpecRecord.Meta,
   }
 
   export type GetPropertyOptions = {
@@ -250,7 +216,7 @@ export namespace SpecPlugin {
      * the use case for this is when the specific plugin do not want the property to be spied,
      * but need to capture additional information so that it can be constructed and simulated correctly.
      */
-    meta?: Meta
+    meta?: SpecRecord.Meta
   }
 
   export type InvocationRecorder = {
@@ -260,8 +226,8 @@ export namespace SpecPlugin {
   }
 
   export type InvocationResponder = {
-    getResult(): { type: 'return' | 'throw', value: any, meta: Meta | undefined },
-    getResultAsync(): Promise<{ type: 'return' | 'throw', value: any, meta: Meta | undefined }>,
+    getResult(): { type: 'return' | 'throw', value: any, meta: SpecRecord.Meta | undefined },
+    getResultAsync(): Promise<{ type: 'return' | 'throw', value: any, meta: SpecRecord.Meta | undefined }>,
     returns<V>(value: V): V,
     throws<V>(value: V): V,
   }
@@ -269,7 +235,7 @@ export namespace SpecPlugin {
   export type InstantiateOptions = {
     performer?: SpecRecord.Performer,
     processArguments?: <A>(id: SpecRecord.ActionId, arg: A) => A,
-    meta?: Meta,
+    meta?: SpecRecord.Meta,
   }
 
   export type InstantiationRecorder = {

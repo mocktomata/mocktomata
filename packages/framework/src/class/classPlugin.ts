@@ -9,7 +9,7 @@ export const classPlugin: SpecPlugin<new (...args: any[]) => void> = {
     context.setMeta(metarize(subject))
     // console.log('createSpy', subject, subject.prototype, subject.prototype.constructor)
     const Spy: any = function (...args: any[]) {
-      return context.instantiate2({ args }, ({ args }) => {
+      return context.instantiate({ args }, ({ args }) => {
         const _this = new subject(...args)
         Object.setPrototypeOf(_this, new.target.prototype)
         return _this
@@ -24,7 +24,7 @@ export const classPlugin: SpecPlugin<new (...args: any[]) => void> = {
   createStub(context, subject, meta) {
     const base = subject || demetarize(meta)
     const Stub: any = function (...args: any[]) {
-      return context.instantiate2({ args }, ({ args }) => {
+      return context.instantiate({ args }, ({ args }) => {
         const _this = new base(...args)
         Object.setPrototypeOf(_this, new.target.prototype)
         return _this

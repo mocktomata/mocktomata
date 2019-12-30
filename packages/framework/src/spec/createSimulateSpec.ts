@@ -3,13 +3,13 @@ import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { enableLog } from './enableLog';
 import { createSimulator } from './simulator';
-import { Spec, SpecContext, SpecOptions } from './types';
+import { Spec, SpecContext } from './types';
 
 export async function createSimulateSpec(
   context: Context<SpecContext>,
   specName: string,
   invokePath: string,
-  options: SpecOptions
+  options: Spec.Options
 ): Promise<Spec> {
   assertSpecName(specName)
   const { io } = await context.get()

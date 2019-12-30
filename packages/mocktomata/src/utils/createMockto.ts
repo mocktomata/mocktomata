@@ -1,4 +1,4 @@
-import { createSpec, Spec, SpecContext, SpecHandler, SpecMode, SpecOptions } from '@mocktomata/framework'
+import { createSpec, Spec, SpecContext } from '@mocktomata/framework'
 import { Context as AsyncContext } from 'async-fp'
 import { Store } from 'global-store'
 import { LogLevel } from 'standard-log'
@@ -20,8 +20,8 @@ export namespace Mockto {
     store: Store<MocktomataStore>
   }
   export interface SpecFn {
-    (specName: string, handler: SpecHandler): void,
-    (specName: string, options: SpecOptions, handler: SpecHandler): void,
+    (specName: string, handler: Spec.Handler): void,
+    (specName: string, options: Spec.Options, handler: Spec.Handler): void,
   }
 }
 
@@ -38,7 +38,7 @@ export function createMockto(context: Mockto.Context) {
 }
 
 
-function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode: SpecMode): Mockto.SpecFn {
+function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode: Spec.Mode): Mockto.SpecFn {
   const fn = (...args: any[]): any => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(fn)
@@ -64,7 +64,7 @@ function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode:
   return fn
 }
 
-function resolveMocktoFnArgs(args: any[]): { specName: string, options: SpecOptions | undefined, handler: SpecHandler } {
+function resolveMocktoFnArgs(args: any[]): { specName: string, options: Spec.Options | undefined, handler: Spec.Handler } {
   if (args.length === 3) {
     return { specName: args[0], options: args[1], handler: args[2] }
   }

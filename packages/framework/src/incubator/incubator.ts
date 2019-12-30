@@ -3,7 +3,7 @@ import { LogLevel, logLevels } from 'standard-log';
 import { SpecContext } from '../spec';
 import { createSaveSpec } from '../spec/createSaveSpec';
 import { createSimulateSpec } from '../spec/createSimulateSpec';
-import { Spec, SpecHandler, SpecOptions } from '../spec/types';
+import { Spec } from '../spec/types';
 import { createTestHarness } from './createTestHarness';
 import { ensureDirNotExists, ensureFileNotExists } from './ensures';
 import { CreateTestHarnessOptions, SequenceHandler } from './types';
@@ -49,7 +49,7 @@ const testSequence: TestSpecFn<SequenceHandler> = (...args: any[]) => {
   })
 }
 
-function createTestSpec(specFn: typeof createSaveSpec, specName: string, options: SpecOptions = { timeout: 3000 }): Spec {
+function createTestSpec(specFn: typeof createSaveSpec, specName: string, options: Spec.Options = { timeout: 3000 }): Spec {
   let s: Spec
   const initState: { enableLog: boolean, logLevel?: LogLevel } = { enableLog: false }
   return Object.assign(
@@ -78,7 +78,7 @@ function createTestSpec(specFn: typeof createSaveSpec, specName: string, options
   }
 }
 
-export function resolveTestSpecFnArgs<H = SpecHandler>(args: any[]): { specName: string, options: SpecOptions | undefined, handler: H } {
+export function resolveTestSpecFnArgs<H = Spec.Handler>(args: any[]): { specName: string, options: Spec.Options | undefined, handler: H } {
   if (args.length === 3) {
     return { specName: args[0], options: args[1], handler: args[2] }
   }
@@ -87,15 +87,15 @@ export function resolveTestSpecFnArgs<H = SpecHandler>(args: any[]): { specName:
   }
 }
 
-export type TestSpecFn<H = SpecHandler> = {
+export type TestSpecFn<H = Spec.Handler> = {
   (specName: string, handler: H): void,
-  (specName: string, options: SpecOptions, handler: H): void,
+  (specName: string, options: Spec.Options, handler: H): void,
 }
 
 export type Incubator = {
-  save: TestSpecFn<SpecHandler<Spec>>,
-  simulate: TestSpecFn<SpecHandler<Spec>>,
-  duo: TestSpecFn<SpecHandler<Spec>>,
+  save: TestSpecFn<Spec.Handler<Spec>>,
+  simulate: TestSpecFn<Spec.Handler<Spec>>,
+  duo: TestSpecFn<Spec.Handler<Spec>>,
   sequence: TestSpecFn<SequenceHandler<Spec>>,
   start: (options?: CreateTestHarnessOptions | undefined) => Promise<void>,
   ensureDirNotExists: (dirpath: string) => void,
