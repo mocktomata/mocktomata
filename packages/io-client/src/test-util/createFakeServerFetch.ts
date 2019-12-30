@@ -1,4 +1,4 @@
-import * as f from 'cross-fetch';
+import * as f from 'cross-fetch'
 
 export function createFakeServerFetch() {
   const specs: Record<string, any> = {
@@ -35,10 +35,11 @@ export function createFakeServerFetch() {
       }
       console.error(url)
       return new f.Response(undefined, { status: 404 })
-    }, {
-    specs,
-    scenarios
-  }
+    },
+    {
+      specs,
+      scenarios
+    }
   )
 }
 

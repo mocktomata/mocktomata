@@ -1,19 +1,19 @@
-import { SpecContext } from '../context';
+import { Context } from 'async-fp';
 import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { enableLog } from './enableLog';
 import { createSimulator } from './simulator';
-import { Spec, SpecOptions } from './types';
+import { Spec, SpecContext, SpecOptions } from './types';
 
 export async function createSimulateSpec(
-  context: SpecContext,
+  context: Context<SpecContext>,
   specName: string,
   invokePath: string,
   options: SpecOptions
 ): Promise<Spec> {
   assertSpecName(specName)
-
-  const loaded = await context.io.readSpec(specName, invokePath)
+  const { io } = await context.get()
+  const loaded = await io.readSpec(specName, invokePath)
   const simulator = createSimulator(specName, loaded, options)
 
   return Object.assign(

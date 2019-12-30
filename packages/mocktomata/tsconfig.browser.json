@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "declaration": false,
+    "downlevelIteration": true,
     "esModuleInterop": true,
     "lib": [
       "es2015"
@@ -12,9 +12,9 @@
     "removeComments": false,
     "sourceMap": true,
     "strict": true,
-    "target": "es2015",
+    "target": "es5",
     "skipLibCheck": true,
-    "outDir": "b",
+    "outDir": ".no-where",
     "rootDir": "src"
   }
 }

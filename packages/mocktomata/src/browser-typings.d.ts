@@ -1,2 +1,2 @@
-export * from './client'
+export * from './browser'
 export as namespace komondor

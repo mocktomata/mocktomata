@@ -1,11 +1,7 @@
 const base = require('../../jest.config.node-base')
+// const base = require('../../jest.nodejs.base-config')
 
 module.exports = {
   ...base,
   displayName: 'test-nodejs',
-  moduleNameMapper: {
-    '@mocktomata/(.*)/(.*)': '<rootDir>/../$1/src/$2',
-    '@mocktomata/(.*)': '<rootDir>/../$1/src',
-    'mocktomata': '<rootDir>/../mocktomata/src'
-  }
 }

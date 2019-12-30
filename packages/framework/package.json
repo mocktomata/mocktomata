@@ -32,19 +32,19 @@
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev -i type-plus && dependency-check . --missing --no-dev",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "eslint --ext=js,ts .",
     "test": "jest --reporters=default",
     "test:watch": "jest --watch",
     "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "async-fp": "^1.2.3",
-    "global-store": "^1.0.0-beta.14",
+    "async-fp": "^2.0.0",
+    "global-store": "^1.0.0-beta.15",
     "iso-error": "^3.1.1",
     "satisfier": "^5.1.0",
-    "standard-log": "^4.0.0",
-    "standard-log-color": "^1.5.13",
+    "standard-log": "^4.0.1",
+    "standard-log-color": "^1.5.14",
     "tersify": "^3.5.1",
     "type-plus": "^1.29.0"
   }

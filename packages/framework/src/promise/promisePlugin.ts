@@ -2,7 +2,7 @@
 import { SpecPlugin } from '../spec';
 import { isPromise } from './isPromise';
 
-export const promisePlugin: SpecPlugin<Promise<any>, { state: 'fulfilled' | 'rejected' }> = {
+export const promisePlugin: SpecPlugin<Promise<any>, boolean> = {
   name: 'promise',
   support: isPromise,
   createSpy({ invoke, setMeta }, subject) {

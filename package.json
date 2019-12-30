@@ -16,6 +16,7 @@
     "nuke": "yarn clean && lerna clean -y && rimraf node_modules",
     "release": "lerna publish --amend",
     "test": "jest",
+    "test:browser": "lerna run test:browser",
     "test:watch": "jest --watch",
     "verify": "yarn lint && yarn depcheck && yarn coverage",
     "watch": "yarn test:watch"
@@ -34,7 +35,7 @@
     "@babel/preset-typescript": "^7.7.7",
     "@commitlint/cli": "^8.2.0",
     "@commitlint/config-conventional": "^8.2.0",
-    "@jest-runner/electron": "2.0.2",
+    "@jest-runner/electron": "2.0.3",
     "@types/rimraf": "^2.0.3",
     "@unional/devpkg-node": "^1.4.2",
     "assertron": "^7.1.2",
@@ -42,8 +43,9 @@
     "codecov": "^3.6.1",
     "commitlint-circle": "^1.0.0",
     "husky": "^3.1.0",
+    "jest-environment-jsdom-fifteen": "^1.0.2",
     "jest-watch-exec": "^1.4.1",
-    "lerna": "^3.19.0",
+    "lerna": "^3.20.0",
     "rimraf": "^3.0.0"
   }
 }

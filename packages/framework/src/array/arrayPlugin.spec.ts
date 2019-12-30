@@ -2,7 +2,7 @@ import { createSpyContextStub } from '../incubator'
 import { SpecPlugin } from '../spec'
 import { arrayPlugin } from './arrayPlugin'
 
-function setupSpyArrayTest(subject: any[], partialContext?: Partial<SpecPlugin.SpyContext>) {
+function setupSpyArrayTest(subject: any[], partialContext?: Partial<SpecPlugin.SpyContext<Array<any>>>) {
   return arrayPlugin.createSpy(createSpyContextStub(partialContext), subject)
 }
 
@@ -24,7 +24,7 @@ test('capture refId in meta', () => {
   let meta
   setupSpyArrayTest([1, { a: 1 }], {
     setMeta: m => meta = m,
-    getSpyId: (value) => typeof value === 'object' ? '0' : value
+    getSpyId: value => typeof value === 'object' ? '0' : value
   })
 
   expect(meta).toEqual([1, '0'])

@@ -1,5 +1,5 @@
 import { SpecMode } from '@mocktomata/framework'
-import { MocktomataStore } from './store'
+import { MocktomataStore } from '../store'
 
 /**
  * Get the effective SpecMode for the specified id.

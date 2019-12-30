@@ -1,8 +1,7 @@
 'use strict';
-const paramCase = require('param-case')
-const pascalCase = require('pascal-case')
+const paramCase = require('param-case').paramCase
+const pascalCase = require('pascal-case').pascalCase
 const path = require('path')
-// const UglifyJSPlugin = require('uglifyjs-webpack-plugin')
 const webpack = require('webpack')
 
 const pjson = require('./package.json')
@@ -13,7 +12,7 @@ const globalVariable = pascalCase(filename)
 module.exports = {
   devtool: 'inline-source-map',
   entry: {
-    'komondor': './src/komondor'
+    'mocktomata': './src/browser'
   },
   mode: 'development',
   module: {
@@ -43,8 +42,8 @@ module.exports = {
     mainFields: ['browser', 'main']
   },
   plugins: [
-    // new UglifyJSPlugin({ sourceMap: true }),
     new webpack.IgnorePlugin(/fs/),
+    new webpack.IgnorePlugin(/module/),
     new webpack.IgnorePlugin(/perf_hooks/)
   ]
 }

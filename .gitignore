@@ -45,6 +45,7 @@ node_modules
 .progress
 .reports
 .ts
+dist
 lib*
 out*
 *.tsbuildinfo

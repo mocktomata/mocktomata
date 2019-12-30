@@ -1,14 +1,14 @@
+import { Context } from 'async-fp';
 import { logLevels } from 'standard-log';
-import { SpecContext } from '../context';
 import { log } from '../log';
 import { prettyPrintSpecRecord } from '../utils';
 import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { createRecorder } from './recorder';
-import { Spec, SpecOptions } from './types';
+import { Spec, SpecContext, SpecOptions } from './types';
 
 export async function createSaveSpec(
-  context: SpecContext,
+  context: Context<SpecContext>,
   specName: string,
   invokePath: string,
   options: SpecOptions
@@ -26,8 +26,9 @@ export async function createSaveSpec(
     {
       async done() {
         recorder.end()
-        const record = recorder.getSpecRecord()
-        context.io.writeSpec(specName, invokePath, record)
+        const record = recorder.getSpecRecord();
+        const { io } = await context.get()
+        io.writeSpec(specName, invokePath, record)
         if (enabledLog) {
           log.debug(`Spec Record "${specName}":`, prettyPrintSpecRecord(record))
         }

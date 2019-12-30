@@ -2,7 +2,7 @@ import { createStore } from 'global-store';
 import { SpecPluginInstance } from './spec/types-internal';
 
 export type SpecStore = {
-  plugins: SpecPluginInstance[]
+  plugins: SpecPluginInstance[],
 }
 
 export const store = createStore<SpecStore>({
@@ -13,6 +13,6 @@ export const store = createStore<SpecStore>({
     return {
       plugins: [],
       ...current
-    } as SpecStore
+    }
   }
 })

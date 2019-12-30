@@ -32,7 +32,7 @@ test('load from .mocktomata.json', () => {
   t.deepStrictEqual(actual, expected)
 })
 
-test('if .mocktomata.json is not a valid json, throws InvalidConfigFormat', () => {
+test.only('if .mocktomata.json is not a valid json, throws InvalidConfigFormat', () => {
   const tmp = dirSync()
 
   fs.writeFileSync(path.join(tmp.name, '.mocktomata.json'), '')

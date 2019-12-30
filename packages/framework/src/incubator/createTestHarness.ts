@@ -1,20 +1,21 @@
+import { Context } from 'async-fp';
 import { clearLogReporters, config, logLevel, setLogLevel } from 'standard-log';
 import { createColorLogReporter } from 'standard-log-color';
 import { required } from 'type-plus';
-import { context } from '../context';
 import { es2015 } from '../es2015';
-import { loadPlugins } from '../spec';
+import { loadPlugins, SpecContext } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
 import { CreateTestHarnessOptions, TestHarness, TestIO } from './types';
 
-export function createTestHarness(options?: CreateTestHarnessOptions): TestHarness {
+export function createTestHarness(context: Context<SpecContext>, options?: CreateTestHarnessOptions): TestHarness {
   const opts = required<Required<CreateTestHarnessOptions>>({ target: 'es2015', logLevel: logLevel.info }, options)
   const level = opts.logLevel
 
   config({ mode: 'test', reporters: [createColorLogReporter()], logLevel: level })
   const io = createTestIO()
   context.set({ io })
+
   store.reset()
 
   switch (opts.target) {

@@ -1,3 +1,4 @@
+
 export type ConfigOptions = {
   clientOptions?: {
     url: string

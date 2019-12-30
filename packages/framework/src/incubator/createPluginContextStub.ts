@@ -5,7 +5,7 @@ function noop() { }
 
 function passthrough(_: any, h: any) { return h() }
 
-export function createSpyContextStub(partialContext?: Partial<SpecPlugin.SpyContext>): SpecPlugin.SpyContext {
+export function createSpyContextStub<S>(partialContext?: Partial<SpecPlugin.SpyContext<S>>): SpecPlugin.SpyContext<S> {
   return required({
     getProperty: passthrough,
     setProperty: (o: any, h: any) => h(o.value),
