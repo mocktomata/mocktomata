@@ -9,7 +9,7 @@ import { Meta, SpecOptions, SpecPlugin, SpecRecord } from './types';
 import { Recorder } from './types-internal';
 
 export function createRecorder(specName: string, options: SpecOptions) {
-  const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
+  const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordBuilder(specName)
   const context = { record, timeTracker }
 

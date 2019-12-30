@@ -22,7 +22,7 @@ export namespace Simulator {
 }
 
 export function createSimulator(specName: string, loaded: SpecRecord, options: SpecOptions) {
-  const timeTracker = createTimeTracker(options, () => logRecordingTimeout(options.timeout))
+  const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordValidator(specName, loaded)
 
   return {
@@ -46,7 +46,7 @@ export function createSimulator(specName: string, loaded: SpecRecord, options: S
 }
 
 function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }): S {
-  const { record } = context
+  const { record, timeTracker } = context
 
   // const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
   const plugin = findPlugin(subject)
@@ -64,6 +64,7 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
     // as long as at the end they still produce the same result.
     // we may emit a warning at `spec.done()`
     // For now, throw an error.
+    timeTracker.stop()
     throw new ExtraReference(record.specName, subject)
   }
 
@@ -164,6 +165,7 @@ function setProperty<V = any>(
   }
 
   if (!actionMatches(action, expected)) {
+    timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
 
@@ -234,10 +236,16 @@ function invoke(context: Simulator.Context,
 
   const actionId = record.addAction(action)
 
-  if (!expected) throw new ExtraAction(record.specName, state, actionId, action)
+  if (!expected) {
+    timeTracker.stop()
+    throw new ExtraAction(record.specName, state, actionId, action)
+  }
 
   const thisArgRef = record.findRef(thisArg)
-  if (!thisArgRef) throw new ExtraReference(record.specName, thisArg)
+  if (!thisArgRef) {
+    timeTracker.stop()
+    throw new ExtraReference(record.specName, thisArg)
+  }
 
   if (thisArgRef.testDouble === notDefined) {
     buildTestDouble({
@@ -265,6 +273,7 @@ function invoke(context: Simulator.Context,
   })
 
   if (!actionMatches(action, expected)) {
+    timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
 
@@ -304,7 +313,10 @@ function instantiate(
   performer = performer || getDefaultPerformer(state.ref.profile)
 
   const ref = record.claimNextRef()
-  if (!ref) throw new ExtraInstance(record.specName, context.state.ref.plugin)
+  if (!ref) {
+    timeTracker.stop()
+    throw new ExtraInstance(record.specName, context.state.ref.plugin)
+  }
   // TODO check mismatch ref
 
   const refId = record.getRefId(ref)
@@ -338,6 +350,7 @@ function instantiate(
   })
 
   if (!actionMatches(action, expected)) {
+    timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
 
@@ -413,6 +426,7 @@ function instantiate2(
   })
 
   if (!actionMatches(action, expected)) {
+    timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
 
@@ -453,7 +467,7 @@ function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.Plu
 }
 
 function processNextAction(context: Simulator.Context) {
-  const { record, pendingPluginActions } = context
+  const { record, pendingPluginActions, timeTracker } = context
   const nextAction = record.getNextExpectedAction()
   const actionId = record.getNextActionId()
   if (!nextAction) return
@@ -477,7 +491,10 @@ function processNextAction(context: Simulator.Context) {
       }
       else if (nextAction.performer === 'plugin') {
         const pa = pendingPluginActions.find(a => a.type === nextAction.type && a.site === nextAction.site)
-        if (!pa) throw new ActionMismatch(record.specName, undefined, nextAction)
+        if (!pa) {
+          timeTracker.stop()
+          throw new ActionMismatch(record.specName, undefined, nextAction)
+        }
         pendingPluginActions.splice(pendingPluginActions.indexOf(pa), 1)
         invoke({
           ...context,

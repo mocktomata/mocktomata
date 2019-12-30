@@ -1,6 +1,6 @@
 import { NotSpecable, SpecIDCannotBeEmpty, SpecNotFound } from '@mocktomata/framework'
 import a from 'assertron'
-import { CannotConfigAfterUsed, config, mockto } from '../lib'
+import { CannotConfigAfterUsed, config, mockto } from '.'
 
 mockto('config() can only be called before using mockto', (title, spec) => {
   test(title, async () => {

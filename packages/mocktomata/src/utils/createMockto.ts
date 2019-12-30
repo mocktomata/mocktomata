@@ -1,7 +1,8 @@
 import { createSpec, Spec, SpecContext, SpecHandler, SpecMode, SpecOptions } from '@mocktomata/framework'
-import { Context } from 'async-fp'
+import { Context as AsyncContext } from 'async-fp'
+import { Store } from 'global-store'
 import { LogLevel } from 'standard-log'
-import { store } from '../store'
+import { MocktomataStore } from '../browser/store'
 import { getCallerRelativePath } from './getCallerRelativePath'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 import { start } from './start'
@@ -14,25 +15,30 @@ export type Mockto = Mockto.SpecFn & {
 }
 
 export namespace Mockto {
+  export type Context = {
+    initializeContext: () => AsyncContext<SpecContext>,
+    store: Store<MocktomataStore>
+  }
   export interface SpecFn {
     (specName: string, handler: SpecHandler): void,
     (specName: string, options: SpecOptions, handler: SpecHandler): void,
   }
 }
 
-export function createMockto(asyncSpecContext: Context<SpecContext>) {
+export function createMockto(context: Mockto.Context) {
   return Object.assign(
-    createSpecFn(asyncSpecContext, 'auto'),
+    createSpecFn(context, 'auto'),
     {
-      live: createSpecFn(asyncSpecContext, 'live'),
-      save: createSpecFn(asyncSpecContext, 'save'),
-      simulate: createSpecFn(asyncSpecContext, 'simulate'),
+      live: createSpecFn(context, 'live'),
+      save: createSpecFn(context, 'save'),
+      simulate: createSpecFn(context, 'simulate'),
       start,
     }
   )
 }
 
-function createSpecFn(asyncSpecContext: Context<SpecContext>, defaultMode: SpecMode): Mockto.SpecFn {
+
+function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode: SpecMode): Mockto.SpecFn {
   const fn = (...args: any[]): any => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(fn)
@@ -41,7 +47,8 @@ function createSpecFn(asyncSpecContext: Context<SpecContext>, defaultMode: SpecM
     // this is used to avoid unhandled promise error
     function createSpecWithHandler() {
       if (s) return s
-      return s = createSpec(asyncSpecContext, specName, specRelativePath, mode, options)
+      const context = initializeContext()
+      return s = createSpec(context, specName, specRelativePath, mode, options)
     }
     const spec = Object.assign((subject: any) => createSpecWithHandler().then(sp => {
       spec.getSpecRecord = sp.getSpecRecord

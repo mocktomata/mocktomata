@@ -15,7 +15,6 @@ export function loadConfig(cwd: string) {
   if (names.length > 1) throw new AmbiguousConfig(names)
 
   const config = configs[names[0]]
-
   return config
 }
 
@@ -29,22 +28,22 @@ function loadPjsonConfig(cwd: string) {
 }
 
 function loadMjsonConfig(cwd: string) {
-  const filepath = path.resolve(cwd, '.mocktomata.json')
+  const filepath = path.resolve(cwd, '.mockto.config.json')
   if (fs.existsSync(filepath)) {
     try {
-      return require(filepath)
+      return JSON.parse(fs.readFileSync(filepath, 'utf-8'))
     }
     catch (e) {
       // istanbul ignore next
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('.mocktomata.json')
+        throw new InvalidConfigFormat('.mockto.config.json')
       }
     }
   }
 }
 
 function loadMjsConfig(cwd: string) {
-  const filepath = path.resolve(cwd, '.mocktomata.js')
+  const filepath = path.resolve(cwd, '.mockto.config.js')
   if (fs.existsSync(filepath)) {
     try {
       return require(filepath)
@@ -52,7 +51,7 @@ function loadMjsConfig(cwd: string) {
     catch (e) {
       // istanbul ignore next
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('.mocktomata.js')
+        throw new InvalidConfigFormat('.mockto.config.js')
       }
     }
   }

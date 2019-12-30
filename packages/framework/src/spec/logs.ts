@@ -18,8 +18,8 @@ export function logAction(state: Recorder.State, actionId: SpecRecord.ActionId, 
   log.on(logLevels.debug, () => prettifyAction(state, actionId, action))
 }
 
-export function logRecordingTimeout(timeout: number) {
-  log.warn(`done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
+export function logRecordingTimeout(specName: string, timeout: number) {
+  log.warn(`${specName}: done() was not called in ${timeout} ms. Did the test takes longer than expected or you forget to call done()?`)
 }
 
 export function logCreateStub({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subjectOrMeta: any) {
