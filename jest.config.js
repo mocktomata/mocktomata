@@ -1,11 +1,17 @@
 module.exports = {
   collectCoverageFrom: [
     '<rootDir>/src/**/*.[jt]s',
-    '!<rootDir>/src/bin.[jt]s'
+    '!<rootDir>/src/bin.[jt]s',
+    '!<rootDir>/src/browser/**/*'
   ],
   projects: [
     '<rootDir>/packages/*',
-    '<rootDir>/packages/mocktomata/jest.jsdom.config.js'
+    // not running right now because we use karma
+    // jsdom still different compare to browser,
+    // e.g. getCallerRelativePath does not work correctly.
+    // tests on browser should be very limited.
+    // most logic should be shared and use jest to test.
+    // '<rootDir>/packages/mocktomata/jest.jsdom.config.js'
   ],
   reporters: [
     'default',

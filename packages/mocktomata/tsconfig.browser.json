@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
     "lib": [
@@ -12,9 +13,9 @@
     "removeComments": false,
     "sourceMap": true,
     "strict": true,
-    "target": "es5",
-    "skipLibCheck": true,
-    "outDir": ".no-where",
+    "target": "esnext",
+    // "skipLibCheck": true,
+    // "outDir": ".no-where",
     "rootDir": "src"
   }
 }
