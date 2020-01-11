@@ -34,7 +34,7 @@
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-alpha"
+    "@mocktomata/framework": "^7.0.0-beta"
   },
   "engines": {
     "node": ">= 6"

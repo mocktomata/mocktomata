@@ -57,10 +57,10 @@
     "@mocktomata/framework": "^7.0.0-beta",
     "@mocktomata/io-client": "^7.0.0-beta",
     "@mocktomata/io-local": "^7.0.0-beta",
-    "async-fp": "^2.0.0",
+    "async-fp": "^2.0.1",
     "chalk": "^3.0.0",
     "clibuilder": "^6.1.7",
-    "global-store": "^1.0.0-beta.14",
+    "global-store": "^1.0.0-beta.15",
     "stack-utils": "^2.0.1",
     "standard-log": "^4.0.3",
     "standard-log-color": "^1.5.16",
@@ -79,7 +79,7 @@
     "@types/tmp": "^0.1.0",
     "@unional/devpkg-node": "^1.4.2",
     "babel-loader": "^8.0.6",
-    "core-js": "^3.6.1",
+    "core-js": "^3.6.3",
     "delay": "^4.3.0",
     "jest": "^24.9.0",
     "karma": "^4.4.1",
@@ -94,7 +94,7 @@
     "source-map-loader": "^0.2.4",
     "tmp": "^0.1.0",
     "ts-loader": "^6.2.1",
-    "webpack": "^4.41.4",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   }
 }

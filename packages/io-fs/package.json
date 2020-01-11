@@ -39,10 +39,10 @@
   },
   "dependencies": {
     "@mocktomata/framework": "^7.0.0-beta",
-    "find-installed-packages": "^2.0.1",
+    "find-installed-packages": "^2.1.6",
     "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
-    "type-plus": "^1.29.0"
+    "type-plus": "^1.31.3"
   },
   "devDependencies": {
     "@types/md5": "^2.1.33",

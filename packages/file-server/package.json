@@ -53,6 +53,6 @@
     "assertron": "^7.1.2",
     "delay": "^4.3.0",
     "node-fetch": "^2.6.0",
-    "type-plus": "^1.29.0"
+    "type-plus": "^1.31.3"
   }
 }

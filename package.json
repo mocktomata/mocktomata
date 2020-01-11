@@ -13,6 +13,7 @@
     "depcheck": "lerna run depcheck",
     "dev": "yarn test:watch",
     "lint": "eslint --ext=js,ts .",
+    "ncu": "echo npm-check-updates && ncu -u && lerna exec ncu -- -u",
     "nuke": "yarn clean && lerna clean -y && rimraf node_modules",
     "release": "lerna publish --amend",
     "test": "jest",
@@ -33,8 +34,8 @@
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@babel/preset-env": "^7.7.7",
     "@babel/preset-typescript": "^7.7.7",
-    "@commitlint/cli": "^8.2.0",
-    "@commitlint/config-conventional": "^8.2.0",
+    "@commitlint/cli": "^8.3.4",
+    "@commitlint/config-conventional": "^8.3.4",
     "@jest-runner/electron": "2.0.3",
     "@types/rimraf": "^2.0.3",
     "@unional/devpkg-node": "^1.4.2",
@@ -43,10 +44,11 @@
     "codecov": "^3.6.1",
     "commitlint-circle": "^1.0.0",
     "electron": "^7.1.8",
-    "husky": "^3.1.0",
+    "husky": "^4.0.6",
     "jest-environment-jsdom-fifteen": "^1.0.2",
     "jest-watch-exec": "^1.4.1",
-    "lerna": "^3.20.0",
+    "lerna": "^3.20.2",
+    "npm-check-updates": "^4.0.1",
     "rimraf": "^3.0.0"
   }
 }
