@@ -18,7 +18,7 @@
     "test": "jest",
     "test:browser": "lerna run test:browser",
     "test:watch": "jest --watch",
-    "verify": "yarn lint && yarn depcheck && yarn coverage",
+    "verify": "yarn clean && yarn lint && yarn build && yarn depcheck && yarn coverage",
     "watch": "yarn test:watch"
   },
   "husky": {
@@ -42,6 +42,7 @@
     "babel-jest": "^24.9.0",
     "codecov": "^3.6.1",
     "commitlint-circle": "^1.0.0",
+    "electron": "^7.1.8",
     "husky": "^3.1.0",
     "jest-environment-jsdom-fifteen": "^1.0.2",
     "jest-watch-exec": "^1.4.1",

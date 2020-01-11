@@ -7,6 +7,11 @@ module.exports = {
   mode: 'development',
   module: {
     rules: [
+      // {
+      //   test: /\.js$/,
+      //   use: ['source-map-loader'],
+      //   enforce: 'pre'
+      // },
       {
         test: /\.tsx?$/,
         loader: 'ts-loader',

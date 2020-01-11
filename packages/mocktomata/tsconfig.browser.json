@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "allowJs": true,
     "downlevelIteration": true,
     "esModuleInterop": true,
     "lib": [
@@ -11,9 +10,10 @@
     "newLine": "LF",
     "noUnusedLocals": true,
     "removeComments": false,
-    "sourceMap": true,
+    "inlineSources": true,
+    "inlineSourceMap": true,
     "strict": true,
-    "target": "esnext",
+    "target": "es5",
     // "skipLibCheck": true,
     // "outDir": ".no-where",
     "rootDir": "src"

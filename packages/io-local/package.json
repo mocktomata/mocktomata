@@ -29,8 +29,8 @@
     "build:esnext": "tsc -p tsconfig.esnext.json",
     "clean": "rimraf lib libm .ts",
     "coverage": "jest --coverage --reporters=default",
-    "dc": "yarn dependency-check",
-    "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "dc": "yarn depcheck",
+    "depcheck": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
     "lint": "eslint --ext=js,ts .",
     "test": "jest --reporters=default",
     "test:watch": "jest --watch",
@@ -40,8 +40,7 @@
   "dependencies": {
     "@mocktomata/framework": "^7.0.0-beta",
     "@mocktomata/io-fs": "^7.0.0-beta",
-    "global-store": "^1.0.0-beta.11",
-    "type-plus": "^1.29.0"
+    "type-plus": "^1.31.3"
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "^1.0.2",

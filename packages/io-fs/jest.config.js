@@ -1,11 +1,7 @@
-// const base = require('../../jest.config.node-base')
-const base = require('../../jest.nodejs.base-config')
+const base = require('../../jest.config.base.nodejs')
+// const base = require('../../jest.nodejs.base-config')
 
 module.exports = {
   ...base,
-  displayName: 'io-fs',
-  // moduleNameMapper: {
-  //   '@mocktomata/(plugin-fixture-deep-link.*)': '<rootDir>/../$1',
-  //   '@mocktomata/(.*)': '<rootDir>/../$1/src'
-  // }
+  displayName: 'io-fs'
 }

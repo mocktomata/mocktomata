@@ -1,6 +1,3 @@
-// Karma configuration
-// Generated on Sun Dec 29 2019 16:07:24 GMT-0800 (Pacific Standard Time)
-// const webpack = require('webpack')
 const webpackConfig = require('./webpack.config.dev')
 
 module.exports = function (config) {
@@ -25,7 +22,7 @@ module.exports = function (config) {
     // preprocess matching files before serving them to the browser
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'src/**/*.ts': 'webpack',
+      'src/**/*.spec.browser.ts': 'webpack'
     },
 
 

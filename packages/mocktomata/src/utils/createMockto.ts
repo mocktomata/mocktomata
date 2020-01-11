@@ -37,7 +37,6 @@ export function createMockto(context: Mockto.Context) {
   )
 }
 
-
 function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode: Spec.Mode): Mockto.SpecFn {
   const fn = (...args: any[]): any => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)

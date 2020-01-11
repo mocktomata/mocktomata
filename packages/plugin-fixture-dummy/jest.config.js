@@ -1,5 +1,4 @@
-const base = require('@unional/devpkg-node/simple/config/jest.common')
-// const base = require('../../jest.nodejs.base-config')
+const base = require('../../jest.config.base.nodejs')
 
 module.exports = {
   ...base,

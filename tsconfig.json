@@ -49,11 +49,17 @@
     {
       "path": "packages/test-nodejs/tsconfig.esnext.json"
     },
-    // {
-    //   "path": "packages/plugin-node-fetch/tsconfig.es5.json"
-    // },
-    // {
-    //   "path": "packages/plugin-node-fetch/tsconfig.esnext.json"
-    // }
+    {
+      "path": "packages/plugin-node-fetch/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/plugin-node-fetch/tsconfig.esnext.json"
+    },
+    {
+      "path": "packages/plugin-nodejs/tsconfig.es5.json"
+    },
+    {
+      "path": "packages/plugin-nodejs/tsconfig.esnext.json"
+    }
   ]
 }

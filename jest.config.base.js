@@ -1,8 +1,4 @@
 module.exports = {
-  // collectCoverageFrom: [
-  //   '<rootDir>/src/**/*.[jt]s',
-  //   '!<rootDir>/src/bin.[jt]s'
-  // ],
   globals: {
     'ts-jest': {
       babelConfig: true,

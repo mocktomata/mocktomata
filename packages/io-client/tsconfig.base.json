@@ -10,12 +10,6 @@
   "references": [
     {
       "path": "../framework"
-    },
-    {
-      "path": "../io-fs"
-    },
-    {
-      "path": "../file-server"
     }
   ],
   "include": [

@@ -2,7 +2,7 @@ module.exports = {
   collectCoverageFrom: [
     '<rootDir>/src/**/*.[jt]s',
     '!<rootDir>/src/bin.[jt]s',
-    '!<rootDir>/src/browser/**/*'
+    '!<rootDir>/src/**/*.spec.*'
   ],
   projects: [
     '<rootDir>/packages/*',
@@ -11,7 +11,8 @@ module.exports = {
     // e.g. getCallerRelativePath does not work correctly.
     // tests on browser should be very limited.
     // most logic should be shared and use jest to test.
-    // '<rootDir>/packages/mocktomata/jest.jsdom.config.js'
+    '<rootDir>/packages/mocktomata/jest.config.electron.js',
+    '<rootDir>/packages/mocktomata/jest.config.jsdom.js'
   ],
   reporters: [
     'default',

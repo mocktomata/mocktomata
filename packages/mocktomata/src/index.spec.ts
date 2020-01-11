@@ -56,6 +56,8 @@ mockto.save('calling handler without options', (title, spec) => {
     expect(title).toEqual('calling handler without options')
     const subject = await spec((x: number) => x)
     expect(subject(3)).toBe(3)
+
+    await spec.done()
   })
 })
 
@@ -64,5 +66,7 @@ mockto.save('calling handler with options', { timeout: 100 }, (title, spec) => {
     expect(title).toEqual('calling handler with options')
     const subject = await spec((x: number) => x)
     expect(subject(3)).toBe(3)
+
+    await spec.done()
   })
 })

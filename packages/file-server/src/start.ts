@@ -54,7 +54,7 @@ function defineRoutes(server: Server, repo: Repository) {
       path: '/mocktomata/info',
       handler: async (request) => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const pjson = require('mocktomata/package.json')
+        const pjson = require('../package.json')
         return JSON.stringify({
           name: 'mocktomata',
           version: pjson.version,
