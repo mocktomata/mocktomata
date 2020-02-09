@@ -1,6 +1,6 @@
 {
   "name": "mocktomata",
-  "version": "7.0.0-alpha",
+  "version": "7.0.0-beta",
   "description": "A Behavior Tracking and Simulation System",
   "keywords": [
     "boundary",
@@ -78,6 +78,7 @@
     "@types/delay": "^3.1.0",
     "@types/tmp": "^0.1.0",
     "@unional/devpkg-node": "^1.4.2",
+    "ansi-colors": "^4.1.1",
     "babel-loader": "^8.0.6",
     "core-js": "^3.6.3",
     "delay": "^4.3.0",

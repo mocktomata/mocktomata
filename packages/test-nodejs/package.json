@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
-    "mocktomata": "^7.0.0-alpha"
+    "mocktomata": "^7.0.0-beta"
   },
   "engines": {
     "node": ">= 6"

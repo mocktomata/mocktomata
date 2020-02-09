@@ -1,7 +1,7 @@
 import { createFileRepository, FileRepositoryOptions, Repository } from '@mocktomata/io-fs';
 import boom from 'boom';
 import { RequestInfo, Server, ServerInfo } from 'hapi';
-import { required } from 'unpartial';
+import { required } from 'type-plus';
 import { atob } from './base64';
 
 export type StartOptions = {
@@ -13,37 +13,21 @@ export type StartOptions = {
   repoOptions: Partial<FileRepositoryOptions>
 }
 
-export async function start(options: Partial<StartOptions> = {}) {
-  const { port, cwd, repoOptions } = required({ cwd: process.cwd() }, options)
-
-  const server = port ? new Server({ port, routes: { 'cors': true } }) : await tryCreateHapi(3698, 3708)
+export async function start(options?: Partial<StartOptions>) {
+  const { cwd, port, repoOptions } = required({ cwd: process.cwd(), port: 80 }, options)
   const repo = createFileRepository(cwd, repoOptions)
-  defineRoutes(server, repo)
 
+  const server = new Server({
+    port,
+    routes: { 'cors': true }
+  })
   await server.start()
+  defineRoutes(server, repo)
   return {
     info: server.info,
     stop(options?: { timeout: number }) {
       return server.stop(options)
     }
-  }
-}
-
-async function tryCreateHapi(start: number, end: number, port = start): Promise<Server> {
-  // istanbul ignore next
-  if (port > end) {
-    throw new Error(`Unable to start mocktomata server using port from ${start} to ${end}`)
-  }
-
-  try {
-    const server = new Server({ port, routes: { 'cors': true } })
-    await server.start()
-    await server.stop()
-    return server
-  }
-  catch (e) {
-    // istanbul ignore next
-    return await tryCreateHapi(start, end, port + 1)
   }
 }
 

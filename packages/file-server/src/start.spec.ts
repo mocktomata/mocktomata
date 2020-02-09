@@ -7,15 +7,8 @@ import { PromiseValue } from 'type-plus';
 import { start } from '.';
 import { btoa } from './base64';
 
-test('automatically find a port between 3698 and 3798', async () => {
-  const server = await start()
-  expect(server.info.port).toBeGreaterThanOrEqual(3698)
-  expect(server.info.port).toBeLessThanOrEqual(3798)
-  await server.stop()
-})
-
 test('if a port is specified and not available, will throw an error', async () => {
-  const runningServer = await start()
+  const runningServer = await start({ port: 3710 })
   const e = await a.throws<Error & Record<string, any>>(start({ port: Number(runningServer.info.port) }))
   await runningServer.stop()
   expect(e.code).toBe('EADDRINUSE')

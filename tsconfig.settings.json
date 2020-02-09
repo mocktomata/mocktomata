@@ -16,6 +16,8 @@
     // This is added just in case tsconfig.json forgot to have `noEmit: true`
     "outDir": ".nowhere",
     "removeComments": false,
+    // this is added because of enquirer used in clibuilder
+    "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "target": "esnext"
