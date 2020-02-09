@@ -43,9 +43,7 @@
   },
   "devDependencies": {
     "@mocktomata/file-server": "^7.0.0-beta",
-    "@mocktomata/io-fs": "^7.0.0-beta",
-    "assertron": "^7.1.2",
-    "type-plus": "^1.31.3"
+    "@mocktomata/io-fs": "^7.0.0-beta"
   },
   "engines": {
     "node": ">= 6"

@@ -45,10 +45,7 @@
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "^1.0.2",
     "@mocktomata/plugin-fixture-dummy": "^1.0.3",
-    "@mocktomata/plugin-fixture-no-activate": "^1.0.0",
-    "@types/tmp": "^0.1.0",
-    "assertron": "^7.1.2",
-    "tmp": "^0.1.0"
+    "@mocktomata/plugin-fixture-no-activate": "^1.0.0"
   },
   "engines": {
     "node": ">= 6"

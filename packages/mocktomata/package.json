@@ -47,10 +47,12 @@
     "depcheck": "dependency-check . --unused --no-dev -i standard-log-color -i @mocktomata/io-client  && dependency-check . --missing --no-dev",
     "lint": "tslint -p tsconfig.json",
     "test": "jest --reporters=default",
-    "test:browser": "karma start",
+    "test:browser": "karma start --single-run",
     "test:watch": "jest --watch",
+    "test:watch:browser": "karma start",
     "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
-    "watch": "yarn test:watch"
+    "watch": "yarn test:watch",
+    "watch:browser": "yarn test:watch:browser"
   },
   "dependencies": {
     "@mocktomata/file-server": "^7.0.0-beta",
@@ -59,7 +61,7 @@
     "@mocktomata/io-local": "^7.0.0-beta",
     "async-fp": "^2.0.1",
     "chalk": "^3.0.0",
-    "clibuilder": "^6.1.7",
+    "clibuilder": "^6.2.0",
     "global-store": "^1.0.0-beta.15",
     "stack-utils": "^2.0.1",
     "standard-log": "^4.0.3",
@@ -67,35 +69,7 @@
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.7.4",
-    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
-    "@babel/preset-env": "^7.7.7",
-    "@babel/preset-typescript": "^7.7.7",
     "@mocktomata/plugin-fixture-deep-link": "^1.0.2",
-    "@mocktomata/plugin-fixture-dummy": "^1.0.3",
-    "@types/delay": "^3.1.0",
-    "@types/tmp": "^0.1.0",
-    "@unional/devpkg-node": "^1.4.2",
-    "ansi-colors": "^4.1.1",
-    "babel-loader": "^8.0.6",
-    "core-js": "^3.6.3",
-    "delay": "^4.3.0",
-    "jest": "^24.9.0",
-    "karma": "^4.4.1",
-    "karma-babel-preprocessor": "^8.0.1",
-    "karma-chrome-launcher": "^3.1.0",
-    "karma-jasmine": "^3.1.0",
-    "karma-typescript": "^4.1.1",
-    "karma-typescript-es6-transform": "^4.1.1",
-    "karma-webpack": "^4.0.2",
-    "param-case": "^3.0.3",
-    "pascal-case": "^3.1.1",
-    "source-map-loader": "^0.2.4",
-    "tmp": "^0.1.0",
-    "ts-loader": "^6.2.1",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "@mocktomata/plugin-fixture-dummy": "^1.0.3"
   }
 }

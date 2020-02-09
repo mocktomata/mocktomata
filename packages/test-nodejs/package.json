@@ -39,7 +39,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "axios": "^0.19.1",
+    "axios": "^0.19.2",
     "mocktomata": "^7.0.0-beta"
   },
   "engines": {

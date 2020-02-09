@@ -47,12 +47,5 @@
     "node": ">= 6"
   },
   "devDependencies": {
-    "@types/hapi": "^18.0.3",
-    "@types/node-fetch": "^2.5.4",
-    "@types/update-notifier": "^2.5.0",
-    "assertron": "^7.1.2",
-    "delay": "^4.3.0",
-    "node-fetch": "^2.6.0",
-    "type-plus": "^1.31.3"
   }
 }

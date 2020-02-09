@@ -43,7 +43,7 @@ mockto.save(`type %s is not specable`, (title, spec) => {
   })
 })
 
-mockto.simulate('not exist', (title, spec) => {
+mockto.simulate('not exist', (_, spec) => {
   test('simulate throws if spec record does not exist', async () => {
     await a.throws(spec((x: any) => x), SpecNotFound)
   })
@@ -51,7 +51,7 @@ mockto.simulate('not exist', (title, spec) => {
 
 test.todo('plugin with passive spy (same as subject spy)')
 
-mockto.save('calling handler without options', (title, spec) => {
+mockto('calling handler without options', (title, spec) => {
   test(title, async () => {
     expect(title).toEqual('calling handler without options')
     const subject = await spec((x: number) => x)
@@ -61,7 +61,7 @@ mockto.save('calling handler without options', (title, spec) => {
   })
 })
 
-mockto.save('calling handler with options', { timeout: 100 }, (title, spec) => {
+mockto('calling handler with options', { timeout: 100 }, (title, spec) => {
   test(title, async () => {
     expect(title).toEqual('calling handler with options')
     const subject = await spec((x: number) => x)

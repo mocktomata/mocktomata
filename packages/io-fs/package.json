@@ -41,16 +41,8 @@
     "@mocktomata/framework": "^7.0.0-beta",
     "find-installed-packages": "^2.1.6",
     "md5": "^2.2.1",
-    "mkdirp": "^0.5.1",
+    "mkdirp": "^1.0.3",
     "type-plus": "^1.31.3"
-  },
-  "devDependencies": {
-    "@types/md5": "^2.1.33",
-    "@types/mkdirp": "^0.5.2",
-    "@types/tmp": "^0.1.0",
-    "assertron": "^7.1.2",
-    "memfs": "^3.0.3",
-    "tmp": "^0.1.0"
   },
   "engines": {
     "node": ">= 6"
