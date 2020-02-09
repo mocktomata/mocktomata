@@ -1,5 +1,4 @@
 {
-  "breadcrumbs.enabled": true,
   "eslint.enable": true,
   "search.exclude": {
     "**/node_modules": true,
@@ -22,6 +21,5 @@
       "url": "http://json.schemastore.org/tsconfig"
     }
   ],
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "workbench.editor.closeEmptyGroups": false
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
