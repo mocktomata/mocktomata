@@ -10,7 +10,7 @@ test('gets empty plugin list in empty folder', async () => {
   expect(await io.getPluginList()).toEqual([])
 })
 
-test.only('get both installed plugins when there is no config', async () => {
+test('get both installed plugins when there is no config', async () => {
   const cwd = path.resolve(__dirname, '../../fixtures/has-plugins')
 
   const io = createFileRepository(cwd)
