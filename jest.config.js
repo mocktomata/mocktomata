@@ -6,11 +6,6 @@ module.exports = {
   ],
   projects: [
     '<rootDir>/packages/*',
-    // not running right now because we use karma
-    // jsdom still different compare to browser,
-    // e.g. getCallerRelativePath does not work correctly.
-    // tests on browser should be very limited.
-    // most logic should be shared and use jest to test.
     '<rootDir>/packages/mocktomata/jest.config.electron.js',
     '<rootDir>/packages/mocktomata/jest.config.jsdom.js'
   ],

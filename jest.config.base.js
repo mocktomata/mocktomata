@@ -2,7 +2,11 @@ module.exports = {
   globals: {
     'ts-jest': {
       babelConfig: true,
-      diagnostics: false
+      diagnostics: false,
+      tsConfig: {
+        module: 'ESNext',
+        target: 'ES2017',
+      }
     }
   },
   moduleNameMapper: {

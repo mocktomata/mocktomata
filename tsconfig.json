@@ -1,7 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "es2015"
-  },
   "files": [],
   "references": [
     {
