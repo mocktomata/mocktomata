@@ -15,9 +15,9 @@ export type Mockto = Mockto.SpecFn & {
 }
 
 export namespace Mockto {
-  export type Context = {
-    initializeContext: (store: Store<WorkerStore>) => AsyncContext<SpecContext>,
-    store: Store<WorkerStore>
+  export type Context<S> = {
+    initializeContext: (store: Store<S>) => AsyncContext<SpecContext>,
+    store: Store<S>
   }
   export interface SpecFn {
     (specName: string, handler: Spec.Handler): void,
@@ -25,7 +25,7 @@ export namespace Mockto {
   }
 }
 
-export function createMockto(context: Mockto.Context) {
+export function createMockto<S extends WorkerStore>(context: Mockto.Context<S>) {
   return Object.assign(
     createSpecFn(context, 'auto'),
     {
@@ -37,16 +37,16 @@ export function createMockto(context: Mockto.Context) {
   )
 }
 
-function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode: Spec.Mode): Mockto.SpecFn {
+function createSpecFn<S>({ initializeContext, store }: Mockto.Context<S>, defaultMode: Spec.Mode): Mockto.SpecFn {
   const fn = (...args: any[]): any => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(fn)
-    const mode = getEffectiveSpecMode(store.value, defaultMode, specName, specRelativePath)
     let s: Promise<Spec>
     // this is used to avoid unhandled promise error
     function createSpecWithHandler() {
       if (s) return s
       const context = initializeContext(store)
+      const mode = getEffectiveSpecMode(store.value, defaultMode, specName, specRelativePath)
       return s = createSpec(context, specName, specRelativePath, mode, options)
     }
     const spec = Object.assign((subject: any) => createSpecWithHandler().then(sp => {

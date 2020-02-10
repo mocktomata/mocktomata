@@ -1,6 +1,4 @@
-import { SpecContext } from '@mocktomata/framework'
-import { createIO, CreateIOOptions } from '@mocktomata/io-local'
-import { createContext } from 'async-fp'
+import { CreateIOOptions } from '@mocktomata/io-local'
 import { CannotConfigAfterUsed } from '../errors'
 import { store } from './store'
 
@@ -11,11 +9,7 @@ import { store } from './store'
 
 export function config(options: config.Options) {
   if (store.value.context) throw new CannotConfigAfterUsed()
-  const io = createIO(options.io)
-  // const target = options.runtime?.target || detectTarget()
-  const context = createContext<SpecContext>()
-  context.set({ io })
-  store.value.context = context
+  store.value.config = options
 }
 
 
@@ -24,7 +18,6 @@ export namespace config {
     io?: CreateIOOptions,
     runtime?: {
       target?: 'es2015'
-
     }
   }
 }
