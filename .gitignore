@@ -44,10 +44,7 @@ node_modules
 .nowhere
 .progress
 .reports
-.ts
 dist
 lib*
 out*
 *.tsbuildinfo
-tsconfig.tsbuildinfo
-tsconfig.*.tsbuildinfo

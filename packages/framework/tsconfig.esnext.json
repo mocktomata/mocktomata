@@ -4,6 +4,6 @@
     "module": "esnext",
     "outDir": "libm",
     "target": "esnext",
-    "tsBuildInfoFile": ".ts/esnext.buildinfo"
+    "tsBuildInfoFile": ".ts/esnext.tsbuildInfo"
   }
 }
