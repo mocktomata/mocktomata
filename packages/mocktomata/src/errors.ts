@@ -1,4 +1,4 @@
-import { MocktomataError } from '@mocktomata/framework';
+import { MocktomataError } from '@mocktomata/framework'
 
 export class CannotConfigAfterUsed extends MocktomataError {
   constructor() {

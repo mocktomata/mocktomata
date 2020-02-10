@@ -2,12 +2,14 @@ import { NotSpecable, SpecIDCannotBeEmpty, SpecNotFound } from '@mocktomata/fram
 import a from 'assertron'
 import { CannotConfigAfterUsed, config, mockto } from '.'
 
-mockto('config() can only be called before using mockto', (title, spec) => {
-  test(title, async () => {
-    await spec({})
-    a.throws(() => config({}), CannotConfigAfterUsed)
+describe('config()', () => {
+  mockto('config() can only be called before using mockto', (title, spec) => {
+    test(title, async () => {
+      await spec({})
+      a.throws(() => config({}), CannotConfigAfterUsed)
+    })
   })
-})
+});
 
 function noop() { }
 

@@ -1,5 +1,5 @@
-import { Spec } from '@mocktomata/framework';
-import { config, ConfigOptions } from 'standard-log';
+import { Spec } from '@mocktomata/framework'
+import { config, ConfigOptions } from 'standard-log'
 
 export type StartOptions = {
   folder: string,

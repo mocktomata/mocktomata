@@ -1,15 +1,7 @@
-import { Spec, SpecContext } from '@mocktomata/framework'
 import { createStore } from 'global-store'
-import { Context } from 'async-fp'
+import { WorkerStore } from '../types'
 
-export type MocktomataStore = {
-  context: Context<SpecContext> | undefined,
-  overrideMode?: Spec.Mode,
-  filePathFilter?: RegExp,
-  specNameFilter?: RegExp
-}
-
-export const store = createStore<MocktomataStore>({
+export const store = createStore<WorkerStore>({
   moduleName: 'mocktomata',
   key: 'f6d1823b-b529-473e-ab84-17cada707ef9',
   version: '7.0.0',

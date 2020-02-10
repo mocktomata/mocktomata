@@ -1,12 +1,12 @@
 import { Spec } from '@mocktomata/framework'
-import { MocktomataStore } from '../browser/store'
+import { WorkerStore } from '../types'
 
 /**
  * Get the effective SpecMode for the specified id.
  * @param mode The SpecMode to return if SpecMode is not changed by config.
  */
 export function getEffectiveSpecMode(
-  storeValue: Pick<MocktomataStore, 'overrideMode' | 'filePathFilter' | 'specNameFilter'>,
+  storeValue: Pick<WorkerStore, 'overrideMode' | 'filePathFilter' | 'specNameFilter'>,
   mode: Spec.Mode,
   specName: string,
   invokePath: string,

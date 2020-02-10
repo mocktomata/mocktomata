@@ -1,4 +1,4 @@
-import StackUtils from 'stack-utils';
+import StackUtils from 'stack-utils'
 
 const stackUtil = new StackUtils({ cwd: process.cwd() })
 

@@ -2,7 +2,7 @@ import { createSpec, Spec, SpecContext } from '@mocktomata/framework'
 import { Context as AsyncContext } from 'async-fp'
 import { Store } from 'global-store'
 import { LogLevel } from 'standard-log'
-import { MocktomataStore } from '../browser/store'
+import { WorkerStore } from '../types'
 import { getCallerRelativePath } from './getCallerRelativePath'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 import { start } from './start'
@@ -16,8 +16,8 @@ export type Mockto = Mockto.SpecFn & {
 
 export namespace Mockto {
   export type Context = {
-    initializeContext: () => AsyncContext<SpecContext>,
-    store: Store<MocktomataStore>
+    initializeContext: (store: Store<WorkerStore>) => AsyncContext<SpecContext>,
+    store: Store<WorkerStore>
   }
   export interface SpecFn {
     (specName: string, handler: Spec.Handler): void,
@@ -46,7 +46,7 @@ function createSpecFn({ initializeContext, store }: Mockto.Context, defaultMode:
     // this is used to avoid unhandled promise error
     function createSpecWithHandler() {
       if (s) return s
-      const context = initializeContext()
+      const context = initializeContext(store)
       return s = createSpec(context, specName, specRelativePath, mode, options)
     }
     const spec = Object.assign((subject: any) => createSpecWithHandler().then(sp => {
