@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.settings.json",
+  "extends": "../../.tsc/tsconfig.settings.json",
   "compilerOptions": {
     "lib": [
       "es2015"
