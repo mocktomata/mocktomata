@@ -51,13 +51,6 @@ export class DuplicatePlugin extends MocktomataError {
   }
 }
 
-export class NoActivate extends MocktomataError {
-  // istanbul ignore next
-  constructor(public moduleName: string) {
-    super(`${moduleName} does not export an 'activate()' function`)
-  }
-}
-
 export class PluginNotConforming extends MocktomataError {
   // istanbul ignore next
   constructor(public pluginName: string) {

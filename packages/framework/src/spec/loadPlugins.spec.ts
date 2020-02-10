@@ -1,5 +1,5 @@
 import a from 'assertron';
-import { DuplicatePlugin, loadPlugins, NoActivate, PluginNotConforming, PluginNotFound } from '.';
+import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from '.';
 import { createTestIO } from '../incubator/createTestIO';
 import { store } from '../store';
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts';
@@ -36,10 +36,9 @@ test('registering plugin with the same name throws PluginAlreadyLoaded', async (
   await a.throws(() => loadPlugins({ io }), DuplicatePlugin)
 })
 
-test('plugin without activate function throws', async () => {
+test('plugin without activate function is ignored', async () => {
   const io = createTestIO()
   io.addPluginModule('@mocktomata/no-activate', noActivatePluginModule as any)
-  await a.throws(() => loadPlugins({ io }), NoActivate)
 })
 
 test('plugin missing support method throws', async () => {

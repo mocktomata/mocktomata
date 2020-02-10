@@ -1,5 +1,6 @@
+import { log } from '../log';
 import { store } from '../store';
-import { DuplicatePlugin, NoActivate, PluginNotConforming, PluginNotFound } from './errors';
+import { DuplicatePlugin, PluginNotConforming, PluginNotFound } from './errors';
 import { SpecPlugin, SpecPluginModule } from './types';
 import { PluginIO } from './types-internal';
 
@@ -29,7 +30,10 @@ async function tryLoad({ io }: LoadPluginContext, name: string) {
 }
 
 export function addPluginModule(moduleName: string, pluginModule: SpecPluginModule) {
-  assertModuleConfirming(moduleName, pluginModule)
+  if (typeof pluginModule.activate !== 'function') {
+    log.warn(`${moduleName} does not export an 'activate()' function`)
+    return
+  }
 
   pluginModule.activate({
     register(plugin: SpecPlugin) {
@@ -43,12 +47,6 @@ export function addPluginModule(moduleName: string, pluginModule: SpecPluginModu
       plugins.unshift({ ...plugin, name: pluginName })
     }
   })
-}
-
-function assertModuleConfirming(moduleName: string, pluginModule: Partial<SpecPluginModule>) {
-  if (typeof pluginModule.activate !== 'function') {
-    throw new NoActivate(moduleName)
-  }
 }
 
 function assertPluginConfirming(plugin: any) {
