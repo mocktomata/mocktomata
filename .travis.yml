@@ -2,13 +2,15 @@ language: node_js
 sudo: false
 matrix:
   include:
+    - env: PROJECT=packages/file-server
     - env: PROJECT=packages/framework
     - env: PROJECT=packages/io-client
     - env: PROJECT=packages/io-fs
     - env: PROJECT=packages/io-local
-    - env: PROJECT=packages/file-server
     - env: PROJECT=packages/mocktomata
     - env: PROJECT=packages/plugin-fixture-dummy
+    - env: PROJECT=packages/plugin-node-fetch
+    - env: PROJECT=packages/plugin-nodejs
 node_js:
   - node
 script: if .travis/build-condition.sh $TRAVIS_COMMIT_RANGE $PROJECT; then echo "$PROJECT is being built"; else echo "$PROJECT is NOT being built"; fi
