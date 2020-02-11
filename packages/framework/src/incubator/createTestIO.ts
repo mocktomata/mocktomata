@@ -1,6 +1,12 @@
-import { SpecNotFound, SpecPlugin } from '../spec';
-import { TestIO } from './types';
+import { SpecNotFound, SpecPlugin, Spec } from '../spec';
 import { prettyPrintSpecRecord } from '../utils';
+
+
+export type TestIO = {
+  getAllSpecs(): IterableIterator<[string, string]>,
+  addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,
+  addPlugin(moduleName: string, ...plugins: SpecPlugin[]): void
+} & Spec.IO & SpecPlugin.IO
 
 export function createTestIO(): TestIO {
   const specStore = new Map<string, string>()

@@ -1,11 +1,11 @@
-import { createContext } from 'async-fp';
-import { LogLevel, logLevels } from 'standard-log';
-import { createSaveSpec } from '../spec/createSaveSpec';
-import { createSimulateSpec } from '../spec/createSimulateSpec';
-import { Spec } from '../spec/types';
-import { createTestHarness } from './createTestHarness';
-import { ensureDirNotExists, ensureFileNotExists } from './ensures';
-import { CreateTestHarnessOptions, SequenceHandler } from './types';
+import { createContext } from 'async-fp'
+import { LogLevel, logLevels } from 'standard-log'
+import { createSaveSpec } from '../spec/createSaveSpec'
+import { createSimulateSpec } from '../spec/createSimulateSpec'
+import { Spec } from '../spec/types'
+import { createTestHarness } from './createTestHarness'
+import { ensureDirNotExists, ensureFileNotExists } from './ensures'
+import { SequenceHandler, TestHarness } from './types'
 
 const context = createContext<Spec.Context>()
 
@@ -96,7 +96,7 @@ export type Incubator = {
   simulate: TestSpecFn<Spec.Handler<Spec>>,
   duo: TestSpecFn<Spec.Handler<Spec>>,
   sequence: TestSpecFn<SequenceHandler<Spec>>,
-  start: (options?: CreateTestHarnessOptions | undefined) => Promise<void>,
+  start: (options?: TestHarness.Options | undefined) => Promise<void>,
   ensureDirNotExists: (dirpath: string) => void,
   ensureFileNotExists: (filepath: string) => void,
 }
@@ -106,7 +106,7 @@ export const incubator = {
   simulate: testSimulate,
   duo: testDuo,
   sequence: testSequence,
-  start: (options?: CreateTestHarnessOptions) => {
+  start: (options?: TestHarness.Options) => {
     return createTestHarness(context, options).start()
   },
   ensureDirNotExists,

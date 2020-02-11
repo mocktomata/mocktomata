@@ -1,5 +1,5 @@
-import { required } from 'type-plus';
-import { SpecPlugin } from '../spec/types';
+import { required } from 'type-plus'
+import { SpecPlugin } from '../spec/types'
 
 function noop() { }
 
@@ -16,6 +16,7 @@ export function createSpyContextStub<S>(partialContext?: Partial<SpecPlugin.SpyC
     getSpyId: (v: any) => v,
   }, partialContext)
 }
+
 export function createStubContextStub(partialContext?: Partial<SpecPlugin.StubContext>): SpecPlugin.StubContext {
   return required({
     getProperty: passthrough,
