@@ -1,3 +1,3 @@
-import { SpecIO, SpecPluginModuleIO } from './spec/types'
+import { Spec, SpecPluginModuleIO } from './spec/types'
 
-export type MocktomataIO = SpecIO & SpecPluginModuleIO
+export type MocktomataIO = Spec.IO & SpecPluginModuleIO

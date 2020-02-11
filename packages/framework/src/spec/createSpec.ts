@@ -3,9 +3,9 @@ import { createAutoSpec } from './createAutoSpec'
 import { createLiveSpec } from './createLiveSpec'
 import { createSaveSpec } from './createSaveSpec'
 import { createSimulateSpec } from './createSimulateSpec'
-import { Spec, SpecContext } from './types'
+import { Spec } from './types'
 
-export async function createSpec(context: Context<SpecContext>, specName: string, invokeRelativePath: string, mode: Spec.Mode, options: Spec.Options): Promise<Spec> {
+export async function createSpec(context: Context<Spec.Context>, specName: string, invokeRelativePath: string, mode: Spec.Mode, options: Spec.Options): Promise<Spec> {
   switch (mode) {
     case 'auto':
       return createAutoSpec(context, specName, invokeRelativePath, options)

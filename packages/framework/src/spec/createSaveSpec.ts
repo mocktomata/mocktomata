@@ -5,10 +5,10 @@ import { prettyPrintSpecRecord } from '../utils';
 import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { createRecorder } from './recorder';
-import { Spec, SpecContext } from './types';
+import { Spec } from './types';
 
 export async function createSaveSpec(
-  context: Context<SpecContext>,
+  context: Context<Spec.Context>,
   specName: string,
   invokePath: string,
   options: Spec.Options

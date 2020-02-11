@@ -1,4 +1,4 @@
-import { addPluginModule, es2015, SpecContext } from '@mocktomata/framework'
+import { addPluginModule, es2015, Spec } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/io-client'
 import { createContext } from 'async-fp'
 import { Store } from 'global-store'
@@ -10,7 +10,7 @@ export function initializeContext(store: Store<WorkerStore>) {
   if (store.value.context) return store.value.context
 
   addPluginModule(es2015.name, es2015)
-  const context = createContext<SpecContext>(() => createIO().then(io => ({ io })))
+  const context = createContext<Spec.Context>(() => createIO().then(io => ({ io })))
   store.value.context = context
   return context
 }

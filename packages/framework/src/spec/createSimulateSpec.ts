@@ -3,10 +3,10 @@ import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { enableLog } from './enableLog';
 import { createSimulator } from './simulator';
-import { Spec, SpecContext } from './types';
+import { Spec } from './types';
 
 export async function createSimulateSpec(
-  context: Context<SpecContext>,
+  context: Context<Spec.Context>,
   specName: string,
   invokePath: string,
   options: Spec.Options

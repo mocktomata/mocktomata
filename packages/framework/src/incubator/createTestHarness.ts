@@ -3,12 +3,12 @@ import { clearLogReporters, config, logLevel, setLogLevel } from 'standard-log';
 import { createColorLogReporter } from 'standard-log-color';
 import { required } from 'type-plus';
 import { es2015 } from '../es2015';
-import { loadPlugins, SpecContext } from '../spec';
+import { loadPlugins, Spec } from '../spec';
 import { store } from '../store';
 import { createTestIO } from './createTestIO';
 import { CreateTestHarnessOptions, TestHarness, TestIO } from './types';
 
-export function createTestHarness(context: Context<SpecContext>, options?: CreateTestHarnessOptions): TestHarness {
+export function createTestHarness(context: Context<Spec.Context>, options?: CreateTestHarnessOptions): TestHarness {
   const opts = required<Required<CreateTestHarnessOptions>>({ target: 'es2015', logLevel: logLevel.info }, options)
   const level = opts.logLevel
 

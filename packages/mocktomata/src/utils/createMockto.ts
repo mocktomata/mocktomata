@@ -1,4 +1,4 @@
-import { createSpec, Spec, SpecContext } from '@mocktomata/framework'
+import { createSpec, Spec } from '@mocktomata/framework'
 import { Context as AsyncContext } from 'async-fp'
 import { Store } from 'global-store'
 import { LogLevel } from 'standard-log'
@@ -16,7 +16,7 @@ export type Mockto = Mockto.SpecFn & {
 
 export namespace Mockto {
   export type Context<S> = {
-    initializeContext: (store: Store<S>) => AsyncContext<SpecContext>,
+    initializeContext: (store: Store<S>) => AsyncContext<Spec.Context>,
     store: Store<S>
   }
   export interface SpecFn {

@@ -1,8 +1,8 @@
-import { createStore } from 'global-store';
-import { SpecPluginInstance } from './spec/types-internal';
+import { createStore } from 'global-store'
+import { SpecPlugin } from './spec/types'
 
 export type SpecStore = {
-  plugins: SpecPluginInstance[],
+  plugins: SpecPlugin.Instance[],
 }
 
 export const store = createStore<SpecStore>({

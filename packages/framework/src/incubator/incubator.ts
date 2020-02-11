@@ -1,6 +1,5 @@
 import { createContext } from 'async-fp';
 import { LogLevel, logLevels } from 'standard-log';
-import { SpecContext } from '../spec';
 import { createSaveSpec } from '../spec/createSaveSpec';
 import { createSimulateSpec } from '../spec/createSimulateSpec';
 import { Spec } from '../spec/types';
@@ -8,7 +7,7 @@ import { createTestHarness } from './createTestHarness';
 import { ensureDirNotExists, ensureFileNotExists } from './ensures';
 import { CreateTestHarnessOptions, SequenceHandler } from './types';
 
-const context = createContext<SpecContext>()
+const context = createContext<Spec.Context>()
 
 /**
  * Run spec in both save and simulate mode
