@@ -1,10 +1,10 @@
-import { SpecNotFound, SpecPlugin, SpecPluginModule } from '../spec';
+import { SpecNotFound, SpecPlugin } from '../spec';
 import { TestIO } from './types';
 import { prettyPrintSpecRecord } from '../utils';
 
 export function createTestIO(): TestIO {
   const specStore = new Map<string, string>()
-  const plugins: Record<string, SpecPluginModule> = {}
+  const plugins: Record<string, SpecPlugin.Module> = {}
   return {
     getAllSpecs() {
       return specStore.entries()
@@ -17,7 +17,7 @@ export function createTestIO(): TestIO {
     async writeSpec(title, _specPath, record) {
       specStore.set(title, prettyPrintSpecRecord(record))
     },
-    addPluginModule(moduleName: string, pluginModule: SpecPluginModule) {
+    addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       plugins[moduleName] = pluginModule
     },
     addPlugin(moduleName: string, ...plugins: SpecPlugin[]) {

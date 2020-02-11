@@ -1,14 +1,14 @@
 import { LogLevel } from 'standard-log';
-import { Spec, SpecPlugin, SpecPluginModule, SpecPluginModuleIO, SpecRecord } from '../spec/types';
+import { Spec, SpecPlugin, SpecRecord } from '../spec/types';
 
 export type TestIO = {
   getAllSpecs(): IterableIterator<[string, string]>,
-  addPluginModule(moduleName: string, pluginModule: SpecPluginModule): void,
+  addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,
   addPlugin(moduleName: string, ...plugins: SpecPlugin[]): void
-} & Spec.IO & SpecPluginModuleIO
+} & Spec.IO & SpecPlugin.IO
 
 export type TestHarness = {
-  addPluginModule(pluginName: string, pluginModule: SpecPluginModule): void,
+  addPluginModule(pluginName: string, pluginModule: SpecPlugin.Module): void,
   enableLog(level?: LogLevel): void,
   reset(): void,
   logSpecRecord(title: string): void,

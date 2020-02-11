@@ -1,11 +1,10 @@
 import { log } from '../log';
 import { store } from '../store';
 import { DuplicatePlugin, PluginNotConforming, PluginNotFound } from './errors';
-import { SpecPlugin, SpecPluginModule } from './types';
-import { PluginIO } from './types-internal';
+import { SpecPlugin } from './types';
 
 export type LoadPluginContext = {
-  io: PluginIO
+  io: SpecPlugin.IO
 }
 
 /**
@@ -29,7 +28,7 @@ async function tryLoad({ io }: LoadPluginContext, name: string) {
   }
 }
 
-export function addPluginModule(moduleName: string, pluginModule: SpecPluginModule) {
+export function addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
   if (typeof pluginModule.activate !== 'function') {
     log.warn(`${moduleName} does not export an 'activate()' function`)
     return

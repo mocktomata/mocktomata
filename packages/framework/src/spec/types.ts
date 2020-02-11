@@ -10,7 +10,7 @@ export type Spec = {
 
 export namespace Spec {
   export type Context = {
-    io: IO & SpecPluginModuleIO,
+    io: IO & SpecPlugin.IO,
   }
 
   export type IO = {
@@ -40,14 +40,12 @@ export namespace Spec {
   }
 }
 
-// May need to expand this and specialize it for Spy and Stub
 export type SpecRecord = {
   refs: SpecRecord.Reference[],
   actions: SpecRecord.Action[]
 }
 
 export namespace SpecRecord {
-
   /**
    * Meta data.
    * This is used during spying to save additional information,
@@ -462,19 +460,19 @@ export namespace SpecPlugin {
   export type DeclareOptions = {
     performer?: SpecRecord.Performer
   }
+  export type ActivationContext = {
+    register(plugin: SpecPlugin): void
+  }
+  export type Module = {
+    activate: (activationContext: ActivationContext) => void,
+  }
+
+  export type IO = {
+    getPluginList(): Promise<string[]>,
+    loadPlugin(name: string): Promise<Module>,
+  }
 }
 
-export type SpecPluginModule = {
-  activate: (activationContext: SpecPluginActivationContext) => void,
-}
-export type SpecPluginActivationContext = {
-  register(plugin: SpecPlugin): void
-}
-
-export type SpecPluginModuleIO = {
-  getPluginList(): Promise<string[]>,
-  loadPlugin(name: string): Promise<SpecPluginModule>,
-}
 
 export type SpecStore = {
   plugins: SpecPlugin.Instance[],
