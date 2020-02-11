@@ -1,5 +1,5 @@
 import { required } from 'type-plus'
-import { SpecPlugin } from '../spec/types'
+import { SpecPlugin } from '../spec'
 
 function noop() { }
 

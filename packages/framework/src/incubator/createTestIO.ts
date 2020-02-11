@@ -1,5 +1,5 @@
-import { SpecNotFound, SpecPlugin, Spec } from '../spec';
-import { prettyPrintSpecRecord } from '../utils';
+import { SpecNotFound, SpecPlugin, Spec } from '../spec'
+import { prettyPrintSpecRecord } from '../utils'
 
 
 export type TestIO = {
