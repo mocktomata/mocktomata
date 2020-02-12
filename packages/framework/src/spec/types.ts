@@ -10,7 +10,8 @@ export type Spec = {
 
 export namespace Spec {
   export type Context = {
-    io: IO
+    io: IO,
+    config?: Config,
   }
 
   export type IO = {
@@ -32,9 +33,16 @@ export namespace Spec {
     writeSpec(specName: string, specRelativePath: string, record: SpecRecord): Promise<void>
   }
 
-  export type Handler<S = Spec> = (specName: string, spec: S) => void | Promise<any>
+  export type Config = {
+    overrideMode?: Mode,
+    filePathFilter?: RegExp,
+    specNameFilter?: RegExp
+  }
 
   export type Mode = 'live' | 'save' | 'simulate' | 'auto'
+
+  export type Handler = (specName: string, spec: Spec) => void | Promise<any>
+
   export type Options = {
     timeout: number
   }
@@ -477,12 +485,4 @@ export namespace SpecPlugin {
   export type DeclareOptions = {
     performer?: SpecRecord.Performer
   }
-}
-
-
-export type SpecStore = {
-  plugins: SpecPlugin.Instance[],
-  overrideMode?: Spec.Mode,
-  filePathFilter?: RegExp,
-  specNameFilter?: RegExp
 }

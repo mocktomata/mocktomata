@@ -41,7 +41,7 @@ export function createTestHarness(context: AsyncContext<Spec.Context>, options?:
       console.info(`${entry[0]}:\n`, entry[1])
     },
     start() {
-      return loadPlugins({ io })
+      return loadPlugins({ io }).then(() => this)
     },
     reset() {
       context.clear()

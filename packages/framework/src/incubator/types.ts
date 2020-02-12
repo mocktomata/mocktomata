@@ -7,7 +7,7 @@ export type TestHarness = {
   reset(): void,
   logSpecRecord(title: string): void,
   getSpecRecord(title: string): SpecRecord,
-  start(): Promise<void>
+  start(): Promise<TestHarness>
 }
 export namespace TestHarness {
   export type Options = {

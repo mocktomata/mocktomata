@@ -87,11 +87,11 @@ export function resolveTestSpecFnArgs<H = Spec.Handler>(args: any[]): { specName
 }
 
 export type Incubator = {
-  save: Incubator.Fn<Spec.Handler<Spec>>,
-  simulate: Incubator.Fn<Spec.Handler<Spec>>,
-  duo: Incubator.Fn<Spec.Handler<Spec>>,
-  sequence: Incubator.Fn<Incubator.SequenceHandler<Spec>>,
-  start: (options?: TestHarness.Options | undefined) => Promise<void>,
+  save: Incubator.Fn<Spec.Handler>,
+  simulate: Incubator.Fn<Spec.Handler>,
+  duo: Incubator.Fn<Spec.Handler>,
+  sequence: Incubator.Fn<Incubator.SequenceHandler>,
+  start: (options?: TestHarness.Options | undefined) => Promise<TestHarness>,
   ensureDirNotExists: (dirpath: string) => void,
   ensureFileNotExists: (filepath: string) => void,
 }
@@ -101,7 +101,7 @@ export namespace Incubator {
     (specName: string, handler: H): void,
     (specName: string, options: Spec.Options, handler: H): void,
   }
-  export type SequenceHandler<S = Spec> = (specName: string, specs: { save: S, simulate: S }) => void
+  export type SequenceHandler = (specName: string, specs: { save: Spec, simulate: Spec }) => void
 }
 
 export const incubator = {
