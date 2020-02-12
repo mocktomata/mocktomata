@@ -33,7 +33,7 @@ jobs:
       - run: yarn commitlint-circle
       - run: yarn lint
       - run: yarn build
-      - run: yarn dependency-check
+      - run: yarn depcheck
       - name: upload lib folder
         uses: actions/upload-artifact@v1
         with:
