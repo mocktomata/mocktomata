@@ -3164,10 +3164,10 @@ async-each@^1.0.1:
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.3.tgz#b727dbf87d7651602f06f4d4ac387f47d91b0cbf"
   integrity sha512-z/WhQ5FPySLdvREByI2vZiTWwCnF0moMJ1hK9YQwDTHKh6I7/uSckMetoRGb5UBZPC1z0jlw+n/XCgjeH7y1AQ==
 
-async-fp@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-3.1.1.tgz#343c5fa9f175e4a86c4d4d7ecfe9a4c6f48c87ab"
-  integrity sha512-CxFE5AgtVT0Ufaw58dn9DeHkHbP/Ad1NVhyKEtttouQvQ1SClkyYSk9XV6r3+rGaCWeb1W6g+quuQ2yk9dSYDw==
+async-fp@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-4.0.0.tgz#336ca3080f931029aeb0b7c8c0562989397a6236"
+  integrity sha512-0+bCgGSDsB2u2jGz7jaUrv8HjU+NCs4g4YXY+uCatGjNvKXYgWe8rCCAxSaIgMDpImXFzLxgoRInJaA9uMm5hQ==
   dependencies:
     iso-error "^3.2.1"
 

@@ -1,6 +1,6 @@
-import { SpecPluginActivationContext } from '@mocktomata/framework'
+import { SpecPlugin } from '@mocktomata/framework'
 import activateFS from './fs'
 
-export function activate(context: SpecPluginActivationContext) {
+export function activate(context: SpecPlugin.ActivationContext) {
   activateFS(context)
 }

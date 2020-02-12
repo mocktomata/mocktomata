@@ -1,6 +1,6 @@
 import { addPluginModule, es2015, loadPlugins, Spec } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/io-local'
-import { createContext } from 'async-fp'
+import { AsyncContext } from 'async-fp'
 import { Store } from 'global-store'
 import { NodeJSStore } from './store'
 
@@ -11,7 +11,7 @@ export function initializeContext(store: Store<NodeJSStore>) {
   // TODO: environment detection and load the right target module.
   addPluginModule(es2015.name, es2015)
 
-  const context = createContext<Spec.Context>()
+  const context = new AsyncContext<Spec.Context>()
   store.value.context = context
 
   const io = createIO()

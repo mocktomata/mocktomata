@@ -1,7 +1,10 @@
-import a from 'assertron';
-import { incubator } from '../src';
-import { ActionMismatch, ExtraAction, MissingAction } from './spec';
-import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithStaticProp, WithStaticMethod, WithProperty } from './test-artifacts';
+import a from 'assertron'
+import { ActionMismatch, ExtraAction, incubator, MissingAction } from '.'
+import {
+  callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy,
+  delayed, Dummy, fetch, postReturn, recursive, simpleCallback,
+  synchronous, WithProperty, WithStaticMethod, WithStaticProp
+} from './test-artifacts'
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })

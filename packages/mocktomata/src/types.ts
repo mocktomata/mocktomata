@@ -1,8 +1,8 @@
 import { Spec } from '@mocktomata/framework'
-import { Context } from 'async-fp'
+import { AsyncContext } from 'async-fp'
 
 export type WorkerStore = {
-  context: Context<Spec.Context> | undefined,
+  context: AsyncContext<Spec.Context> | undefined,
   overrideMode?: Spec.Mode,
   filePathFilter?: RegExp,
   specNameFilter?: RegExp

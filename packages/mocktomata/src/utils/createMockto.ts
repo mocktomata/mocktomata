@@ -1,5 +1,5 @@
 import { createSpec, Spec } from '@mocktomata/framework'
-import { Context as AsyncContext } from 'async-fp'
+import { AsyncContext } from 'async-fp'
 import { Store } from 'global-store'
 import { LogLevel } from 'standard-log'
 import { WorkerStore } from '../types'

@@ -1,4 +1,4 @@
-import { Context } from 'async-fp';
+import { AsyncContext } from 'async-fp';
 import { assertMockable } from './assertMockable';
 import { assertSpecName } from './assertSpecName';
 import { enableLog } from './enableLog';
@@ -6,7 +6,7 @@ import { createSimulator } from './simulator';
 import { Spec } from './types';
 
 export async function createSimulateSpec(
-  context: Context<Spec.Context>,
+  context: AsyncContext<Spec.Context>,
   specName: string,
   invokePath: string,
   options: Spec.Options

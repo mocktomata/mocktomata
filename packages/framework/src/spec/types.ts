@@ -10,7 +10,7 @@ export type Spec = {
 
 export namespace Spec {
   export type Context = {
-    io: IO & SpecPlugin.IO,
+    io: IO
   }
 
   export type IO = {
@@ -219,6 +219,23 @@ export type SpecPlugin<S = any, M = any> = {
 }
 
 export namespace SpecPlugin {
+  export type Context = {
+    io: IO,
+  }
+
+  export type IO = {
+    getPluginList(): Promise<string[]>,
+    loadPlugin(name: string): Promise<Module>,
+  }
+
+  export type Module = {
+    activate: (activationContext: ActivationContext) => void,
+  }
+
+  export type ActivationContext = {
+    register(plugin: SpecPlugin): void
+  }
+
   export type Instance<S = any> = RequiredPick<SpecPlugin<S, any>, 'name'>
 
   export type SpyContext<M> = {
@@ -459,17 +476,6 @@ export namespace SpecPlugin {
 
   export type DeclareOptions = {
     performer?: SpecRecord.Performer
-  }
-  export type ActivationContext = {
-    register(plugin: SpecPlugin): void
-  }
-  export type Module = {
-    activate: (activationContext: ActivationContext) => void,
-  }
-
-  export type IO = {
-    getPluginList(): Promise<string[]>,
-    loadPlugin(name: string): Promise<Module>,
   }
 }
 

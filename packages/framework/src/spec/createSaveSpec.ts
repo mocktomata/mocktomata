@@ -1,4 +1,4 @@
-import { Context } from 'async-fp';
+import { AsyncContext } from 'async-fp';
 import { logLevels } from 'standard-log';
 import { log } from '../log';
 import { prettyPrintSpecRecord } from '../utils';
@@ -8,7 +8,7 @@ import { createRecorder } from './recorder';
 import { Spec } from './types';
 
 export async function createSaveSpec(
-  context: Context<Spec.Context>,
+  context: AsyncContext<Spec.Context>,
   specName: string,
   invokePath: string,
   options: Spec.Options
