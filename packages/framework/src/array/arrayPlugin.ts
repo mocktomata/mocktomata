@@ -18,8 +18,5 @@ export const arrayPlugin: SpecPlugin<any[], any[]> = {
         return target[property] = setProperty({ key: property, value })
       }
     })
-  },
-  metarize({ metarize }, spy) {
-    return spy.map(metarize)
   }
 }

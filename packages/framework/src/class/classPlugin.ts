@@ -7,7 +7,6 @@ export const classPlugin: SpecPlugin<new (...args: any[]) => void> = {
   support: isClass,
   createSpy(context, subject) {
     context.setMeta(metarize(subject))
-    // console.log('createSpy', subject, subject.prototype, subject.prototype.constructor)
     const Spy: any = function (...args: any[]) {
       return context.instantiate({ args }, ({ args }) => {
         const _this = new subject(...args)

@@ -40,8 +40,8 @@ const testSimulate: Incubator.Fn = (...args: any[]) => {
 /**
  * Runs save and simulate in different sequence.
  */
-const testSequence: Incubator.Fn<Incubator.SequenceFn> = (...args: any[]) => {
-  const { specName, options, handler } = resolveTestSpecFnArgs<Incubator.SequenceFn>(args)
+const testSequence: Incubator.Fn<Incubator.SequenceHandler> = (...args: any[]) => {
+  const { specName, options, handler } = resolveTestSpecFnArgs<Incubator.SequenceHandler>(args)
   handler(specName, {
     save: createTestSpec(createSaveSpec, specName, options),
     simulate: createTestSpec(createSimulateSpec, specName, options)
@@ -90,7 +90,7 @@ export type Incubator = {
   save: Incubator.Fn<Spec.Handler<Spec>>,
   simulate: Incubator.Fn<Spec.Handler<Spec>>,
   duo: Incubator.Fn<Spec.Handler<Spec>>,
-  sequence: Incubator.Fn<Incubator.SequenceFn<Spec>>,
+  sequence: Incubator.Fn<Incubator.SequenceHandler<Spec>>,
   start: (options?: TestHarness.Options | undefined) => Promise<void>,
   ensureDirNotExists: (dirpath: string) => void,
   ensureFileNotExists: (filepath: string) => void,
@@ -101,7 +101,7 @@ export namespace Incubator {
     (specName: string, handler: H): void,
     (specName: string, options: Spec.Options, handler: H): void,
   }
-  export type SequenceFn<S = Spec> = (specName: string, specs: { save: S, simulate: S }) => void
+  export type SequenceHandler<S = Spec> = (specName: string, specs: { save: S, simulate: S }) => void
 }
 
 export const incubator = {

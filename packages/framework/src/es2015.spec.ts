@@ -251,6 +251,15 @@ describe('function', () => {
       await spec.done()
     })
   })
+  incubator.duo('empty array inputs', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
+      const actual = subject('node', [])
+
+      a.satisfies(actual, { name: 'node', args: [] })
+      await spec.done()
+    })
+  })
   incubator.duo('array inputs', (title, spec) => {
     test(title, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
@@ -260,7 +269,6 @@ describe('function', () => {
       await spec.done()
     })
   })
-
   incubator.duo('insert value to input array', (title, spec) => {
     test(title, async () => {
       const subject = await spec(function passthroughArray(value: string[]) {
@@ -272,7 +280,28 @@ describe('function', () => {
       await spec.done()
     })
   })
-
+  incubator.duo('update value in array', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec(function passthroughArray(value: string[]) {
+        value[1] = 'c'
+        return value
+      })
+      const actual = subject(['a', 'b'])
+      expect(actual).toEqual(['a', 'c'])
+      await spec.done()
+    })
+  })
+  incubator.duo('expend array by assignment', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec(function passthroughArray(value: string[]) {
+        value[2] = 'c'
+        return value
+      })
+      const actual = subject(['a', 'b'])
+      expect(actual).toEqual(['a', 'b', 'c'])
+      await spec.done()
+    })
+  })
   incubator.duo('throwing error', (title, spec) => {
     test(title, async () => {
       const subject = await spec(() => { throw new Error('failed') })
