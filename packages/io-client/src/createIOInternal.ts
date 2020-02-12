@@ -1,4 +1,4 @@
-import { MocktomataIO, SpecNotFound, SpecPluginModule, SpecRecord } from '@mocktomata/framework';
+import { MocktomataIO, SpecNotFound, SpecPlugin, SpecRecord } from '@mocktomata/framework';
 import { buildUrl } from './buildUrl';
 import { getServerInfo } from './getServerInfo';
 import { CreateIOOptions } from './types';
@@ -26,7 +26,7 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
     async getPluginList() {
       return info.plugins
     },
-    async loadPlugin(name: string): Promise<SpecPluginModule> {
+    async loadPlugin(name: string): Promise<SpecPlugin.Module> {
       return import(name)
     },
     // async loadConfig() {

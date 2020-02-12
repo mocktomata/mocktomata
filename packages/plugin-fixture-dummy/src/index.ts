@@ -1,5 +1,5 @@
-import { SpecPluginActivationContext } from '@mocktomata/framework'
-export function activate(context: SpecPluginActivationContext) {
+import { SpecPlugin } from '@mocktomata/framework'
+export function activate(context: SpecPlugin.ActivationContext) {
   context.register({
     name: '@mocktomata/plugin-fixture-dummy',
     support() { return false },
