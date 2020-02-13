@@ -1,7 +1,7 @@
-import { required } from 'type-plus';
-import { MOCKTOMATA_FOLDER } from '../constants';
-import { FileRepositoryOptions } from '../types';
-import { loadConfig } from './loadConfig';
+import { required } from 'type-plus'
+import { MOCKTOMATA_FOLDER } from '../constants'
+import { FileRepositoryOptions } from '../types'
+import { loadConfig } from './loadConfig'
 
 const defaultConfig: Pick<FileRepositoryOptions, 'folder'> = {
   folder: MOCKTOMATA_FOLDER,

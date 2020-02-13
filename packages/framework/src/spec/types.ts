@@ -11,7 +11,7 @@ export type Spec = {
 export namespace Spec {
   export type Context = {
     io: IO,
-    config?: Config,
+    config: Config,
   }
 
   export type IO = {

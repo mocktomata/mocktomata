@@ -14,7 +14,7 @@ export function createTestHarness(context: AsyncContext<Spec.Context>, options?:
 
   config({ mode: 'test', reporters: [createColorLogReporter()], logLevel: level })
   const io = createTestIO()
-  context.set({ io })
+  context.set({ io, config: {} })
 
   store.reset()
 

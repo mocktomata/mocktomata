@@ -4,16 +4,16 @@ import { required } from 'type-plus'
 
 export type CreateIOOptions = {
   cwd: string,
-  repoOptions?: Partial<FileRepositoryOptions>
+  repo?: Partial<FileRepositoryOptions>
 }
 
 export function createIO(options?: CreateIOOptions): MocktomataIO {
-  const { cwd, repoOptions } = required({ cwd: process.cwd() }, options)
-  const repo = createFileRepository(cwd, repoOptions)
+  const { cwd, repo } = required({ cwd: process.cwd() }, options)
+  const repository = createFileRepository(cwd, repo)
   return {
     async readSpec(title: string, invokePath: string): Promise<SpecRecord> {
       try {
-        const specStr = await repo.readSpec(title, invokePath)
+        const specStr = await repository.readSpec(title, invokePath)
         return JSON.parse(specStr)
       }
       catch (e) {
@@ -21,10 +21,10 @@ export function createIO(options?: CreateIOOptions): MocktomataIO {
       }
     },
     async writeSpec(title: string, specRelativePath: string, record: SpecRecord) {
-      return repo.writeSpec(title, specRelativePath, JSON.stringify(record))
+      return repository.writeSpec(title, specRelativePath, JSON.stringify(record))
     },
     async getPluginList() {
-      return repo.getPluginList()
+      return repository.getPluginList()
     },
     async loadPlugin(name: string) {
       return require(name)

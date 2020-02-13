@@ -1,8 +1,12 @@
-import { CreateIOOptions } from '@mocktomata/io-local'
-
-export type Config = {
-  io?: CreateIOOptions,
-  runtime?: {
-    target?: 'es2015'
+export namespace config {
+  export type Options = {
+    io?: {
+      cwd?: string,
+      dir?: string
+    },
+    runtime?: {
+      target?: 'es2015',
+      plugins?: string[]
+    }
   }
 }

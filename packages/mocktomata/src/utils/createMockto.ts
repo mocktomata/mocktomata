@@ -1,8 +1,6 @@
 import { createSpec, Spec } from '@mocktomata/framework'
 import { AsyncContext } from 'async-fp'
-import { Store } from 'global-store'
 import { LogLevel } from 'standard-log'
-import { WorkerStore } from '../types'
 import { getCallerRelativePath } from './getCallerRelativePath'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 import { start } from './start'
@@ -15,38 +13,37 @@ export type Mockto = Mockto.SpecFn & {
 }
 
 export namespace Mockto {
-  export type Context<S> = {
-    initializeContext: (store: Store<S>) => AsyncContext<Spec.Context>,
-    store: Store<S>
-  }
+  export type Initializer = () => AsyncContext<Spec.Context>
+
   export interface SpecFn {
     (specName: string, handler: Spec.Handler): void,
     (specName: string, options: Spec.Options, handler: Spec.Handler): void,
   }
 }
 
-export function createMockto<S extends WorkerStore>(context: Mockto.Context<S>) {
+export function createMockto(initializer: Mockto.Initializer) {
   return Object.assign(
-    createSpecFn(context, 'auto'),
+    createSpecFn(initializer, 'auto'),
     {
-      live: createSpecFn(context, 'live'),
-      save: createSpecFn(context, 'save'),
-      simulate: createSpecFn(context, 'simulate'),
+      live: createSpecFn(initializer, 'live'),
+      save: createSpecFn(initializer, 'save'),
+      simulate: createSpecFn(initializer, 'simulate'),
       start,
     }
   )
 }
 
-function createSpecFn<S>({ initializeContext, store }: Mockto.Context<S>, defaultMode: Spec.Mode): Mockto.SpecFn {
+function createSpecFn(initializer: Mockto.Initializer, defaultMode: Spec.Mode): Mockto.SpecFn {
   const fn = (...args: any[]): any => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(fn)
     let s: Promise<Spec>
     // this is used to avoid unhandled promise error
-    function createSpecWithHandler() {
+    async function createSpecWithHandler() {
       if (s) return s
-      const context = initializeContext(store)
-      const mode = getEffectiveSpecMode(store.value, defaultMode, specName, specRelativePath)
+      const context = initializer()
+      const { config } = await context.get()
+      const mode = getEffectiveSpecMode(config, defaultMode, specName, specRelativePath)
       return s = createSpec(context, specName, specRelativePath, mode, options)
     }
     const spec = Object.assign((subject: any) => createSpecWithHandler().then(sp => {
