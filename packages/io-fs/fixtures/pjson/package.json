@@ -1,0 +1,7 @@
+{
+  "mocktomata": {
+    "runtime": {
+      "target": "ES2015"
+    }
+  }
+}

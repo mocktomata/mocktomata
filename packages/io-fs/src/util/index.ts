@@ -1,4 +1,5 @@
 export * from './ensureFolderCreated'
+export * from './fixturePath'
 export * from './getHash'
 export * from './readByHash'
 export * from './writeByHash'

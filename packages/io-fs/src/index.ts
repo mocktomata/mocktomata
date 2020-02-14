@@ -1,2 +1,3 @@
-export * from './createFileRepository';
-export * from './types';
+export * from './config'
+export * from './plugin'
+export * from './spec'

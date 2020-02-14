@@ -1,7 +1,9 @@
-import path from 'path';
-import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util';
+import path from 'path'
+import { ensureFolderCreated, getHash, readByHash, writeTo } from '../util'
+import { MOCKTOMATA_FOLDER } from '../constants'
 
-export function createSpecRepository(mocktomataFolder: string) {
+export function createSpecRepository({ cwd }: createSpecRepository.Options) {
+  const mocktomataFolder = path.resolve(cwd, MOCKTOMATA_FOLDER)
   const baseDir = getSpecFolder(mocktomataFolder)
   return {
     async readSpec(title: string, invokePath: string) {
@@ -17,6 +19,12 @@ export function createSpecRepository(mocktomataFolder: string) {
   }
 }
 
-export function getSpecFolder(mocktomataFolder: string) {
+export namespace createSpecRepository {
+  export type Options = {
+    cwd: string
+  }
+}
+
+function getSpecFolder(mocktomataFolder: string) {
   return path.resolve(mocktomataFolder, 'specs')
 }

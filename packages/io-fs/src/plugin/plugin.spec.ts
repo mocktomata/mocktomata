@@ -1,29 +1,36 @@
-import path from 'path';
-import { dirSync } from 'tmp';
-import { createFileRepository } from '..';
+import { dirSync } from 'tmp'
+import { createPluginRepository } from '..'
+import { fixturePath } from '../util'
 
 test('gets empty plugin list in empty folder', async () => {
   const tmpdir = dirSync()
   const cwd = tmpdir.name
 
-  const io = createFileRepository(cwd)
-  expect(await io.getPluginList()).toEqual([])
+  const io = createPluginRepository({ cwd })
+  expect(await io.findInstalledPlugins()).toEqual([])
 })
 
-test('get both installed plugins when there is no config', async () => {
-  const cwd = path.resolve(__dirname, '../../fixtures/has-plugins')
+test('find all installed plugins', async () => {
+  const cwd = fixturePath('has-plugins')
 
-  const io = createFileRepository(cwd)
-  expect(await io.getPluginList()).toEqual([
+  const io = createPluginRepository({ cwd })
+  expect(await io.findInstalledPlugins()).toEqual([
     '@mocktomata/plugin-fixture-deep-link',
     '@mocktomata/plugin-fixture-dummy'
   ])
 })
 
-test('get configured plugin list', async () => {
-  const cwd = path.resolve(__dirname, '../../fixtures/has-config')
+test('load simple plugin', async () => {
+  const cwd = fixturePath('has-plugins')
+  const io = createPluginRepository({ cwd })
+  const plugin = await io.loadPlugin('@mocktomata/plugin-fixture-dummy')
+  expect(typeof plugin.activate).toBe('function')
+})
 
-  const io = createFileRepository(cwd)
+test('load deep link plugin', async () => {
+  const cwd = fixturePath('has-plugins')
+  const io = createPluginRepository({ cwd })
+  const actual = await io.loadPlugin('@mocktomata/plugin-fixture-deep-link/pluginA')
 
-  expect(await io.getPluginList()).toEqual(['@mocktomata/plugin-fixture-dummy'])
+  expect(typeof actual.activate).toBe('function')
 })

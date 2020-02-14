@@ -1,12 +1,13 @@
-import fs from 'fs';
-import path from 'path';
-import { AmbiguousConfig, InvalidConfigFormat } from './errors';
+import fs from 'fs'
+import path from 'path'
+import { MOCKTO_CONFIG_JS, MOCKTO_CONFIG_JSON, PACKAGE_JSON } from '../constants'
+import { AmbiguousConfig, InvalidConfigFormat } from './errors'
 
-export function loadConfig(cwd: string) {
+export async function loadConfig(cwd: string) {
   const configs: { [k in string]: Record<string, any> } = {
     pjson: loadPjsonConfig(cwd),
     mjson: loadMjsonConfig(cwd),
-    mjs: loadMjsConfig(cwd)
+    mjs: await loadMjsConfig(cwd)
   }
 
   const names = Object.keys(configs).filter(k => !!configs[k])
@@ -19,39 +20,39 @@ export function loadConfig(cwd: string) {
 }
 
 function loadPjsonConfig(cwd: string) {
-  const pjsonPath = path.resolve(cwd, 'package.json')
-  if (fs.existsSync(pjsonPath)) {
+  const filepath = path.resolve(cwd, PACKAGE_JSON)
+  if (fs.existsSync(filepath)) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const pjson = require(pjsonPath)
+    const pjson = require(path.relative(__dirname, filepath))
     if (pjson.mocktomata) return pjson.mocktomata
   }
 }
 
 function loadMjsonConfig(cwd: string) {
-  const filepath = path.resolve(cwd, '.mockto.config.json')
+  const filepath = path.resolve(cwd, MOCKTO_CONFIG_JSON)
   if (fs.existsSync(filepath)) {
     try {
-      return JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+      return require(path.relative(__dirname, filepath))
     }
     catch (e) {
       // istanbul ignore next
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('.mockto.config.json')
+        throw new InvalidConfigFormat(MOCKTO_CONFIG_JSON)
       }
     }
   }
 }
 
 function loadMjsConfig(cwd: string) {
-  const filepath = path.resolve(cwd, '.mockto.config.js')
+  const filepath = path.join(cwd, MOCKTO_CONFIG_JS)
   if (fs.existsSync(filepath)) {
     try {
-      return require(filepath)
+      return require(path.relative(__dirname, filepath))
     }
     catch (e) {
       // istanbul ignore next
       if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat('.mockto.config.js')
+        throw new InvalidConfigFormat(MOCKTO_CONFIG_JS)
       }
     }
   }

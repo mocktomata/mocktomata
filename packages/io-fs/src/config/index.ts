@@ -1,2 +1,2 @@
-export * from './errors';
-export * from './getConfig';
+export * from './errors'
+export * from './loadConfig'
