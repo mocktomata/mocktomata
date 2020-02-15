@@ -1,6 +1,7 @@
 import { Mocktomata, SpecNotFound, SpecRecord, SpecPlugin } from '@mocktomata/framework'
 import { FileRepository } from '@mocktomata/io-fs'
 import { required } from 'type-plus'
+import path from 'path'
 
 export type CreateIOOptions = {
   cwd: string
@@ -12,15 +13,17 @@ export function createIO(options?: CreateIOOptions): Mocktomata.IO {
 
   return {
     async readSpec(title: string, invokePath: string): Promise<SpecRecord> {
+      const relative = path.relative(cwd, invokePath)
       try {
-        return JSON.parse(repo.readSpec(title, invokePath))
+        return JSON.parse(repo.readSpec(title, relative))
       }
       catch (e) {
         throw new SpecNotFound(title)
       }
     },
-    async writeSpec(title: string, specRelativePath: string, record: SpecRecord) {
-      return repo.writeSpec(title, specRelativePath, JSON.stringify(record))
+    async writeSpec(title: string, invokePath: string, record: SpecRecord) {
+      const relative = path.relative(cwd, invokePath)
+      return repo.writeSpec(title, relative, JSON.stringify(record))
     },
     async getPluginList() {
       const config = repo.loadConfig() as SpecPlugin.Config

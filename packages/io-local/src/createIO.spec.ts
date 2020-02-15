@@ -13,31 +13,30 @@ test('read not exist spec throws SpecNotFound', async () => {
 })
 
 test('read existing spec', async () => {
-  const rootDir = gitRootDir(process.cwd())!
-  const cwd = path.join(rootDir, 'fixtures/io-local/with-spec')
+  const cwd = fixturePath('with-spec')
   const io = createIO({ cwd })
+  const invokePath = path.join(cwd, 'src/createIO.spec.ts')
 
-  const specRelativePath = path.relative(rootDir, __filename)
-  const actual = await io.readSpec('exist', specRelativePath)
+  const actual = await io.readSpec('exist', invokePath)
 
   expect(actual).toEqual({ refs: [], actions: [] })
 })
 
 test('write spec', async () => {
-  const tmp = dirSync()
-  const io = createIO({ cwd: tmp.name })
-
+  const cwd = dirSync().name
+  const io = createIO({ cwd })
+  const invokePath = path.join(cwd, 'src/createIO.spec.ts')
   const record: SpecRecord = { refs: [], actions: [] }
-  const specRelativePath = path.relative(process.cwd(), __filename)
-  await io.writeSpec('new spec', specRelativePath, record)
+  await io.writeSpec('new spec', invokePath, record)
 
-  const spec = await io.readSpec('new spec', specRelativePath)
+  const spec = await io.readSpec('new spec', invokePath)
   expect(spec).toEqual({ refs: [], actions: [] })
 })
 
 describe('getPluginList()', () => {
   test('returns installed plugin', async () => {
-    const io = createIO({ cwd: path.join(gitRootDir(process.cwd())!, 'fixtures/io-local/with-plugin') })
+    const cwd = fixturePath('with-plugin')
+    const io = createIO({ cwd })
 
     const list = await io.getPluginList()
     expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
@@ -59,3 +58,7 @@ describe('loadPlugin()', () => {
     t.strictEqual(typeof actual.activate, 'function')
   })
 })
+
+export function fixturePath(dir: string) {
+  return path.join(__dirname, `../fixtures/${dir}`)
+}
