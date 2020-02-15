@@ -1,10 +1,10 @@
-import { MocktomataIO, SpecNotFound, SpecPlugin, SpecRecord } from '@mocktomata/framework'
+import { Mocktomata, SpecNotFound, SpecPlugin, SpecRecord } from '@mocktomata/framework'
 import { buildUrl } from './buildUrl'
 import { getServerInfo } from './getServerInfo'
 import { CreateIOOptions } from './types'
 import { Context } from './typesInternal'
 
-export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<MocktomataIO> {
+export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<Mocktomata.IO> {
   const info = await getServerInfo({ fetch, location }, options)
   return {
     async readSpec(specName: string, specRelativePath: string): Promise<SpecRecord> {
