@@ -30,11 +30,11 @@ export class FileRepository {
   loadPlugin(id: string) {
     return loadPlugin(this.cwd, id)
   }
-  readSpec(specName: string, invokePath: string) {
-    return readSpec(this.specFolder, specName, invokePath)
+  readSpec(specName: string, relativeInvokePath: string) {
+    return readSpec(this.specFolder, specName, relativeInvokePath)
   }
-  writeSpec(specName: string, invokePath: string, data: string) {
-    return writeSpec(this.specFolder, specName, invokePath, data)
+  writeSpec(specName: string, relativeInvokePath: string, data: string) {
+    return writeSpec(this.specFolder, specName, relativeInvokePath, data)
   }
 }
 

@@ -21,8 +21,9 @@ test('find installed plugins', async () => {
 
 test('read/write spec', () => {
   const repo = getTestRepo()
-  repo.writeSpec('some spec', __filename, 'abc')
-  const spec = repo.readSpec('some spec', __filename)
+  const relative = './src/FileRepository.spec.ts'
+  repo.writeSpec('some spec', relative, 'abc')
+  const spec = repo.readSpec('some spec', relative)
   expect(spec).toBe('abc')
 })
 

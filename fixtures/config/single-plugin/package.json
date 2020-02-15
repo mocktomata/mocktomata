@@ -1,7 +1,0 @@
-{
-  "mocktomata": {
-    "plugins": [
-      "mocktomata-plugin-single"
-    ]
-  }
-}
