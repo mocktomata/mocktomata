@@ -30,12 +30,12 @@ export const serveCommand = createCommand({
     })) {
       const { port } = args
       const server = await this._deps.start({ cwd: this.cwd, port })
-      const msg = `      ${chalk.magenta(`${server.info.protocol}://localhost:${server.info.port}`)}`
-      const bar = '-'.repeat(msg.length)
+      const info = `${server.info.protocol}://localhost:${server.info.port}`
+      const bar = '-'.repeat(info.length + 8)
       this.ui.info(`
 mocktomata server started.
 ${bar}
-${msg}
+    ${chalk.magenta(info)}
 ${bar}
 `)
     }

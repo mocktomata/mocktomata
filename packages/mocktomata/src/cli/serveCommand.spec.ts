@@ -36,8 +36,8 @@ test('display started message', async () => {
 
   expect(colors.unstyle(message)).toEqual(`
 mocktomata server started.
--------------------------------------
-      http://localhost:1234
--------------------------------------
+-----------------------------
+    http://localhost:1234
+-----------------------------
 `)
 })

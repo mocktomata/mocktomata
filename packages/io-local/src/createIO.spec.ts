@@ -44,14 +44,16 @@ describe('getPluginList()', () => {
 
 describe('loadPlugin()', () => {
   test('load npm plugin package', async () => {
-    const io = createIO()
+    const cwd = fixturePath('with-plugin')
+    const io = createIO({ cwd })
     const actual = await io.loadPlugin('@mocktomata/plugin-fixture-dummy')
 
     t.strictEqual(typeof actual.activate, 'function')
   })
 
   test('can load plugin using deep link', async () => {
-    const io = createIO()
+    const cwd = fixturePath('with-plugin')
+    const io = createIO({ cwd })
     const actual = await io.loadPlugin('@mocktomata/plugin-fixture-deep-link/pluginA')
 
     t.strictEqual(typeof actual.activate, 'function')
