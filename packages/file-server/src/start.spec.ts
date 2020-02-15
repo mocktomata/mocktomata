@@ -1,11 +1,11 @@
-import { createFileRepository, Repository } from '@mocktomata/io-fs';
-import t from 'assert';
-import a from 'assertron';
-import fetch from 'node-fetch';
-import { dirSync } from 'tmp';
-import { PromiseValue } from 'type-plus';
-import { start } from '.';
-import { btoa } from './base64';
+import { FileRepository } from '@mocktomata/io-fs'
+import t from 'assert'
+import a from 'assertron'
+import fetch from 'node-fetch'
+import { dirSync } from 'tmp'
+import { PromiseValue } from 'type-plus'
+import { start } from '.'
+import { btoa } from './base64'
 
 test('if a port is specified and not available, will throw an error', async () => {
   const runningServer = await start({ port: 3710 })
@@ -16,10 +16,9 @@ test('if a port is specified and not available, will throw an error', async () =
 
 describe('server behavior', () => {
   let server: PromiseValue<ReturnType<typeof start>>
-  let repository: Repository
   beforeAll(async () => {
     const tmp = dirSync()
-    repository = createFileRepository(tmp.name)
+    const repository = new FileRepository({ cwd: tmp.name })
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
     server = await start({ cwd: tmp.name })
   })
@@ -53,10 +52,11 @@ describe('server behavior', () => {
   })
 
   test('write spec', async () => {
-    const response = await fetch(buildUrl(`specs/${buildId('abc')}`), { method: 'POST', body: '{ a: 1 }' })
-
+    const id = buildId('abc')
+    const response = await fetch(buildUrl(`specs/${id}`), { method: 'POST', body: '{ a: 1 }' })
     expect(response.status).toBe(200)
-    const actual = await repository.readSpec('abc', '')
+
+    const actual = await (await fetch(buildUrl(`specs/${id}`))).text()
 
     expect(actual).toEqual('{ a: 1 }')
   })

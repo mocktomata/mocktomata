@@ -1,4 +1,4 @@
-import { MocktomataError } from '@mocktomata/framework'
+import { MocktomataError } from '../errors'
 
 export class InvalidConfigFormat extends MocktomataError {
   // istanbul ignore next
@@ -27,7 +27,6 @@ export class ConfigPropertyIsInvalid extends MocktomataError {
     super(`The property '${property}' is invalid: ${cause}`)
   }
 }
-
 
 export class ConfigPropertyNotRecognized extends MocktomataError {
   // istanbul ignore next

@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../spec-plugin'
 import { demetarize, metarize } from '../utils';
 import { isClass } from './isClass';
 

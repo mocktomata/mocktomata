@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../spec-plugin'
 import { demetarize, hasProperty, metarize } from '../utils';
 
 export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {

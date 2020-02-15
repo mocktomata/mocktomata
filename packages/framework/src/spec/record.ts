@@ -1,7 +1,7 @@
 import { pick, Pick } from 'type-plus';
 import { notDefined } from '../constants';
 import { ActionMismatch, ExtraReference, PluginsNotLoaded } from './errors';
-import { findPlugin, getPlugin } from './findPlugin';
+import { findPlugin, getPlugin } from '../spec-plugin/findPlugin';
 import { SpecRecord } from './types';
 
 export function createSpecRecordBuilder(specName: string) {

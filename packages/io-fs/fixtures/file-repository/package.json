@@ -1,0 +1,7 @@
+{
+  "mocktomata": {
+    "plugins": [
+      "plugin-a"
+    ]
+  }
+}

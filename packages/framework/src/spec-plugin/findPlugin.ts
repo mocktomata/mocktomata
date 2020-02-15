@@ -1,6 +1,6 @@
-import { store } from '../store';
-import { PluginNotFound } from './errors';
-import { SpecPlugin } from './types';
+import { store } from '../store'
+import { PluginNotFound } from './errors'
+import { SpecPlugin } from './types'
 
 export function findPlugin<S>(subject: S): SpecPlugin.Instance<S> | undefined {
   const plugins = store.value.plugins

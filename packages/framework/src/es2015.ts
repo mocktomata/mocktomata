@@ -6,7 +6,7 @@ import { instancePlugin } from './instance'
 import { nullPlugin } from './null'
 import { objectPlugin } from './object'
 import { promisePlugin } from './promise'
-import { SpecPlugin } from './spec'
+import { SpecPlugin } from './spec-plugin'
 import { stringPlugin } from './string'
 import { undefinedPlugin } from './undefined'
 

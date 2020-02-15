@@ -1,6 +1,6 @@
-import { SpecNotFound, SpecPlugin, Spec } from '../spec'
+import { Spec, SpecNotFound } from '../spec'
+import { SpecPlugin } from '../spec-plugin'
 import { prettyPrintSpecRecord } from '../utils'
-
 
 export type TestIO = {
   getAllSpecs(): IterableIterator<[string, string]>,

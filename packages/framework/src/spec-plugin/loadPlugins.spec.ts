@@ -1,8 +1,8 @@
-import a from 'assertron';
-import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from '.';
-import { createTestIO } from '../incubator/createTestIO';
-import { store } from '../store';
-import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts';
+import a from 'assertron'
+import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from '.'
+import { createTestIO } from '../incubator/createTestIO'
+import { store } from '../store'
+import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts'
 
 beforeEach(() => {
   store.reset()

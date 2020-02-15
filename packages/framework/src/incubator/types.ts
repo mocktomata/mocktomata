@@ -1,5 +1,6 @@
 import { LogLevel } from 'standard-log'
-import { SpecPlugin, SpecRecord } from '../spec'
+import { SpecRecord } from '../spec/types'
+import { SpecPlugin } from '../spec-plugin/types'
 
 export type TestHarness = {
   addPluginModule(pluginName: string, pluginModule: SpecPlugin.Module): void,

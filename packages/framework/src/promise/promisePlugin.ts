@@ -1,5 +1,5 @@
 
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../spec-plugin';
 import { isPromise } from './isPromise';
 
 export const promisePlugin: SpecPlugin<Promise<any>, boolean> = {

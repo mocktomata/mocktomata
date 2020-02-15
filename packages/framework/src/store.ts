@@ -1,5 +1,5 @@
 import { createStore } from 'global-store'
-import { SpecPlugin } from './spec/types'
+import { SpecPlugin } from './spec-plugin/types'
 
 export type SpecStore = {
   plugins: SpecPlugin.Instance[],

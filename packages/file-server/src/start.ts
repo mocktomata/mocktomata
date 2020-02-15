@@ -1,28 +1,33 @@
-import { createFileRepository, FileRepositoryOptions, Repository } from '@mocktomata/io-fs';
-import boom from 'boom';
-import { RequestInfo, Server, ServerInfo } from 'hapi';
-import { required } from 'type-plus';
-import { atob } from './base64';
+import { FileRepository } from '@mocktomata/io-fs'
+import boom from 'boom'
+import { RequestInfo, Server, ServerInfo, ServerRoute } from 'hapi'
+import { atob } from './base64'
+import { FileServer } from './types-internal'
 
-export type StartOptions = {
-  /**
-   * Port number the server will run on.
-   */
-  port: number,
-  cwd: string,
-  repoOptions: Partial<FileRepositoryOptions>
+export namespace start {
+  export type Options = {
+    /**
+     * Port number the server will run on.
+     */
+    port: number,
+    cwd: string
+  }
 }
 
-export async function start(options?: Partial<StartOptions>) {
-  const { cwd, port, repoOptions } = required({ cwd: process.cwd(), port: 80 }, options)
-  const repo = createFileRepository(cwd, repoOptions)
-
-  const server = new Server({
-    port,
-    routes: { 'cors': true }
-  })
+export async function start(options: Partial<start.Options> = {}) {
+  const cwd = options.cwd ?? process.cwd()
+  const repo = new FileRepository({ cwd })
+  const config = repo.loadConfig() as FileServer.Config
+  const port = options.port ?? config['file-server']?.port ?? 80
+  const context = { config, repo }
+  const server = new Server({ port, routes: { 'cors': true } })
   await server.start()
-  defineRoutes(server, repo)
+  server.route([
+    infoRoute(context, server),
+    configRoute(context),
+    specGetRoute(context),
+    specPostRoute(context)
+  ])
   return {
     info: server.info,
     stop(options?: { timeout: number }) {
@@ -31,53 +36,65 @@ export async function start(options?: Partial<StartOptions>) {
   }
 }
 
-function defineRoutes(server: Server, repo: Repository) {
-  server.route([
-    {
-      method: 'GET',
-      path: '/mocktomata/info',
-      handler: async (request) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const pjson = require('../package.json')
-        return JSON.stringify({
-          name: 'mocktomata',
-          version: pjson.version,
-          url: getReflectiveUrl(request.info, server.info),
-          plugins: await repo.getPluginList()
-        })
-      }
-    },
-    // {
-    //   method: 'GET',
-    //   path: '/mocktomata/config',
-    //   options: { cors: true },
-    //   handler: async (request, h) => {
-    //     return JSON.stringify(loadConfig(cwd))
-    //   }
-    // },
-    {
-      method: 'GET',
-      path: '/mocktomata/specs/{id}',
-      handler: async (request) => {
-        try {
-          const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
-          return await repo.readSpec(specName, specRelativePath)
-        }
-        catch (e) {
-          throw boom.notFound(e.message)
-        }
-      }
-    },
-    {
-      method: 'POST',
-      path: '/mocktomata/specs/{id}',
-      handler: async (request, h) => {
+type Context = {
+  config: FileServer.Config ,
+  repo: FileRepository
+}
+
+function infoRoute({ config }: Context, server: Server): ServerRoute {
+  return {
+    method: 'GET',
+    path: '/mocktomata/info',
+    handler: async (request) => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const pjson = require('../package.json')
+      return JSON.stringify({
+        name: 'mocktomata',
+        version: pjson.version,
+        url: getReflectiveUrl(request.info, server.info),
+        plugins: config.plugins || []
+      })
+    }
+  }
+}
+
+function configRoute({ config }: Context): ServerRoute {
+  return {
+    method: 'GET',
+    path: '/mocktomata/config',
+    options: { cors: true },
+    handler: async () => {
+      return JSON.stringify(config)
+    }
+  }
+}
+
+function specGetRoute({ repo }: Context): ServerRoute {
+  return {
+    method: 'GET',
+    path: '/mocktomata/specs/{id}',
+    handler: async (request) => {
+      try {
         const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
-        await repo.writeSpec(specName, specRelativePath, request.payload as string)
-        return h.response()
+        return await repo.readSpec(specName, specRelativePath)
       }
-    },
-  ])
+      catch (e) {
+        throw boom.notFound(e.message)
+      }
+    }
+  }
+}
+
+function specPostRoute({ repo }: Context): ServerRoute {
+  return {
+    method: 'POST',
+    path: '/mocktomata/specs/{id}',
+    handler: async (request, h) => {
+      const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
+      await repo.writeSpec(specName, specRelativePath, request.payload as string)
+      return h.response()
+    }
+  }
 }
 
 /**

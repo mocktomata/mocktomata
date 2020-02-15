@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec/types';
+import { SpecPlugin } from '../spec-plugin/types';
 
 // istanbul ignore next
 export const echoPluginModule: SpecPlugin.Module = {

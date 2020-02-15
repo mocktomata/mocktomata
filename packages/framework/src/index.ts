@@ -1,5 +1,7 @@
+export * from './config'
 export * from './errors'
 export * from './es2015'
 export * from './incubator'
 export * from './spec'
+export * from './spec-plugin'
 export * from './types'

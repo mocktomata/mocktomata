@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../spec-plugin'
 
 export const undefinedPlugin: SpecPlugin<string> = {
   name: 'undefined',

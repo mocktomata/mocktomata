@@ -1,1 +1,2 @@
-export * from './plugin';
+export * from './findInstalledPlugins'
+export * from './loadPlugin'

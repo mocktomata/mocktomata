@@ -1,8 +1,8 @@
-import { tersify } from 'tersify';
-import { MocktomataError } from '../errors';
-import { prettifyAction } from './prettifyAction';
-import { SpecRecord } from './types';
-import { Recorder } from './types-internal';
+import { tersify } from 'tersify'
+import { MocktomataError } from '../errors'
+import { prettifyAction } from './prettifyAction'
+import { SpecRecord } from './types'
+import { Recorder } from './types-internal'
 
 export class SpecIDCannotBeEmpty extends MocktomataError {
   // istanbul ignore next
@@ -22,39 +22,6 @@ export class NotSpecable extends MocktomataError {
   // istanbul ignore next
   constructor(public subject: any) {
     super(`The ${typeof subject === 'string' ? subject : `subject ${tersify(subject, { maxLength: 50 })}`} is not supported by any loaded plugins`)
-  }
-}
-
-export class PluginNotFound extends MocktomataError {
-  // istanbul ignore next
-  constructor(public pluginName: string) {
-    super(`Could not locate plugin '${pluginName}'`)
-  }
-}
-
-export class NoSupportedPlugin extends MocktomataError {
-  constructor(public subject: any) {
-    super(`Unable to find plugin that supports ${tersify(subject)}`)
-  }
-}
-
-export class PluginsNotLoaded extends MocktomataError {
-  constructor(public specName: string, public plugins: string[]) {
-    super(`The following plugins are usec in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`)
-  }
-}
-
-export class DuplicatePlugin extends MocktomataError {
-  // istanbul ignore next
-  constructor(public pluginName: string) {
-    super(`A plugin with the name '${pluginName}' has already been loaded.`)
-  }
-}
-
-export class PluginNotConforming extends MocktomataError {
-  // istanbul ignore next
-  constructor(public pluginName: string) {
-    super(`${pluginName} is not a plugin.`)
   }
 }
 
@@ -119,6 +86,18 @@ Expecting action:
 ${tersifyAction(expected)}
 Received:
 ${tersifyAction(actual)}`)
+  }
+}
+
+export class NoSupportedPlugin extends MocktomataError {
+  constructor(public subject: any) {
+    super(`Unable to find plugin that supports ${tersify(subject)}`)
+  }
+}
+
+export class PluginsNotLoaded extends MocktomataError {
+  constructor(public specName: string, public plugins: string[]) {
+    super(`The following plugins are usec in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`)
   }
 }
 

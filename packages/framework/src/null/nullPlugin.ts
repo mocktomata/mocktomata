@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec';
+import { SpecPlugin } from '../spec-plugin'
 
 export const nullPlugin: SpecPlugin<null> = {
   name: 'null',

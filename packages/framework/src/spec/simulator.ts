@@ -1,14 +1,15 @@
 import { PartialPick } from 'type-plus';
 import { notDefined } from '../constants';
+import { findPlugin, getPlugin } from '../spec-plugin/findPlugin';
+import { SpecPlugin } from '../spec-plugin/types';
 import { actionMatches } from './actionMatches';
 import { createTimeTracker, TimeTracker } from './createTimeTracker';
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin } from './errors';
-import { findPlugin, getPlugin } from './findPlugin';
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs';
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record';
 import { createPluginSpyContext } from './recorder';
 import { getDefaultPerformer } from './subjectProfile';
-import { Spec, SpecPlugin, SpecRecord } from './types';
+import { Spec, SpecRecord } from './types';
 import { Recorder } from './types-internal';
 import { referenceMismatch } from './validations';
 

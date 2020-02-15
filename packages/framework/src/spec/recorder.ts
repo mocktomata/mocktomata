@@ -1,12 +1,13 @@
-import { PartialPick, required } from 'type-plus';
-import { notDefined } from '../constants';
-import { createTimeTracker } from './createTimeTracker';
-import { findPlugin, getPlugin } from './findPlugin';
-import { logAction, logCreateSpy, logRecordingTimeout } from './logs';
-import { createSpecRecordBuilder } from './record';
-import { getDefaultPerformer } from './subjectProfile';
-import { Spec, SpecPlugin, SpecRecord } from './types';
-import { Recorder } from './types-internal';
+import { PartialPick, required } from 'type-plus'
+import { notDefined } from '../constants'
+import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
+import { SpecPlugin } from '../spec-plugin/types'
+import { createTimeTracker } from './createTimeTracker'
+import { logAction, logCreateSpy, logRecordingTimeout } from './logs'
+import { createSpecRecordBuilder } from './record'
+import { getDefaultPerformer } from './subjectProfile'
+import { Spec, SpecRecord } from './types'
+import { Recorder } from './types-internal'
 
 export function createRecorder(specName: string, options: Spec.Options) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))

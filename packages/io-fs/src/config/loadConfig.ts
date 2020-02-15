@@ -1,13 +1,13 @@
+import { AmbiguousConfig, InvalidConfigFormat } from '@mocktomata/framework'
 import fs from 'fs'
 import path from 'path'
-import { MOCKTO_CONFIG_JS, MOCKTO_CONFIG_JSON, PACKAGE_JSON } from '../constants'
-import { AmbiguousConfig, InvalidConfigFormat } from './errors'
+import { MOCKTO_CONFIG_JS, MOCKTO_CONFIG_JSON, PACKAGE_JSON } from './constants'
 
-export async function loadConfig(cwd: string) {
+export function loadConfig(cwd: string) {
   const configs: { [k in string]: Record<string, any> } = {
     pjson: loadPjsonConfig(cwd),
     mjson: loadMjsonConfig(cwd),
-    mjs: await loadMjsConfig(cwd)
+    mjs: loadMjsConfig(cwd)
   }
 
   const names = Object.keys(configs).filter(k => !!configs[k])
