@@ -4,7 +4,6 @@ import a from 'assertron'
 import path from 'path'
 import { dirSync } from 'tmp'
 import { createIO } from '.'
-import { gitRootDir } from './test-util'
 
 test('read not exist spec throws SpecNotFound', async () => {
   const io = createIO()
