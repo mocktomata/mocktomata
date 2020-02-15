@@ -40,8 +40,7 @@
   "dependencies": {
     "@mocktomata/io-fs": "^7.0.0-beta",
     "boom": "^7.3.0",
-    "hapi": "^18.1.0",
-    "type-plus": "^1.31.3"
+    "hapi": "^18.1.0"
   },
   "engines": {
     "node": ">= 6"
