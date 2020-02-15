@@ -1,23 +1,28 @@
+import { SpecPlugin } from '@mocktomata/framework'
 import { FileRepository } from '@mocktomata/io-fs'
 import boom from 'boom'
 import { RequestInfo, Server, ServerInfo, ServerRoute } from 'hapi'
 import { atob } from './base64'
-import { FileServer } from './types-internal'
 
 export namespace start {
+  export type Config = {
+    'file-server'?: {
+      port?: number
+    }
+  } & SpecPlugin.Config
   export type Options = {
     /**
      * Port number the server will run on.
      */
-    port: number,
-    cwd: string
+    port?: number,
+    cwd?: string
   }
 }
 
-export async function start(options: Partial<start.Options> = {}) {
+export async function start(options: start.Options = {}) {
   const cwd = options.cwd ?? process.cwd()
   const repo = new FileRepository({ cwd })
-  const config = repo.loadConfig() as FileServer.Config
+  const config = repo.loadConfig() as start.Config
   const port = options.port ?? config['file-server']?.port ?? 80
   const context = { config, repo }
   const server = new Server({ port, routes: { 'cors': true } })
@@ -37,7 +42,7 @@ export async function start(options: Partial<start.Options> = {}) {
 }
 
 type Context = {
-  config: FileServer.Config ,
+  config: start.Config,
   repo: FileRepository
 }
 

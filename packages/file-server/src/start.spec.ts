@@ -17,10 +17,10 @@ test('if a port is specified and not available, will throw an error', async () =
 describe('server behavior', () => {
   let server: PromiseValue<ReturnType<typeof start>>
   beforeAll(async () => {
-    const tmp = dirSync()
-    const repository = new FileRepository({ cwd: tmp.name })
+    const cwd = dirSync().name
+    const repository = new FileRepository({ cwd })
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
-    server = await start({ cwd: tmp.name })
+    server = await start({ cwd })
   })
   afterAll(() => {
     return server.stop()
@@ -36,7 +36,12 @@ describe('server behavior', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const pjson = require('../package.json')
-    t.strictEqual(actual, `{"name":"mocktomata","version":"${pjson.version}","url":"http://localhost:${server.info.port}","plugins":[]}`)
+    t.strictEqual(actual, JSON.stringify({
+      name: 'mocktomata',
+      version: pjson.version,
+      url: `http://localhost:${server.info.port}`,
+      plugins: []
+    }))
   })
 
   test('read not exist spec gets 404', async () => {
