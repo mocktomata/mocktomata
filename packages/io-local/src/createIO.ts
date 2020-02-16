@@ -1,7 +1,7 @@
-import { Mocktomata, SpecNotFound, SpecRecord, SpecPlugin } from '@mocktomata/framework'
+import { Mocktomata, SpecNotFound, SpecRecord } from '@mocktomata/framework'
 import { FileRepository } from '@mocktomata/io-fs'
-import { required } from 'type-plus'
 import path from 'path'
+import { required, pick } from 'type-plus'
 
 export namespace createIO {
   export type Options = {
@@ -12,10 +12,13 @@ export namespace createIO {
 export function createIO(options?: createIO.Options): Mocktomata.IO {
   const { cwd } = required({ cwd: process.cwd() }, options)
   const repo = new FileRepository({ cwd })
+  const config = repo.loadConfig() as Mocktomata.Config
 
   return {
+    async getSpecConfig() {
+      return pick(config, 'filePathFilter', 'overrideMode', 'specNameFilter')
+    },
     async getPluginList() {
-      const config = repo.loadConfig() as SpecPlugin.Config
       return config.plugins || []
     },
     async loadPlugin(id: string) {

@@ -5,6 +5,14 @@ import path from 'path'
 import { dirSync } from 'tmp'
 import { createIO } from '.'
 
+test('get spec config', async () => {
+  const cwd = fixturePath('simple')
+  const io = createIO({ cwd })
+
+  const config = await io.getSpecConfig()
+  expect(config).toEqual({ overrideMode: 'live', filePathFilter: 'file', specNameFilter: 'spec' })
+})
+
 test('read not exist spec throws SpecNotFound', async () => {
   const io = createIO()
 
@@ -12,7 +20,7 @@ test('read not exist spec throws SpecNotFound', async () => {
 })
 
 test('read existing spec', async () => {
-  const cwd = fixturePath('with-spec')
+  const cwd = fixturePath('simple')
   const io = createIO({ cwd })
   const invokePath = path.join(cwd, 'src/createIO.spec.ts')
 
@@ -34,7 +42,7 @@ test('write spec', async () => {
 
 describe('getPluginList()', () => {
   test('returns installed plugin', async () => {
-    const cwd = fixturePath('with-plugin')
+    const cwd = fixturePath('simple')
     const io = createIO({ cwd })
 
     const list = await io.getPluginList()
@@ -44,7 +52,7 @@ describe('getPluginList()', () => {
 
 describe('loadPlugin()', () => {
   test('load npm plugin package', async () => {
-    const cwd = fixturePath('with-plugin')
+    const cwd = fixturePath('simple')
     const io = createIO({ cwd })
     const actual = await io.loadPlugin('@mocktomata/plugin-fixture-dummy')
 
@@ -52,7 +60,7 @@ describe('loadPlugin()', () => {
   })
 
   test('can load plugin using deep link', async () => {
-    const cwd = fixturePath('with-plugin')
+    const cwd = fixturePath('simple')
     const io = createIO({ cwd })
     const actual = await io.loadPlugin('@mocktomata/plugin-fixture-deep-link/pluginA')
 

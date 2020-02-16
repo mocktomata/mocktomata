@@ -1,5 +1,8 @@
 {
   "mocktomata": {
+    "overrideMode": "live",
+    "filePathFilter": "file",
+    "specNameFilter": "spec",
     "plugins": ["@mocktomata/plugin-fixture-dummy"]
   },
   "devDependencies": {

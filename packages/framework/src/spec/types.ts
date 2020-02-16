@@ -15,6 +15,7 @@ export namespace Spec {
   }
 
   export type IO = {
+    getSpecConfig(): Promise<Config>,
     /**
      * Read spec record.
      * @param specRelativePath file path of where the spec was used relative to:

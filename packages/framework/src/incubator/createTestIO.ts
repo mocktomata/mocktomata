@@ -15,6 +15,9 @@ export function createTestIO(): TestIO {
     getAllSpecs() {
       return specStore.entries()
     },
+    async getSpecConfig() {
+      return {}
+    },
     readSpec(title) {
       const record = specStore.get(title)
       if (!record) return Promise.reject(new SpecNotFound(title))
