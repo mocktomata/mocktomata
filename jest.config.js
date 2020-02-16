@@ -5,7 +5,7 @@ module.exports = {
     '!<rootDir>/src/**/*.spec.*'
   ],
   projects: [
-    '<rootDir>/packages/*',
+    '<rootDir>/packages/*/jest.config.js',
     '<rootDir>/packages/*/jest.config.electron.js',
     '<rootDir>/packages/*/jest.config.jsdom.js'
   ],
