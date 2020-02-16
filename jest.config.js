@@ -6,8 +6,8 @@ module.exports = {
   ],
   projects: [
     '<rootDir>/packages/*',
-    '<rootDir>/packages/mocktomata/jest.config.electron.js',
-    '<rootDir>/packages/mocktomata/jest.config.jsdom.js'
+    '<rootDir>/packages/*/jest.config.electron.js',
+    '<rootDir>/packages/*/jest.config.jsdom.js'
   ],
   reporters: [
     'default',

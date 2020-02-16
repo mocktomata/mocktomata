@@ -1,6 +1,6 @@
-import a from 'assertron';
-import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors';
-import { getServerInfo } from './getServerInfo';
+import a from 'assertron'
+import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors'
+import { getServerInfo } from './getServerInfo'
 
 test('will try to search for server', async () => {
   const fetch = (() => {
