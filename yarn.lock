@@ -13357,6 +13357,13 @@ type-plus@^1.31.2, type-plus@^1.31.3:
   dependencies:
     unpartial "^0.6.3"
 
+type-plus@^1.32.0:
+  version "1.32.0"
+  resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.32.0.tgz#62d476726e37cf6d8480fe52ecf66cfa17b4198b"
+  integrity sha512-GM8ksUETCoC89EBv6kQji8ZTLRzPmqhrVujPKMgtQuTpxR+/yyD2CZyOkJqjqO1zAyWIr0CC4K/9yqSRdWtS1g==
+  dependencies:
+    unpartial "^0.6.3"
+
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/typedarray-to-buffer/-/typedarray-to-buffer-3.1.5.tgz#a97ee7a9ff42691b9f783ff1bc5112fe3fca9080"
