@@ -10,9 +10,6 @@ workflows:
       - node10:
           requires:
             - node-latest
-      - node8:
-          requires:
-            - node-latest
       # - release:
       #     filters:
       #       branches:
@@ -77,18 +74,6 @@ jobs:
   node10:
     docker:
       - image: 'circleci/node:10'
-    steps:
-      - checkout
-      # - attach_workspace:
-      #     at: '.'
-      - run: yarn
-      - run: yarn build
-      - run: yarn test:nodejs --coverage --maxWorkers=2
-      - store_test_results:
-          path: .reports/junit
-  node8:
-    docker:
-      - image: 'circleci/node:8'
     steps:
       - checkout
       # - attach_workspace:
