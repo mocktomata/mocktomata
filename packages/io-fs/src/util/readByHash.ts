@@ -7,7 +7,6 @@ export function readByHash(baseDir: string, id: string, hash: string, dupId = 0)
   const content = fs.readFileSync(filePath, 'utf-8')
   const [firstLine, specStr] = content.split('\n', 2)
   if (firstLine !== id) {
-    console.info('id vs firstline', id, firstLine);
     return readByHash(baseDir, id, hash, dupId + 1)
   }
   return specStr
