@@ -1,7 +1,9 @@
 import { FileRepository } from '@mocktomata/io-fs'
 import t from 'assert'
 import a from 'assertron'
+import fs from 'fs'
 import fetch from 'node-fetch'
+import path from 'path'
 import { dirSync } from 'tmp'
 import { PromiseValue } from 'type-plus'
 import { start } from '.'
@@ -18,6 +20,7 @@ describe('server behavior', () => {
   let server: PromiseValue<ReturnType<typeof start>>
   beforeAll(async () => {
     const cwd = dirSync().name
+    fs.writeFileSync(path.join(cwd, 'package.json'), JSON.stringify({ mocktomata: { overrideMode: 'live', fileFilter: 'file', specNameFilter: 'spec' } }))
     const repository = new FileRepository({ cwd })
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
     server = await start({ cwd })
@@ -43,7 +46,11 @@ describe('server behavior', () => {
       plugins: []
     }))
   })
-
+  test('get config', async () => {
+    const response = await fetch(buildUrl('config'))
+    const actual = await response.json()
+    expect(actual).toEqual({ overrideMode: 'live', fileFilter: 'file', specNameFilter: 'spec' })
+  })
   test('read not exist spec gets 404', async () => {
     const response = await fetch(buildUrl(`specs/${buildId('not exist')}`))
 

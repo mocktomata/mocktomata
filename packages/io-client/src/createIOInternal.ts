@@ -21,10 +21,6 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
     async loadPlugin(name: string): Promise<SpecPlugin.Module> {
       return import(name)
     },
-    // async loadConfig() {
-    //   const response = await fetch(createConfigURL(info.url))
-    //   return response.text()
-    // },
     async readSpec(specName: string, specRelativePath: string): Promise<SpecRecord> {
       const id = btoa(JSON.stringify({ specName, specRelativePath }))
       const response = await fetch(buildUrl(info.url, `specs/${id}`))
