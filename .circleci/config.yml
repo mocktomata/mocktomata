@@ -43,7 +43,7 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn depcheck
-      - run: yarn coverage --maxWorkers=2
+      - run: yarn test:nodejs --coverage --maxWorkers=2
       # - run: yarn codecov
       - store_test_results:
           path: .reports/junit
@@ -71,7 +71,7 @@ jobs:
       - run: yarn
       # - run: yarn bootstrap
       - run: yarn build
-      - run: yarn coverage --maxWorkers=2
+      - run: yarn test:nodejs --coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
   node10:
@@ -83,7 +83,7 @@ jobs:
       #     at: '.'
       - run: yarn
       - run: yarn build
-      - run: yarn coverage --maxWorkers=2
+      - run: yarn test:nodejs --coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
   node8:
@@ -95,7 +95,7 @@ jobs:
       #     at: '.'
       - run: yarn
       - run: yarn build
-      - run: yarn coverage --maxWorkers=2
+      - run: yarn test:nodejs --coverage --maxWorkers=2
       - store_test_results:
           path: .reports/junit
   release:
