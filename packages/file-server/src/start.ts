@@ -42,15 +42,15 @@ export async function start(options: start.Options = {}) {
 }
 
 type Context = {
-  config: start.Config,
   repo: FileRepository
 }
 
-function infoRoute({ config }: Context, server: Server): ServerRoute {
+function infoRoute({ repo }: Context, server: Server): ServerRoute {
   return {
     method: 'GET',
     path: '/mocktomata/info',
     handler: async (request) => {
+      const config = repo.loadConfig()
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const pjson = require('../package.json')
       return JSON.stringify({
@@ -63,12 +63,13 @@ function infoRoute({ config }: Context, server: Server): ServerRoute {
   }
 }
 
-function configRoute({ config }: Context): ServerRoute {
+function configRoute({ repo }: Context): ServerRoute {
   return {
     method: 'GET',
     path: '/mocktomata/config',
     options: { cors: true },
     handler: async () => {
+      const config = repo.loadConfig()
       return JSON.stringify(config)
     }
   }
