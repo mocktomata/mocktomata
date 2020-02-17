@@ -50,6 +50,7 @@
     "@types/hapi": "^18.0.3",
     "@types/md5": "^2.1.33",
     "@types/mkdirp": "^0.5.2",
+    "@types/node": "^13.7.1",
     "@types/node-fetch": "^2.5.4",
     "@types/rimraf": "^2.0.3",
     "@types/tmp": "^0.1.0",
