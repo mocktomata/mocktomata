@@ -1,10 +1,7 @@
 import a from 'assertron'
+import { EventEmitter } from 'events'
 import { ActionMismatch, ExtraAction, incubator, MissingAction } from '.'
-import {
-  callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy,
-  delayed, Dummy, fetch, postReturn, recursive, simpleCallback,
-  synchronous, WithProperty, WithStaticMethod, WithStaticProp
-} from './test-artifacts'
+import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
 
 beforeAll(() => {
   return incubator.start({ target: 'es2015' })
@@ -19,7 +16,6 @@ describe('mismatch simulation', () => {
       a.throws(() => stub(), ExtraAction)
     })
   })
-
   incubator.sequence('missing action', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = () => { }
@@ -345,6 +341,7 @@ describe('function', () => {
       await spec.done()
     })
   })
+
   function echo(value: any, callback: (v: any) => void) {
     callback(value)
   }
@@ -515,7 +512,6 @@ describe('function', () => {
       await spec.done()
     })
   })
-
   incubator.duo('return out of scope value', (title, spec) => {
     function scopingSpec(expected: number) {
       return spec(() => expected)
@@ -524,6 +520,16 @@ describe('function', () => {
     test(title, async () => {
       await scopingSpec(1).then(subject => expect(subject()).toBe(1))
       await scopingSpec(3).then(subject => expect(subject()).toBe(3))
+      await spec.done()
+    })
+  })
+  incubator.duo('invoke method of input', (title, spec) => {
+    test(title, async () => {
+      expect.assertions(1)
+      const emitter = new EventEmitter()
+      emitter.on('abc', () => expect(true).toBe(true))
+      const s = await spec(({ emitter }: { emitter: EventEmitter }) => emitter.emit('abc'))
+      s({ emitter })
       await spec.done()
     })
   })

@@ -471,7 +471,7 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
 function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
   const { record } = context
 
-  const ref = record.getRef(action.refId)
+  const ref = record.getRef(action.refId)!
   const thisArg = resolveValue({
     ...context,
     state: {
@@ -486,5 +486,6 @@ function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId
       source: { type: 'argument', id: actionId, key }
     }
   }, arg))
-  return ref?.testDouble.apply(thisArg, args)
+  const target = action.site === undefined ? ref.testDouble : ref.testDouble[action.site]
+  return target.apply(thisArg, args)
 }
