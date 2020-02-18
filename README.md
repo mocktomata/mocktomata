@@ -92,7 +92,6 @@ test('get followers of a user', async () => {
 
 - demo: I can record and simulate external systems so that demo can always run without any hipcups.
 
-
 ## Wallaby config
 
 Since `mocktomata` will write files to the file system, if you use wallaby you need configure it as follow so that the changed files will be written correctly:
