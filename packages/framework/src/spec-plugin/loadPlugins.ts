@@ -2,23 +2,25 @@ import { addPluginModule } from './addPluginModule'
 import { PluginNotFound } from './errors'
 import { SpecPlugin } from './types'
 
-export type LoadPluginContext = {
-  io: SpecPlugin.IO
+export namespace loadPlugins {
+  export type Context = {
+    io: SpecPlugin.IO
+  }
 }
 
 /**
  * Load plugins to the system.
  */
-export async function loadPlugins({ io }: LoadPluginContext): Promise<void> {
+export async function loadPlugins({ io }: loadPlugins.Context): Promise<void> {
   const pluginNames = await (await io.getConfig()).plugins
-  return Promise.all(pluginNames.map(name => loadPlugin({ io }, name))).then(() => { })
+  return Promise.all(pluginNames.map(name => loadPlugin(io, name))).then(() => { })
 }
 
-async function loadPlugin(context: LoadPluginContext, moduleName: string) {
-  const pluginModule = await tryLoad(context, moduleName)
+async function loadPlugin(io: SpecPlugin.IO, moduleName: string) {
+  const pluginModule = await tryLoad(io, moduleName)
   addPluginModule(moduleName, pluginModule)
 }
-async function tryLoad({ io }: LoadPluginContext, name: string) {
+async function tryLoad(io: SpecPlugin.IO, name: string) {
   try {
     return await io.loadPlugin(name)
   }
