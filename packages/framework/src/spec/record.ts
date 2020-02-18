@@ -3,10 +3,11 @@ import { notDefined } from '../constants';
 import { ActionMismatch, ExtraReference, PluginsNotLoaded } from './errors';
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin';
 import { SpecRecord } from './types';
+import { SpecRecordLive } from './types-internal';
 
 export function createSpecRecordBuilder(specName: string) {
-  const refs: SpecRecord.Reference[] = []
-  const actions: SpecRecord.Action[] = []
+  const refs: SpecRecordLive.Reference[] = []
+  const actions: SpecRecordLive.Action[] = []
 
   return {
     specName,
@@ -14,11 +15,11 @@ export function createSpecRecordBuilder(specName: string) {
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
-    getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
-    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
+    getRefId: (ref: SpecRecordLive.Reference) => getRefId(refs, ref),
+    addRef: (ref: SpecRecordLive.Reference) => addRef(refs, ref),
     findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
     findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
-    addAction: (action: SpecRecord.Action) => addAction(actions, action),
+    addAction: (action: SpecRecordLive.Action) => addAction(actions, action),
   }
 }
 
@@ -41,19 +42,20 @@ function assertPluginsLoaded(specName: string, refs: SpecRecord.Reference[]) {
 
 type ValidateRecord = {
   refs: Array<ValidateReference>,
-  actions: Array<SpecRecord.Action & {}>,
+  actions: Array<SpecRecordLive.Action & {}>,
 }
 
-export type ValidateReference = SpecRecord.Reference & { claimed?: boolean }
+export type ValidateReference = SpecRecordLive.Reference & { claimed?: boolean }
 
-export function createSpecRecordValidator(specName: string, loaded: ValidateRecord) {
+export function createSpecRecordValidator(specName: string, loaded: SpecRecord) {
   assertPluginsLoaded(specName, loaded.refs)
   const record: ValidateRecord = {
-    refs: loaded.refs.map(r => {
-      r.testDouble = notDefined
-      r.subject = notDefined
-      return r
-    }),
+    refs: loaded.refs.map(r => ({
+      ...r,
+      states: [],
+      testDouble: notDefined,
+      subject: notDefined,
+    })),
     actions: []
   }
   const { refs, actions } = record
@@ -65,7 +67,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id) as ValidateReference | undefined,
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
-    getLoadedRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef(loaded, id) as ValidateReference | undefined,
+    getLoadedRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef(loaded, id),
     getLoadedRefId: (ref: SpecRecord.Reference) => getRefId(loaded.refs, ref),
     addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
     claimNextRef: () => {
@@ -116,7 +118,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     },
 
     getExpectedResultAction: (actionId: SpecRecord.ActionId) => loaded.actions.find(a => (a.type == 'return' || a.type === 'throw') && a.actionId === actionId) as SpecRecord.ResultActions | undefined,
-    addAction: (action: SpecRecord.Action) => {
+    addAction: (action: SpecRecordLive.Action) => {
       return addAction(actions, action)
     },
 
@@ -144,7 +146,7 @@ export function createSpecRecordValidator(specName: string, loaded: ValidateReco
     },
 
     getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(record, id),
-    getNextExpectedAction(): SpecRecord.Action | undefined { return loaded.actions[actions.length] },
+    getNextExpectedAction(): SpecRecordLive.Action | undefined { return loaded.actions[actions.length] },
     getNextActionId() { return actions.length },
   }
 }
@@ -196,7 +198,7 @@ export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 //   return actions.find((a: any) => a.actionId === actionId)
 // }
 
-function getSpecRecord(refs: SpecRecord.Reference[], actions: SpecRecord.Action[]): SpecRecord {
+function getSpecRecord(refs: SpecRecordLive.Reference[], actions: SpecRecordLive.Action[]): SpecRecord {
   return {
     refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta')),
     actions
@@ -208,12 +210,12 @@ function getRef(record: SpecRecord, id: SpecRecord.ReferenceId | SpecRecord.Acti
   return record.refs[Number(refId)]
 }
 
-function resolveRefId({ actions }: Pick<SpecRecord, 'actions'>, id: SpecRecord.ActionId): SpecRecord.ReferenceId {
+function resolveRefId({ actions }: Pick<SpecRecordLive, 'actions'>, id: SpecRecord.ActionId): SpecRecord.ReferenceId {
   const action = actions[id]
   return action.type === 'return' || action.type === 'throw' ? getCauseAction({ actions }, id).refId : action.refId
 }
 
-function getCauseAction({ actions }: { actions: SpecRecord.Action[] }, id: SpecRecord.ActionId) {
+function getCauseAction({ actions }: { actions: SpecRecordLive.Action[] }, id: SpecRecord.ActionId) {
   return (actions[id] as SpecRecord.CauseActions)
 }
 
@@ -221,11 +223,11 @@ function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
   return String(refs.push(ref) - 1)
 }
 
-function findRefBySubjectOrTestDouble<R extends SpecRecord.Reference>(refs: R[], value: any): R | undefined {
+function findRefBySubjectOrTestDouble<R extends SpecRecordLive.Reference>(refs: R[], value: any): R | undefined {
   return refs.find(r => r.testDouble === value || r.subject === value)
 }
 
-function findRefIdBySubjectOrTestDouble(refs: SpecRecord.Reference[], value: any) {
+function findRefIdBySubjectOrTestDouble(refs: SpecRecordLive.Reference[], value: any) {
   const i = refs.findIndex(r => r.testDouble === value || r.subject === value)
   if (i !== -1) {
     return String(i)
@@ -233,15 +235,15 @@ function findRefIdBySubjectOrTestDouble(refs: SpecRecord.Reference[], value: any
   return undefined
 }
 
-function getRefId(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
+function getRefId<R>(refs: R[], ref: R) {
   return String(refs.indexOf(ref))
 }
 
-function addAction(actions: SpecRecord.Action[], action: SpecRecord.Action) {
+function addAction(actions: SpecRecordLive.Action[], action: SpecRecordLive.Action) {
   return actions.push(action) - 1
 }
 
-export function assertActionType<T extends SpecRecord.Action>(specId: string, type: SpecRecord.Action['type'], action: SpecRecord.Action | undefined): asserts action is T {
+export function assertActionType<T extends SpecRecordLive.Action>(specId: string, type: SpecRecordLive.Action['type'], action: SpecRecordLive.Action | undefined): asserts action is T {
   if (!action || action.type !== type) {
     throw new ActionMismatch(specId, { type } as any, action)
   }

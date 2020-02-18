@@ -75,30 +75,30 @@ export namespace SpecRecord {
      */
     meta?: Meta,
 
-    source?: ReferenceSource
+    source?: ReferenceSource,
   }
   export type ReferenceId = string
 
   export type ReferenceSource = PropertySource | ThisSource | ArgumentSource | ResultSource
   export type ArgumentSource = {
     type: 'argument',
-    id: SpecRecord.ActionId,
+    id: ActionId,
     key: number,
   }
   export type PropertySource = {
     type: 'property',
-    id: SpecRecord.ActionId,
+    id: ActionId,
     key: SupportedKeyTypes,
   }
 
   export type ThisSource = {
     type: 'this',
-    id: SpecRecord.ActionId,
+    id: ActionId,
   }
 
   export type ResultSource = {
     type: 'result',
-    id: SpecRecord.ActionId,
+    id: ActionId,
   }
 
   /**

@@ -7,7 +7,7 @@ import { logAction, logCreateSpy, logRecordingTimeout } from './logs'
 import { createSpecRecordBuilder } from './record'
 import { getDefaultPerformer } from './subjectProfile'
 import { Spec, SpecRecord } from './types'
-import { Recorder } from './types-internal'
+import { Recorder, SpecRecordLive } from './types-internal'
 
 export function createRecorder(specName: string, options: Spec.Options) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
@@ -41,11 +41,13 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   // instantiate argument: { actionId: instantiateId, site: [argIndex] }
   // getSpyId from array: no source
   const source = context.state?.source
-  const ref: SpecRecord.Reference = { plugin: plugin.name, profile, subject, testDouble: notDefined, source }
+  const ref: SpecRecordLive.Reference = { plugin: plugin.name, profile, states: [], subject, testDouble: notDefined, source }
   const refId = context.record.addRef(ref)
-  const state: Recorder.State = { ref, refId, spyOptions: [], source }
+  const state = { ref, refId, spyOptions: [] }
   logCreateSpy(state, profile, subject)
-  ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state: { ...state, source: undefined } }), subject)
+  const newContext = { ...context, state }
+  ref.states.push(state)
+  ref.testDouble = plugin.createSpy(createPluginSpyContext(newContext), subject)
   // TODO: fix circular reference
   return ref.testDouble
 }
@@ -169,27 +171,38 @@ function invoke<V, T, A extends any[]>(
   }
   const actionId = record.addAction(action)
 
-  const spiedThisArg = getSpy({ ...context, state: { ...context.state, source: { type: 'this', id: actionId } } }, thisArg, {
-    // TODO: if performer is overridden, this might change
-    profile: getProfileForInvokeThis(state.ref.profile),
-    source: { type: 'this', id: actionId }
-  })
+  const spiedThisArg = getSpy(
+    { ...context, state: { ...context.state, source: { type: 'this', id: actionId } } },
+    thisArg,
+    {
+      // TODO: if performer is overridden, this might change
+      profile: getProfileForInvokeThis(state.ref.profile),
+      source: { type: 'this', id: actionId }
+    })
   action.thisArg = record.findRefId(spiedThisArg) || thisArg
 
   const spiedArgs = args.map((arg, i) => {
-    const spiedArg = getSpy({ ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } }, arg, {
-      profile: getProfileForInvokeArgument(state.ref.profile),
-      source: { type: 'argument', id: actionId, key: i }
-    })
-    action.payload.push(record.findRefId(spiedArg) || arg)
+    const spiedArg = getSpy(
+      { ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } },
+      arg,
+      {
+        profile: getProfileForInvokeArgument(state.ref.profile),
+        source: { type: 'argument', id: actionId, key: i }
+      })
+    const refId = record.findRefId(spiedArg)
+    action.payload.push(refId || arg)
     return spiedArg
   })
 
   logAction(context.state, actionId, action)
-  return handleResult({ ...context, state: { ...context.state, source: { type: 'result', id: actionId } } }, actionId, action.type, () => handler({
-    thisArg: spiedThisArg,
-    args: spiedArgs as A,
-  }))
+  return handleResult(
+    { ...context, state: { ...context.state, source: { type: 'result', id: actionId } } },
+    actionId,
+    action.type,
+    () => handler({
+      thisArg: spiedThisArg,
+      args: spiedArgs as A,
+    }))
 }
 
 function getProfileForInvokeThis(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {

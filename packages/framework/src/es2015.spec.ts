@@ -173,6 +173,23 @@ describe('object', () => {
       await spec.done()
     })
   })
+
+  incubator.duo('modify output array', (title, spec) => {
+    test.skip(title, async () => {
+      const s = await spec({
+        getArray() { return ['a', 'b'] },
+        updateArray(arr: string[]) {
+          arr[1] = 'c'
+        }
+      })
+
+      const arr = s.getArray()
+      s.updateArray(arr)
+      expect(arr).toEqual(['a', 'c'])
+      spec.enableLog()
+      await spec.done()
+    })
+  })
 })
 
 describe('function', () => {

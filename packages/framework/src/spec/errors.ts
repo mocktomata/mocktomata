@@ -59,7 +59,7 @@ export class ExtraAction extends MocktomataError {
 }
 
 export class MissingAction extends MocktomataError {
-  constructor(public specName: string, public state: Pick<Recorder.State, 'ref' | 'refId' | 'source'>, public actionId: number, public action: SpecRecord.Action) {
+  constructor(public specName: string, public state: prettifyAction.State, public actionId: number, public action: SpecRecord.Action) {
     super(`Recorded data for '${specName}' expecting action:
   ${prettifyAction(state, actionId, action)}`)
   }
