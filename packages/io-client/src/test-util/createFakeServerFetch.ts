@@ -16,7 +16,6 @@ export function createFakeServerFetch() {
         return new f.Response(JSON.stringify({
           url: 'http://localhost:3999',
           version: '1.0',
-          plugins: ['@mocktomata/plugin-fixture-dummy']
         }))
       }
       else if (uri === 'mocktomata/config') {
