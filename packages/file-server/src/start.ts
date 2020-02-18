@@ -45,19 +45,17 @@ type Context = {
   repo: FileRepository
 }
 
-function infoRoute({ repo }: Context, server: Server): ServerRoute {
+function infoRoute(_: Context, server: Server): ServerRoute {
   return {
     method: 'GET',
     path: '/mocktomata/info',
     handler: async (request) => {
-      const config = repo.loadConfig()
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const pjson = require('../package.json')
       return JSON.stringify({
         name: 'mocktomata',
         version: pjson.version,
         url: getReflectiveUrl(request.info, server.info),
-        plugins: config.plugins || []
       })
     }
   }
