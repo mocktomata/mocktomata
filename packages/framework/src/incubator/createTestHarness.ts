@@ -1,16 +1,31 @@
 import { AsyncContext } from 'async-fp'
-import { clearLogReporters, config, logLevel, setLogLevel } from 'standard-log'
+import { clearLogReporters, config, logLevel, LogLevel, setLogLevel } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import { required } from 'type-plus'
 import { es2015 } from '../es2015'
 import { Spec } from '../spec'
 import { loadPlugins } from '../spec-plugin'
+import { SpecPlugin } from '../spec-plugin/types'
+import { SpecRecord } from '../spec/types'
 import { store } from '../store'
-import { createTestIO, TestIO } from './createTestIO'
-import { TestHarness } from './types'
+import { createTestIO } from './createTestIO'
 
-export function createTestHarness(context: AsyncContext<Spec.Context>, options?: TestHarness.Options): TestHarness {
-  const opts = required<Required<TestHarness.Options>>({ target: 'es2015', logLevel: logLevel.info }, options)
+export namespace createTestHarness {
+  export type TestHarness = {
+    addPluginModule(pluginName: string, pluginModule: SpecPlugin.Module): void,
+    enableLog(level?: LogLevel): void,
+    reset(): void,
+    logSpecRecord(title: string): void,
+    getSpecRecord(title: string): SpecRecord,
+    start(): Promise<TestHarness>
+  }
+  export type Options = {
+    target: 'es2015',
+    logLevel?: number,
+  }
+}
+export function createTestHarness(context: AsyncContext<Spec.Context>, options?: createTestHarness.Options): createTestHarness.TestHarness {
+  const opts = required<Required<createTestHarness.Options>>({ target: 'es2015', logLevel: logLevel.info }, options)
   const level = opts.logLevel
 
   config({ mode: 'test', reporters: [createColorLogReporter()], logLevel: level })
@@ -51,7 +66,7 @@ export function createTestHarness(context: AsyncContext<Spec.Context>, options?:
   }
 }
 
-function getSpecEntry(io: TestIO, title: string) {
+function getSpecEntry(io: createTestIO.TestIO, title: string) {
   const colonIndex = title.lastIndexOf(':')
   const specId = colonIndex === -1 ? title : title.slice(0, colonIndex)
   const specs = io.getAllSpecs()

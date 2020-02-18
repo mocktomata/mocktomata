@@ -5,14 +5,13 @@ import { createSaveSpec } from '../spec/createSaveSpec'
 import { createSimulateSpec } from '../spec/createSimulateSpec'
 import { createTestHarness } from './createTestHarness'
 import { ensureDirNotExists, ensureFileNotExists } from './ensures'
-import { TestHarness } from './types'
 
 const context = new AsyncContext<Spec.Context>()
 
 /**
  * Run spec in both save and simulate mode
  */
-const testDuo: Incubator.Fn = (...args: any[]) => {
+const testDuo: incubator.Fn = (...args: any[]) => {
   const { specName, options, handler } = resolveTestSpecFnArgs(args)
   if (options) {
     testSave(specName, options, handler)
@@ -24,24 +23,23 @@ const testDuo: Incubator.Fn = (...args: any[]) => {
   }
 }
 
-const testSave: Incubator.Fn = (...args: any[]) => {
+const testSave: incubator.Fn = (...args: any[]) => {
   const { specName, options, handler } = resolveTestSpecFnArgs(args)
   const title = `${specName}: save`
   handler(title, createTestSpec(createSaveSpec, specName, options))
 }
 
-const testSimulate: Incubator.Fn = (...args: any[]) => {
+const testSimulate: incubator.Fn = (...args: any[]) => {
   const { specName, options, handler } = resolveTestSpecFnArgs(args)
   const title = `${specName}: simulate`
   handler(title, createTestSpec(createSimulateSpec, specName, options))
 }
 
-
 /**
  * Runs save and simulate in different sequence.
  */
-const testSequence: Incubator.Fn<Incubator.SequenceHandler> = (...args: any[]) => {
-  const { specName, options, handler } = resolveTestSpecFnArgs<Incubator.SequenceHandler>(args)
+const testSequence: incubator.Fn<incubator.SequenceHandler> = (...args: any[]) => {
+  const { specName, options, handler } = resolveTestSpecFnArgs<incubator.SequenceHandler>(args)
   handler(specName, {
     save: createTestSpec(createSaveSpec, specName, options),
     simulate: createTestSpec(createSimulateSpec, specName, options)
@@ -77,7 +75,7 @@ function createTestSpec(specFn: typeof createSaveSpec, specName: string, options
   }
 }
 
-export function resolveTestSpecFnArgs<H = Spec.Handler>(args: any[]): { specName: string, options: Spec.Options | undefined, handler: H } {
+function resolveTestSpecFnArgs<H = Spec.Handler>(args: any[]): { specName: string, options: Spec.Options | undefined, handler: H } {
   if (args.length === 3) {
     return { specName: args[0], options: args[1], handler: args[2] }
   }
@@ -86,17 +84,17 @@ export function resolveTestSpecFnArgs<H = Spec.Handler>(args: any[]): { specName
   }
 }
 
-export type Incubator = {
-  save: Incubator.Fn<Spec.Handler>,
-  simulate: Incubator.Fn<Spec.Handler>,
-  duo: Incubator.Fn<Spec.Handler>,
-  sequence: Incubator.Fn<Incubator.SequenceHandler>,
-  start: (options?: TestHarness.Options | undefined) => Promise<TestHarness>,
+export type incubator = {
+  save: incubator.Fn<Spec.Handler>,
+  simulate: incubator.Fn<Spec.Handler>,
+  duo: incubator.Fn<Spec.Handler>,
+  sequence: incubator.Fn<incubator.SequenceHandler>,
+  start: (options?: createTestHarness.Options | undefined) => Promise<createTestHarness.TestHarness>,
   ensureDirNotExists: (dirpath: string) => void,
   ensureFileNotExists: (filepath: string) => void,
 }
 
-export namespace Incubator {
+export namespace incubator {
   export type Fn<H = Spec.Handler> = {
     (specName: string, handler: H): void,
     (specName: string, options: Spec.Options, handler: H): void,
@@ -109,10 +107,9 @@ export const incubator = {
   simulate: testSimulate,
   duo: testDuo,
   sequence: testSequence,
-  start: (options?: TestHarness.Options) => {
+  start: (options?: createTestHarness.Options) => {
     return createTestHarness(context, options).start()
   },
   ensureDirNotExists,
   ensureFileNotExists
-} as Incubator
-
+} as incubator
