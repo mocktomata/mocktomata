@@ -50,7 +50,7 @@ export namespace SpecPlugin {
   }
 
   export type IO = {
-    getPluginList(): Promise<string[]>,
+    getConfig(): Promise<Config>,
     loadPlugin(name: string): Promise<Module>,
   }
 

@@ -1,22 +1,18 @@
 import { Mocktomata, SpecNotFound, SpecPlugin, SpecRecord } from '@mocktomata/framework'
-import { pick } from 'type-plus'
+import { pick, required } from 'type-plus'
 import { buildUrl } from './buildUrl'
-import { getServerInfo, ServerInfo } from './getServerInfo'
+import { getServerInfo } from './getServerInfo'
 import { CreateIOOptions } from './types'
 import { Context } from './typesInternal'
 
 export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<Mocktomata.IO> {
   const info = await getServerInfo({ fetch, location }, options)
   return {
-    async getSpecConfig() {
-      const response = await fetch(buildUrl(info.url, `config`))
+    async getConfig() {
+      const url = buildUrl(info.url, `config`)
+      const response = await fetch(url)
       const config = await response.json() as Mocktomata.Config
-      return pick(config, 'overrideMode', 'filePathFilter', 'specNameFilter')
-    },
-    async getPluginList() {
-      const response = await fetch(buildUrl(info.url, `info`))
-      const si = await response.json() as ServerInfo
-      return si.plugins
+      return required({ plugins: [] }, pick(config, 'overrideMode', 'filePathFilter', 'specNameFilter', 'ecmaVersion', 'plugins'))
     },
     async loadPlugin(name: string): Promise<SpecPlugin.Module> {
       return import(name)

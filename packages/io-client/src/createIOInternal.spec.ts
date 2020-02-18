@@ -1,7 +1,7 @@
-import { SpecNotFound, SpecRecord } from '@mocktomata/framework';
-import a from 'assertron';
-import { createIOInternal } from './createIOInternal';
-import { createFakeServerFetch } from './test-util';
+import { SpecNotFound, SpecRecord } from '@mocktomata/framework'
+import a from 'assertron'
+import { createIOInternal } from './createIOInternal'
+import { createFakeServerFetch } from './test-util'
 
 test('read not exist spec throws SpecNotFound', async () => {
   const fetch = createFakeServerFetch()
@@ -30,12 +30,12 @@ test('write spec', async () => {
   expect(spec).toEqual(record)
 })
 
-describe('getPluginList()', () => {
+describe('getConfig()', () => {
   test('returns installed plugin', async () => {
     const fetch = createFakeServerFetch()
     const io = await createIOInternal({ fetch, location })
 
-    const list = await io.getPluginList()
+    const list = await (await io.getConfig()).plugins
     expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
   })
 })

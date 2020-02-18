@@ -19,6 +19,11 @@ export function createFakeServerFetch() {
           plugins: ['@mocktomata/plugin-fixture-dummy']
         }))
       }
+      else if (uri === 'mocktomata/config') {
+        return new f.Response(JSON.stringify({
+          plugins: ['@mocktomata/plugin-fixture-dummy']
+        }))
+      }
       else if (uri.startsWith('mocktomata/specs/')) {
         const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
         const { specName } = JSON.parse(atob(id))

@@ -15,8 +15,8 @@ export function createTestIO(): TestIO {
     getAllSpecs() {
       return specStore.entries()
     },
-    async getSpecConfig() {
-      return {}
+    async getConfig() {
+      return { plugins: Object.keys(plugins) } as any
     },
     readSpec(title) {
       const record = specStore.get(title)
@@ -35,9 +35,6 @@ export function createTestIO(): TestIO {
           plugins.forEach(p => c.register(p))
         }
       })
-    },
-    getPluginList() {
-      return Promise.resolve(Object.keys(plugins))
     },
     loadPlugin(name) {
       const m = plugins[name]

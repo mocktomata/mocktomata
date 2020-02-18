@@ -9,8 +9,13 @@ test('get spec config', async () => {
   const cwd = fixturePath('simple')
   const io = createIO({ cwd })
 
-  const config = await io.getSpecConfig()
-  expect(config).toEqual({ overrideMode: 'live', filePathFilter: 'file', specNameFilter: 'spec' })
+  const config = await io.getConfig()
+  expect(config).toEqual({
+    overrideMode: 'live',
+    filePathFilter: 'file',
+    specNameFilter: 'spec',
+    plugins: ['@mocktomata/plugin-fixture-dummy']
+  })
 })
 
 test('read not exist spec throws SpecNotFound', async () => {
@@ -40,12 +45,12 @@ test('write spec', async () => {
   expect(spec).toEqual({ refs: [], actions: [] })
 })
 
-describe('getPluginList()', () => {
+describe('getConfig()', () => {
   test('returns installed plugin', async () => {
     const cwd = fixturePath('simple')
     const io = createIO({ cwd })
 
-    const list = await io.getPluginList()
+    const list = await (await io.getConfig()).plugins
     expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
   })
 })

@@ -15,11 +15,8 @@ export function createIO(options?: createIO.Options): Mocktomata.IO {
   const config = repo.loadConfig() as Mocktomata.Config
 
   return {
-    async getSpecConfig() {
-      return pick(config, 'filePathFilter', 'overrideMode', 'specNameFilter')
-    },
-    async getPluginList() {
-      return config.plugins || []
+    async getConfig() {
+      return required({ plugins: [] }, pick(config, 'ecmaVersion', 'filePathFilter', 'overrideMode', 'specNameFilter', 'plugins'))
     },
     async loadPlugin(id: string) {
       return repo.loadPlugin(id)
