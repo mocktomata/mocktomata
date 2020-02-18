@@ -14,6 +14,7 @@ export function createTestIO(): createTestIO.TestIO {
   const specStore = new Map<string, string>()
   const plugins: Record<string, SpecPlugin.Module> = {}
   return {
+    // istanbul ignore next
     getAllSpecs() {
       return specStore.entries()
     },
@@ -31,6 +32,7 @@ export function createTestIO(): createTestIO.TestIO {
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       plugins[moduleName] = pluginModule
     },
+    // istanbul ignore next
     addPlugin(moduleName: string, ...plugins: SpecPlugin[]) {
       this.addPluginModule(moduleName, {
         activate(c) {
