@@ -52,7 +52,7 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
   const record: ValidateRecord = {
     refs: loaded.refs.map(r => ({
       ...r,
-      states: [],
+      overrideProfiles: [],
       testDouble: notDefined,
       subject: notDefined,
     })),

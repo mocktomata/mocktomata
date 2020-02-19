@@ -25,7 +25,7 @@ export type SpecRecordLive = {
 
 export namespace SpecRecordLive {
   export type Reference = SpecRecord.Reference & {
-    states: State[],
+    overrideProfiles: SpecRecord.SubjectProfile[],
   }
   export type Action = SpecRecord.Action
 
