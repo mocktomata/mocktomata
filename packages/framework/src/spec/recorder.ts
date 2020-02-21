@@ -2,6 +2,7 @@ import { PartialPick, required } from 'type-plus'
 import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
+import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils'
 import { createTimeTracker } from './createTimeTracker'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs'
 import { createSpecRecordBuilder } from './record'
@@ -132,7 +133,7 @@ function setProperty<V, R>(
 
   return handleResult(context, actionId, action.type, () => {
     const spiedValue = getSpy(
-      { ...context, state: { ...context.state, source: { type: 'property', id: actionId, key } } },
+      getPropertyContext(context, actionId, key),
       value,
       { profile: getThisProfile(state.ref.profile), source: { type: 'this', id: actionId } }
     )
@@ -162,17 +163,17 @@ function invoke<V, T, A extends any[]>(
 
   return handleResult(context, actionId, action.type, () => {
     const spiedThisArg = getSpy(
-      { ...context, state: { ...context.state, source: { type: 'this', id: actionId } } },
+      getThisContext(context, actionId),
       thisArg,
       { profile: getThisProfile(state.ref.profile), source: { type: 'this', id: actionId } }
     )
     action.thisArg = record.findRefId(spiedThisArg) ?? thisArg
 
-    const spiedArgs = args.map((arg, i) => {
+    const spiedArgs = args.map((arg, key) => {
       const spiedArg = getSpy(
-        { ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } },
+        getArgumentContext(context, actionId, key),
         arg,
-        { profile: getArgumentProfile(state.ref.profile), source: { type: 'argument', id: actionId, key: i } }
+        { profile: getArgumentProfile(state.ref.profile), source: { type: 'argument', id: actionId, key: key } }
       )
       action.payload.push(record.findRefId(spiedArg) ?? arg)
       return spiedArg
@@ -203,11 +204,11 @@ function instantiate<V, A extends any[]>(
   const actionId = record.addAction(action)
 
   return handleResult(context, actionId, action.type, () => {
-    const spiedArgs = args.map((arg, i) => {
+    const spiedArgs = args.map((arg, key) => {
       const spiedArg = getSpy(
-        { ...context, state: { ...context.state, source: { type: 'argument', id: actionId, key: i } } },
+        getArgumentContext(context, actionId, key),
         arg,
-        { profile: getArgumentProfile(state.ref.profile), source: { type: 'argument', id: actionId, key: i } }
+        { profile: getArgumentProfile(state.ref.profile), source: { type: 'argument', id: actionId, key: key } }
       )
       action.payload.push(record.findRefId(spiedArg) || arg)
       return spiedArg
@@ -240,17 +241,18 @@ function addResultAction(
   type: 'return' | 'throw',
   subject: any
 ) {
-  const { record, state, timeTracker } = context
+  const { record, timeTracker } = context
   const action = { type, actionId, tick: timeTracker.elaspe(), payload: notDefined }
   const id = record.addAction(action)
+  const resultContext = getResultContext(context, actionId)
   const spy = getSpy(
-    { ...context, state: { ...context.state, source: { type: 'result', id: actionId } } },
+    resultContext,
     subject,
-    { profile: getResultProfile(state.ref.profile, actionType), source: { type: 'result', id } }
+    { profile: getResultProfile(context.state.ref.profile, actionType), source: { type: 'result', id } }
   )
   const refId = record.findRefId(spy)
   action.payload = refId !== undefined ? refId : subject
-  logAction(state, id, action)
+  logAction(resultContext.state, id, action)
   return spy
 }
 

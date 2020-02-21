@@ -5,7 +5,7 @@ Each way has its own application thus what can be configured varies.
 Also, since `mocktomata` can run in different environments,
 the configuration may be used differently and applied in certain way.
 
-### Configuration File
+## Configuration File
 
 `mocktomata` will look for `.mocktomata.js`, `.mocktomata.json`, and the `mocktomata` section inside `package.json`.
 
@@ -50,7 +50,7 @@ here is what can be configured and their default values:
 }
 ```
 
-### Environment Variables
+## Environment Variables
 
 Specific configuration can be overridden using environment variables.
 This allow different CI job to run `mocktomata` with different configuration.
@@ -60,7 +60,7 @@ but will be expended as needed.
 
 - `MOCKTOMATA_SPEC_MODE`: instruct `mockto(...)` to run in specific mode.
 
-### Using `config()`
+## Using `config()`
 
 Configuration can also be overridden in runtime using the `config` object.
 This is useful when the configuration is stored in different means (e.g. database or remote service),

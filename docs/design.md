@@ -4,17 +4,32 @@
 
 Subject profile descibes the behavior of the subject.
 
-`target` is the spec target, including its derivatives.
+profile: `target` is the spec target, including its derivatives.
 
-- source: input
-- type: stub
+- source: `input`
+- type: `stub`
 - actions
   - get: `user`
     - result: `target`
+    <!-- - in-between-actions: `user`? -->
   - invoke: `user`
     - thisArg: `input`
     - arguments: `input`
     - result: `output`
+    <!-- - in-between-actions:
+      - profile: `target`
+        - source: `input`
+        - type: `stub`
+        - actions
+          - get: ignored
+            - if the result is not used as the result of invocation, the get essentially does nothing
+            - if the result is used as the result of invocation:
+              - if it is new value, it will be `output` as dictated by `invoke` rule
+              - if it is `input`, performer can be `mockto` (original), and `user` (as it is returned to user)
+              - if it is `output`, nothing changes, as if it comes in as `invoke param` or `set value`, it already add `mockto` as performer.
+            - result: `tbd`
+              - if invoke returns this, it will be `output`
+              - if invoke does not return this, -->
   - instantiate: `user`
     - arguments: `input`
     - result: `output`

@@ -174,6 +174,7 @@ describe('object', () => {
     })
   })
 
+  // this will not work until v8
   incubator.duo('modify output array', (title, spec) => {
     test.skip(title, async () => {
       const s = await spec({

@@ -2,6 +2,7 @@ import { PartialPick } from 'type-plus'
 import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
+import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils'
 import { actionMatches } from './actionMatches'
 import { createTimeTracker, TimeTracker } from './createTimeTracker'
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin } from './errors'
@@ -122,25 +123,20 @@ function getProperty(
   }
 
   const actionId = record.addAction(action)
-  const newState: Recorder.State = { ...state, source: { type: 'property', id: actionId, key } }
-
-  logAction(newState, actionId, action)
+  logAction(state, actionId, action)
   processNextAction(context)
 
   const resultAction = record.getExpectedResultAction(actionId)
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  const result = resolveValue(context, resultAction.payload)
+  const resultContext = getPropertyContext(context, actionId, key)
 
-  if (resultAction.type === 'return') {
-    logAction(newState, resultActionId, resultAction)
-    return result
-  }
-  else {
-    logAction(newState, resultActionId, resultAction)
-    throw result
-  }
+  const result = resolveValue(resultContext, resultAction.payload)
+
+  logAction(resultContext.state, resultActionId, resultAction)
+  if (resultAction.type === 'return') return result
+  throw result
 }
 
 function setProperty<V = any>(
@@ -170,26 +166,20 @@ function setProperty<V = any>(
   }
 
   const actionId = record.addAction(action)
-  const newState: Recorder.State = { ...state, source: { type: 'property', id: actionId, key } }
-
   action.value = record.findRefId(resolveValue(context, value)) || value
 
-  logAction(newState, actionId, action)
+  logAction(context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  const result = resolveValue(context, resultAction.payload)
+  const resultContext = getPropertyContext(context, actionId, key)
+  const result = resolveValue(resultContext, resultAction.payload)
 
-  if (resultAction.type === 'return') {
-    logAction(newState, resultActionId, resultAction)
-    return result
-  }
-  else {
-    logAction(newState, resultActionId, resultAction)
-    throw result
-  }
+  logAction(resultContext.state, resultActionId, resultAction)
+  if (resultAction.type === 'return') return result
+  throw result
 }
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const { record } = context
@@ -248,21 +238,15 @@ function invoke(context: Simulator.Context,
   }
 
   if (thisArgRef.testDouble === notDefined) {
-    buildTestDouble({
-      ...context,
-      state: { ...context.state, source: { type: 'this', id: actionId } }
-    }, thisArgRef)
+    buildTestDouble(getThisContext(context, actionId), thisArgRef)
   }
   action.thisArg = record.getRefId(thisArgRef)
 
-  args.forEach((arg, i) => {
+  args.forEach((arg, key) => {
     const ref = record.findRef(arg)
     if (ref) {
       if (ref.testDouble === notDefined) {
-        buildTestDouble({
-          ...context,
-          state: { ...context.state, source: { type: 'argument', id: actionId, key: i } }
-        }, ref)
+        buildTestDouble(getArgumentContext(context, actionId, key), ref)
       }
       action.payload.push(record.getRefId(ref))
     }
@@ -285,22 +269,14 @@ function invoke(context: Simulator.Context,
   if (!resultAction) return undefined
 
   const resultActionId = record.addAction(resultAction)
-  const resultContext: Simulator.Context = {
-    ...context,
-    state: { ...context.state, source: { type: 'result', id: actionId } }
-  }
+  const resultContext = getResultContext(context, actionId)
   const result = resolveValue(resultContext, resultAction.payload)
 
   setImmediate(() => processNextAction(context))
 
-  if (resultAction.type === 'return') {
-    logAction(resultContext.state, resultActionId, resultAction)
-    return result
-  }
-  else {
-    logAction(resultContext.state, resultActionId, resultAction)
-    throw result
-  }
+  logAction(resultContext.state, resultActionId, resultAction)
+  if (resultAction.type === 'return') return result
+  throw result
 }
 
 function instantiate(
@@ -323,14 +299,11 @@ function instantiate(
 
   const actionId = record.addAction(action)
 
-  const spiedArgs = args.map((arg, i) => {
+  const spiedArgs = args.map((arg, key) => {
     const ref = record.findRef(arg)
     if (ref) {
       if (ref.testDouble === notDefined) {
-        buildTestDouble({
-          ...context,
-          state: { ...context.state, source: { type: 'argument', id: actionId, key: i } }
-        }, ref)
+        buildTestDouble(getArgumentContext(context, actionId, key), ref)
       }
       action.payload.push(record.getRefId(ref))
     }
@@ -354,27 +327,13 @@ function instantiate(
   if (!resultAction) new Error('missing result action')
 
   const resultActionId = record.addAction(resultAction)
-  const resultContext: Simulator.Context = {
-    ...context,
-    state: {
-      ...context.state,
-
-      source: { type: 'result', id: actionId }
-    }
-  }
-
+  const resultContext = getResultContext(context, actionId)
   const result = resolveValue(resultContext, resultAction.payload, () => handler({ args: spiedArgs }))
-
   setImmediate(() => processNextAction(context))
 
-  if (resultAction.type === 'return') {
-    logAction(resultContext.state, resultActionId, resultAction)
-    return result
-  }
-  else {
-    logAction(resultContext.state, resultActionId, resultAction)
-    throw result
-  }
+  logAction(resultContext.state, resultActionId, resultAction)
+  if (resultAction.type === 'return') return result
+  throw result
 }
 
 function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.PluginAction) {
@@ -450,7 +409,8 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
   const valueRef = typeof value === 'string' ? record.getRef(value) : undefined
   if (valueRef) {
     if (valueRef.testDouble === notDefined) {
-      const newContext = {
+      if (handler) valueRef.subject = handler()
+      buildTestDouble({
         ...context,
         state: {
           ...context.state,
@@ -458,9 +418,7 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
           refId: record.getRefId(valueRef),
           source: undefined
         }
-      }
-      if (handler) valueRef.subject = handler()
-      buildTestDouble(newContext, valueRef)
+      }, valueRef)
     }
     return valueRef.testDouble
   }
@@ -472,20 +430,8 @@ function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId
   const { record } = context
 
   const ref = record.getRef(action.refId)!
-  const thisArg = resolveValue({
-    ...context,
-    state: {
-      ...context.state,
-      source: { type: 'this', id: actionId }
-    }
-  }, action.thisArg)
-  const args = action.payload.map((arg, key) => resolveValue({
-    ...context,
-    state: {
-      ...context.state,
-      source: { type: 'argument', id: actionId, key }
-    }
-  }, arg))
+  const thisArg = resolveValue(getThisContext(context, actionId), action.thisArg)
+  const args = action.payload.map((arg, key) => resolveValue(getArgumentContext(context, actionId, key), arg))
   const target = action.site === undefined ? ref.testDouble : ref.testDouble[action.site]
   return target.apply(thisArg, args)
 }
