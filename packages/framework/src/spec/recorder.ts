@@ -1,4 +1,4 @@
-import { PartialPick, required } from 'type-plus'
+import { PartialPick } from 'type-plus'
 import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
@@ -64,7 +64,7 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
   }
 }
 
-export function getSpy<S>(context: Recorder.Context, subject: S, options: { source?: SpecRecord.ReferenceSource, profile?: SpecRecord.SubjectProfile }): S {
+export function getSpy<S>(context: Recorder.Context, subject: S, options: { profile?: SpecRecord.SubjectProfile }): S {
   const { record, state } = context
 
   const sourceRef = state.ref
@@ -79,7 +79,7 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: { sour
     return ref.testDouble
   }
 
-  return createSpy({ ...context, state: required(state, { source: options.source ?? state.source }) }, subject, { profile }) || subject
+  return createSpy(context, subject, { profile }) || subject
 }
 
 function getSpyId<V>(context: Recorder.Context, value: V) {
@@ -132,11 +132,7 @@ function setProperty<V, R>(
   const actionId = record.addAction(action)
 
   return handleResult(context, actionId, action.type, () => {
-    const spiedValue = getSpy(
-      getPropertyContext(context, actionId, key),
-      value,
-      { profile: getThisProfile(state.ref.profile), source: { type: 'this', id: actionId } }
-    )
+    const spiedValue = getSpy(getPropertyContext(context, actionId, key), value, { profile: getPropertyProfile(state.ref.profile) })
     action.value = record.findRefId(spiedValue) || value
     logAction(context.state, actionId, action)
     const result = handler(spiedValue)
@@ -162,19 +158,11 @@ function invoke<V, T, A extends any[]>(
   const actionId = record.addAction(action)
 
   return handleResult(context, actionId, action.type, () => {
-    const spiedThisArg = getSpy(
-      getThisContext(context, actionId),
-      thisArg,
-      { profile: getThisProfile(state.ref.profile), source: { type: 'this', id: actionId } }
-    )
+    const spiedThisArg = getSpy(getThisContext(context, actionId), thisArg, { profile: getThisProfile(state.ref.profile) })
     action.thisArg = record.findRefId(spiedThisArg) ?? thisArg
 
     const spiedArgs = args.map((arg, key) => {
-      const spiedArg = getSpy(
-        getArgumentContext(context, actionId, key),
-        arg,
-        { profile: getArgumentProfile(state.ref.profile), source: { type: 'argument', id: actionId, key: key } }
-      )
+      const spiedArg = getSpy(getArgumentContext(context, actionId, key), arg, { profile: getArgumentProfile(state.ref.profile) })
       action.payload.push(record.findRefId(spiedArg) ?? arg)
       return spiedArg
     })
@@ -205,11 +193,7 @@ function instantiate<V, A extends any[]>(
 
   return handleResult(context, actionId, action.type, () => {
     const spiedArgs = args.map((arg, key) => {
-      const spiedArg = getSpy(
-        getArgumentContext(context, actionId, key),
-        arg,
-        { profile: getArgumentProfile(state.ref.profile), source: { type: 'argument', id: actionId, key: key } }
-      )
+      const spiedArg = getSpy(getArgumentContext(context, actionId, key), arg, { profile: getArgumentProfile(state.ref.profile) })
       action.payload.push(record.findRefId(spiedArg) || arg)
       return spiedArg
     }) as A
@@ -245,26 +229,25 @@ function addResultAction(
   const action = { type, actionId, tick: timeTracker.elaspe(), payload: notDefined }
   const id = record.addAction(action)
   const resultContext = getResultContext(context, actionId)
-  const spy = getSpy(
-    resultContext,
-    subject,
-    { profile: getResultProfile(context.state.ref.profile, actionType), source: { type: 'result', id } }
-  )
+  const spy = getSpy(resultContext, subject, { profile: getResultProfile(context.state.ref.profile, actionType) })
   const refId = record.findRefId(spy)
   action.payload = refId !== undefined ? refId : subject
   logAction(resultContext.state, id, action)
   return spy
 }
 
-function getThisProfile(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {
-  switch (parentProfile) {
-    case 'target': return 'input'
-    case 'input': return 'output'
-    case 'output': return 'input'
-  }
+function getPropertyProfile(parentProfile: SpecRecord.SubjectProfile) {
+  return getSubjectProfile(parentProfile)
+}
+function getThisProfile(parentProfile: SpecRecord.SubjectProfile) {
+  return getSubjectProfile(parentProfile)
 }
 
-function getArgumentProfile(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {
+function getArgumentProfile(parentProfile: SpecRecord.SubjectProfile) {
+  return getSubjectProfile(parentProfile)
+}
+
+function getSubjectProfile(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {
   switch (parentProfile) {
     case 'target': return 'input'
     case 'input': return 'output'
