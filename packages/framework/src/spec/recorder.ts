@@ -46,8 +46,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   const refId = context.record.addRef(ref)
   const state = { ref, refId, spyOptions: [] }
   logCreateSpy(state, profile, subject)
-  const newContext = { ...context, state }
-  ref.testDouble = plugin.createSpy(createPluginSpyContext(newContext), subject)
+  ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
   // TODO: fix circular reference
   return ref.testDouble
 }
