@@ -1,5 +1,5 @@
-import fs from 'fs';
-import rimraf from 'rimraf';
+import fs from 'fs'
+import rimraf from 'rimraf'
 
 export function ensureFileNotExists(filepath: string) {
   if (fs.existsSync(filepath)) {

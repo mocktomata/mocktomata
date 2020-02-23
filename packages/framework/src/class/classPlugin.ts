@@ -1,5 +1,5 @@
 import { SpecPlugin } from '../spec-plugin'
-import { demetarize, metarize } from '../utils';
+import { demetarize, metarize } from '../utils-internal';
 import { isClass } from './isClass';
 
 export const classPlugin: SpecPlugin<new (...args: any[]) => void> = {

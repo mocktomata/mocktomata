@@ -1,5 +1,5 @@
 import { SpecPlugin } from '../spec-plugin'
-import { hasProperty, hasPropertyInPrototype, metarize, demetarize } from '../utils';
+import { hasProperty, hasPropertyInPrototype, metarize, demetarize } from '../utils-internal';
 
 export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
   name: 'function',
