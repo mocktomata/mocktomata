@@ -3164,12 +3164,13 @@ async-each@^1.0.1:
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.3.tgz#b727dbf87d7651602f06f4d4ac387f47d91b0cbf"
   integrity sha512-z/WhQ5FPySLdvREByI2vZiTWwCnF0moMJ1hK9YQwDTHKh6I7/uSckMetoRGb5UBZPC1z0jlw+n/XCgjeH7y1AQ==
 
-async-fp@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-4.0.0.tgz#336ca3080f931029aeb0b7c8c0562989397a6236"
-  integrity sha512-0+bCgGSDsB2u2jGz7jaUrv8HjU+NCs4g4YXY+uCatGjNvKXYgWe8rCCAxSaIgMDpImXFzLxgoRInJaA9uMm5hQ==
+async-fp@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-4.1.0.tgz#285acc28dba8e8946df94f8ff3208823cd57a0e6"
+  integrity sha512-KnbYqNw7Aw+q3j5mz34um8ha/DB098A4rHm+hFSlSiUN1Eqq/zJgG0xMtaqTvFqH2z1stndLsVIGsjdLrFPY4g==
   dependencies:
     iso-error "^3.2.1"
+    type-plus "^1.34.0"
 
 async-limiter@~1.0.0:
   version "1.0.1"
