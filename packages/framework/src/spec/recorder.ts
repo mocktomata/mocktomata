@@ -10,14 +10,14 @@ import { createSpecRecordBuilder } from './record'
 import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
 import { Recorder, SpecRecordLive } from './types-internal'
+import { AsyncContext } from 'async-fp'
 
-export function createRecorder(specName: string, options: Spec.Options) {
+export function createRecorder(context: AsyncContext<Spec.Context>, specName: string, options: Spec.Options) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordBuilder(specName)
-  const context = { record, timeTracker }
 
   return {
-    createSpy: <S>(subject: S) => createSpy(context, subject, { profile: 'target' }),
+    createSpy: <S>(subject: S) => context.get().then(({ plugins }) => createSpy({ plugins, record, timeTracker }, subject, { profile: 'target' })),
     end: () => timeTracker.stop(),
     getSpecRecord: () => record.getSpecRecord()
   }

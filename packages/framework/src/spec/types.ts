@@ -1,5 +1,6 @@
 import { LogLevel } from 'standard-log'
 import { SpecRecord } from '../spec-record/types'
+import { SpecPlugin } from '../spec-plugin'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,
@@ -10,6 +11,7 @@ export type Spec = {
 
 export namespace Spec {
   export type Context = {
+    plugins: SpecPlugin.Instance[],
     io: IO,
     config: Config,
   }

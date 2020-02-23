@@ -1,12 +1,19 @@
 import a from 'assertron'
-import { incubator } from '../incubator'
+import { AsyncContext } from 'async-fp'
+import { es2015 } from '../es2015'
+import { createTestIO } from '../incubator/createTestIO'
+import { store } from '../store'
 import { ExtraReference, PluginsNotLoaded } from './errors'
 import { createSimulator } from './simulator'
-
-beforeAll(() => incubator.start({ target: 'es2015' }))
+import { Spec } from './types'
 
 test('create not expected stub throws', () => {
+  const io = createTestIO()
+  io.addPluginModule(es2015.name, es2015)
+  const context = new AsyncContext<Spec.Context>()
+  context.set({ io, config: {}, plugins: store.value.plugins })
   const sim = createSimulator(
+    context,
     'extra ref',
     { refs: [], actions: [] },
     { timeout: 10 })
@@ -15,7 +22,12 @@ test('create not expected stub throws', () => {
 })
 
 test('simulate without plugin install throws', () => {
+  const io = createTestIO()
+  io.addPluginModule(es2015.name, es2015)
+  const context = new AsyncContext<Spec.Context>()
+  context.set({ io, config: {}, plugins: store.value.plugins })
   a.throws(() => createSimulator(
+    context,
     'no plugin',
     { refs: [{ plugin: 'not-installed', profile: 'target' }], actions: [] },
     { timeout: 10 }), PluginsNotLoaded)

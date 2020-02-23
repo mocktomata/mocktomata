@@ -15,7 +15,7 @@ export async function createSaveSpec(
 ): Promise<Spec> {
   assertSpecName(specName)
 
-  const recorder = createRecorder(specName, options)
+  const recorder = createRecorder(context, specName, options)
   let enabledLog = false
 
   return Object.assign(

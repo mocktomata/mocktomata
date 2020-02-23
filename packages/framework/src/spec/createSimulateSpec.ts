@@ -14,7 +14,7 @@ export async function createSimulateSpec(
   assertSpecName(specName)
   const { io } = await context.get()
   const loaded = await io.readSpec(specName, invokePath)
-  const simulator = createSimulator(specName, loaded, options)
+  const simulator = createSimulator(context, specName, loaded, options)
 
   return Object.assign(
     async <S>(subject: S) => {

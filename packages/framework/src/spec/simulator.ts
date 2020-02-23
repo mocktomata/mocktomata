@@ -14,9 +14,11 @@ import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
 import { Recorder, SpecRecordLive } from './types-internal'
 import { referenceMismatch } from './validations'
+import { AsyncContext } from 'async-fp'
 
 export namespace Simulator {
   export type Context = {
+    plugins: SpecPlugin.Instance[],
     timeTracker: TimeTracker,
     record: SpecRecordValidator,
     state: Recorder.State,
@@ -24,16 +26,17 @@ export namespace Simulator {
   }
 }
 
-export function createSimulator(specName: string, loaded: SpecRecord, options: Spec.Options) {
+export function createSimulator(context: AsyncContext<Spec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordValidator(specName, loaded)
 
   return {
-    createStub: <S>(subject: S) => createStub({
+    createStub: <S>(subject: S) => context.get().then(({ plugins }) => createStub({
+      plugins,
       record,
       timeTracker,
       pendingPluginActions: []
-    }, subject, { profile: 'target' }),
+    }, subject, { profile: 'target' })),
     end: () => {
       timeTracker.stop()
       const action = record.getNextExpectedAction()

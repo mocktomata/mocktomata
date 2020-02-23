@@ -30,14 +30,13 @@ export function createTestHarness(context: AsyncContext<Spec.Context>, options?:
 
   config({ mode: 'test', reporters: [createColorLogReporter()], logLevel: level })
   const io = createTestIO()
-  context.set({ io, config: {} })
+
+  io.addPluginModule(es2015.name, es2015)
+
+  context.set({ io, config: {}, plugins: store.value.plugins })
 
   store.reset()
 
-  switch (opts.target) {
-    case 'es2015':
-      io.addPluginModule(es2015.name, es2015)
-  }
 
   return {
     addPluginModule(pluginName, pluginModule) {

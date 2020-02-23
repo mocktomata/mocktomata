@@ -1,10 +1,11 @@
 import { SpecPlugin } from '../spec-plugin/types'
+import { SpecRecord } from '../spec-record/types'
 import { TimeTracker } from './createTimeTracker'
 import { SpecRecorderBuilder } from './record'
-import { SpecRecord } from '../spec-record/types'
 
 export namespace Recorder {
   export type Context = {
+    plugins: SpecPlugin.Instance[],
     timeTracker: TimeTracker,
     record: SpecRecorderBuilder,
     state: State,
