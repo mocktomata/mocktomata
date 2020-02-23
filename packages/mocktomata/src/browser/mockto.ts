@@ -8,7 +8,7 @@ export const mockto = createMockto(() => {
   addPluginModule(es2015.name, es2015)
   if (store.value.context) return store.value.context
   const context = store.value.context = new AsyncContext<Spec.Context>(
-    () => createIO().then(io => ({ io, config: {} }))
+    () => createIO().then(io => ({ io, config: {}, plugins: [] }))
   )
   return context
 })

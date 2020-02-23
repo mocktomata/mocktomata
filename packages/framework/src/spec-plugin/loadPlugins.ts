@@ -1,6 +1,7 @@
 import { addPluginModule } from './addPluginModule'
 import { PluginNotFound } from './errors'
 import { SpecPlugin } from './types'
+import { store } from '../store'
 
 export namespace loadPlugins {
   export type Context = {
@@ -11,9 +12,9 @@ export namespace loadPlugins {
 /**
  * Load plugins to the system.
  */
-export async function loadPlugins({ io }: loadPlugins.Context): Promise<void> {
+export async function loadPlugins({ io }: loadPlugins.Context): Promise<SpecPlugin.Instance[]> {
   const pluginNames = await (await io.getConfig()).plugins
-  return Promise.all(pluginNames.map(name => loadPlugin(io, name))).then(() => { })
+  return Promise.all(pluginNames.map(name => loadPlugin(io, name))).then(() => store.value.plugins)
 }
 
 async function loadPlugin(io: SpecPlugin.IO, moduleName: string) {

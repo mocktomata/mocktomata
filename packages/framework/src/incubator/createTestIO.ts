@@ -6,7 +6,7 @@ export namespace createTestIO {
   export type TestIO = {
     getAllSpecs(): IterableIterator<[string, string]>,
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,
-    addPlugin(moduleName: string, ...plugins: SpecPlugin[]): void
+    // addPlugin(moduleName: string, ...plugins: SpecPlugin[]): void
   } & Spec.IO & SpecPlugin.IO
 }
 
@@ -32,14 +32,14 @@ export function createTestIO(): createTestIO.TestIO {
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       plugins[moduleName] = pluginModule
     },
-    // istanbul ignore next
-    addPlugin(moduleName: string, ...plugins: SpecPlugin[]) {
-      this.addPluginModule(moduleName, {
-        activate(c) {
-          plugins.forEach(p => c.register(p))
-        }
-      })
-    },
+    // // istanbul ignore next
+    // addPlugin(moduleName: string, ...plugins: SpecPlugin[]) {
+    //   this.addPluginModule(moduleName, {
+    //     activate(c) {
+    //       plugins.forEach(p => c.register(p))
+    //     }
+    //   })
+    // },
     loadPlugin(name) {
       const m = plugins[name]
       if (m) return Promise.resolve(m)

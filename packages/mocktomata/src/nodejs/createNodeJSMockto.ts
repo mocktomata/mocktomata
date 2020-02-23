@@ -10,7 +10,7 @@ export function createNodeJSMockto() {
     const context = store.value.context = new AsyncContext<Mocktomata.Context>()
     const io = createIO()
     addPluginModule(es2015.name, es2015)
-    Promise.all([io.getConfig(), loadPlugins({ io })]).then(([config]) => context.set({ io, config }))
+    Promise.all([io.getConfig(), loadPlugins({ io })]).then(([config, plugins]) => context.set({ io, config, plugins }))
     return context
   })
 }
