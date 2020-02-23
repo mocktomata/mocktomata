@@ -21,7 +21,7 @@ export namespace Mockto {
   }
 }
 
-export function createMockto(initializer: Mockto.Initializer) {
+export function createMockto(initializer: Mockto.Initializer): Mockto {
   return Object.assign(
     createSpecFn(initializer, 'auto'),
     {
