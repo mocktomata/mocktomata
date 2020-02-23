@@ -1,7 +1,7 @@
 import { tersify } from 'tersify'
 import { MocktomataError } from '../errors'
+import { SpecRecord } from '../spec-record/types'
 import { prettifyAction } from './prettifyAction'
-import { SpecRecord } from './types'
 import { Recorder } from './types-internal'
 
 export class SpecIDCannotBeEmpty extends MocktomataError {

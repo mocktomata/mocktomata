@@ -1,4 +1,4 @@
-import { SpecRecord } from './types'
+import { SpecRecord } from '../spec-record/types'
 
 export function referenceMismatch(actual: SpecRecord.Reference, expected: SpecRecord.Reference) {
   return !(actual.plugin === expected.plugin && !sourceMismatch(actual.source, expected.source))

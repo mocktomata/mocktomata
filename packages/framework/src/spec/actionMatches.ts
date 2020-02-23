@@ -1,4 +1,4 @@
-import { SpecRecord } from './types'
+import { SpecRecord } from '../spec-record/types'
 
 export function actionMatches(actual: SpecRecord.Action, expected: SpecRecord.Action | undefined) {
   switch (actual.type) {

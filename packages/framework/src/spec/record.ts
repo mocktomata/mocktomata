@@ -1,9 +1,9 @@
-import { pick, Pick } from 'type-plus';
-import { notDefined } from '../constants';
-import { ActionMismatch, ExtraReference, PluginsNotLoaded } from './errors';
-import { findPlugin, getPlugin } from '../spec-plugin/findPlugin';
-import { SpecRecord } from './types';
-import { SpecRecordLive } from './types-internal';
+import { pick, Pick } from 'type-plus'
+import { notDefined } from '../constants'
+import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
+import { SpecRecord } from '../spec-record/types'
+import { ActionMismatch, ExtraReference, PluginsNotLoaded } from './errors'
+import { SpecRecordLive } from './types-internal'
 
 export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecordLive.Reference[] = []

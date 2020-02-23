@@ -1,6 +1,6 @@
-import { tersify } from 'tersify';
-import { notDefined } from '../constants';
-import { SpecRecord } from './types';
+import { tersify } from 'tersify'
+import { notDefined } from '../constants'
+import { SpecRecord } from '../spec-record/types'
 
 export namespace prettifyAction {
   export type Options = OptionsForGetInvoke | OptionsForReturnThrow

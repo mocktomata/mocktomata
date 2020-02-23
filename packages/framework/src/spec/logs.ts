@@ -1,9 +1,9 @@
-import { logLevels } from 'standard-log';
-import { tersify } from 'tersify';
-import { log } from '../log';
-import { prettifyAction, prettifyId } from './prettifyAction';
-import { SpecRecord } from './types';
-import { Recorder } from './types-internal';
+import { logLevels } from 'standard-log'
+import { tersify } from 'tersify'
+import { log } from '../log'
+import { SpecRecord } from '../spec-record/types'
+import { prettifyAction, prettifyId } from './prettifyAction'
+import { Recorder } from './types-internal'
 
 
 export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subject: any) {

@@ -6,7 +6,7 @@ import { es2015 } from '../es2015'
 import { Spec } from '../spec'
 import { loadPlugins } from '../spec-plugin'
 import { SpecPlugin } from '../spec-plugin/types'
-import { SpecRecord } from '../spec/types'
+import { SpecRecord } from '../spec-record/types'
 import { store } from '../store'
 import { createTestIO } from './createTestIO'
 

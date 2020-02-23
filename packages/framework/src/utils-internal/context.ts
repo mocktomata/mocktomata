@@ -1,4 +1,4 @@
-import { SpecRecord } from '../spec/types'
+import { SpecRecord } from '../spec-record/types'
 import { Recorder } from '../spec/types-internal'
 
 export function getPropertyContext<C extends Recorder.Context>(context: C, sourceId: SpecRecord.ActionId, key: SpecRecord.SupportedKeyTypes): C {
