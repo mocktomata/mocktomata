@@ -3,15 +3,20 @@ import { store } from '../store'
 import { DuplicatePlugin, PluginNotConforming } from './errors'
 import { SpecPlugin } from './types'
 
+// TODO: this might need to be convert to async function so that the module
+// can call register asynchronously
 export function addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
+  const ps: SpecPlugin.Instance[] = []
+
   if (!pluginModule) {
     log.warn(`${moduleName} is not a valid plugin module.`)
-    return
+    return ps
   }
   if (typeof pluginModule.activate !== 'function') {
     log.warn(`${moduleName} does not export an 'activate()' function.`)
-    return
+    return ps
   }
+
 
   pluginModule.activate({
     register(plugin: SpecPlugin) {
@@ -23,8 +28,11 @@ export function addPluginModule(moduleName: string, pluginModule: SpecPlugin.Mod
       }
 
       plugins.unshift({ ...plugin, name: pluginName })
+      ps.unshift({ ...plugin, name: pluginName })
     }
   })
+
+  return ps
 }
 
 function assertPluginConfirming(plugin: any) {
