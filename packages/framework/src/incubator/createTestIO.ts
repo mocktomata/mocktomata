@@ -21,9 +21,9 @@ export function createTestIO(): createTestIO.TestIO {
     async getConfig() {
       return { plugins: Object.keys(plugins) } as any
     },
-    readSpec(title) {
-      const record = specStore.get(title)
-      if (!record) return Promise.reject(new SpecNotFound(title))
+    readSpec(specName, specRelativePath) {
+      const record = specStore.get(specName)
+      if (!record) return Promise.reject(new SpecNotFound(specName, specRelativePath))
       return Promise.resolve(JSON.parse(record))
     },
     async writeSpec(title, _specPath, record) {
@@ -43,7 +43,7 @@ export function createTestIO(): createTestIO.TestIO {
     loadPlugin(name) {
       const m = plugins[name]
       if (m) return Promise.resolve(m)
-      throw new Error('module not found')
+      throw new Error(`module ${name} not found`)
     }
   }
 }

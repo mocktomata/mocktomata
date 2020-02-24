@@ -13,8 +13,8 @@ export class SpecIDCannotBeEmpty extends MocktomataError {
 
 export class SpecNotFound extends MocktomataError {
   // istanbul ignore next
-  constructor(public specName: string, public reason?: Error) {
-    super(`Unable to find the spec record for '${specName}'${reason ? `due to: ${reason}` : ''}`)
+  constructor(public specName: string, public specRelativePath: string,  public reason?: Error) {
+    super(`Unable to find the spec record for ${specRelativePath}: '${specName}'${reason ? `due to: ${reason}` : ''}`)
   }
 }
 

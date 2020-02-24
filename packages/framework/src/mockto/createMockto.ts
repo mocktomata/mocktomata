@@ -4,13 +4,17 @@ import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 import { SpecPlugin, addPluginModule } from '../spec-plugin'
 
 export namespace createMockto {
+  export type Config = Spec.Config & SpecPlugin.Config
+  export type IO = Spec.IO & SpecPlugin.IO
   export type Context = {
-    io: Spec.IO & SpecPlugin.IO,
-    config: Spec.Config & SpecPlugin.Config,
+    config: Config,
+    io: IO,
     getCallerRelativePath(subject: Function): string
   }
-  export type Mockto = {
-    live: SpecFn
+  export type Mockto = SpecFn & {
+    live: SpecFn,
+    save: SpecFn,
+    simulate: SpecFn,
   }
 
   export type SpecFn = {
@@ -23,15 +27,20 @@ export function createMockto(context: AsyncContext<createMockto.Context>): creat
   const ctx = context.merge(async () => {
     const { config, io } = await context.get()
     const plugins = [] as SpecPlugin.Instance[]
-    for (const plugin in config.plugins) {
+    for (const plugin of config.plugins) {
       const m = await io.loadPlugin(plugin)
       plugins.push(...addPluginModule(plugin, m))
     }
     return { plugins }
   })
-  return {
-    live: createSpecFn(ctx, 'live')
-  }
+  return Object.assign(
+    createSpecFn(ctx, 'auto'),
+    {
+      live: createSpecFn(ctx, 'live'),
+      save: createSpecFn(ctx, 'save'),
+      simulate: createSpecFn(ctx, 'simulate'),
+    }
+  )
 }
 
 function createSpecFn(context: AsyncContext<Spec.Context & {
@@ -57,7 +66,7 @@ function createSpecObject(context: AsyncContext<Spec.Context & {
 }>, specName: string, options: Spec.Options) {
 
   async function createActualSpec() {
-    const { specRelativePath, mode } = await context.get()
+    const { mode, specRelativePath } = await context.get()
     return createSpec(context, specName, specRelativePath, mode, options)
   }
 
