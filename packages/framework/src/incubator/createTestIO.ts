@@ -26,7 +26,7 @@ export function createTestIO(): createTestIO.TestIO {
       if (!record) return Promise.reject(new SpecNotFound(specName, specRelativePath))
       return Promise.resolve(JSON.parse(record))
     },
-    async writeSpec(title, _specPath, record) {
+    async writeSpec(title, _specRelativePath, record) {
       specStore.set(title, prettyPrintSpecRecord(record))
     },
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {

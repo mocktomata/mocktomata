@@ -3,7 +3,7 @@ import { Spec } from './types'
 export type TimeTracker = ReturnType<typeof createTimeTracker>
 
 export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, callback: (timeout: number) => void) {
-  let handle: NodeJS.Timeout
+  let handle: number
   let startTick: number
   let endTick: number
   let prevTick: number

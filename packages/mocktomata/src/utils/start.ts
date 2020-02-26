@@ -1,6 +1,7 @@
 import { Spec } from '@mocktomata/framework'
 import { config, ConfigOptions } from 'standard-log'
 
+// to be removed. go back to `config()`
 export type StartOptions = {
   folder: string,
   libs: string[],

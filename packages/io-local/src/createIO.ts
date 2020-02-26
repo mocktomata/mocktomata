@@ -16,7 +16,7 @@ export function createIO(options?: createIO.Options): Mocktomata.IO {
 
   return {
     async getConfig() {
-      return required({ plugins: [] }, pick(config, 'ecmaVersion', 'filePathFilter', 'overrideMode', 'specNameFilter', 'plugins'))
+      return required({ plugins: [] }, pick(config, 'filePathFilter', 'overrideMode', 'specNameFilter', 'plugins'))
     },
     async loadPlugin(id: string) {
       return repo.loadPlugin(id)
@@ -27,7 +27,7 @@ export function createIO(options?: createIO.Options): Mocktomata.IO {
         return JSON.parse(repo.readSpec(title, relative))
       }
       catch (e) {
-        throw new SpecNotFound(title)
+        throw new SpecNotFound(title, invokePath)
       }
     },
     async writeSpec(title: string, invokePath: string, record: SpecRecord) {

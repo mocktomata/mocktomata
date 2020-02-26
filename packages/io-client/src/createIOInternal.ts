@@ -12,7 +12,7 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
       const url = buildUrl(info.url, `config`)
       const response = await fetch(url)
       const config = await response.json() as Mocktomata.Config
-      return required({ plugins: [] }, pick(config, 'overrideMode', 'filePathFilter', 'specNameFilter', 'ecmaVersion', 'plugins'))
+      return required({ plugins: [] }, pick(config, 'overrideMode', 'filePathFilter', 'specNameFilter', 'plugins'))
     },
     async loadPlugin(name: string): Promise<SpecPlugin.Module> {
       return import(name)
@@ -21,7 +21,7 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
       const id = btoa(JSON.stringify({ specName, specRelativePath }))
       const response = await fetch(buildUrl(info.url, `specs/${id}`))
       if (response.status === 404) {
-        throw new SpecNotFound(id)
+        throw new SpecNotFound(id, specRelativePath)
       }
       return response.json()
     },

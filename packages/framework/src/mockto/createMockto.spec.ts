@@ -1,11 +1,7 @@
 import a from 'assertron'
-import { AsyncContext } from 'async-fp'
-import path from 'path'
 import { createMockto } from '..'
-import { es2015 } from '../es2015'
-import { createTestIO } from '../incubator/createTestIO'
-import { store } from '../store'
 import { SpecNotFound } from '../spec'
+import { createTestContext } from '../test-utils'
 
 test('live with no options', () => {
   const context = createTestContext()
@@ -13,7 +9,7 @@ test('live with no options', () => {
   const title = 'live with no options'
   return new Promise(a => {
     mockto.live(title, (specName, spec) => {
-      expect(specName).toEqual(title)
+      expect(specName).toEqual(`${title}: live`)
       spec((x: number) => x + 1).then(s => {
         expect(s(1)).toBe(2)
         a()
@@ -28,7 +24,7 @@ test('live with options', () => {
   const title = 'live with options'
   return new Promise(a => {
     mockto.live(title, { timeout: 2000 }, (specName, spec) => {
-      expect(specName).toEqual(title)
+      expect(specName).toEqual(`${title}: live`)
       spec((x: number) => x + 1).then(s => {
         expect(s(1)).toBe(2)
         a()
@@ -43,7 +39,7 @@ test('save with no options', async () => {
   const title = 'save with no options'
   await new Promise(a => {
     mockto.save(title, (specName, spec) => {
-      expect(specName).toEqual(title)
+      expect(specName).toEqual(`${title}: save`)
       spec((x: number) => x + 1).then(async s => {
         expect(s(1)).toBe(2)
         await spec.done()
@@ -63,7 +59,7 @@ test('save with options', async () => {
   const title = 'save with options'
   await new Promise(a => {
     mockto.save(title, { timeout: 100 }, (specName, spec) => {
-      expect(specName).toEqual(title)
+      expect(specName).toEqual(`${title}: save`)
       spec((x: number) => x + 1).then(async s => {
         expect(s(1)).toBe(2)
         await spec.done()
@@ -83,7 +79,7 @@ test('simulate with no options', async () => {
   const title = 'simulate with no options'
   await new Promise(r => {
     mockto.simulate(title, (specName, spec) => {
-      expect(specName).toEqual(title)
+      expect(specName).toEqual(`${title}: simulate`)
       a.throws(() => spec((x: number) => x + 1), SpecNotFound)
       r()
     })
@@ -96,7 +92,7 @@ test('simulate with options', async () => {
   const title = 'simulate with options'
   await new Promise(r => {
     mockto.simulate(title, { timeout: 100 }, (specName, spec) => {
-      expect(specName).toEqual(title)
+      expect(specName).toEqual(`${title}: simulate`)
       a.throws(() => spec((x: number) => x + 1), SpecNotFound)
       r()
     })
@@ -162,14 +158,3 @@ test('auto with options', async () => {
     })
   })
 })
-function createTestContext({ currentFilename, config } = { currentFilename: __filename, config: { plugins: [] as string[] } }) {
-  store.reset()
-  const io = createTestIO()
-  io.addPluginModule(es2015.name, es2015)
-  config.plugins.push(es2015.name)
-  return new AsyncContext({
-    config,
-    io,
-    getCallerRelativePath(_: any) { return path.relative(process.cwd(), currentFilename) },
-  })
-}

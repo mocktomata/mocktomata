@@ -3,9 +3,9 @@ import { EventEmitter } from 'events'
 import { ActionMismatch, ExtraAction, incubator, MissingAction } from '.'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
 
-beforeAll(() => {
-  return incubator.start({ target: 'es2015' })
-})
+// beforeAll(() => {
+//   return incubator.start({ target: 'es2015' })
+// })
 
 describe('mismatch simulation', () => {
   incubator.sequence('extra action', (title, { save, simulate }) => {

@@ -3,13 +3,11 @@ import { AsyncContext } from 'async-fp'
 import { LogLevel } from 'standard-log'
 import { getCallerRelativePath } from './getCallerRelativePath'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
-import { start } from './start'
 
 export type Mockto = Mockto.SpecFn & {
   live: Mockto.SpecFn,
   save: Mockto.SpecFn,
   simulate: Mockto.SpecFn,
-  start: typeof start,
 }
 
 export namespace Mockto {
@@ -28,7 +26,6 @@ export function createMockto(initializer: Mockto.Initializer): Mockto {
       live: createSpecFn(initializer, 'live'),
       save: createSpecFn(initializer, 'save'),
       simulate: createSpecFn(initializer, 'simulate'),
-      start,
     }
   )
 }

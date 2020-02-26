@@ -10,6 +10,12 @@ export type Spec = {
 }
 
 export namespace Spec {
+  export type Config = {
+    overrideMode?: Mode,
+    filePathFilter?: RegExp,
+    specNameFilter?: RegExp
+  }
+
   export type Context = {
     plugins: SpecPlugin.Instance[],
     io: IO,
@@ -36,15 +42,9 @@ export namespace Spec {
     writeSpec(specName: string, specRelativePath: string, record: SpecRecord): Promise<void>
   }
 
-  export type Config = {
-    overrideMode?: Mode,
-    filePathFilter?: RegExp,
-    specNameFilter?: RegExp
-  }
-
   export type Mode = 'live' | 'save' | 'simulate' | 'auto'
 
-  export type Handler = (specName: string, spec: Spec) => void | Promise<any>
+  export type Handler = (title: string, spec: Spec) => void | Promise<any>
 
   export type Options = {
     timeout: number
