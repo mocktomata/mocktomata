@@ -39,7 +39,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "async-fp": "^4.1.0",
+    "async-fp": "^4.1.1",
     "global-store": "^1.0.0-beta.15",
     "iso-error": "^3.2.1",
     "rimraf": "^3.0.2",

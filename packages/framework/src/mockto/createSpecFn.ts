@@ -1,17 +1,16 @@
 import { AsyncContext } from 'async-fp'
+import { LogLevel, logLevels } from 'standard-log'
 import { createSpec, Spec } from '../spec'
+import { getCallerRelativePath } from '../test-utils'
+import { createMockto } from './createMockto'
 import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 import { resolveMocktoFnArgs } from './resolveMocktoFnArgs'
-import { createMockto } from './createMockto'
-import { LogLevel, logLevels } from 'standard-log'
 
-export function createSpecFn(context: AsyncContext<Spec.Context & {
-  getCallerRelativePath(subject: Function): string
-}>, defaultMode: Spec.Mode) {
+export function createSpecFn(context: AsyncContext<Spec.Context>, defaultMode: Spec.Mode) {
   const specFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const ctx = context.merge(async () => {
-      const { config, getCallerRelativePath } = await context.get()
+      const { config } = await context.get()
       const specRelativePath = getCallerRelativePath(specFn)
       const mode = getEffectiveSpecMode(config, defaultMode, specName, specRelativePath)
       return { specRelativePath, mode }
@@ -22,9 +21,7 @@ export function createSpecFn(context: AsyncContext<Spec.Context & {
   return specFn as createMockto.SpecFn
 }
 
-export function createInertSpecFn(context: AsyncContext<Spec.Context & {
-  getCallerRelativePath(subject: Function): string
-}>, mode: Spec.Mode) {
+export function createInertSpecFn(context: AsyncContext<Spec.Context>, mode: Spec.Mode) {
   let ctx: AsyncContext<Spec.Context & {
     mode: Spec.Mode,
     specRelativePath: string,
@@ -33,7 +30,6 @@ export function createInertSpecFn(context: AsyncContext<Spec.Context & {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     if (!ctx) {
       ctx = context.merge(async () => {
-        const { getCallerRelativePath } = await context.get()
         const specRelativePath = getCallerRelativePath(specFn)
         return { mode, specRelativePath }
       }, { lazy: true })

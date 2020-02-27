@@ -1,7 +1,7 @@
 import a from 'assertron'
 import { createMockto } from '..'
 import { SpecNotFound } from '../spec'
-import { createTestContext } from '../test-utils'
+import { createTestContext, getCallerRelativePath } from '../test-utils'
 
 test('live with no options', () => {
   const context = createTestContext()
@@ -48,7 +48,7 @@ test('save with no options', async () => {
     })
   })
 
-  const { io, getCallerRelativePath } = await context.get()
+  const { io } = await context.get()
   const record = await io.readSpec(title, getCallerRelativePath(() => { }))
   expect(record).not.toBeUndefined()
 })
@@ -68,7 +68,7 @@ test('save with options', async () => {
     })
   })
 
-  const { io, getCallerRelativePath } = await context.get()
+  const { io } = await context.get()
   const record = await io.readSpec(title, getCallerRelativePath(() => { }))
   expect(record).not.toBeUndefined()
 })
@@ -114,7 +114,7 @@ test('auto with no options', async () => {
     })
   })
 
-  const { io, getCallerRelativePath } = await context.get()
+  const { io } = await context.get()
   const record = await io.readSpec(title, getCallerRelativePath(() => { }))
   expect(record).not.toBeUndefined()
 
@@ -144,7 +144,7 @@ test('auto with options', async () => {
     })
   })
 
-  const { io, getCallerRelativePath } = await context.get()
+  const { io } = await context.get()
   const record = await io.readSpec(title, getCallerRelativePath(() => { }))
   expect(record).not.toBeUndefined()
 

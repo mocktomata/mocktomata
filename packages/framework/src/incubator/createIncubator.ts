@@ -2,6 +2,7 @@ import { AsyncContext } from 'async-fp'
 import { createInertSpecFn, createMockto, createSpecObject, resolveMocktoFnArgs } from '../mockto'
 import { loadPlugins } from '../mockto/loadPlugins'
 import { Spec } from '../spec'
+import { getCallerRelativePath } from '../test-utils'
 import { Mocktomata } from '../types'
 
 export namespace createIncubator {
@@ -16,7 +17,6 @@ export function createIncubator(context: AsyncContext<Mocktomata.Context>) {
   const sequence: createIncubator.SequenceFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs<createIncubator.SequenceHandler>(args)
     const sctx = ctx.merge(async () => {
-      const { getCallerRelativePath } = await ctx.get()
       const specRelativePath = getCallerRelativePath(sequence)
       return { specRelativePath }
     })

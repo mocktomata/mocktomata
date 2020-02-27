@@ -10,8 +10,7 @@ export namespace Mocktomata {
   // }
   export type Context = {
     config: Config,
-    io: IO,
-    getCallerRelativePath(subject: Function): string
+    io: IO
   }
   export type IO = ReplaceProperty<Spec.IO & SpecPlugin.IO, 'getConfig', () => Promise<Config>>
 }
