@@ -8,7 +8,7 @@ import { loadPlugins } from '../spec-plugin'
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
 import { store } from '../store'
-import { createTestIO } from './createTestIO'
+import { createTestIO } from '../test-utils'
 
 export namespace createTestHarness {
   export type TestHarness = {

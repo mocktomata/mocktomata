@@ -1,49 +1,6 @@
 import a, { AssertOrder } from 'assertron'
-import { AsyncContext } from 'async-fp'
-import { createInertSpecFn, createMockto, createSpecObject, resolveMocktoFnArgs } from '../mockto'
-import { loadPlugins } from '../mockto/loadPlugins'
-import { Spec, SpecNotFound } from '../spec'
+import { createIncubator, SpecNotFound } from '..'
 import { createTestContext } from '../test-utils'
-import { Mocktomata } from '../types'
-
-export namespace createIncubator {
-  export type SequenceFn = (specName: string, handler: SequenceHandler) => void
-  export type SequenceHandler = (specName: string, specs: { save: Spec, simulate: Spec }) => void
-}
-
-export function createIncubator(context: AsyncContext<Mocktomata.Context>) {
-  const ctx = loadPlugins(context)
-  const save = createInertSpecFn(ctx, 'save')
-  const simulate = createInertSpecFn(ctx, 'simulate')
-  const sequence: createIncubator.SequenceFn = (...args: any[]) => {
-    const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs<createIncubator.SequenceHandler>(args)
-    const sctx = ctx.merge(async () => {
-      const { getCallerRelativePath } = await ctx.get()
-      const specRelativePath = getCallerRelativePath(sequence)
-      return { specRelativePath }
-    })
-    handler(specName, {
-      save: createSpecObject(sctx.merge({ mode: 'save' }), specName, options),
-      simulate: createSpecObject(sctx.merge({ mode: 'simulate' }), specName, options)
-    })
-  }
-  return {
-    save,
-    simulate,
-    duo: ((...args: any[]) => {
-      const { specName, options, handler } = resolveMocktoFnArgs(args)
-      if (options) {
-        save(specName, options, handler)
-        simulate(specName, options, handler)
-      }
-      else {
-        save(specName, handler)
-        simulate(specName, handler)
-      }
-    }) as createMockto.SpecFn,
-    sequence
-  }
-}
 
 const context = createTestContext()
 const incubator = createIncubator(context)

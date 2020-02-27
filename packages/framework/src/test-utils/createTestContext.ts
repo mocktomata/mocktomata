@@ -1,8 +1,8 @@
 import { AsyncContext } from 'async-fp'
 import { es2015 } from '../es2015'
-import { createTestIO } from '../incubator/createTestIO'
-import { store } from '../store'
 import { SpecPlugin } from '../spec-plugin'
+import { store } from '../store'
+import { createTestIO } from './createTestIO'
 import { getCallerRelativePath } from './getCallerRelativePath'
 
 export function createTestContext({ config }: { config: SpecPlugin.Config } = { config: { plugins: [] } }) {

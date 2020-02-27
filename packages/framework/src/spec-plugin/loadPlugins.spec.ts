@@ -1,10 +1,10 @@
 import a from 'assertron'
 import { logLevels } from 'standard-log'
 import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from '.'
-import { createTestIO } from '../incubator/createTestIO'
 import { log } from '../log'
 import { store } from '../store'
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts'
+import { createTestIO } from '../test-utils'
 
 beforeEach(() => {
   log.level = logLevels.none
