@@ -1,6 +1,6 @@
 import { AsyncContext } from 'async-fp'
 import { Spec } from '../spec'
-import { createSpecFn, createInertSpecFn } from './createSpecFn'
+import { createSpecFn, createFixedModeSpecFn } from './createSpecFn'
 import { loadPlugins } from './loadPlugins'
 import { Mocktomata } from '../types'
 
@@ -22,9 +22,9 @@ export function createMockto(context: AsyncContext<Mocktomata.Context>): createM
   return Object.assign(
     createSpecFn(ctx, 'auto'),
     {
-      live: createInertSpecFn(ctx, 'live'),
-      save: createInertSpecFn(ctx, 'save'),
-      simulate: createInertSpecFn(ctx, 'simulate'),
+      live: createFixedModeSpecFn(ctx, 'live'),
+      save: createFixedModeSpecFn(ctx, 'save'),
+      simulate: createFixedModeSpecFn(ctx, 'simulate'),
     }
   )
 }

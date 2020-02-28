@@ -1,9 +1,17 @@
 import a, { AssertOrder } from 'assertron'
-import { createIncubator, SpecNotFound } from '..'
-import { createTestContext } from '../test-utils'
+import { incubator, SpecNotFound } from '..'
+import { log } from '../log'
 
-const context = createTestContext()
-const incubator = createIncubator(context)
+incubator.duo('enable log only lasts through one spec', (title, spec) => {
+  test(title, async () => {
+    const origLevel = log.level
+    spec.enableLog()
+    const s = await spec((x: number) => x + 1)
+    expect(s(4)).toBe(5)
+    await spec.done()
+    expect(log.level).toBe(origLevel)
+  })
+})
 
 incubator.save('save', (title, spec) => {
   test(title, async () => {

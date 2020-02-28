@@ -1,9 +1,10 @@
 import { AsyncContext } from 'async-fp'
 import { assertMockable } from './assertMockable'
 import { assertSpecName } from './assertSpecName'
-import { enableLog } from './enableLog'
 import { createSimulator } from './simulator'
 import { Spec } from './types'
+import { logLevels } from 'standard-log'
+import { log } from '../log'
 
 export async function createSimulateSpec(
   context: AsyncContext<Spec.Context>,
@@ -15,6 +16,8 @@ export async function createSimulateSpec(
   const { io } = await context.get()
   const loaded = await io.readSpec(specName, invokePath)
   const simulator = createSimulator(context, specName, loaded, options)
+  let enabledLog = false
+  const origLogLevel = log.level
 
   return Object.assign(
     async <S>(subject: S) => {
@@ -24,8 +27,11 @@ export async function createSimulateSpec(
     {
       async done() {
         simulator.end()
+        if (enabledLog) log.level = origLogLevel
       },
-      enableLog,
-      getSpecRecord: () => simulator.getSpecRecord()
+      enableLog: (level = logLevels.debug) => {
+        enabledLog = true
+        log.level = level
+      },
     })
 }

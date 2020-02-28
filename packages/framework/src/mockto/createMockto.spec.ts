@@ -1,11 +1,11 @@
 import a from 'assertron'
-import { createMockto } from '..'
-import { SpecNotFound } from '../spec'
+import { createMockto, SpecNotFound } from '..'
 import { createTestContext, getCallerRelativePath } from '../test-utils'
 
+const context = createTestContext()
+const mockto = createMockto(context)
+
 test('live with no options', () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'live with no options'
   return new Promise(a => {
     mockto.live(title, (specName, spec) => {
@@ -19,8 +19,6 @@ test('live with no options', () => {
 })
 
 test('live with options', () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'live with options'
   return new Promise(a => {
     mockto.live(title, { timeout: 2000 }, (specName, spec) => {
@@ -34,8 +32,6 @@ test('live with options', () => {
 })
 
 test('save with no options', async () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'save with no options'
   await new Promise(a => {
     mockto.save(title, (specName, spec) => {
@@ -54,8 +50,6 @@ test('save with no options', async () => {
 })
 
 test('save with options', async () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'save with options'
   await new Promise(a => {
     mockto.save(title, { timeout: 100 }, (specName, spec) => {
@@ -74,8 +68,6 @@ test('save with options', async () => {
 })
 
 test('simulate with no options', async () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'simulate with no options'
   await new Promise(r => {
     mockto.simulate(title, (specName, spec) => {
@@ -87,8 +79,6 @@ test('simulate with no options', async () => {
 })
 
 test('simulate with options', async () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'simulate with options'
   await new Promise(r => {
     mockto.simulate(title, { timeout: 100 }, (specName, spec) => {
@@ -100,8 +90,6 @@ test('simulate with options', async () => {
 })
 
 test('auto with no options', async () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'auto with no options'
   await new Promise(a => {
     mockto(title, (specName, spec) => {
@@ -130,8 +118,6 @@ test('auto with no options', async () => {
 })
 
 test('auto with options', async () => {
-  const context = createTestContext()
-  const mockto = createMockto(context)
   const title = 'auto with options'
   await new Promise(a => {
     mockto(title, { timeout: 100 }, (specName, spec) => {
@@ -156,5 +142,15 @@ test('auto with options', async () => {
         a()
       })
     })
+  })
+
+})
+
+mockto('can enable log after spec subject is created', (title, spec) => {
+  test(title, async () => {
+    const s = await spec(() => 1)
+    spec.enableLog()
+    expect(s()).toBe(1)
+    await spec.done()
   })
 })

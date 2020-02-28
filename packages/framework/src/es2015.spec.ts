@@ -200,17 +200,6 @@ describe('function', () => {
       expect(subject()).toBeUndefined()
 
       await spec.done()
-
-      a.satisfies(await spec.getSpecRecord(), {
-        refs: [
-          { 'plugin': '@mocktomata/es2015/function', 'profile': 'target' },
-          { 'plugin': '@mocktomata/es2015/undefined', 'profile': 'input', 'source': { 'type': 'this', 'id': 0 } }
-        ],
-        actions: [
-          { 'type': 'invoke', 'refId': '0', 'performer': 'user', 'thisArg': '1', 'payload': [] },
-          { 'type': 'return', 'actionId': 0, 'payload': '1' }
-        ]
-      })
     })
   })
   incubator.duo('string input no result', (title, spec) => {

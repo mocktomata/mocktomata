@@ -17,6 +17,7 @@ export async function createSaveSpec(
 
   const recorder = createRecorder(context, specName, options)
   let enabledLog = false
+  const origLogLevel = log.level
 
   return Object.assign(
     async <S>(subject: S) => {
@@ -31,12 +32,12 @@ export async function createSaveSpec(
         io.writeSpec(specName, invokePath, record)
         if (enabledLog) {
           log.debug(`Spec Record "${specName}":`, prettyPrintSpecRecord(record))
+          log.level = origLogLevel
         }
       },
       enableLog: (level = logLevels.debug) => {
         enabledLog = true
         log.level = level
       },
-      getSpecRecord: () => recorder.getSpecRecord(),
     })
 }

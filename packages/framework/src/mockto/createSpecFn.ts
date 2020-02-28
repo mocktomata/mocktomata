@@ -7,21 +7,26 @@ import { getEffectiveSpecMode } from './getEffectiveSpecMode'
 import { resolveMocktoFnArgs } from './resolveMocktoFnArgs'
 
 export function createSpecFn(context: AsyncContext<Spec.Context>, defaultMode: Spec.Mode) {
+  let ctx: AsyncContext<Spec.Context & {
+    mode: Spec.Mode,
+    specRelativePath: string,
+  }> | undefined
   const specFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
-    const ctx = context.merge(async () => {
-      const { config } = await context.get()
-      const specRelativePath = getCallerRelativePath(specFn)
-      const mode = getEffectiveSpecMode(config, defaultMode, specName, specRelativePath)
-      return { specRelativePath, mode }
-    }, { lazy: true })
-
+    if (!ctx) {
+      ctx = context.merge(async () => {
+        const { config } = await context.get()
+        const specRelativePath = getCallerRelativePath(specFn)
+        const mode = getEffectiveSpecMode(config, defaultMode, specName, specRelativePath)
+        return { specRelativePath, mode }
+      }, { lazy: true })
+    }
     handler(specName, createSpecObject(ctx, specName, options))
   }
   return specFn as createMockto.SpecFn
 }
 
-export function createInertSpecFn(context: AsyncContext<Spec.Context>, mode: Spec.Mode) {
+export function createFixedModeSpecFn(context: AsyncContext<Spec.Context>, mode: Spec.Mode) {
   let ctx: AsyncContext<Spec.Context & {
     mode: Spec.Mode,
     specRelativePath: string,
@@ -34,8 +39,7 @@ export function createInertSpecFn(context: AsyncContext<Spec.Context>, mode: Spe
         return { mode, specRelativePath }
       }, { lazy: true })
     }
-    const title = `${specName}: ${mode}`
-    handler(title, createSpecObject(ctx, specName, options))
+    handler(`${specName}: ${mode}`, createSpecObject(ctx, specName, options))
   }
   return specFn as createMockto.SpecFn
 }
@@ -56,10 +60,7 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
   }
 
   const spec = Object.assign((subject: any) => createActualSpec(initState).then(actualSpec => {
-    spec.getSpecRecord = actualSpec.getSpecRecord
-    spec.enableLog = actualSpec.enableLog
     spec.done = actualSpec.done
-    spec.getSpecRecord = actualSpec.getSpecRecord
     return actualSpec(subject)
   }), {
     enableLog: (level: LogLevel = logLevels.all) => {
@@ -69,7 +70,6 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
         initState.logLevel = level
       }
     },
-    getSpecRecord: () => s.getSpecRecord(),
   }) as Spec
   return spec
 }
