@@ -14,7 +14,7 @@ export function createSpecFn(context: AsyncContext<Spec.Context>, defaultMode: S
       const specRelativePath = getCallerRelativePath(specFn)
       const mode = getEffectiveSpecMode(config, defaultMode, specName, specRelativePath)
       return { specRelativePath, mode }
-    })
+    }, { lazy: true })
 
     handler(specName, createSpecObject(ctx, specName, options))
   }

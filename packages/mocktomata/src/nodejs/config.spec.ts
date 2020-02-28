@@ -2,14 +2,11 @@ import a from 'assertron'
 import { CannotConfigAfterUsed, config, mockto } from '..'
 import { store } from './store'
 
-beforeEach(() => {
-  store.reset()
-})
+beforeEach(() => store.reset())
 
-// afterEach(() => {
-//   store.value.config = { plugins: [] }
-//   store.value.context?.clear()
-// })
+afterEach(() => {
+  store.value.config = undefined
+})
 
 mockto('config() can only be called before using mockto', (title, spec) => {
   test(title, async () => {

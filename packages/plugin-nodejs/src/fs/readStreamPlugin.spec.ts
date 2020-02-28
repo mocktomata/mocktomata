@@ -1,7 +1,3 @@
-import { incubator } from '@mocktomata/framework';
-
-beforeEach(async () => {
-  await incubator.start()
-});
+// import { incubator } from '@mocktomata/framework';
 
 test.todo('no test yet')
