@@ -283,7 +283,7 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator.duo('update value in array', (title, spec) => {
+  incubator.duo('update value in input array', (title, spec) => {
     test(title, async () => {
       const subject = await spec(function passthroughArray(value: string[]) {
         value[1] = 'c'
@@ -291,6 +291,25 @@ describe('function', () => {
       })
       const actual = subject(['a', 'b'])
       expect(actual).toEqual(['a', 'c'])
+      await spec.done()
+    })
+  })
+  // version 8
+  incubator.duo('update value in output array', (title, spec) => {
+    test.skip(title, async () => {
+      const subject = await spec(() => {
+        return {
+          get() { return [1,2,3] },
+          modify(array: number[]) {
+            array[0] = 4
+          }
+        }
+      })
+      const s = subject()
+      const value = s.get()
+      expect(value).toEqual([1, 2, 3])
+      s.modify(value)
+      expect(value).toEqual([4, 2, 3])
       await spec.done()
     })
   })
@@ -537,6 +556,14 @@ describe('function', () => {
       emitter.on('abc', () => expect(true).toBe(true))
       const s = await spec(({ emitter }: { emitter: EventEmitter }) => emitter.emit('abc'))
       s({ emitter })
+      await spec.done()
+    })
+  })
+  incubator.duo('call toString()', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec(function () {})
+      expect(subject.toString()).toEqual('function () { [native code] }')
+
       await spec.done()
     })
   })
