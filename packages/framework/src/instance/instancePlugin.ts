@@ -1,10 +1,13 @@
 import { isPromise } from 'type-plus';
 import { SpecPlugin } from '../spec-plugin'
-import { createMap, demetarize, hasProperty, isBaseObject, metarize } from '../utils-internal';
+import {
+  // createMap,
+  demetarize, hasProperty, isBaseObject, metarize
+} from '../utils-internal';
 
-const map = createMap()
+// const map = createMap()
 
-type SpyTrackData = { pending: boolean, publicMethods: string[] }
+// type SpyTrackData = { pending: boolean, publicMethods: string[] }
 
 export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: string, classConstructor: string, functionCalls: string[] }> = {
   name: 'instance',
@@ -28,33 +31,36 @@ export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: st
         if (typeof prop === 'function') {
           return (...args: any[]) => {
             meta.functionCalls.push(key)
-            const tracker = map.get(spy) as SpyTrackData
-            if (!tracker.pending || tracker.publicMethods.indexOf(key) >= 0) {
-              tracker.pending = true
-              if (tracker.publicMethods.indexOf(key) === -1) {
-                tracker.publicMethods.push(key)
-              }
-              try {
-                let result = invoke({ site: key, thisArg: spy, args }, ({ args }) => prop.apply(target, args))
-                if (isPromise(result)) {
-                  result = result.then(v => {
-                    tracker.pending = false
-                    return v
-                  })
-                }
-                else {
-                  tracker.pending = false
-                }
-                return result
-              }
-              catch (e) {
-                tracker.pending = false
-                throw e
-              }
+            // const tracker = map.get(spy) as SpyTrackData
+            // if (!tracker.pending || tracker.publicMethods.indexOf(key) >= 0) {
+            //   tracker.pending = true
+            //   if (tracker.publicMethods.indexOf(key) === -1) {
+            //     tracker.publicMethods.push(key)
+            //   }
+            // try {
+            // `apply(target...)` instead of `apply(spy...)` seems to handle the internal call well.
+            // can't think of a drawback but hard to believe this works.
+            // so keeping the code commented out for now until we get more real life validation.
+            let result = invoke({ site: key, thisArg: spy, args }, ({ args }) => prop.apply(target, args))
+            if (isPromise(result)) {
+              result = result.then(v => {
+                // tracker.pending = false
+                return v
+              })
             }
-            else {
-              return prop.apply(target, args)
-            }
+            // else {
+            //   tracker.pending = false
+            // }
+            return result
+            // }
+            // catch (e) {
+            //   tracker.pending = false
+            //   throw e
+            // }
+            // }
+            // else {
+            //   return prop.apply(target, args)
+            // }
           }
         }
         else {
@@ -65,7 +71,7 @@ export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: st
         return setProperty({ key: property, value }, value => subject[property] = value)
       }
     })
-    map.set(spy, { pending: false, publicMethods: [] })
+    // map.set(spy, { pending: false, publicMethods: [] })
 
     return spy
   },

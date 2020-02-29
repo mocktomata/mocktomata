@@ -174,7 +174,7 @@ describe('object', () => {
     })
   })
 
-  // this will not work until v8
+  // version 8
   incubator.duo('modify output array', (title, spec) => {
     test.skip(title, async () => {
       const s = await spec({
@@ -189,6 +189,30 @@ describe('object', () => {
       expect(arr).toEqual(['a', 'c'])
       spec.enableLog()
       await spec.done()
+    })
+  })
+
+  // version 8
+  incubator.sequence('method skips internal method calls', (title, { save, simulate }) => {
+    test.skip(title, async () => {
+      const spy = await save({
+        foo() {
+          this.internalCall()
+          return 'ok'
+        },
+        internalCall() { }
+      })
+      expect(spy.foo()).toBe('ok')
+      await save.done()
+      const stub = await simulate({
+        foo() {
+          this.internalCall()
+          return 'ok'
+        },
+        internalCall() { throw new Error('should not reach') }
+      })
+      expect(stub.foo()).toBe('ok')
+      await simulate.done()
     })
   })
 })
@@ -1160,6 +1184,42 @@ describe('instance', () => {
       await simulate.done()
     })
   })
+  incubator.sequence('method skips internal method calls', (title, { save, simulate }) => {
+    test(title, async () => {
+      let shouldThrow = false
+      class InvokeInternal {
+        foo() {
+          this.internalCall()
+          return 'ok'
+        }
+        internalCall() {
+          if (shouldThrow) throw new Error('should not reach')
+        }
+      }
+      const instance = new InvokeInternal()
+      const spy = await save(instance)
+      expect(spy.foo()).toBe('ok')
+      await save.done()
+      shouldThrow = true
+
+      const stub = await simulate(instance)
+      expect(stub.foo()).toBe('ok')
+      await simulate.done()
+    })
+  })
+
+  incubator.duo('returning this is same as spy', (title, spec) => {
+    test(title, async () => {
+      class Fluent {
+        foo() { return this }
+      }
+
+      const spy = await spec(new Fluent())
+      expect(spy.foo()).toBe(spy)
+      await spec.done()
+    })
+  })
+
 
   incubator.duo('static property', (title, spec) => {
     test(title, async () => {
