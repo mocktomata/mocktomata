@@ -1,5 +1,6 @@
 import a from 'assertron'
 import { createMockto, SpecNotFound } from '..'
+import { log } from '../log'
 import { createTestContext, getCallerRelativePath } from '../test-utils'
 
 const context = createTestContext()
@@ -148,6 +149,7 @@ test('auto with options', async () => {
 
 mockto('can enable log after spec subject is created', (title, spec) => {
   test(title, async () => {
+    log.info(title)
     const s = await spec(() => 1)
     spec.enableLog()
     expect(s()).toBe(1)

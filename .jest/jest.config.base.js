@@ -19,4 +19,7 @@ module.exports = {
   roots: [
     '<rootDir>/src'
   ],
+  setupFiles: [
+    '../../scripts/jest-setup.js'
+  ],
 }

@@ -19,10 +19,14 @@ export namespace start {
   }
 }
 
+// can't add test for port 80. wil fail during CI
+// istanbul ignore next
 export async function start(options: start.Options = {}) {
   const cwd = options.cwd ?? process.cwd()
   const repo = new FileRepository({ cwd })
   const config = repo.loadConfig() as start.Config
+  // can't add test for port 80. wil fail during CI
+  // istanbul ignore next
   const port = options.port ?? config['file-server']?.port ?? 80
   const context = { config, repo }
   const server = new Server({ port, routes: { 'cors': true } })

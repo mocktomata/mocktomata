@@ -5,6 +5,7 @@ import { log } from '../log'
 incubator.duo('enable log only lasts through one spec', (title, spec) => {
   test(title, async () => {
     const origLevel = log.level
+    log.info(title)
     spec.enableLog()
     const s = await spec((x: number) => x + 1)
     expect(s(4)).toBe(5)
@@ -40,3 +41,16 @@ incubator.duo('duo', (title, spec) => {
     await spec.done()
   })
 })
+
+incubator.duo('duo with option', { timeout: 200 }, (title, spec) => {
+  const o = new AssertOrder(1)
+  test(title, async () => {
+    const s = await spec((x: number) => {
+      o.once(1)
+      return x + 1
+    })
+    expect(s(1)).toBe(2)
+    await spec.done()
+  })
+})
+
