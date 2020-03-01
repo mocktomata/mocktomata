@@ -2,7 +2,7 @@ import a from 'assertron'
 import { EventEmitter } from 'events'
 import { ActionMismatch, ExtraAction, incubator, MissingAction, NotSpecable } from '.'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
-import { SpecIDCannotBeEmpty } from './spec'
+import { SpecIDCannotBeEmpty, ExtraReference } from './spec'
 
 // beforeAll(() => {
 //   return incubator.start({ target: 'es2015' })
@@ -57,6 +57,7 @@ describe('mismatch simulation', () => {
       a.throws(() => stub(), ExtraAction)
     })
   })
+
   incubator.sequence('missing action', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = () => { }
@@ -69,6 +70,16 @@ describe('mismatch simulation', () => {
     })
   })
 
+  incubator.sequence('set with wrong value', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save(() => ({ a: 1 }))
+      spy().a = 2
+      await save.done()
+      const stub = await simulate(() => ({ a: 1 }))
+      a.throws(() => stub().a = 3, ActionMismatch)
+    })
+  })
+
   incubator.sequence('invoke with missing argument', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save((cb: any) => cb())
@@ -77,6 +88,17 @@ describe('mismatch simulation', () => {
 
       const stub = await simulate(() => { })
       a.throws(() => stub(), ActionMismatch)
+    })
+  })
+
+  incubator.sequence('invoke with different scope', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save(function () { })
+      spy()
+      await save.done()
+
+      const stub = await simulate(function () { })
+      a.throws(() => stub.call({}), ExtraReference)
     })
   })
 })
@@ -118,6 +140,14 @@ describe('object', () => {
     test(title, async () => {
       const subject = await spec({ get x() { throw new Error('thrown') } })
       a.throws(() => subject.x, e => e.message === 'thrown')
+      await spec.done()
+    })
+  })
+
+  incubator.duo('throw during set', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec({ set x(_: number) { throw new Error('thrown') } })
+      a.throws(() => subject.x = 2, e => e.message === 'thrown')
       await spec.done()
     })
   })

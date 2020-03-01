@@ -164,13 +164,13 @@ function setProperty<V = any>(
     value: notDefined
   }
 
+  action.value = record.findRefId(resolveValue(context, value)) || value
   if (!actionMatches(action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
 
   const actionId = record.addAction(action)
-  action.value = record.findRefId(resolveValue(context, value)) || value
 
   logAction(context.state, actionId, action)
   processNextAction(context)
@@ -194,7 +194,8 @@ function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const state = { ref, refId, spyOptions: [] }
   if (profile === 'input') {
     logCreateSpy(state, profile, subject)
-    ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
+    // about `as any`: RecordValidator does not have `addRef` and `getSpecRecord` and they are not needed for this
+    ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state } as any), subject)
   }
   else {
     if (subject === notDefined) {

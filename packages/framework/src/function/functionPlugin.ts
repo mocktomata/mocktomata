@@ -45,7 +45,7 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
       },
       get(target: any, property: string) {
         if (!hasProperty(subject, property)) return undefined
-        if (property === 'apply' || property === 'toString') return target[property]
+        if (property === 'call' || property === 'apply' || property === 'toString') return target[property]
         return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
@@ -60,7 +60,7 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
         return invoke({ thisArg, args })
       },
       get(target: any, property: string) {
-        if (property === 'apply' || property === 'toString') return target[property]
+        if (property === 'call' || property === 'apply' || property === 'toString') return target[property]
 
         return getProperty({ key: property })
       }

@@ -30,7 +30,11 @@ function isMatchingSetAction(
   return !!expected && expected.type === 'set' &&
     actual.refId === expected.refId &&
     actual.performer === expected.performer &&
-    actual.key === expected.key
+    actual.key === expected.key &&
+    (!isPrimitive(expected.value) || expected.value === actual.value)
+}
+function isPrimitive(value: any) {
+  return (typeof value !== 'object' && typeof value !== 'function') || value === null
 }
 
 function isMatchingInvokeAction(
