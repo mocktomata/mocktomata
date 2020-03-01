@@ -1,3 +1,5 @@
+// ignore coverage because not going to write test just for enable log with all different action types
+// istanbul ignore file
 import { tersify } from 'tersify'
 import { notDefined } from '../constants'
 import { SpecRecord } from '../spec-record/types'
@@ -40,13 +42,10 @@ export function prettifyAction(state: prettifyAction.State, actionId: SpecRecord
   }
 }
 
-export function prettifyId(id: SpecRecord.ReferenceId | SpecRecord.ActionId | undefined) {
-  return id !== undefined ? typeof id === 'string' ? `<ref:${id}>` : `<act:${id}>` : ''
-}
-
 function prettifyIdWithRef(refId: SpecRecord.ReferenceId, id: SpecRecord.ReferenceId | SpecRecord.ActionId | undefined) {
   return id !== undefined ? typeof id === 'string' ? `<ref:${id}>` : `<ref:${refId} act:${id}>` : ''
 }
+
 function prettifyPerformer(performer: SpecRecord.Performer) {
   switch (performer) {
     case 'user': return 'you'

@@ -13,6 +13,7 @@ import { Recorder, SpecRecordLive } from './types-internal'
 import { AsyncContext } from 'async-fp'
 
 export function createRecorder(context: AsyncContext<Spec.Context>, specName: string, options: Spec.Options) {
+  // istanbul ignore next
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordBuilder(specName)
 
@@ -29,9 +30,8 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
   // istanbul ignore next
   if (!plugin) return undefined
-  // `context.state` can only be undefined at `createRecorder()`. At that time `options.profile` is default to `target`
-  // so `context.state` will always be defined in this line.
-  const profile = options.profile || context.state!.ref.profile
+
+  const profile = options.profile
 
   // Possible sources:
   // spec subject: undefined
@@ -159,7 +159,7 @@ function invoke<V, T, A extends any[]>(
 
   return handleResult(context, actionId, action.type, () => {
     const spiedThisArg = getSpy(getThisContext(context, actionId), thisArg, { profile: getThisProfile(state.ref.profile) })
-    action.thisArg = record.findRefId(spiedThisArg) ?? thisArg
+    action.thisArg = record.findRefId(spiedThisArg)!
 
     const spiedArgs = args.map((arg, key) => {
       const spiedArg = getSpy(getArgumentContext(context, actionId, key), arg, { profile: getArgumentProfile(state.ref.profile) })

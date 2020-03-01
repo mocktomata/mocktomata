@@ -27,6 +27,7 @@ export namespace Simulator {
 }
 
 export function createSimulator(context: AsyncContext<Spec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
+  // istanbul ignore next
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordValidator(specName, loaded)
 
@@ -47,7 +48,6 @@ export function createSimulator(context: AsyncContext<Spec.Context>, specName: s
         throw new MissingAction(record.specName, { ref, refId }, actionId, action)
       }
     },
-    getSpecRecord: () => record.getSpecRecord()
   }
 }
 

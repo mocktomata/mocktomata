@@ -1,24 +1,27 @@
 import a, { AssertOrder } from 'assertron'
-import { logLevels } from 'standard-log'
+import { logLevels, captureLogs } from 'standard-log'
 import { incubator, SpecNotFound } from '..'
 import { log } from '../log'
 
 incubator.duo('enable log only lasts through one spec', (title, spec) => {
   test(title, async () => {
-    const origLevel = log.level
-    log.info(title)
-    spec.enableLog()
-    const s = await spec((x: number) => x + 1)
-    expect(s(4)).toBe(5)
-    await spec.done()
-    expect(log.level).toBe(origLevel)
+    await captureLogs(log, async () => {
+      const origLevel = log.level
+      spec.enableLog()
+      const s = await spec((x: number) => x + 1)
+      expect(s(4)).toBe(5)
+      await spec.done()
+      expect(log.level).toBe(origLevel)
+    })
   })
 })
 incubator.duo('enableLog can specify log level', (title, spec) => {
   test(title, async () => {
-    spec.enableLog(logLevels.none)
-    await spec(() => {})
-    await spec.done()
+    await captureLogs(log, async () => {
+      spec.enableLog(logLevels.none)
+      await spec(() => { })
+      await spec.done()
+    })
   })
 })
 

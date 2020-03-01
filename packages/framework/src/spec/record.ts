@@ -14,8 +14,8 @@ export function createSpecRecordBuilder(specName: string) {
     refs,
     actions,
     getSpecRecord: () => getSpecRecord(refs, actions),
-    getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
-    getRefId: (ref: SpecRecordLive.Reference) => getRefId(refs, ref),
+    // getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
+    // getRefId: (ref: SpecRecordLive.Reference) => getRefId(refs, ref),
     addRef: (ref: SpecRecordLive.Reference) => addRef(refs, ref),
     findRef: (value: any) => findRefBySubjectOrTestDouble(refs, value),
     findRefId: (value: any) => findRefIdBySubjectOrTestDouble(refs, value),
@@ -64,17 +64,17 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
     specName,
     refs,
     actions,
-    getSpecRecord: () => getSpecRecord(refs, actions),
+    // getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id) as ValidateReference | undefined,
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
     getLoadedRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef(loaded, id),
     getLoadedRefId: (ref: SpecRecord.Reference) => getRefId(loaded.refs, ref),
-    addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
-    claimNextRef: () => {
-      const ref = refs.find(r => !r.claimed)
-      if (ref) ref.claimed = true
-      return ref
-    },
+    // addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
+    // claimNextRef: () => {
+    //   const ref = refs.find(r => !r.claimed)
+    //   if (ref) ref.claimed = true
+    //   return ref
+    // },
     findRef: (value: any) => {
       let ref = findRefBySubjectOrTestDouble(refs, value)
       if (ref) return ref
@@ -110,12 +110,14 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
         ref.subject = value
         return getRefId(refs, ref)
       }
+      // for safety
+      // istanbul ignore next
       return undefined
     },
 
-    hasExpectedGetThenAction: (refId: SpecRecord.ReferenceId) => {
-      return loaded.actions.some(a => a.type === 'get' && a.refId === refId && a.key === 'then')
-    },
+    // hasExpectedGetThenAction: (refId: SpecRecord.ReferenceId) => {
+    //   return loaded.actions.some(a => a.type === 'get' && a.refId === refId && a.key === 'then')
+    // },
 
     getExpectedResultAction: (actionId: SpecRecord.ActionId) => loaded.actions.find(a => (a.type == 'return' || a.type === 'throw') && a.actionId === actionId) as SpecRecord.ResultActions | undefined,
     addAction: (action: SpecRecordLive.Action) => {
@@ -123,29 +125,29 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
     },
 
     // findNextExpectedRefForPlugin: (plugin: string) => findNextExpectedRefForPlugin(record.refs, refs, plugin),
-    findNextExpectedGetAction: (
-      refId: SpecRecord.ReferenceId,
-      performer: SpecRecord.Performer,
-      key: SpecRecord.SupportedKeyTypes
-    ) => {
-      const getActions = loaded.actions.filter(a =>
-        a.type === 'get' &&
-        a.refId === refId &&
-        a.performer === performer &&
-        a.key === key
-      ) as SpecRecord.GetAction[]
+    // findNextExpectedGetAction: (
+    //   refId: SpecRecord.ReferenceId,
+    //   performer: SpecRecord.Performer,
+    //   key: SpecRecord.SupportedKeyTypes
+    // ) => {
+    //   const getActions = loaded.actions.filter(a =>
+    //     a.type === 'get' &&
+    //     a.refId === refId &&
+    //     a.performer === performer &&
+    //     a.key === key
+    //   ) as SpecRecord.GetAction[]
 
-      if (getActions.length === 0) return undefined
-      if (getActions.length === 1) return getActions[0]
+    //   if (getActions.length === 0) return undefined
+    //   if (getActions.length === 1) return getActions[0]
 
-    },
-    findLoadedRef: (value: any) => {
-      const ref = findRefBySubjectOrTestDouble(record.refs, value)
-      if (!ref) throw new ExtraReference(specName, value)
-      return ref
-    },
+    // },
+    // findLoadedRef: (value: any) => {
+    //   const ref = findRefBySubjectOrTestDouble(record.refs, value)
+    //   if (!ref) throw new ExtraReference(specName, value)
+    //   return ref
+    // },
 
-    getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(record, id),
+    // getExpectedRef: (id: SpecRecord.ReferenceId) => getRef(record, id),
     getNextExpectedAction(): SpecRecordLive.Action | undefined { return loaded.actions[actions.length] },
     getNextActionId() { return actions.length },
   }
@@ -206,17 +208,19 @@ function getSpecRecord(refs: SpecRecordLive.Reference[], actions: SpecRecordLive
 }
 
 function getRef(record: SpecRecord, id: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.Reference | undefined {
-  const refId = typeof id === 'string' ? id : resolveRefId(record, id)
+  const refId = typeof id === 'string' ? id : resolveRefId(record.actions, id)
   return record.refs[Number(refId)]
 }
 
-function resolveRefId({ actions }: Pick<SpecRecordLive, 'actions'>, id: SpecRecord.ActionId): SpecRecord.ReferenceId {
+function resolveRefId(actions: SpecRecordLive.Action[], id: SpecRecord.ActionId): SpecRecord.ReferenceId {
   const action = actions[id]
-  return action.type === 'return' || action.type === 'throw' ? getCauseAction({ actions }, id).refId : action.refId
+  return action.type === 'return' || action.type === 'throw' ? getCauseAction(actions, id).refId : action.refId
 }
 
-function getCauseAction({ actions }: { actions: SpecRecordLive.Action[] }, id: SpecRecord.ActionId) {
-  return (actions[id] as SpecRecord.CauseActions)
+// per coverage this is not in use, but that is hard to believe.
+// I feel like there must be some scenarios missing
+function getCauseAction(actions: SpecRecordLive.Action[], id: SpecRecord.ActionId) {
+  return actions[id] as SpecRecord.CauseActions
 }
 
 function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
@@ -243,9 +247,9 @@ function addAction(actions: SpecRecordLive.Action[], action: SpecRecordLive.Acti
   return actions.push(action) - 1
 }
 
-export function assertActionType<T extends SpecRecordLive.Action>(specId: string, type: SpecRecordLive.Action['type'], action: SpecRecordLive.Action | undefined): asserts action is T {
-  if (!action || action.type !== type) {
-    throw new ActionMismatch(specId, { type } as any, action)
-  }
-}
+// export function assertActionType<T extends SpecRecordLive.Action>(specId: string, type: SpecRecordLive.Action['type'], action: SpecRecordLive.Action | undefined): asserts action is T {
+//   if (!action || action.type !== type) {
+//     throw new ActionMismatch(specId, { type } as any, action)
+//   }
+// }
 
