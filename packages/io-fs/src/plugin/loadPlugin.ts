@@ -1,4 +1,5 @@
-import { SpecPlugin, PluginModuleNotConforming } from '@mocktomata/framework'
+import { PluginModuleNotConforming, SpecPlugin, PluginNotFound } from '@mocktomata/framework'
+import { log } from '../log'
 
 export function loadPlugin(cwd: string, id: string): SpecPlugin.Module {
   try {
@@ -8,8 +9,8 @@ export function loadPlugin(cwd: string, id: string): SpecPlugin.Module {
     if (m && typeof m.activate === 'function') return m
   }
   catch (e) {
-    // istanbul ignore next
-    if (e.code !== 'MODULE_NOT_FOUND') throw e
+    log.warn(`Unable to find plugin: ${id}`);
+    throw new PluginNotFound(id)
   }
   throw new PluginModuleNotConforming(id)
 }

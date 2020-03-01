@@ -41,7 +41,8 @@
     "@mocktomata/framework": "^7.0.0-beta",
     "find-installed-packages": "^2.1.6",
     "md5": "^2.2.1",
-    "mkdirp": "^1.0.3"
+    "mkdirp": "^1.0.3",
+    "standard-log": "^4.1.0"
   },
   "engines": {
     "node": ">= 6"

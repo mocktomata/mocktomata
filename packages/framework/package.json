@@ -43,7 +43,7 @@
     "global-store": "^1.0.0-beta.15",
     "iso-error": "^3.2.1",
     "stack-utils": "^2.0.1",
-    "standard-log": "^4.0.3",
+    "standard-log": "^4.1.0",
     "tersify": "^3.5.1",
     "type-plus": "^1.34.0"
   }
