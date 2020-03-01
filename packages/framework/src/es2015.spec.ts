@@ -18,7 +18,7 @@ describe('basic checks', () => {
       ['symbol', Symbol()],
       ['string', 'string'],
       ['array', []]
-    ])(title, async ([, value]) => {
+    ])(title, async (_, value) => {
       await a.throws(() => spec(value), NotSpecable)
     })
   })
@@ -228,7 +228,6 @@ describe('object', () => {
       const arr = s.getArray()
       s.updateArray(arr)
       expect(arr).toEqual(['a', 'c'])
-      spec.enableLog()
       await spec.done()
     })
   })

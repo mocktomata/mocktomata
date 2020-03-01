@@ -1,10 +1,10 @@
 import { AsyncContext } from 'async-fp'
+import { LogLevel } from 'standard-log'
+import { log } from '../log'
 import { assertMockable } from './assertMockable'
 import { assertSpecName } from './assertSpecName'
 import { createSimulator } from './simulator'
 import { Spec } from './types'
-import { logLevels } from 'standard-log'
-import { log } from '../log'
 
 export async function createSimulateSpec(
   context: AsyncContext<Spec.Context>,
@@ -29,7 +29,7 @@ export async function createSimulateSpec(
         simulator.end()
         if (enabledLog) log.level = origLogLevel
       },
-      enableLog: (level = logLevels.debug) => {
+      enableLog: (level?: LogLevel) => {
         enabledLog = true
         log.level = level
       },

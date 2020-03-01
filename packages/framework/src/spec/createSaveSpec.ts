@@ -1,5 +1,5 @@
 import { AsyncContext } from 'async-fp'
-import { logLevels } from 'standard-log'
+import { LogLevel } from 'standard-log'
 import { log } from '../log'
 import { prettyPrintSpecRecord } from '../utils'
 import { assertMockable } from './assertMockable'
@@ -35,7 +35,7 @@ export async function createSaveSpec(
           log.level = origLogLevel
         }
       },
-      enableLog: (level = logLevels.debug) => {
+      enableLog: (level?: LogLevel) => {
         enabledLog = true
         log.level = level
       },

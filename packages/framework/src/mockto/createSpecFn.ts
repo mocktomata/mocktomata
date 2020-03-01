@@ -48,7 +48,6 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
   mode: Spec.Mode,
   specRelativePath: string
 }>, specName: string, options: Spec.Options) {
-
   let s: Spec
   const initState: { enableLog: boolean, logLevel?: LogLevel } = { enableLog: false }
   async function createActualSpec(initState: { enableLog: boolean, logLevel?: LogLevel }) {

@@ -1,4 +1,5 @@
 import a, { AssertOrder } from 'assertron'
+import { logLevels } from 'standard-log'
 import { incubator, SpecNotFound } from '..'
 import { log } from '../log'
 
@@ -11,6 +12,13 @@ incubator.duo('enable log only lasts through one spec', (title, spec) => {
     expect(s(4)).toBe(5)
     await spec.done()
     expect(log.level).toBe(origLevel)
+  })
+})
+incubator.duo('enableLog can specify log level', (title, spec) => {
+  test(title, async () => {
+    spec.enableLog(logLevels.none)
+    await spec(() => {})
+    await spec.done()
   })
 })
 

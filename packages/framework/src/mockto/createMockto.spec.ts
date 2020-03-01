@@ -2,6 +2,7 @@ import a from 'assertron'
 import { createMockto, SpecNotFound } from '..'
 import { log } from '../log'
 import { createTestContext, getCallerRelativePath } from '../test-utils'
+import { logLevels } from 'standard-log'
 
 const context = createTestContext()
 const mockto = createMockto(context)
@@ -9,12 +10,12 @@ const mockto = createMockto(context)
 test('live with no options', () => {
   const title = 'live with no options'
   return new Promise(a => {
-    mockto.live(title, (specName, spec) => {
+    mockto.live(title, async (specName, spec) => {
       expect(specName).toEqual(`${title}: live`)
-      spec((x: number) => x + 1).then(s => {
-        expect(s(1)).toBe(2)
-        a()
-      })
+      const s = await spec((x: number) => x + 1)
+      expect(s(1)).toBe(2)
+      await spec.done()
+      a()
     })
   })
 })
@@ -28,6 +29,30 @@ test('live with options', () => {
         expect(s(1)).toBe(2)
         a()
       })
+    })
+  })
+})
+
+test('live has enableLog method', () => {
+  const context = createTestContext()
+  const mockto = createMockto(context)
+  return new Promise(a => {
+    mockto.live('live has enableLog methd', async (_, spec) => {
+      await spec(() => { })
+      spec.enableLog()
+      a()
+    })
+  })
+})
+
+test('live enableLog method can specify log level', () => {
+  const context = createTestContext()
+  const mockto = createMockto(context)
+  return new Promise(a => {
+    mockto.live('live has enableLog methd', async (_, spec) => {
+      await spec(() => { })
+      spec.enableLog(logLevels.none)
+      a()
     })
   })
 })

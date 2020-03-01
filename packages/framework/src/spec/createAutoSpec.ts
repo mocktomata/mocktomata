@@ -9,6 +9,7 @@ export async function createAutoSpec(context: AsyncContext<Spec.Context>, title:
     return await createSimulateSpec(context, title, specPath, options)
   }
   catch (e) {
+    // istanbul ignore next
     if (e instanceof SpecNotFound) return createSaveSpec(context, title, specPath, options)
     else throw e
   }
