@@ -1,11 +1,52 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
-import { ActionMismatch, ExtraAction, incubator, MissingAction } from '.'
+import { ActionMismatch, ExtraAction, incubator, MissingAction, NotSpecable } from '.'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
+import { SpecIDCannotBeEmpty } from './spec'
 
 // beforeAll(() => {
 //   return incubator.start({ target: 'es2015' })
 // })
+
+describe('basic checks', () => {
+  incubator.save(`type %s is not specable`, (title, spec) => {
+    test.each<[any, any]>([
+      ['undefined', undefined],
+      ['null', null],
+      ['number', 1],
+      ['boolean', true],
+      ['symbol', Symbol()],
+      ['string', 'string'],
+      ['array', []]
+    ])(title, async ([, value]) => {
+      await a.throws(() => spec(value), NotSpecable)
+    })
+  })
+  function noop() { }
+
+  incubator.save('', (_, spec) => {
+    test('spec id cannot be empty (save)', async () => {
+      await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
+    })
+  })
+
+  incubator.simulate('', (_, spec) => {
+    test('spec id cannot be empty (simulate)', async () => {
+      await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
+    })
+  })
+  incubator.duo('', (_, spec) => {
+    test('spec id cannot be empty (duo)', async () => {
+      await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
+    })
+  })
+  incubator.sequence('', (_, { save, simulate }) => {
+    test('spec id cannot be empty (sequence)', async () => {
+      await a.throws(() => save(noop), SpecIDCannotBeEmpty)
+      await a.throws(() => save(simulate), SpecIDCannotBeEmpty)
+    })
+  })
+})
 
 describe('mismatch simulation', () => {
   incubator.sequence('extra action', (title, { save, simulate }) => {
@@ -323,7 +364,7 @@ describe('function', () => {
     test.skip(title, async () => {
       const subject = await spec(() => {
         return {
-          get() { return [1,2,3] },
+          get() { return [1, 2, 3] },
           modify(array: number[]) {
             array[0] = 4
           }
@@ -585,7 +626,7 @@ describe('function', () => {
   })
   incubator.duo('call toString()', (title, spec) => {
     test(title, async () => {
-      const subject = await spec(function () {})
+      const subject = await spec(function () { })
       expect(subject.toString()).toEqual('function () { [native code] }')
 
       await spec.done()
