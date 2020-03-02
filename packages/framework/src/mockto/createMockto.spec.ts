@@ -1,8 +1,8 @@
 import a from 'assertron'
+import { captureLogs, logLevels } from 'standard-log'
 import { createMockto, SpecNotFound } from '..'
 import { log } from '../log'
 import { createTestContext, getCallerRelativePath } from '../test-utils'
-import { logLevels, captureLogs } from 'standard-log'
 
 const context = createTestContext()
 const mockto = createMockto(context)
@@ -180,5 +180,68 @@ mockto('can enable log after spec subject is created', (title, spec) => {
       expect(s()).toBe(1)
       await spec.done()
     })
+  })
+})
+
+describe('config', () => {
+  test('override to live mode', async () => {
+    const context = createTestContext({ config: { overrideMode: 'live', plugins: [] } })
+    const mockto = createMockto(context)
+    await new Promise(a => {
+      mockto('force live', async (_, spec) => {
+        (await spec(() => { }))()
+        await spec.done()
+        a()
+      })
+    })
+    const { io } = await context.get()
+    await a.throws(io.readSpec('force live', ''), SpecNotFound)
+  })
+
+  test('overrideMode has no effect on save and simulate', async () => {
+    const context = createTestContext({ config: { overrideMode: 'live', plugins: [] } })
+    const mockto = createMockto(context)
+    await new Promise(a => {
+      mockto.save('force live', async (_, spec) => {
+        (await spec(() => { }))()
+        await spec.done()
+        a()
+      })
+    })
+    await new Promise(a => {
+      mockto.simulate('force live', async (_, spec) => {
+        (await spec(() => { }))()
+        await spec.done()
+        a()
+      })
+    })
+  })
+
+  test('overrideMode for specific spec name', async () => {
+    const context = createTestContext({
+      config: {
+        overrideMode: 'live',
+        specNameFilter: 'to-live',
+        plugins: []
+      }
+    })
+    const mockto = createMockto(context)
+    await new Promise(a => {
+      mockto('not affected', async (_, spec) => {
+        (await spec(() => { }))()
+        await spec.done()
+        a()
+      })
+    })
+    await new Promise(a => {
+      mockto('a to-live spec', async (_, spec) => {
+        (await spec(() => { }))()
+        await spec.done()
+        a()
+      })
+    })
+    const { io } = await context.get()
+    await io.readSpec('not affected', '')
+    await a.throws(io.readSpec('a to-live spec', ''), SpecNotFound)
   })
 })

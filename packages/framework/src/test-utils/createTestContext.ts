@@ -1,10 +1,12 @@
 import { AsyncContext } from 'async-fp'
 import { es2015 } from '../es2015'
-import { SpecPlugin } from '../spec-plugin'
 import { store } from '../store'
+import { Mocktomata } from '../types'
 import { createTestIO } from './createTestIO'
+import { required } from 'type-plus'
 
-export function createTestContext({ config }: { config: SpecPlugin.Config } = { config: { plugins: [] } }) {
+export function createTestContext(context?: { config: Mocktomata.Config }) {
+  const { config } = required({ config: { plugins: [] } }, context)
   store.reset()
   const io = createTestIO()
   io.addPluginModule(es2015.name, es2015)

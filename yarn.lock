@@ -3425,12 +3425,12 @@ async-each@^1.0.1:
   integrity sha512-z/WhQ5FPySLdvREByI2vZiTWwCnF0moMJ1hK9YQwDTHKh6I7/uSckMetoRGb5UBZPC1z0jlw+n/XCgjeH7y1AQ==
 
 async-fp@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-4.1.1.tgz#acc9345251eb102a153f332eea85cd823f4fa805"
-  integrity sha512-/5inIEeRUw6gpkrwruXY3F11002SY/zfQtzEAZgQSD9adsHJq74FHUnnPGCFlysilfOQWHXTvhPzgflR4OIsCQ==
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/async-fp/-/async-fp-4.2.1.tgz#5e3d3af59477052962c896d4ade608762be9f7c1"
+  integrity sha512-xvGdJ/3XeR7c/FQsPWNbp4CeXVJNE71fS41Sg78XmlO0JVJpKyKndgCyxQ2hXgxGAwGZvychmX/Os/5J9tjVMQ==
   dependencies:
     iso-error "^3.2.1"
-    type-plus "^1.34.0"
+    type-plus "^1.35.1"
 
 async-limiter@~1.0.0:
   version "1.0.1"
@@ -7364,9 +7364,9 @@ http-cache-semantics@^3.8.1:
   integrity sha512-5ai2iksyV8ZXmnZhHH4rWPoxxistEexSi5936zIQ1bnNTW5VnA85B6P/VpXiRM017IgRvb2kKo1a//y+0wSp3w==
 
 http-cache-semantics@^4.0.0, http-cache-semantics@^4.0.4:
-  version "4.0.4"
-  resolved "https://registry.yarnpkg.com/http-cache-semantics/-/http-cache-semantics-4.0.4.tgz#13eeb612424bb113d52172c28a13109c46fa85d7"
-  integrity sha512-Z2EICWNJou7Tr9Bd2M2UqDJq3A9F2ePG9w3lIpjoyuSyXFP9QbniJVu3XQYytuw5ebmG7dXSXO9PgAjJG8DDKA==
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/http-cache-semantics/-/http-cache-semantics-4.1.0.tgz#49e91c5cbf36c9b94bcfcd71c23d5249ec74e390"
+  integrity sha512-carPklcUh7ROWRK7Cv27RPtdhYhUsela/ue5/jKzjegVvXDqM2ILE9Q2BGn9JZJh1g87cp56su/FgQSzcWS8cQ==
 
 http-errors@1.7.2:
   version "1.7.2"
@@ -13510,10 +13510,10 @@ type-name@^2.0.1:
   resolved "https://registry.yarnpkg.com/type-name/-/type-name-2.0.2.tgz#efe7d4123d8ac52afff7f40c7e4dec5266008fb4"
   integrity sha1-7+fUEj2KxSr/9/QMfk3sUmYAj7Q=
 
-type-plus@^1.31.3, type-plus@^1.34.0:
-  version "1.34.0"
-  resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.34.0.tgz#cdeee61161465b251e02bba65c8c289b7b6b4960"
-  integrity sha512-TPsS3+1/p8fzAzZo0eZQKBESOTsEeHy9ZfLQzAxRUWeR7N4z+2e3lt6rUf87zXKJU7eLp4Eipl1i24v0B0rQXg==
+type-plus@^1.31.3, type-plus@^1.34.0, type-plus@^1.35.1:
+  version "1.35.1"
+  resolved "https://registry.yarnpkg.com/type-plus/-/type-plus-1.35.1.tgz#15e39a0922fdf08d8d24cc7d1a5d50d3273434de"
+  integrity sha512-El1yp4aLFVpOwU/emJRxqw7+OsA8gUWILnrS8Ln5rafvHSG5tHopvmQLIBPdkFfRk65ZBcipVlk3XcfkL36jng==
   dependencies:
     unpartial "^0.6.3"
 

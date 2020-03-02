@@ -37,7 +37,9 @@ export function createFakeServerFetch() {
             return new f.Response(undefined, { status: 404 })
         }
       }
+      // istanbul ignore next
       console.error(url)
+      // istanbul ignore next
       return new f.Response(undefined, { status: 404 })
     },
     {

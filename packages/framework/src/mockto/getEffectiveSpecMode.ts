@@ -5,19 +5,14 @@ import { Spec } from '../spec'
  * @param mode The SpecMode to return if SpecMode is not changed by config.
  */
 export function getEffectiveSpecMode(
-  config: Spec.Config,
-  mode: Spec.Mode,
+  config: Spec.Context['config'],
   specName: string,
   invokePath: string,
 ): Spec.Mode {
-  if (mode !== 'auto') return mode
-
   const overrideMode = config.overrideMode
-  if (!overrideMode) return mode
-
-  if (config.filePathFilter && !config.filePathFilter.test(invokePath)) return mode
-
-  if (config.specNameFilter && !config.specNameFilter.test(specName)) return mode
+  if (!overrideMode) return 'auto'
+  if (config.filePathFilter && !config.filePathFilter.test(invokePath)) return 'auto'
+  if (config.specNameFilter && !config.specNameFilter.test(specName)) return 'auto'
 
   return overrideMode
 }

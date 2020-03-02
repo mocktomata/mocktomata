@@ -1371,7 +1371,6 @@ describe('instance', () => {
 
   incubator.duo('ioc instanciate class', (title, spec) => {
     test(title, async () => {
-      spec.enableLog()
       class Dummy { foo() { } }
       const s = await spec((subject: any) => new subject())
       expect(s(Dummy)).toBeInstanceOf(Dummy)

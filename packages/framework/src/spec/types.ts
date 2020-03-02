@@ -1,6 +1,6 @@
 import { LogLevel } from 'standard-log'
+import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
-import { SpecPlugin } from '../spec-plugin'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,
@@ -10,15 +10,20 @@ export type Spec = {
 
 export namespace Spec {
   export type Config = {
-    overrideMode?: Mode,
-    filePathFilter?: RegExp,
-    specNameFilter?: RegExp
+    overrideMode?: OverrideMode,
+    filePathFilter?: string,
+    specNameFilter?: string
   }
 
+  export type OverrideMode = Extract<Mode, 'live' | 'save' | 'simulate'>
   export type Context = {
     plugins: SpecPlugin.Instance[],
     io: IO,
-    config: Config,
+    config: {
+      overrideMode?: Mode,
+      filePathFilter?: RegExp,
+      specNameFilter?: RegExp
+    },
   }
 
   export type IO = {
