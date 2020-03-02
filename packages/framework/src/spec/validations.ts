@@ -13,15 +13,6 @@ function sourceMismatch(actual: SpecRecord.ReferenceSource | undefined, expected
     (actual as any).key !== (expected as any).key
 }
 
-export function siteMismatch(actual: SpecRecord.SupportedKeyTypes | undefined, expected: SpecRecord.SupportedKeyTypes | undefined) {
-  return actual === expected
-}
-
-export function arrayMismatch(actual: any[] | undefined, expected: any[] | undefined) {
-  if (actual === undefined) {
-    return expected !== undefined
-  }
-  return expected === undefined ||
-    actual.length !== expected.length ||
-    actual.some((v, i) => v !== expected[i])
-}
+// export function siteMismatch(actual: SpecRecord.SupportedKeyTypes | undefined, expected: SpecRecord.SupportedKeyTypes | undefined) {
+//   return actual === expected
+// }

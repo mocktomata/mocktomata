@@ -1,9 +1,11 @@
 export class Dummy {
   // class detection requires to have at least one method defined.
+  // istanbul ignore next
   do() { return }
 }
 
 export class ChildOfDummy extends Dummy {
+  // istanbul ignore next
   doDumber() { return }
 }
 

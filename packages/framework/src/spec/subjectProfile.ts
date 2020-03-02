@@ -8,6 +8,7 @@ export function getDefaultPerformer(profile: SpecRecord.SubjectProfile) {
     case 'input':
       return 'mockto'
     default:
+      // istanbul ignore next
       throw new Error(`unknown subject profile ${profile}`)
   }
 }

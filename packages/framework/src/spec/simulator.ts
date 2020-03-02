@@ -74,20 +74,18 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
     throw new ExtraReference(record.specName, subject)
   }
 
-  if (ref.testDouble === notDefined) {
-    // `context.state` can only be undefined at `createSimulator()`. At that time `options.profile` is default to `target`
-    // so `context.state` will always be defined in this line.
-    const profile = options.profile || context.state!.ref.profile
+  // `context.state` can only be undefined at `createSimulator()`. At that time `options.profile` is default to `target`
+  // so `context.state` will always be defined in this line.
+  const profile = options.profile
 
-    const source = context.state?.source
+  const source = context.state?.source
 
-    referenceMismatch({ plugin: plugin.name, profile, source }, ref)
-    const refId = record.getRefId(ref)
-    const state = { ref, refId, spyOptions: [] }
-    logCreateStub(state, profile, subject || ref.meta)
+  referenceMismatch({ plugin: plugin.name, profile, source }, ref)
+  const refId = record.getRefId(ref)
+  const state = { ref, refId, spyOptions: [] }
+  logCreateStub(state, profile, subject || ref.meta)
 
-    ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
-  }
+  ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
 
   return ref.testDouble
 }
