@@ -370,6 +370,9 @@ function processNextAction(context: Simulator.Context) {
       }
       else if (nextAction.performer === 'plugin') {
         const pa = pendingPluginActions.find(a => a.type === nextAction.type && a.site === nextAction.site)
+
+        // Can't find a test case to cover this yet.
+        // istanbul ignore next
         if (!pa) {
           timeTracker.stop()
           throw new ActionMismatch(record.specName, undefined, nextAction)
@@ -387,14 +390,21 @@ function processNextAction(context: Simulator.Context) {
       break
     case 'instantiate':
       if (nextAction.performer === 'mockto') {
-        processInstantiate()
+        processInstantiate(context, actionId, nextAction)
         processNextAction(context)
       }
       break
   }
 }
 
-function processInstantiate() { }
+function processInstantiate(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InstantiateAction) {
+  const { record } = context
+
+  const ref = record.getRef(action.refId)!
+  const args = action.payload.map((arg, key) => resolveValue(getArgumentContext(context, actionId, key), arg))
+  const target = ref.testDouble
+  return new target(...args)
+}
 
 function processGet(context: Simulator.Context, nextAction: SpecRecord.GetAction) {
   const { record } = context

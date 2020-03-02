@@ -1,5 +1,4 @@
 export * from './context'
-export * from './createMap'
 export * from './getPropertyNames'
 export * from './hasProperty'
 export * from './hasPropertyInPrototype'

@@ -1254,6 +1254,7 @@ describe('instance', () => {
       await simulate.done()
     })
   })
+
   incubator.sequence('method skips internal method calls', (title, { save, simulate }) => {
     test(title, async () => {
       let shouldThrow = false
@@ -1290,7 +1291,6 @@ describe('instance', () => {
     })
   })
 
-
   incubator.duo('static property', (title, spec) => {
     test(title, async () => {
       WithStaticProp.x = 1
@@ -1314,6 +1314,68 @@ describe('instance', () => {
       const subject = await spec(getClass)
       const s = subject()
       expect(s.do()).toBe('foo')
+      await spec.done()
+    })
+  })
+
+  incubator.duo('constructor throws error', (title, spec) => {
+    test(title, async () => {
+      class Throw {
+        constructor(x: string) {
+          throw new Error(x)
+        }
+        // need this dummy method for the system to detect this is a class
+        foo() { }
+      }
+      const s = await spec({ Throw })
+      const err = a.throws(() => new s.Throw('abc'))
+
+      expect(err.message).toBe('abc')
+
+      await spec.done()
+    })
+  })
+
+  incubator.sequence('instantiate with wrong primitive argument', (title, { save, simulate }) => {
+    test(title, async () => {
+      class EchoConstuctorArg {
+        constructor(public value: number) { }
+        echo() { return this.value }
+      }
+
+      const s = await save({ EchoConstuctorArg })
+      new s.EchoConstuctorArg(1)
+      await save.done()
+
+      const s2 = await simulate({ EchoConstuctorArg })
+      a.throws(() => new s2.EchoConstuctorArg(2), ActionMismatch)
+    })
+  })
+
+  incubator.sequence('instantiate with different argument is okay as long as behavior does not change', (title, { save, simulate }) => {
+    test(title, async () => {
+      class EchoConstuctorArg {
+        constructor(public value: string) { }
+        echo() { return this.value }
+      }
+
+      const s = await save({ EchoConstuctorArg })
+      new s.EchoConstuctorArg('abc')
+      await save.done()
+
+      const s2 = await simulate({ EchoConstuctorArg })
+      new s2.EchoConstuctorArg('xyz')
+      await simulate.done()
+    })
+  })
+
+  incubator.duo('ioc instanciate class', (title, spec) => {
+    test(title, async () => {
+      spec.enableLog()
+      class Dummy { foo() { } }
+      const s = await spec((subject: any) => new subject())
+      expect(s(Dummy)).toBeInstanceOf(Dummy)
+
       await spec.done()
     })
   })

@@ -55,5 +55,7 @@ function isMatchingInstantiateAction(
 ): actual is SpecRecord.InstantiateAction {
   return !!expected && expected.type === 'instantiate' &&
     actual.refId === expected.refId &&
-    actual.performer === expected.performer
+    actual.performer === expected.performer &&
+    actual.payload.length === expected.payload.length &&
+    actual.payload.every((a, i) => a === expected.payload[i])
 }
