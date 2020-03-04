@@ -12,7 +12,7 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
       const url = buildUrl(info.url, `config`)
       const response = await fetch(url)
       const config = await response.json() as Mocktomata.Config
-      return required({ plugins: [] }, pick(config, 'overrideMode', 'filePathFilter', 'specNameFilter', 'plugins'))
+      return required({ plugins: [] }, pick(config, 'overrideMode', 'ecmaVersion', 'filePathFilter', 'specNameFilter', 'plugins'))
     },
     async loadPlugin(name: string): Promise<SpecPlugin.Module> {
       return import(name)

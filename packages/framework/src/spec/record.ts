@@ -1,8 +1,8 @@
 import { pick } from 'type-plus'
 import { notDefined } from '../constants'
-import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
+import { SpecPlugin } from '../spec-plugin'
+import { findPlugin } from '../spec-plugin/findPlugin'
 import { SpecRecord } from '../spec-record/types'
-import { PluginsNotLoaded } from './errors'
 import { SpecRecordLive } from './types-internal'
 
 export function createSpecRecordBuilder(specName: string) {
@@ -25,21 +25,6 @@ export function createSpecRecordBuilder(specName: string) {
 
 export type SpecRecorderBuilder = ReturnType<typeof createSpecRecordBuilder>
 
-function assertPluginsLoaded(specName: string, refs: SpecRecord.Reference[]) {
-  const pluginsInUse = refs.reduce<string[]>((p, v) => {
-    if (p.indexOf(v.plugin) === -1) p.push(v.plugin)
-    return p
-  }, [])
-
-  const pluginsMissing = pluginsInUse.filter(p => {
-    try { return !getPlugin(p) }
-    catch (e) { return true }
-  })
-  if (pluginsMissing.length > 0) {
-    throw new PluginsNotLoaded(specName, pluginsMissing)
-  }
-}
-
 type ValidateRecord = {
   refs: Array<ValidateReference>,
   actions: Array<SpecRecordLive.Action & {}>,
@@ -48,7 +33,6 @@ type ValidateRecord = {
 export type ValidateReference = SpecRecordLive.Reference & { claimed?: boolean }
 
 export function createSpecRecordValidator(specName: string, loaded: SpecRecord) {
-  assertPluginsLoaded(specName, loaded.refs)
   const record: ValidateRecord = {
     refs: loaded.refs.map(r => ({
       ...r,
@@ -59,11 +43,15 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
     actions: []
   }
   const { refs, actions } = record
+  let plugins: SpecPlugin.Instance[]
 
   return {
     specName,
     refs,
     actions,
+    setPlugins(instances: SpecPlugin.Instance[]) {
+      plugins = instances
+    },
     // getSpecRecord: () => getSpecRecord(refs, actions),
     getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id) as ValidateReference | undefined,
     getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
@@ -79,7 +67,7 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
       let ref = findRefBySubjectOrTestDouble(refs, value)
       if (ref) return ref
 
-      const plugin = findPlugin(value)
+      const plugin = findPlugin(plugins, value)
       if (!plugin) {
         // `value` is primitive
         return undefined
@@ -98,7 +86,7 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
       let ref = findRefBySubjectOrTestDouble(refs, value)
       if (ref) return getRefId(refs, ref)
 
-      const plugin = findPlugin(value)
+      const plugin = findPlugin(plugins, value)
       if (!plugin) {
         // `value` is primitive
         return undefined

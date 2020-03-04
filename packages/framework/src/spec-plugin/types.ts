@@ -42,11 +42,13 @@ export type SpecPlugin<S = any, M = any> = {
 
 export namespace SpecPlugin {
   export type Config = {
+    ecmaVersion: 'es2015',
     plugins: string[]
   }
 
   export type Context = {
     io: IO,
+    config: Config
   }
 
   export type IO = {

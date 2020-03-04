@@ -39,12 +39,11 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "async-fp": "^4.1.1",
-    "global-store": "^1.0.0-beta.15",
+    "async-fp": "^4.2.1",
     "iso-error": "^3.2.1",
     "stack-utils": "^2.0.1",
     "standard-log": "^4.1.0",
-    "tersify": "^3.5.1",
-    "type-plus": "^1.34.0"
+    "tersify": "^3.7.0",
+    "type-plus": "^1.35.1"
   }
 }

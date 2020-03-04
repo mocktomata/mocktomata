@@ -1,17 +1,14 @@
 import a from 'assertron'
 import { AsyncContext } from 'async-fp'
-import { es2015 } from '../es2015'
-import { addPluginModule } from '../spec-plugin'
-import { createTestIO } from '../test-utils'
+import { transformConfig } from '../mockto/transformConfig'
+import { loadPlugins } from '../spec-plugin'
+import { createTestContext, createTestIO } from '../test-utils'
 import { ExtraReference, PluginsNotLoaded } from './errors'
 import { createSimulator } from './simulator'
 import { Spec } from './types'
 
 test('create not expected stub throws', async () => {
-  const io = createTestIO()
-  const plugins = addPluginModule(es2015.name, es2015)
-  const context = new AsyncContext<Spec.Context>()
-  context.set({ io, config: {}, plugins })
+  const context = createTestContext().merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
   const sim = createSimulator(
     context,
     'extra ref',
@@ -25,9 +22,10 @@ test('simulate without plugin install throws', () => {
   const io = createTestIO()
   const context = new AsyncContext<Spec.Context>()
   context.set({ io, config: {}, plugins: [] })
-  a.throws(() => createSimulator(
+  const simulator = createSimulator(
     context,
     'no plugin',
     { refs: [{ plugin: 'not-installed', profile: 'target' }], actions: [] },
-    { timeout: 10 }), PluginsNotLoaded)
+    { timeout: 10 })
+  a.throws(() => simulator.createStub(() => { }), PluginsNotLoaded)
 })

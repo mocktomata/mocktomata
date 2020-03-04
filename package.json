@@ -92,6 +92,7 @@
     "param-case": "^3.0.3",
     "pascal-case": "^3.1.1",
     "rimraf": "^3.0.2",
+    "satisfier": "^5.1.0",
     "source-map-loader": "^0.2.4",
     "tmp": "^0.1.0",
     "ts-jest": "^25.2.1",

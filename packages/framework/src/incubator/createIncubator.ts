@@ -1,10 +1,10 @@
 import { AsyncContext } from 'async-fp'
 import { createMockto } from '../mockto'
 import { createFixedModeSpecFn, createSpecObject } from '../mockto/createSpecFn'
-import { loadPlugins } from '../mockto/loadPlugins'
 import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs'
 import { transformConfig } from '../mockto/transformConfig'
 import { Spec } from '../spec'
+import { loadPlugins } from '../spec-plugin'
 import { getCallerRelativePath } from '../test-utils'
 import { Mocktomata } from '../types'
 
@@ -14,7 +14,7 @@ export namespace createIncubator {
 }
 
 export function createIncubator(context: AsyncContext<Mocktomata.Context>) {
-  const ctx = loadPlugins(context).merge(transformConfig, { lazy: true })
+  const ctx = context.merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
   const save = createFixedModeSpecFn(ctx, 'save')
   const simulate = createFixedModeSpecFn(ctx, 'simulate')
   const sequence: createIncubator.SequenceFn = (...args: any[]) => {

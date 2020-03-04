@@ -6,7 +6,7 @@ import { SpecRecord } from '../spec-record/types'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
 import { actionMatches } from './actionMatches'
 import { createTimeTracker, TimeTracker } from './createTimeTracker'
-import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin } from './errors'
+import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors'
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs'
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record'
 import { createPluginSpyContext } from './recorder'
@@ -32,12 +32,16 @@ export function createSimulator(context: AsyncContext<Spec.Context>, specName: s
   const record = createSpecRecordValidator(specName, loaded)
 
   return {
-    createStub: <S>(subject: S) => context.get().then(({ plugins }) => createStub({
-      plugins,
-      record,
-      timeTracker,
-      pendingPluginActions: []
-    }, subject, { profile: 'target' })),
+    createStub: <S>(subject: S) => context.get().then(({ plugins }) => {
+      assertPluginsLoaded(plugins, specName, loaded.refs)
+      record.setPlugins(plugins)
+      return createStub({
+        plugins,
+        record,
+        timeTracker,
+        pendingPluginActions: []
+      }, subject, { profile: 'target' })
+    }),
     end: () => {
       timeTracker.stop()
       const action = record.getNextExpectedAction()
@@ -51,11 +55,26 @@ export function createSimulator(context: AsyncContext<Spec.Context>, specName: s
   }
 }
 
+function assertPluginsLoaded(plugins: SpecPlugin.Instance[], specName: string, refs: SpecRecord.Reference[]) {
+  const pluginsInUse = refs.reduce<string[]>((p, v) => {
+    if (p.indexOf(v.plugin) === -1) p.push(v.plugin)
+    return p
+  }, [])
+
+  const pluginsMissing = pluginsInUse.filter(p => {
+    try { return !getPlugin(plugins, p) }
+    catch (e) { return true }
+  })
+  if (pluginsMissing.length > 0) {
+    throw new PluginsNotLoaded(specName, pluginsMissing)
+  }
+}
+
 function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }): S {
-  const { record, timeTracker } = context
+  const { record, timeTracker, plugins } = context
 
   // const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
-  const plugin = findPlugin(subject)
+  const plugin = findPlugin(plugins, subject)
 
   // this is a valid case when user change their implementation to use some new features in JavaScript which existing plugins do not support.
   // istanbul ignore next
@@ -184,8 +203,8 @@ function setProperty<V = any>(
   throw result
 }
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
-  const { record } = context
-  const plugin = getPlugin(ref.plugin)
+  const { record, plugins } = context
+  const plugin = getPlugin(plugins, ref.plugin)
   const profile = ref.profile
   const subject = ref.subject
   const refId = record.getRefId(ref)

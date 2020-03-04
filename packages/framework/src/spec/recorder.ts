@@ -1,3 +1,4 @@
+import { AsyncContext } from 'async-fp'
 import { PartialPick } from 'type-plus'
 import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
@@ -10,7 +11,6 @@ import { createSpecRecordBuilder } from './record'
 import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
 import { Recorder, SpecRecordLive } from './types-internal'
-import { AsyncContext } from 'async-fp'
 
 export function createRecorder(context: AsyncContext<Spec.Context>, specName: string, options: Spec.Options) {
   // istanbul ignore next
@@ -26,7 +26,7 @@ export function createRecorder(context: AsyncContext<Spec.Context>, specName: st
 
 function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }) {
   const spyOption = context.state?.spyOptions.find(o => o.subject === subject)
-  const plugin = spyOption?.options.plugin ? getPlugin(spyOption.options.plugin) : findPlugin(subject)
+  const plugin = spyOption?.options.plugin ? getPlugin(context.plugins, spyOption.options.plugin) : findPlugin(context.plugins, subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
   // istanbul ignore next
   if (!plugin) return undefined
@@ -65,7 +65,7 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
 }
 
 export function getSpy<S>(context: Recorder.Context, subject: S, options: { profile?: SpecRecord.SubjectProfile }): S {
-  const { record, state } = context
+  const { record, state, plugins } = context
 
   const sourceRef = state.ref
   const profile = options.profile || sourceRef.profile
@@ -73,7 +73,7 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: { prof
   const ref = record.findRef(subject)
   if (ref) {
     if (ref.testDouble === notDefined) {
-      const plugin = getPlugin(ref.plugin)
+      const plugin = getPlugin(plugins, ref.plugin)
       ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state: { ...state, source: undefined } }), ref.subject)
     }
     return ref.testDouble

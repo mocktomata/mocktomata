@@ -1,15 +1,15 @@
 import { AsyncContext } from 'async-fp'
-import { es2015 } from '../es2015'
-import { store } from '../store'
+import { forEachKey, requiredDeep } from 'type-plus'
+import { SpecPlugin } from '../spec-plugin/types'
 import { Mocktomata } from '../types'
 import { createTestIO } from './createTestIO'
-import { required } from 'type-plus'
 
-export function createTestContext(context?: { config: Mocktomata.Config }) {
-  const { config } = required({ config: { plugins: [] } }, context)
-  store.reset()
+export function createTestContext(context?: {
+  config?: Partial<Mocktomata.Config>,
+  pluginModuleMap?: Record<string, SpecPlugin.Module>
+}) {
+  const { config, pluginModuleMap } = requiredDeep({ config: { ecmaVersion: '2015', plugins: [] }, pluginModuleMap: {} }, context)
   const io = createTestIO()
-  io.addPluginModule(es2015.name, es2015)
-  config.plugins.push(es2015.name)
+  forEachKey(pluginModuleMap, k => io.addPluginModule(k, pluginModuleMap[k]))
   return new AsyncContext({ config, io })
 }

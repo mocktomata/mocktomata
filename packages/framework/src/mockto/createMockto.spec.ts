@@ -185,7 +185,7 @@ mockto('can enable log after spec subject is created', (title, spec) => {
 
 describe('config', () => {
   test('override to live mode', async () => {
-    const context = createTestContext({ config: { overrideMode: 'live', plugins: [] } })
+    const context = createTestContext({ config: { overrideMode: 'live' } })
     const mockto = createMockto(context)
     await new Promise(a => {
       mockto('force live', async (_, spec) => {
@@ -199,7 +199,7 @@ describe('config', () => {
   })
 
   test('overrideMode has no effect on save and simulate', async () => {
-    const context = createTestContext({ config: { overrideMode: 'live', plugins: [] } })
+    const context = createTestContext({ config: { overrideMode: 'live' } })
     const mockto = createMockto(context)
     await new Promise(a => {
       mockto.save('force live', async (_, spec) => {
@@ -222,7 +222,6 @@ describe('config', () => {
       config: {
         overrideMode: 'live',
         specNameFilter: 'to-live',
-        plugins: []
       }
     })
     const mockto = createMockto(context)

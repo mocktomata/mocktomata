@@ -1,8 +1,8 @@
 import { AsyncContext } from 'async-fp'
 import { Spec } from '../spec'
+import { loadPlugins } from '../spec-plugin'
 import { Mocktomata } from '../types'
 import { createFixedModeSpecFn, createSpecFn } from './createSpecFn'
-import { loadPlugins } from './loadPlugins'
 import { transformConfig } from './transformConfig'
 
 export namespace createMockto {
@@ -19,7 +19,7 @@ export namespace createMockto {
 }
 
 export function createMockto(context: AsyncContext<Mocktomata.Context>): createMockto.Mockto {
-  const ctx = loadPlugins(context).merge(transformConfig, { lazy: true })
+  const ctx = context.merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
   return Object.assign(
     createSpecFn(ctx),
     {

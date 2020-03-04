@@ -1,14 +1,14 @@
 import a from 'assertron'
+import { startsWith } from 'satisfier'
 import { logLevels } from 'standard-log'
 import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from '.'
 import { log } from '../log'
-import { store } from '../store'
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts'
-import { createTestIO } from '../test-utils'
+import { createTestContext } from '../test-utils'
 
 beforeEach(() => {
   log.level = logLevels.none
-  store.reset()
+  // store.reset()
 })
 
 afterEach(() => {
@@ -19,56 +19,77 @@ afterEach(() => {
  * Plugin order is reversed so that most specific plugin are checked first.
  */
 test('load plugins in reverse order', async () => {
+  const context = createTestContext({
+    config: { plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-deep-link/pluginA'] },
+    pluginModuleMap: {
+      '@mocktomata/plugin-fixture-dummy': echoPluginModule,
+      '@mocktomata/plugin-fixture-deep-link/pluginA': pluginModuleA
+    }
+  })
 
-  const io = createTestIO()
-  io.addPluginModule('@mocktomata/plugin-fixture-dummy', echoPluginModule)
-  io.addPluginModule('@mocktomata/plugin-fixture-deep-link/pluginA', pluginModuleA)
+  const { plugins } = await loadPlugins(context)
 
-  await loadPlugins({ io })
-  const actual = store.value.plugins
-
-  a.satisfies(actual.map(p => p.name), ['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy'])
+  a.satisfies(plugins.map(p => p.name), startsWith(['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy']))
 })
 
 test('Not existing plugin throws PluginNotFound', async () => {
-  const io = createTestIO()
-  io.addPluginModule('not-exist', undefined as any)
+  const context = createTestContext({
+    config: { plugins: ['not-exist'] },
+  })
 
-  await a.throws(() => loadPlugins({ io }), PluginNotFound)
+  await a.throws(() => loadPlugins(context), PluginNotFound)
 })
 
 test('plugin without activate function is ignored', async () => {
-  const io = createTestIO()
-  io.addPluginModule('@mocktomata/no-activate', noActivatePluginModule as any)
+  const context = createTestContext({
+    config: { plugins: ['@mocktomata/no-activate'] },
+    pluginModuleMap: {
+      '@mocktomata/no-activate': noActivatePluginModule as any
+    }
+  })
 
-  await loadPlugins({ io })
+  await loadPlugins(context)
 })
 
 test('plugin missing support method throws', async () => {
-  const io = createTestIO()
-  io.addPluginModule('@mocktomata/no-support', missSupportPluginModule as any)
-
-  await a.throws(() => loadPlugins({ io }), PluginNotConforming)
+  const context = createTestContext({
+    config: { plugins: ['@mocktomata/no-support'] },
+    pluginModuleMap: {
+      '@mocktomata/no-support': missSupportPluginModule as any
+    }
+  })
+  await a.throws(() => loadPlugins(context), PluginNotConforming)
 })
 
 test('plugin missing getSpy method throws', async () => {
-  const io = createTestIO()
-  io.addPluginModule('@mocktomata/no-getspy', missGetSpyPluginModule as any)
+  const context = createTestContext({
+    config: { plugins: ['@mocktomata/no-getspy'] },
+    pluginModuleMap: {
+      '@mocktomata/no-getspy': missGetSpyPluginModule as any
+    }
+  })
 
-  await a.throws(() => loadPlugins({ io }), PluginNotConforming)
+  await a.throws(() => loadPlugins(context), PluginNotConforming)
 })
 
 test('plugin missing getStub method throws', async () => {
-  const io = createTestIO()
-  io.addPluginModule('@mocktomata/no-getstub', missGetStubPluginModule as any)
+  const context = createTestContext({
+    config: { plugins: ['@mocktomata/no-getstub'] },
+    pluginModuleMap: {
+      '@mocktomata/no-getstub': missGetStubPluginModule as any
+    }
+  })
 
-  await a.throws(() => loadPlugins({ io }), PluginNotConforming)
+  await a.throws(() => loadPlugins(context), PluginNotConforming)
 })
 
-test('registering plugin with the same name throws PluginAlreadyLoaded', async () => {
-  const io = createTestIO()
-  io.addPluginModule('@mocktomata/plugin-fixture-dummy', echoPluginModule)
-  await loadPlugins({ io })
+test('registering plugin with the same name throws DuplicatePlugin', async () => {
+  const context = createTestContext({
+    config: { plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-dummy'] },
+    pluginModuleMap: {
+      '@mocktomata/plugin-fixture-dummy': echoPluginModule
+    }
+  })
 
-  await a.throws(() => loadPlugins({ io }), DuplicatePlugin)
+  await a.throws(() => loadPlugins(context), DuplicatePlugin)
 })
