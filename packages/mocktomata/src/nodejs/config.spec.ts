@@ -3,6 +3,8 @@ import { SpecNotFound, CannotConfigAfterUsed, config, mockto } from '..'
 import { store } from './store'
 import { createMockto } from '@mocktomata/framework'
 import { createContext } from './createContext'
+import { logLevels, captureLogs } from 'standard-log'
+import { log } from '../log'
 
 beforeEach(() => store.reset())
 
@@ -24,8 +26,16 @@ test('override mode', () => {
       r()
     })
   })
-});
+})
 
-// test('can specify ecmaVersion to ES2015', async () => {
-//   config({ ecmaVersion: 'ES2015' })
-// });
+test('enable log', () => {
+  const mockto = createMockto(createContext())
+  config({ logLevel: logLevels.all })
+  return new Promise(r => {
+    mockto('log enabled', async (_, spec) => {
+      const logs = await captureLogs(log, () => spec({}))
+      a.satisfies(logs, [{ level: logLevels.debug }])
+      r()
+    })
+  })
+})

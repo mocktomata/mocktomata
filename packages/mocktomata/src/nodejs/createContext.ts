@@ -8,10 +8,9 @@ export function createContext() {
   return new AsyncContext(async () => {
     const io = createIO()
     const loadedConfig = await io.getConfig()
-    log.debug(`loaded config`, loadedConfig)
     const storedConfig = store.value.config
-    if (storedConfig) log.debug(`config(...)`, storedConfig)
     const config = required(loadedConfig, storedConfig)
+    if (config.logLevel) log.level = config.logLevel
     store.value.config = config
     return { config, io }
   }, { lazy: true })
