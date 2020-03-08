@@ -1,6 +1,5 @@
 # mocktomata
 
-![unstable][unstable-image]
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
 [![Circle CI][circleci-image]][circleci-url]
@@ -20,16 +19,16 @@ Welcome to [`mocktomata`](https://github.com/mocktomata/mocktomata), master.
 
 I am `mockto`, or in short `mt`, the main mechanism and your guide.
 
-I can record the behavior of a part of your system.
+I can record the behavior of your system.
 And I can simulate that behavior.
 
 I can isolate your code from the fluctuation and uncertainty of the outside world.
-And I can let your code connect to the world by the flip of a switch.
+And I can connect your code to the world by the flip of a switch.
 
 Most of the time,
 masters utilize me when they write tests.
 
-Utilize me in tests has several benefits over traditional tests.
+Utilizing me in tests has several benefits over traditional tests.
 
 Traditionally, masteres write unit tests, integration tests, and acceptance tests to verify the system is working correctly.
 
@@ -62,30 +61,17 @@ yarn add mocktomata
 import axios from 'axios'
 import { mockto } from 'mocktomata'
 
-mockto('get followers of a user', (title, m) => {
+mockto('get followers of a user', (title, spec) => {
   test(title, async () => {
-    const mockedAxios = m.mock(axios)
+    const mockedAxios = spec(axios)
 
     const followers = await getFollowers(mockedAxios, 'danny')
 
     expect(followers.length).toBe(10)
 
-    await m.done()
+    await spec.done()
   })
 })
-
-// or
-test('get followers of a user', async () => {
-  const m = await mockto('get followers of a user')
-  const mockedAxios = m.mock(axios)
-
-  const followers = await getFollowers(mockedAxios, 'danny')
-
-  expect(followers.length).toBe(10)
-
-  await m.done()
-})
-
 ```
 
 ## Other use cases
@@ -101,7 +87,7 @@ module.exports = () => {
   return {
     'files': [
       // load spec records
-      { pattern: '__mocktomata__/**/*', instrument: false },
+      { pattern: '.mocktomata/**/*', instrument: false },
       ...
     ],
     setup(wallaby) {
@@ -111,14 +97,14 @@ module.exports = () => {
 
       const writeFile = fs.writeFileSync;
       fs.writeFileSync = function(file, content) {
-        if (/__mocktomata__/.test(file)) {
+        if (/.mocktomata/.test(file)) {
           writeFile(path.join(wallaby.localProjectDir, file.replace(wallaby.projectCacheDir, '')), content);
         }
         return writeFile.apply(this, arguments);
       }
       const mkdirSync = fs.mkdirSync;
       fs.mkdirSync = function (dir, mode) {
-        if (/__mocktomata__/.test(dir)) {
+        if (/.mocktomata/.test(dir)) {
           mkdirSync(path.join(wallaby.localProjectDir, dir.replace(wallaby.projectCacheDir, '')), mode);
         }
         return mkdirSync.apply(this, arguments);
