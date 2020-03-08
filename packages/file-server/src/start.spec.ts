@@ -65,7 +65,7 @@ describe('server behavior', () => {
   test('write spec', async () => {
     const id = buildId('abc')
     const response = await fetch(buildUrl(`specs/${id}`), { method: 'POST', body: '{ a: 1 }' })
-    expect(response.status).toBe(204)
+    expect(response.status).toBe(200)
 
     const actual = await (await fetch(buildUrl(`specs/${id}`))).text()
 
