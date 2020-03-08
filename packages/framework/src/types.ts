@@ -8,5 +8,8 @@ export namespace Mocktomata {
   export type Config = Spec.Config & SpecPlugin.Config & {
     logLevel?: LogLevel
   }
-  export type IO = ReplaceProperty<Spec.IO & SpecPlugin.IO, 'getConfig', () => Promise<Config>>
+  export type IO = ReplaceProperty<
+    Spec.IO & SpecPlugin.IO,
+    'getConfig',
+    () => Promise<Spec.Config & SpecPlugin.Config & { logLevel?: string }>>
 }
