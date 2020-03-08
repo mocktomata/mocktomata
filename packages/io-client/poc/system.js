@@ -83,10 +83,8 @@
             segmentIndex = i;
           }
         }
-        else {
-          // it is the start of a new segment
-          segmentIndex = i;
-        }
+        // it is the start of a new segment
+        segmentIndex = i;
       }
       // finish reading out the last segment
       if (segmentIndex !== -1)
@@ -142,7 +140,8 @@
         const segment = path.slice(0, sepIndex);
         if (segment in matchObj)
           return segment;
-      } while ((sepIndex = path.lastIndexOf('/', sepIndex - 1)) !== -1)
+        sepIndex = path.lastIndexOf('/', sepIndex - 1)
+      } while (sepIndex !== -1)
     }
 
     function applyPackages(id, packages, baseUrl) {
