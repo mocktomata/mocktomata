@@ -1,5 +1,6 @@
 {
   "files": [],
+  "exclude": ["**/browser-typings.d.ts"],
   "references": [
     {
       "path": "packages/framework/tsconfig.es5.json"

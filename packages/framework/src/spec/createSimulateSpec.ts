@@ -25,6 +25,7 @@ export async function createSimulateSpec(
       return simulator.createStub<S>(subject)
     },
     {
+      get mode() { return 'simulate' as const },
       async done() {
         simulator.end()
         if (enabledLog) log.level = origLogLevel

@@ -25,6 +25,7 @@ export async function createSaveSpec(
       return recorder.createSpy<S>(subject)
     },
     {
+      get mode() { return 'save' as const },
       async done() {
         recorder.end()
         const record = recorder.getSpecRecord();

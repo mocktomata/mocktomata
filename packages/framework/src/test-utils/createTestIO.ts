@@ -1,25 +1,34 @@
+import { requiredDeep } from 'type-plus'
 import { es2015 } from '../es2015'
 import { Spec, SpecNotFound } from '../spec'
 import { SpecPlugin } from '../spec-plugin'
+import { Mocktomata } from '../types'
 import { prettyPrintSpecRecord } from '../utils'
 
 export namespace createTestIO {
+  export type Options = {
+    config?: Partial<Mocktomata.Config>,
+    modules?: Record<string, SpecPlugin.Module>
+  }
   export type TestIO = {
     getAllSpecs(): IterableIterator<[string, string]>,
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,
   } & Spec.IO & SpecPlugin.IO
 }
 
-export function createTestIO(): createTestIO.TestIO {
+export function createTestIO(options?: createTestIO.Options): createTestIO.TestIO {
   const specStore = new Map<string, string>()
-  const plugins: Record<string, SpecPlugin.Module> = { [es2015.name]: es2015 }
+  const { config, modules } = requiredDeep({
+    config: { ecmaVersion: 'es2015', plugins: [] },
+    modules: { [es2015.name]: es2015 } as Record<string, SpecPlugin.Module>
+  }, options)
   return {
     // istanbul ignore next
     getAllSpecs() {
       return specStore.entries()
     },
     async getConfig() {
-      return { plugins: Object.keys(plugins) } as any
+      return config
     },
     readSpec(specName, specRelativePath) {
       const record = specStore.get(specName)
@@ -30,10 +39,10 @@ export function createTestIO(): createTestIO.TestIO {
       specStore.set(title, prettyPrintSpecRecord(record))
     },
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
-      plugins[moduleName] = pluginModule
+      modules[moduleName] = pluginModule
     },
     loadPlugin(name) {
-      const m = plugins[name]
+      const m = modules[name]
       if (m) return Promise.resolve(m)
       throw new Error(`module ${name} not found`)
     }

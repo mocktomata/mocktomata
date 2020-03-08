@@ -9,11 +9,11 @@ import { resolveMocktoFnArgs } from './resolveMocktoFnArgs'
 export function createSpecFn(context: AsyncContext<Spec.Context>) {
   const specFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
+    const specRelativePath = getCallerRelativePath(specFn)
     const ctx = context.merge(async () => {
       const { config } = await context.get()
-      const specRelativePath = getCallerRelativePath(specFn)
       const mode = getEffectiveSpecMode(config, specName, specRelativePath)
-      return { specRelativePath, mode }
+      return { mode, specRelativePath }
     }, { lazy: true })
     handler(specName, createSpecObject(ctx, specName, options))
   }
@@ -27,11 +27,9 @@ export function createFixedModeSpecFn(context: AsyncContext<Spec.Context>, mode:
   }> | undefined
   const specFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
+    const specRelativePath = getCallerRelativePath(specFn)
     if (!ctx) {
-      ctx = context.merge(async () => {
-        const specRelativePath = getCallerRelativePath(specFn)
-        return { mode, specRelativePath }
-      }, { lazy: true })
+      ctx = context.merge({ mode, specRelativePath }, { lazy: true })
     }
     handler(`${specName}: ${mode}`, createSpecObject(ctx, specName, options))
   }
@@ -53,7 +51,18 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
   }
 
   const spec = Object.assign((subject: any) => createActualSpec(initState).then(actualSpec => {
-    spec.done = actualSpec.done
+    if (!spec.mode) {
+      Object.defineProperties(spec, {
+        mode: {
+          get() { return actualSpec.mode }
+        },
+        done: {
+          configurable: false,
+          value: actualSpec.done,
+          writable: false
+        }
+      })
+    }
     return actualSpec(subject)
   }), {
     enableLog: (level: LogLevel = logLevels.all) => {

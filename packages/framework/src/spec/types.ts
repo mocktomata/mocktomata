@@ -4,6 +4,7 @@ import { SpecRecord } from '../spec-record/types'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,
+  readonly mode: Spec.Mode,
   done(): Promise<void>,
   enableLog(level?: LogLevel): void,
 }
