@@ -7,6 +7,7 @@ export type Spec = {
   readonly mode: Spec.Mode,
   done(): Promise<void>,
   enableLog(level?: LogLevel): void,
+  ignoreMismatch(value: any): void,
 }
 
 export namespace Spec {

@@ -41,11 +41,13 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
   specRelativePath: string
 }>, specName: string, options: Spec.Options) {
   let s: Spec
-  const initState: { enableLog: boolean, logLevel?: LogLevel } = { enableLog: false }
-  async function createActualSpec(initState: { enableLog: boolean, logLevel?: LogLevel }) {
+  type InitState = { enableLog: boolean, ignoreValues: any[], logLevel?: LogLevel }
+  const initState: InitState = { enableLog: false, ignoreValues: [] }
+  async function createActualSpec(initState: InitState) {
     if (s) return s
     const { mode, specRelativePath } = await context.get()
     s = await createSpec(context, specName, specRelativePath, mode, options)
+    initState.ignoreValues.forEach(v => s.ignoreMismatch(v))
     if (initState.enableLog) s.enableLog(initState.logLevel)
     return s
   }
@@ -72,6 +74,7 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
         initState.logLevel = level
       }
     },
-  }) as Spec
+    ignoreMismatch(value: any) { initState.ignoreValues.push(value) }
+  }) as any
   return spec
 }

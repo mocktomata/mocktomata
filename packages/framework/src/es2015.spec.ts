@@ -1,8 +1,8 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
 import { ActionMismatch, ExtraAction, incubator, MissingAction, NotSpecable } from '.'
+import { ExtraReference, SpecIDCannotBeEmpty } from './spec'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
-import { SpecIDCannotBeEmpty, ExtraReference } from './spec'
 
 // beforeAll(() => {
 //   return incubator.start({ target: 'es2015' })
@@ -1379,3 +1379,44 @@ describe('instance', () => {
     })
   })
 });
+
+describe('ignoreMismatch', () => {
+  incubator.sequence('reference object changes are ignored by default. Garbage-in garbage-out issues are handled by tests, not by the system', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = (x: string) => x
+      const s = await save(subject)
+      expect(s('192.168.0.123')).toBe('192.168.0.123')
+      await save.done()
+
+      const s2 = await simulate(subject)
+      expect(s2('10.0.8.123')).toBe('10.0.8.123')
+      await simulate.done()
+    })
+  })
+
+  incubator.duo('non-primitive value are skipped (still work as normal)', (title, spec) => {
+    test(title, async () => {
+      spec.ignoreMismatch('192.168.0.123')
+      const s = await spec((x: string) => x)
+      const actual = s('192.168.0.123')
+      expect(actual).toBe('192.168.0.123')
+      await spec.done()
+    })
+  })
+
+  incubator.sequence('changed to ignored value is ignored', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = (x: number) => x + 1
+      save.ignoreMismatch(1)
+      const s = await save(subject)
+      const actual = s(1)
+      expect(actual).toBe(2)
+      await save.done()
+
+      const s2 = await simulate(subject)
+      const actual2 = s2(100)
+      expect(actual2).toBe(2) // still get the saved value
+      await simulate.done()
+    })
+  })
+})

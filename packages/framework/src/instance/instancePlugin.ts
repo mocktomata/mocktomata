@@ -18,7 +18,7 @@ export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: st
   },
   createSpy: ({ getProperty, invoke, setProperty, setMeta, getSpyId, setSpyOptions }, subject) => {
     const classConstructor = Object.getPrototypeOf(subject).constructor
-    setSpyOptions(classConstructor, { plugin: '@mocktomata/es2015/class' })
+    setSpyOptions(classConstructor, { plugin: '@mocktomata/class' })
     const meta = setMeta({
       base: metarize(subject),
       classConstructor: getSpyId(classConstructor),

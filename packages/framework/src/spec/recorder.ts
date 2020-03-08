@@ -17,15 +17,23 @@ export function createRecorder(context: AsyncContext<Spec.Context>, specName: st
   const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
   const record = createSpecRecordBuilder(specName)
 
+  let c: Promise<PartialPick<Recorder.Context, 'state'>>
+  async function getContext() {
+    if (c) return c
+    return c = context.get().then(({ plugins }) => {
+      return { plugins, record, timeTracker, spyOptions: [] }
+    })
+  }
   return {
-    createSpy: <S>(subject: S) => context.get().then(({ plugins }) => createSpy({ plugins, record, timeTracker }, subject, { profile: 'target' })),
+    createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
     end: () => timeTracker.stop(),
-    getSpecRecord: () => record.getSpecRecord()
+    getSpecRecord: () => record.getSpecRecord(),
+    addInertValue: (value: any) => getContext().then(ctx => setSpyOptions(ctx, value, { plugin: '@mocktomata/inert' })),
   }
 }
 
 function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }) {
-  const spyOption = context.state?.spyOptions.find(o => o.subject === subject)
+  const spyOption = context.spyOptions.find(o => o.subject === subject)
   const plugin = spyOption?.options.plugin ? getPlugin(context.plugins, spyOption.options.plugin) : findPlugin(context.plugins, subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
   // istanbul ignore next
@@ -45,7 +53,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   const source = context.state?.source
   const ref: SpecRecordLive.Reference = { plugin: plugin.name, profile, overrideProfiles: [], subject, testDouble: notDefined, source }
   const refId = context.record.addRef(ref)
-  const state = { ref, refId, spyOptions: [] }
+  const state = { ref, refId }
   logCreateSpy(state, profile, subject)
   ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
   // TODO: fix circular reference
@@ -78,7 +86,6 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: { prof
     }
     return ref.testDouble
   }
-
   return createSpy(context, subject, { profile }) || subject
 }
 
@@ -88,8 +95,8 @@ function getSpyId<V>(context: Recorder.Context, value: V) {
   return record.findRefId(spy) || value
 }
 
-function setSpyOptions(context: Recorder.Context, subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options) {
-  context.state.spyOptions.push({ subject, options })
+function setSpyOptions(context: { spyOptions: Recorder.SpyOption[] }, subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options) {
+  context.spyOptions.push({ subject, options })
 }
 
 function setMeta<M extends SpecRecord.Meta>({ state }: Recorder.Context, meta: M) {
@@ -166,7 +173,6 @@ function invoke<V, T, A extends any[]>(
       action.payload.push(record.findRefId(spiedArg) ?? arg)
       return spiedArg
     })
-
     logAction(context.state, actionId, action)
     const result = handler({ thisArg: spiedThisArg, args: spiedArgs as A })
     // remove overrideProfiles for this and args

@@ -9,13 +9,17 @@ export namespace Recorder {
     timeTracker: TimeTracker,
     record: SpecRecorderBuilder,
     state: State,
+    spyOptions: Array<SpyOption>,
   }
 
   export type State = {
     ref: SpecRecordLive.Reference,
     refId: SpecRecord.ReferenceId,
-    spyOptions: Array<{ subject: any, options: SpecPlugin.SpyContext.setSpyOptions.Options }>,
     source?: SpecRecord.ReferenceSource,
+  }
+  export type SpyOption = {
+    subject: any,
+    options: SpecPlugin.SpyContext.setSpyOptions.Options
   }
 }
 

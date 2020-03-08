@@ -1,15 +1,16 @@
 import { SpecRecord } from '../spec-record/types'
+import { SpecRecordValidator } from './record'
 
-export function actionMatches(actual: SpecRecord.Action, expected: SpecRecord.Action | undefined) {
+export function actionMatches(record: SpecRecordValidator, actual: SpecRecord.Action, expected: SpecRecord.Action | undefined) {
   switch (actual.type) {
     case 'get':
       return isMatchingGetAction(actual, expected)
     case 'set':
-      return isMatchingSetAction(actual, expected)
+      return isMatchingSetAction(record, actual, expected)
     case 'invoke':
-      return isMatchingInvokeAction(actual, expected)
+      return isMatchingInvokeAction(record, actual, expected)
     case 'instantiate':
-      return isMatchingInstantiateAction(actual, expected)
+      return isMatchingInstantiateAction(record, actual, expected)
   }
 }
 
@@ -24,6 +25,7 @@ function isMatchingGetAction(
 }
 
 function isMatchingSetAction(
+  record: SpecRecordValidator,
   actual: SpecRecord.SetAction,
   expected: SpecRecord.Action | undefined
 ): actual is SpecRecord.SetAction {
@@ -38,6 +40,7 @@ function isPrimitive(value: any) {
 }
 
 function isMatchingInvokeAction(
+  record: SpecRecordValidator,
   actual: SpecRecord.InvokeAction,
   expected: SpecRecord.Action | undefined
 ): actual is SpecRecord.InvokeAction {
@@ -45,17 +48,27 @@ function isMatchingInvokeAction(
     actual.refId === expected.refId &&
     actual.performer === expected.performer &&
     actual.thisArg === expected.thisArg &&
-    actual.payload.length === expected.payload.length &&
-    actual.payload.every((a, i) => a === expected.payload[i])
+    isMatchingPayload(record, actual.payload, expected.payload)
 }
 
 function isMatchingInstantiateAction(
+  record: SpecRecordValidator,
   actual: SpecRecord.InstantiateAction,
   expected: SpecRecord.Action | undefined
 ): actual is SpecRecord.InstantiateAction {
   return !!expected && expected.type === 'instantiate' &&
     actual.refId === expected.refId &&
     actual.performer === expected.performer &&
-    actual.payload.length === expected.payload.length &&
-    actual.payload.every((a, i) => a === expected.payload[i])
+    isMatchingPayload(record, actual.payload, expected.payload)
+}
+
+function isMatchingPayload(record: SpecRecordValidator, actualPayload: any[], expectedPayload: any[]) {
+  return actualPayload.length === expectedPayload.length &&
+  actualPayload.every((a, i) => {
+    if (a === expectedPayload[i]) return true
+
+    // ignore inert value
+    const ref = record.getLoadedRef(expectedPayload[i])
+    return ref?.plugin === '@mocktomata/inert'
+  })
 }

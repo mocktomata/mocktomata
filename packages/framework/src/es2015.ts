@@ -2,6 +2,7 @@ import { arrayPlugin } from './array'
 import { classPlugin } from './class'
 import { errorPlugin } from './error'
 import { functionPlugin } from './function'
+import { inertPlugin } from './inert'
 import { instancePlugin } from './instance'
 import { nullPlugin } from './null'
 import { objectPlugin } from './object'
@@ -11,8 +12,9 @@ import { stringPlugin } from './string'
 import { undefinedPlugin } from './undefined'
 
 export const es2015 = {
-  name: '@mocktomata/es2015',
+  name: '@mocktomata',
   activate({ register }: SpecPlugin.ActivationContext) {
+    register(inertPlugin)
     register(undefinedPlugin)
     register(nullPlugin)
     register(stringPlugin)

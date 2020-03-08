@@ -27,6 +27,11 @@ export namespace SpecRecord {
     meta?: Meta,
 
     source?: ReferenceSource,
+
+    /**
+     * Are changes for this reference are ignored during simulation
+     */
+    inert?: boolean
   }
   export type ReferenceId = string
 

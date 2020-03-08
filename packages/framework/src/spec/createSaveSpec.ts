@@ -40,5 +40,10 @@ export async function createSaveSpec(
         enabledLog = true
         log.level = level
       },
+      ignoreMismatch(value: any) {
+        const valueType = typeof value
+        if (valueType !== 'bigint' && valueType !== 'boolean' && valueType !== 'number') return
+        recorder.addInertValue(value)
+      }
     })
 }

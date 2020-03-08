@@ -22,6 +22,7 @@ export namespace Simulator {
     timeTracker: TimeTracker,
     record: SpecRecordValidator,
     state: Recorder.State,
+    spyOptions: Array<Recorder.SpyOption>,
     pendingPluginActions: Array<SpecPlugin.StubContext.PluginAction & { ref: SpecRecordLive.Reference, refId: SpecRecord.ReferenceId }>
   }
 }
@@ -39,6 +40,7 @@ export function createSimulator(context: AsyncContext<Spec.Context>, specName: s
         plugins,
         record,
         timeTracker,
+        spyOptions: [],
         pendingPluginActions: []
       }, subject, { profile: 'target' })
     }),
@@ -101,7 +103,7 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
 
   referenceMismatch({ plugin: plugin.name, profile, source }, ref)
   const refId = record.getRefId(ref)
-  const state = { ref, refId, spyOptions: [] }
+  const state = { ref, refId }
   logCreateStub(state, profile, subject || ref.meta)
 
   ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
@@ -137,7 +139,7 @@ function getProperty(
     key,
   }
 
-  if (!actionMatches(action, expected)) {
+  if (!actionMatches(record, action, expected)) {
     // getProperty calls may be caused by framework access.
     // Those calls will not be record and simply ignored.
     return undefined
@@ -182,7 +184,7 @@ function setProperty<V = any>(
   }
 
   action.value = record.findRefId(resolveValue(context, value)) || value
-  if (!actionMatches(action, expected)) {
+  if (!actionMatches(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
@@ -208,7 +210,7 @@ function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const profile = ref.profile
   const subject = ref.subject
   const refId = record.getRefId(ref)
-  const state = { ref, refId, spyOptions: [] }
+  const state = { ref, refId }
   if (profile === 'input') {
     logCreateSpy(state, profile, subject)
     // about `as any`: RecordValidator does not have `addRef` and `getSpecRecord` and they are not needed for this
@@ -278,7 +280,7 @@ function invoke(context: Simulator.Context,
     return arg
   })
 
-  if (!actionMatches(action, expected)) {
+  if (!actionMatches(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
@@ -335,7 +337,7 @@ function instantiate(
     return arg
   })
 
-  if (!actionMatches(action, expected)) {
+  if (!actionMatches(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }

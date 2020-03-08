@@ -5,5 +5,6 @@ export async function createLiveSpec(): Promise<Spec> {
     get mode() { return 'live' as const },
     async done() { },
     enableLog: () => { },
+    ignoreMismatch() {},
   })
 }

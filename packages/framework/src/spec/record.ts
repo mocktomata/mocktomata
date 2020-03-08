@@ -190,7 +190,7 @@ export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 
 function getSpecRecord(refs: SpecRecordLive.Reference[], actions: SpecRecordLive.Action[]): SpecRecord {
   return {
-    refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta')),
+    refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta', 'inert')),
     actions
   }
 }
