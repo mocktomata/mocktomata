@@ -28,7 +28,7 @@ export function createRecorder(context: AsyncContext<Spec.Context>, specName: st
     createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
     end: () => timeTracker.stop(),
     getSpecRecord: () => record.getSpecRecord(),
-    addInertValue: (value: any) => getContext().then(ctx => setSpyOptions(ctx, value, { plugin: '@mocktomata/inert' })),
+    addInertValue: (value: any) => getContext().then(ctx => setSpyOptions(ctx, value, { plugin: '@mocktomata/inert', inert: true })),
   }
 }
 
@@ -52,12 +52,11 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   // getSpyId from array: no source
   const source = context.state?.source
   const ref: SpecRecordLive.Reference = { plugin: plugin.name, profile, overrideProfiles: [], subject, testDouble: notDefined, source }
+  if (spyOption?.options.inert) ref.inert = true
   const refId = context.record.addRef(ref)
   const state = { ref, refId }
   logCreateSpy(state, profile, subject)
-  ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
-  // TODO: fix circular reference
-  return ref.testDouble
+  return ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
 }
 
 export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContext<any> {

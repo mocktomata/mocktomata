@@ -13,6 +13,12 @@ export namespace createMockto {
   }
 
   export type SpecFn = {
+    /**
+     * Creates an automatic spec.
+     * Automatic spec will record and save a record in the first run.
+     * In subsequent runs, the saved record will be used to simulate the behavior.
+     * @param specName Name of the spec. Every test in the same file must have a unique spec name.
+     */
     (specName: string, handler: Spec.Handler): void,
     (specName: string, options: Spec.Options, handler: Spec.Handler): void,
   }

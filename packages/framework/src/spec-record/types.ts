@@ -27,6 +27,12 @@ export namespace SpecRecord {
     meta?: Meta,
 
     source?: ReferenceSource,
+
+    /**
+     * Indicates the value is inert.
+     * Inert value changes will not cause ActionMismatch error.
+     */
+    inert?: boolean
   }
   export type ReferenceId = string
 

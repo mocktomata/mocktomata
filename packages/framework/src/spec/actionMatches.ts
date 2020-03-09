@@ -69,6 +69,7 @@ function isMatchingPayload(record: SpecRecordValidator, actualPayload: any[], ex
 
     // ignore inert value
     const ref = record.getLoadedRef(expectedPayload[i])
-    return ref?.plugin === '@mocktomata/inert'
+    if (ref?.inert) return true
+    return a == ref?.subject
   })
 }

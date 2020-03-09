@@ -100,6 +100,10 @@ export namespace SpecPlugin {
       export type Options = {
         plugin?: string,
         profile?: SpecRecord.SubjectProfile,
+        /**
+         * Indicates changes of this value will not cause ActionMismatch error.
+         */
+        inert?: boolean
       }
     }
 

@@ -6,7 +6,7 @@ import { atob } from './base64'
 
 export namespace start {
   export type Config = {
-    'file-server'?: {
+    server?: {
       port?: number
     }
   } & SpecPlugin.Config
@@ -25,7 +25,7 @@ export async function start(options?: start.Options) {
   const config = repo.loadConfig() as start.Config
   // can't add test for port 80. wil fail during CI
   // istanbul ignore next
-  const port = options?.port ?? config['file-server']?.port ?? 80
+  const port = options?.port ?? config.server?.port ?? 80
   const context = { config, repo }
   const server = new Server({ port, routes: { 'cors': true } })
   await server.start()
