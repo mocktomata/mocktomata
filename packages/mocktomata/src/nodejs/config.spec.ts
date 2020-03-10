@@ -144,7 +144,7 @@ describe('config with env', () => {
     process.env[ENV_VARS.fileFilter] = 'something else'
     const mockto = createMockto(createContext({ io: createTestIO() }))
     return new Promise(r => {
-      mockto('overide to save mode', async (_, spec) => {
+      mockto('still in save mode', async (_, spec) => {
         await spec({})
         expect(spec.mode).toBe('save')
         r()
@@ -167,6 +167,48 @@ describe('config with env', () => {
       mockto('this does not match', async (_, spec) => {
         await spec({})
         expect(spec.mode).toBe('save')
+        r()
+      })
+    })
+  })
+
+  test('spec match file not match will not override', async () => {
+    process.env[ENV_VARS.mode] = 'live'
+    process.env[ENV_VARS.specFilter] = 'still'
+    process.env[ENV_VARS.fileFilter] = 'something else'
+    const mockto = createMockto(createContext({ io: createTestIO() }))
+    return new Promise(r => {
+      mockto('still in save mode', async (_, spec) => {
+        await spec({})
+        expect(spec.mode).toBe('save')
+        r()
+      })
+    })
+  })
+
+  test('spec not match file match will not override', async () => {
+    process.env[ENV_VARS.mode] = 'live'
+    process.env[ENV_VARS.specFilter] = 'not match'
+    process.env[ENV_VARS.fileFilter] = 'config.spec'
+    const mockto = createMockto(createContext({ io: createTestIO() }))
+    return new Promise(r => {
+      mockto('still in save mode', async (_, spec) => {
+        await spec({})
+        expect(spec.mode).toBe('save')
+        r()
+      })
+    })
+  })
+
+  test('both spec and file match will override', async () => {
+    process.env[ENV_VARS.mode] = 'live'
+    process.env[ENV_VARS.specFilter] = 'live'
+    process.env[ENV_VARS.fileFilter] = 'config.spec'
+    const mockto = createMockto(createContext({ io: createTestIO() }))
+    return new Promise(r => {
+      mockto('override to live mode', async (_, spec) => {
+        await spec({})
+        expect(spec.mode).toBe('live')
         r()
       })
     })
