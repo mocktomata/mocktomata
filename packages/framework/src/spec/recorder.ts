@@ -14,13 +14,18 @@ import { Recorder, SpecRecordLive } from './types-internal'
 
 export function createRecorder(context: AsyncContext<Spec.Context>, specName: string, options: Spec.Options) {
   // istanbul ignore next
-  const timeTracker = createTimeTracker(options, () => logRecordingTimeout(specName, options.timeout))
+  const timeTracker = createTimeTracker(options, elasped => logRecordingTimeout(specName, elasped))
+  const ctx = context.merge(async context => {
+    const { timeTrackers } = await context.get()
+    timeTrackers.push(timeTracker)
+    return {}
+  }, { lazy: true })
   const record = createSpecRecordBuilder(specName)
 
   let c: Promise<PartialPick<Recorder.Context, 'state'>>
   async function getContext() {
     if (c) return c
-    return c = context.get().then(({ plugins }) => {
+    return c = ctx.get().then(({ plugins }) => {
       return { plugins, record, timeTracker, spyOptions: [] }
     })
   }

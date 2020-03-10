@@ -1,15 +1,11 @@
 import axios from 'axios'
 import { mockto } from 'mocktomata'
 import { Calculator } from './Calculator'
-// import a from 'assertron'
-// import delay from 'delay'
 
-beforeAll(() => {
-  // mockto.start({ logOptions: { mode: 'test' } })
-})
+afterAll(() => mockto.teardown())
 
-mockto('1 + 1 = 2', (specName, spec) => {
-  test(specName, async () => {
+mockto('1 + 1 = 2', (title, spec) => {
+  test(title, async () => {
     const subject = await spec(axios)
     const calc = new Calculator(subject)
     const actual = await calc.add(1, 1)

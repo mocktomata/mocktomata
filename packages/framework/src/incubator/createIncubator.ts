@@ -7,6 +7,7 @@ import { Spec } from '../spec'
 import { loadPlugins } from '../spec-plugin'
 import { getCallerRelativePath } from '../test-utils'
 import { Mocktomata } from '../types'
+import { TimeTracker } from '../spec/createTimeTracker'
 
 export namespace createIncubator {
   export type SequenceFn = (specName: string, handler: SequenceHandler) => void
@@ -14,7 +15,7 @@ export namespace createIncubator {
 }
 
 export function createIncubator(context: AsyncContext<Mocktomata.Context>) {
-  const ctx = context.merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
+  const ctx = context.merge({ timeTrackers: [] as TimeTracker[] }, { lazy: true }).merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
   const save = createFixedModeSpecFn(ctx, 'save')
   const simulate = createFixedModeSpecFn(ctx, 'simulate')
   const sequence: createIncubator.SequenceFn = (...args: any[]) => {

@@ -21,7 +21,7 @@ test('create not expected stub throws', async () => {
 test('simulate without plugin install throws', () => {
   const io = createTestIO()
   const context = new AsyncContext<Spec.Context>()
-  context.set({ io, config: {}, plugins: [] })
+  context.set({ io, config: {}, plugins: [], timeTrackers: [] })
   const simulator = createSimulator(
     context,
     'no plugin',

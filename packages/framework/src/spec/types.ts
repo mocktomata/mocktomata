@@ -1,6 +1,7 @@
 import { LogLevel } from 'standard-log'
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
+import { TimeTracker } from './createTimeTracker'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,
@@ -19,6 +20,7 @@ export namespace Spec {
 
   export type OverrideMode = Extract<Mode, 'live' | 'save' | 'simulate'>
   export type Context = {
+    timeTrackers: TimeTracker[],
     plugins: SpecPlugin.Instance[],
     io: IO,
     config: {
