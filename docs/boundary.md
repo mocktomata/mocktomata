@@ -1,5 +1,5 @@
 
-## The problem
+# The problem
 
 Boundary is where two systems meet and communicate with each other using data structures and primitive types.
 

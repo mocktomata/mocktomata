@@ -13,6 +13,24 @@ So that you don't have to repeat that yourself.
 Also, when you use it with a specific mode,
 the `title` will mention the `mode` so that it is easier to track in the test report.
 
+If your test runner support nesting, for example the `describe()` function in `jasmine`, `mocha` or `jest`,
+remember that the `specName` must be unique,
+so you may need to repeat the `name` in `describe(name, handler)` in the `specName`.
+
+- [mockto](#mockto)
+  - [`mockto(specName, [options], (title, spec) => void)`](#mocktospecname-options-title-spec--void)
+  - [`mockto.live(specName, [options], (title, spec) => void)`](#mocktolivespecname-options-title-spec--void)
+  - [`mockto.save(specName, [options], (title, spec) => void)`](#mocktosavespecname-options-title-spec--void)
+  - [`mockto.simulate(specName, [options], (title, spec) => void)`](#mocktosimulatespecname-options-title-spec--void)
+  - [`mockto.teardown()`](#mocktoteardown)
+  - [Tips and Tricks](#tips-and-tricks)
+    - [TDD Workflow](#tdd-workflow)
+    - [Lazy TDD Workflow](#lazy-tdd-workflow)
+    - [Streamlined Workflow](#streamlined-workflow)
+    - [Update One Test Record](#update-one-test-record)
+    - [Preserving Passed Tests](#preserving-passed-tests)
+    - [Use Configuration To Update Record](#use-configuration-to-update-record)
+
 ## `mockto(specName, [options], (title, spec) => void)`
 
 This is the basic usage of `mockto`.
@@ -20,7 +38,7 @@ This is the basic usage of `mockto`.
 When you call it the first time, it will make the actual calls and record the behavior.
 When you call it again, it will load the record and replay the behavior.
 
-Here is an example of how to use it:
+Here is an example on how to use it:
 
 ```ts
 import axios from 'axios'
@@ -60,18 +78,18 @@ For methods available to `spec`, please check out its [`user manual`](./spec.md)
 
 ## `mockto.live(specName, [options], (title, spec) => void)`
 
-Run the spec in `live` mode.
+Always run the spec in `live` mode.
 Actual calls will be made and the behavior is not recorded.
 These specs are not affected by configuration.
 
 ## `mockto.save(specName, [options], (title, spec) => void)`
 
-Run the spec in `save` mode regardless if a spec record exists or not.
+Always run the spec in `save` mode regardless if a spec record exists or not.
 These specs are not affected by configuration.
 
 ## `mockto.simulate(specName, [options], (title, spec) => void)`
 
-Run the spec in `simulate` mode.
+Always run the spec in `simulate` mode.
 These specs are not affected by configuration.
 
 ## `mockto.teardown()`

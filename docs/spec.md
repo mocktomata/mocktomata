@@ -6,6 +6,12 @@ You will get a `spec` object when using [`mockto`](./mockto.md), [`komondor`](./
 
 It is the main mechanism to record the behaviors.
 
+- [spec](#spec)
+  - [`spec<S>(subject: S): Promise<S>`](#specssubject-s-promises)
+  - [`spec.done(): Promise<void>`](#specdone-promisevoid)
+  - [`spec.enableLog(): void`](#specenablelog-void)
+  - [`spec.ignoreMismatch(value)`](#specignoremismatchvalue)
+
 ## `spec<S>(subject: S): Promise<S>`
 
 This tell the `spec` to create a `test double` of the `subject`.
