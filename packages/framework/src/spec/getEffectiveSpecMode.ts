@@ -1,4 +1,4 @@
-import { Spec } from '../spec'
+import { Spec } from '.'
 
 /**
  * Get the effective SpecMode for the specified id.

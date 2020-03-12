@@ -1,4 +1,4 @@
-import { Spec } from './types'
+import { Spec } from '../spec/types'
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
 

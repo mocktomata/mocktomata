@@ -37,7 +37,7 @@ test('live has enableLog method', () => {
   const context = createTestContext()
   const mockto = createMockto(context)
   return new Promise(a => {
-    mockto.live('live has enableLog methd', async (_, spec) => {
+    mockto.live('live has enableLog method', async (_, spec) => {
       await spec(() => { })
       spec.enableLog()
       a()
@@ -49,7 +49,7 @@ test('live enableLog method can specify log level', () => {
   const context = createTestContext()
   const mockto = createMockto(context)
   return new Promise(a => {
-    mockto.live('live has enableLog methd', async (_, spec) => {
+    mockto.live('ive enableLog method can specify log level', async (_, spec) => {
       await spec(() => { })
       spec.enableLog(logLevels.none)
       a()

@@ -1,6 +1,6 @@
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
-import { TimeTracker } from './createTimeTracker'
+import { TimeTracker } from '../timeTracker/createTimeTracker'
 import { SpecRecorderBuilder } from './record'
 
 export namespace Recorder {

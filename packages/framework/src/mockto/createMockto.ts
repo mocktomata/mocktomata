@@ -1,20 +1,20 @@
 import { AsyncContext } from 'async-fp'
 import { Spec } from '../spec'
 import { loadPlugins } from '../spec-plugin'
+import { TimeTracker } from '../timeTracker'
 import { Mocktomata } from '../types'
-import { createFixedModeSpecFn, createSpecFn } from './createSpecFn'
+import { createFixedModeMocktoFn, createMocktoFn } from './createMocktoFn'
 import { transformConfig } from './transformConfig'
-import { TimeTracker } from '../spec/createTimeTracker'
 
 export namespace createMockto {
-  export type Mockto = SpecFn & {
-    live: SpecFn,
-    save: SpecFn,
-    simulate: SpecFn,
+  export type Mockto = MocktoFn & {
+    live: MocktoFn,
+    save: MocktoFn,
+    simulate: MocktoFn,
     teardown(): Promise<void>
   }
 
-  export type SpecFn = {
+  export type MocktoFn = {
     /**
      * Creates an automatic spec.
      * Automatic spec will record and save a record in the first run.
@@ -27,13 +27,16 @@ export namespace createMockto {
 }
 
 export function createMockto(context: AsyncContext<Mocktomata.Context>): createMockto.Mockto {
-  const ctx = context.merge({ timeTrackers: [] as TimeTracker[] }, { lazy: true }).merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
+  const ctx = context
+    .merge({ timeTrackers: [] as TimeTracker[] }, { lazy: true })
+    .merge(loadPlugins, { lazy: true })
+    .merge(transformConfig, { lazy: true })
   return Object.assign(
-    createSpecFn(ctx),
+    createMocktoFn(ctx),
     {
-      live: createFixedModeSpecFn(ctx, 'live'),
-      save: createFixedModeSpecFn(ctx, 'save'),
-      simulate: createFixedModeSpecFn(ctx, 'simulate'),
+      live: createFixedModeMocktoFn(ctx, 'live'),
+      save: createFixedModeMocktoFn(ctx, 'save'),
+      simulate: createFixedModeMocktoFn(ctx, 'simulate'),
       async teardown() {
         const { timeTrackers } = await ctx.get()
         timeTrackers.forEach(t => t.terminate())
