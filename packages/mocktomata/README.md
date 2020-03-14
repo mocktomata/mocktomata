@@ -54,7 +54,9 @@ Please check in that folder into your source control.
 
 ## mockto
 
-I have been designed for writing tests.
+I am `mockto`.
+I am an automaton specialized in writing tests.
+You can also call me `mt` if you like.
 
 Here is an example on how to work with the [`axios`](https://www.npmjs.com/package/axios) library:
 
@@ -80,21 +82,94 @@ mockto('get followers of a user', (title, spec) => {
 })
 ```
 
-When this is executed the first time, I will be running in `save` mode.
-I will save the record when calling `await spec.done()`.
+When the test is executed the first time, I will be running in `save` mode.
+I will save the record when you call `await spec.done()`.
 
-When this is executed again, I will be running in `simulate` mode.
+When the test is executed again, I will be running in `simulate` mode.
 I will load the record and replay the behavior.
 
-For tips, tricks, and advance usages, please checkout my [user manual](./docs/mockto.md)
+For tips, tricks, and advance usages, please checkout my [user manual](https://github.com/mocktomata/mocktomata/docs/mockto.md)
+
+## komondor
+
+I am `komondor`.
+I used to be a guard dog.
+But time passes and now I become an automaton in the `mocktomata` family.
+You can also call me `kd` if you like.
+
+I am a sibing of [`mockto`](#mockto).
+While he is more streamlined for testing, I'm more conventional.
+
+Here is how you call me:
+
+```ts
+import axios from 'axios'
+import { komondor } from 'mocktomata'
+
+test('get followers of a user', async () => {
+  const spec = komondor('get followers of a user')
+  const s = await spec(axios)
+
+  const followers = await getFollowers(s, 'danny')
+  expect(followers.length).toBe(10)
+
+  await spec.done()
+})
+```
+
+Since I'm conventional,
+I can blend in pretty well with production code.
+
+If you want to know more about me, please checout my [user manual](https://github.com/mocktomata/mocktomata/docs/komondor.md)
 
 ## incubator
 
-## config
+I am `incubator`.
+I am specialized in writing tests for [`mocktomata plugins`](#plugins).
 
-## Other use cases
+The most common way to call me is using the `incubator.duo()` method:
 
-- demo: I can record and simulate external systems so that demo can always run without any hipcups.
+```ts
+import { incubator } from 'mocktomata'
+
+incubator.config({ plugins: ['your-plugin'] })
+
+incubator.duo('some test', (title, spec) => {
+  // this will be called twice:
+  // 1. title = 'some test: save'
+  // 2. title = 'some test: simulate'
+  test(title, async () => {
+    const s = await spec(YourPluginSubject)
+    const actual = specificUsage(s)
+    expect(actual).toBe(true)
+
+    await spec.done()
+  })
+})
+```
+
+Please checout my [user manual](https://github.com/mocktomata/mocktomata/docs/incubator.md) for more information.
+
+## plugins
+
+[`mocktomata`](https://github.com/mocktomata/mocktomata) supports a wide range of use cases out of the box.
+In general, it can support any code that interact wtih external systems using simple DTO (data transfer objects).
+
+But there will be libraries that do things it cannot recognize.
+When that happens, don't worry!
+
+The easiest workaround is to create an adaptor that change the interface to communicate in simple DTOs,
+or use a plugin for that library.
+
+To learn more about plugins, please check out the [`plugin documentation`](https://github.com/mocktomata/mocktomata/docs/plugins.md)
+
+## Sensitive Information
+
+Since `mocktomata` will record the behavior,
+it might accidentially record sensitive information that you do not want to keep in the record and commit to your source control.
+
+In that case, you can use the `spec.mockValue()` function.
+To learn more about it, please checkout the [`user manual`](https://github.com/mocktomata/mocktomata/docs/spec.md#mcok)
 
 ## Wallaby config
 

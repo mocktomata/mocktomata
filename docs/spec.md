@@ -11,6 +11,7 @@ It is the main mechanism to record the behaviors.
   - [`spec.done(): Promise<void>`](#specdone-promisevoid)
   - [`spec.enableLog(): void`](#specenablelog-void)
   - [`spec.ignoreMismatch(value)`](#specignoremismatchvalue)
+  - [`spec.maskValue(value, [replaceWith])`](#specmaskvaluevalue-replacewith)
 
 ## `spec<S>(subject: S): Promise<S>`
 
@@ -47,3 +48,82 @@ On the other hand, primitive values such as number and boolean are validated.
 
 If you want to tell `spec` that it should not care about the changes,
 you can use `spec.ignoreMismatch()`.
+
+## `spec.maskValue(value, [replaceWith])`
+
+If the behavior of your code sends or receives sensitive information,
+you should use `spec.maskValue()` to indicate those values should be masked in the record.
+
+This prevents those sensitive information to be saved and commited to your source control.
+
+the sensitive information can be `string` or `number`.
+If it is `string`, you can use `string` or `RegExp` for `value`.
+
+While you can call `spec.maskValue()` anytime before the sensitive information appear,
+for best practice you do declare them at the beginning of your code.
+
+```ts
+test('...', async () => {
+  const spec = kd('...')
+  spec.maskValue(...)
+  spec.maskValue(...)
+  const s = await spec(subject)
+  ...
+})
+```
+
+Here is the exact behavior when using `spec.maskValue()`:
+
+If you are masking a `string` (using `string` or `RegExp`),
+If you do not provide `replaceWith`,
+the senstive information will be replaced with a string with the same length but filled with `*`. i.e.:
+
+```ts
+spec.maskValue('sensitive') // replace with '*********'
+```
+
+If keeping the same length is a concern, you should provide your own `replaceWith`.
+
+If you are masking a `number`,
+by default it will be replace all digits with `3`, and cut of all decimals if any.
+
+The `replaceWith` can be `string` or `number`,
+or a callback receiving the sensitive data so that you can create your own mask.
+
+i.e., the signature of `spec.maskValue()` is:
+
+```ts
+function maskValue<V extends string | number>(value: V, replaceWith: V | ((sensitive: V) => V)): void
+```
+
+The exact behavior when using `spec.maskValue()` also worth mentioning.
+Because they are different depends on which mode it is in.
+
+explicit `live` mode (e.g. `mockto.live()`):
+
+- from you (input): original sensitive information is sent.
+- from external (output): original sensitive information is returned.
+  - so that you can observe the acutal value.
+
+
+
+
+`live` mode:
+
+- from you (input): original sensitive information is sent.
+- from external (output): original sensitive information is returned.****
+- save to record: does not apply.
+
+`save` mode:
+
+- from you (input): original sensitive information is sent.
+- from external (output): masked value is returned.
+- save to record: masked value
+
+`simulate` mode:
+
+- from you (input): ignored as no actual code is executed.
+- from external (output): masked value is returned.
+- save to record: does not apply.
+
+The reason of returning sensitive information
