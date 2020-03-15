@@ -18,7 +18,7 @@ export function createContext(options?: { io: Mocktomata.IO }) {
     if (config.logLevel) log.level = config.logLevel
     store.value.config = config
     return { config, io }
-  }, { lazy: true })
+  })
 }
 
 function getEnvConfig() {

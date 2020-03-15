@@ -14,7 +14,7 @@ const context = new AsyncContext(async () => {
   if (config.logLevel) log.level = config.logLevel
   store.value.config = config
   return { config, io }
-}, { lazy: true })
+})
 export const mockto = createMockto(context)
 
 function getLoadedConfig(config: PromiseValue<ReturnType<Mocktomata.IO['getConfig']>>): Mocktomata.Config {
