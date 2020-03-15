@@ -59,7 +59,7 @@
     "@mocktomata/framework": "^7.0.0-beta",
     "@mocktomata/io-client": "^7.0.0-beta",
     "@mocktomata/io-local": "^7.0.0-beta",
-    "async-fp": "^4.2.1",
+    "async-fp": "^5.0.0",
     "chalk": "^3.0.0",
     "clibuilder": "^6.3.1",
     "global-store": "^1.0.0-beta.15",

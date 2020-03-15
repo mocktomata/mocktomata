@@ -11,10 +11,24 @@ This is the user manual for `incubator`.
 
 ## `incubator.config()`
 
-Configure the `incubator`.
-This function's signature is identical to the configuation function [`config()`](./configuration.md#using-config).
+To use the `incubator`, you need to call `incubator.config()` to add your plugin to the system.
 
-The general configuration mechanism does not affect `incubator`.
+```ts
+import { incubator } from 'mocktomata'
+import { activate } from '.'
+
+beforeAll(() => incubator.config({ plugins: [
+  'other-plugin-a',
+  ['your-plugin', activate],
+  'other-plugin-b'
+]}))
+```
+
+where `activate` is activate function you export (`function activate(context: SpecPlugin.ActivationContext): any`).
+
+As shown in the example above, you can load other plugins to create a specific test environment.
+
+Note that the general configuration mechanism does not affect `incubator`.
 
 ## `incubator.duo(specName, (title, spec) => void)`
 

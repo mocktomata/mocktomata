@@ -8,7 +8,7 @@ import { createSimulator } from './simulator'
 import { Spec } from './types'
 
 test('create not expected stub throws', async () => {
-  const context = createTestContext().merge(loadPlugins, { lazy: true }).merge(transformConfig, { lazy: true })
+  const context = createTestContext().extend(loadPlugins).extend(transformConfig)
   const sim = createSimulator(
     context,
     'extra ref',
@@ -20,8 +20,7 @@ test('create not expected stub throws', async () => {
 
 test('simulate without plugin install throws', () => {
   const io = createTestIO()
-  const context = new AsyncContext<Spec.Context>()
-  context.set({ io, config: {}, plugins: [], timeTrackers: [] })
+  const context = new AsyncContext<Spec.Context>({ io, config: {}, plugins: [], timeTrackers: [] })
   const simulator = createSimulator(
     context,
     'no plugin',

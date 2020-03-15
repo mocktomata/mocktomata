@@ -19,9 +19,9 @@ export namespace createKomondor {
 
 export function createKomondor(context: AsyncContext<Mocktomata.Context>): createKomondor.Komondor {
   const ctx = context
-    .merge({ timeTrackers: [] as TimeTracker[] }, { lazy: true })
-    .merge(loadPlugins, { lazy: true })
-    .merge(transformConfig, { lazy: true })
+    .extend(loadPlugins)
+    .extend(transformConfig)
+    .extend({ timeTrackers: [] as TimeTracker[] })
 
   return Object.assign(
     createKomondorFn(ctx),
@@ -41,11 +41,11 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
 function createKomondorFn(context: AsyncContext<Spec.Context>): createKomondor.KomondorFn {
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
     const specRelativePath = getCallerRelativePath(komondorFn)
-    const ctx = context.merge(async () => {
+    const ctx = context.extend(async () => {
       const { config } = await context.get()
       const mode = getEffectiveSpecMode(config, specName, specRelativePath)
       return { mode, specRelativePath }
-    }, { lazy: true })
+    })
     return createSpecObject(ctx, specName, options)
   }
   return komondorFn
@@ -58,7 +58,7 @@ function createFixedModeKomondorFn(context: AsyncContext<Spec.Context>, mode: Sp
   }> | undefined
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
     const specRelativePath = getCallerRelativePath(komondorFn)
-    if (!ctx) ctx = context.merge({ mode, specRelativePath }, { lazy: true })
+    if (!ctx) ctx = context.extend({ mode, specRelativePath })
     return createSpecObject(ctx, specName, options)
   }
   return komondorFn

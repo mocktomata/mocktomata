@@ -30,11 +30,11 @@ export namespace Simulator {
 export function createSimulator(context: AsyncContext<Spec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
   // istanbul ignore next
   const timeTracker = createTimeTracker(options, elasped => logRecordingTimeout(specName, elasped))
-  const ctx = context.merge(async context => {
+  const ctx = context.extend(async context => {
     const { timeTrackers } = await context.get()
     timeTrackers.push(timeTracker)
     return {}
-  }, { lazy: true })
+  })
   const record = createSpecRecordValidator(specName, loaded)
 
   return {

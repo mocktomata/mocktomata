@@ -28,9 +28,9 @@ export namespace createMockto {
 
 export function createMockto(context: AsyncContext<Mocktomata.Context>): createMockto.Mockto {
   const ctx = context
-    .merge({ timeTrackers: [] as TimeTracker[] }, { lazy: true })
-    .merge(loadPlugins, { lazy: true })
-    .merge(transformConfig, { lazy: true })
+    .extend(loadPlugins)
+    .extend(transformConfig)
+    .extend({ timeTrackers: [] as TimeTracker[] })
   return Object.assign(
     createMocktoFn(ctx),
     {

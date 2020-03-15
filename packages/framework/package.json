@@ -39,7 +39,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "async-fp": "^4.2.1",
+    "async-fp": "^5.0.0",
     "iso-error": "^3.2.1",
     "stack-utils": "^2.0.1",
     "standard-log": "^4.1.2",

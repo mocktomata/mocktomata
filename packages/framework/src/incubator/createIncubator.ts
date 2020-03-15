@@ -8,6 +8,7 @@ import { loadPlugins, SpecPlugin } from '../spec-plugin'
 import { createTestIO, getCallerRelativePath } from '../test-utils'
 import { TimeTracker } from '../timeTracker'
 import { Mocktomata } from '../types'
+import { LeftJoin } from 'type-plus'
 
 export namespace createIncubator {
   export type Context = { config: Mocktomata.Config, io: createTestIO.TestIO }
@@ -19,36 +20,43 @@ export namespace createIncubator {
 }
 
 export function createIncubator(context: AsyncContext<createIncubator.Context>) {
+  let ctxValue: LeftJoin<createIncubator.Context, { plugins: SpecPlugin.Instance[] }> | undefined
+  let pluginInstances: SpecPlugin.Instance[] | undefined
+
   const ctx = context
-    .merge({ timeTrackers: [] as TimeTracker[] }, { lazy: true })
-    .merge(async context => {
-      if (configOptions?.plugins) {
-        const { config, io } = await context.get()
-        config.plugins = configOptions.plugins.map(p => {
-          if (typeof p === 'string') return p
-          io.addPluginModule(p[0], { activate: p[1] })
-          return p[0]
-        })
-      }
+    .extend(loadPlugins)
+    .extend(async ctx => {
+      ctxValue = await ctx.get()
+      return { plugins: ctxValue.plugins = pluginInstances || ctxValue.plugins }
+    })
+    .extend(transformConfig)
+    .extend({ timeTrackers: [] as TimeTracker[] })
+
+  const config = async function (options: createIncubator.ConfigOptions) {
+    const { plugins } = await context.extend(async ctx => {
+      const { config, io } = await ctx.get()
+      config.plugins = options.plugins.map(p => {
+        if (typeof p === 'string') return p
+        io.addPluginModule(p[0], { activate: p[1] })
+        return p[0]
+      })
       return {}
-    }, { lazy: true })
-    .merge(loadPlugins, { lazy: true })
-    .merge(transformConfig, { lazy: true })
-
-  let configOptions: createIncubator.ConfigOptions | undefined
-
-  const config = function (options: createIncubator.ConfigOptions) { configOptions = options }
+    }).extend(loadPlugins).get()
+    if (ctxValue) {
+      ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
+    }
+    else {
+      pluginInstances = plugins
+    }
+  }
   const save = createFixedModeMocktoFn(ctx, 'save')
   const simulate = createFixedModeMocktoFn(ctx, 'simulate')
   const sequence: createIncubator.SequenceFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs<createIncubator.SequenceHandler>(args)
-    const sctx = ctx.merge(async () => {
-      const specRelativePath = getCallerRelativePath(sequence)
-      return { specRelativePath }
-    })
+    const sctx = ctx.extend({ specRelativePath: getCallerRelativePath(sequence) })
     handler(specName, {
-      save: createSpecObject(sctx.merge({ mode: 'save' }), specName, options),
-      simulate: createSpecObject(sctx.merge({ mode: 'simulate' }), specName, options)
+      save: createSpecObject(sctx.extend({ mode: 'save' }), specName, options),
+      simulate: createSpecObject(sctx.extend({ mode: 'simulate' }), specName, options)
     })
   }
   const duo: createMockto.MocktoFn = (...args: any[]) => {
