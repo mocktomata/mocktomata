@@ -1,4 +1,5 @@
 import { AsyncContext } from 'async-fp'
+import { LeftJoin } from 'type-plus'
 import { createMockto } from '../mockto'
 import { createFixedModeMocktoFn } from '../mockto/createMocktoFn'
 import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs'
@@ -8,7 +9,6 @@ import { loadPlugins, SpecPlugin } from '../spec-plugin'
 import { createTestIO, getCallerRelativePath } from '../test-utils'
 import { TimeTracker } from '../timeTracker'
 import { Mocktomata } from '../types'
-import { LeftJoin } from 'type-plus'
 
 export namespace createIncubator {
   export type Context = { config: Mocktomata.Config, io: createTestIO.TestIO }
@@ -42,12 +42,8 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
       })
       return {}
     }).extend(loadPlugins).get()
-    if (ctxValue) {
-      ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
-    }
-    else {
-      pluginInstances = plugins
-    }
+    if (!ctxValue) pluginInstances = plugins
+    else ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
   }
   const save = createFixedModeMocktoFn(ctx, 'save')
   const simulate = createFixedModeMocktoFn(ctx, 'simulate')
