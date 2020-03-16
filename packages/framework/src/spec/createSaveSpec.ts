@@ -44,6 +44,9 @@ export async function createSaveSpec(
         const valueType = typeof value
         if (valueType !== 'bigint' && valueType !== 'boolean' && valueType !== 'number') return
         recorder.addInertValue(value)
+      },
+      maskValue(value: any, replaceWith?: any) {
+        recorder.addMaskValue(value, replaceWith)
       }
     })
 }

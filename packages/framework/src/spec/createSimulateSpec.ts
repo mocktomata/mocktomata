@@ -34,6 +34,7 @@ export async function createSimulateSpec(
         enabledLog = true
         log.level = level
       },
-      ignoreMismatch() {},
+      ignoreMismatch() { },
+      maskValue() { },
     })
 }

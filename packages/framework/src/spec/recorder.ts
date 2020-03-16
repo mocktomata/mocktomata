@@ -1,5 +1,5 @@
 import { AsyncContext } from 'async-fp'
-import { PartialPick } from 'type-plus'
+import { PartialPick, Pick } from 'type-plus'
 import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
@@ -18,20 +18,23 @@ export function createRecorder(context: AsyncContext<Spec.Context>, specName: st
   const ctx = context.extend(async context => {
     const { timeTrackers } = await context.get()
     timeTrackers.push(timeTracker)
-    return {}
+    return { timeTracker }
   })
   const record = createSpecRecordBuilder(specName)
 
   let c: Promise<PartialPick<Recorder.Context, 'state'>>
   async function getContext() {
     if (c) return c
-    return c = ctx.get().then(({ plugins }) => ({ plugins, record, timeTracker, spyOptions: [] }))
+    return c = ctx.extend<
+      Pick<Recorder.Context, 'record' | 'spyOptions' | 'maskValues'>
+    >({ record, spyOptions: [], maskValues: [] }).get()
   }
   return {
     createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
     end: () => timeTracker.stop(),
     getSpecRecord: () => record.getSpecRecord(),
     addInertValue: (value: any) => getContext().then(ctx => setSpyOptions(ctx, value, { plugin: '@mocktomata/inert', inert: true })),
+    addMaskValue: (value: any, replaceWith: any) => getContext().then(({ maskValues }) => maskValues.push({ value, replaceWith }))
   }
 }
 

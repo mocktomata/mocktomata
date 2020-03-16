@@ -10,6 +10,10 @@ export namespace Recorder {
     record: SpecRecorderBuilder,
     state: State,
     spyOptions: Array<SpyOption>,
+    maskValues: Array<
+      { value: string | RegExp, replaceWith?: string | ((value: string) => string) } |
+      { value: number, replaceWith?: number | ((value: number) => number) }
+    >
   }
 
   export type State = {

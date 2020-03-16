@@ -1,12 +1,8 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
-import { ActionMismatch, ExtraAction, incubator, MissingAction, NotSpecable } from '.'
-import { ExtraReference, SpecIDCannotBeEmpty } from './spec'
+import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from '.'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
-
-// beforeAll(() => {
-//   return incubator.start({ target: 'es2015' })
-// })
+import { InvokeMetaMethodAfterSpec } from './spec'
 
 describe('basic checks', () => {
   incubator.save(`type %s is not specable`, (title, spec) => {
@@ -1418,5 +1414,29 @@ describe('ignoreMismatch', () => {
       expect(actual2).toBe(2) // still get the saved value
       await simulate.done()
     })
+  })
+
+  incubator.save('call after spec throws', (title, spec) => {
+    test(title, async () => {
+      await spec(() => { })
+      a.throws(() => spec.ignoreMismatch(1), InvokeMetaMethodAfterSpec)
+    })
+  })
+})
+
+describe('maskValue', () => {
+  incubator.save('actual value is sent to the subject', (title, spec) => {
+    test(title, async () => {
+      spec.maskValue('secret')
+      const s = await spec((value: string) => expect(value).toBe('secret'))
+      s('secret')
+      await spec.done()
+    })
+  })
+  incubator.save('call after spec throws', (title, spec) => {
+    test(title, async () => {
+      await spec(() => { })
+      a.throws(() => spec.maskValue('secret'), InvokeMetaMethodAfterSpec)
+    });
   })
 })

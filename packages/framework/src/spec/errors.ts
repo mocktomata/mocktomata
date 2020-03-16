@@ -66,6 +66,12 @@ export class PluginsNotLoaded extends MocktomataError {
   }
 }
 
+export class InvokeMetaMethodAfterSpec extends MocktomataError {
+  constructor(public method: string) {
+    super(`Cannot call 'spec.${method}()' after creating spec subject. Please make these call before that.`)
+  }
+}
+
 function tersifyAction(action: MismatchActionModel | undefined): string {
   return tersify(action, { maxLength: Infinity })
 }
