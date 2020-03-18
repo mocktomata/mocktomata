@@ -23,6 +23,7 @@ export function createFakeServerFetch() {
           plugins: ['@mocktomata/plugin-fixture-dummy']
         }))
       }
+      // istanbul ignore next
       else if (uri.startsWith('mocktomata/specs/')) {
         const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
         const { specName } = JSON.parse(atob(id))
@@ -51,6 +52,7 @@ export function createFakeServerFetch() {
 
 function extractUri(url: string) {
   const match = /https?:\/\/\w*:\d+\/(.*)/.exec(url)
+  // istanbul ignore next
   if (!match) throw match
   return match[1]
 }
