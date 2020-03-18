@@ -65,11 +65,11 @@ function isMatchingInstantiateAction(
 function isMatchingPayload(record: SpecRecordValidator, actualPayload: any[], expectedPayload: any[]) {
   return actualPayload.length === expectedPayload.length &&
   actualPayload.every((a, i) => {
+    // this compare already compares ref as the values are refId (string)
     if (a === expectedPayload[i]) return true
 
     // ignore inert value
     const ref = record.getLoadedRef(expectedPayload[i])
-    if (ref?.inert) return true
-    return a == ref?.subject
+    return ref?.inert
   })
 }
