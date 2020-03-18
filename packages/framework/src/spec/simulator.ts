@@ -4,7 +4,7 @@ import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
-import { createTimeTracker, TimeTracker } from '../timeTracker/createTimeTracker'
+import { createTimeTracker, TimeTracker } from '../timeTracker'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
 import { actionMatches } from './actionMatches'
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors'
@@ -14,7 +14,7 @@ import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } fro
 import { createPluginSpyContext } from './recorder'
 import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
-import { MaskCriterion, Recorder, SpecRecordLive, createSpec } from './types-internal'
+import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal'
 import { referenceMismatch } from './validations'
 
 export namespace Simulator {

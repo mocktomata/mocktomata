@@ -1,7 +1,7 @@
 import { LogLevel } from 'standard-log'
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
-import { TimeTracker } from '../timeTracker/createTimeTracker'
+import { TimeTracker } from '../timeTracker'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,
