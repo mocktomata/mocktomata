@@ -20,10 +20,13 @@ export namespace start {
 }
 
 export async function start(options?: start.Options) {
+  // can't add test for port 80. will fail during CI
+  // so can test the case of not specifying options
+  // istanbul ignore next
   const cwd = options?.cwd ?? process.cwd()
   const repo = new FileRepository({ cwd })
   const config = repo.loadConfig() as start.Config
-  // can't add test for port 80. wil fail during CI
+  // can't add test for port 80. will fail during CI
   // istanbul ignore next
   const port = options?.port ?? config.server?.port ?? 80
   const context = { config, repo }

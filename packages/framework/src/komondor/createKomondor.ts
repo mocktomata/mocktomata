@@ -38,7 +38,6 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
   )
 }
 
-
 function createKomondorFn(context: AsyncContext<Spec.Context>): createKomondor.KomondorFn {
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
     const specRelativePath = getCallerRelativePath(komondorFn)

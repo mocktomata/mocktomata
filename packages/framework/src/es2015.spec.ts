@@ -124,6 +124,39 @@ describe('object', () => {
     })
   })
 
+  incubator.duo('set object property', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec({ a: { b: 1 } })
+      const actual = subject.a = { b: 2 }
+
+      expect(actual).toEqual({ b: 2 })
+
+      await spec.done()
+    })
+  })
+
+  incubator.duo('set function property', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec({ a: (v: number) => v })
+      const actual = subject.a = (v: number) => v + 1
+
+      expect(actual(1)).toEqual(2)
+
+      await spec.done()
+    })
+  })
+
+  incubator.duo('set null property', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec({ a: { b: 1 } as any })
+      const actual = subject.a = null
+
+      expect(actual).toEqual(null)
+
+      await spec.done()
+    })
+  })
+
   incubator.duo('update primitive property', (title, spec) => {
     test(title, async () => {
       const subject = await spec({ a: 1 })

@@ -11,12 +11,7 @@ export const arrayPlugin: SpecPlugin<any[], any[]> = {
       }
     })
   },
-  createStub({ resolve, setProperty }, _, meta) {
-    const subject = meta.map(entry => resolve(entry))
-    return new Proxy(subject, {
-      set(target: any, property: string, value: any) {
-        return target[property] = setProperty({ key: property, value })
-      }
-    })
+  createStub({ resolve }, _, meta) {
+    return meta.map(entry => resolve(entry))
   }
 }

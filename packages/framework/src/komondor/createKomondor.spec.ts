@@ -10,6 +10,8 @@ import { log } from '../log'
 const context = createTestContext()
 const k = createKomondor(context)
 
+afterAll(() => k.teardown())
+
 test('live with no options', async () => {
   const spec = k.live('live with no options')
   const s = await spec((x: number) => x + 1)
@@ -67,4 +69,16 @@ test('save enableLog method can specify log level', async () => {
   await spec(() => { })
   spec.enableLog(logLevels.none)
   await spec.done()
+})
+
+test('auto lifecycle', async () => {
+  const save = k('auto lifecycle')
+  await save({})
+  expect(save.mode).toBe('save')
+  await save.done()
+
+  const simulate = k('auto lifecycle')
+  await simulate({})
+  expect(simulate.mode).toBe('simulate')
+  await simulate.done()
 })

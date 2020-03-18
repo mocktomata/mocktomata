@@ -10,6 +10,7 @@ module.exports = {
     '!<rootDir>/src/bin.[jt]s',
     '!<rootDir>/src/**/*.spec.*'
   ],
+  coverageReporters: ['text', 'html'],
   projects,
   reporters: [
     'default',

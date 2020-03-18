@@ -1,5 +1,6 @@
 import { SpecPlugin } from '../spec-plugin'
 
+// istanbul ignore next
 const decrementPlugin: SpecPlugin = {
   support: s => typeof s === 'number',
   createSpy: (_, s) => s - 1,

@@ -35,6 +35,7 @@ describe('config with config()', () => {
       })
     })
   })
+
   test('override to save mode', async () => {
     const mockto = createMockto(createContext({ io: createTestIO() }))
     config({ overrideMode: 'save' })

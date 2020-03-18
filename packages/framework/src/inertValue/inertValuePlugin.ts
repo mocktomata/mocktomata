@@ -1,5 +1,6 @@
 import { SpecPlugin } from '../spec-plugin'
 
+// istanbul ignore next
 export const inertPlugin: SpecPlugin<any> = {
   name: 'inert',
   support: () => false,

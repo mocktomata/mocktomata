@@ -20,7 +20,7 @@ describe('server behavior', () => {
   let server: PromiseValue<ReturnType<typeof start>>
   beforeAll(async () => {
     const cwd = dirSync().name
-    fs.writeFileSync(path.join(cwd, 'package.json'), JSON.stringify({ mocktomata: { overrideMode: 'live', fileFilter: 'file', specNameFilter: 'spec' } }))
+    fs.writeFileSync(path.join(cwd, 'package.json'), JSON.stringify({ mocktomata: { overrideMode: 'live', filePathFilter: 'file', specNameFilter: 'spec' } }))
     const repository = new FileRepository({ cwd })
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
     server = await start({ cwd, port: 3456 })
@@ -48,7 +48,7 @@ describe('server behavior', () => {
   test('get config', async () => {
     const response = await fetch(buildUrl('config'))
     const actual = await response.json()
-    expect(actual).toEqual({ overrideMode: 'live', fileFilter: 'file', specNameFilter: 'spec' })
+    expect(actual).toEqual({ overrideMode: 'live', filePathFilter: 'file', specNameFilter: 'spec' })
   })
   test('read not exist spec gets 404', async () => {
     const response = await fetch(buildUrl(`specs/${buildId('not exist')}`))

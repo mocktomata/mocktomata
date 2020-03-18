@@ -1085,13 +1085,6 @@
   dependencies:
     "@hapi/hoek" "9.x.x"
 
-"@hapi/boom@*":
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-9.1.0.tgz#0d9517657a56ff1e0b42d0aca9da1b37706fec56"
-  integrity sha512-4nZmpp4tXbm162LaZT45P7F7sgiem8dwAh2vHWT6XX24dozNjGMg6BvKCRvtCUcmcXqeMIUqWN8Rc5X8yKuROQ==
-  dependencies:
-    "@hapi/hoek" "9.x.x"
-
 "@hapi/boom@7.x.x":
   version "7.4.11"
   resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-7.4.11.tgz#37af8417eb9416aef3367aa60fa04a1a9f1fc262"
@@ -1103,6 +1096,13 @@
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-9.0.0.tgz#28f9e77ecf2dea1fe3a8982b9d8827aa5137e33a"
   integrity sha512-D+Or4yahLq3L7D1Jf0fR1+Lgr+HPK1lej8tc6hS/fBLmK66XdpvTyKv8YUR5ls1GeQy+KGtbpKAs+ZxyzNtUyA==
+  dependencies:
+    "@hapi/hoek" "9.x.x"
+
+"@hapi/boom@^9.0.0":
+  version "9.1.0"
+  resolved "https://registry.yarnpkg.com/@hapi/boom/-/boom-9.1.0.tgz#0d9517657a56ff1e0b42d0aca9da1b37706fec56"
+  integrity sha512-4nZmpp4tXbm162LaZT45P7F7sgiem8dwAh2vHWT6XX24dozNjGMg6BvKCRvtCUcmcXqeMIUqWN8Rc5X8yKuROQ==
   dependencies:
     "@hapi/hoek" "9.x.x"
 
@@ -1224,17 +1224,6 @@
   resolved "https://registry.yarnpkg.com/@hapi/hoek/-/hoek-9.0.3.tgz#e49e637d5de8faa4f0d313c2590b455d7c00afd7"
   integrity sha512-jKtjLLDiH95b002sJVc5c74PE6KKYftuyVdVmsuYId5stTaWcRFqE+5ukZI4gDUKjGn8wv2C3zPn3/nyjEI7gg==
 
-"@hapi/iron@*":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@hapi/iron/-/iron-6.0.0.tgz#ca3f9136cda655bdd6028de0045da0de3d14436f"
-  integrity sha512-zvGvWDufiTGpTJPG1Y/McN8UqWBu0k/xs/7l++HVU535NLHXsHhy54cfEMdW7EjwKfbBfM9Xy25FmTiobb7Hvw==
-  dependencies:
-    "@hapi/b64" "5.x.x"
-    "@hapi/boom" "9.x.x"
-    "@hapi/bourne" "2.x.x"
-    "@hapi/cryptiles" "5.x.x"
-    "@hapi/hoek" "9.x.x"
-
 "@hapi/iron@5.x.x":
   version "5.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/iron/-/iron-5.1.4.tgz#7406f36847f798f52b92d1d97f855e27973832b7"
@@ -1245,6 +1234,17 @@
     "@hapi/bourne" "1.x.x"
     "@hapi/cryptiles" "4.x.x"
     "@hapi/hoek" "8.x.x"
+
+"@hapi/iron@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@hapi/iron/-/iron-6.0.0.tgz#ca3f9136cda655bdd6028de0045da0de3d14436f"
+  integrity sha512-zvGvWDufiTGpTJPG1Y/McN8UqWBu0k/xs/7l++HVU535NLHXsHhy54cfEMdW7EjwKfbBfM9Xy25FmTiobb7Hvw==
+  dependencies:
+    "@hapi/b64" "5.x.x"
+    "@hapi/boom" "9.x.x"
+    "@hapi/bourne" "2.x.x"
+    "@hapi/cryptiles" "5.x.x"
+    "@hapi/hoek" "9.x.x"
 
 "@hapi/joi@15.x.x":
   version "15.1.1"
@@ -2622,38 +2622,24 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/hapi__boom@*":
-  version "9.0.1"
-  resolved "https://registry.yarnpkg.com/@types/hapi__boom/-/hapi__boom-9.0.1.tgz#8fbf719d0358e361b831802fb05fb4feced2ac29"
-  integrity sha512-TSqwgnTmNNp3/9uOpV16S8IVJv+QDmZLEImSuQrzGLCzmuK5P3bx3wdaXGXxfWLlN09Qqnd27POLrEAKhVCM5g==
-  dependencies:
-    "@hapi/boom" "*"
-
 "@types/hapi__catbox@*":
   version "10.2.2"
   resolved "https://registry.yarnpkg.com/@types/hapi__catbox/-/hapi__catbox-10.2.2.tgz#b13fbdd6006c8793eb80919158593bc2bf8307c4"
   integrity sha512-AWK70LgRsRWL1TNw+aT0IlS56E0pobvFdr/en0K8XazyK4Ey6T/jXhQqv/iQ6FJAAU+somMzgmt9fWq2TaaOkA==
 
-"@types/hapi__hapi@^18.2.6":
-  version "18.2.6"
-  resolved "https://registry.yarnpkg.com/@types/hapi__hapi/-/hapi__hapi-18.2.6.tgz#61c1b210c55dee4636df594e7a0868ad48c8042a"
-  integrity sha512-sXFlSg9btu/LdHqK/N/kuQXVqZhSvibXbtZc0KfEcelRXKthdU5ZSu5qItDIov7SYnyK2faMe7dbZaC/VpC33w==
+"@types/hapi__hapi@^19.0.2":
+  version "19.0.2"
+  resolved "https://registry.yarnpkg.com/@types/hapi__hapi/-/hapi__hapi-19.0.2.tgz#a05cc41f1991db7b7f989ef6b2dd6a8662919949"
+  integrity sha512-Z+Xmah1MnTNBhsS0rvY4nQeJ09MGxFkJ4vWlxVzR5XtGBzWFhwnRwtWGVivnaEj+qu+xzgajvDH6qp4DB6LcdA==
   dependencies:
-    "@types/hapi__boom" "*"
+    "@hapi/boom" "^9.0.0"
+    "@hapi/iron" "^6.0.0"
     "@types/hapi__catbox" "*"
-    "@types/hapi__iron" "*"
     "@types/hapi__joi" "*"
     "@types/hapi__mimos" "*"
     "@types/hapi__podium" "*"
     "@types/hapi__shot" "*"
     "@types/node" "*"
-
-"@types/hapi__iron@*":
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/@types/hapi__iron/-/hapi__iron-6.0.1.tgz#ec8b23eff3d69313f1187c234deb80652384ad6b"
-  integrity sha512-NTr+1FKl+nvEeSwVpfcks36dCm6+tbcQh3tJYbyQ5XWb5sIbCIptW6p38zmCYE5ppOoU/2PK1Y8taGpl6cOl5w==
-  dependencies:
-    "@hapi/iron" "*"
 
 "@types/hapi__joi@*":
   version "16.0.12"
@@ -13491,7 +13477,7 @@ write-file-atomic@^2.0.0, write-file-atomic@^2.3.0, write-file-atomic@^2.4.2:
     imurmurhash "^0.1.4"
     signal-exit "^3.0.2"
 
-write-file-atomic@^3.0.0:
+write-file-atomic@^3.0.0, write-file-atomic@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/write-file-atomic/-/write-file-atomic-3.0.3.tgz#56bd5c5a5c70481cd19c571bd39ab965a5de56e8"
   integrity sha512-AvHcyZ5JnSfq3ioSyjrBkH9yW4m7Ayk8/9My/DD9onKeu/94fwrMocemO2QAJFAlnnDN+ZDS+ZjAR5ua1/PV/Q==

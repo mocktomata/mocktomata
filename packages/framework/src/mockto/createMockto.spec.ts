@@ -7,6 +7,8 @@ import { createTestContext, getCallerRelativePath } from '../test-utils'
 const context = createTestContext()
 const mockto = createMockto(context)
 
+afterAll(() => mockto.teardown())
+
 test('live with no options', () => {
   const title = 'live with no options'
   return new Promise(a => {

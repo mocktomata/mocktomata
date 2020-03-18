@@ -36,7 +36,7 @@ function isMatchingSetAction(
     (!isPrimitive(expected.value) || expected.value === actual.value)
 }
 function isPrimitive(value: any) {
-  return (typeof value !== 'object' && typeof value !== 'function') || value === null
+  return typeof value !== 'object' && typeof value !== 'function'
 }
 
 function isMatchingInvokeAction(

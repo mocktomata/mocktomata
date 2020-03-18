@@ -3,6 +3,8 @@ import { Mocktomata } from '../types'
 
 export async function transformConfig(context: AsyncContext<Mocktomata.Context>) {
   const { config } = await context.get()
+  // filePathFilter not tested because it is troublesome to setup test
+  // istanbul ignore next
   return {
     config: {
       ...config,

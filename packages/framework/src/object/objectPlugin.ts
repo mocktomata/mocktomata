@@ -4,31 +4,27 @@ import { demetarize, hasProperty, metarize } from '../utils-internal'
 export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
   name: 'object',
   support: subject => subject !== null && typeof subject === 'object',
-  createSpy: ({ getProperty, setProperty, invoke, setMeta }, subject) => {
+  createSpy: ({ getProperty, setProperty, setMeta }, subject) => {
     setMeta(metarize(subject))
     return new Proxy(subject, {
-      apply(target, thisArg, args: any[] = []) {
-        return invoke({ thisArg, args }, ({ args }) => subject.apply(target, args))
-      },
       get(_: any, property: string) {
         if (!hasProperty(subject, property)) return undefined
         return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
-        return setProperty({ key: property, value }, value => subject[property] = value)
+        setProperty({ key: property, value }, value => subject[property] = value)
+        return true
       }
     })
   },
-  createStub: ({ getProperty, setProperty, invoke }, _, meta) => {
+  createStub: ({ getProperty, setProperty }, _, meta) => {
     return new Proxy(demetarize(meta), {
-      apply(_, thisArg, args: any[] = []) {
-        return invoke({ thisArg, args })
-      },
       get(_: any, property: string) {
         return getProperty({ key: property })
       },
       set(_, key: string, value: any) {
-        return setProperty({ key, value })
+        setProperty({ key, value })
+        return true
       }
     })
   }

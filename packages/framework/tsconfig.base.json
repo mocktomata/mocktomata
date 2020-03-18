@@ -1,6 +1,7 @@
 {
   "extends": "../../.ts/tsconfig.settings.json",
   "compilerOptions": {
+    "importHelpers": true,
     "lib": [
       "DOM",
       "es2015"

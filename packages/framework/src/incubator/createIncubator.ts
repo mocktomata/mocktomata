@@ -36,6 +36,7 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
     const { plugins } = await context.extend(async ctx => {
       const { config, io } = await ctx.get()
       config.plugins = options.plugins.map(p => {
+        // istanbul ignore next
         if (typeof p === 'string') return p
         io.addPluginModule(p[0], { activate: p[1] })
         return p[0]
