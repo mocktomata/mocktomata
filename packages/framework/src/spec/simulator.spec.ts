@@ -5,7 +5,7 @@ import { loadPlugins } from '../spec-plugin'
 import { createTestContext, createTestIO } from '../test-utils'
 import { ExtraReference, PluginsNotLoaded } from './errors'
 import { createSimulator } from './simulator'
-import { Spec } from './types'
+import { createSpec } from './types-internal'
 
 test('create not expected stub throws', async () => {
   const context = createTestContext().extend(loadPlugins).extend(transformConfig)
@@ -20,7 +20,7 @@ test('create not expected stub throws', async () => {
 
 test('simulate without plugin install throws', () => {
   const io = createTestIO()
-  const context = new AsyncContext<Spec.Context>({ io, config: {}, plugins: [], timeTrackers: [] })
+  const context = new AsyncContext<createSpec.Context>({ io, config: {}, plugins: [], timeTrackers: [], maskCriteria: [] })
   const simulator = createSimulator(
     context,
     'no plugin',

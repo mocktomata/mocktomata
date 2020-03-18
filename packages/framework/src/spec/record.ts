@@ -3,7 +3,8 @@ import { notDefined } from '../constants'
 import { SpecPlugin } from '../spec-plugin'
 import { findPlugin } from '../spec-plugin/findPlugin'
 import { SpecRecord } from '../spec-record/types'
-import { SpecRecordLive } from './types-internal'
+import { createMaskFn, maskValue } from './masking'
+import { MaskCriterion, SpecRecordLive } from './types-internal'
 
 export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecordLive.Reference[] = []
@@ -13,7 +14,7 @@ export function createSpecRecordBuilder(specName: string) {
     specName,
     refs,
     actions,
-    getSpecRecord: () => getSpecRecord(refs, actions),
+    getSpecRecord: (maskValues: MaskCriterion[]) => getSpecRecord(refs, actions, maskValues),
     // getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
     // getRefId: (ref: SpecRecordLive.Reference) => getRefId(refs, ref),
     addRef: (ref: SpecRecordLive.Reference) => addRef(refs, ref),
@@ -188,12 +189,23 @@ export type SpecRecordValidator = ReturnType<typeof createSpecRecordValidator>
 //   return actions.find((a: any) => a.actionId === actionId)
 // }
 
-function getSpecRecord(refs: SpecRecordLive.Reference[], actions: SpecRecordLive.Action[]): SpecRecord {
-  return {
+function getSpecRecord(refs: SpecRecordLive.Reference[], actions: SpecRecordLive.Action[], maskCriteria: MaskCriterion[]): SpecRecord {
+  const record = {
     refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta', 'inert')),
     actions
   }
+  if (maskCriteria.length > 0) {
+    return maskCriteria.reduce((record, criterion) => maskRecord(record, criterion), record as SpecRecord)
+  }
+  return record
 }
+
+function maskRecord(record: SpecRecord, criterion: MaskCriterion) {
+  const maskFn = createMaskFn(criterion)
+  record.refs.forEach(ref => ref.meta = maskValue(ref.meta, maskFn))
+  return record
+}
+
 
 function getRef(record: SpecRecord, id: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.Reference | undefined {
   const refId = typeof id === 'string' ? id : resolveRefId(record.actions, id)

@@ -244,3 +244,14 @@ describe('config', () => {
     await a.throws(io.readSpec('a to-live spec', ''), SpecNotFound)
   })
 })
+
+describe('maskValue()', () => {
+  mockto.live('explicit live mode returns sensitive info', (title, spec) => {
+    test(title, async () => {
+      spec.maskValue('secret')
+      const s = await spec((v: string) => v)
+      const actual = s('secret')
+      expect(actual).toBe('secret')
+    })
+  })
+})

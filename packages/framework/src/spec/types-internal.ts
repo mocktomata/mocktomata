@@ -2,18 +2,39 @@ import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
 import { TimeTracker } from '../timeTracker/createTimeTracker'
 import { SpecRecorderBuilder } from './record'
+import { Spec } from './types'
 
+export type MaskCriterion<V extends number | string = any> = MaskNumberCriterion | MaskStringCriterion | MaskRegExpCriterion | MaskPredicateCriterion<V>
+
+export type MaskNumberCriterion = {
+  value: number, replaceWith?: number | ((value: number) => number)
+}
+
+export type MaskStringCriterion = {
+  value: string, replaceWith?: string | ((value: string) => string)
+}
+
+export type MaskRegExpCriterion = {
+  value: RegExp, replaceWith?: string | ((value: RegExpExecArray) => string)
+}
+
+export type MaskPredicateCriterion<V extends number | string> = {
+  value: (value: V) => boolean, replaceWith?: V | ((value: V) => V)
+}
+
+export namespace createSpec {
+  export type Context = Spec.Context & {
+    maskCriteria: MaskCriterion[]
+  }
+}
 export namespace Recorder {
   export type Context = {
     plugins: SpecPlugin.Instance[],
     timeTracker: TimeTracker,
     record: SpecRecorderBuilder,
     state: State,
-    spyOptions: Array<SpyOption>,
-    maskValues: Array<
-      { value: string | RegExp, replaceWith?: string | ((value: string) => string) } |
-      { value: number, replaceWith?: number | ((value: number) => number) }
-    >
+    spyOptions: SpyOption[],
+    maskCriteria: MaskCriterion[],
   }
 
   export type State = {

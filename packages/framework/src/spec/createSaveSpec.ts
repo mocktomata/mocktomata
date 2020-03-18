@@ -6,9 +6,10 @@ import { assertMockable } from './assertMockable'
 import { assertSpecName } from './assertSpecName'
 import { createRecorder } from './recorder'
 import { Spec } from './types'
+import { createSpec } from './types-internal'
 
 export async function createSaveSpec(
-  context: AsyncContext<Spec.Context>,
+  context: AsyncContext<createSpec.Context>,
   specName: string,
   invokePath: string,
   options: Spec.Options
@@ -28,8 +29,8 @@ export async function createSaveSpec(
       get mode() { return 'save' as const },
       async done() {
         recorder.end()
-        const record = recorder.getSpecRecord();
-        const { io } = await context.get()
+        const { io, maskCriteria } = await context.get()
+        const record = recorder.getSpecRecord(maskCriteria);
         io.writeSpec(specName, invokePath, record)
         if (enabledLog) {
           log.debug(`Spec Record "${specName}":`, prettyPrintSpecRecord(record))
@@ -47,6 +48,6 @@ export async function createSaveSpec(
       },
       maskValue(value: any, replaceWith?: any) {
         recorder.addMaskValue(value, replaceWith)
-      }
+      },
     })
 }

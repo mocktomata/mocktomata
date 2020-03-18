@@ -2,11 +2,12 @@ import { logLevels } from 'standard-log'
 import { tersify } from 'tersify'
 import { log } from '../log'
 import { SpecRecord } from '../spec-record/types'
+import { maskIfNeeded } from './masking'
 import { prettifyAction } from './prettifyAction'
-import { Recorder } from './types-internal'
+import { MaskCriterion, Recorder } from './types-internal'
 
-
-export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subject: any) {
+export function logCreateSpy({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, maskCriteria: MaskCriterion[], profile: SpecRecord.SubjectProfile, subject: any) {
+  subject = maskIfNeeded(maskCriteria, subject)
   log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject, { maxLength: Infinity })}`))
 }
 

@@ -5,9 +5,10 @@ import { assertMockable } from './assertMockable'
 import { assertSpecName } from './assertSpecName'
 import { createSimulator } from './simulator'
 import { Spec } from './types'
+import { createSpec } from './types-internal'
 
 export async function createSimulateSpec(
-  context: AsyncContext<Spec.Context>,
+  context: AsyncContext<createSpec.Context>,
   specName: string,
   invokePath: string,
   options: Spec.Options
@@ -35,6 +36,8 @@ export async function createSimulateSpec(
         log.level = level
       },
       ignoreMismatch() { },
-      maskValue() { },
+      maskValue(value: any, replaceWith?: any) {
+        simulator.addMaskValue(value, replaceWith)
+      },
     })
 }

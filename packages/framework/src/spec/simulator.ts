@@ -1,25 +1,27 @@
+import { AsyncContext } from 'async-fp'
 import { PartialPick } from 'type-plus'
 import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
+import { createTimeTracker, TimeTracker } from '../timeTracker/createTimeTracker'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
 import { actionMatches } from './actionMatches'
-import { createTimeTracker, TimeTracker } from '../timeTracker/createTimeTracker'
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors'
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs'
+import { maskIfNeeded } from './masking'
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record'
 import { createPluginSpyContext } from './recorder'
 import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
-import { Recorder, SpecRecordLive } from './types-internal'
+import { MaskCriterion, Recorder, SpecRecordLive, createSpec } from './types-internal'
 import { referenceMismatch } from './validations'
-import { AsyncContext } from 'async-fp'
 
 export namespace Simulator {
   export type Context = {
     plugins: SpecPlugin.Instance[],
     timeTracker: TimeTracker,
+    maskCriteria: MaskCriterion[],
     record: SpecRecordValidator,
     state: Recorder.State,
     spyOptions: Array<Recorder.SpyOption>,
@@ -27,7 +29,7 @@ export namespace Simulator {
   }
 }
 
-export function createSimulator(context: AsyncContext<Spec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
+export function createSimulator(context: AsyncContext<createSpec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
   // istanbul ignore next
   const timeTracker = createTimeTracker(options, elasped => logRecordingTimeout(specName, elasped))
   const ctx = context.extend(async context => {
@@ -37,14 +39,21 @@ export function createSimulator(context: AsyncContext<Spec.Context>, specName: s
   })
   const record = createSpecRecordValidator(specName, loaded)
 
+  let c: Promise<createSpec.Context>
+  async function getContext() {
+    if (c) return c
+    return c = ctx.get()
+  }
+
   return {
-    createStub: <S>(subject: S) => ctx.get().then(({ plugins }) => {
+    createStub: <S>(subject: S) => getContext().then(({ plugins, maskCriteria }) => {
       assertPluginsLoaded(plugins, specName, loaded.refs)
       record.setPlugins(plugins)
       return createStub({
         plugins,
         record,
         timeTracker,
+        maskCriteria,
         spyOptions: [],
         pendingPluginActions: []
       }, subject, { profile: 'target' })
@@ -59,6 +68,7 @@ export function createSimulator(context: AsyncContext<Spec.Context>, specName: s
         throw new MissingAction(record.specName, { ref, refId }, actionId, action)
       }
     },
+    addMaskValue: (value: any, replaceWith: any) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
   }
 }
 
@@ -210,14 +220,14 @@ function setProperty<V = any>(
   throw result
 }
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
-  const { record, plugins } = context
+  const { record, plugins, maskCriteria } = context
   const plugin = getPlugin(plugins, ref.plugin)
   const profile = ref.profile
   const subject = ref.subject
   const refId = record.getRefId(ref)
   const state = { ref, refId }
   if (profile === 'input') {
-    logCreateSpy(state, profile, subject)
+    logCreateSpy(state, maskCriteria, profile, subject)
     // about `as any`: RecordValidator does not have `addRef` and `getSpecRecord` and they are not needed for this
     ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state } as any), subject)
   }
@@ -459,10 +469,10 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
         }
       }, valueRef)
     }
-    return valueRef.testDouble
+    return maskIfNeeded(context.maskCriteria, valueRef.testDouble)
   }
   else {
-    return value
+    return maskIfNeeded(context.maskCriteria, value)
   }
 }
 function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {

@@ -2,6 +2,7 @@ import { AsyncContext } from 'async-fp'
 import { transformConfig } from '../mockto/transformConfig'
 import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec'
 import { loadPlugins } from '../spec-plugin'
+import { MaskCriterion } from '../spec/types-internal'
 import { getCallerRelativePath } from '../test-utils'
 import { TimeTracker } from '../timeTracker'
 import { Mocktomata } from '../types'
@@ -44,7 +45,7 @@ function createKomondorFn(context: AsyncContext<Spec.Context>): createKomondor.K
     const ctx = context.extend(async () => {
       const { config } = await context.get()
       const mode = getEffectiveSpecMode(config, specName, specRelativePath)
-      return { mode, specRelativePath }
+      return { mode, specRelativePath, maskCriteria: [] }
     })
     return createSpecObject(ctx, specName, options)
   }
@@ -55,10 +56,11 @@ function createFixedModeKomondorFn(context: AsyncContext<Spec.Context>, mode: Sp
   let ctx: AsyncContext<Spec.Context & {
     mode: Spec.Mode,
     specRelativePath: string,
+    maskCriteria: MaskCriterion[]
   }> | undefined
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
     const specRelativePath = getCallerRelativePath(komondorFn)
-    if (!ctx) ctx = context.extend({ mode, specRelativePath })
+    if (!ctx) ctx = context.extend({ mode, specRelativePath, maskCriteria: [] })
     return createSpecObject(ctx, specName, options)
   }
   return komondorFn

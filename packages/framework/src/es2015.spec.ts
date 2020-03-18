@@ -1,8 +1,10 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
+import { captureLogs } from 'standard-log'
 import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from '.'
-import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
+import { log } from './log'
 import { InvokeMetaMethodAfterSpec } from './spec'
+import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
 
 describe('basic checks', () => {
   incubator.save(`type %s is not specable`, (title, spec) => {
@@ -1433,10 +1435,198 @@ describe('maskValue', () => {
       await spec.done()
     })
   })
+
   incubator.save('call after spec throws', (title, spec) => {
     test(title, async () => {
       await spec(() => { })
       a.throws(() => spec.maskValue('secret'), InvokeMetaMethodAfterSpec)
-    });
+    })
+  })
+
+  incubator.duo('not save in log and record', (title, spec) => {
+    test(title, async () => {
+      spec.enableLog()
+      const logs = await captureLogs(log, async () => {
+        spec.maskValue('secret')
+        const s = await spec((v: string) => v)
+        s('secret')
+        await spec.done()
+      })
+      expect(JSON.stringify(logs)).not.toMatch('secret')
+    })
+  })
+
+  incubator.duo('invoke returns masked value', (title, spec) => {
+    test(title, async () => {
+      spec.maskValue('secret')
+      const s = await spec((v: string) => v)
+      const actual = s('secret')
+      expect(actual).toBe('******')
+      await spec.done()
+    })
+  })
+
+  incubator.duo('get returns masked value', (title, spec) => {
+    test(title, async () => {
+      spec.maskValue('secret')
+      const s = await spec({ secret: 'secret' })
+      expect(s.secret).toBe('******')
+      await spec.done()
+    })
+  })
+
+  incubator.duo('against array', (title, spec) => {
+    test(title, async () => {
+      spec.maskValue('secret')
+      const s = await spec((v: string) => [v, 'world'])
+      expect(s('secret')).toEqual(['******', 'world'])
+      await spec.done()
+    })
+  })
+
+  incubator.duo('against object', (title, spec) => {
+    test(title, async () => {
+      spec.maskValue('secret')
+      const s = await spec((value: string) => ({ value, b: 1 }))
+      expect(s('secret')).toEqual({ value: '******', b: 1 })
+      await spec.done()
+    })
+  })
+
+  describe('with string', () => {
+    incubator.duo('replace with different string', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue('secret', 'apple')
+        const s = await spec({ secret: 'secret' })
+        expect(s.secret).toBe('apple')
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with callback', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue('secret', () => 'apple')
+        const s = await spec({ secret: 'secret' })
+        expect(s.secret).toBe('apple')
+        await spec.done()
+      })
+    })
+  });
+
+  describe('with regex', () => {
+    incubator.duo('using default replaceWith', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(/secret/)
+        const s = await spec((v: string) => v)
+        expect(s('some secret message')).toBe('some ****** message')
+        await spec.done()
+      })
+    })
+
+    incubator.duo('does not apply to numbers', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(/1234/)
+        const s = await spec((v: number) => v)
+        expect(s(1234)).toBe(1234)
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with string', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(/secret/, 'miku')
+        const s = await spec((v: string) => v)
+        expect(s('some secret message')).toBe('some miku message')
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with callback', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(/secret/, () => 'miku strike')
+        const s = await spec((v: string) => v)
+        expect(s('some secret message')).toBe('miku strike')
+        await spec.done()
+      })
+    })
+  });
+
+  describe('with number', () => {
+    incubator.duo('using default replaceWith', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(3)
+        spec.maskValue(1234)
+        const s = await spec((v: number) => v + 1)
+        expect(s(1)).toBe(2)
+        expect(s(2)).toBe(7)
+        expect(s(1233)).toBe(7777)
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with number', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(3, 1234)
+        const s = await spec((v: number) => v + 1)
+        expect(s(2)).toBe(1234)
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with callback', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue(3, () => 1234)
+        const s = await spec((v: number) => v + 1)
+        expect(s(2)).toBe(1234)
+        await spec.done()
+      })
+    })
+  });
+
+  describe('with predicate', () => {
+    incubator.duo('using default replaceWith for number', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue((v: number) => v > 100)
+        const s = await spec((v: number) => v + 1)
+        expect(s(100)).toBe(777)
+        await spec.done()
+      })
+    })
+
+    incubator.duo('using default replaceWith for string', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue((v: string) => v === 'secret')
+        const s = await spec((v: string) => v)
+        expect(s('secret')).toBe('******')
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with number', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue((v: number) => v > 100, 999)
+        const s = await spec((v: number) => v + 1)
+        expect(s(100)).toBe(999)
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with string', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue((v: string) => v === 'abcd', '*.*')
+        const s = await spec((v: string) => v)
+        expect(s('abcd')).toBe('*.*')
+        await spec.done()
+      })
+    })
+
+    incubator.duo('replace with callback', (title, spec) => {
+      test(title, async () => {
+        spec.maskValue((v: string) => v === 'abcd', () => '*.*')
+        const s = await spec((v: string) => v)
+        expect(s('abcd')).toBe('*.*')
+        await spec.done()
+      })
+    })
   })
 })

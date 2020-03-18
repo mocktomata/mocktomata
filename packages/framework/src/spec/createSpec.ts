@@ -4,16 +4,18 @@ import { createLiveSpec } from './createLiveSpec'
 import { createSaveSpec } from './createSaveSpec'
 import { createSimulateSpec } from './createSimulateSpec'
 import { Spec } from './types'
+import { MaskCriterion } from './types-internal'
 
 export async function createSpec(context: AsyncContext<Spec.Context>, specName: string, invokeRelativePath: string, mode: Spec.Mode, options: Spec.Options): Promise<Spec> {
+  const ctx = context.extend({ maskCriteria: [] as MaskCriterion[] })
   switch (mode) {
     case 'auto':
-      return createAutoSpec(context, specName, invokeRelativePath, options)
+      return createAutoSpec(ctx, specName, invokeRelativePath, options)
     case 'live':
       return createLiveSpec()
     case 'save':
-      return createSaveSpec(context, specName, invokeRelativePath, options)
+      return createSaveSpec(ctx, specName, invokeRelativePath, options)
     case 'simulate':
-      return createSimulateSpec(context, specName, invokeRelativePath, options)
+      return createSimulateSpec(ctx, specName, invokeRelativePath, options)
   }
 }

@@ -9,8 +9,10 @@ export type Spec = {
   done(): Promise<void>,
   enableLog(level?: LogLevel): void,
   ignoreMismatch(value: any): void,
-  maskValue(value: string | RegExp, replaceWith?: string | ((sensitive: string) => string)): void,
   maskValue(value: number, replaceWith?: number | ((sensitive: number) => number)): void,
+  maskValue(value: string, replaceWith?: string | ((sensitive: string) => string)): void,
+  maskValue(value: RegExp, replaceWith?: string | ((sensitive: RegExpMatchArray) => string)): void,
+  maskValue<V extends number | string>(value: (value: V) => boolean, replaceWith?: V | ((value: V) => V)): void,
 }
 
 export namespace Spec {

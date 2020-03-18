@@ -6,18 +6,18 @@ import { InvokeMetaMethodAfterSpec } from './errors'
 
 export function createSpecObject(context: AsyncContext<Spec.Context & {
   mode: Spec.Mode,
-  specRelativePath: string
+  specRelativePath: string,
 }>, specName: string, options: Spec.Options) {
   let s: Spec | undefined
-  type InitState = { enableLog: boolean, ignoreValues: any[], maskValues: any[], logLevel?: LogLevel }
-  const initState: InitState = { enableLog: false, ignoreValues: [], maskValues: [] }
+  type InitState = { enableLog: boolean, ignoreValues: any[], maskCriteria: any[], logLevel?: LogLevel }
+  const initState: InitState = { enableLog: false, ignoreValues: [], maskCriteria: [] }
   async function createActualSpec(initState: InitState) {
     if (s) return s
     const { mode, specRelativePath } = await context.get()
     const spec = s = await createSpec(context, specName, specRelativePath, mode, options)
     if (initState.enableLog) spec.enableLog(initState.logLevel)
     initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))
-    initState.maskValues.forEach(v => spec.maskValue(v.value, v.replaceWith))
+    initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
     return spec
   }
 
@@ -49,7 +49,7 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
     },
     maskValue(value: any, replaceWith: any) {
       if (s) throw new InvokeMetaMethodAfterSpec('maskValue')
-      initState.maskValues.push({ value, replaceWith })
+      initState.maskCriteria.push({ value, replaceWith })
     }
   }) as any
   return spec

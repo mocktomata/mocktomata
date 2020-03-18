@@ -4,15 +4,16 @@ import { notDefined } from '../constants'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin'
 import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
-import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
 import { createTimeTracker } from '../timeTracker/createTimeTracker'
+import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs'
+import { maskIfNeeded } from './masking'
 import { createSpecRecordBuilder } from './record'
 import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
-import { Recorder, SpecRecordLive } from './types-internal'
+import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal'
 
-export function createRecorder(context: AsyncContext<Spec.Context>, specName: string, options: Spec.Options) {
+export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
   // istanbul ignore next
   const timeTracker = createTimeTracker(options, elasped => logRecordingTimeout(specName, elasped))
   const ctx = context.extend(async context => {
@@ -26,15 +27,15 @@ export function createRecorder(context: AsyncContext<Spec.Context>, specName: st
   async function getContext() {
     if (c) return c
     return c = ctx.extend<
-      Pick<Recorder.Context, 'record' | 'spyOptions' | 'maskValues'>
-    >({ record, spyOptions: [], maskValues: [] }).get()
+      Pick<Recorder.Context, 'record' | 'spyOptions'>
+    >({ record, spyOptions: [] }).get()
   }
   return {
     createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
     end: () => timeTracker.stop(),
-    getSpecRecord: () => record.getSpecRecord(),
+    getSpecRecord: (maskValues: MaskCriterion[]) => record.getSpecRecord(maskValues),
     addInertValue: (value: any) => getContext().then(ctx => setSpyOptions(ctx, value, { plugin: '@mocktomata/inert', inert: true })),
-    addMaskValue: (value: any, replaceWith: any) => getContext().then(({ maskValues }) => maskValues.push({ value, replaceWith }))
+    addMaskValue: (value: any, replaceWith: any) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
   }
 }
 
@@ -61,7 +62,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   if (spyOption?.options.inert) ref.inert = true
   const refId = context.record.addRef(ref)
   const state = { ref, refId }
-  logCreateSpy(state, profile, subject)
+  logCreateSpy(state, context.maskCriteria, profile, subject)
   return ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
 }
 
@@ -147,8 +148,7 @@ function setProperty<V, R>(
     const spiedValue = getSpy(getPropertyContext(context, actionId, key), value, { profile: getPropertyProfile(state.ref.profile) })
     action.value = record.findRefId(spiedValue) || value
     logAction(context.state, actionId, action)
-    const result = handler(spiedValue)
-    return result
+    return handler(spiedValue)
   })
 }
 
@@ -179,9 +179,7 @@ function invoke<V, T, A extends any[]>(
       return spiedArg
     })
     logAction(context.state, actionId, action)
-    const result = handler({ thisArg: spiedThisArg, args: spiedArgs as A })
-    // remove overrideProfiles for this and args
-    return result
+    return handler({ thisArg: spiedThisArg, args: spiedArgs as A })
   })
 }
 
@@ -209,9 +207,7 @@ function instantiate<V, A extends any[]>(
       return spiedArg
     }) as A
     logAction(context.state, actionId, action)
-    const result = handler({ args: spiedArgs })
-
-    return result
+    return handler({ args: spiedArgs })
   })
 }
 
@@ -222,8 +218,7 @@ function handleResult(
   handler: () => any
 ) {
   try {
-    const result = handler()
-    return addResultAction(context, actionId, actionType, 'return', result)
+    return addResultAction(context, actionId, actionType, 'return', handler())
   }
   catch (e) {
     throw addResultAction(context, actionId, actionType, 'throw', e)
@@ -244,7 +239,7 @@ function addResultAction(
   const refId = record.findRefId(spy)
   action.payload = refId !== undefined ? refId : subject
   logAction(resultContext.state, id, action)
-  return spy
+  return maskIfNeeded(context.maskCriteria, spy)
 }
 
 function getPropertyProfile(parentProfile: SpecRecord.SubjectProfile) {
