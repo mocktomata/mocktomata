@@ -1,4 +1,4 @@
-import { FileRepository } from './FileRepository'
+import { FileRepository } from '.'
 import { fixturePath } from './util'
 
 test('load config', () => {
