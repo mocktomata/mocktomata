@@ -131,7 +131,7 @@ function setProperty<V, R>(
   context: Recorder.Context,
   { key, value, performer }: SpecPlugin.SpyContext.setProperty.Options<V>,
   handler: SpecPlugin.SpyContext.setProperty.Handler<V, R>
-): R {
+): true {
   const { record, timeTracker, state } = context
   const action: SpecRecord.SetAction = {
     type: 'set',
@@ -144,12 +144,13 @@ function setProperty<V, R>(
 
   const actionId = record.addAction(action)
 
-  return handleResult(context, actionId, action.type, () => {
+  handleResult(context, actionId, action.type, () => {
     const spiedValue = getSpy(getPropertyContext(context, actionId, key), value, { profile: getPropertyProfile(state.ref.profile) })
     action.value = record.findRefId(spiedValue) || value
     logAction(context.state, actionId, action)
     return handler(spiedValue)
   })
+  return true
 }
 
 function invoke<V, T, A extends any[]>(

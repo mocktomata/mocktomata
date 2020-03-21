@@ -49,8 +49,7 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
         return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
-        setProperty({ key: property, value }, (value) => subject[property] = value)
-        return true
+        return setProperty({ key: property, value }, (value) => subject[property] = value)
       }
     })
   },
@@ -66,8 +65,7 @@ export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
         return getProperty({ key: property })
       },
       set(_, property: string, value: any) {
-        setProperty({ key: property, value })
-        return true
+        return setProperty({ key: property, value })
       }
     })
     return stub

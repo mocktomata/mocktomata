@@ -12,8 +12,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
         return getProperty({ key: property }, () => subject[property])
       },
       set(_, property: string, value: any) {
-        setProperty({ key: property, value }, value => subject[property] = value)
-        return true
+        return setProperty({ key: property, value }, value => subject[property] = value)
       }
     })
   },
@@ -23,8 +22,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
         return getProperty({ key: property })
       },
       set(_, key: string, value: any) {
-        setProperty({ key, value })
-        return true
+        return setProperty({ key, value })
       }
     })
   }

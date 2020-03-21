@@ -122,7 +122,7 @@ export namespace SpecPlugin {
       export type Handler<V> = () => V
     }
 
-    export type setProperty = <V = any, R = any>(options: setProperty.Options<V>, handler: setProperty.Handler<V, R>) => R
+    export type setProperty = <V = any, R = any>(options: setProperty.Options<V>, handler: setProperty.Handler<V, R>) => true
     export namespace setProperty {
       export type Options<V> = {
         key: SpecRecord.SupportedKeyTypes,
@@ -184,7 +184,7 @@ export namespace SpecPlugin {
       }
     }
 
-    export type setProperty = <V = any>(options: setProperty.Options<V>) => V
+    export type setProperty = <V = any>(options: setProperty.Options<V>) => true
     export namespace setProperty {
       export type Options<V> = {
         key: SpecRecord.SupportedKeyTypes,

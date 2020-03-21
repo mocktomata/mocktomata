@@ -180,7 +180,7 @@ function getProperty(
 function setProperty<V = any>(
   context: Simulator.Context,
   { key, value, performer }: SpecPlugin.StubContext.setProperty.Options<V>
-) {
+): true {
   // value can be:
   //   `user`: actual value or spy/stub if user uses a value returned to him.
   //   `mockto`: spy/stub (`mockto` should not perform on stub under basic usage)
@@ -222,13 +222,13 @@ function setProperty<V = any>(
   logAction(context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
-  if (!resultAction) return undefined
+  if (!resultAction) return true
   const resultActionId = record.addAction(resultAction)
   const resultContext = getPropertyContext(context, actionId, key)
   const result = resolveValue(resultContext, resultAction.payload)
 
   logAction(resultContext.state, resultActionId, resultAction)
-  if (resultAction.type === 'return') return result
+  if (resultAction.type === 'return') return true
   throw result
 }
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {

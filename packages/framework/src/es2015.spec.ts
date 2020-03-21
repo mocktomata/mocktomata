@@ -256,7 +256,7 @@ describe('instantiate', () => {
     })
   })
   incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
-    test.only(title, async () => {
+    test(title, async () => {
       const spy = await save(Subject)
       new spy().a = 0
       await save.done()
