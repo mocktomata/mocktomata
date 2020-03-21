@@ -46,37 +46,30 @@ describe('basic checks', () => {
   })
 })
 
-describe('mismatch simulation', () => {
-  incubator.sequence('extra action throws ExtraAction', (title, { save, simulate }) => {
+describe('set', () => {
+  incubator.sequence('with wrong number throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      await save(() => { })
+      const spy = await save(() => ({ a: 1 }))
+      spy().a = 2
       await save.done()
-      const stub = await simulate(() => { })
-      a.throws(() => stub(), ExtraAction)
+      const stub = await simulate(() => ({ a: 1 }))
+      a.throws(() => stub().a = 3, ActionMismatch)
     })
   })
 
-  incubator.sequence('extra param throws ActionMismatch', (title, { save, simulate }) => {
+  incubator.sequence('with wrong string throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      const s = await save((...args: any[]) => args)
-      s('a')
+      const spy = await save({ a: 'a' })
+      spy.a = 'x'
       await save.done()
-      const stub = await simulate((...args: any[]) => args)
-      a.throws(() => stub('a', 'b'), ActionMismatch)
+      const stub = await simulate({ a: 'a' })
+      a.throws(() => stub.a = 'y', ActionMismatch)
     })
   })
+})
 
-  incubator.sequence('missing param throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
-      const s = await save((...args: any[]) => args)
-      s('a')
-      await save.done()
-      const stub = await simulate((...args: any[]) => args)
-      a.throws(() => stub(), ActionMismatch)
-    })
-  })
-
-  incubator.sequence('missing action', (title, { save, simulate }) => {
+describe('invoke', () => {
+  incubator.sequence('missing call throws MissingAction', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = () => { }
       const spy = await save(subject)
@@ -87,39 +80,33 @@ describe('mismatch simulation', () => {
       await a.throws(simulate.done(), MissingAction)
     })
   })
-
-  incubator.sequence('set with wrong number', (title, { save, simulate }) => {
+  incubator.sequence('extra call throws ExtraAction', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save(() => ({ a: 1 }))
-      spy().a = 2
+      await save(() => { })
       await save.done()
-      const stub = await simulate(() => ({ a: 1 }))
-      a.throws(() => stub().a = 3, ActionMismatch)
-    })
-  })
-
-  incubator.sequence('set with wrong string', (title, { save, simulate }) => {
-    test(title, async () => {
-      const spy = await save({ a: 'a' })
-      spy.a = 'x'
-      await save.done()
-      const stub = await simulate({ a: 'a' })
-      a.throws(() => stub.a = 'y', ActionMismatch)
-    })
-  })
-
-  incubator.sequence('invoke with missing argument', (title, { save, simulate }) => {
-    test(title, async () => {
-      const spy = await save((cb: any) => cb())
-      spy(() => { })
-      await save.done()
-
       const stub = await simulate(() => { })
+      a.throws(() => stub(), ExtraAction)
+    })
+  })
+  incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const s = await save((...args: any[]) => args)
+      s('a')
+      await save.done()
+      const stub = await simulate((...args: any[]) => args)
+      a.throws(() => stub('a', 'b'), ActionMismatch)
+    })
+  })
+  incubator.sequence('with missing param throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const s = await save((...args: any[]) => args)
+      s('a')
+      await save.done()
+      const stub = await simulate((...args: any[]) => args)
       a.throws(() => stub(), ActionMismatch)
     })
   })
-
-  incubator.sequence('invoke with different scope', (title, { save, simulate }) => {
+  incubator.sequence('with not recorded scope throws ExtraReference', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save(function () { })
       spy()
