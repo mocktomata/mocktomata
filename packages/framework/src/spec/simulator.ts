@@ -186,8 +186,8 @@ function setProperty<V = any>(
   //   `mockto`: spy/stub (`mockto` should not perform on stub under basic usage)
   //   `plugin`: actual value or spy/stub, just like `user`
   const { record, timeTracker, state } = context
-  const expected = record.getNextExpectedAction()
 
+  const expected = record.getNextExpectedAction()
   performer = performer || getDefaultPerformer(state.ref.profile)
   const action: SpecRecord.SetAction = {
     type: 'set',
@@ -199,6 +199,12 @@ function setProperty<V = any>(
   }
 
   const actionId = record.addAction(action)
+
+  if (!expected) {
+    timeTracker.stop()
+    throw new ExtraAction(record.specName, state, actionId, action)
+  }
+
   const ref = record.findRef(value)
   if (ref) {
     if (ref.testDouble === notDefined) {

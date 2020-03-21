@@ -47,6 +47,23 @@ describe('basic checks', () => {
 })
 
 describe('set', () => {
+  incubator.sequence('missing action throws MissingAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save({ a: 1 })
+      spy.a = 2
+      await save.done()
+      await simulate({ a: 1 })
+      a.throws(() => simulate.done(), MissingAction)
+    })
+  })
+  incubator.sequence('extra set throws ExtraAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      await save({ a: 1 })
+      await save.done()
+      const stub = await simulate({ a: 1 })
+      a.throws(() => stub.a = 2, ExtraAction)
+    })
+  })
   incubator.sequence('with wrong number throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save(() => ({ a: 1 }))
