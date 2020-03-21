@@ -96,6 +96,16 @@ describe('set', () => {
       a.throws(() => stub.a = 2, ActionMismatch)
     })
   })
+  incubator.sequence('the wrong key throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = { a: 1, b: 1 }
+      const spy = await save(subject)
+      spy.a = 2
+      await save.done()
+      const stub = await simulate(subject)
+      a.throws(() => stub.b = 2, ActionMismatch)
+    })
+  })
   incubator.sequence('with wrong number value throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = () => ({ a: 1 })
