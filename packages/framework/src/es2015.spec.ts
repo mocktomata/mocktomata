@@ -1547,6 +1547,12 @@ describe('instance', () => {
 });
 
 describe('ignoreMismatch', () => {
+  incubator.save('call after spec throws', (title, spec) => {
+    test(title, async () => {
+      await spec({})
+      a.throws(() => spec.ignoreMismatch(1), InvokeMetaMethodAfterSpec)
+    })
+  })
   incubator.sequence('reference object changes are ignored by default. Garbage-in garbage-out issues are handled by tests, not by the system', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = (x: string) => x
@@ -1559,7 +1565,6 @@ describe('ignoreMismatch', () => {
       await simulate.done()
     })
   })
-
   incubator.duo('non-primitive value are skipped (still work as normal)', (title, spec) => {
     test(title, async () => {
       spec.ignoreMismatch('192.168.0.123')
@@ -1569,27 +1574,66 @@ describe('ignoreMismatch', () => {
       await spec.done()
     })
   })
+  incubator.sequence('on get', (title, { save, simulate }) => {
+    test(title, async () => {
+      save.ignoreMismatch(1)
+      const spy = await save({ a: 1 })
+      expect(spy.a).toBe(1)
+      await save.done()
 
-  incubator.sequence('changed to ignored value is ignored', (title, { save, simulate }) => {
+      const stub = await simulate({ a: 2 })
+      expect(stub.a).toBe(1) // still get the saved value
+      await simulate.done()
+    })
+  })
+  incubator.sequence('on set', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = { a: 1 }
+      save.ignoreMismatch(2)
+      const spy = await save(subject)
+      spy.a = 2
+      expect(spy.a).toBe(2)
+      await save.done()
+
+      const stub = await simulate(subject)
+      stub.a = 3
+      expect(stub.a).toBe(2) // still get the saved value
+      await simulate.done()
+    })
+  })
+  incubator.sequence('in invoke param', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = (x: number) => x + 1
       save.ignoreMismatch(1)
-      const s = await save(subject)
-      const actual = s(1)
+      const spy = await save(subject)
+      const actual = spy(1)
       expect(actual).toBe(2)
       await save.done()
 
-      const s2 = await simulate(subject)
-      const actual2 = s2(100)
+      const stub = await simulate(subject)
+      const actual2 = stub(100)
       expect(actual2).toBe(2) // still get the saved value
       await simulate.done()
     })
   })
-
-  incubator.save('call after spec throws', (title, spec) => {
+  incubator.sequence('in instantiate param', (title, { save, simulate }) => {
     test(title, async () => {
-      await spec(() => { })
-      a.throws(() => spec.ignoreMismatch(1), InvokeMetaMethodAfterSpec)
+      class Subject {
+        constructor(private value: number) { }
+        getValue() {
+          return this.value
+        }
+      }
+      save.ignoreMismatch(1)
+      const spy = await save(Subject)
+      const actual = new spy(1)
+      expect(actual.getValue()).toBe(1)
+      await save.done()
+
+      const stub = await simulate(Subject)
+      const actual2 = new stub(100)
+      expect(actual2.getValue()).toBe(1) // still get the saved value
+      await simulate.done()
     })
   })
 })

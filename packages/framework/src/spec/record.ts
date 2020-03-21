@@ -227,15 +227,22 @@ function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
   return String(refs.push(ref) - 1)
 }
 
-function findRefBySubjectOrTestDouble<R extends SpecRecordLive.Reference>(refs: R[], value: any): R | undefined {
-  return refs.find(r => r.testDouble === value || r.subject === value)
+function findRefBySubjectOrTestDouble<R extends ValidateReference>(refs: R[], value: any): R | undefined {
+  const ref = refs.find(r => r.testDouble === value || r.subject === value)
+  if (ref) return ref
+  const nextRef = refs.find(r => !r.claimed)
+  if (nextRef?.inert) {
+    // special handling for inert value.
+    // setting subject to the meta to use the recorded value
+    nextRef.subject = nextRef.meta
+    return nextRef
+  }
+  return undefined
 }
 
 function findRefIdBySubjectOrTestDouble(refs: SpecRecordLive.Reference[], value: any) {
   const i = refs.findIndex(r => r.testDouble === value || r.subject === value)
-  if (i !== -1) {
-    return String(i)
-  }
+  if (i !== -1) return String(i)
   return undefined
 }
 
@@ -246,10 +253,3 @@ function getRefId<R>(refs: R[], ref: R) {
 function addAction(actions: SpecRecordLive.Action[], action: SpecRecordLive.Action) {
   return actions.push(action) - 1
 }
-
-// export function assertActionType<T extends SpecRecordLive.Action>(specId: string, type: SpecRecordLive.Action['type'], action: SpecRecordLive.Action | undefined): asserts action is T {
-//   if (!action || action.type !== type) {
-//     throw new ActionMismatch(specId, { type } as any, action)
-//   }
-// }
-

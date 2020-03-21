@@ -219,7 +219,6 @@ function setProperty<V = any>(
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
-
   logAction(context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
