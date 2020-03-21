@@ -68,7 +68,8 @@ export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: st
         }
       },
       set(_, property: string, value: any) {
-        return setProperty({ key: property, value }, value => subject[property] = value)
+        setProperty({ key: property, value }, value => subject[property] = value)
+        return true
       }
     })
     // map.set(spy, { pending: false, publicMethods: [] })
@@ -90,7 +91,8 @@ export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: st
         return getProperty({ key: property })
       },
       set(_, key: string, value: any) {
-        return setProperty({ key, value })
+        setProperty({ key, value })
+        return true
       }
     })
     return stub

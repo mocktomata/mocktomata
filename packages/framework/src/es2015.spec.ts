@@ -232,6 +232,7 @@ describe('invoke', () => {
 
 describe('instantiate', () => {
   class Subject {
+    a = 0
     constructor(..._args: any[]) { }
     // must exist at least one method for class plugin to identify it.
     foo() { }
@@ -252,6 +253,17 @@ describe('instantiate', () => {
       await save.done()
       const stub = await simulate(Subject)
       a.throws(() => new stub(), ExtraAction)
+    })
+  })
+  incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
+    test.only(title, async () => {
+      const spy = await save(Subject)
+      new spy().a = 0
+      await save.done()
+
+      const stub = await simulate(Subject)
+      new stub()
+      a.throws(() => new stub(), ActionMismatch)
     })
   })
   incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
