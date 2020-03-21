@@ -25,19 +25,20 @@ export function isMatchingSetAction(
   if (typeof expected.value !== 'string') return actual.value === expected.value
 
   // don't care about actual value if expectation is inert
-  const expectedRef = record.getLoadedRef(expected.value)
-  if (expectedRef?.inert) return true
+  const expectedRef = record.getLoadedRef(expected.value)!
+  if (expectedRef.inert) return true
 
   // actual is primitive value but expected is not primitive or not inert
   if (typeof actual.value !== 'string') return false
 
-  const actualRef = record.getRef(actual.value)
+  const actualRef = record.getRef(actual.value)!
 
   // ignore function, class, object, and array
-  if (!isPrimitive(actualRef?.subject)) return true
+  if (!isPrimitive(actualRef.subject)) return true
+
   // cheat a bit. only string|undefined goes here,
   // which comparing meta would work
-  return actualRef?.meta === expectedRef?.meta
+  return actualRef.meta === expectedRef.meta
 }
 function isPrimitive(value: any) {
   return typeof value !== 'object' && typeof value !== 'function'

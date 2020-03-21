@@ -136,6 +136,18 @@ describe('set', () => {
       a.throws(() => stub.a = 1, ActionMismatch)
     })
   })
+  incubator.sequence('with function will not trigger ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = { foo() { } }
+      const spy = await save(subject)
+      spy.foo = () => { }
+      await save.done()
+
+      const stub = await simulate(subject)
+      stub.foo = () => { }
+      await simulate.done()
+    })
+  })
 })
 
 describe('invoke', () => {
