@@ -1,20 +1,7 @@
 import { SpecRecord } from '../spec-record/types'
 import { SpecRecordValidator } from './record'
 
-export function actionMatches(record: SpecRecordValidator, actual: SpecRecord.Action, expected: SpecRecord.Action | undefined) {
-  switch (actual.type) {
-    case 'get':
-      return isMatchingGetAction(actual, expected)
-    case 'set':
-      return isMatchingSetAction(record, actual, expected)
-    case 'invoke':
-      return isMatchingInvokeAction(record, actual, expected)
-    case 'instantiate':
-      return isMatchingInstantiateAction(record, actual, expected)
-  }
-}
-
-function isMatchingGetAction(
+export function isMatchingGetAction(
   actual: SpecRecord.GetAction,
   expected: SpecRecord.Action | undefined
 ): actual is SpecRecord.GetAction {
@@ -24,13 +11,11 @@ function isMatchingGetAction(
     actual.key === expected.key
 }
 
-function isMatchingSetAction(
+export function isMatchingSetAction(
   record: SpecRecordValidator,
   actual: SpecRecord.SetAction,
-  expected: SpecRecord.Action | undefined
+  expected: SpecRecord.Action
 ): actual is SpecRecord.SetAction {
-  // extra action
-  if (!expected) return false
   // wrong type
   if (expected.type !== 'set') return false
 
@@ -58,24 +43,24 @@ function isPrimitive(value: any) {
   return typeof value !== 'object' && typeof value !== 'function'
 }
 
-function isMatchingInvokeAction(
+export function isMatchingInvokeAction(
   record: SpecRecordValidator,
   actual: SpecRecord.InvokeAction,
-  expected: SpecRecord.Action | undefined
+  expected: SpecRecord.Action
 ): actual is SpecRecord.InvokeAction {
-  return !!expected && expected.type === 'invoke' &&
+  return expected.type === 'invoke' &&
     actual.refId === expected.refId &&
     actual.performer === expected.performer &&
     actual.thisArg === expected.thisArg &&
     isMatchingPayload(record, actual.payload, expected.payload)
 }
 
-function isMatchingInstantiateAction(
+export function isMatchingInstantiateAction(
   record: SpecRecordValidator,
   actual: SpecRecord.InstantiateAction,
-  expected: SpecRecord.Action | undefined
+  expected: SpecRecord.Action
 ): actual is SpecRecord.InstantiateAction {
-  return !!expected && expected.type === 'instantiate' &&
+  return expected.type === 'instantiate' &&
     actual.refId === expected.refId &&
     actual.performer === expected.performer &&
     isMatchingPayload(record, actual.payload, expected.payload)

@@ -6,7 +6,7 @@ import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
 import { createTimeTracker, TimeTracker } from '../timeTracker'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
-import { actionMatches } from './actionMatches'
+import { isMatchingGetAction, isMatchingSetAction, isMatchingInvokeAction, isMatchingInstantiateAction } from './actionMatches'
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors'
 import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs'
 import { maskIfNeeded } from './masking'
@@ -154,7 +154,7 @@ function getProperty(
     key,
   }
 
-  if (!actionMatches(record, action, expected)) {
+  if (!isMatchingGetAction(action, expected)) {
     // getProperty calls may be caused by framework access.
     // Those calls will not be record and simply ignored.
     return undefined
@@ -215,7 +215,7 @@ function setProperty<V = any>(
   else {
     action.value = value
   }
-  if (!actionMatches(record, action, expected)) {
+  if (!isMatchingSetAction(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
@@ -308,7 +308,7 @@ function invoke(context: Simulator.Context,
     return arg
   })
 
-  if (!actionMatches(record, action, expected)) {
+  if (!isMatchingInvokeAction(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
@@ -351,6 +351,11 @@ function instantiate(
 
   const actionId = record.addAction(action)
 
+  if (!expected) {
+    timeTracker.stop()
+    throw new ExtraAction(record.specName, state, actionId, action)
+  }
+
   const spiedArgs = args.map((arg, key) => {
     const ref = record.findRef(arg)
     if (ref) {
@@ -365,7 +370,7 @@ function instantiate(
     return arg
   })
 
-  if (!actionMatches(record, action, expected)) {
+  if (!isMatchingInstantiateAction(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }

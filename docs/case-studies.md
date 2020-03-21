@@ -214,7 +214,7 @@ buffer.toString('utf-8')
 // <act:24> I invoke <ref:9>()
 // <act:25> <ref:9 act:24> -> <ref:12>
 const fs = await spec(require('fs'))
-const rr = fs.createReadStream('foo.txt');
-rr.on('readable', (() => console.log(`readable: ${rr.read()}`)) as Handler1);
-rr.on('end', (() => console.log('end')) as Handler2);
+const rs = fs.createReadStream('foo.txt');
+rs.on('readable', (() => console.log(`readable: ${rs.read()}`)) as Handler1);
+rs.on('end', (() => console.log('end')) as Handler2);
 ```

@@ -16,27 +16,19 @@ describe('basic checks', () => {
       ['symbol', Symbol()],
       ['string', 'string'],
       ['array', []]
-    ])(title, async (_, value) => {
-      await a.throws(() => spec(value), NotSpecable)
-    })
+    ])(title, (_, value) => a.throws(() => spec(value), NotSpecable))
   })
   function noop() { }
 
   incubator.save('', (_, spec) => {
-    test('spec id cannot be empty (save)', async () => {
-      await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
-    })
+    test('spec id cannot be empty (save)', () => a.throws(() => spec(noop), SpecIDCannotBeEmpty))
   })
 
   incubator.simulate('', (_, spec) => {
-    test('spec id cannot be empty (simulate)', async () => {
-      await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
-    })
+    test('spec id cannot be empty (simulate)', () => a.throws(() => spec(noop), SpecIDCannotBeEmpty))
   })
   incubator.duo('', (_, spec) => {
-    test('spec id cannot be empty (duo)', async () => {
-      await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
-    })
+    test('spec id cannot be empty (duo)', () => a.throws(() => spec(noop), SpecIDCannotBeEmpty))
   })
   incubator.sequence('', (_, { save, simulate }) => {
     test('spec id cannot be empty (sequence)', async () => {
@@ -46,48 +38,91 @@ describe('basic checks', () => {
   })
 })
 
+describe('get', () => {
+  incubator.sequence('missing action throws MissingAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = { a: 1 }
+      const spy = await save(subject)
+      expect(spy.a).toBe(1)
+      await save.done()
+      await simulate(subject)
+      a.throws(simulate.done(), MissingAction)
+    })
+  })
+  incubator.sequence('extra action not performed before gets value from subject', (title, { save, simulate }) => {
+    test.skip(title, async () => {
+      const subject = { a: 1, b: 2 }
+      const spy = await save(subject)
+      expect(spy.a).toBe(1)
+      await save.done()
+      const stub = await simulate(subject)
+      expect(stub.a).toBe(1)
+      expect(stub.b).toBe(2)
+      await simulate.done();
+    })
+  })
+})
+
 describe('set', () => {
   incubator.sequence('missing action throws MissingAction', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save({ a: 1 })
+      const subject = { a: 1 }
+      const spy = await save(subject)
       spy.a = 2
       await save.done()
-      await simulate({ a: 1 })
-      a.throws(() => simulate.done(), MissingAction)
+      await simulate(subject)
+      a.throws(simulate.done(), MissingAction)
     })
   })
   incubator.sequence('extra set throws ExtraAction', (title, { save, simulate }) => {
     test(title, async () => {
-      await save({ a: 1 })
+      const subject = { a: 1 }
+      await save(subject)
       await save.done()
-      const stub = await simulate({ a: 1 })
+      const stub = await simulate(subject)
       a.throws(() => stub.a = 2, ExtraAction)
+    })
+  })
+  incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = { a: 1, foo() { } }
+      const spy = await save(subject)
+      const foo = spy.foo
+      expect(spy.a).toBe(1)
+      foo()
+      await save.done()
+      const stub = await simulate(subject)
+      stub.foo
+      a.throws(() => stub.a = 2, ActionMismatch)
     })
   })
   incubator.sequence('with wrong number value throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save(() => ({ a: 1 }))
+      const subject = () => ({ a: 1 })
+      const spy = await save(subject)
       spy().a = 2
       await save.done()
-      const stub = await simulate(() => ({ a: 1 }))
+      const stub = await simulate(subject)
       a.throws(() => stub().a = 3, ActionMismatch)
     })
   })
   incubator.sequence('with wrong string value throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save({ a: 'a' })
+      const subject = { a: 'a' }
+      const spy = await save(subject)
       spy.a = 'x'
       await save.done()
-      const stub = await simulate({ a: 'a' })
+      const stub = await simulate(subject)
       a.throws(() => stub.a = 'y', ActionMismatch)
     })
   })
-  incubator.sequence('with wrong type throws ActionMismatch', (title, { save, simulate }) => {
+  incubator.sequence('with wrong value type throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save({ a: 'a' as any })
+      const subject = { a: 'a' as any }
+      const spy = await save(subject)
       spy.a = '1'
       await save.done()
-      const stub = await simulate({ a: 'a' as any })
+      const stub = await simulate(subject)
       a.throws(() => stub.a = 1, ActionMismatch)
     })
   })
@@ -107,38 +142,86 @@ describe('invoke', () => {
   })
   incubator.sequence('extra call throws ExtraAction', (title, { save, simulate }) => {
     test(title, async () => {
-      await save(() => { })
+      const subject = () => { }
+      await save(subject)
       await save.done()
-      const stub = await simulate(() => { })
+      const stub = await simulate(subject)
       a.throws(() => stub(), ExtraAction)
     })
   })
   incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      const s = await save((...args: any[]) => args)
+      const subject = (...args: any[]) => args
+      const s = await save(subject)
       s('a')
       await save.done()
-      const stub = await simulate((...args: any[]) => args)
+      const stub = await simulate(subject)
       a.throws(() => stub('a', 'b'), ActionMismatch)
     })
   })
   incubator.sequence('with missing param throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
-      const s = await save((...args: any[]) => args)
-      s('a')
+      const subject = (...args: any[]) => args
+      const spy = await save(subject)
+      spy('a')
       await save.done()
-      const stub = await simulate((...args: any[]) => args)
+      const stub = await simulate(subject)
       a.throws(() => stub(), ActionMismatch)
     })
   })
   incubator.sequence('with not recorded scope throws ExtraReference', (title, { save, simulate }) => {
     test(title, async () => {
-      const spy = await save(function () { })
+      function subject() { }
+      const spy = await save(subject)
       spy()
       await save.done()
 
-      const stub = await simulate(function () { })
+      const stub = await simulate(subject)
       a.throws(() => stub.call({}), ExtraReference)
+    })
+  })
+})
+
+describe('instantiate', () => {
+  class Subject {
+    constructor(..._args: any[]) { }
+    // must exist at least one method for class plugin to identify it.
+    foo() { }
+  }
+  incubator.sequence('missing call throws MissingAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save(Subject)
+      new spy()
+      await save.done()
+
+      await simulate(Subject)
+      await a.throws(simulate.done(), MissingAction)
+    })
+  })
+  incubator.sequence('extra call throws ExtraAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      await save(Subject)
+      await save.done()
+      const stub = await simulate(Subject)
+      a.throws(() => new stub(), ExtraAction)
+    })
+  })
+  incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save(Subject)
+      new spy('a')
+      await save.done()
+      const stub = await simulate(Subject)
+      a.throws(() => new stub('a', 'b'), ActionMismatch)
+    })
+  })
+  incubator.sequence('with missing param throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const s = await save(Subject)
+      new s('a')
+      await save.done()
+      const stub = await simulate(Subject)
+      a.throws(() => new stub(), ActionMismatch)
     })
   })
 })
