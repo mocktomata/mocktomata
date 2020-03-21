@@ -198,19 +198,26 @@ function setProperty<V = any>(
     value: notDefined
   }
 
-  action.value = record.findRefId(resolveValue(context, value)) || value
+  const actionId = record.addAction(action)
+  const ref = record.findRef(value)
+  if (ref) {
+    if (ref.testDouble === notDefined) {
+      buildTestDouble(getPropertyContext(context, actionId, key), ref)
+    }
+    action.value = record.getRefId(ref)
+  }
+  else {
+    action.value = value
+  }
   if (!actionMatches(record, action, expected)) {
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
 
-  const actionId = record.addAction(action)
-
   logAction(context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
   if (!resultAction) return undefined
-
   const resultActionId = record.addAction(resultAction)
   const resultContext = getPropertyContext(context, actionId, key)
   const result = resolveValue(resultContext, resultAction.payload)

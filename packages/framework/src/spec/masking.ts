@@ -85,12 +85,12 @@ function isRegExpCriterion(criterion: MaskCriterion): criterion is MaskRegExpCri
 function createRegExpReplacer(replaceWith: string | ((value: RegExpExecArray) => string) | undefined) {
   if (replaceWith === undefined) {
     return function (value: RegExpMatchArray) {
-      return value.input?.replace(value[0], toMask(value[0]))
+      return value.input!.replace(value[0], toMask(value[0]))
     }
   }
   else if (typeof replaceWith === 'string') {
     return function (value: RegExpMatchArray) {
-      return value.input?.replace(value[0], replaceWith)
+      return value.input!.replace(value[0], replaceWith)
     }
   }
   return replaceWith

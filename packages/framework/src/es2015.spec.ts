@@ -47,12 +47,32 @@ describe('basic checks', () => {
 })
 
 describe('mismatch simulation', () => {
-  incubator.sequence('extra action', (title, { save, simulate }) => {
+  incubator.sequence('extra action throws ExtraAction', (title, { save, simulate }) => {
     test(title, async () => {
       await save(() => { })
       await save.done()
       const stub = await simulate(() => { })
       a.throws(() => stub(), ExtraAction)
+    })
+  })
+
+  incubator.sequence('extra param throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const s = await save((...args: any[]) => args)
+      s('a')
+      await save.done()
+      const stub = await simulate((...args: any[]) => args)
+      a.throws(() => stub('a', 'b'), ActionMismatch)
+    })
+  })
+
+  incubator.sequence('missing param throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const s = await save((...args: any[]) => args)
+      s('a')
+      await save.done()
+      const stub = await simulate((...args: any[]) => args)
+      a.throws(() => stub(), ActionMismatch)
     })
   })
 
@@ -68,13 +88,23 @@ describe('mismatch simulation', () => {
     })
   })
 
-  incubator.sequence('set with wrong value', (title, { save, simulate }) => {
+  incubator.sequence('set with wrong number', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save(() => ({ a: 1 }))
       spy().a = 2
       await save.done()
       const stub = await simulate(() => ({ a: 1 }))
       a.throws(() => stub().a = 3, ActionMismatch)
+    })
+  })
+
+  incubator.sequence('set with wrong string', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save({ a: 'a' })
+      spy.a = 'x'
+      await save.done()
+      const stub = await simulate({ a: 'a' })
+      a.throws(() => stub.a = 'y', ActionMismatch)
     })
   })
 
@@ -1520,7 +1550,7 @@ describe('maskValue', () => {
   incubator.duo('against object', (title, spec) => {
     test(title, async () => {
       spec.maskValue('secret')
-      const s = await spec((value: string) => ({ value, b: 1 }))
+      const s = await spec((value: string) => { return { value, b: 1 } })
       expect(s('secret')).toEqual({ value: '******', b: 1 })
       await spec.done()
     })
