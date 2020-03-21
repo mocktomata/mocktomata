@@ -171,6 +171,32 @@ describe('invoke', () => {
       a.throws(() => stub(), ExtraAction)
     })
   })
+  incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = Object.assign(function () { }, { a: 1 })
+      const spy = await save(subject)
+      spy()
+      spy.a = 2
+      await save.done()
+
+      const stub = await simulate(subject)
+      stub()
+      a.throws(() => stub(), ActionMismatch)
+    })
+  })
+  incubator.sequence('TODO: improve error instead of MissingReference', (title, { save, simulate }) => {
+    test.skip(title, async () => {
+      const subject = Object.assign(function () { }, { a: 1 })
+      const spy = await save(subject)
+      spy()
+      spy.a = 2
+      await save.done()
+
+      const stub = await simulate(subject)
+      stub()
+      a.throws(() => stub(), ActionMismatch)
+    })
+  })
   incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = (...args: any[]) => args
@@ -1625,6 +1651,21 @@ describe('ignoreMismatch', () => {
       const stub = await simulate(subject)
       const actual2 = stub(100)
       expect(actual2).toBe(2) // still get the saved value
+      await simulate.done()
+    })
+  })
+  incubator.sequence('in invoke param array', (title, { save, simulate }) => {
+    test(title, async () => {
+      const subject = (x: number[]) => x[1]
+      save.ignoreMismatch(1)
+      const spy = await save(subject)
+      const actual = spy([2, 1])
+      expect(actual).toBe(1)
+      await save.done()
+
+      const stub = await simulate(subject)
+      const actual2 = stub([2, 100])
+      expect(actual2).toBe(1) // still get the saved value
       await simulate.done()
     })
   })

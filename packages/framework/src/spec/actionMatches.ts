@@ -69,11 +69,5 @@ export function isMatchingInstantiateAction(
 
 function isMatchingPayload(record: SpecRecordValidator, actualPayload: any[], expectedPayload: any[]) {
   return actualPayload.length === expectedPayload.length &&
-    actualPayload.every((a, i) => {
-      if (a === expectedPayload[i]) return true
-
-      // ignore inert value
-      const ref = record.getLoadedRef(expectedPayload[i])
-      return ref?.inert
-    })
+    actualPayload.every((a, i) => a === expectedPayload[i])
 }
