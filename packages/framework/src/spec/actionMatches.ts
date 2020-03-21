@@ -43,6 +43,9 @@ function isMatchingSetAction(
   const expectedRef = record.getLoadedRef(expected.value)
   if (expectedRef?.inert) return true
 
+  // actual is primitive value but expected is not primitive or not inert
+  if (typeof actual.value !== 'string') return false
+
   const actualRef = record.getRef(actual.value)
 
   // ignore function, class, object, and array

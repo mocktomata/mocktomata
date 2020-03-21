@@ -64,7 +64,7 @@ describe('set', () => {
       a.throws(() => stub.a = 2, ExtraAction)
     })
   })
-  incubator.sequence('with wrong number throws ActionMismatch', (title, { save, simulate }) => {
+  incubator.sequence('with wrong number value throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save(() => ({ a: 1 }))
       spy().a = 2
@@ -73,14 +73,22 @@ describe('set', () => {
       a.throws(() => stub().a = 3, ActionMismatch)
     })
   })
-
-  incubator.sequence('with wrong string throws ActionMismatch', (title, { save, simulate }) => {
+  incubator.sequence('with wrong string value throws ActionMismatch', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save({ a: 'a' })
       spy.a = 'x'
       await save.done()
       const stub = await simulate({ a: 'a' })
       a.throws(() => stub.a = 'y', ActionMismatch)
+    })
+  })
+  incubator.sequence('with wrong type throws ActionMismatch', (title, { save, simulate }) => {
+    test(title, async () => {
+      const spy = await save({ a: 'a' as any })
+      spy.a = '1'
+      await save.done()
+      const stub = await simulate({ a: 'a' as any })
+      a.throws(() => stub.a = 1, ActionMismatch)
     })
   })
 })
