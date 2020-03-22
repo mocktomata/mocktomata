@@ -5,10 +5,6 @@ import { SpecPlugin } from './types'
 // TODO: this might need to be convert to async function so that the module
 // can call register asynchronously
 export function addPluginModule(plugins: SpecPlugin.Instance[], moduleName: string, pluginModule: SpecPlugin.Module) {
-  if (!pluginModule) {
-    log.warn(`${moduleName} is not a valid plugin module.`)
-    return plugins
-  }
   if (typeof pluginModule.activate !== 'function') {
     log.warn(`${moduleName} does not export an 'activate()' function.`)
     return plugins

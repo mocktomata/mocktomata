@@ -6,9 +6,9 @@ import { SpecPlugin } from '../spec-plugin/types'
 import { SpecRecord } from '../spec-record/types'
 import { createTimeTracker, TimeTracker } from '../timeTracker'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal'
-import { isMatchingGetAction, isMatchingSetAction, isMatchingInvokeAction, isMatchingInstantiateAction } from './actionMatches'
+import { isMatchingGetAction, isMatchingInstantiateAction, isMatchingInvokeAction, isMatchingSetAction } from './actionMatches'
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors'
-import { logAction, logCreateSpy, logCreateStub, logRecordingTimeout } from './logs'
+import { logAction, logCreateSpy, logCreateStub, logMissingResultAction, logRecordingTimeout } from './logs'
 import { maskIfNeeded } from './masking'
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record'
 import { createPluginSpyContext } from './recorder'
@@ -16,8 +16,6 @@ import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
 import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal'
 import { referenceMismatch } from './validations'
-import { log } from '../log'
-import { prettifyAction } from './prettifyAction'
 
 export namespace Simulator {
   export type Context = {
@@ -167,8 +165,7 @@ function getProperty(
   const resultAction = record.getExpectedResultAction(actionId)
   // istanbul ignore next
   if (!resultAction) {
-    log.error(`Result action for ${prettifyAction(state, actionId, action)} not found.`)
-    log.error(`Since all in-between actions should be processed, this is likely some kind of recording error.`)
+    logMissingResultAction(state, actionId, action)
     return undefined
   }
 
@@ -227,7 +224,11 @@ function setProperty<V = any>(
   logAction(context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
-  if (!resultAction) return true
+  // istanbul ignore next
+  if (!resultAction) {
+    logMissingResultAction(state, actionId, action)
+    return true
+  }
   const resultActionId = record.addAction(resultAction)
   const resultContext = getPropertyContext(context, actionId, key)
   const result = resolveValue(resultContext, resultAction.payload)
@@ -298,19 +299,7 @@ function invoke(context: Simulator.Context,
   }
   action.thisArg = record.getRefId(thisArgRef)
 
-  args.forEach((arg, key) => {
-    const ref = record.findRef(arg)
-    if (ref) {
-      if (ref.testDouble === notDefined) {
-        buildTestDouble(getArgumentContext(context, actionId, key), ref)
-      }
-      action.payload.push(record.getRefId(ref))
-    }
-    else {
-      action.payload.push(arg)
-    }
-    return arg
-  })
+  buildSpiedArgs(context, action, actionId, args)
 
   if (!isMatchingInvokeAction(record, action, expected)) {
     timeTracker.stop()
@@ -320,9 +309,11 @@ function invoke(context: Simulator.Context,
   logAction(context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
-  // in what case the resultAction is undefined?
-  // those extra invoke calls by the framework?
-  if (!resultAction) return undefined
+  // istanbul ignore next
+  if (!resultAction) {
+    logMissingResultAction(state, actionId, action)
+    return undefined
+  }
 
   const resultActionId = record.addAction(resultAction)
   const resultContext = getResultContext(context, actionId)
@@ -339,7 +330,7 @@ function instantiate(
   context: Simulator.Context,
   { args, performer }: SpecPlugin.StubContext.instantiate.Options,
   handler: SpecPlugin.StubContext.instantiate.Handler,
-): SpecPlugin.StubContext.instantiate.Responder {
+) {
   const { record, state, timeTracker } = context
 
   const expected = record.getNextExpectedAction()
@@ -360,19 +351,7 @@ function instantiate(
     throw new ExtraAction(record.specName, state, actionId, action)
   }
 
-  const spiedArgs = args.map((arg, key) => {
-    const ref = record.findRef(arg)
-    if (ref) {
-      if (ref.testDouble === notDefined) {
-        buildTestDouble(getArgumentContext(context, actionId, key), ref)
-      }
-      action.payload.push(record.getRefId(ref))
-    }
-    else {
-      action.payload.push(arg)
-    }
-    return arg
-  })
+  const spiedArgs = buildSpiedArgs(context, action, actionId, args)
 
   if (!isMatchingInstantiateAction(record, action, expected)) {
     timeTracker.stop()
@@ -383,9 +362,11 @@ function instantiate(
   processNextAction(context)
 
   const resultAction = record.getExpectedResultAction(actionId)!
-  // in what case the resultAction is undefined?
-  // those extra invoke calls by the framework?
-  if (!resultAction) new Error('missing result action')
+  // istanbul ignore next
+  if (!resultAction) {
+    logMissingResultAction(state, actionId, action)
+    return undefined
+  }
 
   const resultActionId = record.addAction(resultAction)
   const resultContext = getResultContext(context, actionId)
@@ -395,6 +376,22 @@ function instantiate(
   logAction(resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return result
   throw result
+}
+
+function buildSpiedArgs(context: Simulator.Context, action: SpecRecord.InvokeAction | SpecRecord.InstantiateAction, actionId: SpecRecord.ActionId, args: any[]) {
+  return args.map((arg, key) => {
+    const ref = context.record.findRef(arg)
+    if (ref) {
+      if (ref.testDouble === notDefined) {
+        buildTestDouble(getArgumentContext(context, actionId, key), ref)
+      }
+      action.payload.push(context.record.getRefId(ref))
+    }
+    else {
+      action.payload.push(arg)
+    }
+    return arg
+  })
 }
 
 function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.PluginAction) {

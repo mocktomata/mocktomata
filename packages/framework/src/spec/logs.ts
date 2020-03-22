@@ -23,3 +23,9 @@ export function logRecordingTimeout(specName: string, timeout: number) {
 export function logCreateStub({ ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subjectOrMeta: any) {
   log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${tersify(subjectOrMeta)}`))
 }
+
+// istanbul ignore next
+export function logMissingResultAction(state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
+  log.error(`Result action for ${prettifyAction(state, actionId, action)} not found.`)
+  log.error(`Since all in-between actions should be processed, this is likely some kind of recording error.`)
+}

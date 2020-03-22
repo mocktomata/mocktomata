@@ -764,6 +764,15 @@ describe('function', () => {
       await spec.done()
     })
   })
+  incubator.duo('callback in deep object literal fail', (title, spec) => {
+    test(title, async () => {
+      const subject = await spec(callbackInDeepObjLiteral.fail)
+
+      await a.throws(callbackInDeepObjLiteral.increment(subject, 2), err => err.message === 'fail')
+
+      await spec.done()
+    })
+  })
   incubator.duo('synchronous callback success', (title, spec) => {
     test(title, async () => {
       const subject = await spec(synchronous.success)

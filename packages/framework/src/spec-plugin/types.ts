@@ -145,7 +145,6 @@ export namespace SpecPlugin {
       export type Context<T, A> = {
         thisArg: T,
         args: A,
-        // setMeta: setMeta,
       }
     }
 
@@ -211,10 +210,6 @@ export namespace SpecPlugin {
         args: any[],
         performer?: SpecRecord.Performer,
       }
-      export type Responder = {
-        setInstance(instance: any): void,
-        invoke: StubContext.invoke,
-      }
     }
 
     export type on = (pluginAction: PluginAction) => any
@@ -249,35 +244,10 @@ export namespace SpecPlugin {
     meta?: SpecRecord.Meta
   }
 
-  export type InvocationRecorder = {
-    // args: any[],
-    returns<V>(value: V, options?: SpyResultOptions): V,
-    throws<E>(err: E, options?: SpyResultOptions): E
-  }
-
-  export type InvocationResponder = {
-    getResult(): { type: 'return' | 'throw', value: any, meta: SpecRecord.Meta | undefined },
-    getResultAsync(): Promise<{ type: 'return' | 'throw', value: any, meta: SpecRecord.Meta | undefined }>,
-    returns<V>(value: V): V,
-    throws<V>(value: V): V,
-  }
-
   export type InstantiateOptions = {
     performer?: SpecRecord.Performer,
     processArguments?: <A>(id: SpecRecord.ActionId, arg: A) => A,
     meta?: SpecRecord.Meta,
-  }
-
-  export type InstantiationRecorder = {
-    args: any[],
-    setInstance(instance: any): SpecRecord.ReferenceId,
-    invoke(args: any[], options?: InvokeOptions): InvocationRecorder,
-  }
-
-  export type InstantiationResponder = {
-    args: any[],
-    setInstance(instance: any): SpecRecord.ReferenceId,
-    invoke(args: any[], options?: InvokeOptions): InvocationResponder,
   }
 
   export type ResolveOptions = {
