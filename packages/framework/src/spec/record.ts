@@ -69,10 +69,8 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
       if (ref) return ref
 
       const plugin = findPlugin(plugins, value)
-      if (!plugin) {
-        // `value` is primitive
-        return undefined
-      }
+      // `value` is primitive
+      if (!plugin) return undefined
 
       ref = refs.find(r => r.plugin === plugin.name && !r.claimed)
       if (ref) {
@@ -84,24 +82,8 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
     },
 
     findRefId: (value: any) => {
-      let ref = findRefBySubjectOrTestDouble(refs, value)
-      if (ref) return getRefId(refs, ref)
-
-      const plugin = findPlugin(plugins, value)
-      if (!plugin) {
-        // `value` is primitive
-        return undefined
-      }
-
-      ref = refs.find(r => r.plugin === plugin.name && !r.claimed)
-      if (ref) {
-        ref.claimed = true
-        ref.subject = value
-        return getRefId(refs, ref)
-      }
-      // for safety
-      // istanbul ignore next
-      return undefined
+      const ref = findRefBySubjectOrTestDouble(refs, value)
+      return ref ? getRefId(refs, ref) : undefined
     },
 
     // hasExpectedGetThenAction: (refId: SpecRecord.ReferenceId) => {
@@ -213,14 +195,8 @@ function getRef(record: SpecRecord, id: SpecRecord.ReferenceId | SpecRecord.Acti
 }
 
 function resolveRefId(actions: SpecRecordLive.Action[], id: SpecRecord.ActionId): SpecRecord.ReferenceId {
-  const action = actions[id]
-  return action.type === 'return' || action.type === 'throw' ? getCauseAction(actions, id).refId : action.refId
-}
-
-// per coverage this is not in use, but that is hard to believe.
-// I feel like there must be some scenarios missing
-function getCauseAction(actions: SpecRecordLive.Action[], id: SpecRecord.ActionId) {
-  return actions[id] as SpecRecord.CauseActions
+  // ReturnAction|ThrowAction never reach here as they are resolved in different means (nextAction)
+  return (actions[id] as SpecRecord.CauseActions).refId
 }
 
 function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {

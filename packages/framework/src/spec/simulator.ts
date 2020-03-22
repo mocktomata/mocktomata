@@ -16,6 +16,8 @@ import { getDefaultPerformer } from './subjectProfile'
 import { Spec } from './types'
 import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal'
 import { referenceMismatch } from './validations'
+import { log } from '../log'
+import { prettifyAction } from './prettifyAction'
 
 export namespace Simulator {
   export type Context = {
@@ -114,12 +116,10 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
   // so `context.state` will always be defined in this line.
   const profile = options.profile
 
-  const source = context.state?.source
-
-  referenceMismatch({ plugin: plugin.name, profile, source }, ref)
+  referenceMismatch({ plugin: plugin.name, profile, source: undefined }, ref)
   const refId = record.getRefId(ref)
   const state = { ref, refId }
-  logCreateStub(state, profile, subject || ref.meta)
+  logCreateStub(state, profile, subject)
 
   ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
 
@@ -165,7 +165,12 @@ function getProperty(
   processNextAction(context)
 
   const resultAction = record.getExpectedResultAction(actionId)
-  if (!resultAction) return undefined
+  // istanbul ignore next
+  if (!resultAction) {
+    log.error(`Result action for ${prettifyAction(state, actionId, action)} not found.`)
+    log.error(`Since all in-between actions should be processed, this is likely some kind of recording error.`)
+    return undefined
+  }
 
   const resultActionId = record.addAction(resultAction)
   const resultContext = getPropertyContext(context, actionId, key)
@@ -482,7 +487,6 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
           ...context.state,
           ref: valueRef,
           refId: record.getRefId(valueRef),
-          source: undefined
         }
       }, valueRef)
     }
