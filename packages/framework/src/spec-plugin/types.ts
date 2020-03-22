@@ -23,21 +23,6 @@ export type SpecPlugin<S = any, M = any> = {
    * This is created in `createSpy() -> record.declare()` and is used to make the stub looks like the subject.
    */
   createStub(context: SpecPlugin.StubContext, subject: S, meta: M): S,
-  /**
-   * If provided, allow you to create an additional `meta` data.
-   * This `meta` data will be available when `createStub()` is called.
-   * Note that this `meta` is useful only for static information,
-   * i.e. information that did not change throughout the simulation.
-   */
-  metarize?(context: { metarize(subject: any): void }, spy: S): M,
-  recreateSubject?(context: {}, meta: M): S,
-  /**
-   * Creates an imitator that simulates the behavior of the original subject.
-   * Imitator is used when the subject is created during the spec.
-   * Since the original subject does not come from the spec caller,
-   * the imitator is created to imitate the original subject.
-   */
-  createImitator?(context: any, meta: M): S,
 }
 
 export namespace SpecPlugin {
