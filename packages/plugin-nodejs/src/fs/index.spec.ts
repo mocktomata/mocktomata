@@ -2,7 +2,7 @@ import { incubator } from '@mocktomata/framework'
 import fs from 'fs'
 import path from 'path'
 
-incubator.duo('readFileSync in string', (title, spec) => {
+incubator('readFileSync in string', (title, spec) => {
   test(title, async () => {
     const sfs = await spec(fs)
 
@@ -13,7 +13,7 @@ incubator.duo('readFileSync in string', (title, spec) => {
   })
 })
 
-incubator.duo('readFileSync in Buffer', (title, spec) => {
+incubator('readFileSync in Buffer', (title, spec) => {
   test(title, async () => {
     const sfs = await spec(fs)
 

@@ -68,11 +68,10 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
     }
   }
 
-  return {
+  return Object.assign(duo, {
     save,
     simulate,
-    duo,
     sequence,
     config
-  }
+  })
 }

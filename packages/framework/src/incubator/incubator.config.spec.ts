@@ -8,7 +8,7 @@ beforeAll(() => incubator.config({
 }))
 
 
-incubator.duo('increment plugin is loaded', (title, spec) => {
+incubator('increment plugin is loaded', (title, spec) => {
   test(title, async () => {
     const s = await spec((x: number) => x)
     expect(s(1)).toBe(2)
@@ -23,7 +23,7 @@ describe('use decrement', () => {
   }))
 
   // can't find a way to hack in the AsyncContext protection! :)
-  incubator.duo('call config again replaces the plugins', (title, spec) => {
+  incubator('call config again replaces the plugins', (title, spec) => {
     test(title, async () => {
       const s = await spec((x: number) => x)
       expect(s(2)).toBe(1)

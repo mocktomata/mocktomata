@@ -3,7 +3,7 @@ import { logLevels, captureLogs } from 'standard-log'
 import { incubator, SpecNotFound } from '..'
 import { log } from '../log'
 
-incubator.duo('enable log only lasts through one spec', (title, spec) => {
+incubator('enable log only lasts through one spec', (title, spec) => {
   test(title, async () => {
     await captureLogs(log, async () => {
       const origLevel = log.level
@@ -15,7 +15,7 @@ incubator.duo('enable log only lasts through one spec', (title, spec) => {
     })
   })
 })
-incubator.duo('enableLog can specify log level', (title, spec) => {
+incubator('enableLog can specify log level', (title, spec) => {
   test(title, async () => {
     await captureLogs(log, async () => {
       spec.enableLog(logLevels.none)
@@ -41,7 +41,7 @@ incubator.simulate('simulate', (title, spec) => {
   })
 })
 
-incubator.duo('duo', (title, spec) => {
+incubator('duo', (title, spec) => {
   const o = new AssertOrder(1)
   test(title, async () => {
     const s = await spec((x: number) => {
@@ -53,7 +53,7 @@ incubator.duo('duo', (title, spec) => {
   })
 })
 
-incubator.duo('duo with option', { timeout: 200 }, (title, spec) => {
+incubator('duo with option', { timeout: 200 }, (title, spec) => {
   const o = new AssertOrder(1)
   test(title, async () => {
     const s = await spec((x: number) => {
