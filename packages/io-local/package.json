@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-local",
-  "version": "7.0.0-beta",
+  "version": "7.0.0-beta.0",
   "description": "mocktomata local IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
@@ -38,13 +38,13 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta",
-    "@mocktomata/io-fs": "^7.0.0-beta",
+    "@mocktomata/framework": "^7.0.0-beta.0",
+    "@mocktomata/io-fs": "^7.0.0-beta.0",
     "type-plus": "^1.35.1"
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "^1.0.2",
-    "@mocktomata/plugin-fixture-dummy": "^1.0.3",
+    "@mocktomata/plugin-fixture-dummy": "^1.1.0",
     "@mocktomata/plugin-fixture-no-activate": "^1.0.0"
   },
   "engines": {

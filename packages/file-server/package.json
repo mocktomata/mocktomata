@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/file-server",
-  "version": "7.0.0-beta",
+  "version": "7.0.0-beta.0",
   "description": "mocktomata file server",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
@@ -38,14 +38,12 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta",
-    "@mocktomata/io-fs": "^7.0.0-beta",
-    "boom": "^7.3.0",
-    "@hapi/hapi": "^18.4.1"
+    "@hapi/hapi": "^18.4.1",
+    "@mocktomata/framework": "^7.0.0-beta.0",
+    "@mocktomata/io-fs": "^7.0.0-beta.0",
+    "boom": "^7.3.0"
   },
   "engines": {
     "node": ">= 6"
-  },
-  "devDependencies": {
   }
 }
