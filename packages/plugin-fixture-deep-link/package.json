@@ -1,6 +1,7 @@
 {
   "name": "@mocktomata/plugin-fixture-deep-link",
   "version": "1.0.2",
+  "private": true,
   "keywords": [
     "mocktomata-plugin"
   ],
