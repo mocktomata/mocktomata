@@ -1,6 +1,15 @@
 {
-  "lerna": "3.4.3",
-  "version": "7.0.0-beta",
+  "version": "independent",
   "npmClient": "yarn",
-  "useWorkspaces": true
+  "useWorkspaces": true,
+  "command": {
+    "version": {
+      "createRelease": "github"
+    },
+    "publish": {
+      "conventionalCommits": true,
+      "message": "chore(release): publish packages",
+      "yes": true
+    }
+  }
 }
