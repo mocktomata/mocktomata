@@ -1,19 +1,14 @@
-// import { komondorTest } from '@mocktomata/framework';
-// import fetch from 'node-fetch';
+import { incubator } from '@mocktomata/framework'
+import fetch from 'node-fetch'
 
+incubator('call echo with url string', (title, spec) => {
+  test(title, async () => {
+    const f = await spec(fetch)
 
-// beforeAll(async () => {
-//   komondorTest.
-// })
+    const response = await f('https://postman-echo.com/get?foo=foo1')
+    const actual = await response.json()
 
-// komondorTest.trio('echo', (title, spec) => {
-//   test(title, async () => {
-//     const s = await spec(fetch)
-//     const response = await s.subject('https://postman-echo.com/get?a=1')
-//     console.info(await response.text())
-
-//     await s.done()
-//   })
-// })
-
-test.todo('no test yet')
+    expect(actual.args).toEqual({ foo: 'foo1' })
+    await spec.done()
+  })
+})
