@@ -1,6 +1,7 @@
 {
   "name": "@mocktomata/plugin-node-fetch",
   "version": "1.1.0",
+  "private": true,
   "description": "komondor plugin for node-fetch",
   "keywords": [
     "komondor-plugin"
