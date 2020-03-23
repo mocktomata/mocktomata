@@ -8,14 +8,13 @@
 [![Codacy Grade Badge][codacy-grade]][codacy-grade-url]
 [![Codacy Coverage Badge][codacy-coverage]][codacy-coverage-url]
 
-[![Greenkeeper][greenkeeper-image]][greenkeeper-url]
-
 [![Visual Studio Code][vscode-image]][vscode-url]
 [![Wallaby.js][wallaby-image]][wallaby-url]
 
 Hello masters,
 
 My name is [`mockto`](#mockto).
+
 I'm the main automaton and you guide to the [`mocktomata`][mocktomata] system.
 
 In a nut shell, [`mocktomata`][mocktomata] can save the behavior of your code,
@@ -65,6 +64,7 @@ Please check in that folder into your source control.
 ## mockto
 
 My name is [`mockto`][mockto].
+
 I am an automaton specialized in writing tests.
 You can refer to me as `mt`.
 
@@ -103,7 +103,9 @@ Please check out my [user manual][mockto] for more information.
 ## komondor
 
 Hi, I'm `komondor`.
+
 I used to be a guard dog.
+
 But as time passes, I become a part of the [`mocktomata`][mocktomata] family as an automaton.
 Masters can also call me `kd` if you like.
 
@@ -220,7 +222,7 @@ module.exports = () => {
 [downloads-image]: https://img.shields.io/npm/dm/mocktomata.svg?style=flat
 [downloads-url]: https://npmjs.org/package/mocktomata
 
-[github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/Node%20CI/badge.svg
+[github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/nodejs/badge.svg
 [github-action-url]: https://github.com/mocktomata/mocktomata/actions
 [codecov-image]: https://codecov.io/gh/mocktomata/mocktomata/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/mocktomata/mocktomata
@@ -228,9 +230,6 @@ module.exports = () => {
 [codacy-grade-url]: https://www.codacy.com/gh/mocktomata/mocktomata?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mocktomata/mocktomata&amp;utm_campaign=Badge_Grade
 [codacy-coverage]: https://api.codacy.com/project/badge/Coverage/bcb8e88109b54a7593cfe6744c6dac38
 [codacy-coverage-url]: https://www.codacy.com/manual/mocktomata/mocktomata?utm_source=github.com&utm_medium=referral&utm_content=mocktomata/mocktomata&utm_campaign=Badge_Coverage
-
-[greenkeeper-image]: https://badges.greenkeeper.io/mocktomata/mocktomata.svg
-[greenkeeper-url]: https://greenkeeper.io/
 
 [vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
 [vscode-url]: https://code.visualstudio.com/
