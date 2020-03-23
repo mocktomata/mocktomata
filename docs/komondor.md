@@ -20,12 +20,12 @@ Here is an example on how to use it:
 import axios from 'axios'
 import { komondor } from 'mocktomata'
 
-test('get followers of a user', async () => {
-  const spec = komondor('get followers of a user', { timeout: 3000 })
+test('get friends', async () => {
+  const spec = komondor('get friends')
   const s = await spec(axios)
 
-  const followers = await getFollowers(s, 'danny')
-  expect(followers.length).toBe(10)
+    const friends = await getFriends(s, 'miku')
+    expect(friends.map(f => f.name)).toEqual(['luka', 'rumi', 'len', 'ren'])
 
   await spec.done()
 })

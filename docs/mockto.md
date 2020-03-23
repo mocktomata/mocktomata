@@ -4,7 +4,7 @@ This is the user manual for `mockto`.
 
 It is specialized for writing tests.
 
-For using [`mocktomata`](https://github.com/mocktomata/mocktomata) in production code,
+For using [`mocktomata`][mocktomata] in production code,
 please check out [`komondor`](./komondor.md).
 
 The main benefit of using `mockto` is that the test `title` are prepared for you.
@@ -144,3 +144,5 @@ However, this should be done with care, because you are essentially changing the
 ### Use Configuration To Update Record
 
 Refer to [`configuration tips and tricks`](./configuration.md#tips-and-tricks) session for ways to update multiple records.
+
+[mocktomata]: https://github.com/mocktomata/mocktomata/blob/master/packages/mocktomata

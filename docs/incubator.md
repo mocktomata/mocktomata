@@ -6,7 +6,7 @@ This is the user manual for `incubator`.
 
 - [incubator](#incubator)
   - [`incubator.config()`](#incubatorconfig)
-  - [`incubator.duo(specName, (title, spec) => void)`](#incubatorduospecname-title-spec--void)
+  - [`incubator(specName, (title, spec) => void)`](#incubatorspecname-title-spec--void)
   - [`incubator.sequence(specName, (title, { save, simulate }) => void)`](#incubatorsequencespecname-title--save-simulate---void)
 
 ## `incubator.config()`
@@ -30,7 +30,7 @@ As shown in the example above, you can load other plugins to create a specific t
 
 Note that the general configuration mechanism does not affect `incubator`.
 
-## `incubator.duo(specName, (title, spec) => void)`
+## `incubator(specName, (title, spec) => void)`
 
 This is the basic usage of `incubator`.
 

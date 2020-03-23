@@ -13,19 +13,24 @@
 [![Visual Studio Code][vscode-image]][vscode-url]
 [![Wallaby.js][wallaby-image]][wallaby-url]
 
-I am `mockto`, or in short `mt`, the main automaton and your guide for [`mocktomata`](https://github.com/mocktomata/mocktomata).
+Hello masters,
 
-I can record the behavior of your system.
-And I can simulate it.
+My name is [`mockto`](#mockto).
+I'm the main automaton and you guide to the [`mocktomata`][mocktomata] system.
 
-I can isolate your code from the changes and uncertainty of the outside world.
-And I can connect your code back to it by the flip of a switch.
+In a nut shell, [`mocktomata`][mocktomata] can save the behavior of your code,
+and simulate it at a later time.
 
-Most of the time, I am summoned by masters when they are writing tests.
+We can isolate your code from the changes and uncertainty of the outside world.
+And we can connect your code back to it by a flip of a switch.
 
-Writing tests with me has several benefits over traditional tests.
+Most of the time, we are summoned by masters when they are writing tests.
 
-Traditionally, masters write unit tests, integration tests, and acceptance tests to verify the system is working correctly.
+Writing tests with us has several benefits over traditional tests.
+
+Traditionally,
+masters write different type of tests: unit tests, integration tests, and acceptance tests etc,
+to verify the system is working correctly.
 
 This approach has several drawbacks:
 
@@ -36,9 +41,13 @@ This approach has several drawbacks:
 - Unit tests and integration tests give a false impression that the system is working while in reality the external system does not behave as expected causing the system to fail.
 - It is very expensive to setup and teardown environment for acceptance tests, especially when there are many environment variations and application states that are difficult to reach.
 
-Utilizing me can mitigate most of these drawbacks.
+Utilizing us can mitigate most of these drawbacks.
 
-Me and my other friends in [`mocktomata`](https://github.com/mocktomata/mocktomata) at your service.
+Besides writing tests, you can also deploy us in production code,
+which you can do some very [`advance stuff`][advance-use-cases]
+
+So, welcome to [`mocktomata`][mocktomata],
+Me and other automata at your service.
 
 ## Installation
 
@@ -48,96 +57,96 @@ npm install --dev mocktomata
 yarn add --dev mocktomata
 ```
 
-When using [`mocktomata`](https://github.com/mocktomata/mocktomata),
-records are saved under the `.mocktomata` folder.
+When using [`mocktomata`][mocktomata],
+we will record the behavior as `SpecRecord`.
+They are saved under the `.mocktomata` folder at the root of your project.
 Please check in that folder into your source control.
 
 ## mockto
 
-I am `mockto`.
+My name is [`mockto`][mockto].
 I am an automaton specialized in writing tests.
-You can also call me `mt` if you like.
+You can refer to me as `mt`.
 
-Here is an example on how to work with the [`axios`](https://www.npmjs.com/package/axios) library:
+Here is an example on how to work with the [`axios`][axios] library:
 
 ```ts
 import axios from 'axios'
 import { mockto } from 'mocktomata'
 
-mockto('get followers of a user', (title, spec) => {
-  // `title` is essentially the same as spec name: 'get followers of a user'.
-  // It is provided so that you don't have to repeat the message.
+// `mockto(specName, handler)`
+// `specName` must be unqique within the test file.
+// so you need to be careful when using grouping mechanics such as `describe()`
+mockto('get friends', (title, spec) => {
+  // `title` is the same as `specName`.
+  // It is provided to use as the test title,
+  // so you don't need to repeat the message manually.
   test(title, async () => {
-    // `s` is a spec'd copy of `axios`.
+    // `spec(subject)` creates a substitute to be used in place of the `subject`
     const s = await spec(axios)
 
-    // use `s` in place of `axios`
-    const followers = await getFollowers(s, 'danny')
-    expect(followers.length).toBe(10)
+    const friends = await getFriends(s, 'miku')
+    expect(friends.map(f => f.name)).toEqual(['luka', 'rumi', 'len', 'ren'])
 
-    // tell `mockto` the test is done.
-    // in `save` mode, this will save the spec record.
+    // indicates the spec is completed.
     await spec.done()
   })
 })
 ```
 
-When the test is executed the first time, I will be running in `save` mode.
-I will save the record when you call `await spec.done()`.
+That is typically all you need to do.
+Internally, I'll record the behavior and replay it as needed.
 
-When the test is executed again, I will be running in `simulate` mode.
-I will load the record and replay the behavior.
-
-For tips, tricks, and advance usages, please checkout my [user manual](https://github.com/mocktomata/mocktomata/docs/mockto.md)
+Of course, I can do a lot more.
+Please check out my [user manual][mockto] for more information.
 
 ## komondor
 
-I am `komondor`.
+Hi, I'm `komondor`.
 I used to be a guard dog.
-But time passes and now I become an automaton in the `mocktomata` family.
-You can also call me `kd` if you like.
+But as time passes, I become a part of the [`mocktomata`][mocktomata] family as an automaton.
+Masters can also call me `kd` if you like.
 
-I am a sibing of [`mockto`](#mockto).
-While he is more streamlined for testing, I'm more conventional.
+While [`mockto`](#mockto) is specialized for testing,
+I'm more general purposed and versatile.
 
-Here is how you call me:
+Here is how masters dispatch me in the same [`axios`][axios] example:
 
 ```ts
 import axios from 'axios'
 import { komondor } from 'mocktomata'
 
-test('get followers of a user', async () => {
-  const spec = komondor('get followers of a user')
+test('get friends', async () => {
+  const spec = komondor('get friends')
   const s = await spec(axios)
 
-  const followers = await getFollowers(s, 'danny')
-  expect(followers.length).toBe(10)
+    const friends = await getFriends(s, 'miku')
+    expect(friends.map(f => f.name)).toEqual(['luka', 'rumi', 'len', 'ren'])
 
   await spec.done()
 })
 ```
 
-Since I'm conventional,
-I can blend in pretty well with production code.
+If you want to use [`mocktomata`][mocktomata] in production for [`advance usage`][advance-use-cases],
+I'm the one you can depend on.
 
-If you want to know more about me, please checout my [user manual](https://github.com/mocktomata/mocktomata/docs/komondor.md)
+To know more about me, you can check out my ~~raising guide~~ [`user manual`][komondor].
 
 ## incubator
 
-I am `incubator`.
-I am specialized in writing tests for [`mocktomata plugins`](#plugins).
+My name is `incubator`, master.
 
-The most common way to call me is using the `incubator.duo()` method:
+I am specialized in helping masters to create [`plugins`][plugin].
+
+The way I work is very similar to [`mockto`](#mockto):
 
 ```ts
 import { incubator } from 'mocktomata'
+import { activate } from './your-plugin'
 
-incubator.config({ plugins: ['your-plugin'] })
+incubator.config({ plugins: [['your-plugin', activate]] })
 
-incubator.duo('some test', (title, spec) => {
-  // this will be called twice:
-  // 1. title = 'some test: save'
-  // 2. title = 'some test: simulate'
+incubator('some test', (title, spec) => {
   test(title, async () => {
     const s = await spec(YourPluginSubject)
     const actual = specificUsage(s)
@@ -148,28 +157,25 @@ incubator.duo('some test', (title, spec) => {
 })
 ```
 
-Please checout my [user manual](https://github.com/mocktomata/mocktomata/docs/incubator.md) for more information.
+The difference is I will go through the lifecycle of `SpecRecord` by running the test twice:
+once as `${specName}: save` and once as `${specName}: simulate`.
 
-## plugins
+Also, the `SpecRecord` is stored in memory and not written to file.
 
-[`mocktomata`](https://github.com/mocktomata/mocktomata) supports a wide range of use cases out of the box.
-In general, it can support any code that interact wtih external systems using simple DTO (data transfer objects).
+Please checout my [responsibility list][incubator] for more information.
 
-But there will be libraries that do things it cannot recognize.
-When that happens, don't worry!
+## configuration
 
-The easiest workaround is to create an adaptor that change the interface to communicate in simple DTOs,
-or use a plugin for that library.
+Hi, it's `mockto` again.
 
-To learn more about plugins, please check out the [`plugin documentation`](https://github.com/mocktomata/mocktomata/docs/plugins.md)
+By default, [`mocktomata`][mocktomata]) works out-of-the-box without any configuration.
+It should be able to cover most of the use cases for testing.
 
-## Sensitive Information
+But you can configure [`mocktomata`][mocktomata]) to do more things such as using additional plugins, and changing the behavior of the `auto` mode.
 
-Since `mocktomata` will record the behavior,
-it might accidentially record sensitive information that you do not want to keep in the record and commit to your source control.
+Did I mentioned that you can change your unit tests to acceptance tests by a flip of a switch?
 
-In that case, you can use the `spec.mockValue()` function.
-To learn more about it, please checkout the [`user manual`](https://github.com/mocktomata/mocktomata/docs/spec.md#mcok)
+To learn more, please chect out the [`configuration manual`][configuration].
 
 ## Wallaby config
 
@@ -230,3 +236,13 @@ module.exports = () => {
 [vscode-url]: https://code.visualstudio.com/
 [wallaby-image]: https://img.shields.io/badge/wallaby.js-configured-green.svg
 [wallaby-url]: https://wallabyjs.com
+
+[axios]: https://www.npmjs.com/package/axios
+[advance-use-cases]: https://github.com/mocktomata/mocktomata/blob/master/docs/advance-use-cases.md
+[configuration]: https://github.com/mocktomata/mocktomata/blob/master/docs/configuration.md
+[incubator]: https://github.com/mocktomata/mocktomata/blob/master/docs/incubator.md
+[komondor]: https://github.com/mocktomata/mocktomata/blob/master/docs/komondor.md
+[mockto]: https://github.com/mocktomata/mocktomata/blob/master/docs/mockto.md
+[mocktomata]: https://github.com/mocktomata/mocktomata/blob/master/packages/mocktomata
+[plugin]: https://github.com/mocktomata/mocktomata/blob/master/docs/plugin.md
+[spec]: https://github.com/mocktomata/mocktomata/blob/master/docs/spec.md
