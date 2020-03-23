@@ -44,15 +44,15 @@ test('duration returns total duration since first elaspe() call', async () => {
 })
 
 test('elaspe() returns time passed since last elaspe() call', async () => {
-  const timeTracker = createTimeTracker({ timeout: 20 }, notCalled)
+  const timeTracker = createTimeTracker({ timeout: 2000 }, notCalled)
 
   let elaspedTotal = timeTracker.elaspe()
-  await delay(3)
+  await delay(30)
   let elasped = timeTracker.elaspe()
   expect(elasped).toBeGreaterThan(0)
   elaspedTotal += elasped
 
-  await delay(3)
+  await delay(30)
   elasped = timeTracker.elaspe()
   expect(elasped).toBeGreaterThan(0)
   elaspedTotal += elasped
