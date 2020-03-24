@@ -10,7 +10,7 @@ export const serveCommand = createCommand({
     number: {
       port: {
         description: 'port number',
-        default: 3698
+        // default: 3698
       }
     }
   },
@@ -20,7 +20,7 @@ export const serveCommand = createCommand({
   async run(args) {
     if (validate(this, args, {
       port: {
-        presence: true,
+        presence: false,
         numericality: {
           onlyInteger: true,
           lessThanOrEqualTo: 65535,

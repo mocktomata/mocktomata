@@ -3,7 +3,7 @@
   "compilerOptions": {
     "module": "esnext",
     "outDir": "libm",
-    "target": "esnext",
-    "tsBuildInfoFile": ".ts/es5.tsbuildInfo"
+    "target": "es2017",
+    "tsBuildInfoFile": ".tsc/libm.buildInfo"
   }
 }

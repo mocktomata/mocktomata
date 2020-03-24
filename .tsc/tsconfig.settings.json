@@ -19,7 +19,6 @@
     // this is added because of enquirer used in clibuilder
     "skipLibCheck": true,
     "sourceMap": true,
-    "strict": true,
-    "target": "esnext"
+    "strict": true
   }
 }
