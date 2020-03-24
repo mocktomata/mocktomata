@@ -10,7 +10,7 @@ export const serveCommand = createCommand({
     number: {
       port: {
         description: 'port number',
-        default: 3698
+        // default: 3698
       }
     }
   },

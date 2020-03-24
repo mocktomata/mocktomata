@@ -34,7 +34,7 @@
   "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "bin": {
-    "komondor": "lib/bin.js"
+    "mtmt": "lib/bin.js"
   },
   "scripts": {
     "build": "yarn build:es5 && yarn build:esnext && yarn build:browser",

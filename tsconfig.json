@@ -2,61 +2,61 @@
   "files": [],
   "references": [
     {
-      "path": "packages/framework/tsconfig.es5.json"
+      "path": "packages/framework/tsconfig.lib.json"
     },
     {
-      "path": "packages/framework/tsconfig.esnext.json"
+      "path": "packages/framework/tsconfig.libm.json"
     },
     {
-      "path": "packages/plugin-fixture-dummy/tsconfig.es5.json"
+      "path": "packages/plugin-fixture-dummy/tsconfig.lib.json"
     },
     {
-      "path": "packages/plugin-fixture-dummy/tsconfig.esnext.json"
+      "path": "packages/plugin-fixture-dummy/tsconfig.libm.json"
     },
     {
-      "path": "packages/io-fs/tsconfig.es5.json"
+      "path": "packages/io-fs/tsconfig.lib.json"
     },
     {
-      "path": "packages/io-fs/tsconfig.esnext.json"
+      "path": "packages/io-fs/tsconfig.libm.json"
     },
     {
-      "path": "packages/file-server/tsconfig.es5.json"
+      "path": "packages/file-server/tsconfig.lib.json"
     },
     {
-      "path": "packages/file-server/tsconfig.esnext.json"
+      "path": "packages/file-server/tsconfig.libm.json"
     },
     {
-      "path": "packages/io-client/tsconfig.es5.json"
+      "path": "packages/io-client/tsconfig.lib.json"
     },
     {
-      "path": "packages/io-client/tsconfig.esnext.json"
+      "path": "packages/io-client/tsconfig.libm.json"
     },
     {
-      "path": "packages/io-local/tsconfig.es5.json"
+      "path": "packages/io-local/tsconfig.lib.json"
     },
     {
-      "path": "packages/io-local/tsconfig.esnext.json"
+      "path": "packages/io-local/tsconfig.libm.json"
     },
     {
-      "path": "packages/mocktomata/tsconfig.es5.json"
+      "path": "packages/mocktomata/tsconfig.lib.json"
     },
     {
-      "path": "packages/mocktomata/tsconfig.esnext.json"
+      "path": "packages/mocktomata/tsconfig.libm.json"
     },
     {
-      "path": "packages/test-nodejs/tsconfig.esnext.json"
+      "path": "packages/test-nodejs/tsconfig.libm.json"
     },
     {
-      "path": "packages/plugin-node-fetch/tsconfig.es5.json"
+      "path": "packages/plugin-node-fetch/tsconfig.lib.json"
     },
     {
-      "path": "packages/plugin-node-fetch/tsconfig.esnext.json"
+      "path": "packages/plugin-node-fetch/tsconfig.libm.json"
     },
     {
-      "path": "packages/plugin-nodejs/tsconfig.es5.json"
+      "path": "packages/plugin-nodejs/tsconfig.lib.json"
     },
     {
-      "path": "packages/plugin-nodejs/tsconfig.esnext.json"
+      "path": "packages/plugin-nodejs/tsconfig.libm.json"
     }
   ]
 }
