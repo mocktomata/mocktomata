@@ -20,7 +20,7 @@ export const serveCommand = createCommand({
   async run(args) {
     if (validate(this, args, {
       port: {
-        presence: true,
+        presence: false,
         numericality: {
           onlyInteger: true,
           lessThanOrEqualTo: 65535,
