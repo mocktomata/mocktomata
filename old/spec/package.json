@@ -31,7 +31,9 @@
     "lint": "tslint -p tsconfig.json",
     "test": "jest --reporters=default",
     "verify": "yarn build && yarn dc && jest --coverage --reporters=default",
-    "watch": "jest --watch"
+    "watch": "jest --watch",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
     "@types/ramda": "^0.26.5",
@@ -45,12 +47,14 @@
     "lerna": "^3.13.1",
     "satisfier": "^5.0.1",
     "tersify": "^2.0.4",
-    "type-plus": "^1.17.1"
+    "type-plus": "^1.17.1",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "@types/rimraf": "^2.0.2",
     "@unional/devpkg-node": "^1.2.5",
     "assertron": "^7.0.1",
     "rimraf": "^2.6.3"
-  }
+  },
+  "snyk": true
 }
