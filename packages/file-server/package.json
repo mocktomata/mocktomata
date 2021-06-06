@@ -27,7 +27,7 @@
     "build": "yarn build:es5 && yarn build:esnext",
     "build:es5": "tsc -p tsconfig.es5.json",
     "build:esnext": "tsc -p tsconfig.esnext.json",
-    "clean": "rimraf lib libm .ts",
+    "clean": "rimraf lib libm .tsc",
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn depcheck",
     "depcheck": "dependency-check . --unused --no-dev -i @mocktomata/framework && dependency-check . --missing --no-dev",

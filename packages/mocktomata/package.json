@@ -41,7 +41,7 @@
     "build:es5": "tsc -p tsconfig.es5.json",
     "build:esnext": "tsc -p tsconfig.esnext.json",
     "build:browser": "webpack",
-    "clean": "rimraf lib libm dist .ts",
+    "clean": "rimraf lib libm dist .tsc",
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn depcheck",
     "depcheck": "dependency-check . --unused --no-dev -i standard-log-color -i @mocktomata/io-client  && dependency-check . --missing --no-dev",
