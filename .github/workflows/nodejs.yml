@@ -64,7 +64,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: codacy
-        if: github.repository == 'unional/type-plus' && matrix.node-version == 14 && matrix.os == 'ubuntu-latest'
+        if: github.repository == 'unional/type-plus' && matrix.node-version == 16 && matrix.os == 'ubuntu-latest'
         uses: codacy/codacy-coverage-reporter-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
@@ -75,7 +75,7 @@ jobs:
     strategy:
       matrix:
         os: ['macos-latest', 'windows-latest']
-        node-version: [10, 12, 14]
+        node-version: [12, 14, 16]
     steps:
       - uses: actions/checkout@v2
         with:
