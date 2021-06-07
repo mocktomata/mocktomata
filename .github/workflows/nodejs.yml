@@ -64,16 +64,18 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: codacy
-        run: yarn codacy
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+        if: github.repository == 'unional/type-plus' && matrix.node-version == 14 && matrix.os == 'ubuntu-latest'
+        uses: codacy/codacy-coverage-reporter-action@master
+        with:
+          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+          coverage-reports: coverage/clover.xml
   platform-tests:
     runs-on: ${{ matrix.os }}
     needs: build
     strategy:
       matrix:
         os: ['macos-latest', 'windows-latest']
-        node-version: [10, 12]
+        node-version: [10, 12, 14]
     steps:
       - uses: actions/checkout@v2
         with:
