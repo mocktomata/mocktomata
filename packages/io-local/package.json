@@ -40,7 +40,7 @@
   "dependencies": {
     "@mocktomata/framework": "^7.0.0-beta.5",
     "@mocktomata/io-fs": "^7.0.0-beta.5",
-    "type-plus": "^1.35.1"
+    "type-plus": "^3.12.0"
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "^1.0.7",

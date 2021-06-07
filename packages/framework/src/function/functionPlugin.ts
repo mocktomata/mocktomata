@@ -1,7 +1,8 @@
+import { AnyFunction } from 'type-plus'
 import { SpecPlugin } from '../spec-plugin'
-import { hasProperty, hasPropertyInPrototype, metarize, demetarize } from '../utils-internal';
+import { demetarize, hasProperty, hasPropertyInPrototype, metarize } from '../utils-internal'
 
-export const functionPlugin: SpecPlugin<Function & Record<any, any>, string> = {
+export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> = {
   name: 'function',
   support: subject => {
     if (typeof subject !== 'function') return false

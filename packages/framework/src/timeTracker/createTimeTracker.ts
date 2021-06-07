@@ -2,24 +2,24 @@ import { Spec } from '../spec/types'
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
 
-export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, onTimeout: (elasped: number) => void) {
+export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, onTimeout: (elapsed: number) => void) {
   let handle: any
   let startTick: number
   let endTick: number
   let prevTick: number
   return {
     /**
-     * Get the duration since the first `elaspe()` call.
+     * Get the duration since the first `elapse()` call.
      */
     duration() {
       endTick = new Date().getTime()
       return endTick - startTick
     },
     /**
-     * Get the elasped time since the last `elaspe()` call.
-     * First `elaspe()` call returns 0.
+     * Get the elapsed time since the last `elapse()` call.
+     * First `elapse()` call returns 0.
      */
-    elaspe() {
+    elapse() {
       if (!handle) {
         prevTick = startTick = new Date().getTime()
         handle = setTimeout(() => this.terminate(), timeout)
@@ -27,17 +27,17 @@ export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, on
       }
       else {
         const newTick = new Date().getTime()
-        const elasped = newTick - prevTick
+        const elapsed = newTick - prevTick
         prevTick = newTick
 
         clearTimeout(handle)
         handle = setTimeout(() => this.terminate(), timeout)
 
-        return elasped
+        return elapsed
       }
     },
     /**
-     * Stop time tracker and return the total duration since the first `elaspe()` call.
+     * Stop time tracker and return the total duration since the first `elapse()` call.
      */
     stop() {
       const duration = this.duration()
@@ -48,8 +48,8 @@ export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, on
     terminate() {
       if (handle) {
         const newTick = new Date().getTime()
-        const elasped = newTick - prevTick
-        onTimeout(elasped)
+        const elapsed = newTick - prevTick
+        onTimeout(elapsed)
         this.stop()
       }
     }

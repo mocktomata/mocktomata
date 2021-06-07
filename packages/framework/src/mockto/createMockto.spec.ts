@@ -11,7 +11,7 @@ afterAll(() => mockto.teardown())
 
 test('live with no options', () => {
   const title = 'live with no options'
-  return new Promise(a => {
+  return new Promise<void>(a => {
     mockto.live(title, async (specName, spec) => {
       expect(specName).toEqual(`${title}: live`)
       const s = await spec((x: number) => x + 1)
@@ -24,7 +24,7 @@ test('live with no options', () => {
 
 test('live with options', () => {
   const title = 'live with options'
-  return new Promise(a => {
+  return new Promise<void>(a => {
     mockto.live(title, { timeout: 2000 }, (specName, spec) => {
       expect(specName).toEqual(`${title}: live`)
       spec((x: number) => x + 1).then(s => {
@@ -38,7 +38,7 @@ test('live with options', () => {
 test('live has enableLog method', () => {
   const context = createTestContext()
   const mockto = createMockto(context)
-  return new Promise(a => {
+  return new Promise<void>(a => {
     mockto.live('live has enableLog method', async (_, spec) => {
       await spec(() => { })
       spec.enableLog()
@@ -50,7 +50,7 @@ test('live has enableLog method', () => {
 test('live enableLog method can specify log level', () => {
   const context = createTestContext()
   const mockto = createMockto(context)
-  return new Promise(a => {
+  return new Promise<void>(a => {
     mockto.live('ive enableLog method can specify log level', async (_, spec) => {
       await spec(() => { })
       spec.enableLog(logLevels.none)
@@ -61,7 +61,7 @@ test('live enableLog method can specify log level', () => {
 
 test('save with no options', async () => {
   const title = 'save with no options'
-  await new Promise(a => {
+  await new Promise<void>(a => {
     mockto.save(title, (specName, spec) => {
       expect(specName).toEqual(`${title}: save`)
       spec((x: number) => x + 1).then(async s => {
@@ -79,7 +79,7 @@ test('save with no options', async () => {
 
 test('save with options', async () => {
   const title = 'save with options'
-  await new Promise(a => {
+  await new Promise<void>(a => {
     mockto.save(title, { timeout: 100 }, (specName, spec) => {
       expect(specName).toEqual(`${title}: save`)
       spec((x: number) => x + 1).then(async s => {
@@ -97,7 +97,7 @@ test('save with options', async () => {
 
 test('simulate with no options', async () => {
   const title = 'simulate with no options'
-  await new Promise(r => {
+  await new Promise<void>(r => {
     mockto.simulate(title, (specName, spec) => {
       expect(specName).toEqual(`${title}: simulate`)
       a.throws(() => spec((x: number) => x + 1), SpecNotFound)
@@ -108,7 +108,7 @@ test('simulate with no options', async () => {
 
 test('simulate with options', async () => {
   const title = 'simulate with options'
-  await new Promise(r => {
+  await new Promise<void>(r => {
     mockto.simulate(title, { timeout: 100 }, (specName, spec) => {
       expect(specName).toEqual(`${title}: simulate`)
       a.throws(() => spec((x: number) => x + 1), SpecNotFound)
@@ -119,7 +119,7 @@ test('simulate with options', async () => {
 
 test('auto with no options', async () => {
   const title = 'auto with no options'
-  await new Promise(a => {
+  await new Promise<void>(a => {
     mockto(title, (specName, spec) => {
       expect(specName).toEqual(title)
       spec((x: number) => x + 1).then(async s => {
@@ -134,7 +134,7 @@ test('auto with no options', async () => {
   const record = await io.readSpec(title, getCallerRelativePath(() => { }))
   expect(record).not.toBeUndefined()
 
-  await new Promise(a => {
+  await new Promise<void>(a => {
     mockto(title, (_, spec) => {
       spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
         expect(s(1)).toBe(2)
@@ -147,7 +147,7 @@ test('auto with no options', async () => {
 
 test('auto with options', async () => {
   const title = 'auto with options'
-  await new Promise(a => {
+  await new Promise<void>(a => {
     mockto(title, { timeout: 100 }, (specName, spec) => {
       expect(specName).toEqual(title)
       spec((x: number) => x + 1).then(async s => {
@@ -162,7 +162,7 @@ test('auto with options', async () => {
   const record = await io.readSpec(title, getCallerRelativePath(() => { }))
   expect(record).not.toBeUndefined()
 
-  await new Promise(a => {
+  await new Promise<void>(a => {
     mockto(title, { timeout: 100 }, (_, spec) => {
       spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
         expect(s(1)).toBe(2)
@@ -189,7 +189,7 @@ describe('config', () => {
   test('override to live mode', async () => {
     const context = createTestContext({ config: { overrideMode: 'live' } })
     const mockto = createMockto(context)
-    await new Promise(a => {
+    await new Promise<void>(a => {
       mockto('force live', async (_, spec) => {
         (await spec(() => { }))()
         await spec.done()
@@ -203,14 +203,14 @@ describe('config', () => {
   test('overrideMode has no effect on save and simulate', async () => {
     const context = createTestContext({ config: { overrideMode: 'live' } })
     const mockto = createMockto(context)
-    await new Promise(a => {
+    await new Promise<void>(a => {
       mockto.save('force live', async (_, spec) => {
         (await spec(() => { }))()
         await spec.done()
         a()
       })
     })
-    await new Promise(a => {
+    await new Promise<void>(a => {
       mockto.simulate('force live', async (_, spec) => {
         (await spec(() => { }))()
         await spec.done()
@@ -227,14 +227,14 @@ describe('config', () => {
       }
     })
     const mockto = createMockto(context)
-    await new Promise(a => {
+    await new Promise<void>(a => {
       mockto('not affected', async (_, spec) => {
         (await spec(() => { }))()
         await spec.done()
         a()
       })
     })
-    await new Promise(a => {
+    await new Promise<void>(a => {
       mockto('a to-live spec', async (_, spec) => {
         (await spec(() => { }))()
         await spec.done()

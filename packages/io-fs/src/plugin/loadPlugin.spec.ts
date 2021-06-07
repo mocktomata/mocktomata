@@ -35,7 +35,7 @@ test('activate property not a function throws PluginModuleNotConforming', () => 
 })
 
 test('not a package', () => {
-  const logs = captureLogs(log, () => {
+  const [, logs] = captureLogs(log, () => {
     const cwd = fixturePath('has-plugins')
     a.throws(() => loadPlugin(cwd, 'not-exist'), PluginNotFound)
   })

@@ -1,6 +1,7 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
 import { captureLogs } from 'standard-log'
+import { AnyFunction } from 'type-plus'
 import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from '.'
 import { log } from './log'
 import { InvokeMetaMethodAfterSpec } from './spec'
@@ -83,7 +84,7 @@ describe('set', () => {
       a.throws(() => stub.a = 2, ExtraAction)
     })
   })
-  incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
+  incubator.sequence('in place of different action throws MissingAction', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = { a: 1, foo() { } }
       const spy = await save(subject)
@@ -171,7 +172,7 @@ describe('invoke', () => {
       a.throws(() => stub(), ExtraAction)
     })
   })
-  incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
+  incubator.sequence('in place of different action throws MissingAction', (title, { save, simulate }) => {
     test(title, async () => {
       const subject = Object.assign(function () { }, { a: 1 })
       const spy = await save(subject)
@@ -255,7 +256,7 @@ describe('instantiate', () => {
       a.throws(() => new stub(), ExtraAction)
     })
   })
-  incubator.sequence('inplace of different action throws MissingAction', (title, { save, simulate }) => {
+  incubator.sequence('in place of different action throws MissingAction', (title, { save, simulate }) => {
     test(title, async () => {
       const spy = await save(Subject)
       new spy().a = 0
@@ -808,7 +809,7 @@ describe('function', () => {
     test(title, async () => {
       const subject = await spec(postReturn.fireEvent)
 
-      await new Promise(a => {
+      await new Promise<void>(a => {
         let called = 0
         subject('event', 3, () => {
           called++
@@ -918,7 +919,7 @@ describe('promise', () => {
   }
 
   const noReturn = {
-    doSomething(remote: Function) {
+    doSomething(remote: AnyFunction) {
       return remote()
     },
     success() {
@@ -963,7 +964,7 @@ describe('promise', () => {
 
   incubator('promise with callback in between', (title, spec) => {
     test(title, async () => {
-      function foo(x: number, cb: Function) {
+      function foo(x: number, cb: AnyFunction) {
         return new Promise(a => {
           setTimeout(() => {
             cb('called')
@@ -974,7 +975,7 @@ describe('promise', () => {
       const subject = await spec(foo);
 
       let fooing: any
-      return new Promise(a => {
+      return new Promise<void>(a => {
         fooing = subject(2, (msg: string) => {
           expect(msg).toBe('called')
           a()
@@ -993,7 +994,7 @@ describe('promise', () => {
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
       return promise.increment(subject, 2)
-        .then(async (actualFn: Function) => {
+        .then(async (actualFn: AnyFunction) => {
           expect(actualFn()).toBe(3)
           await spec.done()
         })
@@ -1234,7 +1235,7 @@ describe('class', () => {
       await spec.done()
     })
     test(`${title}: should not fail`, () => {
-      return new Promise(a => setImmediate(() => a()))
+      return new Promise<void>(a => setImmediate(() => a()))
     })
   })
 
@@ -1251,7 +1252,7 @@ describe('class', () => {
     constructor() {
       this.channel = new WithCircular()
     }
-    exec(cmd: string, cb: Function) {
+    exec(cmd: string, cb: AnyFunction) {
       this.channel.value = cmd
       cb(this.channel)
     }
@@ -1305,7 +1306,7 @@ describe('class', () => {
     constructor() {
       this.channel = new Channel()
     }
-    exec(cmd: string, cb: Function) {
+    exec(cmd: string, cb: AnyFunction) {
       cb(this.channel)
       this.channel.stdio.emit(cmd)
     }
@@ -1563,38 +1564,38 @@ describe('instance', () => {
 
   incubator.sequence('instantiate with wrong primitive argument', (title, { save, simulate }) => {
     test(title, async () => {
-      class EchoConstuctorArg {
+      class EchoConstructorArg {
         constructor(public value: number) { }
         echo() { return this.value }
       }
 
-      const s = await save({ EchoConstuctorArg })
-      new s.EchoConstuctorArg(1)
+      const s = await save({ EchoConstructorArg })
+      new s.EchoConstructorArg(1)
       await save.done()
 
-      const s2 = await simulate({ EchoConstuctorArg })
-      a.throws(() => new s2.EchoConstuctorArg(2), ActionMismatch)
+      const s2 = await simulate({ EchoConstructorArg })
+      a.throws(() => new s2.EchoConstructorArg(2), ActionMismatch)
     })
   })
 
   incubator.sequence('instantiate with different argument is okay as long as behavior does not change', (title, { save, simulate }) => {
     test(title, async () => {
-      class EchoConstuctorArg {
+      class EchoConstructorArg {
         constructor(public value: string) { }
         echo() { return this.value }
       }
 
-      const s = await save({ EchoConstuctorArg })
-      new s.EchoConstuctorArg('abc')
+      const s = await save({ EchoConstructorArg })
+      new s.EchoConstructorArg('abc')
       await save.done()
 
-      const s2 = await simulate({ EchoConstuctorArg })
-      new s2.EchoConstuctorArg('xyz')
+      const s2 = await simulate({ EchoConstructorArg })
+      new s2.EchoConstructorArg('xyz')
       await simulate.done()
     })
   })
 
-  incubator('ioc instanciate class', (title, spec) => {
+  incubator('ioc instantiate class', (title, spec) => {
     test(title, async () => {
       class Dummy { foo() { } }
       const s = await spec((subject: any) => new subject())

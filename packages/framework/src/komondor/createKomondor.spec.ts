@@ -56,7 +56,7 @@ test('save with options', async () => {
 test('save has enableLog method', async () => {
   const spec = k.save('save has enableLog method')
   await spec(() => { })
-  const logs = await captureLogs(log, async () => {
+  const [, logs] = await captureLogs(log, async () => {
     spec.enableLog()
     await spec.done()
   })

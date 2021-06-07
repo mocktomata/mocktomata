@@ -50,10 +50,10 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
   const simulate = createFixedModeMocktoFn(ctx, 'simulate')
   const sequence: createIncubator.SequenceFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs<createIncubator.SequenceHandler>(args)
-    const sctx = ctx.extend({ specRelativePath: getCallerRelativePath(sequence) })
+    const stx = ctx.extend({ specRelativePath: getCallerRelativePath(sequence) })
     handler(specName, {
-      save: createSpecObject(sctx.extend({ mode: 'save' }), specName, options),
-      simulate: createSpecObject(sctx.extend({ mode: 'simulate' }), specName, options)
+      save: createSpecObject(stx.extend({ mode: 'save' }), specName, options),
+      simulate: createSpecObject(stx.extend({ mode: 'simulate' }), specName, options)
     })
   }
   const duo: createMockto.MocktoFn = (...args: any[]) => {

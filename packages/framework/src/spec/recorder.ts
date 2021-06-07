@@ -15,7 +15,7 @@ import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-int
 
 export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
   // istanbul ignore next
-  const timeTracker = createTimeTracker(options, elasped => logRecordingTimeout(specName, elasped))
+  const timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout(specName, elapsed))
   const ctx = context.extend(async context => {
     const { timeTrackers } = await context.get()
     timeTrackers.push(timeTracker)
@@ -119,7 +119,7 @@ function getProperty<V>(
     type: 'get',
     refId: state.refId,
     performer: performer || getDefaultPerformer(state.ref.profile),
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
     key,
   }
   const actionId = record.addAction(action)
@@ -137,7 +137,7 @@ function setProperty<V, R>(
     type: 'set',
     refId: state.refId,
     performer: performer || getDefaultPerformer(state.ref.profile),
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
     key,
     value: notDefined
   }
@@ -166,7 +166,7 @@ function invoke<V, T, A extends any[]>(
     site,
     thisArg: notDefined,
     payload: [],
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
   }
   const actionId = record.addAction(action)
 
@@ -197,7 +197,7 @@ function instantiate<V, A extends any[]>(
     refId: state.refId,
     performer,
     payload: [],
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
   }
   const actionId = record.addAction(action)
 
@@ -233,7 +233,7 @@ function addResultAction(
   subject: any
 ) {
   const { record, timeTracker } = context
-  const action = { type, actionId, tick: timeTracker.elaspe(), payload: notDefined }
+  const action = { type, actionId, tick: timeTracker.elapse(), payload: notDefined }
   const id = record.addAction(action)
   const resultContext = getResultContext(context, actionId)
   const spy = getSpy(resultContext, subject, { profile: getResultProfile(context.state.ref.profile, actionType) })

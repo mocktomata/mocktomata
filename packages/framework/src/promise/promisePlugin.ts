@@ -23,7 +23,7 @@ export const promisePlugin: SpecPlugin<Promise<any>, boolean> = {
       // the `(v: any) => { throw v }` is mimicking the reject function to be called by mockto during stub.
       // so for the stub, mockto will invoke the reject function.
       // the `throw v` is used during spy to throw the error handled by this rejecting block,
-      // so that the resulting promose still rejects as the original.
+      // so that the resulting promise still rejects as the original.
       return invoke({
         performer: 'plugin',
         site: 'then',

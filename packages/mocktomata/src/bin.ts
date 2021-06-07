@@ -1,4 +1,4 @@
 #!/usr/bin/env node
-import { cli } from './cli'
+import { app } from './cli'
 
-cli.parse(process.argv).catch((err: any) => console.error(err))
+app.parse(process.argv).catch(err => console.error(err))

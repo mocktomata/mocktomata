@@ -3,7 +3,7 @@ import { createTimeTracker } from '.'
 
 const testOptions = { timeout: 10 }
 const notCalled = () => { throw new Error('should not reach') }
-test('not started until elaspe() is called', async () => {
+test('not started until elapse() is called', async () => {
   let called = false
   createTimeTracker(testOptions, () => called = true)
   await delay(10)
@@ -13,28 +13,28 @@ test('not started until elaspe() is called', async () => {
 test('invoke the callback when timeout is reached', async () => {
   let called = false
   const timeTracker = createTimeTracker(testOptions, () => called = true)
-  timeTracker.elaspe()
+  timeTracker.elapse()
   await delay(10)
 
   timeTracker.stop()
   expect(called).toBeTruthy()
 })
 
-test('first elaspe() returns 0', async () => {
+test('first elapse() returns 0', async () => {
   const timeTracker = createTimeTracker(testOptions, notCalled)
-  const elasped = timeTracker.elaspe()
+  const elapsed = timeTracker.elapse()
   timeTracker.stop()
 
-  expect(elasped).toBe(0)
+  expect(elapsed).toBe(0)
 })
 
-test('duration returns total duration since first elaspe() call', async () => {
+test('duration returns total duration since first elapse() call', async () => {
   const timeTracker = createTimeTracker(testOptions, notCalled)
-  timeTracker.elaspe()
+  timeTracker.elapse()
   await delay(5)
-  timeTracker.elaspe()
+  timeTracker.elapse()
   await delay(5)
-  timeTracker.elaspe()
+  timeTracker.elapse()
   await delay(5)
   const actual = timeTracker.duration()
 
@@ -43,22 +43,22 @@ test('duration returns total duration since first elaspe() call', async () => {
   expect(actual).toBeLessThanOrEqual(2000)
 })
 
-test('elaspe() returns time passed since last elaspe() call', async () => {
+test('elapse() returns time passed since last elapse() call', async () => {
   const timeTracker = createTimeTracker({ timeout: 2000 }, notCalled)
 
-  let elaspedTotal = timeTracker.elaspe()
+  let elapsedTotal = timeTracker.elapse()
   await delay(30)
-  let elasped = timeTracker.elaspe()
-  expect(elasped).toBeGreaterThan(0)
-  elaspedTotal += elasped
+  let elapsed = timeTracker.elapse()
+  expect(elapsed).toBeGreaterThan(0)
+  elapsedTotal += elapsed
 
   await delay(30)
-  elasped = timeTracker.elaspe()
-  expect(elasped).toBeGreaterThan(0)
-  elaspedTotal += elasped
+  elapsed = timeTracker.elapse()
+  expect(elapsed).toBeGreaterThan(0)
+  elapsedTotal += elapsed
 
   const duration = timeTracker.stop()
-  expect(duration).toBeGreaterThanOrEqual(elaspedTotal)
+  expect(duration).toBeGreaterThanOrEqual(elapsedTotal)
 
   timeTracker.stop()
 })

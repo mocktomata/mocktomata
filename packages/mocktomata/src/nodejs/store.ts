@@ -6,7 +6,7 @@ export type NodeJSStore = {
   // context needs to be save in the store because there maybe multiple versions of `mocktomata`
   // is loaded, thus the initializer may be called multiple times.
   context?: AsyncContext<Spec.Context>,
-  config: Mocktomata.Config | undefined
+  config?: Mocktomata.Config
 }
 
 export const store = createStore<NodeJSStore>({
