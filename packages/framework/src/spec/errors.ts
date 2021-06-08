@@ -62,7 +62,7 @@ export class NoSupportedPlugin extends MocktomataError {
 
 export class PluginsNotLoaded extends MocktomataError {
   constructor(public specName: string, public plugins: string[]) {
-    super(`The following plugins are usec in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`)
+    super(`The following plugins are used in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`)
   }
 }
 

@@ -27,7 +27,7 @@
     "build": "yarn build:es5 && yarn build:esnext",
     "build:es5": "tsc -p tsconfig.es5.json",
     "build:esnext": "tsc -p tsconfig.esnext.json",
-    "clean": "rimraf lib libm .ts",
+    "clean": "rimraf lib libm .tsc",
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn depcheck",
     "depcheck": "dependency-check . --unused --no-dev -i @mocktomata/framework && dependency-check . --missing --no-dev",
@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@hapi/hapi": "^18.4.1",
+    "@hapi/hapi": "^20.1.3",
     "@mocktomata/framework": "^7.0.0-beta.5",
     "@mocktomata/io-fs": "^7.0.0-beta.5",
     "boom": "^7.3.0"

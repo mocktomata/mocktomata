@@ -28,7 +28,7 @@
     "build": "yarn build:es5 && yarn build:esnext",
     "build:es5": "tsc -p tsconfig.es5.json",
     "build:esnext": "tsc -p tsconfig.esnext.json",
-    "clean": "rimraf lib libm .ts",
+    "clean": "rimraf lib libm .tsc",
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn dependency-check",
     "dependency-check": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
@@ -39,7 +39,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "mocktomata": "^7.0.0-beta.5"
   },
   "engines": {

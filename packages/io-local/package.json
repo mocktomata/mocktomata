@@ -27,7 +27,7 @@
     "build": "yarn build:es5 && yarn build:esnext",
     "build:es5": "tsc -p tsconfig.es5.json",
     "build:esnext": "tsc -p tsconfig.esnext.json",
-    "clean": "rimraf lib libm .ts",
+    "clean": "rimraf lib libm .tsc",
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn depcheck",
     "depcheck": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
@@ -40,7 +40,7 @@
   "dependencies": {
     "@mocktomata/framework": "^7.0.0-beta.5",
     "@mocktomata/io-fs": "^7.0.0-beta.5",
-    "type-plus": "^1.35.1"
+    "type-plus": "^3.12.0"
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "^1.0.7",

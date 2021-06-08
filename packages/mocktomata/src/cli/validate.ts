@@ -1,8 +1,7 @@
-import { Cli } from 'clibuilder'
-import validatejs from 'validate.js'
+import validateJs from 'validate.js'
 
-export function validate(context: Cli.RunContext<any, any>, value: any, constraints: any) {
-  const failure = validatejs(value, constraints)
+export function validate(context: any, value: any, constraints: any) {
+  const failure = validateJs(value, constraints)
   if (failure === undefined) return true
 
   context.ui.showHelp(context)

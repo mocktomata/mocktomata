@@ -1,21 +1,20 @@
 import { start } from '@mocktomata/file-server'
 import chalk from 'chalk'
-import { createCommand } from 'clibuilder'
+import { command, z } from 'clibuilder'
 import { validate } from './validate'
 
-export const serveCommand = createCommand({
+export const serveCommand = command({
   name: 'serve',
   description: 'Starts a local server to serve requests from client (browser)',
   options: {
-    number: {
-      port: {
-        description: 'port number',
-        // default: 3698
-      }
+    port: {
+      description: 'port number',
+      // default: 3698
+      type: z.optional(z.number())
     }
   },
   context: {
-    _deps: { start }
+    start
   },
   async run(args) {
     if (validate(this, args, {
@@ -29,7 +28,7 @@ export const serveCommand = createCommand({
       }
     })) {
       const { port } = args
-      const server = await this._deps.start({ cwd: this.cwd, port })
+      const server = await this.context.start({ cwd: this.cwd, port })
       const info = `${server.info.protocol}://localhost:${server.info.port}`
       const bar = '-'.repeat(info.length + 8)
       this.ui.info(`
@@ -41,4 +40,3 @@ ${bar}
     }
   }
 })
-

@@ -1,6 +1,6 @@
-import { reduceKey } from 'type-plus'
+import { AnyFunction, reduceKey } from 'type-plus'
 
-export function metarize(value: object | Function) {
+export function metarize(value: Record<any, any> | AnyFunction) {
   return JSON.stringify([getMetaType(value), getMeta(value)])
 }
 
@@ -10,7 +10,7 @@ export function demetarize(meta: string) {
   return Object.assign(base, metaData[1])
 }
 
-function getMetaType(value: object | Function) {
+function getMetaType(value: Record<any, any> | AnyFunction) {
   if (typeof value === 'object') {
     return { type: 'object' }
   }

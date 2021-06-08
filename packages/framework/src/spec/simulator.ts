@@ -31,7 +31,7 @@ export namespace Simulator {
 
 export function createSimulator(context: AsyncContext<createSpec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
   // istanbul ignore next
-  const timeTracker = createTimeTracker(options, elasped => logRecordingTimeout(specName, elasped))
+  const timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout(specName, elapsed))
   const ctx = context.extend(async context => {
     const { timeTrackers } = await context.get()
     timeTrackers.push(timeTracker)
@@ -148,7 +148,7 @@ function getProperty(
     type: 'get',
     refId: state.refId,
     performer,
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
     key,
   }
 
@@ -195,7 +195,7 @@ function setProperty<V = any>(
     type: 'set',
     refId: state.refId,
     performer,
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
     key,
     value: notDefined
   }
@@ -278,7 +278,7 @@ function invoke(context: Simulator.Context,
     site,
     thisArg: notDefined,
     payload: [],
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
   }
 
   const actionId = record.addAction(action)
@@ -319,7 +319,7 @@ function invoke(context: Simulator.Context,
   const resultContext = getResultContext(context, actionId)
   const result = resolveValue(resultContext, resultAction.payload)
 
-  setImmediate(() => processNextAction(context))
+  setTimeout(() => processNextAction(context), 0)
 
   logAction(resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return result
@@ -341,7 +341,7 @@ function instantiate(
     refId: state.refId,
     performer,
     payload: [],
-    tick: timeTracker.elaspe(),
+    tick: timeTracker.elapse(),
   }
 
   const actionId = record.addAction(action)
@@ -371,7 +371,7 @@ function instantiate(
   const resultActionId = record.addAction(resultAction)
   const resultContext = getResultContext(context, actionId)
   const result = resolveValue(resultContext, resultAction.payload, () => handler({ args: spiedArgs }))
-  setImmediate(() => processNextAction(context))
+  setTimeout(() => processNextAction(context), 0)
 
   logAction(resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return result

@@ -28,7 +28,7 @@ export type SpecRecorderBuilder = ReturnType<typeof createSpecRecordBuilder>
 
 type ValidateRecord = {
   refs: Array<ValidateReference>,
-  actions: Array<SpecRecordLive.Action & {}>,
+  actions: Array<SpecRecordLive.Action & Record<string, any>>,
 }
 
 export type ValidateReference = SpecRecordLive.Reference & { claimed?: boolean }

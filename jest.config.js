@@ -1,7 +1,7 @@
 const projects = process.env.JEST_ENV ?
   [`<rootDir>/packages/*/jest.config${process.env.JEST_ENV === 'nodejs' ? '' : '.' + process.env.JEST_ENV}.js`] : [
     '<rootDir>/packages/*/jest.config.js',
-    '<rootDir>/packages/*/jest.config.electron.js',
+    // '<rootDir>/packages/*/jest.config.electron.js',
     '<rootDir>/packages/*/jest.config.jsdom.js'
   ]
 module.exports = {
@@ -12,11 +12,11 @@ module.exports = {
   ],
   // coverageReporters: ['text', 'html'],
   projects,
-  reporters: [
-    'default',
-    'jest-progress-tracker',
-    ['jest-audio-reporter', { volume: 0.3 }],
-  ],
+  // reporters: [
+  //   'default',
+  //   'jest-progress-tracker',
+  //   ['jest-audio-reporter', { volume: 0.3 }],
+  // ],
   watchPlugins: [
     'jest-watch-suspend',
     'jest-watch-repeat',

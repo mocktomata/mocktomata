@@ -1,5 +1,5 @@
 
-export function isClass(subject: any) {
+export function isClass(subject: unknown) {
   return typeof subject === 'function' &&
     hasPropertyInPrototype(subject)
 }

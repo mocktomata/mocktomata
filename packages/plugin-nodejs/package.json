@@ -29,7 +29,7 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc -p tsconfig.es5.json && tsc -p tsconfig.esnext.json",
-    "clean": "rimraf lib libm .ts",
+    "clean": "rimraf lib libm .tsc",
     "dc": "yarn depcheck",
     "_depcheck": "dependency-check . --unused --no-dev -i '@mocktomata/framework' && dependency-check . --missing --no-dev",
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"

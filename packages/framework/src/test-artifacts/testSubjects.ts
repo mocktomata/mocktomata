@@ -1,3 +1,5 @@
+import { AnyFunction } from 'type-plus'
+
 export class Dummy {
   // class detection requires to have at least one method defined.
   // istanbul ignore next
@@ -10,7 +12,7 @@ export class ChildOfDummy extends Dummy {
 }
 
 export const simpleCallback = {
-  increment(remote: Function, value: number) {
+  increment(remote: AnyFunction, value: number) {
     return new Promise<number>((a, r) => {
       remote(value, (err: Error | undefined, response: number) => {
         if (err) r(err)
@@ -44,7 +46,7 @@ export const fetch = {
 }
 
 export const callbackInObjLiteral = {
-  increment(remote: Function, x: number) {
+  increment(remote: AnyFunction, x: number) {
     return new Promise((a, r) => {
       remote({
         data: x,
@@ -57,16 +59,16 @@ export const callbackInObjLiteral = {
       })
     })
   },
-  success(options: { data: number, success: Function }) {
+  success(options: { data: number, success: AnyFunction }) {
     options.success(options.data + 1)
   },
-  fail(options: { data: number, success: Function, error: Function }) {
+  fail(options: { data: number, success: AnyFunction, error: AnyFunction }) {
     options.error(null, 'failStatus', new Error('fail'))
   }
 }
 
 export const callbackInDeepObjLiteral = {
-  increment(remote: Function, x: number) {
+  increment(remote: AnyFunction, x: number) {
     return new Promise((a, r) => {
       remote({
         data: x,
@@ -81,10 +83,10 @@ export const callbackInDeepObjLiteral = {
       })
     })
   },
-  success(options: { data: number, handlers: { success: Function } }) {
+  success(options: { data: number, handlers: { success: AnyFunction } }) {
     options.handlers.success(options.data + 1)
   },
-  fail(options: { data: number, handlers: { error: Function } }) {
+  fail(options: { data: number, handlers: { error: AnyFunction } }) {
     options.handlers.error(null, 'failStatus', { message: 'fail' })
   }
 }
@@ -102,20 +104,20 @@ export const synchronous = {
 }
 
 export const delayed = {
-  increment(remote: Function, x: number) {
+  increment(remote: AnyFunction, x: number) {
     return new Promise(a => {
       remote(x, (_: any, response: number) => {
         a(response)
       })
     })
   },
-  success(a: number, callback: Function) {
+  success(a: number, callback: AnyFunction) {
     setImmediate(() => callback(null, a + 1))
   }
 }
 
 export const recursive = {
-  decrementToZero(remote: Function, x: number) {
+  decrementToZero(remote: AnyFunction, x: number) {
     return new Promise(a => {
       remote(x, (_: any, response: number) => {
         a(response > 0 ?
@@ -124,13 +126,13 @@ export const recursive = {
       })
     })
   },
-  success(a: number, callback: Function) {
+  success(a: number, callback: AnyFunction) {
     callback(null, a - 1)
   }
 }
 
 export const postReturn = {
-  fireEvent(name: string, times: number, callback: Function) {
+  fireEvent(name: string, times: number, callback: AnyFunction) {
     setImmediate(() => {
       for (let i = 0; i < times; i++)
         callback(name)
