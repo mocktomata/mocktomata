@@ -1,6 +1,6 @@
 {
   "name": "mocktomata",
-  "version": "7.0.0-beta.5",
+  "version": "7.0.0-beta.6",
   "description": "A Behavior Tracking and Simulation System",
   "keywords": [
     "boundary",
@@ -55,10 +55,10 @@
     "watch:browser": "yarn test:watch:browser"
   },
   "dependencies": {
-    "@mocktomata/file-server": "^7.0.0-beta.5",
-    "@mocktomata/framework": "^7.0.0-beta.5",
-    "@mocktomata/io-client": "^7.0.0-beta.5",
-    "@mocktomata/io-local": "^7.0.0-beta.5",
+    "@mocktomata/file-server": "^7.0.0-beta.6",
+    "@mocktomata/framework": "^7.0.0-beta.6",
+    "@mocktomata/io-client": "^7.0.0-beta.6",
+    "@mocktomata/io-local": "^7.0.0-beta.6",
     "async-fp": "^5.0.3",
     "chalk": "^4.1.1",
     "clibuilder": "^7.2.0",
@@ -69,7 +69,7 @@
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
-    "@mocktomata/plugin-fixture-deep-link": "^1.0.7",
-    "@mocktomata/plugin-fixture-dummy": "^1.1.5"
+    "@mocktomata/plugin-fixture-deep-link": "^1.0.8",
+    "@mocktomata/plugin-fixture-dummy": "^1.1.6"
   }
 }

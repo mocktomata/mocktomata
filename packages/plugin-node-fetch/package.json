@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/plugin-node-fetch",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "private": true,
   "description": "komondor plugin for node-fetch",
   "keywords": [
@@ -34,7 +34,7 @@
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.5",
+    "@mocktomata/framework": "^7.0.0-beta.6",
     "node-fetch": "^2.6.1"
   },
   "engines": {
