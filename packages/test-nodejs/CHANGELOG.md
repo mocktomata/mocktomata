@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 0.1.7 (2021-09-04)
+
+
+### Bug Fixes
+
+* old/spec/package.json to reduce vulnerabilities ([#311](https://github.com/mocktomata/mocktomata/issues/311)) ([d8cc30f](https://github.com/mocktomata/mocktomata/commit/d8cc30fa1f9e678757b4c00333b527d4e2a8d93e))
+
+
+
+
+
 ## 0.1.6 (2021-06-08)
 
 **Note:** Version bump only for package @mocktomata/test-nodejs

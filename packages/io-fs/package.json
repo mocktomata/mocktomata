@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-fs",
-  "version": "7.0.0-beta.6",
+  "version": "7.0.0-beta.7",
   "description": "mocktomata file system IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.6",
+    "@mocktomata/framework": "^7.0.0-beta.7",
     "find-installed-packages": "^2.1.6",
     "md5": "^2.3.0",
     "mkdirp": "^1.0.4",
