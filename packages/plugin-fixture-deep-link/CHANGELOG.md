@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 1.0.10 (2022-08-06)
+
+**Note:** Version bump only for package @mocktomata/plugin-fixture-deep-link
+
+
+
+
+
 ## 1.0.9 (2021-09-04)
 
 
