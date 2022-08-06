@@ -23,8 +23,8 @@ export class MissingConfigForFeature extends MocktomataError {
 
 export class ConfigPropertyIsInvalid extends MocktomataError {
   // istanbul ignore next
-  constructor(public property: string, public cause: string) {
-    super(`The property '${property}' is invalid: ${cause}`)
+  constructor(public property: string, public value: string) {
+    super(`The property '${property}' is invalid: ${value}`)
   }
 }
 

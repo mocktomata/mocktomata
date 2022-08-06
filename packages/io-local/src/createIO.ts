@@ -26,7 +26,7 @@ export function createIO(options?: createIO.Options): Mocktomata.IO {
       try {
         return JSON.parse(repo.readSpec(title, relative))
       }
-      catch (e) {
+      catch (e: any) {
         throw new SpecNotFound(title, invokePath)
       }
     },

@@ -221,7 +221,7 @@ function handleResult(
   try {
     return addResultAction(context, actionId, actionType, 'return', handler())
   }
-  catch (e) {
+  catch (e: any) {
     throw addResultAction(context, actionId, actionType, 'throw', e)
   }
 }
