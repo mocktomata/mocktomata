@@ -44,7 +44,7 @@
     "stack-utils": "^2.0.3",
     "standard-log": "^6.2.1",
     "tersify": "^3.7.8",
-    "tslib": "^2.2.0",
+    "tslib": "^2.4.0",
     "type-plus": "^3.12.0"
   }
 }

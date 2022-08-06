@@ -87,7 +87,7 @@ function specGetRoute({ repo }: Context): ServerRoute {
         const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
         return await repo.readSpec(specName, specRelativePath)
       }
-      catch (e) {
+      catch (e: any) {
         throw boom.notFound(e.message)
       }
     }

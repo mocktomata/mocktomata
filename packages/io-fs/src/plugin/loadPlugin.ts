@@ -8,7 +8,7 @@ export function loadPlugin(cwd: string, id: string): SpecPlugin.Module {
     const m = require(p)
     if (m && typeof m.activate === 'function') return m
   }
-  catch (e) {
+  catch (e: any) {
     log.warn(`Unable to find plugin: ${id}`);
     throw new PluginNotFound(id)
   }

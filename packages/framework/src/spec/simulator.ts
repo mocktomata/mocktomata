@@ -80,7 +80,7 @@ function assertPluginsLoaded(plugins: SpecPlugin.Instance[], specName: string, r
 
   const pluginsMissing = pluginsInUse.filter(p => {
     try { return !getPlugin(plugins, p) }
-    catch (e) { return true }
+    catch (e: any) { return true }
   })
   if (pluginsMissing.length > 0) {
     throw new PluginsNotLoaded(specName, pluginsMissing)

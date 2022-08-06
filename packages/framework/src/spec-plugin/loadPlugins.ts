@@ -26,7 +26,7 @@ async function tryLoad(io: SpecPlugin.IO, name: string) {
   try {
     return await io.loadPlugin(name)
   }
-  catch (e) {
+  catch (e: any) {
     throw new PluginNotFound(name)
   }
 }

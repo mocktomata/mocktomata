@@ -34,7 +34,7 @@ async function tryGetServerInfoAtPort(context: Context, urlBase: string, port: n
   try {
     return await tryGetServerInfo(context, url)
   }
-  catch (e) {
+  catch (e: any) {
     return tryGetServerInfoAtPort(context, urlBase, port + 1, start, end)
   }
 }
@@ -44,7 +44,7 @@ async function tryGetServerInfo({ fetch }: Context, url: string): Promise<Server
     const response = await fetch(buildUrl(url, 'info'))
     return response.json()
   }
-  catch (e) {
+  catch (e: any) {
     throw e.code === 'ECONNREFUSED' ? new ServerNotAvailable(url) : e
   }
 }

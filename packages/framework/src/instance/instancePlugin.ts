@@ -53,7 +53,7 @@ export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: st
             // }
             return result
             // }
-            // catch (e) {
+            // catch (e: any) {
             //   tracker.pending = false
             //   throw e
             // }

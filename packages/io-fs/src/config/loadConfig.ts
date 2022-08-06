@@ -34,7 +34,7 @@ function loadMjsonConfig(cwd: string) {
     try {
       return require(path.relative(__dirname, filepath))
     }
-    catch (e) {
+    catch (e: any) {
       // istanbul ignore next
       if (e.name === 'SyntaxError') {
         throw new InvalidConfigFormat(MOCKTO_CONFIG_JSON)
@@ -49,7 +49,7 @@ function loadMjsConfig(cwd: string) {
     try {
       return require(path.relative(__dirname, filepath))
     }
-    catch (e) {
+    catch (e: any) {
       // istanbul ignore next
       if (e.name === 'SyntaxError') {
         throw new InvalidConfigFormat(MOCKTO_CONFIG_JS)
