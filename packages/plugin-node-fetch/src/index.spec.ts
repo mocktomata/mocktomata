@@ -6,7 +6,7 @@ incubator('call echo with url string', (title, spec) => {
     const f = await spec(fetch)
 
     const response = await f('https://postman-echo.com/get?foo=foo1')
-    const actual = await response.json()
+    const actual = await response.json() as { args: { foo: string } }
 
     expect(actual.args).toEqual({ foo: 'foo1' })
     await spec.done()
