@@ -25,9 +25,9 @@
   "jsnext:main": "libm/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "yarn build:es5 && yarn build:esnext",
-    "build:es5": "tsc -p tsconfig.es5.json",
-    "build:esnext": "tsc -p tsconfig.esnext.json",
+    "build": "yarn build:lib && yarn build:libm",
+    "build:lib": "tsc -p tsconfig.lib.json",
+    "build:libm": "tsc -p tsconfig.libm.json",
     "clean": "rimraf lib libm .tsc",
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn dependency-check",

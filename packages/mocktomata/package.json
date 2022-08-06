@@ -37,9 +37,9 @@
     "mtmt": "lib/bin.js"
   },
   "scripts": {
-    "build": "yarn build:es5 && yarn build:esnext && yarn build:browser",
-    "build:es5": "tsc -p tsconfig.es5.json",
-    "build:esnext": "tsc -p tsconfig.esnext.json",
+    "build": "yarn build:lib && yarn build:libm && yarn build:browser",
+    "build:lib": "tsc -p tsconfig.lib.json",
+    "build:libm": "tsc -p tsconfig.libm.json",
     "build:browser": "webpack",
     "clean": "rimraf lib libm dist .tsc",
     "coverage": "jest --coverage --reporters=default",
