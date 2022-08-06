@@ -43,6 +43,9 @@
     "@mocktomata/io-fs": "^7.0.0-beta.10",
     "boom": "^7.3.0"
   },
+  "devDependencies": {
+    "node-fetch": "^2.6.7"
+  },
   "engines": {
     "node": ">= 6"
   }

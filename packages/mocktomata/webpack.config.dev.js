@@ -31,8 +31,8 @@ module.exports = {
     mainFields: ['browser', 'main']
   },
   plugins: [
-    new webpack.IgnorePlugin(/fs/),
-    new webpack.IgnorePlugin(/module/),
-    new webpack.IgnorePlugin(/perf_hooks/)
+    new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),
+    new webpack.IgnorePlugin({ resourceRegExp: /module/ }),
+    new webpack.IgnorePlugin({ resourceRegExp: /perf_hooks/ })
   ]
 }
