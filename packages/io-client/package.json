@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-client",
-  "version": "7.0.0-beta.8",
+  "version": "7.0.0-beta.9",
   "description": "mocktomata client IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
@@ -38,13 +38,13 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.8",
+    "@mocktomata/framework": "^7.0.0-beta.9",
     "cross-fetch": "^3.1.4",
     "type-plus": "^3.12.0"
   },
   "devDependencies": {
-    "@mocktomata/file-server": "^7.0.0-beta.8",
-    "@mocktomata/io-fs": "^7.0.0-beta.8"
+    "@mocktomata/file-server": "^7.0.0-beta.9",
+    "@mocktomata/io-fs": "^7.0.0-beta.9"
   },
   "engines": {
     "node": ">= 6"
