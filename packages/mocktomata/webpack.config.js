@@ -39,6 +39,9 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
+    fallback: {
+      module: false
+    },
     mainFields: ['browser', 'main']
   },
   plugins: [
