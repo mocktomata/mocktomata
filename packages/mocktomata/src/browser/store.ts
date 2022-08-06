@@ -1,7 +1,7 @@
-import { createStore } from 'global-store'
-import { config } from './types'
-import { AsyncContext } from 'async-fp'
 import { Spec } from '@mocktomata/framework'
+import { AsyncContext } from 'async-fp'
+import { createStore } from 'global-store'
+import type { config } from './config'
 
 export type BrowserStore = {
   // context needs to be save in the store because there maybe multiple versions of `mocktomata`
