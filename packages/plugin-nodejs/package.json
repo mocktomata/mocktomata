@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/plugin-nodejs",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "private": true,
   "description": "mocktomata plugin for nodejs",
   "keywords": [
@@ -35,7 +35,7 @@
     "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.9"
+    "@mocktomata/framework": "^7.0.0-beta.10"
   },
   "engines": {
     "node": ">= 6"
