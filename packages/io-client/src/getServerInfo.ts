@@ -4,9 +4,11 @@ import { CreateIOOptions } from './types';
 import { Context } from './typesInternal';
 
 export type ServerInfo = {
+  name: string,
   version: string,
   url: string,
-  plugins: string[]
+  // TODO: server not returning plugins
+  plugins?: string[]
 }
 
 export async function getServerInfo(context: Context, options?: CreateIOOptions): Promise<ServerInfo> {

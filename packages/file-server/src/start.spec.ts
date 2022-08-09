@@ -43,6 +43,7 @@ describe('server behavior', () => {
       name: 'mocktomata',
       version: pjson.version,
       url: `http://localhost:${server.info.port}`,
+      plugins: []
     }))
   })
   test('get config', async () => {

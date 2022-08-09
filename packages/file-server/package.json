@@ -46,6 +46,7 @@
   "devDependencies": {
     "@types/boom": "^7.3.2",
     "@types/hapi__hapi": "^20.0.12",
+    "assertron": "^9.2.5",
     "node-fetch": "^2.6.7"
   },
   "engines": {
