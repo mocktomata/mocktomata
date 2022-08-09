@@ -1,0 +1,17 @@
+name: release
+on:
+  push:
+    branches: [main]
+
+jobs:
+  code:
+    uses: unional/.github/.github/workflows/yarn-verify-cross-platform.yml@main
+
+  release:
+    uses: unional/.github/.github/workflows/yarn-release-changeset.yml@main
+    needs: code
+    secrets: inherit
+
+  docgen:
+      uses: unional/.github/.github/workflows/yarn-docs.yml@main
+      needs: release
