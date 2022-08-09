@@ -8859,6 +8859,11 @@ iso-error@^4.1.0, iso-error@^4.3.5:
   resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-4.3.5.tgz#f7b3ff6bdc356d8cc37898551bc87b4cf51cd18d"
   integrity sha512-n1l0vX0MmGwYCvsWPu3/DM5kXnhUh+47LR4m6tIDqraFqBPyYVvcZbPU3Jpdpf/dX9QvFETPb9L7FW6GDbdOkQ==
 
+iso-error@^4.3.6:
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/iso-error/-/iso-error-4.3.6.tgz#062569f648524a19275ddb1f53a81e94159fffff"
+  integrity sha512-gCGeSdffWXnJJIobk5F5JzB6k17uQiKM29M90VkPZD1WrYIQ8dFN7UqEPaaaDgg5yPNVnXBGCZ8kwz8trazYaw==
+
 isobject@^2.0.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/isobject/-/isobject-2.1.0.tgz#f065561096a3f1da2ef46272f815c840d87e0c89"

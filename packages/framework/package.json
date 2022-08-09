@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "async-fp": "^5.0.3",
-    "iso-error": "^4.3.5",
+    "iso-error": "^4.3.6",
     "stack-utils": "^2.0.3",
     "standard-log": "^6.2.1",
     "tersify": "^3.10.2",
