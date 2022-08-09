@@ -8,7 +8,7 @@ export const errorPlugin: SpecPlugin<Error, Record<string, any>> = {
     setMeta(IsoError.toSerializable(subject))
     return subject
   },
-  createStub: (_, _subject, meta) => {
-    return IsoError.fromSerializable(meta)
+  createStub: (_context, _subject, meta) => {
+    return IsoError.fromSerializable(meta as any)
   }
 }

@@ -50,7 +50,7 @@ type Context = {
   repo: FileRepository
 }
 
-function infoRoute(_: Context, server: Server): ServerRoute {
+function infoRoute(ctx: Context, server: Server): ServerRoute {
   return {
     method: 'GET',
     path: '/mocktomata/info',
@@ -61,6 +61,7 @@ function infoRoute(_: Context, server: Server): ServerRoute {
         name: 'mocktomata',
         version: pjson.version,
         url: getReflectiveUrl(request.info, server.info),
+        plugins: (await ctx.repo.findInstalledPlugins())
       })
     }
   }
