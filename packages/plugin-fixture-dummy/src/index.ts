@@ -1,4 +1,5 @@
 import type { SpecPlugin } from '@mocktomata/framework'
+
 export function activate(context: SpecPlugin.ActivationContext) {
   context.register({
     name: '@mocktomata/plugin-fixture-dummy',
@@ -7,4 +8,3 @@ export function activate(context: SpecPlugin.ActivationContext) {
     createStub() { return },
   })
 }
-
