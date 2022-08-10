@@ -45,7 +45,7 @@
     "coverage": "jest --coverage --reporters=default",
     "dc": "yarn depcheck",
     "depcheck": "dependency-check . --unused --no-dev -i standard-log-color -i @mocktomata/io-client  && dependency-check . --missing --no-dev",
-    "lint": "tslint -p tsconfig.json",
+    "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
     "test": "jest --reporters=default",
     "test:browser": "karma start --single-run",
     "test:watch": "jest --watch",
