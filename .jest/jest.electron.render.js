@@ -2,7 +2,7 @@ const base = require('./jest.base')
 
 module.exports = {
   ...base,
-  runner: '@jest-runner/electron',
-  testEnvironment: '@jest-runner/electron/environment',
+  runner: '@kayahr/jest-electron-runner',
+  testEnvironment: '@kayahr/jest-electron-runner/environment',
   testMatch: ['**/?*.(spec|test|integrate|accept|system|unit).electron.render.[jt]s?(x)'],
 }
