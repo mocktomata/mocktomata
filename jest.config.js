@@ -13,12 +13,6 @@ module.exports = {
     '!<rootDir>/src/bin.[jt]s',
     '!<rootDir>/src/**/*.spec.*'
   ],
-  // coverageReporters: ['text', 'html'],
   projects,
-  // reporters: [
-  //   'default',
-  //   'jest-progress-tracker',
-  //   ['jest-audio-reporter', { volume: 0.3 }],
-  // ],
   ...watch
 }
