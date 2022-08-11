@@ -78,6 +78,7 @@
     "@kayahr/jest-electron-runner": "^5.1.1",
     "@mocktomata/plugin-fixture-deep-link": "^1.0.12",
     "@mocktomata/plugin-fixture-dummy": "^1.1.10",
+    "ansi-colors": "^4.1.1",
     "babel-loader": "^8.2.5",
     "core-js": "^3.24.1",
     "electron": "^20.0.1",
