@@ -11,41 +11,40 @@
     "codacy": "cat coverage/lcov.info | codacy-coverage",
     "coverage": "turbo run coverage",
     "coverage:nodejs": "cross-env JEST_ENV=nodejs turbo run coverage",
+    "cs": "changesets",
     "depcheck": "turbo run depcheck",
-    "dev": "yarn test:watch",
+    "dev": "pnpm run test:watch",
     "postinstall": "husky install",
     "lint": "turbo run lint",
     "mtmt": "node ./packages/mocktomata/lib/bin.js",
-    "mocktomata": "yarn workspace mocktomata",
-    "nuke": "yarn clean && rimraf node_modules",
+    "mocktomata": "pnpm run workspace mocktomata",
+    "nuke": "pnpm run clean && rimraf node_modules",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "release": "turbo publish --amend",
+    "publish": "pnpm run workspaces foreach npm publish --access public && changeset tag",
     "test": "turbo run test",
-    "test:browser": "yarn workspace mocktomata test:browser",
+    "test:browser": "pnpm run workspace mocktomata test:browser",
     "test:electron": "cross-env JEST_ENV=electron jest --maxWorkers=60%",
     "test:jsdom": "cross-env JEST_ENV=jsdom jest --maxWorkers=60%",
     "test:nodejs": "cross-env JEST_ENV=nodejs jest --maxWorkers=60%",
     "test:watch": "jest --watch --maxWorkers=60%",
     "verify": "turbo run build lint coverage depcheck",
-    "watch": "yarn test:watch",
-    "watch:browser": "cd packages/mocktomata && yarn run test:watch:browser",
-    "watch:electron": "cross-env JEST_ENV=electron yarn test:watch",
-    "watch:jsdom": "cross-env JEST_ENV=jsdom yarn test:watch",
-    "watch:nodejs": "cross-env JEST_ENV=nodejs yarn test:watch"
+    "version": "changesets version && pnpm run install",
+    "watch": "pnpm run test:watch",
+    "watch:browser": "cd packages/mocktomata && pnpm run run test:watch:browser",
+    "watch:electron": "cross-env JEST_ENV=electron pnpm run test:watch",
+    "watch:jsdom": "cross-env JEST_ENV=jsdom pnpm run test:watch",
+    "watch:nodejs": "cross-env JEST_ENV=nodejs pnpm run test:watch"
   },
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
-  "dependencies": {},
   "devDependencies": {
+    "@changesets/cli": "^2.24.2",
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
-    "@release-it-plugins/workspaces": "^3.2.0",
-    "@release-it/conventional-changelog": "^5.0.0",
-    "@types/delay": "^3.1.0",
     "@types/jest": "^28.1.6",
     "@types/md5": "^2.3.2",
     "@types/mkdirp": "^1.0.1",
@@ -53,12 +52,15 @@
     "@types/node-fetch": "^2.6.2",
     "@types/tmp": "^0.2.3",
     "@typescript-eslint/eslint-plugin": "^5.32.0",
+    "@typescript-eslint/parser": "^5.33.0",
     "cross-env": "^7.0.3",
     "dependency-check": "^4.1.0",
     "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-harmony": "^7.1.0",
     "husky": "^8.0.1",
     "jest": "^28.1.3",
+    "jest-validate": "^28.1.3",
     "jest-watch-repeat": "^2.0.0",
     "jest-watch-suspend": "^1.1.2",
     "jest-watch-toggle-config": "^2.0.1",
@@ -66,20 +68,9 @@
     "npm-check-updates": "^16.0.5",
     "npm-run-all": "^4.1.5",
     "pinst": "^3.0.0",
-    "release-it": "^15.3.0",
     "rimraf": "^3.0.2",
     "turbo": "^1.4.3",
     "typescript": "~4.7.4"
   },
-  "packageManager": "yarn@1.22.19",
-  "release-it": {
-    "plugins": {
-      "@release-it/conventional-changelog": {
-        "preset": "conventionalcommits",
-        "infile": "CHANGELOG.md"
-      },
-      "@release-it-plugins/workspaces": true
-    },
-    "npm": false
-  }
+  "packageManager": "pnpm@7.9.0"
 }

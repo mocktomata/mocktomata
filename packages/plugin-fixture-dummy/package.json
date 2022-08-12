@@ -28,7 +28,7 @@
     "libm"
   ],
   "scripts": {
-    "build": "yarn build:lib && yarn build:libm",
+    "build": "pnpm run build:lib && pnpm run build:libm",
     "build:lib": "tsc -p tsconfig.lib.json",
     "build:libm": "tsc -p tsconfig.libm.json",
     "clean": "rimraf lib libm .tsc"
