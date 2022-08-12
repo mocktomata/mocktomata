@@ -27,7 +27,7 @@
     "test:jsdom": "cross-env JEST_ENV=jsdom jest --maxWorkers=60%",
     "test:nodejs": "cross-env JEST_ENV=nodejs jest --maxWorkers=60%",
     "test:watch": "jest --watch --maxWorkers=60%",
-    "verify": "yarn clean && yarn lint && yarn build && yarn depcheck && yarn coverage",
+    "verify": "turbo run build lint coverage depcheck",
     "watch": "yarn test:watch",
     "watch:browser": "cd packages/mocktomata && yarn run test:watch:browser",
     "watch:electron": "cross-env JEST_ENV=electron yarn test:watch",
