@@ -4,4 +4,4 @@ on:
     types: [opened, synchronize]
 jobs:
   code:
-    uses: ./.github/workflows/pnpm-verify-cross-platform
+    uses: ./.github/workflows/pnpm-verify-cross-platform.yml
