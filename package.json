@@ -43,6 +43,7 @@
   "devDependencies": {
     "@commitlint/cli": "^17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
+    "@release-it-plugins/workspaces": "^3.2.0",
     "@release-it/conventional-changelog": "^5.0.0",
     "@types/delay": "^3.1.0",
     "@types/jest": "^28.1.6",
@@ -70,5 +71,15 @@
     "turbo": "^1.4.3",
     "typescript": "~4.7.4"
   },
-  "packageManager": "yarn@1.22.19"
+  "packageManager": "yarn@1.22.19",
+  "release-it": {
+    "plugins": {
+      "@release-it/conventional-changelog": {
+        "preset": "conventionalcommits",
+        "infile": "CHANGELOG.md"
+      },
+      "@release-it-plugins/workspaces": true
+    },
+    "npm": false
+  }
 }
