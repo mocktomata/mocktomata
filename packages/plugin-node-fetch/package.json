@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "@mocktomata/framework": "^7.0.0-beta.10",
-    "node-fetch": "^3.2.10"
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "jest": "^28.1.3",
