@@ -1,17 +1,34 @@
-name: release
+name: nodejs
 on:
   push:
-    branches: [main]
-
+    branches:
+      - main
 jobs:
-  code:
-    uses: unional/.github/.github/workflows/yarn-verify-cross-platform.yml@main
+  verify:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [14, 16]
+    steps:
+      - uses: actions/checkout@v3
 
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
+
+      - name: Install Dependencies
+        run: yarn
+
+      - name: Verify
+        run: yarn verify
+
+      - name: codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == 16
+        uses: codecov/codecov-action@v3
   release:
-    uses: unional/.github/.github/workflows/yarn-release-changeset.yml@main
+    uses: unional/.github/.github/workflows/yarn-release-it.yml@main
     needs: code
     secrets: inherit
-
-  docgen:
-      uses: unional/.github/.github/workflows/yarn-docs.yml@main
-      needs: release
