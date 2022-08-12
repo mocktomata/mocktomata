@@ -1,11 +1,11 @@
-name: nodejs
+name: release
 on:
   push:
     branches:
       - main
 jobs:
   code:
-    uses: ./pnpm-verify-cross-platform.yml
+    uses: ./.github/workflows/pnpm-verify-cross-platform
   release:
     uses: unional/.github/.github/workflows/pnpm-release-changeset.yml@main
     needs: code
