@@ -48,7 +48,7 @@
     "@types/hapi__hapi": "^20.0.12",
     "assertron": "^9.2.5",
     "jest": "^28.1.3",
-    "node-fetch": "^2.6.7",
+    "node-fetch": "^3.2.10",
     "tmp": "^0.2.1",
     "ts-jest": "^28.0.7"
   },
