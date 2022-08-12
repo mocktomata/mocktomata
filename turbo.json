@@ -30,7 +30,7 @@
     },
     "depcheck": {
       "dependsOn": [
-        "^build"
+        "build"
       ]
     },
     "dev": {

@@ -32,9 +32,7 @@
     "build:lib": "tsc -p tsconfig.lib.json",
     "build:libm": "tsc -p tsconfig.libm.json",
     "clean": "rimraf lib libm .tsc",
-    "_depcheck": "dependency-check . --unused --no-dev -i '@mocktomata/framework' && dependency-check . --missing --no-dev",
-    "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && yarn dependency-check"
+    "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs ."
   },
   "dependencies": {
     "@mocktomata/framework": "^7.0.0-beta.10",
