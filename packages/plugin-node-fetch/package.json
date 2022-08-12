@@ -35,7 +35,7 @@
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs ."
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.10",
+    "@mocktomata/framework": "workspace:*",
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {

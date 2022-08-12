@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.10",
+    "@mocktomata/framework": "workspace:*",
     "find-installed-packages": "^2.1.6",
     "md5": "^2.3.0",
     "mkdirp": "^1.0.4",

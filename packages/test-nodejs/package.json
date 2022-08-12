@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "mocktomata": "^7.0.0-beta.10"
+    "mocktomata": "workspace:*"
   },
   "devDependencies": {
     "jest": "^28.1.3",

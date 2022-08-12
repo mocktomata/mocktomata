@@ -55,10 +55,10 @@
     "watch:browser": "yarn test:watch:browser"
   },
   "dependencies": {
-    "@mocktomata/file-server": "^7.0.0-beta.10",
-    "@mocktomata/framework": "^7.0.0-beta.10",
-    "@mocktomata/io-client": "^7.0.0-beta.10",
-    "@mocktomata/io-local": "^7.0.0-beta.10",
+    "@mocktomata/file-server": "workspace:*",
+    "@mocktomata/framework": "workspace:*",
+    "@mocktomata/io-client": "workspace:*",
+    "@mocktomata/io-local": "workspace:*",
     "async-fp": "^5.0.3",
     "chalk": "^4.1.1",
     "clibuilder": "^7.2.1",

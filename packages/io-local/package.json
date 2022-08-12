@@ -38,8 +38,8 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.10",
-    "@mocktomata/io-fs": "^7.0.0-beta.10",
+    "@mocktomata/framework": "workspace:*",
+    "@mocktomata/io-fs": "workspace:*",
     "type-plus": "^4.11.1"
   },
   "devDependencies": {
