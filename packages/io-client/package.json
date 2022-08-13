@@ -45,6 +45,7 @@
   "devDependencies": {
     "@mocktomata/file-server": "workspace:*",
     "@mocktomata/io-fs": "workspace:*",
+    "assertron": "^9.2.5",
     "jest": "^28.1.3",
     "jest-environment-jsdom": "^28.1.3",
     "ts-jest": "^28.0.7",

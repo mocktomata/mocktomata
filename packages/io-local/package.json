@@ -46,6 +46,7 @@
     "@mocktomata/plugin-fixture-deep-link": "^1.0.12",
     "@mocktomata/plugin-fixture-dummy": "^1.1.10",
     "@mocktomata/plugin-fixture-no-activate": "^1.0.10",
+    "assertron": "^9.2.5",
     "jest": "^28.1.3",
     "tmp": "^0.2.1",
     "ts-jest": "^28.0.7",
