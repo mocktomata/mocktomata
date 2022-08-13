@@ -1,8 +1,8 @@
 import path from 'path'
-import { loadConfig } from './config'
-import { MOCKTOMATA_FOLDER, SPEC_FOLDER } from './constants'
-import { findInstalledPlugins, loadPlugin } from './plugin'
-import { readSpec, writeSpec } from './spec'
+import { loadConfig } from './config/index.js'
+import { MOCKTOMATA_FOLDER, SPEC_FOLDER } from './constants.js'
+import { findInstalledPlugins, loadPlugin } from './plugin/index.js'
+import { readSpec, writeSpec } from './spec/index.js'
 
 export class FileRepository {
   cwd: string

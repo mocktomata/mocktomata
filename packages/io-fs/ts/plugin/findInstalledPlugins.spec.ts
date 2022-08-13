@@ -1,6 +1,6 @@
 import { dirSync } from 'tmp'
-import { findInstalledPlugins } from '.'
-import { fixturePath } from '../util'
+import { findInstalledPlugins } from './index.js'
+import { fixturePath } from '../util/index.js'
 
 test('gets empty plugin list in empty folder', async () => {
   expect(await findInstalledPlugins(dirSync().name)).toEqual([])

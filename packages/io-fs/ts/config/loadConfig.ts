@@ -1,7 +1,7 @@
 import { AmbiguousConfig, InvalidConfigFormat } from '@mocktomata/framework'
 import fs from 'fs'
 import path from 'path'
-import { MOCKTO_CONFIG_JS, MOCKTO_CONFIG_JSON, PACKAGE_JSON } from './constants'
+import { MOCKTO_CONFIG_JS, MOCKTO_CONFIG_JSON, PACKAGE_JSON } from './constants.js'
 
 export function loadConfig(cwd: string) {
   const configs: { [k in string]: Record<string, any> } = {
@@ -23,7 +23,7 @@ function loadPjsonConfig(cwd: string) {
   const filepath = path.resolve(cwd, PACKAGE_JSON)
   if (fs.existsSync(filepath)) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const pjson = require(path.relative(__dirname, filepath))
+    const pjson = require(filepath)
     if (pjson.mocktomata) return pjson.mocktomata
   }
 }
@@ -32,7 +32,7 @@ function loadMjsonConfig(cwd: string) {
   const filepath = path.resolve(cwd, MOCKTO_CONFIG_JSON)
   if (fs.existsSync(filepath)) {
     try {
-      return require(path.relative(__dirname, filepath))
+      return require(filepath)
     }
     catch (e: any) {
       // istanbul ignore next
@@ -47,7 +47,7 @@ function loadMjsConfig(cwd: string) {
   const filepath = path.join(cwd, MOCKTO_CONFIG_JS)
   if (fs.existsSync(filepath)) {
     try {
-      return require(path.relative(__dirname, filepath))
+      return require(filepath)
     }
     catch (e: any) {
       // istanbul ignore next

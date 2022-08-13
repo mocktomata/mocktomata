@@ -1,5 +1,5 @@
 import path from 'path'
-import { getHash, readByHash } from '../util'
+import { getHash, readByHash } from '../util/index.js'
 
 export function readSpec(specFolder: string, title: string, invokePath: string) {
   const hash = getHash(title)

@@ -1,1 +1,1 @@
-export * from './FileRepository'
+export * from './FileRepository.js'

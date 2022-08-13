@@ -1,5 +1,5 @@
 import t from 'assert';
-import { getHash } from './getHash';
+import { getHash } from './getHash.js';
 
 test('accepts empty string as id', () => {
   const actual = getHash('')

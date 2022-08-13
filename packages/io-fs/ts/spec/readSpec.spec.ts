@@ -1,7 +1,7 @@
 import t from 'assert'
 import a from 'assertron'
 import { dirSync } from 'tmp'
-import { readSpec, writeSpec } from '.'
+import { readSpec, writeSpec } from './index.js'
 
 test('not exist spec throws SpecNotFound', async () => {
   const tmp = dirSync()

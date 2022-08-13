@@ -4,8 +4,8 @@ import a from 'assertron'
 import fs from 'fs'
 import path from 'path'
 import { dirSync } from 'tmp'
-import { loadConfig } from '.'
-import { fixturePath } from '../util'
+import { loadConfig } from './index.js'
+import { fixturePath } from '../util/index.js'
 
 test('no config returns empty object', () => {
   const cwd = dirSync().name
