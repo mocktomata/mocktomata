@@ -37,28 +37,28 @@
     "dist"
   ],
   "scripts": {
-    "build": "yarn build:lib && yarn build:libm && yarn build:browser",
+    "build": "pnpm run build:lib && pnpm run build:libm && pnpm run build:browser",
     "build:browser": "webpack",
     "build:lib": "tsc -p tsconfig.lib.json",
     "build:libm": "tsc -p tsconfig.libm.json",
     "clean": "rimraf lib libm dist .tsc",
     "coverage": "jest --coverage --reporters=default",
-    "dc": "yarn depcheck",
+    "dc": "pnpm run depcheck",
     "depcheck": "dependency-check . --unused --no-dev -i standard-log-color -i @mocktomata/io-client  && dependency-check . --missing --no-dev",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
     "test": "jest --reporters=default",
     "test:browser": "karma start --single-run",
     "test:watch": "jest --watch",
     "test:watch:browser": "karma start",
-    "verify": "yarn lint && yarn build && yarn dc && yarn coverage",
-    "watch": "yarn test:watch",
-    "watch:browser": "yarn test:watch:browser"
+    "verify": "pnpm run lint && pnpm run build && pnpm run dc && pnpm run coverage",
+    "watch": "pnpm run test:watch",
+    "watch:browser": "pnpm run test:watch:browser"
   },
   "dependencies": {
-    "@mocktomata/file-server": "^7.0.0-beta.10",
-    "@mocktomata/framework": "^7.0.0-beta.10",
-    "@mocktomata/io-client": "^7.0.0-beta.10",
-    "@mocktomata/io-local": "^7.0.0-beta.10",
+    "@mocktomata/file-server": "workspace:*",
+    "@mocktomata/framework": "workspace:*",
+    "@mocktomata/io-client": "workspace:*",
+    "@mocktomata/io-local": "workspace:*",
     "async-fp": "^5.0.3",
     "chalk": "^4.1.1",
     "clibuilder": "^7.2.1",
@@ -79,6 +79,7 @@
     "@mocktomata/plugin-fixture-deep-link": "^1.0.12",
     "@mocktomata/plugin-fixture-dummy": "^1.1.10",
     "ansi-colors": "^4.1.1",
+    "assertron": "^9.2.5",
     "babel-loader": "^8.2.5",
     "core-js": "^3.24.1",
     "electron": "^20.0.1",
@@ -95,6 +96,7 @@
     "source-map-loader": "^4.0.0",
     "ts-jest": "^28.0.7",
     "ts-loader": "^9.3.1",
+    "typescript": "~4.7.4",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
   }

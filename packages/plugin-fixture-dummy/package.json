@@ -28,13 +28,13 @@
     "libm"
   ],
   "scripts": {
-    "build": "yarn build:lib && yarn build:libm",
+    "build": "pnpm run build:lib && pnpm run build:libm",
     "build:lib": "tsc -p tsconfig.lib.json",
     "build:libm": "tsc -p tsconfig.libm.json",
     "clean": "rimraf lib libm .tsc"
   },
   "dependencies": {
-    "@mocktomata/framework": "^7.0.0-beta.10"
+    "@mocktomata/framework": "workspace:*"
   },
   "engines": {
     "node": ">= 6"
