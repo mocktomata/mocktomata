@@ -1,7 +1,7 @@
 import a, { AssertOrder } from 'assertron'
 import { logLevels, captureLogs } from 'standard-log'
-import { incubator, SpecNotFound } from '..'
-import { log } from '../log'
+import { incubator, SpecNotFound } from '../index.js'
+import { log } from '../log.js'
 
 incubator('enable log only lasts through one spec', (title, spec) => {
   test(title, async () => {

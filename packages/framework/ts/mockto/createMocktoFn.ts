@@ -1,8 +1,8 @@
 import { AsyncContext } from 'async-fp'
-import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec'
-import { getCallerRelativePath } from '../test-utils'
-import { createMockto } from './createMockto'
-import { resolveMocktoFnArgs } from './resolveMocktoFnArgs'
+import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec/index.js'
+import { getCallerRelativePath } from '../test-utils/index.js'
+import { createMockto } from './createMockto.js'
+import { resolveMocktoFnArgs } from './resolveMocktoFnArgs.js'
 
 export function createMocktoFn(context: AsyncContext<Spec.Context>) {
   const specFn = (...args: any[]) => {

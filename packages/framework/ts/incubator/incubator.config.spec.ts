@@ -1,6 +1,6 @@
-import { activate as decrementActivate } from './decrementPlugin'
-import { activate } from './incrementPlugin'
-import { incubator } from './incubator'
+import { activate as decrementActivate } from './decrementPlugin.js'
+import { activate } from './incrementPlugin.js'
+import { incubator } from './incubator.js'
 
 
 beforeAll(() => incubator.config({

@@ -1,4 +1,4 @@
-import { promisePlugin } from './promisePlugin';
+import { promisePlugin } from './promisePlugin.js';
 
 test('simple object is not supported by promisePlugin', () => {
   expect(promisePlugin.support({})).toBe(false)

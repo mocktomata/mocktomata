@@ -1,4 +1,4 @@
-import { stringPlugin } from './stringPlugin';
+import { stringPlugin } from './stringPlugin.js'
 
 test('support string', () => {
   expect(stringPlugin.support('')).toBe(true)

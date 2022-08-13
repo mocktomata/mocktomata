@@ -1,10 +1,10 @@
 import { AsyncContext } from 'async-fp'
-import { createAutoSpec } from './createAutoSpec'
-import { createLiveSpec } from './createLiveSpec'
-import { createSaveSpec } from './createSaveSpec'
-import { createSimulateSpec } from './createSimulateSpec'
-import { Spec } from './types'
-import { MaskCriterion } from './types-internal'
+import { createAutoSpec } from './createAutoSpec.js'
+import { createLiveSpec } from './createLiveSpec.js'
+import { createSaveSpec } from './createSaveSpec.js'
+import { createSimulateSpec } from './createSimulateSpec.js'
+import { Spec } from './types.js'
+import { MaskCriterion } from './types-internal.js'
 
 export async function createSpec(context: AsyncContext<Spec.Context>, specName: string, invokeRelativePath: string, mode: Spec.Mode, options: Spec.Options): Promise<Spec> {
   const ctx = context.extend({ maskCriteria: [] as MaskCriterion[] })

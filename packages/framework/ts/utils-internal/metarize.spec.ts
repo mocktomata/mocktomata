@@ -1,4 +1,4 @@
-import { metarize, demetarize } from './metarize'
+import { metarize, demetarize } from './metarize.js'
 
 test('empty object', () => {
   testMetarize({}, [{ type: 'object' }, {}], {})

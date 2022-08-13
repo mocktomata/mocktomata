@@ -1,4 +1,4 @@
-import { MocktomataError } from '../errors'
+import { MocktomataError } from '../errors.js'
 
 export class PluginNotFound extends MocktomataError {
   // istanbul ignore next

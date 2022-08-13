@@ -1,0 +1,4 @@
+ignores:
+  - '@size-limit/preset-big-lib'
+  - ts-jest
+  - tslib

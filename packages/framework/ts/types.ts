@@ -1,7 +1,7 @@
 import { LogLevel } from 'standard-log'
 import { ReplaceProperty } from 'type-plus'
-import { SpecPlugin } from './spec-plugin/types'
-import { Spec } from './spec/types'
+import { SpecPlugin } from './spec-plugin/types.js'
+import { Spec } from './spec/types.js'
 
 export namespace Mocktomata {
   export type Context = { config: Config, io: IO }

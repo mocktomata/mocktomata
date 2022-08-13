@@ -1,6 +1,6 @@
 import { AnyFunction } from 'type-plus'
-import { SpecPlugin } from '../spec-plugin'
-import { demetarize, hasProperty, hasPropertyInPrototype, metarize } from '../utils-internal'
+import { SpecPlugin } from '../spec-plugin/index.js'
+import { demetarize, hasProperty, hasPropertyInPrototype, metarize } from '../utils-internal/index.js'
 
 export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> = {
   name: 'function',

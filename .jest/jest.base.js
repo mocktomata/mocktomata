@@ -10,7 +10,8 @@ module.exports = {
     '^@mocktomata/(plugin-fixture-deep-link.*)': '<rootDir>/../$1',
     // '^@mocktomata/(.*)/(.*)': '<rootDir>/../$1/ts/$2',
     '^@mocktomata/(.*)': '<rootDir>/../$1/ts',
-    '^mocktomata': '<rootDir>/../mocktomata/ts'
+    '^mocktomata': '<rootDir>/../mocktomata/ts',
+    '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   roots: [
     '<rootDir>/ts'

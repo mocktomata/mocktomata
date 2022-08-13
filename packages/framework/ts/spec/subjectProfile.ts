@@ -1,4 +1,4 @@
-import { SpecRecord } from '../spec-record/types'
+import { SpecRecord } from '../spec-record/types.js'
 
 export function getDefaultPerformer(profile: SpecRecord.SubjectProfile) {
   switch (profile) {

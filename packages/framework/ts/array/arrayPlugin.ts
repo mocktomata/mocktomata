@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec-plugin'
+import { SpecPlugin } from '../spec-plugin/index.js'
 
 export const arrayPlugin: SpecPlugin<any[], any[]> = {
   name: 'array',

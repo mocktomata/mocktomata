@@ -1,6 +1,6 @@
 import { AsyncContext } from 'async-fp'
 import { requiredDeep } from 'type-plus'
-import { createTestIO } from './createTestIO'
+import { createTestIO } from './createTestIO.js'
 
 export function createTestContext(options?: createTestIO.Options) {
   const { config, modules } = requiredDeep({ config: { ecmaVersion: '2015', plugins: [] }, modules: {} }, options)

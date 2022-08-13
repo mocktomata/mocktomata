@@ -1,9 +1,9 @@
 import { isPromise } from 'type-plus';
-import { SpecPlugin } from '../spec-plugin'
+import { SpecPlugin } from '../spec-plugin/index.js'
 import {
   // createMap,
   demetarize, hasProperty, isBaseObject, metarize
-} from '../utils-internal';
+} from '../utils-internal/index.js';
 
 // const map = createMap()
 

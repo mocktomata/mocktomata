@@ -1,8 +1,8 @@
-import { SpecPlugin } from '../spec-plugin/types'
-import { SpecRecord } from '../spec-record/types'
-import { TimeTracker } from '../timeTracker'
-import { SpecRecorderBuilder } from './record'
-import { Spec } from './types'
+import { SpecPlugin } from '../spec-plugin/types.js'
+import { SpecRecord } from '../spec-record/types.js'
+import { TimeTracker } from '../timeTracker/index.js'
+import { SpecRecorderBuilder } from './record.js'
+import { Spec } from './types.js'
 
 export type MaskCriterion<V extends number | string = any> = MaskNumberCriterion | MaskStringCriterion | MaskRegExpCriterion | MaskPredicateCriterion<V>
 

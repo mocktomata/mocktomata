@@ -1,1 +1,1 @@
-export * from './instancePlugin'
+export * from './instancePlugin.js'

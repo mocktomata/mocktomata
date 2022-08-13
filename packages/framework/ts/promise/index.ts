@@ -1,1 +1,1 @@
-export * from './promisePlugin'
+export * from './promisePlugin.js'

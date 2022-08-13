@@ -1,4 +1,4 @@
-import { isBaseObject } from './isBaseObject'
+import { isBaseObject } from './isBaseObject.js'
 
 export function getPropertyNames(target: any): string[] {
   const names = Object.getOwnPropertyNames(target)

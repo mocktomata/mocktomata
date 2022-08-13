@@ -2,10 +2,10 @@ import a from 'assertron'
 import { EventEmitter } from 'events'
 import { captureLogs } from 'standard-log'
 import { AnyFunction } from 'type-plus'
-import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from '.'
-import { log } from './log'
-import { InvokeMetaMethodAfterSpec } from './spec'
-import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts'
+import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from './index.js'
+import { log } from './log.js'
+import { InvokeMetaMethodAfterSpec } from './spec/index.js'
+import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts/index.js'
 
 describe('basic checks', () => {
   incubator.save(`type %s is not specable`, (title, spec) => {

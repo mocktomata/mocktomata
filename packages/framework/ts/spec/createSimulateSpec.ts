@@ -1,11 +1,11 @@
 import { AsyncContext } from 'async-fp'
 import { LogLevel } from 'standard-log'
-import { log } from '../log'
-import { assertMockable } from './assertMockable'
-import { assertSpecName } from './assertSpecName'
-import { createSimulator } from './simulator'
-import { Spec } from './types'
-import { createSpec } from './types-internal'
+import { log } from '../log.js'
+import { assertMockable } from './assertMockable.js'
+import { assertSpecName } from './assertSpecName.js'
+import { createSimulator } from './simulator.js'
+import { Spec } from './types.js'
+import { createSpec } from './types-internal.js'
 
 export async function createSimulateSpec(
   context: AsyncContext<createSpec.Context>,

@@ -1,3 +1,3 @@
-export * from './errors'
-export * from './loadPlugins'
-export * from './types'
+export * from './errors.js'
+export * from './loadPlugins.js'
+export * from './types.js'

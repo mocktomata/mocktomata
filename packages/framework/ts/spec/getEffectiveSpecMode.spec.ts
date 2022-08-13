@@ -1,4 +1,4 @@
-import { getEffectiveSpecMode } from './getEffectiveSpecMode'
+import { getEffectiveSpecMode } from './getEffectiveSpecMode.js'
 
 test('change mode with match file path filter', () => {
   const actual = getEffectiveSpecMode({ overrideMode: 'save', filePathFilter: /part-a/ }, '', 'c/b/part-a/x.ts')

@@ -1,10 +1,10 @@
 import a from 'assertron'
 import { startsWith } from 'satisfier'
 import { logLevels } from 'standard-log'
-import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from '.'
-import { log } from '../log'
-import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts'
-import { createTestContext } from '../test-utils'
+import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from './index.js'
+import { log } from '../log.js'
+import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts/index.js'
+import { createTestContext } from '../test-utils/index.js'
 
 beforeEach(() => {
   log.level = logLevels.none

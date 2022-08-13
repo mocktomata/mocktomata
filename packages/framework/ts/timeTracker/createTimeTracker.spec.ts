@@ -1,5 +1,5 @@
 import delay from 'delay'
-import { createTimeTracker } from '.'
+import { createTimeTracker } from './index.js'
 
 const testOptions = { timeout: 10 }
 const notCalled = () => { throw new Error('should not reach') }

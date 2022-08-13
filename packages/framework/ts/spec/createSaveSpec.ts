@@ -1,12 +1,12 @@
 import { AsyncContext } from 'async-fp'
 import { LogLevel } from 'standard-log'
-import { log } from '../log'
-import { prettyPrintSpecRecord } from '../utils'
-import { assertMockable } from './assertMockable'
-import { assertSpecName } from './assertSpecName'
-import { createRecorder } from './recorder'
-import { Spec } from './types'
-import { createSpec } from './types-internal'
+import { log } from '../log.js'
+import { prettyPrintSpecRecord } from '../utils/index.js'
+import { assertMockable } from './assertMockable.js'
+import { assertSpecName } from './assertSpecName.js'
+import { createRecorder } from './recorder.js'
+import { Spec } from './types.js'
+import { createSpec } from './types-internal.js'
 
 export async function createSaveSpec(
   context: AsyncContext<createSpec.Context>,

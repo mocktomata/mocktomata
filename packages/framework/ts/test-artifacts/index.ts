@@ -1,3 +1,3 @@
-export * from './plugins';
-export * from './testSubjects';
+export * from './plugins.js'
+export * from './testSubjects.js'
 

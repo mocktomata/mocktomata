@@ -1,8 +1,8 @@
 // ignore coverage because not going to write test just for enable log with all different action types
 // istanbul ignore file
 import { tersify } from 'tersify'
-import { notDefined } from '../constants'
-import { SpecRecord } from '../spec-record/types'
+import { notDefined } from '../constants.js'
+import { SpecRecord } from '../spec-record/types.js'
 
 export namespace prettifyAction {
   export type Options = OptionsForGetInvoke | OptionsForReturnThrow
