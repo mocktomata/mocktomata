@@ -8,9 +8,6 @@
     "@mocktomata/io-fs": "7.0.0-beta.10",
     "@mocktomata/io-local": "7.0.0-beta.10",
     "mocktomata": "7.0.0-beta.10",
-    "@mocktomata/plugin-fixture-deep-link": "1.0.12",
-    "@mocktomata/plugin-fixture-dummy": "1.1.10",
-    "@mocktomata/plugin-fixture-no-activate": "1.0.10",
     "@mocktomata/plugin-node-fetch": "1.1.10",
     "@mocktomata/plugin-nodejs": "0.1.10",
     "@mocktomata/test-nodejs": "0.1.10"

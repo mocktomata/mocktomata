@@ -1,14 +1,5 @@
 # Change Log
 
-## 1.1.11-beta.0
-
-### Patch Changes
-
-- @mocktomata/framework@7.0.0-beta.11
-
-All notable changes to this project will be documented in this file.
-See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
-
 ## 1.1.10 (2022-08-06)
 
 **Note:** Version bump only for package @mocktomata/plugin-fixture-dummy
