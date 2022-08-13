@@ -15,5 +15,7 @@
     "@mocktomata/plugin-nodejs": "0.1.10",
     "@mocktomata/test-nodejs": "0.1.10"
   },
-  "changesets": []
+  "changesets": [
+    "curvy-plums-rhyme"
+  ]
 }
