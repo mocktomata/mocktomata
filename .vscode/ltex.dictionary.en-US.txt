@@ -3,3 +3,14 @@ Mocktomata
 unional
 Homa
 NONINFRINGEMENT
+
+Codecov
+github-action-url
+codecov-url
+vscode-url
+@mocktomata
+io-client
+io-fs
+io-local
+plugin-nodejs
+test-nodejs
