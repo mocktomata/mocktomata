@@ -18,7 +18,8 @@
   },
   "files": [
     "lib",
-    "libm"
+    "libm",
+    "ts"
   ],
   "main": "lib/index.js",
   "module": "libm/index.js",

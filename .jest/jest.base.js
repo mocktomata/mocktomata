@@ -8,12 +8,12 @@ module.exports = {
   },
    moduleNameMapper: {
     '^@mocktomata/(plugin-fixture-deep-link.*)': '<rootDir>/../$1',
-    '^@mocktomata/(.*)/(.*)': '<rootDir>/../$1/src/$2',
-    '^@mocktomata/(.*)': '<rootDir>/../$1/src',
-    '^mocktomata': '<rootDir>/../mocktomata/src'
+    // '^@mocktomata/(.*)/(.*)': '<rootDir>/../$1/ts/$2',
+    '^@mocktomata/(.*)': '<rootDir>/../$1/ts',
+    '^mocktomata': '<rootDir>/../mocktomata/ts'
   },
   roots: [
-    '<rootDir>/src'
+    '<rootDir>/ts'
   ],
   setupFiles: [
     '../../scripts/jest-setup.js'

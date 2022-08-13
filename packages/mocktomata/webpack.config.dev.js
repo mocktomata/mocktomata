@@ -3,7 +3,7 @@ const webpack = require('webpack')
 
 module.exports = {
   devtool: 'inline-source-map',
-  entry: './src/index',
+  entry: './ts/index',
   mode: 'development',
   module: {
     rules: [

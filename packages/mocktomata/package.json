@@ -34,7 +34,8 @@
   "files": [
     "lib",
     "libm",
-    "dist"
+    "dist",
+    "ts"
   ],
   "scripts": {
     "build": "pnpm run build:lib && pnpm run build:libm && pnpm run build:browser",
