@@ -1,5 +1,5 @@
-import { FileRepository } from '.'
-import { fixturePath } from './util'
+import { FileRepository } from './index.js'
+import { fixturePath } from './util/index.js'
 
 test('load config', () => {
   const repo = getTestRepo()

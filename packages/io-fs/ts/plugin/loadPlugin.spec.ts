@@ -1,9 +1,9 @@
 import { PluginModuleNotConforming, PluginNotFound } from '@mocktomata/framework'
 import a from 'assertron'
 import { captureLogs } from 'standard-log'
-import { loadPlugin } from '.'
-import { log } from '../log'
-import { fixturePath } from '../util'
+import { loadPlugin } from './index.js'
+import { log } from '../log.js'
+import { fixturePath } from '../util/index.js'
 
 test('load simple plugin', () => {
   const cwd = fixturePath('has-plugins')

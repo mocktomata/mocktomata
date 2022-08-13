@@ -1,5 +1,5 @@
 import { PluginModuleNotConforming, SpecPlugin, PluginNotFound } from '@mocktomata/framework'
-import { log } from '../log'
+import { log } from '../log.js'
 
 export function loadPlugin(cwd: string, id: string): SpecPlugin.Module {
   try {

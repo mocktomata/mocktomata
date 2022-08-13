@@ -1,8 +1,6 @@
-coverage
-dist
-lib*
 node_modules
-old
-out*
-system.js
-v6
+cjs
+dist
+esm
+lib
+libm
