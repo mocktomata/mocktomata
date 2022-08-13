@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/test-nodejs",
-  "version": "0.1.10",
+  "version": "0.1.11-beta.0",
   "private": true,
   "description": "test module for mocktomata",
   "homepage": "https://github.com/mocktomata/mocktomata",
