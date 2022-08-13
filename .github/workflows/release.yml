@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - beta
 jobs:
   code:
     uses: ./.github/workflows/pnpm-verify-cross-platform.yml
