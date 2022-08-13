@@ -21,7 +21,7 @@
     "nuke": "pnpm run clean && rimraf node_modules",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "publish": "pnpm run -r publish --access public && changeset tag",
+    "publish": "pnpm publish -r && changeset tag",
     "test": "turbo run test",
     "test:browser": "pnpm run workspace mocktomata test:browser",
     "test:electron": "cross-env JEST_ENV=electron jest --maxWorkers=60%",
