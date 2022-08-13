@@ -38,6 +38,10 @@ module.exports = {
     library: globalVariable,
   },
   resolve: {
+    extensionAlias: {
+      '.js': ['.ts', '.js'],
+      '.mjs': ['.mts', '.mjs']
+    },
     extensions: ['.ts', '.tsx', '.js'],
     fallback: {
       module: false
