@@ -17,5 +17,9 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "ignore": [
+    "plugin-fixture-deep-link",
+    "plugin-fixture-dummy",
+    "plugin-fixture-no-activate"
+  ]
 }
