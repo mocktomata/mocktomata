@@ -5,11 +5,8 @@
 
 [![GitHub NodeJS][github-nodejs]][github-action-url]
 [![Codecov][codecov-image]][codecov-url]
-[![Codacy Grade Badge][codacy-grade]][codacy-grade-url]
-[![Codacy Coverage Badge][codacy-coverage]][codacy-coverage-url]
 
 [![Visual Studio Code][vscode-image]][vscode-url]
-[![Wallaby.js][wallaby-image]][wallaby-url]
 
 Hello masters,
 
@@ -219,17 +216,13 @@ module.exports = () => {
 
 [advance-use-cases]: https://github.com/mocktomata/mocktomata/blob/master/docs/advance-use-cases.md
 [axios]: https://www.npmjs.com/package/axios
-[codacy-coverage-url]: https://www.codacy.com/manual/mocktomata/mocktomata?utm_source=github.com&utm_medium=referral&utm_content=mocktomata/mocktomata&utm_campaign=Badge_Coverage
-[codacy-coverage]: https://api.codacy.com/project/badge/Coverage/bcb8e88109b54a7593cfe6744c6dac38
-[codacy-grade-url]: https://www.codacy.com/gh/mocktomata/mocktomata?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mocktomata/mocktomata&amp;utm_campaign=Badge_Grade
-[codacy-grade]: https://api.codacy.com/project/badge/Grade/bcb8e88109b54a7593cfe6744c6dac38
 [codecov-image]: https://codecov.io/gh/mocktomata/mocktomata/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/mocktomata/mocktomata
 [configuration]: https://github.com/mocktomata/mocktomata/blob/master/docs/configuration.md
 [downloads-image]: https://img.shields.io/npm/dm/mocktomata.svg?style=flat
 [downloads-url]: https://npmjs.org/package/mocktomata
 [github-action-url]: https://github.com/mocktomata/mocktomata/actions
-[github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/nodejs/badge.svg
+[github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/release/badge.svg
 [incubator]: https://github.com/mocktomata/mocktomata/blob/master/docs/incubator.md
 [komondor]: https://github.com/mocktomata/mocktomata/blob/master/docs/komondor.md
 [mockto]: https://github.com/mocktomata/mocktomata/blob/master/docs/mockto.md
@@ -240,5 +233,3 @@ module.exports = () => {
 [spec]: https://github.com/mocktomata/mocktomata/blob/master/docs/spec.md
 [vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
 [vscode-url]: https://code.visualstudio.com/
-[wallaby-image]: https://img.shields.io/badge/wallaby.js-configured-green.svg
-[wallaby-url]: https://wallabyjs.com
