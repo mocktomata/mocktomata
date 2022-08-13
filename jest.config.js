@@ -9,9 +9,9 @@ const projects = process.env.JEST_ENV
   ]
 module.exports = {
   collectCoverageFrom: [
-    '<rootDir>/src/**/*.[jt]s',
-    '!<rootDir>/src/bin.[jt]s',
-    '!<rootDir>/src/**/*.spec.*'
+    '<rootDir>/ts/**/*.[jt]s',
+    '!<rootDir>/ts/bin.[jt]s',
+    '!<rootDir>/ts/**/*.spec.*'
   ],
   projects,
   ...watch

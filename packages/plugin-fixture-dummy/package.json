@@ -25,7 +25,8 @@
   "typings": "lib/index.d.ts",
   "files": [
     "lib",
-    "libm"
+    "libm",
+    "ts"
   ],
   "scripts": {
     "build": "pnpm run build:lib && pnpm run build:libm",
