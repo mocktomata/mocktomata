@@ -4,12 +4,12 @@
     "lib": [
       "es2015"
     ],
-    "rootDir": "src"
+    "rootDir": "ts"
   },
   "references": [
   ],
   "include": [
-    "src",
+    "ts",
     "typings"
   ]
 }

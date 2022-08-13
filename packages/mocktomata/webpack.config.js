@@ -12,7 +12,7 @@ const globalVariable = pascalCase(filename)
 module.exports = {
   devtool: 'inline-source-map',
   entry: {
-    'mocktomata': './src/browser'
+    'mocktomata': './ts/browser'
   },
   mode: 'development',
   module: {
