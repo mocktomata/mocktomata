@@ -1,8 +1,8 @@
 import a from 'assertron'
 import { captureLogs, logLevels } from 'standard-log'
-import { createMockto, SpecNotFound } from '..'
-import { log } from '../log'
-import { createTestContext, getCallerRelativePath } from '../test-utils'
+import { createMockto, SpecNotFound } from '../index.js'
+import { log } from '../log.js'
+import { createTestContext, getCallerRelativePath } from '../test-utils/index.js'
 
 const context = createTestContext()
 const mockto = createMockto(context)

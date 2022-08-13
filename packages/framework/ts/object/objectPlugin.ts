@@ -1,5 +1,5 @@
-import { SpecPlugin } from '../spec-plugin'
-import { demetarize, hasProperty, metarize } from '../utils-internal'
+import { SpecPlugin } from '../spec-plugin/index.js'
+import { demetarize, hasProperty, metarize } from '../utils-internal/index.js'
 
 export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
   name: 'object',

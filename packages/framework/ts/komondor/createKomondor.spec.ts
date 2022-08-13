@@ -1,11 +1,11 @@
 // import a from 'assertron'
 // import { captureLogs, logLevels } from 'standard-log'
-// import { createMockto, SpecNotFound } from '..'
-// import { log } from '../log'
+// import { createMockto, SpecNotFound } from '../index.js'
+// import { log } from '../log.js'
 import { logLevels, captureLogs } from 'standard-log'
-import { createTestContext } from '../test-utils'
-import { createKomondor } from './createKomondor'
-import { log } from '../log'
+import { createTestContext } from '../test-utils/index.js'
+import { createKomondor } from './createKomondor.js'
+import { log } from '../log.js'
 
 const context = createTestContext()
 const k = createKomondor(context)

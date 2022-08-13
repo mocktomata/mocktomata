@@ -1,4 +1,4 @@
-import { inertPlugin } from './inertValuePlugin'
+import { inertPlugin } from './inertValuePlugin.js'
 
 test('does not support any value', () => {
   expect(inertPlugin.support(0)).toBe(false)

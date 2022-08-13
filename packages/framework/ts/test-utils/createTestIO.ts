@@ -1,9 +1,9 @@
 import { requiredDeep } from 'type-plus'
-import { es2015 } from '../es2015'
-import { Spec, SpecNotFound } from '../spec'
-import { SpecPlugin } from '../spec-plugin'
-import { Mocktomata } from '../types'
-import { prettyPrintSpecRecord } from '../utils'
+import { es2015 } from '../es2015.js'
+import { Spec, SpecNotFound } from '../spec/index.js'
+import { SpecPlugin } from '../spec-plugin/index.js'
+import { Mocktomata } from '../types.js'
+import { prettyPrintSpecRecord } from '../utils/index.js'
 
 export namespace createTestIO {
   export type Options = {

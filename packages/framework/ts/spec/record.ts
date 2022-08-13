@@ -1,10 +1,10 @@
 import { pick } from 'type-plus'
-import { notDefined } from '../constants'
-import { SpecPlugin } from '../spec-plugin'
-import { findPlugin } from '../spec-plugin/findPlugin'
-import { SpecRecord } from '../spec-record/types'
-import { createMaskFn, maskValue } from './masking'
-import { MaskCriterion, SpecRecordLive } from './types-internal'
+import { notDefined } from '../constants.js'
+import { SpecPlugin } from '../spec-plugin/index.js'
+import { findPlugin } from '../spec-plugin/findPlugin.js'
+import { SpecRecord } from '../spec-record/types.js'
+import { createMaskFn, maskValue } from './masking.js'
+import { MaskCriterion, SpecRecordLive } from './types-internal.js'
 
 export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecordLive.Reference[] = []

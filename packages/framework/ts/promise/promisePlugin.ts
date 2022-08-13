@@ -1,6 +1,6 @@
 
-import { SpecPlugin } from '../spec-plugin';
-import { isPromise } from './isPromise';
+import { SpecPlugin } from '../spec-plugin/index.js';
+import { isPromise } from './isPromise.js';
 
 export const promisePlugin: SpecPlugin<Promise<any>, boolean> = {
   name: 'promise',

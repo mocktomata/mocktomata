@@ -1,4 +1,4 @@
-import { Spec } from './types'
+import { Spec } from './types.js'
 
 export async function createLiveSpec(): Promise<Spec> {
   return Object.assign(async (subject: any) => subject, {

@@ -1,1 +1,1 @@
-export * from './createKomondor'
+export * from './createKomondor.js'

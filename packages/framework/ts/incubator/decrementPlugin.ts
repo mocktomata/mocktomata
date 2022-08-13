@@ -1,4 +1,4 @@
-import { SpecPlugin } from '../spec-plugin'
+import { SpecPlugin } from '../spec-plugin/index.js'
 
 // istanbul ignore next
 const decrementPlugin: SpecPlugin = {

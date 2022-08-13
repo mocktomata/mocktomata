@@ -1,6 +1,6 @@
-import { log } from '../log'
-import { DuplicatePlugin, PluginNotConforming } from './errors'
-import { SpecPlugin } from './types'
+import { log } from '../log.js'
+import { DuplicatePlugin, PluginNotConforming } from './errors.js'
+import { SpecPlugin } from './types.js'
 
 // TODO: this might need to be convert to async function so that the module
 // can call register asynchronously

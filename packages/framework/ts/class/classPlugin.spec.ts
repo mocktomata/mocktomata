@@ -1,7 +1,7 @@
-import t from 'assert';
-import a from 'assertron';
-import cp from 'child_process';
-import { classPlugin } from './classPlugin';
+import t from 'assert'
+import { a } from 'assertron'
+import cp from 'child_process'
+import { classPlugin } from './classPlugin.js'
 
 test('false for simple function', () => {
   a.false(classPlugin.support((x: any) => x))

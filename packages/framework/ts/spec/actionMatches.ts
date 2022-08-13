@@ -1,5 +1,5 @@
-import { SpecRecord } from '../spec-record/types'
-import { SpecRecordValidator } from './record'
+import { SpecRecord } from '../spec-record/types.js'
+import { SpecRecordValidator } from './record.js'
 
 export function isMatchingGetAction(
   actual: SpecRecord.GetAction,

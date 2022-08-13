@@ -1,5 +1,5 @@
-import { instancePlugin } from './instancePlugin';
-import { Dummy } from '../test-artifacts';
+import { instancePlugin } from './instancePlugin.js';
+import { Dummy } from '../test-artifacts/index.js';
 
 test('does not support primitive', () => {
   expect(instancePlugin.support(true)).toBe(false)

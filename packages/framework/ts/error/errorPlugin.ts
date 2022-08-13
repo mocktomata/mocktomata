@@ -1,5 +1,5 @@
 import { IsoError } from 'iso-error'
-import { SpecPlugin } from '../spec-plugin'
+import { SpecPlugin } from '../spec-plugin/index.js'
 
 export const errorPlugin: SpecPlugin<Error, Record<string, any>> = {
   name: 'error',

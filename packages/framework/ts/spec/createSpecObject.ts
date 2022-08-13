@@ -1,8 +1,8 @@
 import { AsyncContext } from 'async-fp'
 import { LogLevel, logLevels } from 'standard-log'
-import { createSpec } from './createSpec'
-import { Spec } from './types'
-import { InvokeMetaMethodAfterSpec } from './errors'
+import { createSpec } from './createSpec.js'
+import { Spec } from './types.js'
+import { InvokeMetaMethodAfterSpec } from './errors.js'
 
 export function createSpecObject(context: AsyncContext<Spec.Context & {
   mode: Spec.Mode,

@@ -1,3 +1,3 @@
-export * from './createTestContext'
-export * from './createTestIO'
-export * from './getCallerRelativePath'
+export * from './createTestContext.js'
+export * from './createTestIO.js'
+export * from './getCallerRelativePath.js'

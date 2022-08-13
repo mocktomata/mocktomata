@@ -1,14 +1,14 @@
 import { AsyncContext } from 'async-fp'
 import { LeftJoin } from 'type-plus'
-import { createMockto } from '../mockto'
-import { createFixedModeMocktoFn } from '../mockto/createMocktoFn'
-import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs'
-import { transformConfig } from '../mockto/transformConfig'
-import { createSpecObject, Spec } from '../spec'
-import { loadPlugins, SpecPlugin } from '../spec-plugin'
-import { createTestIO, getCallerRelativePath } from '../test-utils'
-import { TimeTracker } from '../timeTracker'
-import { Mocktomata } from '../types'
+import { createMockto } from '../mockto/index.js'
+import { createFixedModeMocktoFn } from '../mockto/createMocktoFn.js'
+import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs.js'
+import { transformConfig } from '../mockto/transformConfig.js'
+import { createSpecObject, Spec } from '../spec/index.js'
+import { loadPlugins, SpecPlugin } from '../spec-plugin/index.js'
+import { createTestIO, getCallerRelativePath } from '../test-utils/index.js'
+import { TimeTracker } from '../timeTracker/index.js'
+import { Mocktomata } from '../types.js'
 
 export namespace createIncubator {
   export type Context = { config: Mocktomata.Config, io: createTestIO.TestIO }

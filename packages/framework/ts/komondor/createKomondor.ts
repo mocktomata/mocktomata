@@ -1,11 +1,11 @@
 import { AsyncContext } from 'async-fp'
-import { transformConfig } from '../mockto/transformConfig'
-import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec'
-import { loadPlugins } from '../spec-plugin'
-import { MaskCriterion } from '../spec/types-internal'
-import { getCallerRelativePath } from '../test-utils'
-import { TimeTracker } from '../timeTracker'
-import { Mocktomata } from '../types'
+import { transformConfig } from '../mockto/transformConfig.js'
+import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec/index.js'
+import { loadPlugins } from '../spec-plugin/index.js'
+import { MaskCriterion } from '../spec/types-internal.js'
+import { getCallerRelativePath } from '../test-utils/index.js'
+import { TimeTracker } from '../timeTracker/index.js'
+import { Mocktomata } from '../types.js'
 
 export namespace createKomondor {
   export type Komondor = KomondorFn & {

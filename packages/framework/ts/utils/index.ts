@@ -1,1 +1,1 @@
-export * from './prettyPrintSpecRecord'
+export * from './prettyPrintSpecRecord.js'

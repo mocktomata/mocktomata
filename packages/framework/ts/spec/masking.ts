@@ -1,5 +1,5 @@
 import { reduceKey } from 'type-plus'
-import { MaskCriterion, MaskNumberCriterion, MaskStringCriterion, MaskRegExpCriterion } from './types-internal'
+import { MaskCriterion, MaskNumberCriterion, MaskStringCriterion, MaskRegExpCriterion } from './types-internal.js'
 
 export function createMaskFn(criterion: MaskCriterion) {
   if (isNumberCriterion(criterion)) {

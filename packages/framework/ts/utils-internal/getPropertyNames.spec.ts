@@ -1,4 +1,4 @@
-import { getPropertyNames, getInheritedPropertyNames } from './getPropertyNames';
+import { getPropertyNames, getInheritedPropertyNames } from './getPropertyNames.js';
 
 describe('getPropertyNames()', () => {
   test('empty object', () => {

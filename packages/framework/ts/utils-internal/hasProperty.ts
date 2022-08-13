@@ -1,4 +1,4 @@
-import { SpecRecord } from '../spec-record/types'
+import { SpecRecord } from '../spec-record/types.js'
 
 export function hasProperty(subject: any, property: SpecRecord.SupportedKeyTypes): boolean {
   if (typeof property === 'string') {

@@ -1,4 +1,4 @@
-import { hasProperty } from './hasProperty'
+import { hasProperty } from './hasProperty.js'
 
 describe('string property', () => {
   test('no matching property', () => {
