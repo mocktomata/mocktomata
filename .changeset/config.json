@@ -3,7 +3,16 @@
   "changelog": "@changesets/cli/changelog",
   "commit": true,
   "title": "chore: version packages",
-  "fixed": [],
+  "fixed": [
+    [
+      "@mocktomata/file-server",
+      "@mocktomata/framework",
+      "@mocktomata/io-client",
+      "@mocktomata/io-fs",
+      "@mocktomata/io-local",
+      "mocktomata"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
