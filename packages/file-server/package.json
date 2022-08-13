@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/file-server",
-  "version": "7.0.0-beta.10",
+  "version": "7.0.0",
   "description": "mocktomata file server",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {

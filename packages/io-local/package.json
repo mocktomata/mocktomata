@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-local",
-  "version": "7.0.0-beta.10",
+  "version": "7.0.0",
   "description": "mocktomata local IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
@@ -44,7 +44,7 @@
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "^1.0.12",
-    "@mocktomata/plugin-fixture-dummy": "^1.1.10",
+    "@mocktomata/plugin-fixture-dummy": "^1.1.11",
     "@mocktomata/plugin-fixture-no-activate": "^1.0.10",
     "assertron": "^9.2.5",
     "jest": "^28.1.3",

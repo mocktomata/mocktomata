@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/io-client",
-  "version": "7.0.0-beta.10",
+  "version": "7.0.0",
   "description": "mocktomata client IO package",
   "homepage": "https://github.com/mocktomata/mocktomata",
   "bugs": {
