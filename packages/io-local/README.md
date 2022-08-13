@@ -1,5 +1,5 @@
 # @mocktomata/io-local
 
-`komondor` io package for loading locally.
+`mocktomata` IO package for loading locally.
 
-This is used for environments succh as NodeJS and Electron.
+This is used for environments such as NodeJS and Electron.

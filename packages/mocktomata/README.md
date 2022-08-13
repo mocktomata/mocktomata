@@ -1,23 +1,20 @@
-# mocktomata
+# Mocktomata
 
 [![NPM version][npm-image]][npm-url]
 [![NPM downloads][downloads-image]][downloads-url]
 
-[![Github NodeJS][github-nodejs]][github-action-url]
+[![GitHub NodeJS][github-nodejs]][github-action-url]
 [![Codecov][codecov-image]][codecov-url]
-[![Codacy Grade Badge][codacy-grade]][codacy-grade-url]
-[![Codacy Coverage Badge][codacy-coverage]][codacy-coverage-url]
 
 [![Visual Studio Code][vscode-image]][vscode-url]
-[![Wallaby.js][wallaby-image]][wallaby-url]
 
 Hello masters,
 
 My name is [`mockto`](#mockto).
 
-I'm the main automaton and you guide to the [`mocktomata`][mocktomata] system.
+I'm the main automaton and your guide to the [`mocktomata`][mocktomata] system.
 
-In a nut shell, [`mocktomata`][mocktomata] can save the behavior of your code,
+In a nutshell, [`mocktomata`][mocktomata] can save the behavior of your code,
 and simulate it at a later time.
 
 We can isolate your code from the changes and uncertainty of the outside world.
@@ -28,17 +25,17 @@ Most of the time, we are summoned by masters when they are writing tests.
 Writing tests with us has several benefits over traditional tests.
 
 Traditionally,
-masters write different type of tests: unit tests, integration tests, and acceptance tests etc,
+masters write different type of tests: unit tests, integration tests, and acceptance tests etc.,
 to verify the system is working correctly.
 
 This approach has several drawbacks:
 
 - There are many duplications and overlaps between different type of tests.
 - Acceptance tests cannot run during build time.
-- Acceptance tests is slow and take a long time to complete.
+- Acceptance tests are slow and take a long time to complete.
 - Acceptance tests can fail when the external systems are unstable or change without notice.
 - Unit tests and integration tests give a false impression that the system is working while in reality the external system does not behave as expected causing the system to fail.
-- It is very expensive to setup and teardown environment for acceptance tests, especially when there are many environment variations and application states that are difficult to reach.
+- It is very expensive to set up and teardown environment for acceptance tests, especially when there are many environment variations and application states that are difficult to reach.
 
 Utilizing us can mitigate most of these drawbacks.
 
@@ -61,7 +58,7 @@ we will record the behavior as `SpecRecord`.
 They are saved under the `.mocktomata` folder at the root of your project.
 Please check in that folder into your source control.
 
-## mockto
+## `mockto`
 
 My name is [`mockto`][mockto].
 
@@ -100,7 +97,7 @@ Internally, I'll record the behavior and replay it as needed.
 Of course, I can do a lot more.
 Please check out my [user manual][mockto] for more information.
 
-## komondor
+## `komondor`
 
 Hi, I'm `komondor`.
 
@@ -134,7 +131,7 @@ I'm the one you can depend on.
 
 To know more about me, you can check out my ~~raising guide~~ [`user manual`][komondor].
 
-## incubator
+## Incubator
 
 My name is `incubator`, master.
 
@@ -164,24 +161,24 @@ once as `${specName}: save` and once as `${specName}: simulate`.
 
 Also, the `SpecRecord` is stored in memory and not written to file.
 
-Please checout my [responsibility list][incubator] for more information.
+Please check out my [responsibility list][incubator] for more information.
 
-## configuration
+## Configuration
 
 Hi, it's `mockto` again.
 
-By default, [`mocktomata`][mocktomata]) works out-of-the-box without any configuration.
+By default, [`mocktomata`][mocktomata] works out-of-the-box without any configuration.
 It should be able to cover most of the use cases for testing.
 
-But you can configure [`mocktomata`][mocktomata]) to do more things such as using additional plugins, and changing the behavior of the `auto` mode.
+But you can configure [`mocktomata`][mocktomata] to do more things such as using additional plugins, and changing the behavior of the `auto` mode.
 
-Did I mentioned that you can change your unit tests to acceptance tests by a flip of a switch?
+Did I mention that you can change your unit tests to acceptance tests by a flip of a switch?
 
-To learn more, please chect out the [`configuration manual`][configuration].
+To learn more, please check out the [`configuration manual`][configuration].
 
 ## Wallaby config
 
-Since `mocktomata` will write files to the file system, if you use wallaby you need configure it as follow so that the changed files will be written correctly:
+Since `mocktomata` will write files to the file system, if you use wallaby you need to configure it as follows so that the changed files will be written correctly:
 
 ```js
 module.exports = () => {
@@ -217,31 +214,22 @@ module.exports = () => {
 }
 ```
 
-[npm-image]: https://img.shields.io/npm/v/mocktomata.svg?style=flat
-[npm-url]: https://www.npmjs.com/package/mocktomata
-[downloads-image]: https://img.shields.io/npm/dm/mocktomata.svg?style=flat
-[downloads-url]: https://npmjs.org/package/mocktomata
-
-[github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/nodejs/badge.svg
-[github-action-url]: https://github.com/mocktomata/mocktomata/actions
+[advance-use-cases]: https://github.com/mocktomata/mocktomata/blob/master/docs/advance-use-cases.md
+[axios]: https://www.npmjs.com/package/axios
 [codecov-image]: https://codecov.io/gh/mocktomata/mocktomata/branch/master/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/mocktomata/mocktomata
-[codacy-grade]: https://api.codacy.com/project/badge/Grade/bcb8e88109b54a7593cfe6744c6dac38
-[codacy-grade-url]: https://www.codacy.com/gh/mocktomata/mocktomata?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=mocktomata/mocktomata&amp;utm_campaign=Badge_Grade
-[codacy-coverage]: https://api.codacy.com/project/badge/Coverage/bcb8e88109b54a7593cfe6744c6dac38
-[codacy-coverage-url]: https://www.codacy.com/manual/mocktomata/mocktomata?utm_source=github.com&utm_medium=referral&utm_content=mocktomata/mocktomata&utm_campaign=Badge_Coverage
-
-[vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
-[vscode-url]: https://code.visualstudio.com/
-[wallaby-image]: https://img.shields.io/badge/wallaby.js-configured-green.svg
-[wallaby-url]: https://wallabyjs.com
-
-[axios]: https://www.npmjs.com/package/axios
-[advance-use-cases]: https://github.com/mocktomata/mocktomata/blob/master/docs/advance-use-cases.md
 [configuration]: https://github.com/mocktomata/mocktomata/blob/master/docs/configuration.md
+[downloads-image]: https://img.shields.io/npm/dm/mocktomata.svg?style=flat
+[downloads-url]: https://npmjs.org/package/mocktomata
+[github-action-url]: https://github.com/mocktomata/mocktomata/actions
+[github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/release/badge.svg
 [incubator]: https://github.com/mocktomata/mocktomata/blob/master/docs/incubator.md
 [komondor]: https://github.com/mocktomata/mocktomata/blob/master/docs/komondor.md
 [mockto]: https://github.com/mocktomata/mocktomata/blob/master/docs/mockto.md
 [mocktomata]: https://github.com/mocktomata/mocktomata/blob/master/packages/mocktomata
+[npm-image]: https://img.shields.io/npm/v/mocktomata.svg?style=flat
+[npm-url]: https://www.npmjs.com/package/mocktomata
 [plugin]: https://github.com/mocktomata/mocktomata/blob/master/docs/plugin.md
 [spec]: https://github.com/mocktomata/mocktomata/blob/master/docs/spec.md
+[vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
+[vscode-url]: https://code.visualstudio.com/
