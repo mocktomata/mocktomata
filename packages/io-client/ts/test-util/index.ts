@@ -1,1 +1,1 @@
-export * from './createFakeServerFetch';
+export * from './createFakeServerFetch.js';

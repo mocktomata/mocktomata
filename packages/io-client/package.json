@@ -15,27 +15,24 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
+  "type": "module",
+  "exports": {
+    "import": "./esm/index.js"
+  },
+  "types": "./esm/index.d.ts",
   "files": [
-    "lib",
-    "libm",
+    "esm",
     "ts"
   ],
-  "main": "lib/index.js",
-  "module": "libm/index.js",
-  "jsnext:main": "libm/index.js",
-  "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "pnpm run build:lib && pnpm run build:libm",
-    "build:lib": "tsc -p tsconfig.lib.json",
-    "build:libm": "tsc -p tsconfig.libm.json",
-    "clean": "rimraf lib libm .tsc",
-    "coverage": "jest -c jest.config.jsdom.js --coverage --reporters=default",
-    "dc": "pnpm run depcheck",
-    "depcheck": "dependency-check . --unused --no-dev && dependency-check . --missing --no-dev",
+    "build": "tsc",
+    "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
+    "coverage": "jest --coverage --reporters=default",
+    "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "test": "jest -c jest.config.jsdom.js --reporters=default",
-    "test:watch": "jest --watch",
-    "verify": "pnpm run lint && pnpm run build && pnpm run dc && pnpm run coverage",
+    "test": "jest -c jest.config.jsdom.cjs --reporters=default",
+    "test:watch": "jest -c jest.config.jsdom.cjs --watch",
+    "verify": "npm-run-all -p lint build coverage -p depcheck",
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
@@ -45,6 +42,7 @@
   },
   "devDependencies": {
     "@mocktomata/file-server": "workspace:*",
+    "@mocktomata/plugin-fixture-dummy": "workspace:*",
     "@mocktomata/io-fs": "workspace:*",
     "assertron": "^9.2.5",
     "jest": "^28.1.3",

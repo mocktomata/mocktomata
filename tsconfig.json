@@ -2,10 +2,7 @@
   "files": [],
   "references": [
     {
-      "path": "packages/framework/tsconfig.lib.json"
-    },
-    {
-      "path": "packages/framework/tsconfig.libm.json"
+      "path": "packages/framework"
     },
     {
       "path": "packages/plugin-fixture-dummy/tsconfig.lib.json"
@@ -14,28 +11,16 @@
       "path": "packages/plugin-fixture-dummy/tsconfig.libm.json"
     },
     {
-      "path": "packages/io-fs/tsconfig.lib.json"
+      "path": "packages/io-fs"
     },
     {
-      "path": "packages/io-fs/tsconfig.libm.json"
+      "path": "packages/file-server"
     },
     {
-      "path": "packages/file-server/tsconfig.lib.json"
+      "path": "packages/io-client"
     },
     {
-      "path": "packages/file-server/tsconfig.libm.json"
-    },
-    {
-      "path": "packages/io-client/tsconfig.lib.json"
-    },
-    {
-      "path": "packages/io-client/tsconfig.libm.json"
-    },
-    {
-      "path": "packages/io-local/tsconfig.lib.json"
-    },
-    {
-      "path": "packages/io-local/tsconfig.libm.json"
+      "path": "packages/io-local"
     },
     {
       "path": "packages/mocktomata/tsconfig.lib.json"

@@ -26,8 +26,7 @@ module.exports = {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         options: {
-          configFile: 'tsconfig.browser.json',
-          transpileOnly: true
+          configFile: 'tsconfig.browser.json'
         }
       }
     ]
@@ -42,11 +41,11 @@ module.exports = {
       '.js': ['.ts', '.js'],
       '.mjs': ['.mts', '.mjs']
     },
-    extensions: ['.ts', '.tsx', '.js'],
+    extensions: ['.ts', '.tsx', '.js', '...'],
     fallback: {
       module: false
     },
-    mainFields: ['browser', 'main']
+    mainFields: ['browser', 'module', 'main']
   },
   plugins: [
     new webpack.IgnorePlugin({ resourceRegExp: /fs/ }),

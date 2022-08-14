@@ -1,3 +1,3 @@
-export * from './createIO'
-export * from './errors'
-export * from './types'
+export * from './createIO.js'
+export * from './errors.js'
+export * from './types.js'
