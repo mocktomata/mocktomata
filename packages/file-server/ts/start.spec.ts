@@ -2,12 +2,12 @@ import { FileRepository } from '@mocktomata/io-fs'
 import t from 'assert'
 import a from 'assertron'
 import fs from 'fs'
-import fetch from 'node-fetch'
+import { default as fetch } from 'node-fetch'
 import path from 'path'
 import { dirSync } from 'tmp'
 import { PromiseValue } from 'type-plus'
-import { start } from '.'
-import { btoa } from './base64'
+import { start } from './index.js'
+import { btoa } from './base64.js'
 
 test('if a port is specified and not available, will throw an error', async () => {
   const runningServer = await start({ port: 3710 })
