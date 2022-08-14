@@ -19,30 +19,33 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
+  "type": "module",
+  "exports": {
+    "import": "./esm/index.js"
+  },
+  "types": "./esm/index.d.ts",
   "files": [
-    "lib",
-    "libm",
+    "esm",
     "ts"
   ],
-  "main": "lib/index.js",
-  "module": "libm/index.js",
-  "jsnext:main": "libm/index.js",
-  "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "pnpm run build:lib && pnpm run build:libm",
-    "build:lib": "tsc -p tsconfig.lib.json",
-    "build:libm": "tsc -p tsconfig.libm.json",
-    "clean": "rimraf lib libm .tsc",
-    "dc": "pnpm run depcheck",
-    "_depcheck": "dependency-check . --unused --no-dev -i '@mocktomata/framework' && dependency-check . --missing --no-dev",
+    "build": "tsc",
+    "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
+    "coverage": "jest --coverage --reporters=default",
+    "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "verify": "rimraf lib && tsc -p tsconfig.build.json && jest --coverage && pnpm run dependency-check"
+    "test": "jest --reporters=default",
+    "test:watch": "jest --watch",
+    "verify": "npm-run-all -p lint build coverage -p depcheck",
+    "watch": "pnpm run test:watch"
   },
   "dependencies": {
     "@mocktomata/framework": "workspace:*"
   },
   "devDependencies": {
+    "depcheck": "^1.4.3",
     "jest": "^28.1.3",
+    "npm-run-all": "^4.1.5",
     "ts-jest": "^28.0.7",
     "typescript": "~4.7.4"
   },

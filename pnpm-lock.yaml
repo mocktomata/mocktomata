@@ -324,13 +324,17 @@ importers:
   packages/plugin-nodejs:
     specifiers:
       '@mocktomata/framework': workspace:*
+      depcheck: ^1.4.3
       jest: ^28.1.3
+      npm-run-all: ^4.1.5
       ts-jest: ^28.0.7
       typescript: ~4.7.4
     dependencies:
       '@mocktomata/framework': link:../framework
     devDependencies:
+      depcheck: 1.4.3
       jest: 28.1.3
+      npm-run-all: 4.1.5
       ts-jest: 28.0.7_bi2kohzqnxavgozw3csgny5hju
       typescript: 4.7.4
 
