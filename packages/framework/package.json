@@ -25,7 +25,9 @@
     "ts"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "run-p build:esm build:cjs",
+    "build:esm": "tsc",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
     "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
     "coverage": "jest --coverage --reporters=default",
     "depcheck": "depcheck",
@@ -56,5 +58,8 @@
     "size-limit": "^8.0.1",
     "ts-jest": "^28.0.7",
     "typescript": "~4.7.4"
+  },
+  "engines": {
+    "node": ">=14.16"
   }
 }

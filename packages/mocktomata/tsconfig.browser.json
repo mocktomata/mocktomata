@@ -16,6 +16,6 @@
     "target": "es5",
     // "skipLibCheck": true,
     // "outDir": ".no-where",
-    "rootDir": "src"
+    "rootDir": "ts"
   }
 }
