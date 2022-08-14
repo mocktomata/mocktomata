@@ -1,6 +1,6 @@
 import { NotSpecable, SpecIDCannotBeEmpty, SpecNotFound } from '@mocktomata/framework'
 import a from 'assertron'
-import { mockto } from '..'
+import { mockto } from '../index.js'
 
 function noop() { }
 

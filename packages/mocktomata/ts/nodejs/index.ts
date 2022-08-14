@@ -1,3 +1,3 @@
-export * from './config'
-export * from './komondor'
-export * from './mockto'
+export * from './config.js'
+export * from './komondor.js'
+export * from './mockto.js'

@@ -1,5 +1,5 @@
 import { toLogLevel } from 'standard-log'
-import { log } from '../log'
+import { log } from '../log.js'
 import { Spec } from '@mocktomata/framework'
 
 export type SourceType = 'environment' | 'config()' | 'config'

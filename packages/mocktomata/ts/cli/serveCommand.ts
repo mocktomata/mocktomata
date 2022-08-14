@@ -1,7 +1,7 @@
 import { start } from '@mocktomata/file-server'
 import chalk from 'chalk'
 import { command, z } from 'clibuilder'
-import { validate } from './validate'
+import { validate } from './validate.js'
 
 export const serveCommand = command({
   name: 'serve',
@@ -16,7 +16,7 @@ export const serveCommand = command({
   context: {
     start
   },
-  async run(args) {
+  async run(args: any) {
     if (validate(this, args, {
       port: {
         presence: false,

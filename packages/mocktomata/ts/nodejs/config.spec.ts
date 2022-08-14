@@ -1,11 +1,11 @@
 import { createMockto, createTestIO, Spec } from '@mocktomata/framework'
 import a from 'assertron'
 import { captureLogs, logLevel, logLevels } from 'standard-log'
-import { CannotConfigAfterUsed, config, mockto } from '..'
-import { log } from '../log'
-import { ENV_VARS } from './constants'
-import { createContext } from './createContext'
-import { store } from './store'
+import { CannotConfigAfterUsed, config, mockto } from '../index.js'
+import { log } from '../log.js'
+import { ENV_VARS } from './constants.js'
+import { createContext } from './createContext.js'
+import { store } from './store.js'
 
 afterEach(() => {
   store.reset()

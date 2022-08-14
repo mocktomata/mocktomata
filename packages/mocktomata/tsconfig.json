@@ -1,3 +1,34 @@
 {
-  "extends": "./tsconfig.libm.json"
+  "extends": "../../.tsc/tsconfig.settings.json",
+  "compilerOptions": {
+    "lib": [
+      "DOM"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "outDir": "esm",
+    "rootDir": "ts",
+    "target": "ES2020"
+  },
+  "references": [
+    {
+      "path": "../framework"
+    },
+    {
+      "path": "../file-server"
+    },
+    {
+      "path": "../io-client"
+    },
+    {
+      "path": "../io-local"
+    },
+    {
+      "path": "../plugin-fixture-dummy"
+    }
+  ],
+  "include": [
+    "ts",
+    "typings"
+  ]
 }

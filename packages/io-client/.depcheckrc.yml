@@ -1,2 +1,8 @@
+ignorePatterns:
+  - ./poc
 ignores:
+  - '@kayahr/jest-electron-runner'
+  - '@mocktomata/file-server'
+  - '@mocktomata/io-fs'
+  - '@mocktomata/plugin-fixture-dummy'
   - ts-jest
