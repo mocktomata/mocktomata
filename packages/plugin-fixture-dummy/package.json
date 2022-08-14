@@ -38,6 +38,6 @@
     "@mocktomata/framework": "workspace:*"
   },
   "engines": {
-    "node": ">= 6"
+    "node": ">= 14.16"
   }
 }
