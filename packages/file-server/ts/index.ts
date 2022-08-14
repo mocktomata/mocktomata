@@ -1,1 +1,1 @@
-export * from './start'
+export * from './start.js'
