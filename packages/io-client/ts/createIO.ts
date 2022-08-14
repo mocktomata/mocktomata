@@ -1,7 +1,7 @@
 import { Mocktomata } from '@mocktomata/framework'
 import fetch from 'cross-fetch'
-import { createIOInternal } from './createIOInternal'
-import { CreateIOOptions } from './types'
+import { createIOInternal } from './createIOInternal.js'
+import { CreateIOOptions } from './types.js'
 
 export async function createIO(options?: CreateIOOptions): Promise<Mocktomata.IO> {
   // istanbul ignore next

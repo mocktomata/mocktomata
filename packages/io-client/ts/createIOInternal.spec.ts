@@ -1,20 +1,20 @@
 import { SpecNotFound, SpecRecord } from '@mocktomata/framework'
-import a from 'assertron'
-import { createIOInternal } from './createIOInternal'
-import { createFakeServerFetch } from './test-util'
+import { a } from 'assertron'
+import { createIOInternal } from './createIOInternal.js'
+import { createFakeServerFetch } from './test-util/index.js'
 
 test('read not exist spec throws SpecNotFound', async () => {
   const fetch = createFakeServerFetch()
   const io = await createIOInternal({ fetch, location })
 
-  await a.throws(io.readSpec('not exist', __filename), SpecNotFound)
+  await a.throws(io.readSpec('not exist', __dirname), SpecNotFound)
 })
 
 test('read existing spec', async () => {
   const fetch = createFakeServerFetch()
   const io = await createIOInternal({ fetch, location })
 
-  const actual = await io.readSpec('exist', __filename)
+  const actual = await io.readSpec('exist', __dirname)
 
   expect(actual).toEqual({ actions: [] })
 })
@@ -24,7 +24,7 @@ test('write spec', async () => {
   const io = await createIOInternal({ fetch, location })
 
   const record: SpecRecord = { refs: [], actions: [{ type: 'invoke', refId: '1', performer: 'user', thisArg: '0', payload: [], tick: 0 }] }
-  await io.writeSpec('new spec', __filename, record)
+  await io.writeSpec('new spec', __dirname, record)
 
   const spec = fetch.specs['new spec']
   expect(spec).toEqual(record)

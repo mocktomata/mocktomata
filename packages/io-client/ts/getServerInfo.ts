@@ -1,7 +1,7 @@
-import { buildUrl } from './buildUrl';
-import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors';
-import { CreateIOOptions } from './types';
-import { Context } from './typesInternal';
+import { buildUrl } from './buildUrl.js';
+import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js';
+import { CreateIOOptions } from './types.js';
+import { Context } from './typesInternal.js';
 
 export type ServerInfo = {
   name: string,
