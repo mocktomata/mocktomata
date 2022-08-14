@@ -1,4 +1,4 @@
-const base = require('../../.jest/jest.jsdom')
+const base = require('../../.jest/jest.electron.render')
 
 module.exports = {
   ...base,

@@ -30,8 +30,8 @@
     "coverage": "jest --coverage --reporters=default",
     "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "test": "jest -c jest.config.jsdom.cjs --reporters=default",
-    "test:watch": "jest -c jest.config.jsdom.cjs --watch",
+    "test": "jest -c jest.electron.cjs --reporters=default",
+    "test:watch": "jest -c jest.electron.cjs --watch",
     "verify": "npm-run-all -p lint build coverage -p depcheck",
     "watch": "pnpm run test:watch"
   },
@@ -41,12 +41,12 @@
     "type-plus": "^4.11.1"
   },
   "devDependencies": {
+    "@kayahr/jest-electron-runner": "^5.1.1",
     "@mocktomata/file-server": "workspace:*",
-    "@mocktomata/plugin-fixture-dummy": "workspace:*",
     "@mocktomata/io-fs": "workspace:*",
+    "@mocktomata/plugin-fixture-dummy": "workspace:*",
     "assertron": "^9.2.5",
     "jest": "^28.1.3",
-    "jest-environment-jsdom": "^28.1.3",
     "ts-jest": "^28.0.7",
     "typescript": "~4.7.4"
   },

@@ -3,6 +3,7 @@ export type Context = {
   location: {
     protocol: string,
     hostname: string
-  }
+  },
+  importModule(moduleSpecifier: string): Promise<any>
 }
 

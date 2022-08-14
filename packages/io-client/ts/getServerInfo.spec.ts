@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js'
 import { getServerInfo } from './getServerInfo.js'
 
@@ -20,9 +20,13 @@ test('will try to search for server', async () => {
         }
       } as any)
     }
-  })();
-
-  const info = await getServerInfo({ fetch, location })
+  })()
+  const info = await getServerInfo({
+    fetch, location: {
+      hostname: 'localhost',
+      protocol: 'http:'
+    }
+  })
   a.satisfies(info, {
     name: 'mocktomata',
     url: 'http://localhost:3712',
@@ -38,7 +42,12 @@ test('throws when specific server is not available', async () => {
 
 test('throws when server is not up', async () => {
   const fetch = () => Promise.reject({})
-  await a.throws(getServerInfo({ fetch, location }), ServerNotAvailableAtPortRange)
+  await a.throws(getServerInfo({
+    fetch, location: {
+      hostname: 'localhost',
+      protocol: 'http:'
+    }
+  }), ServerNotAvailableAtPortRange)
 })
 
 test('remote', async () => {
