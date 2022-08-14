@@ -3,7 +3,7 @@ import t from 'assert'
 import a from 'assertron'
 import path from 'path'
 import { dirSync } from 'tmp'
-import { createIO } from '.'
+import { createIO } from './index.js'
 
 test('get spec config', async () => {
   const cwd = fixturePath('simple')
@@ -21,7 +21,7 @@ test('get spec config', async () => {
 test('read not exist spec throws SpecNotFound', async () => {
   const io = createIO()
 
-  await a.throws(io.readSpec('not exist', __filename), SpecNotFound)
+  await a.throws(io.readSpec('not exist', __dirname), SpecNotFound)
 })
 
 test('read existing spec', async () => {
