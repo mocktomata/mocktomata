@@ -1,4 +1,4 @@
 export { start as startServer } from '@mocktomata/file-server'
-export * from './errors'
-export * from './framework'
-export * from './nodejs'
+export * from './errors.js'
+export * from './framework.js'
+export * from './nodejs/index.js'

@@ -3,17 +3,17 @@
     "downlevelIteration": true,
     "esModuleInterop": true,
     "lib": [
-      "es2015"
+      "DOM"
     ],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "ESNext",
+    "moduleResolution": "Node",
     "newLine": "LF",
     "noUnusedLocals": true,
     "removeComments": false,
     "inlineSources": true,
     "inlineSourceMap": true,
     "strict": true,
-    "target": "es5",
+    "target": "ES2020",
     // "skipLibCheck": true,
     // "outDir": ".no-where",
     "rootDir": "ts"

@@ -1,2 +1,2 @@
-export * from './config'
-export * from './mockto'
+export * from './config.js'
+export * from './mockto.js'

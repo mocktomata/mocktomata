@@ -1,1 +1,1 @@
-export * from './configResolvers'
+export * from './configResolvers.js'

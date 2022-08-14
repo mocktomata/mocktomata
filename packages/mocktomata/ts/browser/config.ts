@@ -1,5 +1,5 @@
-import { store } from './store'
-import { CannotConfigAfterUsed } from '../errors'
+import { store } from './store.js'
+import { CannotConfigAfterUsed } from '../errors.js'
 
 export namespace config {
   export type Options = {

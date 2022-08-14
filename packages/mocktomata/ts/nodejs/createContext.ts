@@ -1,11 +1,11 @@
 import { createIO } from '@mocktomata/io-local'
 import { AsyncContext } from 'async-fp'
 import { PromiseValue, required } from 'type-plus'
-import { Mocktomata } from '..'
-import { log } from '../log'
-import { resolveFilter, resolveLogLevel, resolveMode } from '../utils'
-import { ENV_VARS } from './constants'
-import { store } from './store'
+import { Mocktomata } from '../index.js'
+import { log } from '../log.js'
+import { resolveFilter, resolveLogLevel, resolveMode } from '../utils/index.js'
+import { ENV_VARS } from './constants.js'
+import { store } from './store.js'
 
 export function createContext(options?: { io: Mocktomata.IO }) {
   return new AsyncContext(async () => {

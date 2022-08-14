@@ -1,5 +1,5 @@
 import { createMockto } from '@mocktomata/framework'
-import { createContext } from './createContext'
+import { createContext } from './createContext.js'
 
 const context = createContext()
 

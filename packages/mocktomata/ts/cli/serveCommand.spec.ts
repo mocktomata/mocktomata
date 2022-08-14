@@ -1,7 +1,7 @@
 import { start } from '@mocktomata/file-server'
 import colors from 'ansi-colors'
 import { testCommand } from 'clibuilder'
-import { serveCommand } from './serveCommand'
+import { serveCommand } from './serveCommand.js'
 
 test('out of range port number emits error message', async () => {
   const { messages } = await testCommand(serveCommand, 'serve --port 90000')

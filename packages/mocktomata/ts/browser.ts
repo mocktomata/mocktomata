@@ -1,3 +1,3 @@
-export * from './errors'
-export * from './framework'
-export * from './browser'
+export * from './errors.js'
+export * from './framework.js'
+export * from './browser.js'
