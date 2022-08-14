@@ -5,21 +5,21 @@ import { getServerInfo } from './getServerInfo.js'
 import { CreateIOOptions } from './types.js'
 import { Context } from './typesInternal.js'
 
-export async function createIOInternal({ fetch, location }: Context, options?: CreateIOOptions): Promise<Mocktomata.IO> {
-  const info = await getServerInfo({ fetch, location }, options)
+export async function createIOInternal(ctx: Context, options?: CreateIOOptions): Promise<Mocktomata.IO> {
+  const info = await getServerInfo(ctx, options)
   return {
     async getConfig() {
       const url = buildUrl(info.url, `config`)
-      const response = await fetch(url)
+      const response = await ctx.fetch(url)
       const config = await response.json() as Mocktomata.Config
       return required({ plugins: [] }, pick(config, 'overrideMode', 'ecmaVersion', 'filePathFilter', 'specNameFilter', 'plugins'))
     },
     async loadPlugin(name: string): Promise<SpecPlugin.Module> {
-      return import(name)
+      return ctx.importModule(name)
     },
     async readSpec(specName: string, specRelativePath: string): Promise<SpecRecord> {
       const id = btoa(JSON.stringify({ specName, specRelativePath }))
-      const response = await fetch(buildUrl(info.url, `specs/${id}`))
+      const response = await ctx.fetch(buildUrl(info.url, `specs/${id}`))
       if (response.status === 404) {
         throw new SpecNotFound(id, specRelativePath)
       }
@@ -27,7 +27,7 @@ export async function createIOInternal({ fetch, location }: Context, options?: C
     },
     async writeSpec(specName: string, specRelativePath: string, record: SpecRecord) {
       const id = btoa(JSON.stringify({ specName, specRelativePath }))
-      const response = await fetch(buildUrl(info.url, `specs/${id}`), { method: 'POST', body: JSON.stringify(record) })
+      const response = await ctx.fetch(buildUrl(info.url, `specs/${id}`), { method: 'POST', body: JSON.stringify(record) })
       // istanbul ignore next
       if (!response.ok) {
         throw new Error(`failed to write spec: ${response.statusText}`)

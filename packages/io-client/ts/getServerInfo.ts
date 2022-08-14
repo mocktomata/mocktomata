@@ -1,7 +1,6 @@
-import { buildUrl } from './buildUrl.js';
-import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js';
-import { CreateIOOptions } from './types.js';
-import { Context } from './typesInternal.js';
+import { buildUrl } from './buildUrl.js'
+import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js'
+import { CreateIOOptions } from './types.js'
 
 export type ServerInfo = {
   name: string,
@@ -9,6 +8,14 @@ export type ServerInfo = {
   url: string,
   // TODO: server not returning plugins
   plugins?: string[]
+}
+
+export type Context = {
+  fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>,
+  location: {
+    protocol: string,
+    hostname: string
+  }
 }
 
 export async function getServerInfo(context: Context, options?: CreateIOOptions): Promise<ServerInfo> {
