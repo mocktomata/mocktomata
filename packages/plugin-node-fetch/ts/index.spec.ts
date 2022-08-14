@@ -1,5 +1,5 @@
 import { incubator } from '@mocktomata/framework'
-import fetch from 'node-fetch'
+import { default as fetch } from 'node-fetch'
 
 incubator('call echo with url string', (title, spec) => {
   test(title, async () => {

@@ -1,6 +1,6 @@
-import axios from 'axios'
+import { default as axios } from 'axios'
 import { mockto } from 'mocktomata'
-import { Calculator } from './Calculator'
+import { Calculator } from './Calculator.js'
 
 afterAll(() => mockto.teardown())
 
