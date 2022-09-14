@@ -1,10 +1,10 @@
-# incubator
+# `incubator`
 
 This is the user manual for `incubator`.
 
 `incubator` is primary used to develop [`plugin`](./plugin.md).
 
-- [incubator](#incubator)
+- [`incubator`](#incubator)
   - [`incubator.config()`](#incubatorconfig)
   - [`incubator(specName, (title, spec) => void)`](#incubatorspecname-title-spec--void)
   - [`incubator.sequence(specName, (title, { save, simulate }) => void)`](#incubatorsequencespecname-title--save-simulate---void)
@@ -24,7 +24,7 @@ beforeAll(() => incubator.config({ plugins: [
 ]}))
 ```
 
-where `activate` is activate function you export (`function activate(context: SpecPlugin.ActivationContext): any`).
+where `activate` is the activate function you export (`function activate(context: SpecPlugin.ActivationContext): any`).
 
 As shown in the example above, you can load other plugins to create a specific test environment.
 

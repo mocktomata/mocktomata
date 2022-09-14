@@ -2,7 +2,7 @@
 
 ## Subject Profiles
 
-Subject profile descibes the behavior of the subject.
+Subject profile describes the behavior of the subject.
 
 profile: `target` is the spec target, including its derivatives.
 
