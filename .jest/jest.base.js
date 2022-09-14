@@ -6,7 +6,7 @@ module.exports = {
       useESM: true
     }
   },
-   moduleNameMapper: {
+  moduleNameMapper: {
     '^@mocktomata/(plugin-fixture-deep-link.*)': '<rootDir>/../$1',
     // '^@mocktomata/(.*)/(.*)': '<rootDir>/../$1/ts/$2',
     '^@mocktomata/(.*)': '<rootDir>/../$1/ts',
@@ -20,6 +20,12 @@ module.exports = {
   //   '../../scripts/jest-setup.js'
   // ],
   transform: {
-    '^.+\\.(js|jsx|mjs)$': 'babel-jest'
+    '^.+\\.(js|jsx|mjs|cjs)$': 'babel-jest',
+    // '^.+\\.(ts|tsx|mts|cts)$': [
+    //   'ts-jest', {
+    //     isolatedModules: true,
+    //     useESM: true
+    //   }
+    // ]
   },
 }
