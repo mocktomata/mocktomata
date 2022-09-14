@@ -1,5 +1,6 @@
 import a from 'assertron'
 import { AsyncContext } from 'async-fp'
+import { createStandardLogForTest } from 'standard-log'
 import { transformConfig } from '../mockto/transformConfig.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import { createTestContext, createTestIO } from '../test-utils/index.js'
@@ -8,9 +9,9 @@ import { createSimulator } from './simulator.js'
 import { createSpec } from './types-internal.js'
 
 test('create not expected stub throws', async () => {
-  const context = createTestContext().extend(loadPlugins).extend(transformConfig)
+  const { context } = createTestContext()
   const sim = createSimulator(
-    context,
+    context.extend(loadPlugins).extend(transformConfig),
     'extra ref',
     { refs: [], actions: [] },
     { timeout: 10 })
@@ -20,7 +21,9 @@ test('create not expected stub throws', async () => {
 
 test('simulate without plugin install throws', () => {
   const io = createTestIO()
-  const context = new AsyncContext<createSpec.Context>({ io, config: {}, plugins: [], timeTrackers: [], maskCriteria: [] })
+  const sl = createStandardLogForTest()
+  const log = sl.getLogger('mocktomata')
+  const context = new AsyncContext<createSpec.Context>({ io, log, config: {}, plugins: [], timeTrackers: [], maskCriteria: [] })
   const simulator = createSimulator(
     context,
     'no plugin',

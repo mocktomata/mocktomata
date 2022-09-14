@@ -1,9 +1,9 @@
 import { incubator } from '@mocktomata/framework'
-import { default as fetch } from 'node-fetch'
+import fetch from 'node-fetch'
 
 incubator('call echo with url string', (title, spec) => {
   test(title, async () => {
-    const f = await spec(fetch)
+    const f = await spec(fetch.default)
 
     const response = await f('https://postman-echo.com/get?foo=foo1')
     const actual = await response.json() as { args: { foo: string } }

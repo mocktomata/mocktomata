@@ -1,10 +1,9 @@
 import a from 'assertron'
-import { captureLogs, logLevels } from 'standard-log'
+import { logLevels } from 'standard-log'
 import { createMockto, SpecNotFound } from '../index.js'
-import { log } from '../log.js'
 import { createTestContext, getCallerRelativePath } from '../test-utils/index.js'
 
-const context = createTestContext()
+const { context } = createTestContext()
 const mockto = createMockto(context)
 
 afterAll(() => mockto.teardown())
@@ -36,7 +35,7 @@ test('live with options', () => {
 })
 
 test('live has enableLog method', () => {
-  const context = createTestContext()
+  const { context } = createTestContext()
   const mockto = createMockto(context)
   return new Promise<void>(a => {
     mockto.live('live has enableLog method', async (_, spec) => {
@@ -48,7 +47,7 @@ test('live has enableLog method', () => {
 })
 
 test('live enableLog method can specify log level', () => {
-  const context = createTestContext()
+  const { context } = createTestContext()
   const mockto = createMockto(context)
   return new Promise<void>(a => {
     mockto.live('ive enableLog method can specify log level', async (_, spec) => {
@@ -176,18 +175,16 @@ test('auto with options', async () => {
 
 mockto('can enable log after spec subject is created', (title, spec) => {
   test(title, async () => {
-    await captureLogs(log, async () => {
-      const s = await spec(() => 1)
-      spec.enableLog()
-      expect(s()).toBe(1)
-      await spec.done()
-    })
+    const s = await spec(() => 1)
+    spec.enableLog()
+    expect(s()).toBe(1)
+    await spec.done()
   })
 })
 
 describe('config', () => {
   test('override to live mode', async () => {
-    const context = createTestContext({ config: { overrideMode: 'live' } })
+    const { context } = createTestContext({ config: { overrideMode: 'live' } })
     const mockto = createMockto(context)
     await new Promise<void>(a => {
       mockto('force live', async (_, spec) => {
@@ -201,7 +198,7 @@ describe('config', () => {
   })
 
   test('overrideMode has no effect on save and simulate', async () => {
-    const context = createTestContext({ config: { overrideMode: 'live' } })
+    const { context } = createTestContext({ config: { overrideMode: 'live' } })
     const mockto = createMockto(context)
     await new Promise<void>(a => {
       mockto.save('force live', async (_, spec) => {
@@ -220,7 +217,7 @@ describe('config', () => {
   })
 
   test('overrideMode for specific spec name', async () => {
-    const context = createTestContext({
+    const { context } = createTestContext({
       config: {
         overrideMode: 'live',
         specNameFilter: 'to-live',

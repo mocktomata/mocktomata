@@ -1,9 +1,7 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
-import { captureLogs } from 'standard-log'
 import { AnyFunction } from 'type-plus'
 import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from './index.js'
-import { log } from './log.js'
 import { InvokeMetaMethodAfterSpec } from './spec/index.js'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts/index.js'
 
@@ -59,7 +57,7 @@ describe('get', () => {
       const stub = await simulate(subject)
       expect(stub.a).toBe(1)
       expect(stub.b).toBe(2)
-      await simulate.done();
+      await simulate.done()
     })
   })
 })
@@ -972,7 +970,7 @@ describe('promise', () => {
           }, 10)
         })
       }
-      const subject = await spec(foo);
+      const subject = await spec(foo)
 
       let fooing: any
       return new Promise<void>(a => {
@@ -1204,7 +1202,7 @@ describe('class', () => {
       const dii = new Subject()
 
       expect(await dii.getDelayedInner()).toBe('inner')
-      await save.done();
+      await save.done()
       {
         class DelayedInvokeInternal {
           getDelayedInner() {
@@ -1604,7 +1602,7 @@ describe('instance', () => {
       await spec.done()
     })
   })
-});
+})
 
 describe('ignoreMismatch', () => {
   incubator.save('call after spec throws', (title, spec) => {
@@ -1730,16 +1728,14 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('not save in log and record', (title, spec) => {
+  incubator('not save in log and record', (title, spec, reporter) => {
     test(title, async () => {
       spec.enableLog()
-      const logs = await captureLogs(log, async () => {
-        spec.maskValue('secret')
-        const s = await spec((v: string) => v)
-        s('secret')
-        await spec.done()
-      })
-      expect(JSON.stringify(logs)).not.toMatch('secret')
+      spec.maskValue('secret')
+      const s = await spec((v: string) => v)
+      s('secret')
+      await spec.done()
+      expect(JSON.stringify(reporter.logs)).not.toMatch('secret')
     })
   })
 
@@ -1798,7 +1794,7 @@ describe('maskValue', () => {
         await spec.done()
       })
     })
-  });
+  })
 
   describe('with regex', () => {
     incubator('using default replaceWith', (title, spec) => {
@@ -1836,7 +1832,7 @@ describe('maskValue', () => {
         await spec.done()
       })
     })
-  });
+  })
 
   describe('with number', () => {
     incubator('using default replaceWith', (title, spec) => {
@@ -1868,7 +1864,7 @@ describe('maskValue', () => {
         await spec.done()
       })
     })
-  });
+  })
 
   describe('with predicate', () => {
     incubator('using default replaceWith for number', (title, spec) => {

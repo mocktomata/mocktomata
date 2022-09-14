@@ -1,9 +1,8 @@
-import { toLogLevel } from 'standard-log'
-import { log } from '../log.js'
 import { Spec } from '@mocktomata/framework'
+import { Logger, toLogLevel } from 'standard-log'
 
 export type SourceType = 'environment' | 'config()' | 'config'
-export function resolveMode(source: SourceType, value: string | undefined): Spec.OverrideMode | undefined {
+export function resolveMode({ log }: { log: Logger }, source: SourceType, value: string | undefined): Spec.OverrideMode | undefined {
   if (!value) return undefined
   const mode = value.toLowerCase()
   if (mode === 'live' || mode === 'save') return mode
@@ -17,7 +16,7 @@ export function resolveFilter(value: string | undefined) {
 }
 
 
-export function resolveLogLevel(source: SourceType, value: number | string | undefined) {
+export function resolveLogLevel({ log }: { log: Logger }, source: SourceType, value: number | string | undefined) {
   if (!value) return undefined
   if (typeof value === 'number') return value
   const level = toLogLevel(value)

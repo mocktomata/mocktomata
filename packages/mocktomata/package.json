@@ -37,8 +37,8 @@
     "ts"
   ],
   "scripts": {
-    "build": "run-p build:esm build:browser",
-    "build:browser": "webpack",
+    "build": "run-p build:esm",
+    "build:browser": "webpack -c webpack.config.cjs",
     "build:esm": "tsc",
     "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
     "coverage": "jest --coverage --reporters=default",
@@ -58,11 +58,11 @@
     "@mocktomata/io-local": "workspace:*",
     "async-fp": "^5.0.3",
     "chalk": "^4.1.1",
-    "clibuilder": "^7.2.1",
-    "global-store": "^1.0.0-beta.18",
-    "standard-log": "^6.2.1",
-    "standard-log-color": "^3.2.1",
-    "type-plus": "^4.11.1",
+    "clibuilder": "^8.0.2",
+    "global-store": "^1.0.0-beta.21",
+    "standard-log": "^10.0.0",
+    "standard-log-color": "^8.0.0",
+    "type-plus": "^4.12.1",
     "validate.js": "^0.13.1"
   },
   "devDependencies": {
@@ -81,7 +81,7 @@
     "source-map-loader": "^4.0.0",
     "ts-jest": "^28.0.7",
     "ts-loader": "^9.3.1",
-    "typescript": "~4.7.4",
+    "typescript": "~4.8.3",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
   },

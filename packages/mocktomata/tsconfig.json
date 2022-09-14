@@ -30,5 +30,5 @@
   "include": [
     "ts",
     "typings"
-  ]
+, "../framework/ts/mockto/config.test-setup.ts"  ]
 }

@@ -19,7 +19,7 @@ afterEach(() => {
  * Plugin order is reversed so that most specific plugin are checked first.
  */
 test('load plugins in reverse order', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-deep-link/pluginA'] },
     modules: {
       '@mocktomata/plugin-fixture-dummy': echoPluginModule,
@@ -33,7 +33,7 @@ test('load plugins in reverse order', async () => {
 })
 
 test('Not existing plugin throws PluginNotFound', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['not-exist'] },
   })
 
@@ -41,7 +41,7 @@ test('Not existing plugin throws PluginNotFound', async () => {
 })
 
 test('plugin without activate function is ignored', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['@mocktomata/no-activate'] },
     modules: {
       '@mocktomata/no-activate': noActivatePluginModule as any
@@ -52,7 +52,7 @@ test('plugin without activate function is ignored', async () => {
 })
 
 test('plugin missing support method throws', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['@mocktomata/no-support'] },
     modules: {
       '@mocktomata/no-support': missSupportPluginModule as any
@@ -62,7 +62,7 @@ test('plugin missing support method throws', async () => {
 })
 
 test('plugin missing getSpy method throws', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['@mocktomata/no-getspy'] },
     modules: {
       '@mocktomata/no-getspy': missGetSpyPluginModule as any
@@ -73,7 +73,7 @@ test('plugin missing getSpy method throws', async () => {
 })
 
 test('plugin missing getStub method throws', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['@mocktomata/no-getstub'] },
     modules: {
       '@mocktomata/no-getstub': missGetStubPluginModule as any
@@ -84,7 +84,7 @@ test('plugin missing getStub method throws', async () => {
 })
 
 test('registering plugin with the same name throws DuplicatePlugin', async () => {
-  const context = createTestContext({
+  const { context } = createTestContext({
     config: { plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-dummy'] },
     modules: {
       '@mocktomata/plugin-fixture-dummy': echoPluginModule

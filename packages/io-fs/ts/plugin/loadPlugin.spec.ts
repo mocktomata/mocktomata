@@ -1,9 +1,9 @@
 import { PluginModuleNotConforming, PluginNotFound } from '@mocktomata/framework'
 import a from 'assertron'
-import { captureLogs } from 'standard-log'
-import { loadPlugin } from './index.js'
-import { log } from '../log.js'
+import { createStandardLogForTest } from 'standard-log'
 import { fixturePath } from '../util/index.js'
+import { loadPlugin } from './index.js'
+import { ctx } from './loadPlugin.js'
 
 test('load simple plugin', () => {
   const cwd = fixturePath('has-plugins')
@@ -35,10 +35,10 @@ test('activate property not a function throws PluginModuleNotConforming', () => 
 })
 
 test('not a package', () => {
-  const [, logs] = captureLogs(log, () => {
-    const cwd = fixturePath('has-plugins')
-    a.throws(() => loadPlugin(cwd, 'not-exist'), PluginNotFound)
-  })
+  const sl = createStandardLogForTest()
+  ctx.log = sl.getLogger('mocktomata')
+  const cwd = fixturePath('has-plugins')
+  a.throws(() => loadPlugin(cwd, 'not-exist'), PluginNotFound)
 
-  a.satisfies(logs, [{ args: ['Unable to find plugin: not-exist'] }])
+  a.satisfies(sl.reporter.logs, [{ args: ['Unable to find plugin: not-exist'] }])
 })
