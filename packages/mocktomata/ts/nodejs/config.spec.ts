@@ -2,7 +2,6 @@ import { createMockto, createTestIO, Spec } from '@mocktomata/framework'
 import a from 'assertron'
 import { createStandardLogForTest, logLevels } from 'standard-log'
 import { CannotConfigAfterUsed, config, mockto } from '../index.js'
-import { log } from '../log.js'
 import { ENV_VARS } from './constants.js'
 import { createContext } from './createContext.js'
 import { store } from './store.js'
@@ -13,7 +12,6 @@ afterEach(() => {
   delete process.env[ENV_VARS.log]
   delete process.env[ENV_VARS.fileFilter]
   delete process.env[ENV_VARS.specFilter]
-  log.level = undefined
 })
 
 describe('config with config()', () => {

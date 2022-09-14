@@ -1,14 +1,14 @@
 import { createMockto, Mocktomata } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/io-client'
 import { AsyncContext } from 'async-fp'
-import { Logger } from 'standard-log'
+import { createStandardLog, Logger } from 'standard-log'
 import { PromiseValue, required } from 'type-plus'
-import { log } from '../log.js'
 import { resolveFilter, resolveLogLevel, resolveMode } from '../utils/index.js'
 import { store } from './store.js'
 
 const context = new AsyncContext(async () => {
   const io = await createIO()
+  const log = createStandardLog().getLogger('mocktomata')
   const loadedConfig = getLoadedConfig({ log }, await io.getConfig())
   const storedConfig = store.value.config
   const config = required(storedConfig, loadedConfig)

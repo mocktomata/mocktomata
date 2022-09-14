@@ -5,19 +5,19 @@ import { mockto } from '../index.js'
 function noop() { }
 
 mockto('', (_, spec) => {
-  test('spec id cannot be empty (auto)', async () => {
+  it('throws when specName is empty (auto)', async () => {
     await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
   })
 })
 
 mockto.save('', (_, spec) => {
-  test('spec id cannot be empty (save)', async () => {
+  it('throws when specName is empty (save)', async () => {
     await a.throws(spec(noop), SpecIDCannotBeEmpty)
   })
 })
 
 mockto.simulate('', (_, spec) => {
-  test('spec id cannot be empty (simulate)', async () => {
+  it('throws when specName is empty (simulate)', async () => {
     await a.throws(spec(noop), SpecIDCannotBeEmpty)
   })
 })
@@ -37,7 +37,7 @@ mockto.save(`type %s is not specable`, (title, spec) => {
 })
 
 mockto.simulate('not exist', (_, spec) => {
-  test('simulate throws if spec record does not exist', async () => {
+  it('throws during simulate if spec record does not exist', async () => {
     await a.throws(spec((x: any) => x), SpecNotFound)
   })
 })

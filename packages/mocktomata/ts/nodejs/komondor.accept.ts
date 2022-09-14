@@ -4,17 +4,17 @@ import { kd } from '../index.js'
 
 function noop() { }
 
-test('spec id cannot be empty (auto)', async () => {
+it('throws when specName is empty (auto)', async () => {
   const spec = kd('')
   await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
 })
 
-test('spec id cannot be empty (save)', async () => {
+it('throws when specName is empty (save)', async () => {
   const spec = kd.save('')
   await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
 })
 
-test('spec id cannot be empty (simulate)', async () => {
+it('throws when specName is empty (simulate)', async () => {
   const spec = kd.simulate('')
   await a.throws(() => spec(noop), SpecIDCannotBeEmpty)
 })
