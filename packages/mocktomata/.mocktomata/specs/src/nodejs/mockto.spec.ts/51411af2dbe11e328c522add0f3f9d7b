@@ -1,2 +1,0 @@
-calling handler without options
-{"refs":[{"plugin":"@mocktomata/function","profile":"target","meta":"[{\"type\":\"function\",\"name\":\"\",\"length\":1},{}]"},{"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}}],"actions":[{"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":[3],"tick":0},{"type":"return","actionId":0,"tick":1,"payload":3}]}

@@ -17,13 +17,13 @@
     "postinstall": "husky install",
     "lint": "turbo run lint",
     "mtmt": "node ./packages/mocktomata/lib/bin.js",
-    "mocktomata": "pnpm run workspace mocktomata",
+    "mt": "pnpm run --filter mocktomata",
     "nuke": "pnpm run clean && rimraf node_modules",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "publish": "pnpm publish -r --publish-branch beta && changeset tag",
     "test": "turbo run test",
-    "test:browser": "pnpm run workspace mocktomata test:browser",
+    "test:browser": "pnpm run --filter mocktomata test:browser",
     "test:electron": "cross-env JEST_ENV=electron jest --maxWorkers=60%",
     "test:jsdom": "cross-env JEST_ENV=jsdom jest --maxWorkers=60%",
     "test:nodejs": "cross-env JEST_ENV=nodejs jest --maxWorkers=60%",
@@ -70,7 +70,7 @@
     "pinst": "^3.0.0",
     "rimraf": "^3.0.2",
     "turbo": "^1.4.3",
-    "typescript": "~4.7.4"
+    "typescript": "~4.8.3"
   },
   "packageManager": "pnpm@7.12.2"
 }

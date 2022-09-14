@@ -1,4 +1,4 @@
-import { LogLevel } from 'standard-log'
+import { Logger, LogLevel } from 'standard-log'
 import { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecRecord } from '../spec-record/types.js'
 import { TimeTracker } from '../timeTracker/index.js'
@@ -26,6 +26,7 @@ export namespace Spec {
   export type Context = {
     timeTrackers: TimeTracker[],
     plugins: SpecPlugin.Instance[],
+    log: Logger,
     io: IO,
     config: {
       overrideMode?: Mode,

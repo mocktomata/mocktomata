@@ -12,7 +12,7 @@ const globalVariable = pascalCase(filename)
 module.exports = {
   devtool: 'inline-source-map',
   entry: {
-    'mocktomata': './ts/browser'
+    'mocktomata': './ts/browser.ts'
   },
   mode: 'development',
   module: {
@@ -26,7 +26,8 @@ module.exports = {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         options: {
-          configFile: 'tsconfig.browser.json'
+          configFile: 'tsconfig.browser.json',
+          transpileOnly: true
         }
       }
     ]

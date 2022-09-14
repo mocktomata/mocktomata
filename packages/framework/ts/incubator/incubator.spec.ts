@@ -1,27 +1,24 @@
 import a, { AssertOrder } from 'assertron'
-import { logLevels, captureLogs } from 'standard-log'
+import { logLevels } from 'standard-log'
 import { incubator, SpecNotFound } from '../index.js'
 import { log } from '../log.js'
 
 incubator('enable log only lasts through one spec', (title, spec) => {
   test(title, async () => {
-    await captureLogs(log, async () => {
-      const origLevel = log.level
-      spec.enableLog()
-      const s = await spec((x: number) => x + 1)
-      expect(s(4)).toBe(5)
-      await spec.done()
-      expect(log.level).toBe(origLevel)
-    })
+    const origLevel = log.level
+    spec.enableLog()
+    const s = await spec((x: number) => x + 1)
+    expect(s(4)).toBe(5)
+    await spec.done()
+    expect(log.level).toBe(origLevel)
   })
 })
 incubator('enableLog can specify log level', (title, spec) => {
   test(title, async () => {
-    await captureLogs(log, async () => {
-      spec.enableLog(logLevels.none)
-      await spec(() => { })
-      await spec.done()
-    })
+
+    spec.enableLog(logLevels.none)
+    await spec(() => { })
+    await spec.done()
   })
 })
 

@@ -38,7 +38,7 @@
   "dependencies": {
     "@mocktomata/framework": "workspace:*",
     "@mocktomata/io-fs": "workspace:*",
-    "type-plus": "^4.11.1"
+    "type-plus": "^4.12.0"
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "workspace:*",
@@ -49,7 +49,7 @@
     "npm-run-all": "^4.1.5",
     "tmp": "^0.2.1",
     "ts-jest": "^28.0.7",
-    "typescript": "~4.7.4"
+    "typescript": "~4.8.3"
   },
   "engines": {
     "node": ">=14.16"

@@ -23,25 +23,16 @@
       "path": "packages/io-local"
     },
     {
-      "path": "packages/mocktomata/tsconfig.lib.json"
+      "path": "packages/mocktomata"
     },
     {
-      "path": "packages/mocktomata/tsconfig.libm.json"
+      "path": "packages/plugin-node-fetch"
     },
     {
-      "path": "packages/test-nodejs/tsconfig.libm.json"
+      "path": "packages/plugin-nodejs"
     },
     {
-      "path": "packages/plugin-node-fetch/tsconfig.lib.json"
-    },
-    {
-      "path": "packages/plugin-node-fetch/tsconfig.libm.json"
-    },
-    {
-      "path": "packages/plugin-nodejs/tsconfig.lib.json"
-    },
-    {
-      "path": "packages/plugin-nodejs/tsconfig.libm.json"
+      "path": "packages/test-nodejs"
     }
   ]
 }

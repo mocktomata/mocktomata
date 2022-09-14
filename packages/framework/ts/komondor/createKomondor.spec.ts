@@ -1,13 +1,8 @@
-// import a from 'assertron'
-// import { captureLogs, logLevels } from 'standard-log'
-// import { createMockto, SpecNotFound } from '../index.js'
-// import { log } from '../log.js'
-import { logLevels, captureLogs } from 'standard-log'
+import { logLevels } from 'standard-log'
 import { createTestContext } from '../test-utils/index.js'
 import { createKomondor } from './createKomondor.js'
-import { log } from '../log.js'
 
-const context = createTestContext()
+const { context, reporter } = createTestContext()
 const k = createKomondor(context)
 
 afterAll(() => k.teardown())
@@ -53,15 +48,13 @@ test('save with options', async () => {
   await spec.done()
 })
 
-test('save has enableLog method', async () => {
+test.skip('save has enableLog method', async () => {
   const spec = k.save('save has enableLog method')
   await spec(() => { })
-  const [, logs] = await captureLogs(log, async () => {
-    spec.enableLog()
-    await spec.done()
-  })
+  spec.enableLog()
+  await spec.done()
 
-  expect(logs.length).toBe(1)
+  expect(reporter.logs.length).toBe(1)
 })
 
 test('save enableLog method can specify log level', async () => {
