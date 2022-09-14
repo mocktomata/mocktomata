@@ -6,9 +6,9 @@ Boundary is where two systems meet and communicate with each other using data st
 For example, making calls to a remote server or a component written by another team in another language.
 
 When we write tests that needs to communicate across the boundary,
-we often need to create a test double to similate the behavior.
+we often need to create a test double to simulate the behavior.
 
-This allow us to write tests that are fast to run and also decouple from the remote system,
+This allows us to write tests that are fast to run and also decouple from the remote system,
 so that we don't have to configure the remote system to produce the expected behavior.
 
 However, if we only have these tests,
@@ -30,17 +30,17 @@ That's a lot of manual work and the worst of all it reduces the level of trust y
 It also makes writing these tests systematic and simple.
 
 When writing a test that needs to access a remote system across a boundary,
-you will do a three steps test-waltz:
+you will do a three step test-waltz:
 
 - write a test and making it pass while making actual remote calls
-- find out and record the data you recevied from the remote calls
+- find out and record the data you received from the remote calls
 - use the recorded data to create a test double and use the test double in the test
 
 Using `mocktomata`, these three steps becomes very straight forward.
 
-The following example will create a test that needs to communicate to GitHub api.
+The following example will create a test that needs to communicate to GitHub API.
 
-### step 1: writing a passing test with actual remote calls
+### Step 1: writing a passing test with actual remote calls
 
 Step 1 is writing a passing test.
 Your logic should be unit testable,
@@ -75,16 +75,16 @@ test('get follower of a user', t => {
 })
 ```
 
-### step 2: find out and record the data
+### Step 2: find out and record the data
 
 The test is passing.
 Now it is time to figure out the shape of the data (which you probably already know as you consumed it),
 and tell `mocktomata` to save the data.
 
 First thing to do is to use `mocktomata` to spy on the data.
-You can do this in step 1, but I'm doing it here to make the steps more concrete for demostration purpose.
+You can do this in step 1, but I'm doing it here to make the steps more concrete for demonstration purpose.
 
-Unchange (and uninterested) lines from the code above are omitted for clarity.
+Unchanged (and uninterested) lines from the code above are omitted for clarity.
 
 ```ts
 ...
@@ -112,10 +112,10 @@ test('get follower of a user', async t => {
 
 The code above uses `mocktomata` to spy on the call and make sure the data received meet your expectation.
 
-Once the test pass again (meaning the spy is working correctly and you have setup the right expectation),
+Once the test pass again (meaning the spy is working correctly, and you have set up the right expectation),
 you can now tell `mocktomata` to save the result.
 
-To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide an `id`:
+To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide a `id`:
 
 ```ts
   const s = await spec.save(
@@ -129,7 +129,7 @@ This will be improved in version 7.
 
 When you run the test, the result will be saved.
 
-### step 3: replay the recorded data
+### Step 3: replay the recorded data
 
 The last step is to tell `mocktomata` to use the recorded data in the test.
 
@@ -142,9 +142,9 @@ All you need is to change the call from `spec.save()` to `spec.simulate()`:
     github.users.getFollowersForUser)
 ```
 
-That's it! Now your test will be ran using the saved result and not making actual remote calls.
+That's it! Now your test will be run using the saved result and not making actual remote calls.
 
-## scenario
+## Scenario
 
 You can use `scenario()` to execute test steps defined using the `defineStep()` function.
 You can execute the test steps in different context:
@@ -188,13 +188,13 @@ Since `mocktomata` will record the calls,
 if they contain sensitive information you don't want to keep in the record,
 you can remove them in the `spec.actions` before you make the `spec.done()` call.
 
-## speced.satisfy(expectations)
+## `speced.satisfy(expectations)`
 
 You can use this method instead of `speced.done()` if you want to validate the call has been performed correctly.
 
 It is generally better than `speced.done()`;
 however, since there are still come changes need to be made to the spec record before it is stable,
-using `speced.done()` saves you some tendious work in updating the expectations before that happens.
+using `speced.done()` saves you some tedious work in updating the expectations before that happens.
 
 ## FAQ
 
@@ -204,9 +204,9 @@ Check if you have wait for `speced.done()`.
 
 i.e., you should have `await yourSpec.done(...)` in your test.
 
-The record will be save when `done()` resolves.
+The record will be saved when `done()` resolves.
 
-### Enable mocktomata log
+### Enable `mocktomata` log
 
 `mocktomata` provides some logs for debugging purpose.
 Since they are chatty, they are turned off by default.
@@ -224,7 +224,7 @@ addAppender(new ColorAppender())
 getLogger('mocktomata').setLevel(logLevel.debug)
 ```
 
-### Using mocktomata with complex subject
+### Using `mocktomata` with complex subject
 
 Out of the box, `mocktomata` cannot handles subject that returns another function or returns object that contains functions.
 
@@ -234,8 +234,8 @@ The response object from `node-fetch` is not serializable.
 
 To work with these subjects, you can:
 
-- create a plugin
-- wrap it to reutrn DTO.
+- Create a plugin
+- Wrap it to return a DTO.
 
 ```ts
 import fetch = require('node-fetch')
@@ -257,17 +257,17 @@ Creating `fetchJson()` is actually a good practice because it creates a separati
 Your application code uses `fetchJson()` instead of `fetch()`,
 meaning it does not know the information comes from the network.
 
-(yes, for that you should give it a more netural name and remove the HTTP specific options)
+(yes, for that you should give it a more neutral name and remove the HTTP specific options)
 
 ### Test fails after upgrade
 
-Since the libary is still in unstable stage,
+Since the library is still in unstable stage,
 when you upgrade to a version,
 your test may break even if there is no breaking change.
 
-It is due to the under lying record change and features being added.
+It is due to the underlying record change and features being added.
 
-You should able to get them pass again by running the `spec` and `scenario` in `save` mode to update the record.
+You should be able to get them pass again by running the `spec` and `scenario` in `save` mode to update the record.
 After you do that the test should pass again.
 
 The easiest way to do that is using `config`:

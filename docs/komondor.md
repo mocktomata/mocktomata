@@ -1,4 +1,4 @@
-# komondor
+# `komondor`
 
 This is the user manual for `komondor`.
 
@@ -6,7 +6,7 @@ It is designed for general usage.
 
 If you use [`mocktomata`](https://github.com/mocktomata/mocktomata) in test,
 and want to have to more streamlined process,
-you can consider using [`mockto`](./mockto.md) intead.
+you can consider using [`mockto`](./mockto.md) instead.
 
 ## `komondor(specName, [options]): Spec`
 
@@ -31,7 +31,7 @@ test('get friends', async () => {
 })
 ```
 
-For detailed explanation, please checkout the [`mockto`](./mockto.md) user manual.
+For detailed explanation, please check out the [`mockto`](./mockto.md) user manual.
 
 The actual behavior of the call can be controlled by [`configuration`](./configuration.md).
 
@@ -40,7 +40,7 @@ For methods available to `spec`, please check out its [`user manual`](./spec.md)
 ## `komondor.live(specName, [options]): Spec`
 
 Always run the spec in `live` mode.
-Actual calls will be made and the behavior is not recorded.
+Actual calls will be made, and the behavior is not recorded.
 These specs are not affected by configuration.
 
 ## `komondor.save(specName, [options], (title, spec) => void)`
@@ -74,7 +74,7 @@ test('some test', async () => {
 
 `komondor` shares the same tips and tricks for [`mockto`](./mockto.md#tips-and-tricks).
 
-But it also have its own when it is used in production.
+But it also has its own when it is used in production.
 
 ### Recorded Demo
 
@@ -90,7 +90,7 @@ Then you can record the complete behavior and reproduce it later on.
 ## Architecture Consideration
 
 To use `komondor` in production code,
-there are a few architecture best practice you can follow to make it easier.
+there are some architecture best practice you can follow to make it easier.
 
 ### Clean Architecture
 
@@ -98,5 +98,5 @@ there are a few architecture best practice you can follow to make it easier.
 
 Design your application with dependency injection in mind will make it very easy to use `komondor` in production.
 
-All you need to do as passing in the spec'd instance of your dependency and it will work as is.
+All you need to do as passing in the spec'd instance of your dependency, and it will work as is.
 When the time is right, call `spec.done()` to save the record.

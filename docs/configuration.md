@@ -4,7 +4,7 @@ There are three ways to configure `mocktomata`.
 
 Each way has its own application.
 Also, since `mocktomata` can run in multiple environments,
-the configuration may be varies depending on the environment.
+the configuration may vary depending on the environment.
 (the variation will be added in the future)
 
 - [Configuration](#configuration)
@@ -24,8 +24,8 @@ the configuration may be varies depending on the environment.
 `mocktomata` will look for `.mocktomata.js`, `.mocktomata.json`, or the `mocktomata` section inside `package.json`.
 
 Only one of them should be used at a time.
-If more than one configurations is found,
-it will throws an `AmbiguousConfig` error.
+If more than one configuration are found,
+it will throw a `AmbiguousConfig` error.
 
 Using `.mocktomata.json` as an example,
 here is what can be configured and their default values:
@@ -66,7 +66,7 @@ config({
 ## Environment Variables
 
 Specific configuration can be overridden using environment variables.
-This allow different CI job to run `mocktomata` with different configuration.
+This allows different CI jobs to run `mocktomata` with different configuration.
 
 The names are:
 
@@ -78,7 +78,7 @@ The names are:
 ## Tips and Tricks
 
 Each configuration mechanism provided is designed for a specific purpose.
-By using these mechanisms with their intented usage,
+By using these mechanisms with their intended usage,
 it would be easier for you to configure [`mocktomata`](../README.md) to your specific needs.
 
 ### Define plugins in configuration file
