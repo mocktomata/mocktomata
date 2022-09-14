@@ -6,6 +6,14 @@ import { ENV_VARS } from './constants.js'
 import { createContext } from './createContext.js'
 import { store } from './store.js'
 
+beforeEach(() => {
+  store.reset()
+  delete process.env[ENV_VARS.mode]
+  delete process.env[ENV_VARS.log]
+  delete process.env[ENV_VARS.fileFilter]
+  delete process.env[ENV_VARS.specFilter]
+})
+
 afterEach(() => {
   store.reset()
   delete process.env[ENV_VARS.mode]
@@ -22,14 +30,16 @@ describe('config with config()', () => {
     })
   })
 
-  test('override to live mode', () => {
-    const mockto = createMockto(createContext())
+  test('override to live mode', async () => {
+    const mockto = createMockto(createContext({ io: createTestIO() }))
     config({ overrideMode: 'live' })
-    return new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
-      .then(async spec => {
-        await spec({})
-        expect(spec.mode).toBe('live')
-      })
+    const spec = await new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
+    // before calling `spec()`,
+    // `spec.mode` is `undefined`.
+    // This is because the work is done within a pending promise,
+    // which is resovled when `spec()` is called.
+    await spec({})
+    expect(spec.mode).toBe('live')
   })
 
   test('override to save mode', async () => {
@@ -47,7 +57,7 @@ describe('config with config()', () => {
       })
   })
 
-  test.skip('enable log', async () => {
+  test('enable log', async () => {
     config({ logLevel: logLevels.all })
     const sl = createStandardLogForTest()
     const context = createContext({ log: sl.getLogger('mocktomata') })
@@ -87,7 +97,7 @@ describe('config with env', () => {
   })
 
   test('invalid override value emits warning', () => {
-    process.env[ENV_VARS.mode] = 'simulate'
+    process.env[ENV_VARS.mode] = 'something-else'
     const sl = createStandardLogForTest()
     const context = createContext({ log: sl.getLogger('mocktomata') })
     const mockto = createMockto(context)
@@ -95,7 +105,7 @@ describe('config with env', () => {
       .then(async spec => {
         await spec({})
         expect(spec.mode).toBe('save')
-        a.satisfies(sl.reporter.logs, [{ level: logLevels.warn, args: [/invalid value for mode/] }])
+        a.satisfies(sl.reporter.logs[0], { level: logLevels.warn, args: [/invalid value for mode/] })
       })
   })
 
@@ -183,7 +193,7 @@ describe('config with env', () => {
       })
   })
 
-  test.skip('enable log', () => {
+  test('enable log', () => {
     process.env[ENV_VARS.log] = 'debug'
     const sl = createStandardLogForTest()
     const context = createContext({ log: sl.getLogger('mocktomata') })
@@ -195,7 +205,7 @@ describe('config with env', () => {
       })
   })
 
-  test.skip('enable log is case insensitive', () => {
+  test('enable log is case insensitive', () => {
     process.env[ENV_VARS.log] = 'debUg'
     const sl = createStandardLogForTest()
     const context = createContext({ log: sl.getLogger('mocktomata') })
@@ -215,7 +225,7 @@ describe('config with env', () => {
     return new Promise<Spec>(a => mockto('invalid override value emits warning', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
-        a.satisfies(sl.reporter.logs, [{ level: logLevels.warn, args: [/invalid value for log level/] }])
+        a.satisfies(sl.reporter.logs[0], { level: logLevels.warn, args: [/invalid value for log level/] })
       })
   })
 })

@@ -16,7 +16,7 @@ export async function createSaveSpec(
   assertSpecName(specName)
 
   const recorder = createRecorder(context, specName, options)
-  let origLogLevel: LogLevel | undefined
+  let origLogLevel: LogLevel | false | undefined = false
 
   return Object.assign(
     async <S>(subject: S) => {
@@ -30,7 +30,7 @@ export async function createSaveSpec(
         const { io, maskCriteria, log } = await context.get()
         const record = recorder.getSpecRecord(maskCriteria)
         io.writeSpec(specName, invokePath, record)
-        if (origLogLevel) {
+        if (origLogLevel !== false) {
           log.debug(`Spec Record "${specName}":`, prettyPrintSpecRecord(record))
           log.level = origLogLevel
         }

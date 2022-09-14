@@ -16,7 +16,7 @@ export async function createSimulateSpec(
   const { io } = await context.get()
   const loaded = await io.readSpec(specName, invokePath)
   const simulator = createSimulator(context, specName, loaded, options)
-  let origLogLevel: LogLevel | undefined
+  let origLogLevel: LogLevel | false | undefined = false
 
   return Object.assign(
     async <S>(subject: S) => {
@@ -27,7 +27,7 @@ export async function createSimulateSpec(
       get mode() { return 'simulate' as const },
       async done() {
         simulator.end()
-        if (origLogLevel) {
+        if (origLogLevel !== false) {
           const { log } = await context.get()
           log.level = origLogLevel
         }
