@@ -16,11 +16,13 @@ import { getDefaultPerformer } from './subjectProfile.js'
 import { Spec } from './types.js'
 import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal.js'
 import { referenceMismatch } from './validations.js'
+import { Logger } from 'standard-log'
 
 export namespace Simulator {
   export type Context = {
     plugins: SpecPlugin.Instance[],
     timeTracker: TimeTracker,
+    log: Logger,
     maskCriteria: MaskCriterion[],
     record: SpecRecordValidator,
     state: Recorder.State,
@@ -30,10 +32,10 @@ export namespace Simulator {
 }
 
 export function createSimulator(context: AsyncContext<createSpec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
-  // istanbul ignore next
-  const timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout(specName, elapsed))
+  let timeTracker: TimeTracker
   const ctx = context.extend(async context => {
-    const { timeTrackers } = await context.get()
+    const { timeTrackers, log } = await context.get()
+    timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
     timeTrackers.push(timeTracker)
     return {}
   })
@@ -46,11 +48,12 @@ export function createSimulator(context: AsyncContext<createSpec.Context>, specN
   }
 
   return {
-    createStub: <S>(subject: S) => getContext().then(({ plugins, maskCriteria }) => {
+    createStub: <S>(subject: S) => getContext().then(({ plugins, maskCriteria, log }) => {
       assertPluginsLoaded(plugins, specName, loaded.refs)
       record.setPlugins(plugins)
       return createStub({
         plugins,
+        log,
         record,
         timeTracker,
         maskCriteria,
@@ -117,7 +120,7 @@ function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject
   referenceMismatch({ plugin: plugin.name, profile, source: undefined }, ref)
   const refId = record.getRefId(ref)
   const state = { ref, refId }
-  logCreateStub(state, profile, subject)
+  logCreateStub(context, state, profile, subject)
 
   ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
 
@@ -159,13 +162,13 @@ function getProperty(
   }
 
   const actionId = record.addAction(action)
-  logAction(state, actionId, action)
+  logAction(context, state, actionId, action)
   processNextAction(context)
 
   const resultAction = record.getExpectedResultAction(actionId)
   // istanbul ignore next
   if (!resultAction) {
-    logMissingResultAction(state, actionId, action)
+    logMissingResultAction(context, state, actionId, action)
     return undefined
   }
 
@@ -174,7 +177,7 @@ function getProperty(
 
   const result = resolveValue(resultContext, resultAction.payload)
 
-  logAction(resultContext.state, resultActionId, resultAction)
+  logAction(resultContext, resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return result
   throw result
 }
@@ -221,19 +224,19 @@ function setProperty<V = any>(
     timeTracker.stop()
     throw new ActionMismatch(record.specName, action, expected)
   }
-  logAction(context.state, actionId, action)
+  logAction(context, context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
   // istanbul ignore next
   if (!resultAction) {
-    logMissingResultAction(state, actionId, action)
+    logMissingResultAction(context, state, actionId, action)
     return true
   }
   const resultActionId = record.addAction(resultAction)
   const resultContext = getPropertyContext(context, actionId, key)
   const result = resolveValue(resultContext, resultAction.payload)
 
-  logAction(resultContext.state, resultActionId, resultAction)
+  logAction(context, resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return true
   throw result
 }
@@ -245,17 +248,17 @@ function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const refId = record.getRefId(ref)
   const state = { ref, refId }
   if (profile === 'input') {
-    logCreateSpy(state, maskCriteria, profile, subject)
+    logCreateSpy(context, state, maskCriteria, profile, subject)
     // about `as any`: RecordValidator does not have `addRef` and `getSpecRecord` and they are not needed for this
     ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state } as any), subject)
   }
   else {
     if (subject === notDefined) {
-      logCreateStub(state, profile, ref.meta)
+      logCreateStub(context, state, profile, ref.meta)
       ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), undefined, ref.meta)
     }
     else {
-      logCreateStub(state, profile, subject)
+      logCreateStub(context, state, profile, subject)
       ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
     }
   }
@@ -306,12 +309,12 @@ function invoke(context: Simulator.Context,
     throw new ActionMismatch(record.specName, action, expected)
   }
 
-  logAction(context.state, actionId, action)
+  logAction(context, context.state, actionId, action)
   processNextAction(context)
   const resultAction = record.getExpectedResultAction(actionId)
   // istanbul ignore next
   if (!resultAction) {
-    logMissingResultAction(state, actionId, action)
+    logMissingResultAction(context, state, actionId, action)
     return undefined
   }
 
@@ -321,7 +324,7 @@ function invoke(context: Simulator.Context,
 
   setTimeout(() => processNextAction(context), 0)
 
-  logAction(resultContext.state, resultActionId, resultAction)
+  logAction(context, resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return result
   throw result
 }
@@ -358,13 +361,13 @@ function instantiate(
     throw new ActionMismatch(record.specName, action, expected)
   }
 
-  logAction(context.state, actionId, action)
+  logAction(context, context.state, actionId, action)
   processNextAction(context)
 
   const resultAction = record.getExpectedResultAction(actionId)!
   // istanbul ignore next
   if (!resultAction) {
-    logMissingResultAction(state, actionId, action)
+    logMissingResultAction(context, state, actionId, action)
     return undefined
   }
 
@@ -373,7 +376,7 @@ function instantiate(
   const result = resolveValue(resultContext, resultAction.payload, () => handler({ args: spiedArgs }))
   setTimeout(() => processNextAction(context), 0)
 
-  logAction(resultContext.state, resultActionId, resultAction)
+  logAction(context, resultContext.state, resultActionId, resultAction)
   if (resultAction.type === 'return') return result
   throw result
 }

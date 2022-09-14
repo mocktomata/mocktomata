@@ -1,3 +1,4 @@
+import { Logger } from 'standard-log'
 import { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecRecord } from '../spec-record/types.js'
 import { TimeTracker } from '../timeTracker/index.js'
@@ -31,6 +32,7 @@ export namespace Recorder {
   export type Context = {
     plugins: SpecPlugin.Instance[],
     timeTracker: TimeTracker,
+    log: Logger,
     record: SpecRecorderBuilder,
     state: State,
     spyOptions: SpyOption[],

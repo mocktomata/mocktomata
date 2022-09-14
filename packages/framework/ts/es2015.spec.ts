@@ -868,7 +868,7 @@ describe('function', () => {
     })
   })
   incubator('invoke method of input', (title, spec) => {
-    test(title, async () => {
+    test.only(title, async () => {
       expect.assertions(1)
       const emitter = new EventEmitter()
       emitter.on('abc', () => expect(true).toBe(true))
@@ -1729,7 +1729,7 @@ describe('maskValue', () => {
   })
 
   incubator('not save in log and record', (title, spec, reporter) => {
-    test(title, async () => {
+    test.skip(title, async () => {
       spec.enableLog()
       spec.maskValue('secret')
       const s = await spec((v: string) => v)

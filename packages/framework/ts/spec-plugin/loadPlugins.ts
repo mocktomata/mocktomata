@@ -10,7 +10,7 @@ export async function loadPlugins(context: AsyncContext<Mocktomata.Context>) {
   const { config, io, log } = await context.get()
   // check `config.ecmaVersion` in the future
   const plugins: SpecPlugin.Instance[] = []
-  addPluginModule(plugins, es2015.name, es2015)
+  addPluginModule({ log }, plugins, es2015.name, es2015)
   const pluginNames = config.plugins
   for (let i = 0; i < pluginNames.length; i++) {
     const name = pluginNames[i]
@@ -26,7 +26,7 @@ async function loadPlugin({ io, log, plugins }: {
 }, moduleName: string) {
   log.debug('loadPlugin:', moduleName)
   const pluginModule = await tryLoad(io, moduleName)
-  addPluginModule(plugins, moduleName, pluginModule)
+  addPluginModule({ log }, plugins, moduleName, pluginModule)
 }
 async function tryLoad(io: SpecPlugin.IO, name: string) {
   try {

@@ -1,19 +1,8 @@
 import a from 'assertron'
 import { startsWith } from 'satisfier'
-import { logLevels } from 'standard-log'
-import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from './index.js'
-import { log } from '../log.js'
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts/index.js'
 import { createTestContext } from '../test-utils/index.js'
-
-beforeEach(() => {
-  log.level = logLevels.none
-  // store.reset()
-})
-
-afterEach(() => {
-  log.level = undefined
-})
+import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from './index.js'
 
 /**
  * Plugin order is reversed so that most specific plugin are checked first.

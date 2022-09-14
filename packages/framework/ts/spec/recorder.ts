@@ -4,7 +4,7 @@ import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin.js'
 import { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecRecord } from '../spec-record/types.js'
-import { createTimeTracker } from '../timeTracker/index.js'
+import { createTimeTracker, TimeTracker } from '../timeTracker/index.js'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal/index.js'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs.js'
 import { maskIfNeeded } from './masking.js'
@@ -14,13 +14,14 @@ import { Spec } from './types.js'
 import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal.js'
 
 export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
-  // istanbul ignore next
-  const timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout(specName, elapsed))
+  let timeTracker: TimeTracker
   const ctx = context.extend(async context => {
-    const { timeTrackers } = await context.get()
+    const { timeTrackers, log } = await context.get()
+    timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
     timeTrackers.push(timeTracker)
     return { timeTracker }
   })
+
   const record = createSpecRecordBuilder(specName)
 
   let c: Promise<PartialPick<Recorder.Context, 'state'>>
@@ -62,7 +63,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   if (spyOption?.options.inert) ref.inert = true
   const refId = context.record.addRef(ref)
   const state = { ref, refId }
-  logCreateSpy(state, context.maskCriteria, profile, subject)
+  logCreateSpy(context, state, context.maskCriteria, profile, subject)
   return ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
 }
 
@@ -123,7 +124,7 @@ function getProperty<V>(
     key,
   }
   const actionId = record.addAction(action)
-  logAction(context.state, actionId, action)
+  logAction(context, context.state, actionId, action)
   return handleResult(context, actionId, action.type, handler)
 }
 
@@ -147,7 +148,7 @@ function setProperty<V, R>(
   handleResult(context, actionId, action.type, () => {
     const spiedValue = getSpy(getPropertyContext(context, actionId, key), value, { profile: getPropertyProfile(state.ref.profile) })
     action.value = record.findRefId(spiedValue) || value
-    logAction(context.state, actionId, action)
+    logAction(context, context.state, actionId, action)
     return handler(spiedValue)
   })
   return true
@@ -158,7 +159,6 @@ function invoke<V, T, A extends any[]>(
   { thisArg, args, performer, site }: SpecPlugin.SpyContext.invoke.Options<T, A>,
   handler: SpecPlugin.SpyContext.invoke.Handler<V, T, A>) {
   const { record, state, timeTracker } = context
-
   const action: SpecRecord.InvokeAction = {
     type: 'invoke',
     refId: state.refId,
@@ -179,7 +179,7 @@ function invoke<V, T, A extends any[]>(
       action.payload.push(record.findRefId(spiedArg) ?? arg)
       return spiedArg
     })
-    logAction(context.state, actionId, action)
+    logAction(context, context.state, actionId, action)
     return handler({ thisArg: spiedThisArg, args: spiedArgs as A })
   })
 }
@@ -207,7 +207,7 @@ function instantiate<V, A extends any[]>(
       action.payload.push(record.findRefId(spiedArg) || arg)
       return spiedArg
     }) as A
-    logAction(context.state, actionId, action)
+    logAction(context, context.state, actionId, action)
     return handler({ args: spiedArgs })
   })
 }
@@ -239,7 +239,7 @@ function addResultAction(
   const spy = getSpy(resultContext, subject, { profile: getResultProfile(context.state.ref.profile, actionType) })
   const refId = record.findRefId(spy)
   action.payload = refId !== undefined ? refId : subject
-  logAction(resultContext.state, id, action)
+  logAction(resultContext, resultContext.state, id, action)
   return maskIfNeeded(context.maskCriteria, spy)
 }
 

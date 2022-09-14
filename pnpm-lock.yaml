@@ -112,7 +112,7 @@ importers:
       size-limit: ^8.0.1
       stack-utils: ^2.0.3
       standard-log: ^10.0.0
-      tersify: ^3.10.2
+      tersify: ^3.10.5
       ts-jest: ^28.0.7
       type-plus: ^4.12.0
       typescript: ~4.8.3
@@ -121,7 +121,7 @@ importers:
       iso-error: 4.3.6
       stack-utils: 2.0.5
       standard-log: 10.0.0
-      tersify: 3.10.2
+      tersify: 3.10.5
       type-plus: 4.12.1
     devDependencies:
       '@size-limit/preset-big-lib': 8.0.1_size-limit@8.0.1
@@ -2873,7 +2873,7 @@ packages:
       iso-error: 4.3.6
       path-equal: 1.2.2
       satisfier: 5.2.2
-      tersify: 3.10.2
+      tersify: 3.10.5
       type-plus: 4.12.1
     dev: true
 
@@ -8298,7 +8298,7 @@ packages:
   /satisfier/5.2.2:
     resolution: {integrity: sha512-VEMcWR7F9xCqWtmjt8HetuycNAPqP5MPcZrYTs+DshHNiE39jWLPjdZeTt/+bhh4ogge2OuktNOWTMcQHAOHcA==}
     dependencies:
-      tersify: 3.10.2
+      tersify: 3.10.5
     dev: true
 
   /saxes/5.0.1:
@@ -9002,12 +9002,12 @@ packages:
       source-map-support: 0.5.21
     dev: true
 
-  /tersify/3.10.2:
-    resolution: {integrity: sha512-7R7EAX2CYn14J4M9wp4phx0Wtd10KVl98f+iMIp17Ua9YBqMTkrZYK5LvtJpxrh+fO1uGTyKoeqL1BXpHiayMw==}
+  /tersify/3.10.5:
+    resolution: {integrity: sha512-dLgsTbGVH/6Z+KU4d+NqMmsMFRwRmTFNxsl5vKGkUmaSQ0TTAwnv+Hck5S8Pdn5bcZSyjR3aTvvetJ7ZUs+ZYg==}
     dependencies:
       acorn: 8.8.0
       is-buffer: 2.0.5
-      unpartial: 0.7.5
+      unpartial: 1.0.3
 
   /test-exclude/6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
@@ -9482,7 +9482,7 @@ packages:
   /type-plus/4.12.1:
     resolution: {integrity: sha512-uQmArqoyVBeUQtt16A0xreSg4YZGWh1Z5E1mdLTubfBLOh7AAs1OlYF9SenDxaJPOulRlnZd8o5LN/Oani0ZKQ==}
     dependencies:
-      tersify: 3.10.2
+      tersify: 3.10.5
       unpartial: 1.0.3
 
   /typedarray-to-buffer/3.1.5:
@@ -9563,10 +9563,6 @@ packages:
 
   /unpartial/0.6.4:
     resolution: {integrity: sha512-t/aGg/x8vW0KCjPB8A6TBB1hd0wnWMze8WD83uUpqSDm99jmhY2ZcHpivlvvSGmPCJ/S5ASZzxeQHga4JTW/4A==}
-    engines: {node: '>=6'}
-
-  /unpartial/0.7.5:
-    resolution: {integrity: sha512-02G/AkbF7MkgaEOAJmCe7P0UYzJVkMkAIU5YEJsO5QmDX7vkqyNctVi1gPm8YLVlGo5T/Qe/hYA66AuliEKBag==}
     engines: {node: '>=6'}
 
   /unpartial/1.0.3:
