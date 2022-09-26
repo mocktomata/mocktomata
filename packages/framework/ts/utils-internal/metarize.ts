@@ -1,4 +1,4 @@
-import { AnyFunction, reduceKey } from 'type-plus'
+import { AnyFunction, reduceByKey } from 'type-plus'
 
 export function metarize(value: Record<any, any> | AnyFunction) {
   return JSON.stringify([getMetaType(value), getMeta(value)])
@@ -24,7 +24,7 @@ function getMetaType(value: Record<any, any> | AnyFunction) {
 }
 
 function getMeta(value: any) {
-  return reduceKey(value, (p, key) => {
+  return reduceByKey(value, (p, key) => {
     const descriptor = Object.getOwnPropertyDescriptor(value, key)!
     if (descriptor.enumerable) {
       if (descriptor.value === null || typeof descriptor.value !== 'object' && typeof descriptor.value !== 'function')

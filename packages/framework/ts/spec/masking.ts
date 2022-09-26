@@ -1,4 +1,4 @@
-import { reduceKey } from 'type-plus'
+import { reduceByKey } from 'type-plus'
 import { MaskCriterion, MaskNumberCriterion, MaskStringCriterion, MaskRegExpCriterion } from './types.internal.js'
 
 export function createMaskFn(criterion: MaskCriterion) {
@@ -109,7 +109,7 @@ export function maskValue<T extends string | number>(value: any, maskFn: (value:
     return value.map(v => maskValue(v, maskFn))
   }
   if (typeof value === 'object') {
-    return reduceKey(value, (v, key) => {
+    return reduceByKey(value, (v, key) => {
       v[key] = maskValue(v[key], maskFn)
       return v
     }, value)
