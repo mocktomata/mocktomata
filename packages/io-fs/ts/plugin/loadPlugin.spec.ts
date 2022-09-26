@@ -1,4 +1,4 @@
-import { PluginModuleNotConforming, PluginNotFound } from '@mocktomata/framework'
+import { PluginNotFound } from '@mocktomata/framework'
 import a from 'assertron'
 import { createStandardLogForTest } from 'standard-log'
 import { fixturePath } from '../util/index.js'
@@ -22,16 +22,6 @@ test('load based on cwd', () => {
   const cwd = fixturePath('has-plugins')
   const actual = loadPlugin(cwd, 'm-plugin-dummy')
   expect(typeof actual.activate).toBe('function')
-})
-
-test('no activate property throws PluginModuleNotConforming', () => {
-  const cwd = fixturePath('has-plugins')
-  a.throws(() => loadPlugin(cwd, 'no-activate'), PluginModuleNotConforming)
-})
-
-test('activate property not a function throws PluginModuleNotConforming', () => {
-  const cwd = fixturePath('has-plugins')
-  a.throws(() => loadPlugin(cwd, 'activate-not-fn'), PluginModuleNotConforming)
 })
 
 test('not a package', () => {

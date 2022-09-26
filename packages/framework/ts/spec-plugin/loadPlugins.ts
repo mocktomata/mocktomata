@@ -3,7 +3,7 @@ import { Logger } from 'standard-log'
 import { es2015 } from '../es2015.js'
 import { Mocktomata } from '../types.js'
 import { addPluginModule } from './addPluginModule.js'
-import { PluginNotFound } from './errors.js'
+import { PluginModuleNotConforming, PluginNotFound } from './errors.js'
 import { SpecPlugin } from './types.js'
 
 export async function loadPlugins(context: AsyncContext<Mocktomata.Context>) {
@@ -30,9 +30,12 @@ async function loadPlugin({ io, log, plugins }: {
 }
 async function tryLoad(io: SpecPlugin.IO, name: string) {
   try {
-    return await io.loadPlugin(name)
+    const m = await io.loadPlugin(name)
+    if (m && typeof m.activate === 'function') return m
   }
   catch (e: any) {
+    console.log(e)
     throw new PluginNotFound(name)
   }
+  throw new PluginModuleNotConforming(name)
 }
