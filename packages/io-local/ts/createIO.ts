@@ -4,13 +4,12 @@ import path from 'path'
 import { required, pick } from 'type-plus'
 
 export namespace createIO {
-  export type Options = {
+  export type InternalContext = {
     cwd: string
   }
 }
 
-export function createIO(options?: createIO.Options): Mocktomata.IO {
-  const { cwd } = required({ cwd: process.cwd() }, options)
+export function createIO({ cwd }: createIO.InternalContext = { cwd: process.cwd() }): Mocktomata.IO {
   const repo = new FileRepository({ cwd })
   const config = repo.loadConfig() as Mocktomata.Config
 
