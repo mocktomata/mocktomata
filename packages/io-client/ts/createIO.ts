@@ -1,6 +1,6 @@
 import { Mocktomata } from '@mocktomata/framework'
 import fetch from 'cross-fetch'
-import { createIOInternal } from './createIOInternal.js'
+import { createIOInternal } from './createIO.internal.js'
 import { importModule } from './platform.js'
 import { CreateIOOptions } from './types.js'
 
