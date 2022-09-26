@@ -1,7 +1,7 @@
 import { createIO } from '@mocktomata/io-local'
 import { AsyncContext } from 'async-fp'
 import { createStandardLog, Logger } from 'standard-log'
-import { PromiseValue, required } from 'type-plus'
+import { required } from 'type-plus'
 import { Mocktomata } from '../index.js'
 import { resolveFilter, resolveLogLevel, resolveMode } from '../utils/index.js'
 import { ENV_VARS } from './constants.js'
@@ -33,10 +33,11 @@ function getEnvConfig(ctx: { log: Logger }) {
   }
 }
 
-function getLoadedConfig(ctx: { log: Logger }, config: PromiseValue<ReturnType<Mocktomata.IO['getConfig']>>) {
+function getLoadedConfig(ctx: { log: Logger }, config: Record<string, any>) {
   if (config.overrideMode) config.overrideMode = resolveMode(ctx, 'config', config.overrideMode)
   if (config.filePathFilter) config.filePathFilter = resolveFilter(config.filePathFilter)
   if (config.specNameFilter) config.specNameFilter = resolveFilter(config.specNameFilter)
   if (config.logLevel) config.logLevel = resolveLogLevel(ctx, 'config', config.logLevel) as any
+  config.plugins = config.plugins ?? []
   return config
 }
