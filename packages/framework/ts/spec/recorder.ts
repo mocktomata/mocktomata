@@ -11,7 +11,7 @@ import { maskIfNeeded } from './masking.js'
 import { createSpecRecordBuilder } from './record.js'
 import { getDefaultPerformer } from './subjectProfile.js'
 import { Spec } from './types.js'
-import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types-internal.js'
+import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
 
 export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
   let timeTracker: TimeTracker

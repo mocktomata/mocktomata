@@ -4,7 +4,7 @@ import { assertMockable } from './assertMockable.js'
 import { assertSpecName } from './assertSpecName.js'
 import { createSimulator } from './simulator.js'
 import { Spec } from './types.js'
-import { createSpec } from './types-internal.js'
+import { createSpec } from './types.internal.js'
 
 export async function createSimulateSpec(
   context: AsyncContext<createSpec.Context>,

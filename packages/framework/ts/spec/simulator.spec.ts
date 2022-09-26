@@ -6,7 +6,7 @@ import { loadPlugins } from '../spec-plugin/index.js'
 import { createTestContext, createTestIO } from '../test-utils/index.js'
 import { ExtraReference, PluginsNotLoaded } from './errors.js'
 import { createSimulator } from './simulator.js'
-import { createSpec } from './types-internal.js'
+import { createSpec } from './types.internal.js'
 
 test('create not expected stub throws', async () => {
   const { context } = createTestContext()

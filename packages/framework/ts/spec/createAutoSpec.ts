@@ -3,7 +3,7 @@ import { createSaveSpec } from './createSaveSpec.js'
 import { createSimulateSpec } from './createSimulateSpec.js'
 import { SpecNotFound } from './errors.js'
 import { Spec } from './types.js'
-import { createSpec } from './types-internal.js'
+import { createSpec } from './types.internal.js'
 
 export async function createAutoSpec(context: AsyncContext<createSpec.Context>, title: string, specPath: string, options: Spec.Options): Promise<Spec> {
   try {
