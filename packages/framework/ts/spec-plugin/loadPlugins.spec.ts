@@ -40,7 +40,6 @@ it('throws PluginModuleNotConforming when the plugin missing activate function',
   await a.throws(() => loadPlugins(context), PluginModuleNotConforming)
 })
 
-
 it('throws PluginModuleNotConforming when the plugin activate export is not a function', async () => {
   const { context } = createTestContext({
     config: { plugins: ['@mocktomata/no-activate'] },

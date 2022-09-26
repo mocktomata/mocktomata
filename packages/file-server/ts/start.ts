@@ -1,6 +1,6 @@
 import boom from '@hapi/boom'
 import { RequestInfo, Server, ServerInfo, ServerRoute } from '@hapi/hapi'
-import { SpecPlugin } from '@mocktomata/framework'
+import type { SpecPlugin } from '@mocktomata/framework'
 import { FileRepository } from '@mocktomata/io-fs'
 import { atob } from './base64.js'
 

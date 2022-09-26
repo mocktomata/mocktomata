@@ -1,4 +1,4 @@
-import { Spec } from '../spec/types.js'
+import type { Spec } from '../spec/types.js'
 
 export function resolveMocktoFnArgs<H = Spec.Handler>(args: any[]): { specName: string, options: Spec.Options | undefined, handler: H } {
   if (args.length === 3) {

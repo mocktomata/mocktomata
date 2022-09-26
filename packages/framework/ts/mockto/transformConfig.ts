@@ -1,5 +1,5 @@
-import { AsyncContext } from 'async-fp'
-import { Mocktomata } from '../types.js'
+import type { AsyncContext } from 'async-fp'
+import type { Mocktomata } from '../types.js'
 
 export async function transformConfig(context: AsyncContext<Mocktomata.Context>) {
   const { config } = await context.get()

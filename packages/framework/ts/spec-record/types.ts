@@ -1,4 +1,4 @@
-import { JSONTypes } from 'type-plus'
+import type { JSONTypes } from 'type-plus'
 
 export type SpecRecord = {
   refs: SpecRecord.Reference[],

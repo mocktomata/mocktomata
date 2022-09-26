@@ -1,5 +1,5 @@
-import { RequiredPick } from 'type-plus'
-import { SpecRecord } from '../spec-record/types.js'
+import type { RequiredPick } from 'type-plus'
+import type { SpecRecord } from '../spec-record/types.js'
 
 export type SpecPlugin<S = any, M = any> = {
   /**

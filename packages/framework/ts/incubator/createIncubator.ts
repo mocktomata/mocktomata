@@ -1,14 +1,14 @@
-import { AsyncContext } from 'async-fp'
-import { Logger, MemoryLogReporter } from 'standard-log'
-import { LeftJoin } from 'type-plus'
+import type { AsyncContext } from 'async-fp'
+import type { Logger, MemoryLogReporter } from 'standard-log'
+import type { LeftJoin } from 'type-plus'
 import { createFixedModeMocktoFn } from '../mockto/createMocktoFn.js'
 import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs.js'
 import { transformConfig } from '../mockto/transformConfig.js'
 import { loadPlugins, SpecPlugin } from '../spec-plugin/index.js'
 import { createSpecObject, Spec } from '../spec/index.js'
 import { createTestIO, getCallerRelativePath } from '../test-utils/index.js'
-import { TimeTracker } from '../timeTracker/index.js'
-import { Mocktomata } from '../types.js'
+import type { TimeTracker } from '../timeTracker/index.js'
+import type { Mocktomata } from '../types.js'
 
 export namespace createIncubator {
   export type Context = { config: Mocktomata.Config, io: createTestIO.TestIO, log: Logger }

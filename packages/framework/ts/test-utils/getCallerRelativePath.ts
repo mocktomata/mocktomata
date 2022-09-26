@@ -1,5 +1,5 @@
 import StackUtils from 'stack-utils'
-import { AnyFunction } from 'type-plus'
+import type { AnyFunction } from 'type-plus'
 
 const stackUtil = new StackUtils({ cwd: process.cwd() })
 

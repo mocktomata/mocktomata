@@ -1,8 +1,8 @@
 import { requiredDeep } from 'type-plus'
 import { es2015 } from '../es2015.js'
-import { SpecPlugin } from '../spec-plugin/index.js'
+import type { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecNotFound } from '../spec/index.js'
-import { Mocktomata } from '../types.js'
+import type { Mocktomata } from '../types.js'
 import { prettyPrintSpecRecord } from '../utils/index.js'
 
 export namespace createTestIO {
