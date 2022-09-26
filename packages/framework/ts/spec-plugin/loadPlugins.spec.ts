@@ -2,7 +2,7 @@ import a from 'assertron'
 import { startsWith } from 'satisfier'
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts/index.js'
 import { createTestContext } from '../test-utils/index.js'
-import { DuplicatePlugin, loadPlugins, PluginNotConforming, PluginNotFound } from './index.js'
+import { DuplicatePlugin, loadPlugins, PluginModuleNotConforming, PluginNotConforming, PluginNotFound } from './index.js'
 
 /**
  * Plugin order is reversed so that most specific plugin are checked first.
@@ -29,7 +29,7 @@ test('Not existing plugin throws PluginNotFound', async () => {
   await a.throws(() => loadPlugins(context), PluginNotFound)
 })
 
-test('plugin without activate function is ignored', async () => {
+it('throws PluginModuleNotConforming when the plugin missing activate function', async () => {
   const { context } = createTestContext({
     config: { plugins: ['@mocktomata/no-activate'] },
     modules: {
@@ -37,7 +37,19 @@ test('plugin without activate function is ignored', async () => {
     }
   })
 
-  await loadPlugins(context)
+  await a.throws(() => loadPlugins(context), PluginModuleNotConforming)
+})
+
+
+it('throws PluginModuleNotConforming when the plugin activate export is not a function', async () => {
+  const { context } = createTestContext({
+    config: { plugins: ['@mocktomata/no-activate'] },
+    modules: {
+      '@mocktomata/no-activate': { activate: 123 } as any
+    }
+  })
+
+  await a.throws(() => loadPlugins(context), PluginModuleNotConforming)
 })
 
 test('plugin missing support method throws', async () => {

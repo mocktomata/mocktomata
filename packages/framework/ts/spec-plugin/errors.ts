@@ -16,8 +16,8 @@ export class DuplicatePlugin extends MocktomataError {
 
 export class PluginModuleNotConforming extends MocktomataError {
   // istanbul ignore next
-  constructor(public id: string) {
-    super(`${id} is not a valid plugin module.`)
+  constructor(public pluginName: string) {
+    super(`${pluginName} is not a valid plugin module.`)
   }
 }
 
