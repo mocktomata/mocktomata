@@ -1,6 +1,6 @@
 import { SpecNotFound, SpecRecord } from '@mocktomata/framework'
 import { a } from 'assertron'
-import { createIOInternal } from './createIOInternal.js'
+import { createIOInternal } from './createIO.internal.js'
 import { createFakeServerFetch } from './test-util/index.js'
 
 const location = {

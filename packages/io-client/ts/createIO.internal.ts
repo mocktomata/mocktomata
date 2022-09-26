@@ -3,7 +3,7 @@ import { pick, required } from 'type-plus'
 import { buildUrl } from './buildUrl.js'
 import { getServerInfo } from './getServerInfo.js'
 import { CreateIOOptions } from './types.js'
-import { Context } from './typesInternal.js'
+import { Context } from './types.internal.js'
 
 export async function createIOInternal(ctx: Context, options?: CreateIOOptions): Promise<Mocktomata.IO> {
   const info = await getServerInfo(ctx, options)
