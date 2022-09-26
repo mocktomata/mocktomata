@@ -4,7 +4,7 @@ import { SpecPlugin } from '../spec-plugin/index.js'
 import { findPlugin } from '../spec-plugin/findPlugin.js'
 import { SpecRecord } from '../spec-record/types.js'
 import { createMaskFn, maskValue } from './masking.js'
-import { MaskCriterion, SpecRecordLive } from './types-internal.js'
+import { MaskCriterion, SpecRecordLive } from './types.internal.js'
 
 export function createSpecRecordBuilder(specName: string) {
   const refs: SpecRecordLive.Reference[] = []

@@ -1,10 +1,10 @@
-import { LogContext } from '../types.internal.js'
+import { Log } from '../log/types.js'
 import { DuplicatePlugin, PluginNotConforming } from './errors.js'
 import { SpecPlugin } from './types.js'
 
 // TODO: this might need to be convert to async function so that the module
 // can call register asynchronously
-export function addPluginModule({ log }: LogContext, plugins: SpecPlugin.Instance[], moduleName: string, pluginModule: SpecPlugin.Module) {
+export function addPluginModule({ log }: Log.Context, plugins: SpecPlugin.Instance[], moduleName: string, pluginModule: SpecPlugin.Module) {
   if (typeof pluginModule.activate !== 'function') {
     log.warn(`${moduleName} does not export an 'activate()' function.`)
     return plugins
