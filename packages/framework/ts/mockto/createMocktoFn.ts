@@ -1,5 +1,5 @@
-import { AsyncContext } from 'async-fp'
-import { MemoryLogReporter } from 'standard-log'
+import type { AsyncContext } from 'async-fp'
+import type { MemoryLogReporter } from 'standard-log'
 import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { createMockto } from './createMockto.js'

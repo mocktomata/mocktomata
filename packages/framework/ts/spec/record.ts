@@ -1,6 +1,6 @@
 import { pick } from 'type-plus'
 import { notDefined } from '../constants.js'
-import { SpecPlugin } from '../spec-plugin/index.js'
+import type { SpecPlugin } from '../spec-plugin/types.js'
 import { findPlugin } from '../spec-plugin/findPlugin.js'
 import { SpecRecord } from '../spec-record/types.js'
 import { createMaskFn, maskValue } from './masking.js'

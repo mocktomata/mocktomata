@@ -1,5 +1,5 @@
-import { SpecRecord } from '../spec-record/types.js'
-import { Recorder } from '../spec/types.internal.js'
+import type { SpecRecord } from '../spec-record/types.js'
+import type { Recorder } from '../spec/types.internal.js'
 
 export function getPropertyContext<C extends { state: Recorder.State }>(context: C, sourceId: SpecRecord.ActionId, key: SpecRecord.SupportedKeyTypes): C {
   return { ...context, state: { ...context.state, source: { type: 'property', id: sourceId, key } } }
