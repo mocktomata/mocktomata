@@ -37,7 +37,6 @@ export namespace SpecPlugin {
   }
 
   export type IO = {
-    getConfig(): Promise<Config>,
     loadPlugin(name: string): Promise<Module>,
   }
 

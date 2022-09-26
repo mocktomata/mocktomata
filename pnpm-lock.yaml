@@ -208,12 +208,10 @@ importers:
       npm-run-all: ^4.1.5
       tmp: ^0.2.1
       ts-jest: ^28.0.7
-      type-plus: ^4.13.1
       typescript: ~4.8.3
     dependencies:
       '@mocktomata/framework': link:../framework
       '@mocktomata/io-fs': link:../io-fs
-      type-plus: 4.13.1
     devDependencies:
       '@mocktomata/plugin-fixture-deep-link': link:../plugin-fixture-deep-link
       '@mocktomata/plugin-fixture-dummy': link:../plugin-fixture-dummy

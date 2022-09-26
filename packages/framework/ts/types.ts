@@ -1,4 +1,3 @@
-import type { ReplaceProperty } from 'type-plus'
 import type { Log } from './log/types.js'
 import type { SpecPlugin } from './spec-plugin/types.js'
 import type { Spec } from './spec/types.js'
@@ -16,8 +15,7 @@ export namespace Mocktomata {
    */
   export type Config = Spec.Config & SpecPlugin.Config & Log.Config
 
-  export type IO = ReplaceProperty<
-    Spec.IO & SpecPlugin.IO,
-    'getConfig',
-    () => Promise<Spec.Config & SpecPlugin.Config & Log.Config>>
+  export type IO = Spec.IO & SpecPlugin.IO & {
+    getConfig(): Promise<Record<string, any>>
+  }
 }

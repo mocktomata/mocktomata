@@ -1,7 +1,6 @@
 import { Mocktomata, SpecNotFound, SpecRecord } from '@mocktomata/framework'
 import { FileRepository } from '@mocktomata/io-fs'
 import path from 'path'
-import { required, pick } from 'type-plus'
 
 export namespace createIO {
   export type InternalContext = {
@@ -11,11 +10,9 @@ export namespace createIO {
 
 export function createIO({ cwd }: createIO.InternalContext = { cwd: process.cwd() }): Mocktomata.IO {
   const repo = new FileRepository({ cwd })
-  const config = repo.loadConfig() as Mocktomata.Config
-
   return {
     async getConfig() {
-      return required({ plugins: [] }, pick(config, 'ecmaVersion', 'filePathFilter', 'overrideMode', 'specNameFilter', 'plugins'))
+      return repo.loadConfig()
     },
     async loadPlugin(id: string) {
       return repo.loadPlugin(id)

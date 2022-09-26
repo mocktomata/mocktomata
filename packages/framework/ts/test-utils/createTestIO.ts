@@ -1,7 +1,7 @@
 import { requiredDeep } from 'type-plus'
 import { es2015 } from '../es2015.js'
-import { Spec, SpecNotFound } from '../spec/index.js'
 import { SpecPlugin } from '../spec-plugin/index.js'
+import { SpecNotFound } from '../spec/index.js'
 import { Mocktomata } from '../types.js'
 import { prettyPrintSpecRecord } from '../utils/index.js'
 
@@ -13,7 +13,7 @@ export namespace createTestIO {
   export type TestIO = {
     getAllSpecs(): IterableIterator<[string, string]>,
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,
-  } & Spec.IO & SpecPlugin.IO
+  } & Mocktomata.IO
 }
 
 export function createTestIO(options?: createTestIO.Options): createTestIO.TestIO {
