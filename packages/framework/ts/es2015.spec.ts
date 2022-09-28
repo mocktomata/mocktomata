@@ -868,7 +868,7 @@ describe('function', () => {
     })
   })
   incubator('invoke method of input', (title, spec) => {
-    test.only(title, async () => {
+    test(title, async () => {
       expect.assertions(1)
       const emitter = new EventEmitter()
       emitter.on('abc', () => expect(true).toBe(true))

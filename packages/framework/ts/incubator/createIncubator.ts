@@ -1,6 +1,5 @@
 import type { AsyncContext } from 'async-fp'
 import type { Logger, MemoryLogReporter } from 'standard-log'
-import type { LeftJoin } from 'type-plus'
 import { createFixedModeMocktoFn } from '../mockto/createMocktoFn.js'
 import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs.js'
 import { transformConfig } from '../mockto/transformConfig.js'
@@ -31,25 +30,24 @@ export namespace createIncubator {
 }
 
 export function createIncubator(context: AsyncContext<createIncubator.Context>, reporter: MemoryLogReporter) {
-  let ctxValue: LeftJoin<createIncubator.Context, { plugins: SpecPlugin.Instance[] }> | undefined
+  let ctxValue: { plugins: SpecPlugin.Instance[] } | undefined
   let pluginInstances: SpecPlugin.Instance[] | undefined
 
   const ctx = context
     .extend(loadPlugins)
-    .extend(async ctx => {
-      ctxValue = await ctx.get()
-      return { plugins: ctxValue.plugins = pluginInstances || ctxValue.plugins }
+    .extend(async value => {
+      ctxValue = value
+      return { plugins: value.plugins = pluginInstances ?? value.plugins }
     })
     .extend(transformConfig)
     .extend({ timeTrackers: [] as TimeTracker[] })
 
   const config = async function (options: createIncubator.ConfigOptions) {
-    const { plugins } = await context.extend(async ctx => {
-      const { config, io } = await ctx.get()
+    const { plugins } = await context.extend(async ({ config, io }) => {
       config.plugins = options.plugins.map(p => {
         // istanbul ignore next
-        if (typeof p === 'string') return p
-        io.addPluginModule(p[0], { activate: p[1] })
+        if (typeof p === 'string') return p;
+        (io as createTestIO.TestIO).addPluginModule(p[0], { activate: p[1] })
         return p[0]
       })
       return {}

@@ -41,11 +41,11 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
 function createKomondorFn(context: AsyncContext<Spec.Context>): createKomondor.KomondorFn {
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
     const specRelativePath = getCallerRelativePath(komondorFn)
-    const ctx = context.extend(async () => {
-      const { config } = await context.get()
-      const mode = getEffectiveSpecMode(config, specName, specRelativePath)
-      return { mode, specRelativePath, maskCriteria: [] }
-    })
+    const ctx = context.extend(async ({ config }) => ({
+      mode: getEffectiveSpecMode(config, specName, specRelativePath),
+      specRelativePath,
+      maskCriteria: []
+    }))
     return createSpecObject(ctx, specName, options)
   }
   return komondorFn
