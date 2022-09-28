@@ -25,7 +25,7 @@ export namespace createIncubator {
   export type SequenceFn = (specName: string, handler: SequenceHandler) => void
   export type SequenceHandler = (title: string, specs: { save: Spec, simulate: Spec }) => void
   export type ConfigOptions = {
-    plugins: Array<string | [string, ((context: SpecPlugin.ActivationContext) => any)]>
+    plugins: Array<string | [pluginName: string, activate: ((context: SpecPlugin.ActivationContext) => any)]>
   }
 }
 
@@ -44,13 +44,14 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>, 
 
   const config = async function (options: createIncubator.ConfigOptions) {
     const { plugins } = await context.extend(async ({ config, io }) => {
-      config.plugins = options.plugins.map(p => {
+      const plugins = options.plugins.map(p => {
         // istanbul ignore next
-        if (typeof p === 'string') return p;
-        (io as createTestIO.TestIO).addPluginModule(p[0], { activate: p[1] })
-        return p[0]
+        if (typeof p === 'string') return p
+        const [name, activate] = p
+        io.addPluginModule(name, { activate })
+        return name
       })
-      return {}
+      return { config: { ...config, plugins } }
     }).extend(loadPlugins).get()
     if (!ctxValue) pluginInstances = plugins
     else ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
