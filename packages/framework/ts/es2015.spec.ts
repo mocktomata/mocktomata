@@ -180,11 +180,15 @@ describe('invoke', () => {
 
       const stub = await simulate(subject)
       stub()
-      a.throws(() => stub(), ActionMismatch)
+      const err = a.throws(() => stub(), ActionMismatch)
+      expect(err.expected?.type).toEqual('set')
+      expect(err.actual?.type).toEqual('invoke')
     })
   })
   incubator.sequence('TODO: improve error instead of MissingReference', (title, { save, simulate }) => {
     test.skip(title, async () => {
+      // This test is not the right test
+      // Can't remember what it should be
       const subject = Object.assign(function () { }, { a: 1 })
       const spy = await save(subject)
       spy()
@@ -461,7 +465,7 @@ describe('object', () => {
   })
 
   // version 8
-  incubator('modify output array', (title, spec) => {
+  incubator('modify out array param', (title, spec) => {
     test.skip(title, async () => {
       const s = await spec({
         getArray() { return ['a', 'b'] },
