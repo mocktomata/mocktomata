@@ -16,7 +16,7 @@ test('load plugins in reverse order', async () => {
     }
   })
 
-  const { plugins } = await loadPlugins(context)
+  const { plugins } = await context.extend(loadPlugins).get()
 
   a.satisfies(plugins.map(p => p.name), startsWith(['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy']))
 })
@@ -26,7 +26,7 @@ test('Not existing plugin throws PluginNotFound', async () => {
     config: { plugins: ['not-exist'] },
   })
 
-  await a.throws(() => loadPlugins(context), PluginNotFound)
+  await a.throws(() => context.extend(loadPlugins).get(), PluginNotFound)
 })
 
 it('throws PluginModuleNotConforming when the plugin missing activate function', async () => {
@@ -37,7 +37,7 @@ it('throws PluginModuleNotConforming when the plugin missing activate function',
     }
   })
 
-  await a.throws(() => loadPlugins(context), PluginModuleNotConforming)
+  await a.throws(() => context.extend(loadPlugins).get(), PluginModuleNotConforming)
 })
 
 it('throws PluginModuleNotConforming when the plugin activate export is not a function', async () => {
@@ -48,7 +48,7 @@ it('throws PluginModuleNotConforming when the plugin activate export is not a fu
     }
   })
 
-  await a.throws(() => loadPlugins(context), PluginModuleNotConforming)
+  await a.throws(() => context.extend(loadPlugins).get(), PluginModuleNotConforming)
 })
 
 test('plugin missing support method throws', async () => {
@@ -58,7 +58,7 @@ test('plugin missing support method throws', async () => {
       '@mocktomata/no-support': missSupportPluginModule as any
     }
   })
-  await a.throws(() => loadPlugins(context), PluginNotConforming)
+  await a.throws(() => context.extend(loadPlugins).get(), PluginNotConforming)
 })
 
 test('plugin missing getSpy method throws', async () => {
@@ -69,7 +69,7 @@ test('plugin missing getSpy method throws', async () => {
     }
   })
 
-  await a.throws(() => loadPlugins(context), PluginNotConforming)
+  await a.throws(() => context.extend(loadPlugins).get(), PluginNotConforming)
 })
 
 test('plugin missing getStub method throws', async () => {
@@ -80,7 +80,7 @@ test('plugin missing getStub method throws', async () => {
     }
   })
 
-  await a.throws(() => loadPlugins(context), PluginNotConforming)
+  await a.throws(() => context.extend(loadPlugins).get(), PluginNotConforming)
 })
 
 test('registering plugin with the same name throws DuplicatePlugin', async () => {
@@ -91,5 +91,5 @@ test('registering plugin with the same name throws DuplicatePlugin', async () =>
     }
   })
 
-  await a.throws(() => loadPlugins(context), DuplicatePlugin)
+  await a.throws(() => context.extend(loadPlugins).get(), DuplicatePlugin)
 })

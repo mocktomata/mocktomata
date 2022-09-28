@@ -1,8 +1,6 @@
-import type { AsyncContext } from 'async-fp'
 import type { Mocktomata } from '../types.js'
 
-export async function transformConfig(context: AsyncContext<Mocktomata.Context>) {
-  const { config } = await context.get()
+export async function transformConfig({ config }: Mocktomata.Context) {
   // filePathFilter not tested because it is troublesome to setup test
   // istanbul ignore next
   return {

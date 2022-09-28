@@ -1,19 +1,19 @@
 import { activate as decrementActivate } from './decrementPlugin.js'
-import { activate } from './incrementPlugin.js'
+import { activate as incrementActivate } from './incrementPlugin.js'
 import { incubator } from './incubator.js'
 
-
 beforeAll(() => incubator.config({
-  plugins: [['incrementPlugin', activate]]
+  plugins: [['incrementPlugin', incrementActivate]]
 }))
 
+describe('use increment', () => {
+  incubator('increment plugin is loaded', (title, spec) => {
+    test(title, async () => {
+      const s = await spec((x: number) => x)
+      expect(s(1)).toBe(2)
 
-incubator('increment plugin is loaded', (title, spec) => {
-  test(title, async () => {
-    const s = await spec((x: number) => x)
-    expect(s(1)).toBe(2)
-
-    await spec.done()
+      await spec.done()
+    })
   })
 })
 

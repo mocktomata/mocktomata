@@ -1,5 +1,5 @@
 import { AsyncContext } from 'async-fp'
-import { PartialPick, Pick } from 'type-plus'
+import { PartialPick } from 'type-plus'
 import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin.js'
 import { SpecPlugin } from '../spec-plugin/types.js'
@@ -10,13 +10,12 @@ import { logAction, logCreateSpy, logRecordingTimeout } from './logs.js'
 import { maskIfNeeded } from './masking.js'
 import { createSpecRecordBuilder } from './record.js'
 import { getDefaultPerformer } from './subjectProfile.js'
-import { Spec } from './types.js'
 import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
+import { Spec } from './types.js'
 
 export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
   let timeTracker: TimeTracker
-  const ctx = context.extend(async context => {
-    const { timeTrackers, log } = await context.get()
+  const ctx = context.extend(async ({ timeTrackers, log }) => {
     timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
     timeTrackers.push(timeTracker)
     return { timeTracker }
@@ -27,9 +26,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
   let c: Promise<PartialPick<Recorder.Context, 'state'>>
   async function getContext() {
     if (c) return c
-    return c = ctx.extend<
-      Pick<Recorder.Context, 'record' | 'spyOptions'>
-    >({ record, spyOptions: [] }).get()
+    return c = ctx.extend(() => ({ record, spyOptions: [] })).get()
   }
   return {
     createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
@@ -41,6 +38,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
 }
 
 function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }) {
+  // console.info('createSpy', context)
   const spyOption = context.spyOptions.find(o => o.subject === subject)
   const plugin = spyOption?.options.plugin ? getPlugin(context.plugins, spyOption.options.plugin) : findPlugin(context.plugins, subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
