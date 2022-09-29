@@ -41,7 +41,7 @@
     "async-fp": "^1.2.0",
     "global-store": "^1.0.0-beta.14",
     "iso-error": "^2.0.0",
-    "ramda": "^0.27.0",
+    "ramda": "^0.28.0",
     "satisfier": "^5.0.2",
     "standard-log": "^3.1.1",
     "standard-log-color": "^1.5.3",
@@ -49,6 +49,6 @@
     "type-plus": "^1.27.0"
   },
   "devDependencies": {
-    "@types/ramda": "^0.26.18"
+    "@types/ramda": "^0.28.0"
   }
 }

@@ -36,7 +36,7 @@
     "prepublish": "npm run snyk-protect"
   },
   "dependencies": {
-    "@types/ramda": "^0.26.5",
+    "@types/ramda": "^0.28.0",
     "@unional/devpkg-node": "^1.2.5",
     "@unional/logging": "^1.0.2",
     "async-fp": "^1.2.0",
