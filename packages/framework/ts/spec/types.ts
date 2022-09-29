@@ -1,4 +1,4 @@
-import { Logger, LogLevel } from 'standard-log'
+import { Logger, LogLevel, MemoryLogReporter } from 'standard-log'
 import { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecRecord } from '../spec-record/types.js'
 import { TimeTracker } from '../timeTracker/index.js'
@@ -57,7 +57,7 @@ export namespace Spec {
 
   export type Mode = 'live' | 'save' | 'simulate' | 'auto'
 
-  export type Handler = (title: string, spec: Spec) => void | Promise<any>
+  export type Handler = (title: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
 
   export type Options = {
     timeout: number
