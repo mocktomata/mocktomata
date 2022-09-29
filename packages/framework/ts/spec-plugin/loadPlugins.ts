@@ -23,16 +23,16 @@ async function loadPlugin({ io, log, plugins }: {
   log: Logger
 }, moduleName: string) {
   log.debug('loadPlugin:', moduleName)
-  const pluginModule = await tryLoad(io, moduleName)
+  const pluginModule = await tryLoad({ io, log }, moduleName)
   addPluginModule({ log }, plugins, moduleName, pluginModule)
 }
-async function tryLoad(io: SpecPlugin.IO, name: string) {
+async function tryLoad({ io, log }: { io: SpecPlugin.IO, log: Logger }, name: string) {
   try {
     const m = await io.loadPlugin(name)
     if (m && typeof m.activate === 'function') return m
   }
   catch (e: any) {
-    console.log(e)
+    log.warn(e)
     throw new PluginNotFound(name)
   }
   throw new PluginModuleNotConforming(name)
