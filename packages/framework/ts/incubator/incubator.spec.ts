@@ -1,20 +1,21 @@
 import a, { AssertOrder } from 'assertron'
 import { logLevels } from 'standard-log'
-import { createTestContext, incubator, Spec, SpecNotFound } from '../index.js'
-import { createIncubator } from './createIncubator.js'
+import { incubator, SpecNotFound } from '../index.js'
 
-test('enable log only lasts through one spec', async () => {
-  const { context, reporter } = createTestContext()
-  const incubator = createIncubator(context, reporter)
-  const { log } = await context.get()
-  const spec = await new Promise<Spec>(a => incubator('enable log only lasts through one spec', (_, spec) => a(spec)))
-  const origLevel = log.level
-  spec.enableLog()
-  const s = await spec((x: number) => x + 1)
-  expect(s(4)).toBe(5)
-  await spec.done()
-  expect(log.level).toBe(origLevel)
-})
+// TODO: not needed after updating the logging system.
+// to be removed.
+// test('enable log only lasts through one spec', async () => {
+//   const { context } = createTestContext()
+//   const incubator = createIncubator(context)
+//   const { log } = await context.get()
+//   const spec = await new Promise<Spec>(a => incubator('enable log only lasts through one spec', (_, spec) => a(spec)))
+//   const origLevel = log.level
+//   spec.enableLog()
+//   const s = await spec((x: number) => x + 1)
+//   expect(s(4)).toBe(5)
+//   await spec.done()
+//   expect(log.level).toBe(origLevel)
+// })
 
 incubator('enableLog can specify log level', (title, spec) => {
   test(title, async () => {

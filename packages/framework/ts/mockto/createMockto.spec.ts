@@ -1,5 +1,6 @@
 import a from 'assertron'
 import { logLevels } from 'standard-log'
+import { record } from 'type-plus'
 import { createMockto, SpecNotFound } from '../index.js'
 import { createTestContext, getCallerRelativePath } from '../test-utils/index.js'
 
@@ -34,13 +35,17 @@ test('live with options', () => {
   })
 })
 
-test('live has enableLog method', () => {
+// TODO: live mode should proxy spec subject,
+// to capture interactions into logs.
+test.skip('live has enableLog method', () => {
   const { context } = createTestContext()
   const mockto = createMockto(context)
   return new Promise<void>(a => {
-    mockto.live('live has enableLog method', async (_, spec) => {
-      await spec(() => { })
-      spec.enableLog()
+    mockto.live('live has enableLog method', async (_, spec, reporter) => {
+      const s = await spec(() => { })
+      spec.enableLog(logLevels.all)
+      s()
+      expect(reporter.logs.length > 0).toBe(true)
       a()
     })
   })
@@ -173,12 +178,23 @@ test('auto with options', async () => {
 
 })
 
-mockto('can enable log after spec subject is created', (title, spec) => {
+test.todo('spec name supports other characters (standard-log restricts them). Need to transform those chars')
+
+mockto('can enable log after spec subject is created', (title, spec, reporter) => {
   test(title, async () => {
     const s = await spec(() => 1)
     spec.enableLog()
     expect(s()).toBe(1)
+
     await spec.done()
+
+    expect(reporter.logs.length).toBeGreaterThan(0)
+    const ids = Object.keys(reporter.logs.reduce((p, log) => {
+      p[log.id] = true
+      return p
+    }, record()))
+    expect(ids.length).toEqual(1)
+    expect(ids[0]).toMatch(/mocktomata:can enable/)
   })
 })
 
