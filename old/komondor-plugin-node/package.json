@@ -65,7 +65,7 @@
     "aurelia-logging-color": "^1.0.0",
     "dependency-check": "^4.0.0",
     "eslint": "^8.0.0",
-    "eslint-plugin-harmony": "^1.0.4",
+    "eslint-plugin-harmony": "^7.0.0",
     "jest": "^23.4.2",
     "komondor": "^6.10.6",
     "komondor-plugin": "^1.7.7",
