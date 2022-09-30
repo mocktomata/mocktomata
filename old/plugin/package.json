@@ -46,7 +46,7 @@
     "jest": "^23.6.0",
     "jest-audio-reporter": "^2.2.0",
     "jest-junit": "^14.0.0",
-    "jest-progress-tracker": "^2.0.1",
+    "jest-progress-tracker": "^3.0.0",
     "jest-watch-repeat": "^1.0.0",
     "jest-watch-suspend": "^1.1.0",
     "jest-watch-toggle-config": "^1.0.2",
