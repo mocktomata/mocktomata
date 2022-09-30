@@ -71,7 +71,7 @@
     "komondor-plugin": "^1.7.7",
     "komondor-test": "^2.1.0",
     "node-fetch": "^2.2.0",
-    "rimraf": "^2.6.2",
+    "rimraf": "^3.0.0",
     "semantic-release": "^19.0.0",
     "ts-jest": "^23.1.2",
     "tslint": "^5.11.0",

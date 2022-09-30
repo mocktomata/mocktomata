@@ -51,10 +51,10 @@
     "snyk": "^1.316.1"
   },
   "devDependencies": {
-    "@types/rimraf": "^2.0.2",
+    "@types/rimraf": "^3.0.0",
     "@unional/devpkg-node": "^1.2.5",
     "assertron": "^7.0.1",
-    "rimraf": "^2.6.3"
+    "rimraf": "^3.0.0"
   },
   "snyk": true
 }
