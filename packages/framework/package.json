@@ -31,7 +31,7 @@
     "build": "run-p build:esm build:cjs",
     "build:esm": "tsc",
     "build:cjs": "tsc -p tsconfig.cjs.json",
-    "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
+    "clean": "rimraf coverage cjs esm lib libm tslib *.tsbuildinfo",
     "coverage": "jest --coverage --reporters=default",
     "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
