@@ -82,6 +82,10 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>, 
     save,
     simulate,
     sequence,
-    config
+    config,
+    async teardown() {
+      const { timeTrackers } = await ctx.get()
+      timeTrackers.forEach(t => t.terminate())
+    }
   })
 }
