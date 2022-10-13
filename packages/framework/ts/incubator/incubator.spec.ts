@@ -1,4 +1,5 @@
 import a, { AssertOrder } from 'assertron'
+import { some } from 'satisfier'
 import { logLevels } from 'standard-log'
 import { incubator, SpecNotFound } from '../index.js'
 
@@ -66,3 +67,24 @@ incubator('duo with option', { timeout: 200 }, (title, spec) => {
   })
 })
 
+incubator.sequence('gets memory log reporter', (title, { save, simulate }, reporter) => {
+  test(title, async () => {
+    const subject = { a: 1 }
+    save.enableLog()
+    const spy = await save(subject)
+    expect(spy.a).toBe(1)
+    await save.done()
+
+    simulate.enableLog()
+    const stub = await simulate(subject)
+    expect(stub.a).toBe(1)
+    await simulate.done()
+
+    a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
+      /^mocktomata:gets memory log reporter: save/
+    ))
+    a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
+      /^mocktomata:gets memory log reporter: simulate/
+    ))
+  })
+})

@@ -1,5 +1,5 @@
 import type { AsyncContext } from 'async-fp'
-import { createConsoleLogReporter, createMemoryLogReporter, createStandardLog, MemoryLogReporter } from 'standard-log'
+import { createConsoleLogReporter, createMemoryLogReporter, createStandardLog } from 'standard-log'
 import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { createMockto } from './createMockto.js'
@@ -22,7 +22,7 @@ export function createMocktoFn(context: AsyncContext<Spec.Context>) {
   return specFn as createMockto.MocktoFn
 }
 
-export function createFixedModeMocktoFn(context: AsyncContext<Spec.Context>, mode: Spec.Mode, reporter?: MemoryLogReporter) {
+export function createFixedModeMocktoFn(context: AsyncContext<Spec.Context>, mode: Spec.Mode) {
   let ctx: AsyncContext<Spec.Context & {
     mode: Spec.Mode,
     specRelativePath: string,

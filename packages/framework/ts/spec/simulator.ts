@@ -34,7 +34,7 @@ export namespace Simulator {
 export function createSimulator(context: AsyncContext<createSpec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
   let timeTracker: TimeTracker
   const ctx = context.extend(async ({ timeTrackers, log }) => {
-    timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
+    timeTracker = createTimeTracker({ log }, options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
     timeTrackers.push(timeTracker)
     return {}
   })

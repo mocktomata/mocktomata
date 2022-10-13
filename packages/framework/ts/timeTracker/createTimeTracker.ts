@@ -1,8 +1,9 @@
+import type { Logger } from 'standard-log'
 import type { Spec } from '../spec/types.js'
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
 
-export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, onTimeout: (elapsed: number) => void) {
+export function createTimeTracker({ log }: { log: Logger }, { timeout }: Pick<Spec.Options, 'timeout'>, onTimeout: (elapsed: number) => void) {
   let handle: any
   let startTick: number
   let endTick: number
@@ -47,6 +48,7 @@ export function createTimeTracker({ timeout }: Pick<Spec.Options, 'timeout'>, on
     },
     terminate() {
       if (handle) {
+        log.notice('time tracker not stopped. Stopping.')
         const newTick = new Date().getTime()
         const elapsed = newTick - prevTick
         onTimeout(elapsed)
