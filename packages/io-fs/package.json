@@ -40,7 +40,7 @@
     "find-installed-packages": "^2.1.6",
     "md5": "^2.3.0",
     "mkdirp": "^1.0.4",
-    "standard-log": "^10.0.0"
+    "standard-log": "^11.2.0"
   },
   "devDependencies": {
     "assertron": "^9.2.5",
