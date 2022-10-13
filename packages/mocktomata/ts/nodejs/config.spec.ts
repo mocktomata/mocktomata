@@ -1,6 +1,6 @@
 import { createMockto, createTestIO, Spec } from '@mocktomata/framework'
 import a from 'assertron'
-import { createStandardLogForTest, logLevels } from 'standard-log'
+import { createStandardLogForTest, logLevels, MemoryLogReporter } from 'standard-log'
 import { CannotConfigAfterUsed, config, mockto } from '../index.js'
 import { ENV_VARS } from './constants.js'
 import { createContext } from './createContext.js'
@@ -62,13 +62,12 @@ describe('config with config()', () => {
 
   test('enable log', async () => {
     config({ logLevel: logLevels.all })
-    const sl = createStandardLogForTest()
-    const context = createContext({ log: sl.getLogger('mocktomata') })
+    const context = createContext()
     mockto = createMockto(context)
-    return new Promise<Spec>(a => mockto('log enabled', (_, spec) => a(spec)))
-      .then(async spec => {
+    return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter })))
+      .then(async ({ spec, reporter }) => {
         await spec({})
-        a.satisfies(sl.reporter.logs, [{ level: logLevels.debug }])
+        a.satisfies(reporter.logs, [{ level: logLevels.debug }])
       })
   })
 })
@@ -203,26 +202,26 @@ describe('config with env', () => {
 
   test('enable log', () => {
     process.env[ENV_VARS.log] = 'debug'
-    const sl = createStandardLogForTest()
-    const context = createContext({ log: sl.getLogger('mocktomata') })
+    const context = createContext()
     mockto = createMockto(context)
-    return new Promise<Spec>(a => mockto('log enabled', (_, spec) => a(spec)))
-      .then(async spec => {
-        await spec({})
-        a.satisfies(sl.reporter.logs, [{ level: logLevels.debug }])
-      })
+    return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
+      a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
+    ).then(async ({ spec, reporter }) => {
+      await spec({})
+      a.satisfies(reporter.logs, [{ level: logLevels.debug }])
+    })
   })
 
   test('enable log is case insensitive', () => {
     process.env[ENV_VARS.log] = 'debUg'
-    const sl = createStandardLogForTest()
-    const context = createContext({ log: sl.getLogger('mocktomata') })
+    const context = createContext()
     mockto = createMockto(context)
-    return new Promise<Spec>(a => mockto('log enabled', (_, spec) => a(spec)))
-      .then(async spec => {
-        await spec({})
-        a.satisfies(sl.reporter.logs, [{ level: logLevels.debug }])
-      })
+    return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
+      a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
+    ).then(async ({ spec, reporter }) => {
+      await spec({})
+      a.satisfies(reporter.logs, [{ level: logLevels.debug }])
+    })
   })
 
   test('invalid log value emits warning', () => {
