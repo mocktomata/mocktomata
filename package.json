@@ -14,16 +14,17 @@
     "cs": "changeset",
     "depcheck": "turbo run depcheck",
     "dev": "pnpm run test:watch",
+    "framework": "pnpm --filter @mocktomata/framework",
     "postinstall": "husky install",
     "lint": "turbo run lint",
     "mtmt": "node ./packages/mocktomata/lib/bin.js",
-    "mt": "pnpm run --filter mocktomata",
+    "mt": "pnpm --filter mocktomata",
     "nuke": "pnpm run clean && rimraf node_modules",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
     "publish": "pnpm publish -r --publish-branch beta && changeset tag",
     "test": "turbo run test",
-    "test:browser": "pnpm run --filter mocktomata test:browser",
+    "test:browser": "pnpm --filter mocktomata test:browser",
     "test:electron": "cross-env JEST_ENV=electron jest --maxWorkers=60%",
     "test:jsdom": "cross-env JEST_ENV=jsdom jest --maxWorkers=60%",
     "test:nodejs": "cross-env JEST_ENV=nodejs jest --maxWorkers=60%",
@@ -72,5 +73,5 @@
     "turbo": "^1.4.3",
     "typescript": "~4.8.3"
   },
-  "packageManager": "pnpm@7.12.2"
+  "packageManager": "pnpm@7.13.4"
 }

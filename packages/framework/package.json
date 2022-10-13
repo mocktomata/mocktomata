@@ -45,7 +45,7 @@
     "async-fp": "^8.0.0",
     "iso-error": "^4.3.6",
     "stack-utils": "^2.0.3",
-    "standard-log": "^10.0.0",
+    "standard-log": "^11.2.0",
     "tersify": "^3.10.5",
     "type-plus": "^4.13.1"
   },
