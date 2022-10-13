@@ -5,6 +5,8 @@ import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, 
 import { InvokeMetaMethodAfterSpec } from './spec/index.js'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts/index.js'
 
+afterAll(() => incubator.teardown())
+
 describe('basic checks', () => {
   incubator.save(`type %s is not specable`, (title, spec) => {
     test.each<[any, any]>([
