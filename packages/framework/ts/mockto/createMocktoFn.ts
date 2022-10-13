@@ -10,12 +10,14 @@ export function createMocktoFn(context: AsyncContext<Spec.Context>) {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(specFn)
     const reporter = createMemoryLogReporter()
-    const sl = createStandardLog({ reporters: [createConsoleLogReporter(), reporter] })
-    const log = sl.getLogger(`mocktomata:${specName}`)
     const ctx = context.extend(async ({ config }) => ({
       mode: getEffectiveSpecMode(config, specName, specRelativePath),
       specRelativePath
-    })).extend({ log })
+    })).extend(({ config }) => {
+      const sl = createStandardLog({ logLevel: config.logLevel, reporters: [createConsoleLogReporter(), reporter] })
+      const log = sl.getLogger(`mocktomata:${specName}`)
+      return { log }
+    })
 
     handler(specName, createSpecObject(ctx, specName, options), reporter)
   }
@@ -33,9 +35,11 @@ export function createFixedModeMocktoFn(context: AsyncContext<Spec.Context>, mod
     const title = `${specName}: ${mode}`
     // console.info('before context.extend', ctx, mode, specRelativePath)
     const reporter = createMemoryLogReporter()
-    const sl = createStandardLog({ reporters: [createConsoleLogReporter(), reporter] })
-    const log = sl.getLogger(`mocktomata:${title}`)
-    if (!ctx) ctx = context.extend({ mode, specRelativePath }).extend({ log })
+    if (!ctx) ctx = context.extend({ mode, specRelativePath }).extend(({ config }) => {
+      const sl = createStandardLog({ logLevel: config.logLevel, reporters: [createConsoleLogReporter(), reporter] })
+      const log = sl.getLogger(`mocktomata:${title}`)
+      return { log }
+    })
     // ctx.get().then(c => console.info('ctx result', c))
     handler(title, createSpecObject(ctx, specName, options), reporter)
   }

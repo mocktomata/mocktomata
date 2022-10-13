@@ -1,4 +1,5 @@
 import { Logger, LogLevel, MemoryLogReporter } from 'standard-log'
+import { Log } from '../log/types.js'
 import { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecRecord } from '../spec-record/types.js'
 import { TimeTracker } from '../timeTracker/index.js'
@@ -32,7 +33,7 @@ export namespace Spec {
       overrideMode?: Mode,
       filePathFilter?: RegExp,
       specNameFilter?: RegExp
-    },
+    } & Log.Config
   }
 
   export type IO = {
