@@ -16,7 +16,7 @@ import { Spec } from './types.js'
 export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
   let timeTracker: TimeTracker
   const ctx = context.extend(async ({ timeTrackers, log }) => {
-    timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
+    timeTracker = createTimeTracker({ log }, options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
     timeTrackers.push(timeTracker)
     return { timeTracker }
   })

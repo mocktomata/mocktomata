@@ -1,5 +1,5 @@
 import type { AsyncContext } from 'async-fp'
-import type { Logger, MemoryLogReporter } from 'standard-log'
+import { createConsoleLogReporter, createMemoryLogReporter, createStandardLog, Logger, MemoryLogReporter } from 'standard-log'
 import { createFixedModeMocktoFn } from '../mockto/createMocktoFn.js'
 import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs.js'
 import { transformConfig } from '../mockto/transformConfig.js'
@@ -23,7 +23,7 @@ export namespace createIncubator {
   }
   export type Handler = (title: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
   export type SequenceFn = (specName: string, handler: SequenceHandler) => void
-  export type SequenceHandler = (title: string, specs: { save: Spec, simulate: Spec }) => void
+  export type SequenceHandler = (title: string, specs: { save: Spec, simulate: Spec }, reporter: MemoryLogReporter) => void
   export type ConfigOptions = {
     plugins: Array<string | [pluginName: string, activate: ((context: SpecPlugin.ActivationContext) => any)]>
   }
@@ -56,15 +56,27 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>, 
     if (!ctxValue) pluginInstances = plugins
     else ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
   }
-  const save = createFixedModeMocktoFn(ctx, 'save', reporter)
-  const simulate = createFixedModeMocktoFn(ctx, 'simulate', reporter)
+  const save = createFixedModeMocktoFn(ctx, 'save')
+  const simulate = createFixedModeMocktoFn(ctx, 'simulate')
   const sequence: createIncubator.SequenceFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs<createIncubator.SequenceHandler>(args)
-    const stx = ctx.extend({ specRelativePath: getCallerRelativePath(sequence) })
+    const specRelativePath = getCallerRelativePath(sequence)
+    const reporter = createMemoryLogReporter()
+    const sl = createStandardLog({ reporters: [createConsoleLogReporter(), reporter] })
     handler(specName, {
-      save: createSpecObject(stx.extend({ mode: 'save' }), specName, options),
-      simulate: createSpecObject(stx.extend({ mode: 'simulate' }), specName, options)
-    })
+      save: createSpecObject(ctx.extend(() => {
+        const mode = 'save'
+        const title = `${specName}: ${mode}`
+        const log = sl.getLogger(`mocktomata:${title}`)
+        return { mode, specRelativePath, log }
+      }), specName, options),
+      simulate: createSpecObject(ctx.extend(() => {
+        const mode = 'simulate'
+        const title = `${specName}: ${mode}`
+        const log = sl.getLogger(`mocktomata:${title}`)
+        return { mode, specRelativePath, log }
+      }), specName, options)
+    }, reporter)
   }
   const duo: createIncubator.IncubatorFn = (...args: any[]) => {
     const { specName, options, handler } = resolveMocktoFnArgs(args)
