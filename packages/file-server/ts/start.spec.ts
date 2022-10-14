@@ -25,7 +25,9 @@ describe('server behavior', () => {
     fs.writeFileSync(path.join(cwd, 'package.json'), JSON.stringify({ mocktomata: { overrideMode: 'live', filePathFilter: 'file', specNameFilter: 'spec' } }))
     const repository = new FileRepository({ cwd })
     await repository.writeSpec('exist', '', '{ "spec": "exist" }')
+    console.info('file-server test: starting server...')
     server = await start({ cwd, port: 3456 })
+    console.info('file-server test: started server...', JSON.stringify(server.info, undefined, '\n'))
   })
   afterAll(() => {
     return server.stop()
