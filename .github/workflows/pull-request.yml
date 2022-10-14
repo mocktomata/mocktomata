@@ -3,5 +3,43 @@ on:
   pull_request:
     types: [opened, synchronize]
 jobs:
-  code:
-    uses: ./.github/workflows/pnpm-verify-cross-platform.yml
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [14]
+        # node-version: [14, 16, 18]
+
+    steps:
+      # - run: apt update
+      # - run: apt install -y libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev libasound2
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.13.4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+
+      - name: Install Dependencies
+        run: pnpm install
+
+      # - run: pnpm build
+      - name: Verify with headless
+        uses: GabrielBB/xvfb-action@v1
+        with:
+          run: pnpm verify
+      # - name: Verify
+      #   env:
+      #     DISPLAY: ':99'
+      #   run: |
+      #     Xvfb :99 -sreen 0 1920x1080x24 > /dev/null 2>&1 &
+      #     pnpm mt test:electron
+
+
+      - name: codecov
+        if: matrix.os == 'ubuntu-latest' && matrix.node-version == 16
+        uses: codecov/codecov-action@v3
