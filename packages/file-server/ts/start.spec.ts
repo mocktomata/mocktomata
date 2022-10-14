@@ -46,7 +46,7 @@ describe('server behavior', () => {
     t.strictEqual(actual, JSON.stringify({
       name: 'mocktomata',
       version: pjson.version,
-      url: `http://${server.info.address}:${server.info.port}`,
+      url: `http://localhost:${server.info.port}`,
       plugins: []
     }))
   })
