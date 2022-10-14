@@ -42,7 +42,7 @@
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "workspace:*",
     "@mocktomata/plugin-fixture-dummy": "workspace:*",
-    "assertron": "^9.2.5",
+    "assertron": "^10.0.0",
     "depcheck": "^1.4.3",
     "jest": "^28.1.3",
     "npm-run-all": "^4.1.5",
