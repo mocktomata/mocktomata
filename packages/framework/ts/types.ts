@@ -4,7 +4,7 @@ import type { SpecPlugin } from './spec-plugin/types.js'
 import type { Spec } from './spec/types.js'
 
 export namespace Mocktomata {
-  export type Context = { config: Config, io: IO } & Log.Context
+  export type IO = Spec.IO & SpecPlugin.IO & Config.IO
 
   /**
    * Configuration used within Mocktomata.
@@ -16,5 +16,5 @@ export namespace Mocktomata {
    */
   export type Config = Spec.Config & SpecPlugin.Config & Log.Config
 
-  export type IO = Spec.IO & SpecPlugin.IO & Config.IO
+  export type Context = { config: Config, io: IO } & Log.Context
 }
