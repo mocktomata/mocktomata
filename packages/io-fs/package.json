@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@mocktomata/framework": "workspace:*",
-    "find-installed-packages": "^2.1.6",
+    "find-installed-packages": "^3.0.0",
     "md5": "^2.3.0",
     "mkdirp": "^1.0.4",
     "standard-log": "^11.2.0"
