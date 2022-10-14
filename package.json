@@ -33,7 +33,7 @@
     "test:jsdom": "cross-env JEST_ENV=jsdom jest --maxWorkers=60%",
     "test:nodejs": "cross-env JEST_ENV=nodejs jest --maxWorkers=60%",
     "test:watch": "jest --watch --maxWorkers=60%",
-    "verify": "turbo run build lint coverage depcheck",
+    "verify": "turbo run verify",
     "version": "changeset version",
     "watch": "pnpm run test:watch",
     "watch:browser": "cd packages/mocktomata && pnpm run run test:watch:browser",

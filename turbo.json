@@ -4,10 +4,6 @@
     "build": {
       "dependsOn": [
         "^build"
-      ],
-      "outputs": [
-        "lib/**",
-        "libm/**"
       ]
     },
     "clean": {
@@ -16,15 +12,6 @@
     "coverage": {
       "dependsOn": [
         "^build"
-      ],
-      "inputs": [
-        "ts/*.ts",
-        "ts/*.tsx",
-        "ts/**/*.ts",
-        "ts/**/*.tsx"
-      ],
-      "outputs": [
-        "coverage/**"
       ]
     },
     "depcheck": {
@@ -48,16 +35,16 @@
     "test": {
       "dependsOn": [
         "^build"
-      ],
-      "inputs": [
-        "ts/*.ts",
-        "ts/*.tsx",
-        "ts/**/*.ts",
-        "ts/**/*.tsx"
       ]
     },
     "verify": {
-      "cache": false
+      "dependsOn": [
+        "build",
+        "lint",
+        "coverage",
+        "depcheck",
+        "size"
+      ]
     },
     "watch": {
       "dependsOn": [
