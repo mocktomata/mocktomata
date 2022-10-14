@@ -41,7 +41,7 @@
     "type-plus": "^4.13.1"
   },
   "devDependencies": {
-    "@kayahr/jest-electron-runner": "^5.1.1",
+    "@kayahr/jest-electron-runner": "^29.0.0",
     "@mocktomata/file-server": "workspace:*",
     "@mocktomata/io-fs": "workspace:*",
     "@mocktomata/plugin-fixture-dummy": "workspace:*",
