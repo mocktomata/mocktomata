@@ -34,7 +34,7 @@ describe('server behavior', () => {
   })
 
   function buildUrl(path: string) {
-    return `http://localhost:${server.info.port}/mocktomata/${path}`
+    return `http://${server.info.address}:${server.info.port}/mocktomata/${path}`
   }
 
   test('get mocktomata info', async () => {
@@ -46,7 +46,7 @@ describe('server behavior', () => {
     t.strictEqual(actual, JSON.stringify({
       name: 'mocktomata',
       version: pjson.version,
-      url: `http://localhost:${server.info.port}`,
+      url: `http://${server.info.address}:${server.info.port}`,
       plugins: []
     }))
   })
