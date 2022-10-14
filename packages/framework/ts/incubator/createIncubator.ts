@@ -29,7 +29,7 @@ export namespace createIncubator {
   }
 }
 
-export function createIncubator(context: AsyncContext<createIncubator.Context>, reporter: MemoryLogReporter) {
+export function createIncubator(context: AsyncContext<createIncubator.Context>) {
   let ctxValue: { plugins: SpecPlugin.Instance[] } | undefined
   let pluginInstances: SpecPlugin.Instance[] | undefined
 
