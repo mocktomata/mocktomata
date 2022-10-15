@@ -5,10 +5,10 @@
       "path": "packages/framework"
     },
     {
-      "path": "packages/plugin-fixture-dummy/tsconfig.lib.json"
+      "path": "test-plugins/plugin-fixture-dummy/tsconfig.lib.json"
     },
     {
-      "path": "packages/plugin-fixture-dummy/tsconfig.libm.json"
+      "path": "test-plugins/plugin-fixture-dummy/tsconfig.libm.json"
     },
     {
       "path": "packages/io-fs"
@@ -26,13 +26,13 @@
       "path": "packages/mocktomata"
     },
     {
-      "path": "packages/plugin-node-fetch"
+      "path": "plugins/plugin-node-fetch"
     },
     {
-      "path": "packages/plugin-nodejs"
+      "path": "plugins/plugin-nodejs"
     },
     {
-      "path": "packages/test-nodejs"
+      "path": "tests/test-nodejs"
     }
   ]
 }

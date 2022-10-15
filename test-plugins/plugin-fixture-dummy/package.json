@@ -35,7 +35,7 @@
     "clean": "rimraf lib libm .tsc"
   },
   "dependencies": {
-    "@mocktomata/framework": "workspace:*"
+    "@mocktomata/framework": "workspace:^"
   },
   "engines": {
     "node": ">= 14.16"

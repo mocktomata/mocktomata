@@ -24,7 +24,7 @@
       "path": "../io-local"
     },
     {
-      "path": "../plugin-fixture-dummy"
+      "path": "../../test-plugins/plugin-fixture-dummy"
     }
   ],
   "include": [

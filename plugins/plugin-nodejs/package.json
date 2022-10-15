@@ -40,7 +40,7 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "workspace:*"
+    "@mocktomata/framework": "workspace:^"
   },
   "devDependencies": {
     "depcheck": "^1.4.3",

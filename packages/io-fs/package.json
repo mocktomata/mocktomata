@@ -36,7 +36,7 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "workspace:*",
+    "@mocktomata/framework": "workspace:^",
     "find-installed-packages": "^2.1.6",
     "md5": "^2.3.0",
     "mkdirp": "^1.0.4",

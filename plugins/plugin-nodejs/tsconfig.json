@@ -9,7 +9,7 @@
   },
   "references": [
     {
-      "path": "../framework"
+      "path": "../../packages/framework"
     }
   ],
   "include": [

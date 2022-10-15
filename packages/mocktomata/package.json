@@ -52,10 +52,10 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/file-server": "workspace:*",
-    "@mocktomata/framework": "workspace:*",
-    "@mocktomata/io-client": "workspace:*",
-    "@mocktomata/io-local": "workspace:*",
+    "@mocktomata/file-server": "workspace:^",
+    "@mocktomata/framework": "workspace:^",
+    "@mocktomata/io-client": "workspace:^",
+    "@mocktomata/io-local": "workspace:^",
     "async-fp": "^8.0.0",
     "chalk": "^4.1.1",
     "clibuilder": "^8.0.2",
@@ -68,8 +68,8 @@
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@kayahr/jest-electron-runner": "^29.0.0",
-    "@mocktomata/plugin-fixture-deep-link": "workspace:*",
-    "@mocktomata/plugin-fixture-dummy": "workspace:*",
+    "@mocktomata/plugin-fixture-deep-link": "workspace:^",
+    "@mocktomata/plugin-fixture-dummy": "workspace:^",
     "ansi-colors": "^4.1.1",
     "assertron": "^10.0.0",
     "depcheck": "^1.4.3",

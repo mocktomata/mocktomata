@@ -18,7 +18,7 @@
       "path": "../io-fs"
     },
     {
-      "path": "../plugin-fixture-dummy"
+      "path": "../../test-plugins/plugin-fixture-dummy"
     }
   ],
   "include": [

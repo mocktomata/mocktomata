@@ -36,15 +36,15 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "workspace:*",
+    "@mocktomata/framework": "workspace:^",
     "cross-fetch": "^3.1.4",
     "type-plus": "^4.13.1"
   },
   "devDependencies": {
     "@kayahr/jest-electron-runner": "^29.0.0",
-    "@mocktomata/file-server": "workspace:*",
-    "@mocktomata/io-fs": "workspace:*",
-    "@mocktomata/plugin-fixture-dummy": "workspace:*",
+    "@mocktomata/file-server": "workspace:^",
+    "@mocktomata/io-fs": "workspace:^",
+    "@mocktomata/plugin-fixture-dummy": "workspace:^",
     "assertron": "^10.0.0",
     "depcheck": "^1.4.3",
     "jest": "^28.1.3",
