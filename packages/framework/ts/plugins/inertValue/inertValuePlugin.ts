@@ -1,4 +1,4 @@
-import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecPlugin } from '../../spec-plugin/types.js'
 
 // istanbul ignore next
 export const inertPlugin: SpecPlugin<any> = {
