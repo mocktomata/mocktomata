@@ -78,7 +78,7 @@ or return values of callbacks.
 `Performer` indicates who should perform the action.
 
 `user` - actions to be performed by user
-`mockto` - actions to be performed by mockto
+`mockto` - actions to be performed by `mockto`
 `plugin` - actions to be performed by respective plugins
 
 ## simulation
@@ -88,7 +88,7 @@ or return values of callbacks.
 During simulation,
 the get calls can be made out of order to certain degree.
 This allows both the external dependency and logic code to change when certain property is accessed without breaking the test.
-This is allowed as long the the behavior remains the same.
+This is allowed as long the behavior remains the same.
 
 Here is an example:
 
@@ -101,8 +101,8 @@ Here is an example:
 } as Options) as Result2
 ```
 
-The get action on `Options.sucess` can made before the actual ajax call is made,
-or when the ajax response is received.
+The get action on `Options.sucess` can be made before the actual AJAX call is made,
+or when the AJAX response is received.
 i.e., the implementation of `$.ajax()` can be either:
 
 ```ts
@@ -121,25 +121,29 @@ Depending on the implementation, the resulting record will be different:
 
 For the first case:
 
-- <ref:0> create passive input stub: ajax() { ... }
-- <act:0> you invoke <ref:0>(<ref:1>)
-- <ref:1> create active input spy: { success: ... }
-- <act:1> I access <ref:1>.success
-- <act:2> <ref:1 act:1> -> <ref:2>
-- <ref:2> create active input spy: success() { ... }
-- <act:3> <ref:0 act:0> -> <ref:3>
-- <ref:3> create passive meta stub: { ... } (Result2)
+```md
+<ref:0> create passive input stub: ajax() { ... }
+<act:0> you invoke <ref:0>(<ref:1>)
+<ref:1> create active input spy: { success: ... }
+<act:1> I access <ref:1>.success
+<act:2> <ref:1 act:1> -> <ref:2>
+<ref:2> create active input spy: success() { ... }
+<act:3> <ref:0 act:0> -> <ref:3>
+<ref:3> create passive meta stub: { ... } (Result2)
+```
 
 For the second case:
 
-- <ref:0> create passive input stub: ajax() { ... }
-- <act:0> you invoke <ref:0>(<ref:1>)
-- <ref:1> create active input spy: { success: ... }
-- <act:1> <ref:0 act:0> -> <ref:2>
-- <ref:2> create passive meta stub: { ... } (Result2)
-- <act:2> I access <ref:1>.success
-- <act:3> <ref:1 act:2> -> <ref:3>
-- <ref:3> create active input spy: success() { ... }
+```md
+<ref:0> create passive input stub: ajax() { ... }
+<act:0> you invoke <ref:0>(<ref:1>)
+<ref:1> create active input spy: { success: ... }
+<act:1> <ref:0 act:0> -> <ref:2>
+<ref:2> create passive meta stub: { ... } (Result2)
+<act:2> I access <ref:1>.success
+<act:3> <ref:1 act:2> -> <ref:3>
+<ref:3> create active input spy: success() { ... }
+```
 
 If we strictly enforce the action order, the tests will become brittle.
 

@@ -1,4 +1,4 @@
-# mockto
+# `mockto`
 
 This is the user manual for `mockto`.
 
@@ -17,7 +17,7 @@ If your test runner support nesting, for example the `describe()` function in `j
 remember that the `specName` must be unique,
 so you may need to repeat the `name` in `describe(name, handler)` in the `specName`.
 
-- [mockto](#mockto)
+- [`mockto`](#mockto)
   - [`mockto(specName, [options], (title, spec) => void)`](#mocktospecname-options-title-spec--void)
   - [`mockto.live(specName, [options], (title, spec) => void)`](#mocktolivespecname-options-title-spec--void)
   - [`mockto.save(specName, [options], (title, spec) => void)`](#mocktosavespecname-options-title-spec--void)
@@ -79,7 +79,7 @@ For methods available to `spec`, please check out its [`user manual`](./spec.md)
 ## `mockto.live(specName, [options], (title, spec) => void)`
 
 Always run the spec in `live` mode.
-Actual calls will be made and the behavior is not recorded.
+Actual calls will be made, and the behavior is not recorded.
 These specs are not affected by configuration.
 
 ## `mockto.save(specName, [options], (title, spec) => void)`
@@ -135,10 +135,10 @@ By changing `mockto()` to `mockto.save()`, run the test, and switch it back.
 
 ### Preserving Passed Tests
 
-If the extenal dependency is not stable or no longer available (for the time being or require specific condition or permission),
+If the external dependency is not stable or no longer available (for the time being or require specific condition or permission),
 you can consider changing some tests from `mockto()` to `mockto.simulate()` so that the test behavior is preserved.
 
-When using `mockto.simulate()`, configuration will not changes it behavior thus will not accidentially overwiting the record.
+When using `mockto.simulate()`, configuration will not change it behavior thus will not accidentally overwrite the record.
 However, this should be done with care, because you are essentially changing the test to a simple mocked unit test.
 
 ### Use Configuration To Update Record

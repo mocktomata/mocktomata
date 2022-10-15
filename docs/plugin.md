@@ -1,4 +1,4 @@
-# plugin
+# Plugin
 
 [`mocktomata`][mocktomata] is built with a plugin architecture.
 In fact, every language level behavior are simple plugins.
@@ -7,7 +7,7 @@ It works out-of-the-box most of the time.
 But if you use certain library that does not work with [`mocktomata`][mocktomata],
 you can write a plugin for that library.
 
-## PluginModule
+## `PluginModule`
 
 A `PluginModule` is a package that contains one or more plugins.
 
@@ -27,7 +27,7 @@ export function activate(context: SpecPlugin.ActivationContext) {
 const yourPlugin: SpecPlugin = ...
 ```
 
-## SpecPlugin
+## `SpecPlugin`
 
 `SpecPlugin` defines the interface of the plugin.
 

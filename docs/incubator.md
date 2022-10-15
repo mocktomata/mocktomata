@@ -24,7 +24,7 @@ beforeAll(() => incubator.config({ plugins: [
 ]}))
 ```
 
-where `activate` is the activate function you export (`function activate(context: SpecPlugin.ActivationContext): any`).
+`activate` is the activate function you export (`function activate(context: SpecPlugin.ActivationContext): any`).
 
 As shown in the example above, you can load other plugins to create a specific test environment.
 
