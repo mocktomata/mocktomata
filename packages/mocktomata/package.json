@@ -60,6 +60,7 @@
     "chalk": "^4.1.1",
     "clibuilder": "^8.0.2",
     "global-store": "^1.0.0-beta.21",
+    "iso-error": "^4.4.0",
     "standard-log": "^11.2.0",
     "standard-log-color": "^8.0.0",
     "type-plus": "^4.13.1",
