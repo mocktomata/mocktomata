@@ -2,3 +2,5 @@
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q[GitHub NodeJS]github-action-url [Codecov]codecov-url [Codacy Grade Badge]codacy-grade-url [Codacy Coverage Badge]codacy-coverage-url\\E$"}
 {"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\Q[Visual Studio Code]vscode-url [Wallaby.js]wallaby-url\\E$"}
 {"rule":"ENGLISH_WORD_REPEAT_BEGINNING_RULE","sentence":"^\\QAcceptance tests can fail when the external systems are unstable or change without notice.\\E$"}
+
+{"rule":"ENGLISH_WORD_REPEAT_RULE","sentence":"^\\QConfiguration\nConfiguration File\nUsing \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q\nEnvironment Variables\nTips and Tricks\nDefine plugins in configuration file\nChange mode using \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q function\nUse Environment Variables in CI\nAcceptance Tests\nRefresh Records\nDetect Stale Records\\E$"}

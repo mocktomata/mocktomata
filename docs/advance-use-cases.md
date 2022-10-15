@@ -16,7 +16,7 @@ Then you can record the complete behavior and reproduce it later on.
 
 ## Recorded Demo
 
-How many times did you run a live demo and it did not go as planned?
+How many times did you run a live demo, and it did not go as planned?
 
 With [`mocktomata`][mocktomata],
 you can record your action and replay it live.
