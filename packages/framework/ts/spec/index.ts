@@ -5,5 +5,5 @@ export * from './createSimulateSpec.js'
 export * from './createSpecObject.js'
 export * from './errors.js'
 export * from './getEffectiveSpecMode.js'
-export * from './types.js'
+export type { Spec } from './types.js'
 

@@ -1,6 +1,6 @@
-import { Log } from '../log/types.js'
+import type { Log } from '../log/types.js'
 import { DuplicatePlugin, PluginNotConforming } from './errors.js'
-import { SpecPlugin } from './types.js'
+import type { SpecPlugin } from './types.js'
 
 // TODO: this might need to be convert to async function so that the module
 // can call register asynchronously

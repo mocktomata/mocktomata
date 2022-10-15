@@ -1,16 +1,17 @@
 import type { AsyncContext } from 'async-fp'
-import { createConsoleLogReporter, createMemoryLogReporter, createStandardLog, Logger, MemoryLogReporter } from 'standard-log'
+import { createConsoleLogReporter, createMemoryLogReporter, createStandardLog, MemoryLogReporter } from 'standard-log'
+import { transformConfig } from '../config/index.js'
+import { Config } from '../config/types.js'
+import { Log } from '../log/types.js'
 import { createFixedModeMocktoFn } from '../mockto/createMocktoFn.js'
 import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs.js'
-import { transformConfig } from '../mockto/transformConfig.js'
 import { loadPlugins, SpecPlugin } from '../spec-plugin/index.js'
 import { createSpecObject, Spec } from '../spec/index.js'
 import { createTestIO, getCallerRelativePath } from '../test-utils/index.js'
 import type { TimeTracker } from '../timeTracker/index.js'
-import type { Mocktomata } from '../types.js'
 
 export namespace createIncubator {
-  export type Context = { config: Mocktomata.Config, io: createTestIO.TestIO, log: Logger }
+  export type Context = Config.Context & Log.Context & { io: createTestIO.TestIO }
   export type IncubatorFn = {
     /**
      * Creates an automatic incubator spec.

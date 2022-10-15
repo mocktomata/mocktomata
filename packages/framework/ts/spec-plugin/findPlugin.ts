@@ -1,5 +1,5 @@
 import { PluginNotFound } from './errors.js'
-import { SpecPlugin } from './types.js'
+import type { SpecPlugin } from './types.js'
 
 export function findPlugin<S>(plugins: SpecPlugin.Instance[], subject: S): SpecPlugin.Instance<S> | undefined {
   return plugins.find(p => p.support(subject))

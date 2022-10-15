@@ -1,6 +1,5 @@
 import { logLevels } from 'standard-log'
-import { createTestContext } from '../test-utils/index.js'
-import { createKomondor } from './createKomondor.js'
+import { createKomondor, createTestContext } from '../index.js'
 
 const { context } = createTestContext()
 const k = createKomondor(context)

@@ -1,12 +1,11 @@
 import a from 'assertron'
 import { AsyncContext } from 'async-fp'
 import { createStandardLogForTest } from 'standard-log'
-import { transformConfig } from '../mockto/transformConfig.js'
+import { transformConfig } from '../config/index.js'
+import { createTestContext, createTestIO, ExtraReference, PluginsNotLoaded } from '../index.js'
 import { loadPlugins } from '../spec-plugin/index.js'
-import { createTestContext, createTestIO } from '../test-utils/index.js'
-import { ExtraReference, PluginsNotLoaded } from './errors.js'
 import { createSimulator } from './simulator.js'
-import { createSpec } from './types.internal.js'
+import type { createSpec } from './types.internal.js'
 
 test('create not expected stub throws', async () => {
   const { context } = createTestContext()

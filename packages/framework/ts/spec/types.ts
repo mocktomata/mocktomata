@@ -1,8 +1,8 @@
-import { Logger, LogLevel, MemoryLogReporter } from 'standard-log'
-import { Log } from '../log/types.js'
-import { SpecPlugin } from '../spec-plugin/types.js'
-import { SpecRecord } from '../spec-record/types.js'
-import { TimeTracker } from '../timeTracker/index.js'
+import type { Logger, LogLevel, MemoryLogReporter } from 'standard-log'
+import type { Log } from '../log/types.js'
+import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecRecord } from '../spec-record/types.js'
+import type { TimeTracker } from '../timeTracker/index.js'
 
 export type Spec = {
   <S>(subject: S): Promise<S>,

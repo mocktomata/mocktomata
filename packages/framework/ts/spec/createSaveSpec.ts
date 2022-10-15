@@ -5,7 +5,7 @@ import { assertMockable } from './assertMockable.js'
 import { assertSpecName } from './assertSpecName.js'
 import { createRecorder } from './recorder.js'
 import type { Spec } from './types.js'
-import { createSpec } from './types.internal.js'
+import type { createSpec } from './types.internal.js'
 
 export async function createSaveSpec(
   context: AsyncContext<createSpec.Context>,
