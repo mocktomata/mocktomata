@@ -25,6 +25,8 @@
     "cjs",
     "esm",
     "ts",
+    "!ts/test-artifacts",
+    "!**/*.mock.*",
     "!**/*.spec.*"
   ],
   "scripts": {
