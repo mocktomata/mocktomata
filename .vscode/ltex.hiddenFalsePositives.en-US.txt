@@ -4,3 +4,5 @@
 {"rule":"ENGLISH_WORD_REPEAT_BEGINNING_RULE","sentence":"^\\QAcceptance tests can fail when the external systems are unstable or change without notice.\\E$"}
 
 {"rule":"ENGLISH_WORD_REPEAT_RULE","sentence":"^\\QConfiguration\nConfiguration File\nUsing \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q\nEnvironment Variables\nTips and Tricks\nDefine plugins in configuration file\nChange mode using \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q function\nUse Environment Variables in CI\nAcceptance Tests\nRefresh Records\nDetect Stale Records\\E$"}
+{"rule":"IN_A_X_MANNER","sentence":"^\\QRedistribution in source code or other forms must include a copy of this license document to be provided in a reasonable manner.\\E$"}
+{"rule":"ALL_OF_THE","sentence":"^\\QLicensor hereby grants to each recipient of the Software (“you”) a non-exclusive, non-transferable, royalty-free and fully-paid-up license, under all of the Licensor's copyright and patent rights, to use, copy, distribute, prepare derivative works of, publicly perform and display the Software, subject to the Use Limitation and the conditions set forth below.\\E$"}
