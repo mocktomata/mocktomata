@@ -1,5 +1,5 @@
-import { AsyncContext } from 'async-fp'
-import { LogLevel } from 'standard-log'
+import type { AsyncContext } from 'async-fp'
+import type { LogLevel } from 'standard-log'
 import { assertMockable } from './assertMockable.js'
 import { assertSpecName } from './assertSpecName.js'
 import { createSimulator } from './simulator.js'

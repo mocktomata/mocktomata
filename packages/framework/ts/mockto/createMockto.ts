@@ -1,10 +1,10 @@
 import type { AsyncContext } from 'async-fp'
-import type { Spec } from '../spec/index.js'
+import { transformConfig } from '../config/index.js'
 import { loadPlugins } from '../spec-plugin/index.js'
+import type { Spec } from '../spec/index.js'
 import type { TimeTracker } from '../timeTracker/index.js'
 import type { Mocktomata } from '../types.js'
 import { createFixedModeMocktoFn, createMocktoFn } from './createMocktoFn.js'
-import { transformConfig } from './transformConfig.js'
 
 export namespace createMockto {
   export type Mockto = MocktoFn & {

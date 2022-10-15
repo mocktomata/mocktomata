@@ -1,4 +1,5 @@
 import { requiredDeep } from 'type-plus'
+import type { Config } from '../config/types.js'
 import { es2015 } from '../es2015.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecNotFound } from '../spec/index.js'
@@ -7,9 +8,8 @@ import { prettyPrintSpecRecord } from '../utils/index.js'
 
 export namespace createTestIO {
   export type Options = {
-    config?: Partial<Mocktomata.Config>,
     modules?: Record<string, SpecPlugin.Module>
-  }
+  } & Partial<Config.Options>
   export type TestIO = {
     getAllSpecs(): IterableIterator<[string, string]>,
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,

@@ -1,8 +1,7 @@
 import a from 'assertron'
 import { logLevels } from 'standard-log'
 import { record } from 'type-plus'
-import { createMockto, SpecNotFound } from '../index.js'
-import { createTestContext, getCallerRelativePath } from '../test-utils/index.js'
+import { createMockto, createTestContext, getCallerRelativePath, SpecNotFound } from '../index.js'
 
 const { context } = createTestContext()
 const mockto = createMockto(context)
@@ -55,7 +54,7 @@ test('live enableLog method can specify log level', () => {
   const { context } = createTestContext()
   const mockto = createMockto(context)
   return new Promise<void>(a => {
-    mockto.live('ive enableLog method can specify log level', async (_, spec) => {
+    mockto.live('live enableLog method can specify log level', async (_, spec) => {
       await spec(() => { })
       spec.enableLog(logLevels.none)
       a()

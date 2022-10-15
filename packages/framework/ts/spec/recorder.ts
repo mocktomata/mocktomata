@@ -1,17 +1,17 @@
-import { AsyncContext } from 'async-fp'
-import { PartialPick } from 'type-plus'
+import type { AsyncContext } from 'async-fp'
+import type { PartialPick } from 'type-plus'
 import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin.js'
-import { SpecPlugin } from '../spec-plugin/types.js'
-import { SpecRecord } from '../spec-record/types.js'
+import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecRecord } from '../spec-record/types.js'
 import { createTimeTracker, TimeTracker } from '../timeTracker/index.js'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal/index.js'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs.js'
 import { maskIfNeeded } from './masking.js'
 import { createSpecRecordBuilder } from './record.js'
 import { getDefaultPerformer } from './subjectProfile.js'
-import { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
-import { Spec } from './types.js'
+import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
+import type { Spec } from './types.js'
 
 export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
   let timeTracker: TimeTracker

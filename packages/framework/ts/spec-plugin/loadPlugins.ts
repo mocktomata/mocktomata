@@ -1,9 +1,11 @@
-import { Logger } from 'standard-log'
+import type { Logger } from 'standard-log'
 import { es2015 } from '../es2015.js'
-import { Mocktomata } from '../types.js'
+import type { Mocktomata } from '../types.js'
 import { addPluginModule } from './addPluginModule.js'
 import { PluginModuleNotConforming, PluginNotFound } from './errors.js'
-import { SpecPlugin } from './types.js'
+import type { SpecPlugin } from './types.js'
+
+// TODO: using Mocktomata.Context here seems to be a bad idea
 
 export async function loadPlugins({ config, io, log }: Mocktomata.Context) {
   // check `config.ecmaVersion` in the future

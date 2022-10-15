@@ -1,4 +1,4 @@
-import { Spec } from './index.js'
+import type { Spec } from './types.js'
 
 /**
  * Get the effective SpecMode for the specified id.

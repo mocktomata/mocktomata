@@ -1,9 +1,9 @@
-import { AsyncContext } from 'async-fp'
+import type { AsyncContext } from 'async-fp'
 import { createSaveSpec } from './createSaveSpec.js'
 import { createSimulateSpec } from './createSimulateSpec.js'
 import { SpecNotFound } from './errors.js'
-import { Spec } from './types.js'
-import { createSpec } from './types.internal.js'
+import type { Spec } from './types.js'
+import type { createSpec } from './types.internal.js'
 
 export async function createAutoSpec(context: AsyncContext<createSpec.Context>, title: string, specPath: string, options: Spec.Options): Promise<Spec> {
   try {

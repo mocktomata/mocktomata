@@ -1,6 +1,6 @@
-import type { Mocktomata } from '../types.js'
+import { Config } from './types.js'
 
-export async function transformConfig({ config }: Mocktomata.Context) {
+export async function transformConfig({ config }: Config.Context) {
   // filePathFilter not tested because it is troublesome to setup test
   // istanbul ignore next
   return {

@@ -1,8 +1,7 @@
 import a from 'assertron'
 import { startsWith } from 'satisfier'
+import { createTestContext, DuplicatePlugin, loadPlugins, PluginModuleNotConforming, PluginNotConforming, PluginNotFound } from '../index.js'
 import { echoPluginModule, missGetSpyPluginModule, missGetStubPluginModule, missSupportPluginModule, noActivatePluginModule, pluginModuleA } from '../test-artifacts/index.js'
-import { createTestContext } from '../test-utils/index.js'
-import { DuplicatePlugin, loadPlugins, PluginModuleNotConforming, PluginNotConforming, PluginNotFound } from './index.js'
 
 /**
  * Plugin order is reversed so that most specific plugin are checked first.

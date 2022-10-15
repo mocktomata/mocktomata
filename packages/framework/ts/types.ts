@@ -16,5 +16,5 @@ export namespace Mocktomata {
    */
   export type Config = Spec.Config & SpecPlugin.Config & Log.Config
 
-  export type Context = { config: Config, io: IO } & Log.Context
+  export type Context = { io: IO } & Config.Context & Log.Context
 }

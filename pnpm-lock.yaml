@@ -105,7 +105,7 @@ importers:
       async-fp: ^8.0.0
       delay: ^5.0.0
       depcheck: ^1.4.3
-      iso-error: ^4.3.6
+      iso-error: ^4.4.0
       jest: ^28.1.3
       npm-run-all: ^4.1.5
       satisfier: ^5.2.2
@@ -118,7 +118,7 @@ importers:
       typescript: ~4.8.3
     dependencies:
       async-fp: 8.0.0
-      iso-error: 4.3.6
+      iso-error: 4.4.0
       stack-utils: 2.0.5
       standard-log: 11.2.0
       tersify: 3.10.5
@@ -5894,11 +5894,6 @@ packages:
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
     dev: true
-
-  /iso-error/4.3.6:
-    resolution: {integrity: sha512-gCGeSdffWXnJJIobk5F5JzB6k17uQiKM29M90VkPZD1WrYIQ8dFN7UqEPaaaDgg5yPNVnXBGCZ8kwz8trazYaw==}
-    engines: {node: '>= 10'}
-    dev: false
 
   /iso-error/4.4.0:
     resolution: {integrity: sha512-DRPiLihxUYhz4rMbfdzvm+l8ihd+d1QXClNa/SJk5HMrX93T5y7A7S+rwNOS+x2Tlzfc/IE0OrJhz/RyQ6s28Q==}
