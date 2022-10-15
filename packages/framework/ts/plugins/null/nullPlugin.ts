@@ -1,4 +1,4 @@
-import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecPlugin } from '../../spec-plugin/types.js'
 
 export const nullPlugin: SpecPlugin<null> = {
   name: 'null',
