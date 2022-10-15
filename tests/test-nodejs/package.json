@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "mocktomata": "workspace:*"
+    "mocktomata": "workspace:^"
   },
   "devDependencies": {
     "depcheck": "^1.4.3",

@@ -38,8 +38,8 @@
   "dependencies": {
     "@hapi/boom": "^10.0.0",
     "@hapi/hapi": "^20.2.2",
-    "@mocktomata/framework": "workspace:*",
-    "@mocktomata/io-fs": "workspace:*"
+    "@mocktomata/framework": "workspace:^",
+    "@mocktomata/io-fs": "workspace:^"
   },
   "devDependencies": {
     "@types/hapi__hapi": "^20.0.12",

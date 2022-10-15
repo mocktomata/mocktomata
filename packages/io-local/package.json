@@ -36,12 +36,12 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/framework": "workspace:*",
-    "@mocktomata/io-fs": "workspace:*"
+    "@mocktomata/framework": "workspace:^",
+    "@mocktomata/io-fs": "workspace:^"
   },
   "devDependencies": {
-    "@mocktomata/plugin-fixture-deep-link": "workspace:*",
-    "@mocktomata/plugin-fixture-dummy": "workspace:*",
+    "@mocktomata/plugin-fixture-deep-link": "workspace:^",
+    "@mocktomata/plugin-fixture-dummy": "workspace:^",
     "assertron": "^10.0.0",
     "depcheck": "^1.4.3",
     "jest": "^28.1.3",

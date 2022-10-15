@@ -68,8 +68,8 @@ importers:
     specifiers:
       '@hapi/boom': ^10.0.0
       '@hapi/hapi': ^20.2.2
-      '@mocktomata/framework': workspace:*
-      '@mocktomata/io-fs': workspace:*
+      '@mocktomata/framework': workspace:^
+      '@mocktomata/io-fs': workspace:^
       '@types/hapi__hapi': ^20.0.12
       '@types/node-fetch': ^2.6.2
       assertron: ^10.0.0
@@ -139,10 +139,10 @@ importers:
   packages/io-client:
     specifiers:
       '@kayahr/jest-electron-runner': ^29.0.0
-      '@mocktomata/file-server': workspace:*
-      '@mocktomata/framework': workspace:*
-      '@mocktomata/io-fs': workspace:*
-      '@mocktomata/plugin-fixture-dummy': workspace:*
+      '@mocktomata/file-server': workspace:^
+      '@mocktomata/framework': workspace:^
+      '@mocktomata/io-fs': workspace:^
+      '@mocktomata/plugin-fixture-dummy': workspace:^
       assertron: ^10.0.0
       cross-fetch: ^3.1.4
       depcheck: ^1.4.3
@@ -159,7 +159,7 @@ importers:
       '@kayahr/jest-electron-runner': 29.0.0
       '@mocktomata/file-server': link:../file-server
       '@mocktomata/io-fs': link:../io-fs
-      '@mocktomata/plugin-fixture-dummy': link:../plugin-fixture-dummy
+      '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
       assertron: 10.0.0
       depcheck: 1.4.3
       jest: 28.1.3
@@ -169,7 +169,7 @@ importers:
 
   packages/io-fs:
     specifiers:
-      '@mocktomata/framework': workspace:*
+      '@mocktomata/framework': workspace:^
       assertron: ^10.0.0
       depcheck: ^1.4.3
       find-installed-packages: ^2.1.6
@@ -198,10 +198,10 @@ importers:
 
   packages/io-local:
     specifiers:
-      '@mocktomata/framework': workspace:*
-      '@mocktomata/io-fs': workspace:*
-      '@mocktomata/plugin-fixture-deep-link': workspace:*
-      '@mocktomata/plugin-fixture-dummy': workspace:*
+      '@mocktomata/framework': workspace:^
+      '@mocktomata/io-fs': workspace:^
+      '@mocktomata/plugin-fixture-deep-link': workspace:^
+      '@mocktomata/plugin-fixture-dummy': workspace:^
       assertron: ^10.0.0
       depcheck: ^1.4.3
       jest: ^28.1.3
@@ -213,8 +213,8 @@ importers:
       '@mocktomata/framework': link:../framework
       '@mocktomata/io-fs': link:../io-fs
     devDependencies:
-      '@mocktomata/plugin-fixture-deep-link': link:../plugin-fixture-deep-link
-      '@mocktomata/plugin-fixture-dummy': link:../plugin-fixture-dummy
+      '@mocktomata/plugin-fixture-deep-link': link:../../test-plugins/plugin-fixture-deep-link
+      '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
       assertron: 10.0.0
       depcheck: 1.4.3
       jest: 28.1.3
@@ -227,12 +227,12 @@ importers:
     specifiers:
       '@babel/core': ^7.18.10
       '@kayahr/jest-electron-runner': ^29.0.0
-      '@mocktomata/file-server': workspace:*
-      '@mocktomata/framework': workspace:*
-      '@mocktomata/io-client': workspace:*
-      '@mocktomata/io-local': workspace:*
-      '@mocktomata/plugin-fixture-deep-link': workspace:*
-      '@mocktomata/plugin-fixture-dummy': workspace:*
+      '@mocktomata/file-server': workspace:^
+      '@mocktomata/framework': workspace:^
+      '@mocktomata/io-client': workspace:^
+      '@mocktomata/io-local': workspace:^
+      '@mocktomata/plugin-fixture-deep-link': workspace:^
+      '@mocktomata/plugin-fixture-dummy': workspace:^
       ansi-colors: ^4.1.1
       assertron: ^10.0.0
       async-fp: ^8.0.0
@@ -271,8 +271,8 @@ importers:
     devDependencies:
       '@babel/core': 7.18.10
       '@kayahr/jest-electron-runner': 29.0.0
-      '@mocktomata/plugin-fixture-deep-link': link:../plugin-fixture-deep-link
-      '@mocktomata/plugin-fixture-dummy': link:../plugin-fixture-dummy
+      '@mocktomata/plugin-fixture-deep-link': link:../../test-plugins/plugin-fixture-deep-link
+      '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
       ansi-colors: 4.1.3
       assertron: 10.0.0
       depcheck: 1.4.3
@@ -288,21 +288,9 @@ importers:
       webpack: 5.74.0_webpack-cli@4.10.0
       webpack-cli: 4.10.0_webpack@5.74.0
 
-  packages/plugin-fixture-deep-link:
-    specifiers: {}
-
-  packages/plugin-fixture-dummy:
+  plugins/plugin-node-fetch:
     specifiers:
-      '@mocktomata/framework': workspace:*
-    dependencies:
-      '@mocktomata/framework': link:../framework
-
-  packages/plugin-fixture-no-activate:
-    specifiers: {}
-
-  packages/plugin-node-fetch:
-    specifiers:
-      '@mocktomata/framework': workspace:*
+      '@mocktomata/framework': workspace:^
       '@types/node-fetch': ^2.6.2
       depcheck: ^1.4.3
       jest: ^28.1.3
@@ -311,7 +299,7 @@ importers:
       ts-jest: ^28.0.7
       typescript: ~4.8.3
     dependencies:
-      '@mocktomata/framework': link:../framework
+      '@mocktomata/framework': link:../../packages/framework
       node-fetch: 2.6.7
     devDependencies:
       '@types/node-fetch': 2.6.2
@@ -321,16 +309,16 @@ importers:
       ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
       typescript: 4.8.3
 
-  packages/plugin-nodejs:
+  plugins/plugin-nodejs:
     specifiers:
-      '@mocktomata/framework': workspace:*
+      '@mocktomata/framework': workspace:^
       depcheck: ^1.4.3
       jest: ^28.1.3
       npm-run-all: ^4.1.5
       ts-jest: ^28.0.7
       typescript: ~4.8.3
     dependencies:
-      '@mocktomata/framework': link:../framework
+      '@mocktomata/framework': link:../../packages/framework
     devDependencies:
       depcheck: 1.4.3
       jest: 28.1.3
@@ -338,18 +326,30 @@ importers:
       ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
       typescript: 4.8.3
 
-  packages/test-nodejs:
+  test-plugins/plugin-fixture-deep-link:
+    specifiers: {}
+
+  test-plugins/plugin-fixture-dummy:
+    specifiers:
+      '@mocktomata/framework': workspace:^
+    dependencies:
+      '@mocktomata/framework': link:../../packages/framework
+
+  test-plugins/plugin-fixture-no-activate:
+    specifiers: {}
+
+  tests/test-nodejs:
     specifiers:
       axios: ^0.21.1
       depcheck: ^1.4.3
       jest: ^28.1.3
-      mocktomata: workspace:*
+      mocktomata: workspace:^
       npm-run-all: ^4.1.5
       ts-jest: ^28.0.7
       typescript: ~4.8.3
     dependencies:
       axios: 0.21.4
-      mocktomata: link:../mocktomata
+      mocktomata: link:../../packages/mocktomata
     devDependencies:
       depcheck: 1.4.3
       jest: 28.1.3

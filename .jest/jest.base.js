@@ -7,10 +7,10 @@ module.exports = {
     }
   },
   moduleNameMapper: {
-    '^@mocktomata/(plugin-fixture-deep-link.*)': '<rootDir>/../$1',
+    '^@mocktomata/(plugin-fixture-deep-link.*)': '<rootDir>/../../test-plugins/$1',
     // '^@mocktomata/(.*)/(.*)': '<rootDir>/../$1/ts/$2',
-    '^@mocktomata/(.*)': '<rootDir>/../$1/ts',
-    '^mocktomata': '<rootDir>/../mocktomata/ts',
+    '^@mocktomata/(.*)': '<rootDir>/../../packages/$1/ts',
+    '^mocktomata': '<rootDir>/../../packages/mocktomata/ts',
     '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   roots: [

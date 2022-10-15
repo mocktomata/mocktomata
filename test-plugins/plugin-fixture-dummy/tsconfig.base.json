@@ -6,7 +6,9 @@
     ],
     "rootDir": "ts"
   },
-  "references": [
+  "references": [{
+    "path": "../../packages/framework"
+  }
   ],
   "include": [
     "ts",
