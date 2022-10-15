@@ -146,6 +146,7 @@ importers:
       assertron: ^10.0.0
       cross-fetch: ^3.1.4
       depcheck: ^1.4.3
+      iso-error: ^4.4.0
       jest: ^28.1.3
       npm-run-all: ^4.1.5
       ts-jest: ^28.0.7
@@ -154,6 +155,7 @@ importers:
     dependencies:
       '@mocktomata/framework': link:../framework
       cross-fetch: 3.1.5
+      iso-error: 4.4.0
       type-plus: 4.13.1
     devDependencies:
       '@kayahr/jest-electron-runner': 29.0.0
@@ -240,6 +242,7 @@ importers:
       clibuilder: ^8.0.2
       depcheck: ^1.4.3
       global-store: ^1.0.0-beta.21
+      iso-error: ^4.4.0
       jest: ^28.1.3
       jest-environment-jsdom: ^28.1.3
       npm-run-all: ^4.1.5
@@ -264,6 +267,7 @@ importers:
       chalk: 4.1.2
       clibuilder: 8.0.2
       global-store: 1.0.0-beta.21
+      iso-error: 4.4.0
       standard-log: 11.2.0
       standard-log-color: 8.0.0_standard-log@11.2.0
       type-plus: 4.13.1
