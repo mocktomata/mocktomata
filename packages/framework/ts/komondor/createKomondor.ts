@@ -3,7 +3,7 @@ import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
 import { transformConfig } from '../config/index.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
-import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec/index.js'
+import { createSpecObject, getEffectiveSpecModeContext, Spec } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import type { TimeTracker } from '../timeTracker/index.js'
 import type { Mocktomata } from '../types.js'
@@ -28,44 +28,30 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
   return Object.assign(
     createKomondorFn(ctx),
     {
-      live: createFixedModeKomondorFn(ctx, 'live'),
-      save: createFixedModeKomondorFn(ctx, 'save'),
-      simulate: createFixedModeKomondorFn(ctx, 'simulate'),
+      live: createKomondorFn(ctx, 'live'),
+      save: createKomondorFn(ctx, 'save'),
+      simulate: createKomondorFn(ctx, 'simulate'),
       async teardown() {
         const { timeTrackers } = await ctx.get()
         timeTrackers.forEach(t => t.terminate())
-      },
+      }
     }
   )
 }
 
-function createKomondorFn(context: AsyncContext<Spec.Context>): createKomondor.KomondorFn {
+function createKomondorFn(context: AsyncContext<Spec.Context>, mode?: Spec.Mode) {
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
-    const specRelativePath = getCallerRelativePath(komondorFn)
     const reporter = createMemoryLogReporter()
-    const ctx = context.extend(async ({ config }) => ({
-      mode: getEffectiveSpecMode(config, specName, specRelativePath),
-      reporter,
-      specName,
-      specRelativePath,
-      maskCriteria: []
-    })).extend(createLogContext)
-    return Object.assign(createSpecObject(ctx, specName, options), {
-      reporter
-    })
-  }
-  return komondorFn
-}
 
-function createFixedModeKomondorFn(context: AsyncContext<Spec.Context>, mode: Spec.Mode) {
-  const komondorFn = (specName: string, options = { timeout: 3000 }) => {
-    const specRelativePath = getCallerRelativePath(komondorFn)
-    const reporter = createMemoryLogReporter()
-    return Object.assign(createSpecObject(context
-      .extend({ mode, reporter, specName, specRelativePath, maskCriteria: [] })
-      .extend(createLogContext), specName, options), {
-      reporter
-    })
+    return Object.assign(
+      createSpecObject(
+        context
+          .extend({ reporter, specName, specRelativePath: getCallerRelativePath(komondorFn) })
+          .extend(getEffectiveSpecModeContext(mode))
+          .extend(createLogContext),
+        specName,
+        options),
+      { reporter })
   }
   return komondorFn
 }

@@ -14,7 +14,7 @@ describe(`mockto`, () => {
       const title = 'live with no options'
       return new Promise<void>(a => {
         mockto.live(title, async (specName, spec) => {
-          expect(specName).toEqual(`${title}: live`)
+          expect(specName).toEqual(title)
           const s = await spec((x: number) => x + 1)
           expect(s(1)).toBe(2)
           await spec.done()
@@ -27,7 +27,7 @@ describe(`mockto`, () => {
       const title = 'live with options'
       return new Promise<void>(a => {
         mockto.live(title, { timeout: 2000 }, (specName, spec) => {
-          expect(specName).toEqual(`${title}: live`)
+          expect(specName).toEqual(title)
           spec((x: number) => x + 1).then(s => {
             expect(s(1)).toBe(2)
             a()
@@ -69,7 +69,7 @@ describe(`mockto`, () => {
     const title = 'save with no options'
     await new Promise<void>(a => {
       mockto.save(title, (specName, spec) => {
-        expect(specName).toEqual(`${title}: save`)
+        expect(specName).toEqual(title)
         spec((x: number) => x + 1).then(async s => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -87,7 +87,7 @@ describe(`mockto`, () => {
     const title = 'save with options'
     await new Promise<void>(a => {
       mockto.save(title, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(`${title}: save`)
+        expect(specName).toEqual(title)
         spec((x: number) => x + 1).then(async s => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -105,7 +105,7 @@ describe(`mockto`, () => {
     const title = 'simulate with no options'
     await new Promise<void>(r => {
       mockto.simulate(title, (specName, spec) => {
-        expect(specName).toEqual(`${title}: simulate`)
+        expect(specName).toEqual(title)
         a.throws(() => spec((x: number) => x + 1), SpecNotFound)
         r()
       })
@@ -116,7 +116,7 @@ describe(`mockto`, () => {
     const title = 'simulate with options'
     await new Promise<void>(r => {
       mockto.simulate(title, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(`${title}: simulate`)
+        expect(specName).toEqual(title)
         a.throws(() => spec((x: number) => x + 1), SpecNotFound)
         r()
       })

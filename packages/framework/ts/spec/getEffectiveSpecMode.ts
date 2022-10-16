@@ -1,5 +1,15 @@
 import type { Spec } from './types.js'
 
+export function getEffectiveSpecModeContext(mode?: Spec.Mode) {
+  return mode ? { mode } : function (ctx: {
+    config: Spec.Context['config'],
+    specName: string,
+    specRelativePath: string,
+  }) {
+    return { mode: getEffectiveSpecMode(ctx.config, ctx.specName, ctx.specRelativePath) }
+  }
+}
+
 /**
  * Get the effective SpecMode for the specified id.
  * @param mode The SpecMode to return if SpecMode is not changed by config.
