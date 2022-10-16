@@ -1,5 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { createConsoleLogReporter, createMemoryLogReporter, createStandardLog } from 'standard-log'
+import { createLogContext } from '../log/createLogContext.js'
 import { createSpecObject, getEffectiveSpecMode, Spec } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { createMockto } from './createMockto.js'
@@ -12,12 +13,10 @@ export function createMocktoFn(context: AsyncContext<Spec.Context>) {
     const reporter = createMemoryLogReporter()
     const ctx = context.extend(async ({ config }) => ({
       mode: getEffectiveSpecMode(config, specName, specRelativePath),
+      reporter,
+      specName,
       specRelativePath
-    })).extend(({ config }) => {
-      const sl = createStandardLog({ logLevel: config.logLevel, reporters: [createConsoleLogReporter(), reporter] })
-      const log = sl.getLogger(`mocktomata:${specName}`)
-      return { log }
-    })
+    })).extend(createLogContext)
 
     handler(specName, createSpecObject(ctx, specName, options), reporter)
   }
@@ -30,7 +29,7 @@ export function createFixedModeMocktoFn(context: AsyncContext<Spec.Context>, mod
     specRelativePath: string,
   }> | undefined
   const specFn = (...args: any[]) => {
-    const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs<any>(args)
+    const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const specRelativePath = getCallerRelativePath(specFn)
     const title = `${specName}: ${mode}`
     // console.info('before context.extend', ctx, mode, specRelativePath)

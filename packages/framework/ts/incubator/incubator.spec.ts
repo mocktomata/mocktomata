@@ -81,10 +81,10 @@ incubator.sequence('gets memory log reporter', (title, { save, simulate }, repor
     await simulate.done()
 
     a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
-      /^mocktomata:gets memory log reporter: save/
+      /^mocktomata:gets memory log reporter:save/
     ))
     a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
-      /^mocktomata:gets memory log reporter: simulate/
+      /^mocktomata:gets memory log reporter:simulate/
     ))
   })
 })

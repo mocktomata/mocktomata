@@ -1,3 +1,5 @@
+import { a } from 'assertron'
+import { some } from 'satisfier'
 import { logLevels } from 'standard-log'
 import { createKomondor, createTestContext } from '../index.js'
 
@@ -74,4 +76,28 @@ test('auto lifecycle', async () => {
   await simulate({})
   expect(simulate.mode).toBe('simulate')
   await simulate.done()
+})
+
+it('gets memory log reporter', async () => {
+  const save = k.save('gets memory log reporter')
+
+  const subject = { a: 1 }
+  save.enableLog()
+  const spy = await save(subject)
+  expect(spy.a).toBe(1)
+  await save.done()
+
+  a.satisfies(save.reporter.getLogMessagesWithIdAndLevel(), some(
+    /^mocktomata:gets memory log reporter:save/
+  ))
+
+  const simulate = k.simulate('gets memory log reporter')
+  simulate.enableLog()
+  const stub = await simulate(subject)
+  expect(stub.a).toBe(1)
+  await simulate.done()
+
+  a.satisfies(simulate.reporter.getLogMessagesWithIdAndLevel(), some(
+    /^mocktomata:gets memory log reporter:simulate/
+  ))
 })
