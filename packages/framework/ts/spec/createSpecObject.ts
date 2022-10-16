@@ -8,7 +8,7 @@ export function createSpecObject(context: AsyncContext<Spec.Context & {
   mode: Spec.Mode,
   specRelativePath: string,
 }>, specName: string, options: Spec.Options) {
-  const { spec, mode, enableLog, ignoreMismatch, maskValue, done } = createSpecFns(context, specName, options)
+  const { spec, modeProperty: mode, enableLog, ignoreMismatch, maskValue, done } = createSpecFns(context, specName, options)
   return Object.assign(Object.defineProperties(spec, { mode }), { enableLog, ignoreMismatch, maskValue, done }) as any
 }
 
@@ -47,7 +47,7 @@ export function createSpecFns(context: AsyncContext<Spec.Context & {
   }
 
   let actualMode: Spec.Mode
-  const mode = {
+  const modeProperty = {
     get() { return actualMode }
   }
   function done() { return promise.then(s => s.done()) }
@@ -56,7 +56,7 @@ export function createSpecFns(context: AsyncContext<Spec.Context & {
     resolve(actualSpec)
     return actualSpec(subject)
   })
-  return { spec, mode, enableLog, ignoreMismatch, maskValue, done }
+  return { spec, modeProperty, enableLog, ignoreMismatch, maskValue, done }
 }
 
 function defer<T>() {
