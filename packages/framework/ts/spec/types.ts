@@ -33,7 +33,11 @@ export namespace Spec {
       overrideMode?: Mode,
       filePathFilter?: RegExp,
       specNameFilter?: RegExp
-    } & Log.Config
+    } & Log.Config,
+    specName: string,
+    options: Options,
+    mode: Mode,
+    specRelativePath: string
   }
 
   export type IO = {

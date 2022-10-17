@@ -22,7 +22,13 @@ test('simulate without plugin install throws', () => {
   const io = createTestIO()
   const sl = createStandardLogForTest()
   const log = sl.getLogger('mocktomata')
-  const context = new AsyncContext<createSpec.Context>({ io, log, config: {}, plugins: [], timeTrackers: [], maskCriteria: [] })
+  const context = new AsyncContext<createSpec.Context>({
+    io, log, mode: 'simulate',
+    specName: 'no plugin',
+    options: { timeout: 10 },
+    specRelativePath: '',
+    config: {}, plugins: [], timeTrackers: [], maskCriteria: []
+  })
   const simulator = createSimulator(
     context,
     'no plugin',

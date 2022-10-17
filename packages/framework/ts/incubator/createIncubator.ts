@@ -66,11 +66,11 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
     const reporter = createMemoryLogReporter()
     handler(specName, {
       save: createSpecObject(ctx
-        .extend({ mode: 'save', specName, reporter, specRelativePath })
-        .extend(createLogContext), specName, options),
+        .extend({ mode: 'save', specName, options, reporter, specRelativePath })
+        .extend(createLogContext)),
       simulate: createSpecObject(ctx
-        .extend({ mode: 'simulate', specName, reporter, specRelativePath })
-        .extend(createLogContext), specName, options)
+        .extend({ mode: 'simulate', specName, options, reporter, specRelativePath })
+        .extend(createLogContext))
     }, reporter)
   }
   const duo: createIncubator.IncubatorFn = (...args: any[]) => {
