@@ -4,24 +4,18 @@ import { createSpec } from './createSpec.js'
 import { InvokeMetaMethodAfterSpec } from './errors.js'
 import type { Spec } from './types.js'
 
-export function createSpecObject(context: AsyncContext<Spec.Context & {
-  mode: Spec.Mode,
-  specRelativePath: string,
-}>, specName: string, options: Spec.Options) {
-  const { spec, modeProperty: mode, enableLog, ignoreMismatch, maskValue, done } = createSpecFns(context, specName, options)
+export function createSpecObject(context: AsyncContext<Spec.Context>) {
+  const { spec, modeProperty: mode, enableLog, ignoreMismatch, maskValue, done } = createSpecFns(context)
   return Object.assign(Object.defineProperties(spec, { mode }), { enableLog, ignoreMismatch, maskValue, done }) as any
 }
 
-export function createSpecFns(context: AsyncContext<Spec.Context & {
-  mode: Spec.Mode,
-  specRelativePath: string,
-}>, specName: string, options: Spec.Options) {
+export function createSpecFns(context: AsyncContext<Spec.Context>) {
   let s: Spec | undefined
   type InitState = { enableLog: boolean, ignoreValues: any[], maskCriteria: any[], logLevel?: LogLevel }
   const initState: InitState = { enableLog: false, ignoreValues: [], maskCriteria: [] }
   async function createActualSpec(initState: InitState) {
     if (s) return s
-    const { mode, specRelativePath } = await context.get()
+    const { mode, specName, options, specRelativePath } = await context.get()
     const spec = s = await createSpec(context, specName, specRelativePath, mode, options)
     if (initState.enableLog) spec.enableLog(initState.logLevel)
     initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))

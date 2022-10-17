@@ -59,11 +59,9 @@ export function createMocktoFn(context: AsyncContext<Spec.Context>, mode?: Spec.
     handler(specName,
       createSpecObject(
         context
-          .extend({ reporter, specName, specRelativePath })
+          .extend({ reporter, specName, options, specRelativePath })
           .extend(getEffectiveSpecModeContext(mode))
-          .extend(createLogContext),
-        specName,
-        options),
+          .extend(createLogContext)),
       reporter)
   }
   return specFn as createMockto.MocktoFn

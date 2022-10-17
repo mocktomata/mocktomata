@@ -45,7 +45,7 @@ class ApiGateway {
       })
   }
   deleteUser(username: string) {
-    return new Promise<any>(a => {
+    return new Promise<void>(a => {
       setImmediate(() => {
         const i = users.findIndex(u => u.username === username)
         if (i >= 0)

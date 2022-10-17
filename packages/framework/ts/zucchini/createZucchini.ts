@@ -12,12 +12,12 @@ import { getCallerRelativePath } from '../test-utils/index.js'
 import { TimeTracker } from '../timeTracker/createTimeTracker.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
-import { createStore, Store } from './store.js'
+import { createStore, Step, Store } from './store.js'
 
 export namespace Zucchini {
   export type IO = Spec.IO & SpecPlugin.IO & Config.IO
 
-  export type Context = { io: IO } & Config.Context & Log.Context
+  export type Context = { io: IO } & Config.Context & Log.Context & Spec.Context
 
   export type StepCaller = (clause: string | RegExp, ...inputs: any[]) => Promise<any>
 
@@ -58,17 +58,17 @@ function createScenario(context: AsyncContext<Zucchini.Context>, store: Store) {
 function createScenarioFn(context: AsyncContext<Zucchini.Context>, store: Store, mode?: Spec.Mode) {
   return function scenario(specName: string, options: Spec.Options = { timeout: 3000 }) {
     const reporter = createMemoryLogReporter()
-    const { spec, modeProperty, done, enableLog, ignoreMismatch, maskValue } = createSpecFns(
-      context
-        .extend({ reporter, specName, specRelativePath: getCallerRelativePath(scenario) })
-        .extend(getEffectiveSpecModeContext(mode))
-        .extend(createLogContext), specName, options)
+    const ctx = context
+      .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(scenario) })
+      .extend(getEffectiveSpecModeContext(mode))
+      .extend(createLogContext)
+    const { spec, modeProperty, done, enableLog, ignoreMismatch, maskValue } = createSpecFns(ctx)
     return {
-      ensure: createInertStepCaller(context, store, 'ensure', false),
-      setup: createInertStepCaller(context, store, 'setup'),
+      ensure: createInertStepCaller(ctx, store, 'ensure', false),
+      setup: createInertStepCaller(ctx, store, 'setup'),
       spec,
-      run: createStepCaller(context, store, 'run'),
-      teardown: createInertStepCaller(context, store, 'teardown'),
+      run: createStepCaller(ctx, store, 'run'),
+      teardown: createInertStepCaller(ctx, store, 'teardown'),
       done,
       enableLog,
       ignoreMismatch,
@@ -78,31 +78,55 @@ function createScenarioFn(context: AsyncContext<Zucchini.Context>, store: Store,
   }
 }
 
-function createInertStepCaller(context: AsyncContext<Zucchini.Context>, store: Store, defaultId: string, shouldLog = true) {
+function createInertStepCaller(context: AsyncContext<Zucchini.Context>, store: Store, stepName: string, shouldLogError = true) {
   return async function inertStep(clause: string, ...inputs: any[]) {
-    lookupStep(store, clause)
-    const { log } = await context.get()
+    const entry = lookupStep(store, clause)
+    const { log, mode, specName } = await context.get()
 
     try {
-      log.info(`${defaultId}(${clause})`)
+      log.debug(`${stepName}(${clause})`)
+      return invokeHandler(context, store, stepName, entry, clause, inputs)
       // return await invokeHandler({}, clause, inputs)
     }
     catch (err) {
-      if (shouldLog) {
-        // log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${record.id})
-        // - ${defaultId}(${clause}) throws, is it safe to ignore?
+      if (shouldLogError) {
+        log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${specName})
+        - ${stepName}(${clause}) throws, is it safe to ignore?
 
-        // ${err}`)
+        ${err}`)
       }
     }
   }
 }
 
-function createStepCaller(context: AsyncContext<Zucchini.Context>, store: Store, defaultId: string, shouldLog = true) {
+function createStepCaller(context: AsyncContext<Zucchini.Context>, store: Store, stepName: string) {
   return async function step(clause: string, ...inputs: any[]) {
-    lookupStep(store, clause)
-    // return invokeHandler()
+    const entry = lookupStep(store, clause)
+    const { log } = await context.get()
+    log.debug(`${stepName}(${clause})`)
+    return invokeHandler(context, store, stepName, entry, clause, inputs)
   }
+}
+
+function invokeHandler(context: AsyncContext<Zucchini.Context>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
+  const runSubStep = createStepCaller(context, store, stepName)
+  const { spec } = createSpecFns(context)
+  if (entry.regex) {
+    // regex must pass as it is tested above
+    const matches = entry.regex.exec(clause)!
+    const values = matches.slice(1, matches.length).map((v, i) => {
+      const valueType = entry.valueTypes![i]
+      if (valueType === 'number')
+        return parseInt(v, 10)
+      if (valueType === 'boolean')
+        return v === 'true'
+      if (valueType === 'float')
+        return parseFloat(v)
+      return v
+    })
+    return entry.handler({ inputs, spec, runSubStep }, ...[...values, ...inputs])
+  }
+  return entry.handler({ inputs, spec, runSubStep }, ...inputs)
 }
 
 function lookupStep(store: Store, clause: string) {
@@ -120,10 +144,34 @@ function createDefineStep(context: AsyncContext<Zucchini.Context>, store: Store)
   return function defineStep(clause: string | RegExp, handler: Zucchini.StepHandler) {
     assertNoDuplicate(clause, handler)
 
-    if (typeof clause === 'string')
-      store.steps.push({ clause, handler })
+    if (typeof clause === 'string') {
+      if (isTemplate(clause)) {
+        const valueTypes: string[] = []
+        const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/([^\}]*)\/))?)?}/g, (_, value) => {
+          const m = /[\w]*:(.*)/.exec(value)
+          const valueType = m ? m[1].trim() : 'string'
+          const isRegex = valueType.startsWith('/')
+          if (isRegex) {
+            valueTypes.push('regex')
+            return `(${valueType.slice(1, -1)})`
+          }
+          else {
+            valueTypes.push(valueType)
+            return '([^ ]*)'
+          }
+        })}$`)
+        store.steps.push({ clause, handler, regex, valueTypes })
+      }
+      else {
+        store.steps.push({ clause, handler })
+      }
+    }
     else
       store.steps.push({ clause: clause.toString(), handler, regex: clause })
 
   }
+}
+
+function isTemplate(clause: string) {
+  return clause.search(/{([\w-]*(:(number|boolean|float|string|\/(.*)\/))?)?}/) >= 0
 }
