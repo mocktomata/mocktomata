@@ -5,7 +5,8 @@ import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import { createSpecObject, getEffectiveSpecModeContext, Spec } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
-import type { TimeTracker } from '../timeTracker/index.js'
+import { initTimeTrackers } from '../timeTracker/index.js'
+import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 
 export namespace createKomondor {
@@ -23,7 +24,7 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
   const ctx = context
     .extend(loadPlugins)
     .extend(transformConfig)
-    .extend({ timeTrackers: [] as TimeTracker[] })
+    .extend(initTimeTrackers)
 
   return Object.assign(
     createKomondorFn(ctx),
@@ -39,14 +40,14 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
   )
 }
 
-function createKomondorFn(context: AsyncContext<Spec.Context>, mode?: Spec.Mode) {
+function createKomondorFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode) {
   const komondorFn = (specName: string, options = { timeout: 3000 }) => {
     const reporter = createMemoryLogReporter()
 
     return Object.assign(
       createSpecObject(
         context
-          .extend({ reporter, specName, options, specRelativePath: getCallerRelativePath(komondorFn) })
+          .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(komondorFn) })
           .extend(getEffectiveSpecModeContext(mode))
           .extend(createLogContext)),
       { reporter })

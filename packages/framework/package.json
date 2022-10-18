@@ -44,7 +44,7 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "async-fp": "^8.0.0",
+    "async-fp": "^8.0.2",
     "iso-error": "^4.4.0",
     "stack-utils": "^2.0.3",
     "standard-log": "^11.2.0",

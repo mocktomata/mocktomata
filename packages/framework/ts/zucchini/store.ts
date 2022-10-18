@@ -1,7 +1,8 @@
+import { AnyFunction } from 'type-plus'
 
 export type Step = {
   clause: string,
-  handler: Function,
+  handler: AnyFunction,
   regex?: RegExp,
   valueTypes?: string[]
 }

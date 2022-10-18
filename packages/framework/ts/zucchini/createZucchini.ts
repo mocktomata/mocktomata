@@ -1,24 +1,18 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter } from 'standard-log'
 import { transformConfig } from '../config/index.js'
-import type { Config } from '../config/types.js'
 import { createLogContext } from '../log/createLogContext.js'
-import type { Log } from '../log/types.js'
 import { loadPlugins } from '../spec-plugin/index.js'
-import type { SpecPlugin } from '../spec-plugin/types.js'
 import { createSpecFns, getEffectiveSpecModeContext } from '../spec/index.js'
 import type { Spec } from '../spec/types.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
-import { TimeTracker } from '../timeTracker/createTimeTracker.js'
+import { initTimeTrackers } from '../timeTracker/createTimeTracker.js'
+import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { createStore, Step, Store } from './store.js'
 
 export namespace Zucchini {
-  export type IO = Spec.IO & SpecPlugin.IO & Config.IO
-
-  export type Context = { io: IO } & Config.Context & Log.Context & Spec.Context
-
   export type StepCaller = (clause: string | RegExp, ...inputs: any[]) => Promise<any>
 
   export type StepContext = {
@@ -29,18 +23,18 @@ export namespace Zucchini {
 }
 
 export function createZucchini(context: AsyncContext<Mocktomata.Context>) {
-  const ctx = context
   const { store } = createStore()
-  const scenario = createScenario(ctx, store)
-  const defineStep = createDefineStep(ctx, store)
+  const scenario = createScenario(context, store)
+  const defineStep = createDefineStep(store)
   return { scenario, defineStep }
 }
 
-function createScenario(context: AsyncContext<Zucchini.Context>, store: Store) {
+function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store) {
   const ctx = context
     .extend(loadPlugins)
     .extend(transformConfig)
-    .extend({ timeTrackers: [] as TimeTracker[] })
+    .extend(initTimeTrackers)
+
   return Object.assign(
     createScenarioFn(ctx, store),
     {
@@ -55,14 +49,17 @@ function createScenario(context: AsyncContext<Zucchini.Context>, store: Store) {
   )
 }
 
-function createScenarioFn(context: AsyncContext<Zucchini.Context>, store: Store, mode?: Spec.Mode) {
+function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mode?: Spec.Mode) {
   return function scenario(specName: string, options: Spec.Options = { timeout: 3000 }) {
     const reporter = createMemoryLogReporter()
+
     const ctx = context
       .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(scenario) })
       .extend(getEffectiveSpecModeContext(mode))
       .extend(createLogContext)
+
     const { spec, modeProperty, done, enableLog, ignoreMismatch, maskValue } = createSpecFns(ctx)
+
     return {
       ensure: createInertStepCaller(ctx, store, 'ensure', false),
       setup: createInertStepCaller(ctx, store, 'setup'),
@@ -78,7 +75,7 @@ function createScenarioFn(context: AsyncContext<Zucchini.Context>, store: Store,
   }
 }
 
-function createInertStepCaller(context: AsyncContext<Zucchini.Context>, store: Store, stepName: string, shouldLogError = true) {
+function createInertStepCaller(context: AsyncContext<Spec.Context>, store: Store, stepName: string, shouldLogError = true) {
   return async function inertStep(clause: string, ...inputs: any[]) {
     const entry = lookupStep(store, clause)
     const { log, mode, specName } = await context.get()
@@ -99,7 +96,7 @@ function createInertStepCaller(context: AsyncContext<Zucchini.Context>, store: S
   }
 }
 
-function createStepCaller(context: AsyncContext<Zucchini.Context>, store: Store, stepName: string) {
+function createStepCaller(context: AsyncContext<Spec.Context>, store: Store, stepName: string) {
   return async function step(clause: string, ...inputs: any[]) {
     const entry = lookupStep(store, clause)
     const { log } = await context.get()
@@ -108,7 +105,7 @@ function createStepCaller(context: AsyncContext<Zucchini.Context>, store: Store,
   }
 }
 
-function invokeHandler(context: AsyncContext<Zucchini.Context>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
+function invokeHandler(context: AsyncContext<Spec.Context>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
   const runSubStep = createStepCaller(context, store, stepName)
   const { spec } = createSpecFns(context)
   if (entry.regex) {
@@ -136,7 +133,7 @@ function lookupStep(store: Store, clause: string) {
 }
 
 
-function createDefineStep(context: AsyncContext<Zucchini.Context>, store: Store) {
+function createDefineStep(store: Store) {
   function assertNoDuplicate(clause: string | RegExp, handler: Zucchini.StepHandler) {
     const step = store.steps.find(s => s.clause.toString() === clause.toString())
     if (step && step.handler !== handler) throw new DuplicateStep(clause)
@@ -147,7 +144,7 @@ function createDefineStep(context: AsyncContext<Zucchini.Context>, store: Store)
     if (typeof clause === 'string') {
       if (isTemplate(clause)) {
         const valueTypes: string[] = []
-        const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/([^\}]*)\/))?)?}/g, (_, value) => {
+        const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/([^}]*)\/))?)?}/g, (_, value) => {
           const m = /[\w]*:(.*)/.exec(value)
           const valueType = m ? m[1].trim() : 'string'
           const isRegex = valueType.startsWith('/')

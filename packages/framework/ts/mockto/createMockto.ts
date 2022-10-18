@@ -6,7 +6,8 @@ import { loadPlugins } from '../spec-plugin/index.js'
 import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
-import type { TimeTracker } from '../timeTracker/index.js'
+import { initTimeTrackers } from '../timeTracker/index.js'
+import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { resolveMocktoFnArgs } from './resolveMocktoFnArgs.js'
 
@@ -34,7 +35,7 @@ export function createMockto(context: AsyncContext<Mocktomata.Context>): createM
   const ctx = context
     .extend(loadPlugins)
     .extend(transformConfig)
-    .extend({ timeTrackers: [] as TimeTracker[] })
+    .extend(initTimeTrackers)
 
   return Object.assign(
     createMocktoFn(ctx),
@@ -50,16 +51,15 @@ export function createMockto(context: AsyncContext<Mocktomata.Context>): createM
   )
 }
 
-export function createMocktoFn(context: AsyncContext<Spec.Context>, mode?: Spec.Mode) {
+export function createMocktoFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode) {
   const specFn = (...args: any[]) => {
     const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
     const reporter = createMemoryLogReporter()
-    const specRelativePath = getCallerRelativePath(specFn)
 
     handler(specName,
       createSpecObject(
         context
-          .extend({ reporter, specName, options, specRelativePath })
+          .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(specFn) })
           .extend(getEffectiveSpecModeContext(mode))
           .extend(createLogContext)),
       reporter)
