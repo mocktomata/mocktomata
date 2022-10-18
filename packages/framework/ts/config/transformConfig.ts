@@ -1,6 +1,14 @@
+import { Omit } from 'type-plus'
 import { Config } from './types.js'
 
-export async function transformConfig({ config }: Config.Context) {
+export namespace transformConfig {
+  export type ExtendedContext = {
+    config: Omit<Config.Context['config'], 'filePathFilter' | 'specNameFilter'>
+    & { filePathFilter?: RegExp, specNameFilter?: RegExp }
+  }
+}
+
+export function transformConfig({ config }: Config.Context): transformConfig.ExtendedContext {
   // filePathFilter not tested because it is troublesome to setup test
   // istanbul ignore next
   return {

@@ -1,11 +1,17 @@
-import type { Config } from './config/types.js'
 import type { Log } from './log/types.js'
 import type { SpecPlugin } from './spec-plugin/types.js'
 import type { Spec } from './spec/types.js'
 
+/**
+ * Namespace for key types of the package.
+ * @note If `mockto`, `komondor`, `zucchini` needs different types,
+ * they will be placed elsewhere.
+ */
 export namespace Mocktomata {
-  export type IO = Spec.IO & SpecPlugin.IO & Config.IO
-
+  export type IO = Spec.IO & SpecPlugin.IO & {
+    getConfig(): Promise<Record<string, any>>
+  }
+  export type IOContext = { io: IO }
   /**
    * Configuration used within Mocktomata.
    * This is not used directly by the user.
@@ -15,6 +21,7 @@ export namespace Mocktomata {
    * instead of using `EitherOrBoth` which is for user input values.
    */
   export type Config = Spec.Config & SpecPlugin.Config & Log.Config
+  export type ConfigContext = { config: Config }
 
-  export type Context = { io: IO } & Config.Context & Log.Context
+  export type Context = IOContext & ConfigContext & Log.Context
 }

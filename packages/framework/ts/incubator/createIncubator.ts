@@ -9,7 +9,7 @@ import { resolveMocktoFnArgs } from '../mockto/resolveMocktoFnArgs.js'
 import { loadPlugins, SpecPlugin } from '../spec-plugin/index.js'
 import { createSpecObject, Spec } from '../spec/index.js'
 import { createTestIO, getCallerRelativePath } from '../test-utils/index.js'
-import type { TimeTracker } from '../timeTracker/index.js'
+import { initTimeTrackers } from '../timeTracker/index.js'
 
 export namespace createIncubator {
   export type Context = Config.Context & Log.Context & { io: createTestIO.TestIO }
@@ -42,9 +42,9 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
       return { plugins: value.plugins = pluginInstances ?? value.plugins }
     })
     .extend(transformConfig)
-    .extend({ timeTrackers: [] as TimeTracker[] })
+    .extend(initTimeTrackers)
 
-  const config = async function (options: createIncubator.ConfigOptions) {
+  async function config(options: createIncubator.ConfigOptions) {
     const { plugins } = await context.extend(async ({ config, io }) => {
       const plugins = options.plugins.map(p => {
         // istanbul ignore next

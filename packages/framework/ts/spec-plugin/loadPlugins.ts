@@ -1,13 +1,15 @@
 import type { Logger } from 'standard-log'
 import { es2015 } from '../es2015.js'
-import type { Mocktomata } from '../types.js'
+import { Log } from '../log/types.js'
 import { addPluginModule } from './addPluginModule.js'
 import { PluginModuleNotConforming, PluginNotFound } from './errors.js'
 import type { SpecPlugin } from './types.js'
 
-// TODO: using Mocktomata.Context here seems to be a bad idea
+export namespace loadPlugins {
+  export type ExtendedContext = { plugins: SpecPlugin.Instance[] }
+}
 
-export async function loadPlugins({ config, io, log }: Mocktomata.Context) {
+export async function loadPlugins({ config, io, log }: Log.Context & { config: SpecPlugin.Config, io: SpecPlugin.IO }): Promise<loadPlugins.ExtendedContext> {
   // check `config.ecmaVersion` in the future
   const plugins: SpecPlugin.Instance[] = []
   addPluginModule({ log }, plugins, es2015.name, es2015)

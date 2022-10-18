@@ -1,9 +1,20 @@
-import type { Logger } from 'standard-log'
+import { Log } from '../log/types.js'
 import type { Spec } from '../spec/types.js'
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
+export type TimeTrackersContext = {
+  timeTrackers: TimeTracker[]
+}
 
-export function createTimeTracker({ log }: { log: Logger }, { timeout }: Pick<Spec.Options, 'timeout'>, onTimeout: (elapsed: number) => void) {
+export function initTimeTrackers(): TimeTrackersContext {
+  return { timeTrackers: [] }
+}
+
+export function createTimeTracker(
+  { log }: Log.Context,
+  { timeout }: Pick<Spec.Options, 'timeout'>,
+  onTimeout: (elapsed: number) => void
+) {
   let handle: any
   let startTick: number
   let endTick: number

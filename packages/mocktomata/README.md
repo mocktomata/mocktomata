@@ -119,8 +119,8 @@ test('get friends', async () => {
   const spec = komondor('get friends')
   const s = await spec(axios)
 
-    const friends = await getFriends(s, 'miku')
-    expect(friends.map(f => f.name)).toEqual(['luka', 'rumi', 'len', 'ren'])
+  const friends = await getFriends(s, 'miku')
+  expect(friends.map(f => f.name)).toEqual(['luka', 'rumi', 'len', 'ren'])
 
   await spec.done()
 })
@@ -130,6 +130,49 @@ If you want to use [`mocktomata`][mocktomata] in production for [`advance usage`
 I'm the one you can depend on.
 
 To know more about me, you can check out my ~~raising guide~~ [`user manual`][komondor].
+
+## Zucchini
+
+Hi, here is `zucchini`, the BDD system within `mocktomata`.
+
+I don't know why my name is `zucchini`.
+I heard that it's because I'm similar to `cucumber`.
+But I don't really understand it.
+
+Anyway, masters can utilize me by defining steps with [`defineStep()`],
+and reuse those steps through [`scenario()`]:
+
+```ts
+import axios from 'axios'
+import { defineStep, scenario } from 'mocktomata'
+
+defineStep('get friends of {name}', ({ spec }, name) => {
+  const s = await spec(axios)
+  return await getFriends(s, name)
+})
+
+test('get friends', async () => {
+  const { run, done } = scenario('get friends')
+  const friends = await run('get friends of miku')
+
+  expect(friends.map(f => f.name)).toEqual(['luka', 'rumi', 'len', 'ren'])
+  await done()
+})
+```
+
+The `scenario()` returns a few things:
+
+- `ensure()`: run steps to clean up the environment before `setup()`.
+  Any error occur are ignored.
+- `setup()`: run steps to set up the environment for the test (the `GIVEN` steps).
+- `run()`: run steps that are the test itself (the `WHEN` steps).
+- `spec()`: run the test code directly (the `WHEN` steps).
+- `teardown()`: run steps to clean up the environment after test.
+- `done()`: indicate the scenario ends.
+- `enableLog()`: turn on logs
+- `ignoreMismatch()`:
+- `maskValue()`:
+- `mode()`: shows which mode the scenario is running under (`Spec.Mode`: `live`, `save`, or `simulate`).
 
 ## Incubator
 
@@ -230,6 +273,5 @@ module.exports = () => {
 [npm-image]: https://img.shields.io/npm/v/mocktomata.svg?style=flat
 [npm-url]: https://www.npmjs.com/package/mocktomata
 [plugin]: https://github.com/mocktomata/mocktomata/blob/master/docs/plugin.md
-[spec]: https://github.com/mocktomata/mocktomata/blob/master/docs/spec.md
 [vscode-image]: https://img.shields.io/badge/vscode-ready-green.svg
 [vscode-url]: https://code.visualstudio.com/
