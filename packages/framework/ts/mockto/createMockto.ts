@@ -33,8 +33,8 @@ export namespace createMockto {
 
 export function createMockto(context: AsyncContext<Mocktomata.Context>): createMockto.Mockto {
   const ctx = context
-    .extend(loadPlugins)
     .extend(transformConfig)
+    .extend(loadPlugins)
     .extend(initTimeTrackers)
 
   return Object.assign(

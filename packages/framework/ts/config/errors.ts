@@ -1,37 +1,41 @@
 import { ModuleError } from 'iso-error'
+import { mapKey } from 'type-plus'
 import { MocktomataError } from '../errors.js'
 
 export class InvalidConfigFormat extends MocktomataError {
-  // istanbul ignore next
   constructor(public filename: string, options?: ModuleError.Options) {
-    super(`The ${filename} does not contain a valid configuration`, options)
+    super(`The file '${filename}' does not contain a valid configuration`, options)
   }
 }
 
 export class AmbiguousConfig extends MocktomataError {
-  // istanbul ignore next
   constructor(public configs: string[], options?: ModuleError.Options) {
-    super(`Multiple configuration detected (${configs.join(', ')}). Please consolidate to one config.`, options)
+    super(`Multiple configuration detected. Please consolidate to one config.
+
+configs:
+${configs.map(c => `- ${c}`).join('\n')}`, options)
   }
 }
 
-export class MissingConfigForFeature extends MocktomataError {
-  // istanbul ignore next
-  constructor(public feature: string, public configPath: string, options?: ModuleError.Options) {
-    super(`Configuring ${configPath} is required to use ${feature}.`, options)
+export class ConfigPropertyMismatch extends MocktomataError {
+  constructor(public filePath: string, public filePropertyPath: string, public fileValue: unknown, public envName: string, public envValue: unknown, options?: ModuleError.Options) {
+    super(`The property value mismatch:
+
+- ${filePropertyPath} (from '${filePath}'): ${fileValue}
+- ${envName}: ${envValue}`, options)
   }
 }
 
-export class ConfigPropertyIsInvalid extends MocktomataError {
-  // istanbul ignore next
-  constructor(public property: string, public value: string, options?: ModuleError.Options) {
+export class ConfigPropertyInvalid extends MocktomataError {
+  constructor(public property: string, public value: unknown, options?: ModuleError.Options) {
     super(`The property '${property}' is invalid: ${value}`, options)
   }
 }
 
-export class ConfigPropertyNotRecognized extends MocktomataError {
-  // istanbul ignore next
-  constructor(public property: string, options?: ModuleError.Options) {
-    super(`The property '${property}' is not a valid komondor option.`, options)
+export class ConfigHasUnrecognizedProperties extends MocktomataError {
+  constructor(public filePath: string, values: Record<string, any>, options?: ModuleError.Options) {
+    super(`The config in '${filePath}' contains unrecognized properties:
+
+${mapKey(values, k => `- ${k}: ${values[k]}`).join('\n')}`, options)
   }
 }

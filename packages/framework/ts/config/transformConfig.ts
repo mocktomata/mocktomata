@@ -1,5 +1,5 @@
-import { Omit } from 'type-plus'
-import { Config } from './types.js'
+import type { Omit } from 'type-plus'
+import type { Config } from './types.js'
 
 export namespace transformConfig {
   export type ExtendedContext = {

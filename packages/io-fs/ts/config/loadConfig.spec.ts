@@ -49,7 +49,7 @@ test('if .mockto.config.json is not a valid json, throws InvalidConfigFormat', (
   a.throws(() => loadConfig(tmp.name), InvalidConfigFormat)
 })
 
-test.only('if .mockto.config.js is not a valid js, throws InvalidConfigFormat', () => {
+test('if .mockto.config.js is not a valid js, throws InvalidConfigFormat', () => {
   const tmp = dirSync()
   const cwd = process.cwd()
   module.paths.unshift(tmp.name)
@@ -62,7 +62,6 @@ test.only('if .mockto.config.js is not a valid js, throws InvalidConfigFormat', 
     process.chdir(cwd)
   }
 })
-
 
 test('if both .mockto.config.json and .mockto.config.js exist, throws AmbiguousConfig', () => {
   const tmp = dirSync()
