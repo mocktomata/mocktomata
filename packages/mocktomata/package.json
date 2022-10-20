@@ -28,9 +28,6 @@
     "import": "./esm/index.js"
   },
   "types": "./esm/index.d.ts",
-  "bin": {
-    "mtmt": "lib/bin.js"
-  },
   "files": [
     "dist",
     "esm",
@@ -57,21 +54,17 @@
     "@mocktomata/io-remote": "workspace:^",
     "@mocktomata/io-local": "workspace:^",
     "async-fp": "^8.0.2",
-    "chalk": "^4.1.1",
-    "clibuilder": "^8.0.2",
     "global-store": "^1.0.0-beta.21",
     "iso-error": "^4.4.0",
     "standard-log": "^11.2.0",
     "standard-log-color": "^8.0.0",
-    "type-plus": "^4.13.1",
-    "validate.js": "^0.13.1"
+    "type-plus": "^4.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
     "@kayahr/jest-electron-runner": "^29.0.0",
     "@mocktomata/plugin-fixture-deep-link": "workspace:^",
     "@mocktomata/plugin-fixture-dummy": "workspace:^",
-    "ansi-colors": "^4.1.1",
     "assertron": "^10.0.0",
     "depcheck": "^1.4.3",
     "jest": "^28.1.3",
