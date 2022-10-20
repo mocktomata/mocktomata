@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@mocktomata/framework": "workspace:^",
-    "@mocktomata/io-fs": "workspace:^"
+    "@mocktomata/nodejs": "workspace:^"
   },
   "devDependencies": {
     "@mocktomata/plugin-fixture-deep-link": "workspace:^",

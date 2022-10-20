@@ -1,8 +1,12 @@
 {
-  "name": "@mocktomata/io-client",
+  "name": "@mocktomata/nodejs",
   "version": "7.0.0-beta.11",
-  "description": "mocktomata client IO package",
-  "homepage": "https://github.com/mocktomata/mocktomata",
+  "description": "provides external dependencies from nodejs for mocktomata",
+  "keywords": [
+    "mocktomata",
+    "mocking"
+  ],
+  "homepage": "https://github.com/mocktomata/mocktomata/tree/main/packages/nodejs",
   "bugs": {
     "url": "https://github.com/mocktomata/mocktomata/issues"
   },
@@ -27,33 +31,31 @@
   "scripts": {
     "build": "tsc",
     "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
-    "coverage": "jest -c jest.electron.cjs --coverage --reporters=default",
+    "coverage": "jest --coverage --reporters=default",
     "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "test": "jest -c jest.electron.cjs --reporters=default",
-    "test:watch": "jest -c jest.electron.cjs --watch",
+    "test": "jest --reporters=default",
+    "test:watch": "jest --watch",
     "verify": "npm-run-all -p lint build coverage -p depcheck",
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
     "@mocktomata/framework": "workspace:^",
-    "cross-fetch": "^3.1.4",
-    "iso-error": "^4.4.0",
-    "type-plus": "^4.13.1"
+    "find-installed-packages": "^2.1.6",
+    "md5": "^2.3.0",
+    "mkdirp": "^1.0.4",
+    "standard-log": "^11.2.0"
   },
   "devDependencies": {
-    "@kayahr/jest-electron-runner": "^29.0.0",
-    "@mocktomata/file-server": "workspace:^",
-    "@mocktomata/io-fs": "workspace:^",
-    "@mocktomata/plugin-fixture-dummy": "workspace:^",
     "assertron": "^10.0.0",
     "depcheck": "^1.4.3",
     "jest": "^28.1.3",
     "npm-run-all": "^4.1.5",
+    "tmp": "^0.2.1",
     "ts-jest": "^28.0.7",
     "typescript": "~4.8.3"
   },
   "engines": {
-    "node": ">= 14.16"
+    "node": ">=14.16"
   }
 }

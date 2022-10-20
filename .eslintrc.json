@@ -13,9 +13,6 @@
         "*.ts",
         "*.tsx"
       ],
-      "parserOptions": {
-        "project": "packages/*/tsconfig.json"
-      },
       "rules": {
         "@typescript-eslint/type-annotation-spacing": "off",
         "no-use-before-define": "off"

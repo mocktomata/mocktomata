@@ -1,6 +1,6 @@
 import { buildUrl } from './buildUrl.js'
 import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js'
-import { CreateIOOptions } from './types.js'
+import type { CreateIOOptions } from './types.js'
 
 export type ServerInfo = {
   name: string,

@@ -1,4 +1,4 @@
-import { FileRepository } from '@mocktomata/io-fs'
+import { FileRepository } from '@mocktomata/nodejs'
 import t from 'assert'
 import a from 'assertron'
 import fs from 'fs'

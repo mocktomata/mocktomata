@@ -64,39 +64,6 @@ importers:
       turbo: 1.4.3
       typescript: 4.8.3
 
-  packages/file-server:
-    specifiers:
-      '@hapi/boom': ^10.0.0
-      '@hapi/hapi': ^20.2.2
-      '@mocktomata/framework': workspace:^
-      '@mocktomata/io-fs': workspace:^
-      '@types/hapi__hapi': ^20.0.12
-      '@types/node-fetch': ^2.6.2
-      assertron: ^10.0.0
-      depcheck: ^1.4.3
-      jest: ^28.1.3
-      node-fetch: ^2.6.7
-      tmp: ^0.2.1
-      ts-jest: ^28.0.7
-      type-plus: ^4.13.1
-      typescript: ~4.8.3
-    dependencies:
-      '@hapi/boom': 10.0.0
-      '@hapi/hapi': 20.2.2
-      '@mocktomata/framework': link:../framework
-      '@mocktomata/io-fs': link:../io-fs
-    devDependencies:
-      '@types/hapi__hapi': 20.0.12
-      '@types/node-fetch': 2.6.2
-      assertron: 10.0.0
-      depcheck: 1.4.3
-      jest: 28.1.3
-      node-fetch: 2.6.7
-      tmp: 0.2.1
-      ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
-      type-plus: 4.13.1
-      typescript: 4.8.3
-
   packages/framework:
     specifiers:
       '@size-limit/preset-big-lib': ^8.0.1
@@ -136,12 +103,37 @@ importers:
       ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
       typescript: 4.8.3
 
-  packages/io-client:
+  packages/io-local:
+    specifiers:
+      '@mocktomata/framework': workspace:^
+      '@mocktomata/nodejs': workspace:^
+      '@mocktomata/plugin-fixture-deep-link': workspace:^
+      '@mocktomata/plugin-fixture-dummy': workspace:^
+      assertron: ^10.0.0
+      depcheck: ^1.4.3
+      jest: ^28.1.3
+      npm-run-all: ^4.1.5
+      tmp: ^0.2.1
+      ts-jest: ^28.0.7
+      typescript: ~4.8.3
+    dependencies:
+      '@mocktomata/framework': link:../framework
+      '@mocktomata/nodejs': link:../nodejs
+    devDependencies:
+      '@mocktomata/plugin-fixture-deep-link': link:../../test-plugins/plugin-fixture-deep-link
+      '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
+      assertron: 10.0.0
+      depcheck: 1.4.3
+      jest: 28.1.3
+      npm-run-all: 4.1.5
+      tmp: 0.2.1
+      ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
+      typescript: 4.8.3
+
+  packages/io-remote:
     specifiers:
       '@kayahr/jest-electron-runner': ^29.0.0
-      '@mocktomata/file-server': workspace:^
       '@mocktomata/framework': workspace:^
-      '@mocktomata/io-fs': workspace:^
       '@mocktomata/plugin-fixture-dummy': workspace:^
       assertron: ^10.0.0
       cross-fetch: ^3.1.4
@@ -156,72 +148,14 @@ importers:
       '@mocktomata/framework': link:../framework
       cross-fetch: 3.1.5
       iso-error: 4.4.0
-      type-plus: 4.13.1
+      type-plus: 4.14.1
     devDependencies:
       '@kayahr/jest-electron-runner': 29.0.0
-      '@mocktomata/file-server': link:../file-server
-      '@mocktomata/io-fs': link:../io-fs
       '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
       assertron: 10.0.0
       depcheck: 1.4.3
       jest: 28.1.3
       npm-run-all: 4.1.5
-      ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
-      typescript: 4.8.3
-
-  packages/io-fs:
-    specifiers:
-      '@mocktomata/framework': workspace:^
-      assertron: ^10.0.0
-      depcheck: ^1.4.3
-      find-installed-packages: ^2.1.6
-      jest: ^28.1.3
-      md5: ^2.3.0
-      mkdirp: ^1.0.4
-      npm-run-all: ^4.1.5
-      standard-log: ^11.2.0
-      tmp: ^0.2.1
-      ts-jest: ^28.0.7
-      typescript: ~4.8.3
-    dependencies:
-      '@mocktomata/framework': link:../framework
-      find-installed-packages: 2.1.6
-      md5: 2.3.0
-      mkdirp: 1.0.4
-      standard-log: 11.2.0
-    devDependencies:
-      assertron: 10.0.0
-      depcheck: 1.4.3
-      jest: 28.1.3
-      npm-run-all: 4.1.5
-      tmp: 0.2.1
-      ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
-      typescript: 4.8.3
-
-  packages/io-local:
-    specifiers:
-      '@mocktomata/framework': workspace:^
-      '@mocktomata/io-fs': workspace:^
-      '@mocktomata/plugin-fixture-deep-link': workspace:^
-      '@mocktomata/plugin-fixture-dummy': workspace:^
-      assertron: ^10.0.0
-      depcheck: ^1.4.3
-      jest: ^28.1.3
-      npm-run-all: ^4.1.5
-      tmp: ^0.2.1
-      ts-jest: ^28.0.7
-      typescript: ~4.8.3
-    dependencies:
-      '@mocktomata/framework': link:../framework
-      '@mocktomata/io-fs': link:../io-fs
-    devDependencies:
-      '@mocktomata/plugin-fixture-deep-link': link:../../test-plugins/plugin-fixture-deep-link
-      '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
-      assertron: 10.0.0
-      depcheck: 1.4.3
-      jest: 28.1.3
-      npm-run-all: 4.1.5
-      tmp: 0.2.1
       ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
       typescript: 4.8.3
 
@@ -229,12 +163,12 @@ importers:
     specifiers:
       '@babel/core': ^7.18.10
       '@kayahr/jest-electron-runner': ^29.0.0
-      '@mocktomata/file-server': workspace:^
       '@mocktomata/framework': workspace:^
-      '@mocktomata/io-client': workspace:^
       '@mocktomata/io-local': workspace:^
+      '@mocktomata/io-remote': workspace:^
       '@mocktomata/plugin-fixture-deep-link': workspace:^
       '@mocktomata/plugin-fixture-dummy': workspace:^
+      '@mocktomata/service': workspace:^
       ansi-colors: ^4.1.1
       assertron: ^10.0.0
       async-fp: ^8.0.2
@@ -259,10 +193,10 @@ importers:
       webpack: ^5.74.0
       webpack-cli: ^4.10.0
     dependencies:
-      '@mocktomata/file-server': link:../file-server
       '@mocktomata/framework': link:../framework
-      '@mocktomata/io-client': link:../io-client
       '@mocktomata/io-local': link:../io-local
+      '@mocktomata/io-remote': link:../io-remote
+      '@mocktomata/service': link:../service
       async-fp: 8.0.2
       chalk: 4.1.2
       clibuilder: 8.0.2
@@ -291,6 +225,68 @@ importers:
       typescript: 4.8.3
       webpack: 5.74.0_webpack-cli@4.10.0
       webpack-cli: 4.10.0_webpack@5.74.0
+
+  packages/nodejs:
+    specifiers:
+      '@mocktomata/framework': workspace:^
+      assertron: ^10.0.0
+      depcheck: ^1.4.3
+      find-installed-packages: ^2.1.6
+      jest: ^28.1.3
+      md5: ^2.3.0
+      mkdirp: ^1.0.4
+      npm-run-all: ^4.1.5
+      standard-log: ^11.2.0
+      tmp: ^0.2.1
+      ts-jest: ^28.0.7
+      typescript: ~4.8.3
+    dependencies:
+      '@mocktomata/framework': link:../framework
+      find-installed-packages: 2.1.6
+      md5: 2.3.0
+      mkdirp: 1.0.4
+      standard-log: 11.2.0
+    devDependencies:
+      assertron: 10.0.0
+      depcheck: 1.4.3
+      jest: 28.1.3
+      npm-run-all: 4.1.5
+      tmp: 0.2.1
+      ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
+      typescript: 4.8.3
+
+  packages/service:
+    specifiers:
+      '@hapi/boom': ^10.0.0
+      '@hapi/hapi': ^20.2.2
+      '@mocktomata/framework': workspace:^
+      '@mocktomata/nodejs': workspace:^
+      '@types/hapi__hapi': ^20.0.12
+      '@types/node-fetch': ^2.6.2
+      assertron: ^10.0.0
+      depcheck: ^1.4.3
+      jest: ^28.1.3
+      node-fetch: ^2.6.7
+      tmp: ^0.2.1
+      ts-jest: ^28.0.7
+      type-plus: ^4.13.1
+      typescript: ~4.8.3
+    dependencies:
+      '@hapi/boom': 10.0.0
+      '@hapi/hapi': 20.2.2
+      '@mocktomata/framework': link:../framework
+      '@mocktomata/nodejs': link:../nodejs
+    devDependencies:
+      '@types/hapi__hapi': 20.0.12
+      '@types/node-fetch': 2.6.2
+      assertron: 10.0.0
+      depcheck: 1.4.3
+      jest: 28.1.3
+      node-fetch: 2.6.7
+      tmp: 0.2.1
+      ts-jest: 28.0.7_oavexkd2euoi6eueqpz7c42uqe
+      type-plus: 4.14.1
+      typescript: 4.8.3
 
   plugins/plugin-node-fetch:
     specifiers:
@@ -2292,7 +2288,7 @@ packages:
       '@types/hapi__catbox': 10.2.4
       '@types/hapi__mimos': 4.1.4
       '@types/hapi__shot': 4.1.2
-      '@types/node': 15.14.9
+      '@types/node': 16.11.48
       joi: 17.6.0
     dev: true
 
@@ -2401,10 +2397,6 @@ packages:
 
   /@types/node/12.20.55:
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
-    dev: true
-
-  /@types/node/15.14.9:
-    resolution: {integrity: sha512-qjd88DrCxupx/kJD5yQgZdcYKZKSIGBVDIBE1/LTGcNm3d2Np/jxojkdePDdfnBHJc5W7vSMpbJ1aB7p/Py69A==}
     dev: true
 
   /@types/node/16.11.48:
@@ -3656,7 +3648,7 @@ packages:
       standard-log-color: 8.0.0_standard-log@10.3.0
       tmp: 0.2.1
       tslib: 2.4.0
-      type-plus: 4.13.1
+      type-plus: 4.14.1
       wordwrap: 1.0.0
       zod: 3.19.1
     dev: false
@@ -9416,7 +9408,7 @@ packages:
       '@just-func/types': 0.2.1
       iso-error: 4.4.0
       ms: 2.1.3
-      type-plus: 4.13.1
+      type-plus: 4.14.1
       upper-case: 2.0.2
     dev: false
 
@@ -9426,7 +9418,7 @@ packages:
       '@just-func/types': 0.4.0
       iso-error: 4.4.0
       ms: 2.1.3
-      type-plus: 4.13.1
+      type-plus: 4.14.1
       upper-case: 2.0.2
     dev: false
 
@@ -10210,6 +10202,7 @@ packages:
     dependencies:
       tersify: 3.10.5
       unpartial: 1.0.3
+    dev: false
 
   /type-plus/4.14.1:
     resolution: {integrity: sha512-Xk6qb+HILmW+03NNMMk7UiUQYroEu9ta36JOZNZX003AYRhWf8+sdE2HPf/p1DIK0/FpjzHWfRNZsIEI0+oJIA==}

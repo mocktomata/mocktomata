@@ -1,8 +1,8 @@
 {
-  "name": "@mocktomata/io-fs",
+  "name": "@mocktomata/service",
   "version": "7.0.0-beta.11",
-  "description": "mocktomata file system IO package",
-  "homepage": "https://github.com/mocktomata/mocktomata",
+  "description": "mocktomata service implementation",
+  "homepage": "https://github.com/mocktomata/mocktomata/tree/main/packages/service",
   "bugs": {
     "url": "https://github.com/mocktomata/mocktomata/issues"
   },
@@ -36,22 +36,24 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
+    "@hapi/boom": "^10.0.0",
+    "@hapi/hapi": "^20.2.2",
     "@mocktomata/framework": "workspace:^",
-    "find-installed-packages": "^2.1.6",
-    "md5": "^2.3.0",
-    "mkdirp": "^1.0.4",
-    "standard-log": "^11.2.0"
+    "@mocktomata/nodejs": "workspace:^"
   },
   "devDependencies": {
+    "@types/hapi__hapi": "^20.0.12",
+    "@types/node-fetch": "^2.6.2",
     "assertron": "^10.0.0",
     "depcheck": "^1.4.3",
     "jest": "^28.1.3",
-    "npm-run-all": "^4.1.5",
+    "node-fetch": "^2.6.7",
     "tmp": "^0.2.1",
     "ts-jest": "^28.0.7",
+    "type-plus": "^4.13.1",
     "typescript": "~4.8.3"
   },
   "engines": {
-    "node": ">=14.16"
+    "node": ">= 14.16"
   }
 }

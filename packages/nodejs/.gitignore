@@ -50,3 +50,4 @@ esm
 lib*
 tslib
 *.tsbuildinfo
+!fixtures/**/*
