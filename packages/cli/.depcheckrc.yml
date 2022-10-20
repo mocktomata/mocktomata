@@ -1,0 +1,13 @@
+ignores:
+  - '@babel/core'
+  - '@kayahr/jest-electron-runner'
+  - '@mocktomata/plugin-fixture-deep-link'
+  - '@mocktomata/plugin-fixture-dummy'
+  - jest-environment-jsdom
+  - param-case
+  - pascal-case
+  - source-map-loader
+  - standard-log-color
+  - ts-jest
+  - ts-loader
+  - webpack-cli

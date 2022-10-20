@@ -18,13 +18,7 @@
       "path": "../service"
     },
     {
-      "path": "../io-remote"
-    },
-    {
       "path": "../io-local"
-    },
-    {
-      "path": "../../test-plugins/plugin-fixture-dummy"
     }
   ],
   "include": [

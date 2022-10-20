@@ -11,19 +11,22 @@
       "path": "test-plugins/plugin-fixture-dummy/tsconfig.libm.json"
     },
     {
-      "path": "packages/io-fs"
+      "path": "packages/nodejs"
     },
     {
-      "path": "packages/file-server"
+      "path": "packages/service"
     },
     {
-      "path": "packages/io-client"
+      "path": "packages/io-remote"
     },
     {
       "path": "packages/io-local"
     },
     {
       "path": "packages/mocktomata"
+    },
+    {
+      "path": "packages/cli"
     },
     {
       "path": "plugins/plugin-node-fetch"
