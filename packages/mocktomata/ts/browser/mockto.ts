@@ -1,5 +1,5 @@
 import { createMockto, Mocktomata } from '@mocktomata/framework'
-import { createIO } from '@mocktomata/io-client'
+import { createIO } from '@mocktomata/io-remote'
 import { AsyncContext } from 'async-fp'
 import { createStandardLog, Logger } from 'standard-log'
 import { PromiseValue, required } from 'type-plus'

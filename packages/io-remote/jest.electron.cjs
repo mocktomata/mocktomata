@@ -2,5 +2,5 @@ const base = require('../../.jest/jest.electron.render')
 
 module.exports = {
   ...base,
-  displayName: 'io-client',
+  displayName: 'io-remote',
 }

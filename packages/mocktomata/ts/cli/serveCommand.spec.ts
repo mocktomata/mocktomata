@@ -1,4 +1,4 @@
-import { start } from '@mocktomata/file-server'
+import { start } from '@mocktomata/service'
 import colors from 'ansi-colors'
 import { testCommand } from 'clibuilder'
 import { serveCommand } from './serveCommand.js'

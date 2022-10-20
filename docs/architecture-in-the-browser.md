@@ -8,10 +8,11 @@ some modules are loaded in the browser while others are loaded in the server.
 Loaded in browser:
 
 - `mocktomata`
-- `@mocktomata/framework`
-- `@mocktomata/io-client`
+  - `@mocktomata/framework`
+  - `@mocktomata/io-remote`
 
 Loaded in server:
 
-- `@mocktomata/file-server`
-- `@mocktomata/io-fs`
+- `@mocktomata/server`
+  - `@mocktomata/nodejs`
+  - `@mocktomata/bun` (alternative)

@@ -7,11 +7,11 @@
   "title": "chore: version packages",
   "fixed": [
     [
-      "@mocktomata/file-server",
       "@mocktomata/framework",
-      "@mocktomata/io-client",
-      "@mocktomata/io-fs",
+      "@mocktomata/nodejs",
+      "@mocktomata/io-remote",
       "@mocktomata/io-local",
+      "@mocktomata/service",
       "mocktomata"
     ]
   ],

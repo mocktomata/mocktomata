@@ -1,9 +1,6 @@
 {
   "extends": "../../.tsc/tsconfig.settings.json",
   "compilerOptions": {
-    "lib": [
-      "DOM"
-    ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "esm",
@@ -15,13 +12,7 @@
       "path": "../framework"
     },
     {
-      "path": "../file-server"
-    },
-    {
-      "path": "../io-fs"
-    },
-    {
-      "path": "../../test-plugins/plugin-fixture-dummy"
+      "path": "../nodejs"
     }
   ],
   "include": [

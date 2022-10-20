@@ -52,9 +52,9 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/file-server": "workspace:^",
+    "@mocktomata/service": "workspace:^",
     "@mocktomata/framework": "workspace:^",
-    "@mocktomata/io-client": "workspace:^",
+    "@mocktomata/io-remote": "workspace:^",
     "@mocktomata/io-local": "workspace:^",
     "async-fp": "^8.0.2",
     "chalk": "^4.1.1",

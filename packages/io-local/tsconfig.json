@@ -15,7 +15,7 @@
       "path": "../framework"
     },
     {
-      "path": "../io-fs"
+      "path": "../nodejs"
     },
     {
       "path": "../../test-plugins/plugin-fixture-dummy"

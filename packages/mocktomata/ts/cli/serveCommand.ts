@@ -1,4 +1,4 @@
-import { start } from '@mocktomata/file-server'
+import { start } from '@mocktomata/service'
 import chalk from 'chalk'
 import { command, z } from 'clibuilder'
 import { validate } from './validate.js'

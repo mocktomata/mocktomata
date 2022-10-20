@@ -15,10 +15,10 @@
       "path": "../framework"
     },
     {
-      "path": "../file-server"
+      "path": "../service"
     },
     {
-      "path": "../io-client"
+      "path": "../io-remote"
     },
     {
       "path": "../io-local"

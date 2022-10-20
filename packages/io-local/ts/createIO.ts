@@ -1,5 +1,5 @@
 import { Mocktomata, SpecNotFound, SpecRecord } from '@mocktomata/framework'
-import { FileRepository } from '@mocktomata/io-fs'
+import { FileRepository } from '@mocktomata/nodejs'
 import path from 'path'
 
 export namespace createIO {
