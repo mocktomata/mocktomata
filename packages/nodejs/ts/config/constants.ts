@@ -1,3 +1,3 @@
-export const PACKAGE_JSON = 'package.json'
-export const MOCKTO_CONFIG_JSON = '.mockto.config.json'
-export const MOCKTO_CONFIG_JS = '.mockto.config.js'
+export const MOCKTOMATA_LOG_LEVEL = 'MOCKTOMATA_LOG_LEVEL'
+export const MOCKTOMATA_FILE_PATH_FILTER = 'MOCKTOMATA_FILE_PATH_FILTER'
+export const MOCKTOMATA_SPEC_NAME_FILTER = 'MOCKTOMATA_SPEC_NAME_FILTER'

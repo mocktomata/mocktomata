@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - packages/nodejs/fixtures/*
   - plugins/*
   - test-plugins/*
   - tests/*

@@ -29,18 +29,18 @@ test('write spec', async () => {
   const io = await createIOInternal({ fetch, location, importModule: () => Promise.resolve({}) })
 
   const record: SpecRecord = { refs: [], actions: [{ type: 'invoke', refId: '1', performer: 'user', thisArg: '0', payload: [], tick: 0 }] }
-  await io.writeSpec('new spec', 'some-path/file', record)
+  await io.writeSpec('new spec', 'some-path/file', JSON.stringify(record))
 
   const spec = fetch.specs['new spec']
   expect(spec).toEqual(record)
 })
 
-describe('getConfig()', () => {
+describe('loadConfig()', () => {
   test('returns installed plugin', async () => {
     const fetch = createFakeServerFetch()
     const io = await createIOInternal({ fetch, location, importModule: () => Promise.resolve({}) })
 
-    const list = await (await io.getConfig()).plugins
+    const list = await (await io.loadConfig()).plugins
     expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
   })
 })

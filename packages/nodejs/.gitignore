@@ -50,4 +50,4 @@ esm
 lib*
 tslib
 *.tsbuildinfo
-!fixtures/**/*
+fixtures/**/write-target*

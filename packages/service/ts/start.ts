@@ -1,8 +1,10 @@
 import boom from '@hapi/boom'
 import { RequestInfo, Server, ServerInfo, ServerRoute } from '@hapi/hapi'
-import type { SpecPlugin } from '@mocktomata/framework'
-import { FileRepository } from '@mocktomata/nodejs'
+import type { Mocktomata, SpecPlugin } from '@mocktomata/framework'
+import { findInstalledPlugins, createIO } from '@mocktomata/nodejs'
 import { atob } from './base64.js'
+import { createStandardLog } from 'standard-log'
+import { createColorLogReporter } from 'standard-log-color'
 
 export namespace start {
   export type Config = {
@@ -24,12 +26,14 @@ export async function start(options?: start.Options) {
   // so can test the case of not specifying options
   // istanbul ignore next
   const cwd = options?.cwd ?? process.cwd()
-  const repo = new FileRepository({ cwd })
-  const config = repo.loadConfig() as start.Config
+  const sl = createStandardLog({ reporters: [createColorLogReporter()] })
+  const log = sl.getLogger('@mocktomata/service')
+  const repo = createIO({ cwd, log })
+  const config = await repo.loadConfig() as start.Config
   // can't add test for port 80. will fail during CI
   // istanbul ignore next
   const port = options?.port ?? config.server?.port ?? 80
-  const context = { config, repo }
+  const context = { config, repo, cwd }
   const server = new Server({ port, routes: { 'cors': true } })
   await server.start()
   server.route([
@@ -47,7 +51,8 @@ export async function start(options?: start.Options) {
 }
 
 type Context = {
-  repo: FileRepository
+  repo: Mocktomata.IO,
+  cwd: string
 }
 
 function infoRoute(ctx: Context, server: Server): ServerRoute {
@@ -61,7 +66,7 @@ function infoRoute(ctx: Context, server: Server): ServerRoute {
         name: 'mocktomata',
         version: pjson.version,
         url: getReflectiveUrl(request.info, server.info),
-        plugins: (await ctx.repo.findInstalledPlugins())
+        plugins: (await findInstalledPlugins(ctx.cwd))
       })
     }
   }

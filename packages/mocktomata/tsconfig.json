@@ -6,7 +6,7 @@
     ],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "lib",
+    "outDir": "esm",
     "rootDir": "ts",
     "target": "ES2020"
   },
@@ -21,7 +21,7 @@
       "path": "../io-remote"
     },
     {
-      "path": "../io-local"
+      "path": "../nodejs"
     },
     {
       "path": "../../test-plugins/plugin-fixture-dummy"

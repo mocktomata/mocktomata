@@ -56,8 +56,10 @@ export namespace Spec {
      * root of project (`process.cwd()`) for server side usage,
      * path name (http://host/<path-name>?query) for client side usage.
      * For example, when used in test, it is the relative path of the test file.
+     * @param record serialized SpecRecord.
+     * It is already in serialized form because for `@mocktomata/service`, the `SpecRecord` is already in string.
      */
-    writeSpec(specName: string, specRelativePath: string, record: SpecRecord): Promise<void>
+    writeSpec(specName: string, specRelativePath: string, record: string): Promise<void>
   }
 
   export type Mode = 'live' | 'save' | 'simulate' | 'auto'

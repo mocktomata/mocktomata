@@ -1,0 +1,5 @@
+{
+  "name": "@mocktomata/plugin-fixture-cjs-b",
+  "private": true,
+  "main": "./index.cjs"
+}

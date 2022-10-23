@@ -1,9 +1,8 @@
-import { Mocktomata } from '@mocktomata/framework'
-import { required } from 'type-plus'
+import { Config } from '@mocktomata/framework'
 import { CannotConfigAfterUsed } from '../errors.js'
 import { store } from './store.js'
 
-export function config(options: Partial<Mocktomata.Config>) {
+export function config(input: Partial<Config.Input>) {
   if (store.value.config) throw new CannotConfigAfterUsed()
-  store.value.config = required({ plugins: [] }, options)
+  store.value.config = input
 }

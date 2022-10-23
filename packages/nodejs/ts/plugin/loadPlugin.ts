@@ -1,15 +1,11 @@
 import { PluginNotFound, SpecPlugin } from '@mocktomata/framework'
-import { log } from '../log.js'
 
-export const ctx = { log }
-export function loadPlugin(cwd: string, id: string): SpecPlugin.Module {
+// istanbul ignore next
+export async function loadPlugin(cwd: string, id: string): Promise<SpecPlugin.Module> {
   try {
-    const p = require.resolve(id, { paths: [cwd] })
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    return require(p)
+    return await import(id)
   }
   catch (e: any) {
-    ctx.log.warn(`Unable to find plugin: ${id}`)
     throw new PluginNotFound(id)
   }
 }

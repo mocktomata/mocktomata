@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@mocktomata/nodejs": "workspace:^",
+    "@mocktomata/plugin-fixture-cjs-a": "workspace:^",
+    "@mocktomata/plugin-fixture-cjs-b": "workspace:^",
+    "standard-log": "11.2.1"
+  },
+  "mocktomata": {
+    "plugins": [
+      "plugin-a"
+    ]
+  }
+}

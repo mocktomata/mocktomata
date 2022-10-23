@@ -1,0 +1,5 @@
+{
+  "name": "@mocktomata/plugin-fixture-cjs-a",
+  "private": true,
+  "type": "commonjs"
+}
