@@ -1,0 +1,6 @@
+{
+  // hello world
+  "plugins": [
+    "@mocktomata/plugin-fixture-dummy"
+  ]
+}

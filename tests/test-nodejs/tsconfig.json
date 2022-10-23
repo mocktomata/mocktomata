@@ -9,7 +9,7 @@
   },
   "references": [
     {
-      "path": "../../packages/framework"
+      "path": "../../packages/mocktomata"
     }
   ],
   "include": [

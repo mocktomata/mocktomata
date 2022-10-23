@@ -4,11 +4,11 @@ import { es2015 } from '../es2015.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecNotFound } from '../spec/index.js'
 import type { Mocktomata } from '../types.js'
-import { prettyPrintSpecRecord } from '../utils/index.js'
 
 export namespace createTestIO {
   export type Options = {
-    modules?: Record<string, SpecPlugin.Module>
+    modules?: Record<string, SpecPlugin.Module>,
+    configInput?: Config.Input
   } & Partial<Config.Options>
   export type TestIO = {
     getAllSpecs(): IterableIterator<[string, string]>,
@@ -18,8 +18,9 @@ export namespace createTestIO {
 
 export function createTestIO(options?: createTestIO.Options): createTestIO.TestIO {
   const specStore = new Map<string, string>()
-  const { config, modules } = requiredDeep({
+  const { configInput, modules } = requiredDeep({
     config: { ecmaVersion: 'es2015', plugins: [] },
+    configInput: {},
     modules: { [es2015.name]: es2015 } as Record<string, SpecPlugin.Module>
   }, options)
   return {
@@ -27,8 +28,8 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
     getAllSpecs() {
       return specStore.entries()
     },
-    async getConfig() {
-      return config
+    async loadConfig() {
+      return configInput
     },
     readSpec(specName, specRelativePath) {
       const record = specStore.get(specName)
@@ -36,7 +37,7 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
       return Promise.resolve(JSON.parse(record))
     },
     async writeSpec(title, _specRelativePath, record) {
-      specStore.set(title, prettyPrintSpecRecord(record))
+      specStore.set(title, record)
     },
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       modules[moduleName] = pluginModule

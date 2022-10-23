@@ -1,59 +1,59 @@
-import { AmbiguousConfig, InvalidConfigFormat } from '@mocktomata/framework'
 import fs from 'fs'
+import json5 from 'json5'
 import path from 'path'
-import { MOCKTO_CONFIG_JS, MOCKTO_CONFIG_JSON, PACKAGE_JSON } from './constants.js'
+import { MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_SPEC_NAME_FILTER } from './constants.js'
 
-export function loadConfig(cwd: string) {
-  const configs: { [k in string]: Record<string, any> } = {
-    pjson: loadPjsonConfig(cwd),
-    mjson: loadMjsonConfig(cwd),
-    mjs: loadMjsConfig(cwd)
-  }
-
-  const names = Object.keys(configs).filter(k => !!configs[k])
-  if (names.length === 0) return {}
-
-  if (names.length > 1) throw new AmbiguousConfig(names)
-
-  const config = configs[names[0]]
-  return config
+export namespace loadConfig {
+  export type Context = { cwd: string }
 }
 
-function loadPjsonConfig(cwd: string) {
-  const filepath = path.resolve(cwd, PACKAGE_JSON)
-  if (fs.existsSync(filepath)) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const pjson = require(filepath)
-    if (pjson.mocktomata) return pjson.mocktomata
-  }
+type Context = loadConfig.Context
+
+export async function loadConfig(context: loadConfig.Context) {
+  return [
+    [
+      loadFromPackageJson(context),
+      ...loadFromJson(context),
+    ].filter(Boolean) as Array<[string, unknown]>,
+    loadFromEnv(context)
+  ] as const
 }
 
-function loadMjsonConfig(cwd: string) {
-  const filepath = path.resolve(cwd, MOCKTO_CONFIG_JSON)
-  if (fs.existsSync(filepath)) {
-    try {
-      return require(filepath)
-    }
-    catch (e: any) {
-      // istanbul ignore next
-      if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat(MOCKTO_CONFIG_JSON)
-      }
-    }
-  }
+function loadFromEnv(_: Context): [string, any] {
+  return ['env', reduceOr([
+    ['logLevel', process.env[MOCKTOMATA_LOG_LEVEL]],
+    ['filePathFilter', process.env[MOCKTOMATA_FILE_PATH_FILTER]],
+    ['specNameFilter', process.env[MOCKTOMATA_SPEC_NAME_FILTER]]
+  ])]
 }
 
-function loadMjsConfig(cwd: string) {
-  const filepath = path.join(cwd, MOCKTO_CONFIG_JS)
+function reduceOr<V>(values: Array<[string, V] | undefined>) {
+  const result = values.reduce((p, v) => {
+    if (v === undefined) return p
+    const value = v[1]
+    if (value === undefined) return p
+    p[v[0]] = value
+    return p
+  }, {} as Record<string, unknown>)
+  return Object.keys(result).length === 0 ? undefined : result
+}
+
+function loadFromPackageJson({ cwd }: Context): [string, any] | undefined {
+  const filepath = path.resolve(cwd, 'package.json')
   if (fs.existsSync(filepath)) {
-    try {
-      return require(filepath)
-    }
-    catch (e: any) {
-      // istanbul ignore next
-      if (e.name === 'SyntaxError') {
-        throw new InvalidConfigFormat(MOCKTO_CONFIG_JS)
-      }
-    }
+    const pjson = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+    if (pjson.mocktomata) return ['package.json', pjson.mocktomata]
   }
+  return undefined
+}
+
+function loadFromJson({ cwd }: Context): Array<[string, any] | undefined> {
+  return ['mocktomata.json'].map(name => {
+    const filepath = path.resolve(cwd, name)
+    if (fs.existsSync(filepath)) {
+      const json = json5.parse(fs.readFileSync(filepath, 'utf-8'))
+      return [name, json]
+    }
+    return undefined
+  })
 }

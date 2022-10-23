@@ -9,9 +9,7 @@ github-action-url
 codecov-url
 vscode-url
 @mocktomata
-io-client
-io-fs
-io-local
+io-remote
 plugin-nodejs
 test-nodejs
 

@@ -1,4 +1,4 @@
-import { Mocktomata, Spec } from '@mocktomata/framework'
+import { Config, Spec } from '@mocktomata/framework'
 import { AsyncContext } from 'async-fp'
 import { createStore } from 'global-store'
 
@@ -6,7 +6,7 @@ export type NodeJSStore = {
   // context needs to be saved in the store because there maybe multiple versions of `mocktomata`
   // is loaded, thus the initializer may be called multiple times.
   context?: AsyncContext<Spec.Context>,
-  config?: Mocktomata.Config
+  config?: Config.Input
 }
 
 export const store = createStore<NodeJSStore>({

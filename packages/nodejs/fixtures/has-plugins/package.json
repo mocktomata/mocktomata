@@ -1,6 +1,8 @@
 {
   "dependencies": {
-    "@mocktomata/plugin-fixture-deep-link": "^1.0.2",
-    "@mocktomata/plugin-fixture-dummy": "^1.0.3"
+    "@mocktomata/plugin-fixture-deep-link": "workspace:^",
+    "@mocktomata/plugin-fixture-dummy": "workspace:^",
+    "@mocktomata/plugin-fixture-no-activate": "workspace:^",
+    "@mocktomata/plugin-fixture-activate-not-fn": "workspace:^"
   }
 }
