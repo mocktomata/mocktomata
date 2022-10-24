@@ -49,7 +49,7 @@ test('duration returns total duration since first elapse() call', async () => {
 
   timeTracker.stop()
   expect(actual).toBeGreaterThanOrEqual(10)
-  expect(actual).toBeLessThanOrEqual(2000)
+  expect(actual).toBeLessThanOrEqual(5000)
 })
 
 test('elapse() returns time passed since last elapse() call', async () => {
