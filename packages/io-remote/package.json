@@ -30,6 +30,7 @@
     "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.cjs --coverage --reporters=default",
     "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
+    "nuke": "pnpm run clean && rimraf node_modules",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.cjs --reporters=default",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.cjs --watch",
     "verify": "npm-run-all -p lint build coverage -p depcheck",
@@ -38,8 +39,7 @@
   "dependencies": {
     "@mocktomata/framework": "workspace:^",
     "cross-fetch": "^3.1.4",
-    "iso-error": "^4.4.0",
-    "type-plus": "^4.13.1"
+    "iso-error": "^4.4.0"
   },
   "devDependencies": {
     "@kayahr/jest-electron-runner": "^29.0.0",
@@ -52,6 +52,7 @@
     "jest-watch-toggle-config": "^2.0.1",
     "jest-watch-typeahead": "^2.2.0",
     "npm-run-all": "^4.1.5",
+    "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
     "typescript": "~4.8.3"
   },

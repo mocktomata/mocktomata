@@ -12,7 +12,8 @@ const [, , id] = process.argv
     try {
       const plugin = await io.loadPlugin(id)
       console.info(typeof plugin.activate)
-    } catch (e) {
+    }
+    catch (e) {
       console.error(e)
     }
   })()

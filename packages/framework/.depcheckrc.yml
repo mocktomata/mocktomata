@@ -1,4 +1,5 @@
 ignores:
   - '@size-limit/preset-big-lib'
+  - jest-*
   - ts-jest
   - tslib
