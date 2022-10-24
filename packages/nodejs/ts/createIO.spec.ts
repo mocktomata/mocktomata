@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals'
 import { SpecNotFound } from '@mocktomata/framework'
 import { execCommand } from '@unional/fixture'
 import { a } from 'assertron'
