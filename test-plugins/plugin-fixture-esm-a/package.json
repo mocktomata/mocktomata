@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "exports": {
-    "import": "./lib/index.js"
+    "import": "./index.js"
   },
   "files": [
     "lib"
