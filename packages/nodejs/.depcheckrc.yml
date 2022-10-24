@@ -1,2 +1,4 @@
 ignores:
+  - '@mocktomata/plugin-fixture-*'
+  - jest-*
   - ts-jest

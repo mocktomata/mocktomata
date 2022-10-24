@@ -5,4 +5,5 @@ ignores:
   - '@mocktomata/server'
   - '@mocktomata/nodejs'
   - '@mocktomata/plugin-fixture-dummy'
+  - jest-*
   - ts-jest

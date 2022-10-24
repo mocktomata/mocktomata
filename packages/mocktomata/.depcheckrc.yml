@@ -3,7 +3,7 @@ ignores:
   - '@kayahr/jest-electron-runner'
   - '@mocktomata/plugin-fixture-deep-link'
   - '@mocktomata/plugin-fixture-dummy'
-  - jest-environment-jsdom
+  - jest-*
   - param-case
   - pascal-case
   - source-map-loader
