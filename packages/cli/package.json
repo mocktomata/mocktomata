@@ -38,17 +38,17 @@
     "build": "run-p build:esm",
     "build:esm": "tsc",
     "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
-    "coverage": "jest --coverage --reporters=default",
+    "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --reporters=default",
     "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "test": "jest --reporters=default",
-    "test:watch": "jest --watch",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --reporters=default",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "verify": "npm-run-all -p lint build coverage test depcheck",
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
     "@mocktomata/service": "workspace:^",
-    "chalk": "^4.1.2",
+    "chalk": "^5.1.2",
     "clibuilder": "^8.0.2",
     "validate.js": "^0.13.1"
   },

@@ -1,6 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter } from 'standard-log'
-import { transformConfig } from '../config/index.js'
+import { loadConfig } from '../config/index.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import { createSpecFns, getEffectiveSpecModeContext } from '../spec/index.js'
@@ -31,8 +31,8 @@ export function createZucchini(context: AsyncContext<Mocktomata.Context>) {
 
 function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store) {
   const ctx = context
+    .extend(loadConfig)
     .extend(loadPlugins)
-    .extend(transformConfig)
     .extend(initTimeTrackers)
 
   return Object.assign(

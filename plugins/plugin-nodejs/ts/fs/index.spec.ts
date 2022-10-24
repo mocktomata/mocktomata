@@ -1,4 +1,5 @@
 import { incubator } from '@mocktomata/framework'
+import { dirname } from 'dirname-filename-esm'
 import fs from 'fs'
 import path from 'path'
 
@@ -25,5 +26,5 @@ incubator('readFileSync in Buffer', (title, spec) => {
 })
 
 function getFixturePath(targetPath: string) {
-  return path.resolve(__dirname, `../../.fixtures/${targetPath}`)
+  return path.resolve(dirname(import.meta), `../../.fixtures/${targetPath}`)
 }

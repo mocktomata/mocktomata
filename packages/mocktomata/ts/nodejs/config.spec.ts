@@ -1,25 +1,25 @@
 import { createMockto, createTestIO, Spec } from '@mocktomata/framework'
+import { MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_MODE, MOCKTOMATA_SPEC_NAME_FILTER } from '@mocktomata/nodejs'
 import a from 'assertron'
-import { createStandardLogForTest, logLevels, MemoryLogReporter } from 'standard-log'
+import { logLevels, MemoryLogReporter } from 'standard-log'
 import { CannotConfigAfterUsed, config, mockto } from '../index.js'
-import { ENV_VARS } from './constants.js'
 import { createContext } from './createContext.js'
 import { store } from './store.js'
 
 beforeEach(() => {
   store.reset()
-  delete process.env[ENV_VARS.mode]
-  delete process.env[ENV_VARS.log]
-  delete process.env[ENV_VARS.fileFilter]
-  delete process.env[ENV_VARS.specFilter]
+  delete process.env[MOCKTOMATA_MODE]
+  delete process.env[MOCKTOMATA_LOG_LEVEL]
+  delete process.env[MOCKTOMATA_FILE_PATH_FILTER]
+  delete process.env[MOCKTOMATA_SPEC_NAME_FILTER]
 })
 
 afterEach(() => {
   store.reset()
-  delete process.env[ENV_VARS.mode]
-  delete process.env[ENV_VARS.log]
-  delete process.env[ENV_VARS.fileFilter]
-  delete process.env[ENV_VARS.specFilter]
+  delete process.env[MOCKTOMATA_MODE]
+  delete process.env[MOCKTOMATA_LOG_LEVEL]
+  delete process.env[MOCKTOMATA_FILE_PATH_FILTER]
+  delete process.env[MOCKTOMATA_SPEC_NAME_FILTER]
 })
 
 mockto('config() can only be called before using mockto', (title, spec) => {
@@ -34,7 +34,8 @@ describe('config with config()', () => {
   afterEach(() => mockto?.teardown())
 
   test('override to live mode', async () => {
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    const { config, context } = createContext({ io: createTestIO() })
+    mockto = createMockto(context)
     config({ overrideMode: 'live' })
     const spec = await new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
     // before calling `spec()`,
@@ -46,7 +47,8 @@ describe('config with config()', () => {
   })
 
   test('override to save mode', async () => {
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    const { config, context } = createContext({ io: createTestIO() })
+    mockto = createMockto(context)
     config({ overrideMode: 'save' })
     await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec)))
       .then(async spec => {
@@ -61,8 +63,8 @@ describe('config with config()', () => {
   })
 
   test('enable log', async () => {
+    const { context, config } = createContext()
     config({ logLevel: logLevels.all })
-    const context = createContext()
     mockto = createMockto(context)
     return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter })))
       .then(async ({ spec, reporter }) => {
@@ -79,9 +81,9 @@ describe('config with env', () => {
   })
 
   test('override as live mode', () => {
-    process.env[ENV_VARS.mode] = 'live'
-    mockto = createMockto(createContext())
-    return new Promise<Spec>(a => mockto('overide to live mode', (_, spec) => a(spec)))
+    process.env[MOCKTOMATA_MODE] = 'live'
+    mockto = createMockto(createContext().context)
+    return new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
         expect(spec.mode).toBe('live')
@@ -89,8 +91,8 @@ describe('config with env', () => {
   })
 
   test('override to save mode', async () => {
-    process.env[ENV_VARS.mode] = 'save'
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    process.env[MOCKTOMATA_MODE] = 'save'
+    mockto = createMockto(createContext().context)
     await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -103,22 +105,9 @@ describe('config with env', () => {
       })
   })
 
-  test('invalid override value emits warning', () => {
-    process.env[ENV_VARS.mode] = 'something-else'
-    const sl = createStandardLogForTest()
-    const context = createContext({ log: sl.getLogger('mocktomata') })
-    mockto = createMockto(context)
-    return new Promise<Spec>(a => mockto('invalid override value emits warning', (_, spec) => a(spec)))
-      .then(async spec => {
-        await spec({})
-        expect(spec.mode).toBe('save')
-        a.satisfies(sl.reporter.logs[0], { level: logLevels.warn, args: [/invalid value for mode/] })
-      })
-  })
-
   test('mode is case insensitive', () => {
-    process.env[ENV_VARS.mode] = 'lIvE'
-    mockto = createMockto(createContext())
+    process.env[MOCKTOMATA_MODE] = 'lIvE'
+    mockto = createMockto(createContext().context)
     return new Promise<Spec>(a => mockto('overide to live mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -127,9 +116,9 @@ describe('config with env', () => {
   })
 
   test('override mode with file filter', () => {
-    process.env[ENV_VARS.mode] = 'live'
-    process.env[ENV_VARS.fileFilter] = 'config.spec'
-    mockto = createMockto(createContext())
+    process.env[MOCKTOMATA_MODE] = 'live'
+    process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
+    mockto = createMockto(createContext().context)
     return new Promise<Spec>(a => mockto('overide to live mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -138,9 +127,9 @@ describe('config with env', () => {
   })
 
   test('not matching file filler will not override mode', () => {
-    process.env[ENV_VARS.mode] = 'live'
-    process.env[ENV_VARS.fileFilter] = 'something else'
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    process.env[MOCKTOMATA_MODE] = 'live'
+    process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'something else'
+    mockto = createMockto(createContext({ io: createTestIO() }).context)
     return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -149,9 +138,9 @@ describe('config with env', () => {
   })
 
   test('override with spec filter', async () => {
-    process.env[ENV_VARS.mode] = 'live'
-    process.env[ENV_VARS.specFilter] = 'filtered'
-    mockto = createMockto(createContext())
+    process.env[MOCKTOMATA_MODE] = 'live'
+    process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'filtered'
+    mockto = createMockto(createContext().context)
     await new Promise<Spec>(a => mockto('this match filtered', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -165,10 +154,10 @@ describe('config with env', () => {
   })
 
   test('spec match file not match will not override', async () => {
-    process.env[ENV_VARS.mode] = 'live'
-    process.env[ENV_VARS.specFilter] = 'still'
-    process.env[ENV_VARS.fileFilter] = 'something else'
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    process.env[MOCKTOMATA_MODE] = 'live'
+    process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'still'
+    process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'something else'
+    mockto = createMockto(createContext({ io: createTestIO() }).context)
     return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -177,10 +166,10 @@ describe('config with env', () => {
   })
 
   test('spec not match file match will not override', async () => {
-    process.env[ENV_VARS.mode] = 'live'
-    process.env[ENV_VARS.specFilter] = 'not match'
-    process.env[ENV_VARS.fileFilter] = 'config.spec'
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    process.env[MOCKTOMATA_MODE] = 'live'
+    process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'not match'
+    process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
+    mockto = createMockto(createContext({ io: createTestIO() }).context)
     return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -189,10 +178,10 @@ describe('config with env', () => {
   })
 
   test('both spec and file match will override', async () => {
-    process.env[ENV_VARS.mode] = 'live'
-    process.env[ENV_VARS.specFilter] = 'live'
-    process.env[ENV_VARS.fileFilter] = 'config.spec'
-    mockto = createMockto(createContext({ io: createTestIO() }))
+    process.env[MOCKTOMATA_MODE] = 'live'
+    process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'live'
+    process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
+    mockto = createMockto(createContext().context)
     return new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
       .then(async spec => {
         await spec({})
@@ -201,8 +190,8 @@ describe('config with env', () => {
   })
 
   test('enable log', () => {
-    process.env[ENV_VARS.log] = 'debug'
-    const context = createContext()
+    process.env[MOCKTOMATA_LOG_LEVEL] = 'debug'
+    const { context } = createContext()
     mockto = createMockto(context)
     return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
       a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
@@ -213,8 +202,8 @@ describe('config with env', () => {
   })
 
   test('enable log is case insensitive', () => {
-    process.env[ENV_VARS.log] = 'debUg'
-    const context = createContext()
+    process.env[MOCKTOMATA_LOG_LEVEL] = 'debUg'
+    const { context } = createContext()
     mockto = createMockto(context)
     return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
       a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
@@ -222,17 +211,5 @@ describe('config with env', () => {
       await spec({})
       a.satisfies(reporter.logs, [{ level: logLevels.debug }])
     })
-  })
-
-  test('invalid log value emits warning', () => {
-    process.env[ENV_VARS.log] = 'not-level'
-    const sl = createStandardLogForTest()
-    const context = createContext({ log: sl.getLogger('mocktomata') })
-    mockto = createMockto(context)
-    return new Promise<Spec>(a => mockto('invalid override value emits warning', (_, spec) => a(spec)))
-      .then(async spec => {
-        await spec({})
-        a.satisfies(sl.reporter.logs[0], { level: logLevels.warn, args: [/invalid value for log level/] })
-      })
   })
 })

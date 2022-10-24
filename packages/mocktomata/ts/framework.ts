@@ -1,9 +1,12 @@
 export {
-  ActionMismatch, AmbiguousConfig, ConfigHasUnrecognizedProperties, ConfigPropertyInvalid,
-  ConfigPropertyMismatch, DuplicatePlugin, ExtraAction, ExtraReference,
-  incubator, InvalidConfigFormat, MismatchActionModel,
-  MissingAction, Mocktomata, MocktomataError, NoSupportedPlugin,
+  ActionMismatch, AmbiguousConfig, CannotConfigAfterUsed, ConfigHasUnrecognizedProperties,
+  ConfigPropertyInvalid, ConfigPropertyMismatch, DuplicatePlugin,
+  ExtraAction, ExtraReference,
+  incubator, InvalidConfigFormat,
+  MissingAction, MocktomataError, NoSupportedPlugin,
   NotSpecable, PluginModuleNotConforming, PluginNotConforming, PluginNotFound,
-  PluginsNotLoaded, Spec, SpecIDCannotBeEmpty, SpecNotFound, SpecPlugin, SpecRecord
+  PluginsNotLoaded, SpecIDCannotBeEmpty, SpecNotFound
 } from '@mocktomata/framework'
+export type { MismatchActionModel, Mocktomata, Spec, SpecPlugin, SpecRecord } from '@mocktomata/framework'
+
 

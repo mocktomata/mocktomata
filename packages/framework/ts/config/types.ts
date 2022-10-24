@@ -3,12 +3,13 @@ import type { Log } from '../log/types.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import type { Spec } from '../spec/types.js'
 
+export type Config = Spec.Config & SpecPlugin.Config & Log.Config
 export namespace Config {
   export type Input = {
-    overrideMode?: Spec.Mode,
+    overrideMode?: Spec.OverrideMode,
     filePathFilter?: string,
     specNameFilter?: string,
-    ecmaVersion?: string,
+    ecmaVersion?: 'es2015',
     plugins?: string[],
     logLevel?: LogMethodNames | number
   }
@@ -20,7 +21,13 @@ export namespace Config {
     config?: Spec.Config & Partial<SpecPlugin.Config> & Log.Config
   }
 
+  export type ResultContext = {
+    config: Config
+  }
+
   export type Context = {
-    config: Spec.Config & SpecPlugin.Config & Log.Config
+    configurator: { store: Config.ResultContext, config(input: Input): void },
+    // loadConfig: (ctx: { io: IO }) => ResultContext
+    // config: Spec.Config & SpecPlugin.Config & Log.Config
   }
 }

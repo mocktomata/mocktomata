@@ -4,13 +4,14 @@ import { a } from 'assertron'
 import t from 'node:assert'
 import { existsSync } from 'node:fs'
 import { createStandardLogForTest } from 'standard-log'
-import { MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_SPEC_NAME_FILTER } from './config/constants.js'
+import { MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_MODE, MOCKTOMATA_SPEC_NAME_FILTER } from './config/constants.js'
 import { createIO } from './createIO.js'
 import { fixturePath } from './util/fixturePath.js'
 import { ensureFileNotExist } from './util/fs.js'
 
 describe(`${createIO.name}()`, () => {
   afterEach(() => {
+    delete process.env[MOCKTOMATA_MODE]
     delete process.env[MOCKTOMATA_LOG_LEVEL]
     delete process.env[MOCKTOMATA_FILE_PATH_FILTER]
     delete process.env[MOCKTOMATA_SPEC_NAME_FILTER]
@@ -48,7 +49,6 @@ describe(`${createIO.name}()`, () => {
       t.deepStrictEqual(config, {})
     })
 
-
     it('loads from mocktomata.json', async () => {
       const [io] = setupIOTest('mjson')
       const config = await io.loadConfig()
@@ -64,12 +64,14 @@ describe(`${createIO.name}()`, () => {
 
     it('loads config from environment', async () => {
       const [io] = setupIOTest('no-config', {
+        [MOCKTOMATA_MODE]: 'live',
         [MOCKTOMATA_LOG_LEVEL]: 'debug',
         [MOCKTOMATA_FILE_PATH_FILTER]: 'hello',
         [MOCKTOMATA_SPEC_NAME_FILTER]: 'world'
       })
       const config = await io.loadConfig()
       expect(config).toStrictEqual({
+        overrideMode: 'live',
         logLevel: 'debug',
         filePathFilter: 'hello',
         specNameFilter: 'world'
@@ -222,7 +224,7 @@ configs:
       ensureFileNotExist(filePath)
 
       const [io] = setupIOTest('no-config')
-      await io.writeSpec('some spec', './src/write-target.ts', JSON.stringify({ actions: [], refs: [] }))
+      await io.writeSpec('some spec', './src/write-target.ts', { actions: [], refs: [] })
 
       expect(existsSync(filePath)).toBeTruthy()
     })
@@ -234,7 +236,7 @@ configs:
       const [io] = setupIOTest('pjson')
       // loadConfig() will have the side effect of updating the path
       await io.loadConfig()
-      await io.writeSpec('some spec', './src/write-target.ts', JSON.stringify({ actions: [], refs: [] }))
+      await io.writeSpec('some spec', './src/write-target.ts', { actions: [], refs: [] })
 
       expect(existsSync(filePath)).toBeTruthy()
     })

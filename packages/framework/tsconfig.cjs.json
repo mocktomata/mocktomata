@@ -3,10 +3,14 @@
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "Node",
-    "outDir": "cjs"
+    "outDir": "cjs",
   },
   "include": [
     "ts",
     "typings"
+  ],
+  // some spec files use `import.meta`
+  "exclude": [
+    "**/*.spec.*"
   ]
 }

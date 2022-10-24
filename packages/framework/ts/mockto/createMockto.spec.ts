@@ -204,6 +204,7 @@ describe(`mockto`, () => {
     test('override to live mode', async () => {
       const { context } = createTestContext({ config: { overrideMode: 'live' } })
       const mockto = createMockto(context)
+
       await new Promise<void>(a => {
         mockto('force live', async (_, spec) => {
           (await spec(() => { }))()
@@ -218,6 +219,7 @@ describe(`mockto`, () => {
     test('overrideMode has no effect on save and simulate', async () => {
       const { context } = createTestContext({ config: { overrideMode: 'live' } })
       const mockto = createMockto(context)
+
       await new Promise<void>(a => {
         mockto.save('force live', async (_, spec) => {
           (await spec(() => { }))()
@@ -242,6 +244,7 @@ describe(`mockto`, () => {
         }
       })
       const mockto = createMockto(context)
+
       await new Promise<void>(a => {
         mockto('not affected', async (_, spec) => {
           (await spec(() => { }))()

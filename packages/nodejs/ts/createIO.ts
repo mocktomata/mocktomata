@@ -59,8 +59,8 @@ ${configFilenames.map(c => `- ${c}`).join('\n')}`)
         throw new SpecNotFound(title, invokePath)
       }
     },
-    async writeSpec(title: string, invokePath: string, record: string) {
-      return writeSpec(specFolder, title, invokePath, record)
+    async writeSpec(title, invokePath, record) {
+      return writeSpec(specFolder, title, invokePath, JSON.stringify(record))
     },
   }
 }

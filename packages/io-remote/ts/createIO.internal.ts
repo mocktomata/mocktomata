@@ -24,9 +24,9 @@ export async function createIOInternal(ctx: Context, options?: CreateIOOptions):
       }
       return response.json()
     },
-    async writeSpec(specName: string, specRelativePath: string, record: string) {
+    async writeSpec(specName, specRelativePath, record) {
       const id = btoa(JSON.stringify({ specName, specRelativePath }))
-      const response = await ctx.fetch(buildUrl(info.url, `specs/${id}`), { method: 'POST', body: record })
+      const response = await ctx.fetch(buildUrl(info.url, `specs/${id}`), { method: 'POST', body: JSON.stringify(record) })
       // istanbul ignore next
       if (!response.ok) {
         throw new Error(`failed to write spec: ${response.statusText}`)

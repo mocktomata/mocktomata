@@ -1,16 +1,19 @@
 import a from 'assertron'
 import { AsyncContext } from 'async-fp'
 import { createStandardLogForTest } from 'standard-log'
-import { transformConfig } from '../config/index.js'
-import { createTestContext, createTestIO, ExtraReference, PluginsNotLoaded } from '../index.js'
+import { createTestContext, createTestIO, ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'
 import { loadPlugins } from '../spec-plugin/index.js'
+import { initTimeTrackers } from '../timeTracker/createTimeTracker.js'
 import { createSimulator } from './simulator.js'
 import type { createSpec } from './types.internal.js'
 
 test('create not expected stub throws', async () => {
   const { context } = createTestContext()
   const sim = createSimulator(
-    context.extend(loadPlugins).extend(transformConfig),
+    context
+      .extend(loadConfig)
+      .extend(loadPlugins)
+      .extend(initTimeTrackers),
     'extra ref',
     { refs: [], actions: [] },
     { timeout: 10 })

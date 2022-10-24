@@ -39,3 +39,8 @@ export class ConfigHasUnrecognizedProperties extends MocktomataError {
 ${mapKey(values, k => `- ${k}: ${values[k]}`).join('\n')}`, options)
   }
 }
+export class CannotConfigAfterUsed extends MocktomataError {
+  constructor(options?: ModuleError.Options) {
+    super(`config() can only be called before usage.`, options)
+  }
+}

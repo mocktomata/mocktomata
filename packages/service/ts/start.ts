@@ -5,6 +5,8 @@ import { findInstalledPlugins, createIO } from '@mocktomata/nodejs'
 import { atob } from './base64.js'
 import { createStandardLog } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 export namespace start {
   export type Config = {
@@ -60,8 +62,7 @@ function infoRoute(ctx: Context, server: Server): ServerRoute {
     method: 'GET',
     path: '/mocktomata/info',
     handler: async (request) => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const pjson = require('../package.json')
+      const pjson = JSON.parse(readFileSync(resolve('./package.json'), 'utf-8'))
       return JSON.stringify({
         name: 'mocktomata',
         version: pjson.version,
@@ -78,7 +79,7 @@ function configRoute({ repo }: Context): ServerRoute {
     path: '/mocktomata/config',
     options: { cors: true },
     handler: async () => {
-      const config = repo.loadConfig()
+      const config = await repo.loadConfig()
       return JSON.stringify(config)
     }
   }
@@ -106,7 +107,7 @@ function specPostRoute({ repo }: Context): ServerRoute {
     path: '/mocktomata/specs/{id}',
     handler: async (request, h) => {
       const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
-      await repo.writeSpec(specName, specRelativePath, request.payload as string)
+      await repo.writeSpec(specName, specRelativePath, JSON.parse(request.payload as string))
       return h.response()
     }
   }
