@@ -51,6 +51,7 @@
     "type-plus": "^4.14.1"
   },
   "devDependencies": {
+    "@jest/globals": "^29.2.1",
     "@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
     "@mocktomata/plugin-fixture-cjs-a": "workspace:^",
     "@mocktomata/plugin-fixture-cjs-b": "workspace:^",
