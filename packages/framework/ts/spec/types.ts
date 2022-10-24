@@ -19,8 +19,8 @@ export type Spec = {
 export namespace Spec {
   export type Config = {
     overrideMode?: OverrideMode,
-    filePathFilter?: string,
-    specNameFilter?: string
+    filePathFilter?: RegExp,
+    specNameFilter?: RegExp
   }
 
   export type OverrideMode = Extract<Mode, 'live' | 'save' | 'simulate'>
@@ -59,7 +59,7 @@ export namespace Spec {
      * @param record serialized SpecRecord.
      * It is already in serialized form because for `@mocktomata/service`, the `SpecRecord` is already in string.
      */
-    writeSpec(specName: string, specRelativePath: string, record: string): Promise<void>
+    writeSpec(specName: string, specRelativePath: string, record: SpecRecord): Promise<void>
   }
 
   export type Mode = 'live' | 'save' | 'simulate' | 'auto'

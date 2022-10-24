@@ -1,6 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
-import { transformConfig } from '../config/index.js'
+import { loadConfig } from '../config/index.js'
 import { Config } from '../config/types.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { Log } from '../log/types.js'
@@ -12,7 +12,7 @@ import { createTestIO, getCallerRelativePath } from '../test-utils/index.js'
 import { initTimeTrackers } from '../timeTracker/index.js'
 
 export namespace createIncubator {
-  export type Context = Config.Context & Log.Context & { io: createTestIO.TestIO }
+  export type Context = Log.Context & { io: createTestIO.TestIO } & Config.Context
   export type IncubatorFn = {
     /**
      * Creates an automatic incubator spec.
@@ -36,16 +36,16 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
   let pluginInstances: SpecPlugin.Instance[] | undefined
 
   const ctx = context
+    .extend(loadConfig)
     .extend(loadPlugins)
     .extend(async value => {
       ctxValue = value
       return { plugins: value.plugins = pluginInstances ?? value.plugins }
     })
-    .extend(transformConfig)
     .extend(initTimeTrackers)
 
   async function config(options: createIncubator.ConfigOptions) {
-    const { plugins } = await context.extend(async ({ config, io }) => {
+    const { plugins } = await ctx.extend(async ({ config, io }) => {
       const plugins = options.plugins.map(p => {
         // istanbul ignore next
         if (typeof p === 'string') return p

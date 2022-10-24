@@ -29,7 +29,7 @@ test('write spec', async () => {
   const io = await createIOInternal({ fetch, location, importModule: () => Promise.resolve({}) })
 
   const record: SpecRecord = { refs: [], actions: [{ type: 'invoke', refId: '1', performer: 'user', thisArg: '0', payload: [], tick: 0 }] }
-  await io.writeSpec('new spec', 'some-path/file', JSON.stringify(record))
+  await io.writeSpec('new spec', 'some-path/file', record)
 
   const spec = fetch.specs['new spec']
   expect(spec).toEqual(record)

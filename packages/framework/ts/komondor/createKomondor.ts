@@ -1,6 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
-import { transformConfig } from '../config/index.js'
+import { loadConfig } from '../config/index.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import { createSpecObject, getEffectiveSpecModeContext, Spec } from '../spec/index.js'
@@ -22,8 +22,8 @@ export namespace createKomondor {
 
 export function createKomondor(context: AsyncContext<Mocktomata.Context>): createKomondor.Komondor {
   const ctx = context
+    .extend(loadConfig)
     .extend(loadPlugins)
-    .extend(transformConfig)
     .extend(initTimeTrackers)
 
   return Object.assign(

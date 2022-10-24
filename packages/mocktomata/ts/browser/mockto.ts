@@ -6,6 +6,6 @@ import { createStandardLog } from 'standard-log'
 const context = new AsyncContext(async () => {
   const io = await createIO()
   const log = createStandardLog().getLogger('mocktomata')
-  return {  io, log }
+  return { io, log }
 })
 export const mockto = createMockto(context)

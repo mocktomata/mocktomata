@@ -8,8 +8,8 @@ import type { Mocktomata } from '../types.js'
 export namespace createTestIO {
   export type Options = {
     modules?: Record<string, SpecPlugin.Module>,
-    configInput?: Config.Input
-  } & Partial<Config.Options>
+    config?: Config.Input
+  }
   export type TestIO = {
     getAllSpecs(): IterableIterator<[string, string]>,
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void,
@@ -18,9 +18,8 @@ export namespace createTestIO {
 
 export function createTestIO(options?: createTestIO.Options): createTestIO.TestIO {
   const specStore = new Map<string, string>()
-  const { configInput, modules } = requiredDeep({
-    config: { ecmaVersion: 'es2015', plugins: [] },
-    configInput: {},
+  const { config, modules } = requiredDeep({
+    config: {},
     modules: { [es2015.name]: es2015 } as Record<string, SpecPlugin.Module>
   }, options)
   return {
@@ -29,7 +28,7 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
       return specStore.entries()
     },
     async loadConfig() {
-      return configInput
+      return config
     },
     readSpec(specName, specRelativePath) {
       const record = specStore.get(specName)
@@ -37,7 +36,7 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
       return Promise.resolve(JSON.parse(record))
     },
     async writeSpec(title, _specRelativePath, record) {
-      specStore.set(title, record)
+      specStore.set(title, JSON.stringify(record))
     },
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       modules[moduleName] = pluginModule

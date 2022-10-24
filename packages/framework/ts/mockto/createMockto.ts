@@ -1,6 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter } from 'standard-log'
-import { transformConfig } from '../config/index.js'
+import { loadConfig } from '../config/index.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import type { Spec } from '../spec/index.js'
@@ -33,7 +33,7 @@ export namespace createMockto {
 
 export function createMockto(context: AsyncContext<Mocktomata.Context>): createMockto.Mockto {
   const ctx = context
-    .extend(transformConfig)
+    .extend(loadConfig)
     .extend(loadPlugins)
     .extend(initTimeTrackers)
 

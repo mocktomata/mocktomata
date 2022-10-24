@@ -1,3 +1,7 @@
+import { createConfigurator } from './loadConfig.js'
+
 export * from './errors.js'
-export * from './processConfig.js'
-export * from './transformConfig.js'
+export * from './loadConfig.js'
+
+export const configurator = createConfigurator()
+

@@ -25,7 +25,8 @@ test('Not existing plugin throws PluginNotFound', async () => {
     config: { plugins: ['not-exist'] },
   })
 
-  await a.throws(() => context.extend(loadPlugins).get(), PluginNotFound)
+  await a.throws(() => context
+    .extend(loadPlugins).get(), PluginNotFound)
 })
 
 it('throws PluginModuleNotConforming when the plugin missing activate function', async () => {

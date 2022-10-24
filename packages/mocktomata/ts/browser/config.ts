@@ -1,5 +1,5 @@
+import { CannotConfigAfterUsed } from '@mocktomata/framework'
 import { store } from './store.js'
-import { CannotConfigAfterUsed } from '../errors.js'
 
 export namespace config {
   export type Options = {

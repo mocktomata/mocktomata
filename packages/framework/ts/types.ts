@@ -14,5 +14,5 @@ export namespace Mocktomata {
   //   getConfig(): Promise<Record<string, any>>
   // }
   export type IOContext = { io: IO }
-  export type Context = IOContext & Config.Context & Log.Context
+  export type Context = IOContext & Log.Context & Config.Context
 }

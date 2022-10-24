@@ -48,6 +48,7 @@ describe('get', () => {
       a.throws(simulate.done(), MissingAction)
     })
   })
+  // @TODO: 💡 not sure if we should support this behavior
   incubator.sequence('extra action not performed before gets value from subject', (title, { save, simulate }) => {
     test.skip(title, async () => {
       const subject = { a: 1, b: 2 }
