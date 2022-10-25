@@ -1,13 +1,18 @@
 import { a } from 'assertron'
-import { logLevels } from 'standard-log'
-import { createTestIO } from '../index.js'
-import { ConfigPropertyInvalid, createConfigurator, loadConfig } from './index.js'
+import { createStandardLogForTest, logLevels } from 'standard-log'
+import { createIncubator } from '../incubator/createIncubator.js'
+import { createKomondor, createMockto, createTestContext, createTestIO, createZucchini, Spec } from '../index.js'
+import { CannotConfigAfterUsed, ConfigPropertyInvalid, createConfigurator, loadConfig } from './index.js'
 
 describe(`${loadConfig.name}()`, () => {
-  function testLoadConfig(options?: createTestIO.Options) {
+  async function testLoadConfig(options?: createTestContext.Options) {
+    // const { context } = createTestContext(options)
+    // return (await context.get()).config
     const io = createTestIO(options)
     const configurator = createConfigurator()
-    return loadConfig({ io, configurator })
+    const sl = createStandardLogForTest()
+    const log = sl.getLogger('test')
+    return loadConfig({ io, configurator, log })
   }
   describe(`logLevel`, () => {
     it('gets undefined when not configured', async () => {
@@ -247,5 +252,64 @@ describe(`${loadConfig.name}()`, () => {
         }
       }), ConfigPropertyInvalid)
     })
+  })
+})
+
+describe(`config()`, () => {
+  it('throws CannotConfigAfterUsed after mockto is used', async () => {
+    const { context, config } = createTestContext()
+    const mockto = createMockto(context)
+    const spec = await new Promise<Spec>(a => mockto('some test', (_, spec) => a(spec)))
+    await spec({})
+    a.throws(() => config({}), CannotConfigAfterUsed)
+  })
+
+  it('throws CannotConfigAfterUsed after komondor is used', async () => {
+    const { context, config } = createTestContext()
+    const kd = createKomondor(context)
+    const spec = kd('some test')
+    await spec({})
+    a.throws(() => config({}), CannotConfigAfterUsed)
+  })
+
+  it('throws CannotConfigAfterUsed after incubator is used', async () => {
+    const { context, config } = createTestContext()
+    const incubator = createIncubator(context)
+    const save = await new Promise<Spec>(a => incubator.sequence('some test', (_, { save }) => a(save)))
+    await save({})
+    a.throws(() => config({}), CannotConfigAfterUsed)
+  })
+
+  it('throws CannotConfigAfterUsed after zucchini is used', async () => {
+    const { context, config } = createTestContext()
+    const { scenario } = createZucchini(context)
+    const { spec } = scenario('some test')
+    await spec({})
+    a.throws(() => config({}), CannotConfigAfterUsed)
+  })
+
+  it('will not throw for defineStep', async () => {
+    const { context, config } = createTestContext()
+    const { defineStep } = createZucchini(context)
+    defineStep('singing', async (ctx) => {
+      await ctx.spec({})
+    })
+    config({})
+  })
+
+  it('overrides log level', async () => {
+    const { context, config } = createTestContext({
+      config: {
+        logLevel: 'trace'
+      }
+    })
+    const kd = createKomondor(context)
+    config({ logLevel: 'error' })
+
+    const spec = kd('overrides log level')
+    const foo = await spec(() => { })
+    foo()
+    expect(spec.reporter.logs.length).toEqual(0)
+    await spec.done()
   })
 })

@@ -1,6 +1,7 @@
 import { toLogLevel } from 'standard-log'
 import { record } from 'type-plus'
 import type { Spec } from '../spec/types.js'
+import type { Mocktomata } from '../types.js'
 import { CannotConfigAfterUsed, ConfigPropertyInvalid } from './errors.js'
 import type { Config } from './types.js'
 
@@ -18,14 +19,16 @@ export function createConfigurator() {
   }
 }
 
-export async function loadConfig({ io, configurator }: { io: Config.IO } & Config.Context) {
+export async function loadConfig({ io, configurator, log }: Mocktomata.Context) {
+  log.trace('loadConfig()')
   const config = configurator.store.config = { ...buildConfig(await io.loadConfig()), ...configurator.store.config }
   return { config }
 }
 
 function buildConfig(input: Config.Input): Config {
   return {
-    logLevel: resolveLogLevel(input),
+    emitLog: input.emitLog,
+    logLevel: resolveLogLevel(input.logLevel),
     ecmaVersion: resolveEcmaVersion(input),
     plugins: resolvePlugins(input),
     filePathFilter: resolveFilePathFilter(input),
@@ -34,11 +37,7 @@ function buildConfig(input: Config.Input): Config {
   }
 }
 
-function resolveLogLevel(config: Config.Input) {
-  return extractLogLevel(config.logLevel)
-}
-
-function extractLogLevel(logLevel?: unknown) {
+export function resolveLogLevel(logLevel: unknown) {
   if (!logLevel) return undefined
   if (typeof logLevel === 'number') {
     if (logLevel < 0) throw new ConfigPropertyInvalid('logLevel', logLevel, { ssf: loadConfig })

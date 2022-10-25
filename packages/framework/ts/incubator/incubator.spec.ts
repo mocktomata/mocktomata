@@ -1,22 +1,8 @@
 import a, { AssertOrder } from 'assertron'
 import { some } from 'satisfier'
-import { logLevels } from 'standard-log'
-import { incubator, SpecNotFound } from '../index.js'
-
-// TODO: not needed after updating the logging system.
-// to be removed.
-// test('enable log only lasts through one spec', async () => {
-//   const { context } = createTestContext()
-//   const incubator = createIncubator(context)
-//   const { log } = await context.get()
-//   const spec = await new Promise<Spec>(a => incubator('enable log only lasts through one spec', (_, spec) => a(spec)))
-//   const origLevel = log.level
-//   spec.enableLog()
-//   const s = await spec((x: number) => x + 1)
-//   expect(s(4)).toBe(5)
-//   await spec.done()
-//   expect(log.level).toBe(origLevel)
-// })
+import { logLevels, MemoryLogReporter } from 'standard-log'
+import { createTestContext, incubator, Spec, SpecNotFound } from '../index.js'
+import { createIncubator } from './createIncubator.js'
 
 incubator('enableLog can specify log level', (title, spec) => {
   test(title, async () => {
@@ -67,24 +53,45 @@ incubator('duo with option', { timeout: 200 }, (title, spec) => {
   })
 })
 
-incubator.sequence('gets memory log reporter', (title, { save, simulate }, reporter) => {
-  test(title, async () => {
-    const subject = { a: 1 }
-    save.enableLog()
-    const spy = await save(subject)
-    expect(spy.a).toBe(1)
-    await save.done()
+describe('reporter', () => {
+  const { context } = createTestContext()
+  const incubator = createIncubator(context)
+  incubator.sequence('gets memory log reporter', (title, { save, simulate }, reporter) => {
+    test(title, async () => {
+      const subject = { a: 1 }
+      save.enableLog()
+      const spy = await save(subject)
+      expect(spy.a).toBe(1)
+      await save.done()
 
-    simulate.enableLog()
-    const stub = await simulate(subject)
-    expect(stub.a).toBe(1)
-    await simulate.done()
+      simulate.enableLog()
+      const stub = await simulate(subject)
+      expect(stub.a).toBe(1)
+      await simulate.done()
 
-    a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
-      /^mocktomata:gets memory log reporter:save/
-    ))
-    a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
-      /^mocktomata:gets memory log reporter:simulate/
-    ))
+      a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
+        /^mocktomata:gets memory log reporter:save/
+      ))
+      a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
+        /^mocktomata:gets memory log reporter:simulate/
+      ))
+    })
+  })
+
+})
+
+describe('teardown()', () => {
+  it('teardown any not done spec', async () => {
+    const { context } = createTestContext()
+    const incubator = createIncubator(context)
+    const { spec, reporter } = await new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
+      a => incubator.save('teardown', (_, spec, reporter) => a({ spec, reporter }))
+    )
+    const foo = await spec(() => { })
+    foo()
+    // await spec.done()
+    await incubator.teardown()
+    const messages = reporter.getLogMessages()
+    a.satisfies(messages, some(/teardown: done\(\) was not called/))
   })
 })

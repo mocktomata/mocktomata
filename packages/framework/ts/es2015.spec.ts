@@ -1733,8 +1733,8 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('not save in log and record', (title, spec, reporter) => {
-    test.skip(title, async () => {
+  incubator('not save in log', (title, spec, reporter) => {
+    test(title, async () => {
       spec.enableLog()
       spec.maskValue('secret')
       const s = await spec((v: string) => v)
