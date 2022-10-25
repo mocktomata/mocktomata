@@ -56,8 +56,8 @@
     "@mocktomata/nodejs": "workspace:^",
     "async-fp": "^8.0.2",
     "global-store": "^1.0.0-beta.21",
-    "standard-log": "^11.2.0",
-    "standard-log-color": "^8.0.0"
+    "standard-log": "^11.2.1",
+    "standard-log-color": "^11.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.18.10",
