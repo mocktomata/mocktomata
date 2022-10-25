@@ -71,6 +71,9 @@ Here is an example on how to work with the [`axios`][axios] library:
 import axios from 'axios'
 import { mockto } from 'mocktomata'
 
+// clean up any unfinished tests
+afterAll(() => mockto.teardown())
+
 // `mockto(specName, handler)`
 // `specName` must be unqique within the test file.
 // so you need to be careful when using grouping mechanics such as `describe()`
@@ -115,6 +118,9 @@ Here is how masters dispatch me in the same [`axios`][axios] example:
 import axios from 'axios'
 import { komondor } from 'mocktomata'
 
+// clean up any unfinished tests
+afterAll(() => komondor.teardown())
+
 test('get friends', async () => {
   const spec = komondor('get friends')
   const s = await spec(axios)
@@ -145,6 +151,9 @@ and reuse those steps through [`scenario()`]:
 ```ts
 import axios from 'axios'
 import { defineStep, scenario } from 'mocktomata'
+
+// clean up any unfinished tests
+afterAll(() => scenario.teardown())
 
 defineStep('get friends of {name}', ({ spec }, name) => {
   const s = await spec(axios)
@@ -185,6 +194,8 @@ The way I work is very similar to [`mockto`](#mockto):
 ```ts
 import { incubator } from 'mocktomata'
 import { activate } from './your-plugin'
+
+afterAll(() => incubator.teardown())
 
 incubator.config({ plugins: [['your-plugin', activate]] })
 

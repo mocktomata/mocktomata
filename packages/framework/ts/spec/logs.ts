@@ -8,11 +8,11 @@ import type { MaskCriterion, Recorder } from './types.internal.js'
 
 export function logCreateSpy({ log }: Log.Context, { ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, maskCriteria: MaskCriterion[], profile: SpecRecord.SubjectProfile, subject: any) {
   subject = maskIfNeeded(maskCriteria, subject)
-  log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject, { maxLength: Infinity })}`))
+  log.on(logLevels.trace, log => log(`${ref.plugin} <ref:${refId}> create ${profile} spy: ${tersify(subject, { maxLength: Infinity })}`))
 }
 
 export function logAction({ log }: Log.Context, state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
-  log.on(logLevels.debug, () => prettifyAction(state, actionId, action))
+  log.on(logLevels.trace, () => prettifyAction(state, actionId, action))
 }
 
 // istanbul ignore next
@@ -21,7 +21,7 @@ export function logRecordingTimeout({ log }: Log.Context, specName: string, time
 }
 
 export function logCreateStub({ log }: Log.Context, { ref, refId }: Pick<Recorder.State, 'ref' | 'refId'>, profile: SpecRecord.SubjectProfile, subjectOrMeta: any) {
-  log.on(logLevels.debug, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${tersify(subjectOrMeta)}`))
+  log.on(logLevels.trace, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${tersify(subjectOrMeta)}`))
 }
 
 // istanbul ignore next

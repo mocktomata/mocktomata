@@ -1,23 +1,18 @@
 import delay from 'delay'
-import { createStandardLogForTest } from 'standard-log'
 import { createTimeTracker } from './index.js'
 
 const testOptions = { timeout: 10 }
 const notCalled = () => { throw new Error('should not reach') }
 test('not started until elapse() is called', async () => {
-  const sl = createStandardLogForTest()
-  const log = sl.getLogger('test')
   let called = false
-  createTimeTracker({ log }, testOptions, () => called = true)
+  createTimeTracker(testOptions, () => called = true)
   await delay(10)
   expect(called).not.toBeTruthy()
 })
 
 test('invoke the callback when timeout is reached', async () => {
-  const sl = createStandardLogForTest()
-  const log = sl.getLogger('test')
   let called = false
-  const timeTracker = createTimeTracker({ log }, testOptions, () => called = true)
+  const timeTracker = createTimeTracker(testOptions, () => called = true)
   timeTracker.elapse()
   await delay(10)
 
@@ -26,9 +21,7 @@ test('invoke the callback when timeout is reached', async () => {
 })
 
 test('first elapse() returns 0', async () => {
-  const sl = createStandardLogForTest()
-  const log = sl.getLogger('test')
-  const timeTracker = createTimeTracker({ log }, testOptions, notCalled)
+  const timeTracker = createTimeTracker(testOptions, notCalled)
   const elapsed = timeTracker.elapse()
   timeTracker.stop()
 
@@ -36,9 +29,7 @@ test('first elapse() returns 0', async () => {
 })
 
 test('duration returns total duration since first elapse() call', async () => {
-  const sl = createStandardLogForTest()
-  const log = sl.getLogger('test')
-  const timeTracker = createTimeTracker({ log }, testOptions, notCalled)
+  const timeTracker = createTimeTracker(testOptions, notCalled)
   timeTracker.elapse()
   await delay(5)
   timeTracker.elapse()
@@ -53,9 +44,7 @@ test('duration returns total duration since first elapse() call', async () => {
 })
 
 test('elapse() returns time passed since last elapse() call', async () => {
-  const sl = createStandardLogForTest()
-  const log = sl.getLogger('test')
-  const timeTracker = createTimeTracker({ log }, { timeout: 2000 }, notCalled)
+  const timeTracker = createTimeTracker({ timeout: 2000 }, notCalled)
 
   let elapsedTotal = timeTracker.elapse()
   await delay(30)

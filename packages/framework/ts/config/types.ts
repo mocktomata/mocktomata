@@ -11,7 +11,12 @@ export namespace Config {
     specNameFilter?: string,
     ecmaVersion?: 'es2015',
     plugins?: string[],
-    logLevel?: LogMethodNames | number
+    logLevel?: LogMethodNames | number,
+    /**
+     * Should logs be emitted.
+     * Default to true.
+     */
+    emitLog?: boolean
   }
 
   export type IO = {

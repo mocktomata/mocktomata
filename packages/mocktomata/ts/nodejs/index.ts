@@ -12,7 +12,3 @@ export const kd = komondor
 
 export const mockto = createMockto(context)
 export const mt = mockto
-
-
-
-

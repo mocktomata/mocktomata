@@ -1,4 +1,5 @@
-import { createConsoleLogReporter, createStandardLog, MemoryLogReporter } from 'standard-log'
+import { createStandardLog, MemoryLogReporter } from 'standard-log'
+import { createColorLogReporter } from 'standard-log-color'
 import { Log } from './types.js'
 
 export function createLogContext({
@@ -11,7 +12,8 @@ export function createLogContext({
     mode: string,
     specName: string
   }) {
-  const sl = createStandardLog({ logLevel: config.logLevel, reporters: [createConsoleLogReporter(), reporter] })
+  const reporters = config.emitLog ? [createColorLogReporter(), reporter] : [reporter]
+  const sl = createStandardLog({ logLevel: config.logLevel, reporters })
   const log = sl.getLogger(`mocktomata:${specName}:${mode}`)
   return { log }
 }
