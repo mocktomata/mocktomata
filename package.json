@@ -20,7 +20,7 @@
     "mt": "pnpm --filter mocktomata",
     "mtmt": "node ./packages/mocktomata/lib/bin.js",
     "nodejs": "pnpm --filter @mocktomata/nodejs",
-    "nuke": "pnpm run nuke && rimraf node_modules",
+    "nuke": "turbo run nuke && rimraf node_modules",
     "plugin-nodejs": "pnpm --filter @mocktomata/plugin-nodejs",
     "postinstall": "husky install",
     "postpack": "pinst --enable",
