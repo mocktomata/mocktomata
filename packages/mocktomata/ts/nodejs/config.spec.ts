@@ -69,7 +69,7 @@ describe('config with config()', () => {
     return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter })))
       .then(async ({ spec, reporter }) => {
         await spec({})
-        a.satisfies(reporter.logs, [{ level: logLevels.debug }])
+        a.satisfies(reporter.logs, [{ level: logLevels.trace }])
       })
   })
 })
@@ -190,26 +190,26 @@ describe('config with env', () => {
   })
 
   test('enable log', () => {
-    process.env[MOCKTOMATA_LOG_LEVEL] = 'debug'
+    process.env[MOCKTOMATA_LOG_LEVEL] = 'trace'
     const { context } = createContext()
     mockto = createMockto(context)
     return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
       a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
     ).then(async ({ spec, reporter }) => {
       await spec({})
-      a.satisfies(reporter.logs, [{ level: logLevels.debug }])
+      a.satisfies(reporter.logs, [{ level: logLevels.trace }])
     })
   })
 
   test('enable log is case insensitive', () => {
-    process.env[MOCKTOMATA_LOG_LEVEL] = 'debUg'
+    process.env[MOCKTOMATA_LOG_LEVEL] = 'tRacE'
     const { context } = createContext()
     mockto = createMockto(context)
     return new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
       a => mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
     ).then(async ({ spec, reporter }) => {
       await spec({})
-      a.satisfies(reporter.logs, [{ level: logLevels.debug }])
+      a.satisfies(reporter.logs, [{ level: logLevels.trace }])
     })
   })
 })
