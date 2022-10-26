@@ -401,7 +401,7 @@ function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.Plu
 }
 
 function processNextAction(context: Simulator.Context) {
-  const { record, pendingPluginActions, timeTracker } = context
+  const { record, pendingPluginActions } = context
   const nextAction = record.getNextExpectedAction()
   const actionId = record.getNextActionId()
   if (!nextAction) return
@@ -426,21 +426,24 @@ function processNextAction(context: Simulator.Context) {
       else if (nextAction.performer === 'plugin') {
         const pa = pendingPluginActions.find(a => a.type === nextAction.type && a.site === nextAction.site)
 
-        // Can't find a test case to cover this yet.
-        // istanbul ignore next
-        if (!pa) {
-          timeTracker.stop()
-          throw new ActionMismatch(record.specName, undefined, nextAction)
+        if (pa) {
+          pendingPluginActions.splice(pendingPluginActions.indexOf(pa), 1)
+          invoke({
+            ...context,
+            state: {
+              ...context.state,
+              ref: pa.ref,
+              refId: pa.refId,
+            }
+          }, { thisArg: pa.thisArg, args: pa.args, performer: 'plugin', site: pa.site })
         }
-        pendingPluginActions.splice(pendingPluginActions.indexOf(pa), 1)
-        invoke({
-          ...context,
-          state: {
-            ...context.state,
-            ref: pa.ref,
-            refId: pa.refId,
-          }
-        }, { thisArg: pa.thisArg, args: pa.args, performer: 'plugin', site: pa.site })
+        else {
+          // No pending action found.
+          // one possiblity is that the next action is comming in through next tick
+          // i.e. these calls `setTimeout(() => processNextAction(context), 0)`
+          //
+          // ignore and wait for next tick to happen.
+        }
       }
       break
     case 'instantiate':

@@ -41,7 +41,7 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): creat
 }
 
 function createKomondorFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode) {
-  const komondorFn = (specName: string, options = { timeout: 3000 }) => {
+  const komondorFn = (specName: string, options: Spec.Options = { timeout: 3000 }) => {
     const reporter = createMemoryLogReporter()
 
     return Object.assign(
