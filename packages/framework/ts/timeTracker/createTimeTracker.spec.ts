@@ -14,7 +14,7 @@ test('invoke the callback when timeout is reached', async () => {
   let called = false
   const timeTracker = createTimeTracker(testOptions, () => called = true)
   timeTracker.elapse()
-  await delay(10)
+  await delay(40)
 
   timeTracker.stop()
   expect(called).toBeTruthy()
