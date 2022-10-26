@@ -10,7 +10,7 @@ export function initTimeTrackers(): TimeTrackersContext {
 }
 
 export function createTimeTracker(
-  { timeout }: Pick<Spec.Options, 'timeout'>,
+  { timeout = 1000 }: Pick<Spec.Options, 'timeout'>,
   onTimeout: (elapsed: number) => void
 ) {
   let handle: any
@@ -32,7 +32,14 @@ export function createTimeTracker(
     elapse() {
       if (!handle) {
         prevTick = startTick = new Date().getTime()
-        handle = setTimeout(() => this.terminate(), timeout)
+        // When the live code is very fast,
+        // e.g. when writing plugin or internal testing
+        // the simulation can be slower than live code.
+        // Therefore, setting `timeout * 3` so that the test will not fail.
+        // @todo may need to make this configurable,
+        // as the live code can be fast at local,
+        // but the simulation code very slow in CI.
+        handle = setTimeout(() => this.terminate(), timeout * 3)
         return 0
       }
       else {
@@ -41,7 +48,7 @@ export function createTimeTracker(
         prevTick = newTick
 
         clearTimeout(handle)
-        handle = setTimeout(() => this.terminate(), timeout)
+        handle = setTimeout(() => this.terminate(), timeout * 3)
 
         return elapsed
       }
