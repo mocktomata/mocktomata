@@ -30,7 +30,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
   }
   return {
     createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
-    end: () => timeTracker.stop(),
+    end: () => timeTracker?.stop(),
     getSpecRecord: (maskValues: MaskCriterion[]) => record.getSpecRecord(maskValues),
     addInertValue: (value: any) => getContext().then(ctx => setSpyOptions(ctx, value, { plugin: '@mocktomata/inert', inert: true })),
     addMaskValue: (value: any, replaceWith: any) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))

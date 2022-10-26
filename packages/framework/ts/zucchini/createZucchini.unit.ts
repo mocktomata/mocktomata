@@ -1,6 +1,7 @@
 import { a } from 'assertron'
 import { createTestContext, createZucchini } from '../index.js'
 import { DuplicateStep, MissingStep } from './errors.js'
+import t from 'node:assert'
 
 describe(`${createZucchini.name}()`, () => {
   const { context } = createTestContext()
@@ -12,6 +13,39 @@ describe(`${createZucchini.name}()`, () => {
         const { setup } = scenario('no handler')
         a.throws(() => setup('no setup handler'), MissingStep)
       })
+
+      it('passes additional params to step', async () => {
+        const { setup, done } = scenario('pass params')
+        const actual: any[] = []
+        defineStep('passing setup arguments', (_, ...inputs) => {
+          actual.push(...inputs)
+        })
+        await setup('passing setup arguments', 1, 2, 3)
+        t.deepStrictEqual(actual, [1, 2, 3])
+        await done()
+      })
+
+      it.skip('can call same setup step twice', async () => {
+        defineStep('setupTwice', async ({ spec }, expected) => {
+          const s = await spec(async () => expected)
+          const actual = await s()
+
+          t.strictEqual(actual, expected)
+        })
+
+        await (async () => {
+          const { setup, done } = scenario.save('call setup twice')
+          await setup('setupTwice', 0)
+          await setup('setupTwice', 2)
+          await done()
+        })()
+
+        const { setup, done } = scenario.simulate('call setup twice')
+        await setup('setupTwice', 0)
+        await setup('setupTwice', 2)
+        await done()
+      })
+
     })
 
     describe('spec()', () => {
