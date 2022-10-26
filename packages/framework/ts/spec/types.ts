@@ -67,6 +67,8 @@ export namespace Spec {
   export type Handler = (title: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
 
   export type Options = {
-    timeout: number
+    timeout?: number,
+    logLevel?: number,
+    emitLog?: boolean
   }
 }

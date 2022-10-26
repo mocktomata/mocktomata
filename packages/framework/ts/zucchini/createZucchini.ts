@@ -17,9 +17,9 @@ export namespace Zucchini {
 
   export type StepContext = {
     spec<T>(subject: T): Promise<T>,
-    done(): Promise<void>,
     runSubStep: StepCaller
-  }
+  } & Pick<Spec, 'maskValue'>
+
   export type StepHandler = (context: StepContext, ...args: any[]) => any
 }
 
@@ -60,18 +60,20 @@ function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mo
       .extend(createLogContext)
 
     const { spec, modeProperty, done, enableLog, ignoreMismatch, maskValue } = createSpecFns(ctx)
-
+    const modeFn = function mode() { return modeProperty.get() }
+    const subCtx = ctx.extend({ spec, modeFn, maskValue })
     return {
-      ensure: createInertStepCaller(ctx, store, 'ensure', false),
-      setup: createInertStepCaller(ctx, store, 'setup'),
+      ensure: createInertStepCaller(subCtx, store, 'ensure', false),
+      setup: createInertStepCaller(subCtx, store, 'setup'),
       spec,
-      run: createStepCaller(ctx, store, 'run'),
-      teardown: createInertStepCaller(ctx, store, 'teardown'),
+      run: createStepCaller(subCtx, store, 'run'),
+      teardown: createInertStepCaller(subCtx, store, 'teardown'),
       done,
       enableLog,
       ignoreMismatch,
       maskValue,
-      mode() { return modeProperty.get() }
+      mode: modeFn,
+      reporter
     }
   }
 }
@@ -97,7 +99,7 @@ function createInertStepCaller(context: AsyncContext<Spec.Context>, store: Store
   }
 }
 
-function createStepCaller(context: AsyncContext<Spec.Context>, store: Store, stepName: string) {
+function createStepCaller(context: AsyncContext<InvokeHandlerContext>, store: Store, stepName: string) {
   return async function step(clause: string, ...inputs: any[]) {
     const entry = lookupStep(store, clause)
     const { log } = await context.get()
@@ -106,11 +108,15 @@ function createStepCaller(context: AsyncContext<Spec.Context>, store: Store, ste
   }
 }
 
-function invokeHandler(context: AsyncContext<Spec.Context>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
+type InvokeHandlerContext = Spec.Context & {
+  spec: <T>(subject: T) => Promise<T>
+} & Pick<Spec, 'maskValue'>
+
+async function invokeHandler(context: AsyncContext<InvokeHandlerContext>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
   const runSubStep = createStepCaller(context, store, stepName)
-  const { spec, done } = createSpecFns(context)
+  const { spec, maskValue } = await context.get()
   const args = buildHandlerArgs(entry, clause, inputs)
-  return entry.handler({ inputs, spec, done, runSubStep }, ...args)
+  return entry.handler({ inputs, spec, maskValue, runSubStep }, ...args)
 }
 
 function buildHandlerArgs(entry: Step, clause: string, inputs: any[]) {

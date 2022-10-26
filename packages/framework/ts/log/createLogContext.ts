@@ -1,19 +1,24 @@
 import { createStandardLog, MemoryLogReporter } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
+import { Spec } from '../index.js'
 import { Log } from './types.js'
 
 export function createLogContext({
   config,
+  options,
   mode,
   specName,
   reporter }: {
     reporter: MemoryLogReporter,
     config: Log.Config,
+    options: Spec.Options,
     mode: string,
     specName: string
   }) {
-  const reporters = config.emitLog ? [createColorLogReporter(), reporter] : [reporter]
-  const sl = createStandardLog({ logLevel: config.logLevel, reporters })
+  const logLevel = options.logLevel ?? config.logLevel
+  const emitLog = options.emitLog ?? config.emitLog
+  const reporters = emitLog ? [createColorLogReporter(), reporter] : [reporter]
+  const sl = createStandardLog({ logLevel, reporters })
   const log = sl.getLogger(`mocktomata:${specName}:${mode}`)
   return { log }
 }
