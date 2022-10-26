@@ -2,5 +2,8 @@ const base = require('../../.jest/jest.nodejs')
 
 module.exports = {
   ...base,
-  displayName: 'framework'
+  displayName: 'framework',
+  coveragePathIgnorePatterns: [
+    '<rootDir>/ts/test-artifacts',
+  ]
 }

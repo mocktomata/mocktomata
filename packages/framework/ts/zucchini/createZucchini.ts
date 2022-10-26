@@ -17,6 +17,7 @@ export namespace Zucchini {
 
   export type StepContext = {
     spec<T>(subject: T): Promise<T>,
+    done(): Promise<void>,
     runSubStep: StepCaller
   }
   export type StepHandler = (context: StepContext, ...args: any[]) => any
@@ -107,23 +108,27 @@ function createStepCaller(context: AsyncContext<Spec.Context>, store: Store, ste
 
 function invokeHandler(context: AsyncContext<Spec.Context>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
   const runSubStep = createStepCaller(context, store, stepName)
-  const { spec } = createSpecFns(context)
-  if (entry.regex) {
-    // regex must pass as it is tested above
-    const matches = entry.regex.exec(clause)!
-    const values = matches.slice(1, matches.length).map((v, i) => {
-      const valueType = entry.valueTypes![i]
-      if (valueType === 'number')
-        return parseInt(v, 10)
-      if (valueType === 'boolean')
-        return v === 'true'
-      if (valueType === 'float')
-        return parseFloat(v)
-      return v
-    })
-    return entry.handler({ inputs, spec, runSubStep }, ...[...values, ...inputs])
-  }
-  return entry.handler({ inputs, spec, runSubStep }, ...inputs)
+  const { spec, done } = createSpecFns(context)
+  const args = buildHandlerArgs(entry, clause, inputs)
+  return entry.handler({ inputs, spec, done, runSubStep }, ...args)
+}
+
+function buildHandlerArgs(entry: Step, clause: string, inputs: any[]) {
+  if (!entry.regex) return inputs
+
+  // regex must pass as it is tested above
+  const matches = entry.regex.exec(clause)!
+  const values = matches.slice(1, matches.length).map((v, i) => {
+    const valueType = entry.valueTypes![i]
+    if (valueType === 'number')
+      return parseInt(v, 10)
+    if (valueType === 'boolean')
+      return v === 'true'
+    if (valueType === 'float')
+      return parseFloat(v)
+    return v
+  })
+  return [...values, ...inputs]
 }
 
 function lookupStep(store: Store, clause: string) {

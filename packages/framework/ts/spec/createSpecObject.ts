@@ -22,7 +22,6 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
     initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
     return spec
   }
-  const { resolve, promise } = defer<Spec>()
 
   function enableLog(level: LogLevel = logLevels.all) {
     if (s) s.enableLog(level)
@@ -44,22 +43,17 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
   const modeProperty = {
     get() { return actualMode }
   }
-  function done() { return promise.then(s => s.done()) }
-  const spec = (subject: any) => createActualSpec(initState).then(actualSpec => {
-    actualMode = actualSpec.mode
-    resolve(actualSpec)
-    return actualSpec(subject)
+  let actualSpec: Spec
+  function done() {
+    if (actualSpec) return actualSpec.done()
+    // spec can be not used at all,
+    // e.g. in `scenario`.
+    return createActualSpec(initState).then(a => a.done())
+  }
+  const spec = (subject: any) => createActualSpec(initState).then(aspec => {
+    actualSpec = aspec
+    actualMode = aspec.mode
+    return aspec(subject)
   })
   return { spec, modeProperty, enableLog, ignoreMismatch, maskValue, done }
-}
-
-function defer<T>() {
-  let resolve: (value: T | PromiseLike<T>) => void
-  let reject: (reason?: any) => void
-  const promise = new Promise<T>((a, r) => {
-    resolve = a
-    reject = r
-  })
-
-  return { resolve: resolve!, reject: reject!, promise }
 }
