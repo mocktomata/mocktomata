@@ -17,9 +17,10 @@ export namespace Zucchini {
   export type StepCaller = (clause: string | RegExp, ...inputs: any[]) => Promise<any>
 
   export type StepContext = {
-    spec<T>(subject: T): Promise<T>,
+    clause: string,
+    mode: Spec.Mode,
     runSubStep: StepCaller,
-    clause: string
+    spec<T>(subject: T): Promise<T>,
   } & Pick<Spec, 'maskValue'>
 
   export type StepHandler = (context: StepContext, ...args: any[]) => any
@@ -87,14 +88,15 @@ function createInertStepCaller(context: AsyncContext<Spec.Context>, store: Store
 
     try {
       log.debug(`${stepName}(${clause})`)
-      return invokeHandler(context, store, stepName, entry, clause, inputs)
+      return await invokeHandler(context, store, stepName, entry, clause, inputs)
     }
     catch (err) {
       if (shouldLogError) {
-        log.warn(`scenario${mode === 'live' ? '' : `.${mode}`}(${specName})
-        - ${stepName}(${clause}) throws, is it safe to ignore?
+        log.warn(
+`scenario${mode === 'auto' ? '' : `.${mode}`}(${specName})
+- ${stepName}(${clause}) throws, is it safe to ignore?
 
-        ${err}`)
+${err}`)
       }
     }
   }
@@ -115,9 +117,9 @@ type InvokeHandlerContext = Spec.Context & {
 
 async function invokeHandler(context: AsyncContext<InvokeHandlerContext>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
   const runSubStep = createStepCaller(context, store, stepName)
-  const { spec, maskValue } = await context.get()
+  const { spec, maskValue, mode } = await context.get()
   const args = buildHandlerArgs(entry, clause, inputs)
-  return entry.handler({ spec, clause, maskValue, runSubStep }, ...args)
+  return entry.handler({ spec, clause, maskValue, mode, runSubStep }, ...args)
 }
 
 function buildHandlerArgs(entry: Step, clause: string, inputs: any[]) {
