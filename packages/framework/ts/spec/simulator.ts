@@ -61,7 +61,9 @@ export function createSimulator(context: AsyncContext<createSpec.Context>, specN
       }, subject, { profile: 'target' })
     }),
     end: () => {
-      timeTracker.stop()
+      // in `zucchini`, the simulation may ends before it starts,
+      // so `timeTracker` can be undefined.
+      timeTracker?.stop()
       const action = record.getNextExpectedAction()
       if (action) {
         const actionId = record.getNextActionId()
