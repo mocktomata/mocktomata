@@ -1,10 +1,9 @@
+import { Expression } from '@cucumber/cucumber-expressions'
 import { AnyFunction } from 'type-plus'
 
 export type Step = {
-  clause: string,
+  expression: Expression,
   handler: AnyFunction,
-  regex?: RegExp,
-  valueTypes?: string[]
 }
 
 export function createStore() {

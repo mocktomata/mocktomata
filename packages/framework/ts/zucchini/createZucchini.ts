@@ -11,13 +11,15 @@ import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { createStore, Step, Store } from './store.js'
+import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions'
 
 export namespace Zucchini {
   export type StepCaller = (clause: string | RegExp, ...inputs: any[]) => Promise<any>
 
   export type StepContext = {
     spec<T>(subject: T): Promise<T>,
-    runSubStep: StepCaller
+    runSubStep: StepCaller,
+    clause: string
   } & Pick<Spec, 'maskValue'>
 
   export type StepHandler = (context: StepContext, ...args: any[]) => any
@@ -26,8 +28,8 @@ export namespace Zucchini {
 export function createZucchini(context: AsyncContext<Mocktomata.Context>) {
   const { store } = createStore()
   const scenario = createScenario(context, store)
-  const defineStep = createDefineStep(store)
-  return { scenario, defineStep }
+  const { defineStep, defineParameterType } = createStepFns(store)
+  return { scenario, defineStep, defineParameterType }
 }
 
 function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store) {
@@ -86,7 +88,6 @@ function createInertStepCaller(context: AsyncContext<Spec.Context>, store: Store
     try {
       log.debug(`${stepName}(${clause})`)
       return invokeHandler(context, store, stepName, entry, clause, inputs)
-      // return await invokeHandler({}, clause, inputs)
     }
     catch (err) {
       if (shouldLogError) {
@@ -116,70 +117,88 @@ async function invokeHandler(context: AsyncContext<InvokeHandlerContext>, store:
   const runSubStep = createStepCaller(context, store, stepName)
   const { spec, maskValue } = await context.get()
   const args = buildHandlerArgs(entry, clause, inputs)
-  return entry.handler({ inputs, spec, maskValue, runSubStep }, ...args)
+  return entry.handler({ spec, clause, maskValue, runSubStep }, ...args)
 }
 
 function buildHandlerArgs(entry: Step, clause: string, inputs: any[]) {
-  if (!entry.regex) return inputs
-
-  // regex must pass as it is tested above
-  const matches = entry.regex.exec(clause)!
-  const values = matches.slice(1, matches.length).map((v, i) => {
-    const valueType = entry.valueTypes![i]
-    if (valueType === 'number')
-      return parseInt(v, 10)
-    if (valueType === 'boolean')
-      return v === 'true'
-    if (valueType === 'float')
-      return parseFloat(v)
-    return v
-  })
-  return [...values, ...inputs]
+  const args = entry.expression.match(clause)
+  if (args && args.length > 0) {
+    return [...args.map(a => {
+      return a.getValue(a)
+    }), ...inputs]
+  }
+  else return inputs
 }
 
 function lookupStep(store: Store, clause: string) {
-  const entry = store.steps.find(s => s.regex ? s.regex.test(clause) : s.clause === clause)
+  const entry = store.steps.find(s => s.expression.match(clause))
   if (!entry) throw new MissingStep(clause)
   return entry
 }
 
 
-function createDefineStep(store: Store) {
+function createStepFns(store: Store) {
   function assertNoDuplicate(clause: string | RegExp, handler: Zucchini.StepHandler) {
-    const step = store.steps.find(s => s.clause.toString() === clause.toString())
+    const str = typeof clause === 'string' ? clause : clause.source
+    const step = store.steps.find(s => s.expression.source === str)
     if (step && step.handler !== handler) throw new DuplicateStep(clause)
   }
-  return function defineStep(clause: string | RegExp, handler: Zucchini.StepHandler) {
+  const r = new ParameterTypeRegistry()
+  const f = new ExpressionFactory(r)
+
+  function defineStep(clause: string | RegExp, handler: Zucchini.StepHandler) {
     assertNoDuplicate(clause, handler)
-
-    if (typeof clause === 'string') {
-      if (isTemplate(clause)) {
-        const valueTypes: string[] = []
-        const regex = new RegExp(`^${clause.replace(/{([\w-]*(:(number|boolean|float|string|\/([^}]*)\/))?)?}/g, (_, value) => {
-          const m = /[\w]*:(.*)/.exec(value)
-          const valueType = m ? m[1].trim() : 'string'
-          const isRegex = valueType.startsWith('/')
-          if (isRegex) {
-            valueTypes.push('regex')
-            return `(${valueType.slice(1, -1)})`
-          }
-          else {
-            valueTypes.push(valueType)
-            return '([^ ]*)'
-          }
-        })}$`)
-        store.steps.push({ clause, handler, regex, valueTypes })
-      }
-      else {
-        store.steps.push({ clause, handler })
-      }
-    }
-    else
-      store.steps.push({ clause: clause.toString(), handler, regex: clause })
-
+    const expression = f.createExpression(clause)
+    store.steps.push({ expression, handler })
   }
+
+  /**
+   * @note This code comes straight from `cucumber-js`.
+   *
+   * @todo Need to check if we need/use the `useForSnippets` props.
+   * @see https://github.com/cucumber/cucumber-js/blob/73d896377bf4045fc5799395d3215453a7e1b700/docs/support_files/api_reference.md#defineparametertypename-preferforregexpmatch-regexp-transformer-useforsnippets
+   * @see https://github.com/cucumber/cucumber-js/blob/main/src/support_code_library_builder/build_parameter_type.ts#L4
+   */
+  function defineParameterType<T>({ name, regexp, transformer, useForSnippets, preferForRegexpMatch }: IParameterTypeDefinition<T>) {
+    if (typeof useForSnippets !== 'boolean') useForSnippets = true
+    if (typeof preferForRegexpMatch !== 'boolean') preferForRegexpMatch = false
+    r.defineParameterType(new ParameterType(
+      name,
+      regexp,
+      null,
+      transformer!,
+      useForSnippets,
+      preferForRegexpMatch
+    ))
+  }
+
+  defineParameterType({
+    name: 'boolean',
+    regexp: /true|false/,
+    transformer: s => s === 'true'
+  })
+
+  defineParameterType({
+    name: 'number',
+    regexp: /[+-]?\d+/,
+    transformer: s => Number(s)
+  })
+
+  return { defineStep, defineParameterType }
 }
 
-function isTemplate(clause: string) {
-  return clause.search(/{([\w-]*(:(number|boolean|float|string|\/(.*)\/))?)?}/) >= 0
+/**
+ * @param name the name of the type
+ * @param regexps that matche the type
+ * @param type the prototype (constructor) of the type. May be null.
+ * @param transform function transforming string to another type. May be null.
+ * @param useForSnippets true if this should be used for snippets. Defaults to true.
+ * @param preferForRegexpMatch true if this is a preferential type. Defaults to false.
+ */
+export type IParameterTypeDefinition<T> = {
+  name: string,
+  regexp: readonly RegExp[] | readonly string[] | RegExp | string,
+  transformer?: (...match: string[]) => T,
+  useForSnippets?: boolean,
+  preferForRegexpMatch?: boolean
 }

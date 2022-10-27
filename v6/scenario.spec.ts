@@ -93,13 +93,13 @@ describe('acceptance', () => {
 })
 
 describe('setup()', () => {
-  test('throws MissingHandler if no handler is defined', async () => {
+  test.skip('throws MissingHandler if no handler is defined', async () => {
     const { setup } = scenario('no handler')
     const err = await a.throws(() => setup('no setup handler'), MissingHandler)
     t.strictEqual(err.message, `Handler for 'no setup handler' not found.`)
   })
 
-  test('arguments are passed to setup handler as inputs', async () => {
+  test.skip('arguments are passed to setup handler as inputs', async () => {
     const { setup } = scenario('')
     const actual: any[] = []
     defineStep('passing setup arguments', ({ }, ...inputs) => {
@@ -109,7 +109,7 @@ describe('setup()', () => {
     t.deepStrictEqual(actual, [1, 2, 3])
   })
 
-  test('can call same setup step twice', async () => {
+  test.skip('can call same setup step twice', async () => {
     defineStep('setupTwice', async ({ spec }, expected) => {
       const s = await spec(() => Promise.resolve(expected))
       const actual = await s.subject()
@@ -131,7 +131,7 @@ describe('setup()', () => {
     await done()
   })
 
-  test('template match result is passed to handler after input', async () => {
+  test.skip('template match result is passed to handler after input', async () => {
     let values: any[] = []
     defineStep('setup template {id} {code}', ({ }, id, code, ...inputs) => {
       values.push(...inputs, id, code)
@@ -192,7 +192,7 @@ describe('setup()', () => {
     a.satisfy(values, [{ a: 'b', b: 123 }])
   })
 
-  test('setup id is used as spec id', async () => {
+  test.skip('setup id is used as spec id', async () => {
     let result
     let id
     defineStep('setup spec - ensure server is up', async ({ spec }, host) => {
