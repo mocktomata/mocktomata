@@ -38,27 +38,14 @@ describe(`mockto`, () => {
 
     // TODO: live mode should proxy spec subject,
     // to capture interactions into logs.
-    test.skip('live has enableLog method', () => {
+    it.skip('can log interactions', () => {
       const { context } = createTestContext()
       const mockto = createMockto(context)
       return new Promise<void>(a => {
-        mockto.live('live has enableLog method', async (_, spec, reporter) => {
+        mockto.live('live has enableLog method', { logLevel: logLevels.all }, async (_, spec, reporter) => {
           const s = await spec(() => { })
-          spec.enableLog(logLevels.all)
           s()
           expect(reporter.logs.length > 0).toBe(true)
-          a()
-        })
-      })
-    })
-
-    test('live enableLog method can specify log level', () => {
-      const { context } = createTestContext()
-      const mockto = createMockto(context)
-      return new Promise<void>(a => {
-        mockto.live('live enableLog method can specify log level', async (_, spec) => {
-          await spec(() => { })
-          spec.enableLog(logLevels.none)
           a()
         })
       })
@@ -182,10 +169,9 @@ describe(`mockto`, () => {
 
   test.todo('spec name supports other characters (standard-log restricts them). Need to transform those chars')
 
-  mockto('can enable log after spec subject is created', (title, spec, reporter) => {
+  mockto('can enable log after spec subject is created', { logLevel: logLevels.all }, (title, spec, reporter) => {
     test(title, async () => {
       const s = await spec(() => 1)
-      spec.enableLog()
       expect(s()).toBe(1)
 
       await spec.done()

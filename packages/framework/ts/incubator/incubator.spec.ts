@@ -4,10 +4,8 @@ import { logLevels, MemoryLogReporter } from 'standard-log'
 import { createTestContext, incubator, Spec, SpecNotFound } from '../index.js'
 import { createIncubator } from './createIncubator.js'
 
-incubator('enableLog can specify log level', (title, spec) => {
+incubator('can specify log level', { logLevel: logLevels.none }, (title, spec) => {
   test(title, async () => {
-
-    spec.enableLog(logLevels.none)
     await spec(() => { })
     await spec.done()
   })
@@ -56,23 +54,22 @@ incubator('duo with option', { timeout: 200 }, (title, spec) => {
 describe('reporter', () => {
   const { context } = createTestContext()
   const incubator = createIncubator(context)
-  incubator.sequence('gets memory log reporter', (title, { save, simulate }, reporter) => {
+  incubator.sequence('gets memory log reporter', { logLevel: logLevels.all }, (title, { save, simulate }, reporter) => {
     test(title, async () => {
       const subject = { a: 1 }
-      save.enableLog()
       const spy = await save(subject)
       expect(spy.a).toBe(1)
       await save.done()
 
-      simulate.enableLog()
       const stub = await simulate(subject)
       expect(stub.a).toBe(1)
       await simulate.done()
 
-      a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
+      const messages = reporter.getLogMessagesWithIdAndLevel()
+      a.satisfies(messages, some(
         /^mocktomata:gets memory log reporter:save/
       ))
-      a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(
+      a.satisfies(messages, some(
         /^mocktomata:gets memory log reporter:simulate/
       ))
     })
