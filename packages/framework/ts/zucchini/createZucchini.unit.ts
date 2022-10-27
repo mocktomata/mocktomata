@@ -2,11 +2,10 @@ import { a } from 'assertron'
 import { createTestContext, createZucchini } from '../index.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import t from 'node:assert'
-import { logLevels } from 'standard-log'
 
 describe(`${createZucchini.name}()`, () => {
   const { context } = createTestContext()
-  const { scenario, defineStep } = createZucchini(context)
+  const { scenario, defineStep, defineParameterType } = createZucchini(context)
   afterAll(() => scenario.teardown())
   describe(`${scenario.name}`, () => {
     describe(`setup()`, () => {
@@ -34,21 +33,34 @@ describe(`${createZucchini.name}()`, () => {
           t.strictEqual(actual, expected)
         })
 
-        const save = scenario.save(
-          'call setup twice',
-          { emitLog: true, logLevel: logLevels.all }
-        )
+        const save = scenario.save('call setup twice')
         await save.setup('setupTwice', 0)
         await save.setup('setupTwice', 2)
         await save.done()
 
-        const sim = scenario.simulate(
-          'call setup twice',
-          { emitLog: true, logLevel: logLevels.all }
-        )
+        const sim = scenario.simulate('call setup twice')
         await sim.setup('setupTwice', 0)
         await sim.setup('setupTwice', 2)
         await sim.done()
+      })
+
+      it('passes template value to hander before additional params', async () => {
+        const values: any[] = []
+        defineStep('setup template {number} {word}', (_, id, code, ...inputs) => {
+          values.push(id, code, ...inputs)
+        })
+        const { setup } = scenario('setup with template')
+        await setup('setup template 123 abc', 'x')
+        t.deepStrictEqual(values, [123, 'abc', 'x'])
+      })
+
+      it('passes clause to the context', async () => {
+        defineStep('return clause {int}', async ({ clause }) => clause)
+
+        const { setup } = scenario('passes clause to the context')
+
+        const actual = await setup('return clause 234')
+        t.strictEqual(actual, 'return clause 234')
       })
     })
 
@@ -103,7 +115,7 @@ describe(`${createZucchini.name}()`, () => {
     })
 
     it('can define step with arguments', async () => {
-      defineStep(`step with {arg}`, (_, arg) => arg + 1)
+      defineStep(`step with {}`, (_, arg) => arg + 1)
 
       const { run } = scenario('template with argument')
       const result = await run('step with 2')
@@ -111,7 +123,7 @@ describe(`${createZucchini.name}()`, () => {
     })
 
     it('can specify argument type as number', async () => {
-      defineStep(`step arg as number {arg:number}`, (_, arg) => arg + 1)
+      defineStep(`step arg as number {number}`, (_, arg) => arg + 1)
 
       const { run } = scenario('template with argument')
       const result = await run('step arg as number 2')
@@ -119,7 +131,7 @@ describe(`${createZucchini.name}()`, () => {
     })
 
     it('can specify argument type as float', async () => {
-      defineStep(`step arg as float {arg:float}`, (_, arg) => arg + 1)
+      defineStep(`step arg as float {float}`, (_, arg) => arg + 1)
 
       const { run } = scenario('template with argument')
       const result = await run('step arg as float 2.1')
@@ -127,11 +139,21 @@ describe(`${createZucchini.name}()`, () => {
     })
 
     it('can specify argument type as boolean', async () => {
-      defineStep(`step arg as boolean {arg:boolean}`, (_, arg) => !arg)
+      defineStep(`step arg as boolean {boolean}`, (_, arg) => arg)
 
       const { run } = scenario('template with argument')
-      const result = await run('step arg as boolean true')
-      expect(result).toEqual(false)
+      expect(await run('step arg as boolean true')).toEqual(true)
+      expect(await run('step arg as boolean false')).toEqual(false)
+    })
+
+    it('works with multiple params template', async () => {
+      const values: any[] = []
+      defineStep(`two regex {word} {int} throws`, (_, a, b) => {
+        values.push({ a, b })
+      })
+      const { setup } = scenario('setup with regex template')
+      await setup('two regex b 123 throws')
+      a.satisfies(values, [{ a: 'b', b: 123 }])
     })
 
     it('can specify clause as regex', async () => {
@@ -142,5 +164,28 @@ describe(`${createZucchini.name}()`, () => {
       expect(result).toEqual(2)
     })
   })
-})
 
+  describe(`${defineParameterType.name}()`, () => {
+    it('define enum and regex type', async () => {
+
+      defineParameterType({
+        name: 'method',
+        regexp: /(GET|POST|PUT|DELETE)/,
+      })
+      defineParameterType({
+        name: 'uri',
+        regexp: /[\w./?=]*/
+      })
+      const mm: any[] = []
+      defineStep(`{method} {uri} throws`, (_, method, uri) => {
+        mm.push(method, uri)
+      })
+
+      const { setup } = scenario('define enum and regex type')
+
+      await setup('GET some/url/1.0/resources?a=b throws')
+      t.strictEqual(mm[0], 'GET')
+      t.strictEqual(mm[1], 'some/url/1.0/resources?a=b')
+    })
+  })
+})

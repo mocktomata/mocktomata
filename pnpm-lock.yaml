@@ -103,6 +103,7 @@ importers:
 
   packages/framework:
     specifiers:
+      '@cucumber/cucumber-expressions': ^16.0.0
       '@size-limit/preset-big-lib': ^8.0.1
       '@types/stack-utils': ^2.0.1
       assertron: ^10.0.0
@@ -128,6 +129,7 @@ importers:
       type-plus: ^4.14.1
       typescript: ~4.8.3
     dependencies:
+      '@cucumber/cucumber-expressions': 16.0.0
       async-fp: 8.0.2
       iso-error: 4.4.0
       stack-utils: 2.0.5
@@ -1240,6 +1242,12 @@ packages:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
+
+  /@cucumber/cucumber-expressions/16.0.0:
+    resolution: {integrity: sha512-HTh+Pg7oQ5aLuCkSbD2Q6jBaE40M3R/XaLEz+UqD5d9dZRu6P38W4LTooV5bV6dZgBunlMLK8+6ug2ziYvRddw==}
+    dependencies:
+      regexp-match-indices: 1.0.2
+    dev: false
 
   /@discoveryjs/json-ext/0.5.7:
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -8629,6 +8637,17 @@ packages:
       extend-shallow: 3.0.2
       safe-regex: 1.1.0
     dev: true
+
+  /regexp-match-indices/1.0.2:
+    resolution: {integrity: sha512-DwZuAkt8NF5mKwGGER1EGh2PRqyvhRhhLviH+R8y8dIuaQROlUfXjt4s9ZTXstIsSkptf06BSvwcEmmfheJJWQ==}
+    dependencies:
+      regexp-tree: 0.1.24
+    dev: false
+
+  /regexp-tree/0.1.24:
+    resolution: {integrity: sha512-s2aEVuLhvnVJW6s/iPgEGK6R+/xngd2jNQ+xy4bXNDKxZKJH6jpPHY6kVeVv1IeLCHgswRj+Kl3ELaDjG6V1iw==}
+    hasBin: true
+    dev: false
 
   /regexp.prototype.flags/1.4.3:
     resolution: {integrity: sha512-fjggEOO3slI6Wvgjwflkc4NFRCTZAu5CnNfBd5qOMYhWdn67nJBBu34/TkD++eeFmd8C9r9jfXJ27+nSiRkSUA==}
