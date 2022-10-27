@@ -62,17 +62,49 @@ function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mo
       .extend(getEffectiveSpecModeContext(mode))
       .extend(createLogContext)
 
-    const { spec, modeProperty, done, enableLog, ignoreMismatch, maskValue } = createSpecFns(ctx)
+    const { spec, modeProperty, done, ignoreMismatch, maskValue } = createSpecFns(ctx)
     const modeFn = function mode() { return modeProperty.get() }
     const subCtx = ctx.extend({ spec, modeFn, maskValue })
     return {
+      /**
+       * Ensure the test environment is clean before the test starts.
+       *
+       * Any error occurs in these steps are ignored completely.
+       */
       ensure: createInertStepCaller(subCtx, store, 'ensure', false),
+      /**
+       * Setup the test environment.
+       * This is the `Given` step.
+       *
+       * Any error occurs in these steps will not fail the test.
+       * An warning message will be printed in case it worths noting.
+       */
       setup: createInertStepCaller(subCtx, store, 'setup'),
+      /**
+       * Directly spec a subject and test away.
+       * It is the same `spec()` as in `komondor` and `mockto`.
+       */
       spec,
+      /**
+       * Run a step as the test.
+       *
+       * Any error occurs in these steps will fail the test.
+       * They are the test itself.
+       */
       run: createStepCaller(subCtx, store, 'run'),
+      /**
+       * Teardown the test environment.
+       *
+       * Any error occurs in these steps will not fail the test.
+       * An warning message will be printed in case it worths noting.
+       */
       teardown: createInertStepCaller(subCtx, store, 'teardown'),
+      /**
+       * Indicate the test is done.
+       *
+       * Either return this or `await` for it to complete.
+       */
       done,
-      enableLog,
       ignoreMismatch,
       maskValue,
       mode: modeFn,
