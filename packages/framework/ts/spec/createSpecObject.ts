@@ -1,12 +1,12 @@
 import type { AsyncContext } from 'async-fp'
-import { LogLevel, logLevels } from 'standard-log'
+import { LogLevel } from 'standard-log'
 import { createSpec } from './createSpec.js'
 import { InvokeMetaMethodAfterSpec } from './errors.js'
 import type { Spec } from './types.js'
 
 export function createSpecObject(context: AsyncContext<Spec.Context>) {
-  const { spec, modeProperty: mode, enableLog, ignoreMismatch, maskValue, done } = createSpecFns(context)
-  return Object.assign(Object.defineProperties(spec, { mode }), { enableLog, ignoreMismatch, maskValue, done }) as any
+  const { spec, modeProperty: mode, ignoreMismatch, maskValue, done } = createSpecFns(context)
+  return Object.assign(Object.defineProperties(spec, { mode }), { ignoreMismatch, maskValue, done }) as any
 }
 
 export function createSpecFns(context: AsyncContext<Spec.Context>) {
@@ -17,19 +17,12 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
     if (s) return s
     const { mode, specName, options, specRelativePath } = await context.get()
     const spec = s = await createSpec(context, specName, specRelativePath, mode, options)
-    if (initState.enableLog) spec.enableLog(initState.logLevel)
+    // if (initState.enableLog) spec.enableLog(initState.logLevel)
     initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))
     initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
     return spec
   }
 
-  function enableLog(level: LogLevel = logLevels.all) {
-    if (s) s.enableLog(level)
-    else {
-      initState.enableLog = true
-      initState.logLevel = level
-    }
-  }
   function ignoreMismatch(value: any) {
     if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
     else initState.ignoreValues.push(value)
@@ -55,5 +48,5 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
     actualMode = aspec.mode
     return aspec(subject)
   })
-  return { spec, modeProperty, enableLog, ignoreMismatch, maskValue, done }
+  return { spec, modeProperty, ignoreMismatch, maskValue, done }
 }

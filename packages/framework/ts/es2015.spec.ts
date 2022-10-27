@@ -1,5 +1,6 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
+import { logLevels } from 'standard-log'
 import { AnyFunction } from 'type-plus'
 import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from './index.js'
 import { InvokeMetaMethodAfterSpec } from './spec/index.js'
@@ -1733,9 +1734,8 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('not save in log', (title, spec, reporter) => {
+  incubator('not save masked value in log', { logLevel: logLevels.all }, (title, spec, reporter) => {
     test(title, async () => {
-      spec.enableLog()
       spec.maskValue('secret')
       const s = await spec((v: string) => v)
       s('secret')

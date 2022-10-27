@@ -8,61 +8,49 @@ const k = createKomondor(context)
 
 afterAll(() => k.teardown())
 
-test('live with no options', async () => {
-  const spec = k.live('live with no options')
-  const s = await spec((x: number) => x + 1)
-  expect(s(1)).toBe(2)
-  await spec.done()
+describe(`kd.live()`, () => {
+  it('can invoke with no options', async () => {
+    const spec = k.live('live with no options')
+    const s = await spec((x: number) => x + 1)
+    expect(s(1)).toBe(2)
+    await spec.done()
+  })
+
+  it('can specify timeout', async () => {
+    const spec = k.live('live with options', { timeout: 2000 })
+    const s = await spec((x: number) => x + 1)
+    expect(s(1)).toBe(2)
+    await spec.done()
+  })
+
+  it('can specify log level', async () => {
+    const spec = k.live('live has enableLog method', { logLevel: logLevels.all })
+    await spec(() => { })
+  })
 })
 
-test('live with options', async () => {
-  const spec = k.live('live with options', { timeout: 2000 })
-  const s = await spec((x: number) => x + 1)
-  expect(s(1)).toBe(2)
-  await spec.done()
-})
+describe(`kd.save()`, () => {
+  it('can invoke with no options', async () => {
+    const spec = k.save('save with no options')
+    const s = await spec((x: number) => x + 1)
+    expect(s(1)).toBe(2)
+    await spec.done()
+  })
 
-test('live has enableLog method', async () => {
-  const spec = k.live('live has enableLog method')
-  await spec(() => { })
-  spec.enableLog()
-})
+  it('can specify timeout', async () => {
+    const spec = k.save('save with options', { timeout: 2000 })
+    const s = await spec((x: number) => x + 1)
+    expect(s(1)).toBe(2)
+    await spec.done()
+  })
 
-test('live enableLog method can specify log level', async () => {
-  const spec = k.live('live enableLog method can specify log level')
-  await spec(() => { })
-  spec.enableLog(logLevels.none)
-})
+  it('can specify log level', async () => {
+    const spec = k.save('save has enableLog method', { logLevel: logLevels.debug })
+    await spec(() => { })
+    await spec.done()
 
-
-test('save with no options', async () => {
-  const spec = k.save('save with no options')
-  const s = await spec((x: number) => x + 1)
-  expect(s(1)).toBe(2)
-  await spec.done()
-})
-
-test('save with options', async () => {
-  const spec = k.save('save with options', { timeout: 2000 })
-  const s = await spec((x: number) => x + 1)
-  expect(s(1)).toBe(2)
-  await spec.done()
-})
-
-test('save has enableLog method', async () => {
-  const spec = k.save('save has enableLog method')
-  await spec(() => { })
-  spec.enableLog()
-  await spec.done()
-
-  expect(spec.reporter.logs.length).toBe(1)
-})
-
-test('save enableLog method can specify log level', async () => {
-  const spec = k.save('save enableLog method can specify log level')
-  await spec(() => { })
-  spec.enableLog(logLevels.none)
-  await spec.done()
+    expect(spec.reporter.logs.length).toBe(1)
+  })
 })
 
 test('auto lifecycle', async () => {
@@ -78,10 +66,9 @@ test('auto lifecycle', async () => {
 })
 
 it('gets memory log reporter', async () => {
-  const save = k.save('gets memory log reporter')
+  const save = k.save('gets memory log reporter', { logLevel: logLevels.all })
 
   const subject = { a: 1 }
-  save.enableLog()
   const spy = await save(subject)
   expect(spy.a).toBe(1)
   await save.done()
@@ -90,8 +77,7 @@ it('gets memory log reporter', async () => {
     /^mocktomata:gets memory log reporter:save/
   ))
 
-  const simulate = k.simulate('gets memory log reporter')
-  simulate.enableLog()
+  const simulate = k.simulate('gets memory log reporter', { logLevel: logLevels.all })
   const stub = await simulate(subject)
   expect(stub.a).toBe(1)
   await simulate.done()

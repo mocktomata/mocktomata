@@ -1,4 +1,4 @@
-import type { Logger, LogLevel, MemoryLogReporter } from 'standard-log'
+import type { Logger, MemoryLogReporter } from 'standard-log'
 import type { Log } from '../log/types.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import type { SpecRecord } from '../spec-record/types.js'
@@ -8,7 +8,6 @@ export type Spec = {
   <S>(subject: S): Promise<S>,
   readonly mode: Spec.Mode,
   done(): Promise<void>,
-  enableLog(level?: LogLevel): void,
   ignoreMismatch(value: any): void,
   maskValue(value: number, replaceWith?: number | ((sensitive: number) => number)): void,
   maskValue(value: string, replaceWith?: string | ((sensitive: string) => string)): void,
@@ -67,8 +66,23 @@ export namespace Spec {
   export type Handler = (title: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
 
   export type Options = {
+    /**
+     * How long will the spec wait before consider the subject failed to return.
+     */
     timeout?: number,
+    /**
+     * Log level to log interactions.
+     *
+     * They are saved in memory and available through the `reporter`.
+     *
+     * If `emitLog` is true, the log will also be printed.
+     */
     logLevel?: number,
+    /**
+     * Emit the log to console or not.
+     *
+     * By default this is false to avoid cluttering the test result.
+     */
     emitLog?: boolean
   }
 }
