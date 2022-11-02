@@ -7,7 +7,7 @@ import { InvokeMetaMethodAfterSpec } from './spec/index.js'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts/index.js'
 
 describe('basic checks', () => {
-  incubator.save(`type %s is not specable`, (title, spec) => {
+  incubator.save(`type %s is not specable`, (specName, spec) => {
     test.each<[any, any]>([
       ['undefined', undefined],
       ['null', null],
@@ -16,7 +16,7 @@ describe('basic checks', () => {
       ['symbol', Symbol()],
       ['string', 'string'],
       ['array', []]
-    ])(title, (_, value) => a.throws(() => spec(value), NotSpecable))
+    ])(specName, (_, value) => a.throws(() => spec(value), NotSpecable))
   })
   function noop() { }
 
@@ -39,8 +39,8 @@ describe('basic checks', () => {
 })
 
 describe('get', () => {
-  incubator.sequence('missing action throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('missing action throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 1 }
       const spy = await save(subject)
       expect(spy.a).toBe(1)
@@ -50,8 +50,8 @@ describe('get', () => {
     })
   })
   // @TODO: 💡 not sure if we should support this behavior
-  incubator.sequence('extra action not performed before gets value from subject', (title, { save, simulate }) => {
-    test.skip(title, async () => {
+  incubator.sequence('extra action not performed before gets value from subject', (specName, { save, simulate }) => {
+    test.skip(specName, async () => {
       const subject = { a: 1, b: 2 }
       const spy = await save(subject)
       expect(spy.a).toBe(1)
@@ -65,8 +65,8 @@ describe('get', () => {
 })
 
 describe('set', () => {
-  incubator.sequence('missing action throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('missing action throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 1 }
       const spy = await save(subject)
       spy.a = 2
@@ -75,8 +75,8 @@ describe('set', () => {
       a.throws(simulate.done(), MissingAction)
     })
   })
-  incubator.sequence('extra set throws ExtraAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('extra set throws ExtraAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 1 }
       await save(subject)
       await save.done()
@@ -84,8 +84,8 @@ describe('set', () => {
       a.throws(() => stub.a = 2, ExtraAction)
     })
   })
-  incubator.sequence('in place of different action throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('in place of different action throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 1, foo() { } }
       const spy = await save(subject)
       const foo = spy.foo
@@ -97,8 +97,8 @@ describe('set', () => {
       a.throws(() => stub.a = 2, ActionMismatch)
     })
   })
-  incubator.sequence('the wrong key throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('the wrong key throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 1, b: 1 }
       const spy = await save(subject)
       spy.a = 2
@@ -107,8 +107,8 @@ describe('set', () => {
       a.throws(() => stub.b = 2, ActionMismatch)
     })
   })
-  incubator.sequence('with wrong number value throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with wrong number value throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = () => ({ a: 1 })
       const spy = await save(subject)
       spy().a = 2
@@ -117,8 +117,8 @@ describe('set', () => {
       a.throws(() => stub().a = 3, ActionMismatch)
     })
   })
-  incubator.sequence('with wrong string value throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with wrong string value throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 'a' }
       const spy = await save(subject)
       spy.a = 'x'
@@ -127,8 +127,8 @@ describe('set', () => {
       a.throws(() => stub.a = 'y', ActionMismatch)
     })
   })
-  incubator.sequence('with wrong value type throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with wrong value type throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 'a' as any }
       const spy = await save(subject)
       spy.a = '1'
@@ -137,8 +137,8 @@ describe('set', () => {
       a.throws(() => stub.a = 1, ActionMismatch)
     })
   })
-  incubator.sequence('with function will not trigger ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with function will not trigger ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { foo() { } }
       const spy = await save(subject)
       spy.foo = () => { }
@@ -152,8 +152,8 @@ describe('set', () => {
 })
 
 describe('invoke', () => {
-  incubator.sequence('missing call throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('missing call throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = () => { }
       const spy = await save(subject)
       spy()
@@ -163,8 +163,8 @@ describe('invoke', () => {
       await a.throws(simulate.done(), MissingAction)
     })
   })
-  incubator.sequence('extra call throws ExtraAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('extra call throws ExtraAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = () => { }
       await save(subject)
       await save.done()
@@ -172,8 +172,8 @@ describe('invoke', () => {
       a.throws(() => stub(), ExtraAction)
     })
   })
-  incubator.sequence('in place of different action throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('in place of different action throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = Object.assign(function () { }, { a: 1 })
       const spy = await save(subject)
       spy()
@@ -187,8 +187,8 @@ describe('invoke', () => {
       expect(err.actual?.type).toEqual('invoke')
     })
   })
-  incubator.sequence('TODO: improve error instead of MissingReference', (title, { save, simulate }) => {
-    test.skip(title, async () => {
+  incubator.sequence('TODO: improve error instead of MissingReference', (specName, { save, simulate }) => {
+    test.skip(specName, async () => {
       // This test is not the right test
       // Can't remember what it should be
       const subject = Object.assign(function () { }, { a: 1 })
@@ -202,8 +202,8 @@ describe('invoke', () => {
       a.throws(() => stub(), ActionMismatch)
     })
   })
-  incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with extra param throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = (...args: any[]) => args
       const s = await save(subject)
       s('a')
@@ -212,8 +212,8 @@ describe('invoke', () => {
       a.throws(() => stub('a', 'b'), ActionMismatch)
     })
   })
-  incubator.sequence('with missing param throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with missing param throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = (...args: any[]) => args
       const spy = await save(subject)
       spy('a')
@@ -222,8 +222,8 @@ describe('invoke', () => {
       a.throws(() => stub(), ActionMismatch)
     })
   })
-  incubator.sequence('with not recorded scope throws ExtraReference', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with not recorded scope throws ExtraReference', (specName, { save, simulate }) => {
+    test(specName, async () => {
       function subject() { }
       const spy = await save(subject)
       spy()
@@ -242,8 +242,8 @@ describe('instantiate', () => {
     // must exist at least one method for class plugin to identify it.
     foo() { }
   }
-  incubator.sequence('missing call throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('missing call throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const spy = await save(Subject)
       new spy()
       await save.done()
@@ -252,16 +252,16 @@ describe('instantiate', () => {
       await a.throws(simulate.done(), MissingAction)
     })
   })
-  incubator.sequence('extra call throws ExtraAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('extra call throws ExtraAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       await save(Subject)
       await save.done()
       const stub = await simulate(Subject)
       a.throws(() => new stub(), ExtraAction)
     })
   })
-  incubator.sequence('in place of different action throws MissingAction', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('in place of different action throws MissingAction', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const spy = await save(Subject)
       new spy().a = 0
       await save.done()
@@ -271,8 +271,8 @@ describe('instantiate', () => {
       a.throws(() => new stub(), ActionMismatch)
     })
   })
-  incubator.sequence('with extra param throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with extra param throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const spy = await save(Subject)
       new spy('a')
       await save.done()
@@ -280,8 +280,8 @@ describe('instantiate', () => {
       a.throws(() => new stub('a', 'b'), ActionMismatch)
     })
   })
-  incubator.sequence('with missing param throws ActionMismatch', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('with missing param throws ActionMismatch', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const s = await save(Subject)
       new s('a')
       await save.done()
@@ -292,8 +292,8 @@ describe('instantiate', () => {
 })
 
 describe('object', () => {
-  incubator('get primitive property', (title, spec) => {
-    test(title, async () => {
+  incubator('get primitive property', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ a: 1 })
       const actual = subject.a
 
@@ -303,8 +303,8 @@ describe('object', () => {
     })
   })
 
-  incubator('set primitive property', (title, spec) => {
-    test(title, async () => {
+  incubator('set primitive property', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ a: 1 })
       const actual = subject.a = 2
 
@@ -314,8 +314,8 @@ describe('object', () => {
     })
   })
 
-  incubator('set object property', (title, spec) => {
-    test(title, async () => {
+  incubator('set object property', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ a: { b: 1 } })
       const actual = subject.a = { b: 2 }
 
@@ -325,8 +325,8 @@ describe('object', () => {
     })
   })
 
-  incubator('set function property', (title, spec) => {
-    test(title, async () => {
+  incubator('set function property', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ a: (v: number) => v })
       const actual = subject.a = (v: number) => v + 1
 
@@ -336,8 +336,8 @@ describe('object', () => {
     })
   })
 
-  incubator('set null property', (title, spec) => {
-    test(title, async () => {
+  incubator('set null property', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ a: { b: 1 } as any })
       const actual = subject.a = null
 
@@ -347,8 +347,8 @@ describe('object', () => {
     })
   })
 
-  incubator('update primitive property', (title, spec) => {
-    test(title, async () => {
+  incubator('update primitive property', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ a: 1 })
       expect(subject.a).toBe(1)
       subject.a = 2
@@ -357,24 +357,24 @@ describe('object', () => {
     })
   })
 
-  incubator('throw during get', (title, spec) => {
-    test(title, async () => {
+  incubator('throw during get', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ get x() { throw new Error('thrown') } })
       a.throws(() => subject.x, e => e.message === 'thrown')
       await spec.done()
     })
   })
 
-  incubator('throw during set', (title, spec) => {
-    test(title, async () => {
+  incubator('throw during set', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ set x(_: number) { throw new Error('thrown') } })
       a.throws(() => subject.x = 2, e => e.message === 'thrown')
       await spec.done()
     })
   })
 
-  incubator('handles property changes type from value to function', (title, spec) => {
-    test(title, async () => {
+  incubator('handles property changes type from value to function', (specName, spec) => {
+    test(specName, async () => {
       const subject: any = await spec({ do: 1 })
       subject.do = (v: number) => v
       expect(subject.do(3)).toBe(3)
@@ -382,8 +382,8 @@ describe('object', () => {
     })
   })
 
-  incubator('primitive method', (title, spec) => {
-    test(title, async () => {
+  incubator('primitive method', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ echo: (x: number) => x })
       const actual = subject.echo(3)
 
@@ -393,8 +393,8 @@ describe('object', () => {
     })
   })
 
-  incubator('primitive method throws error', (title, spec) => {
-    test(title, async () => {
+  incubator('primitive method throws error', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({ echo: (x: string) => { throw new Error(x) } })
       const err = a.throws(() => subject.echo('abc'))
 
@@ -404,8 +404,8 @@ describe('object', () => {
     })
   })
 
-  incubator.sequence('object property is mocked', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('object property is mocked', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const spy = await save({ a: { do() { return 1 } } })
 
       expect(spy.a.do()).toBe(1)
@@ -420,8 +420,8 @@ describe('object', () => {
     })
   })
 
-  incubator('callback method success', (title, spec) => {
-    test(title, async () => {
+  incubator('callback method success', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec({
         inc(x: number, cb: (x: number) => void) {
           cb(x + 1)
@@ -436,8 +436,8 @@ describe('object', () => {
     })
   })
 
-  incubator('same child in two properties', (title, spec) => {
-    test(title, async () => {
+  incubator('same child in two properties', (specName, spec) => {
+    test(specName, async () => {
       const child = { a: 1 }
       const subject = { x: child, y: child }
       const s = await spec(subject)
@@ -450,8 +450,8 @@ describe('object', () => {
     })
   })
 
-  incubator('circular child properties', (title, spec) => {
-    test(title, async () => {
+  incubator('circular child properties', (specName, spec) => {
+    test(specName, async () => {
       const subject: any = { a: 1 }
       subject.s = subject
 
@@ -467,8 +467,8 @@ describe('object', () => {
   })
 
   // version 8
-  incubator('modify out array param', (title, spec) => {
-    test.skip(title, async () => {
+  incubator('modify out array param', (specName, spec) => {
+    test.skip(specName, async () => {
       const s = await spec({
         getArray() { return ['a', 'b'] },
         updateArray(arr: string[]) {
@@ -484,8 +484,8 @@ describe('object', () => {
   })
 
   // version 8
-  incubator.sequence('method skips internal method calls', (title, { save, simulate }) => {
-    test.skip(title, async () => {
+  incubator.sequence('method skips internal method calls', (specName, { save, simulate }) => {
+    test.skip(specName, async () => {
       const spy = await save({
         foo() {
           this.internalCall()
@@ -509,32 +509,32 @@ describe('object', () => {
 })
 
 describe('function', () => {
-  incubator('no input no result', (title, spec) => {
-    test(title, async () => {
+  incubator('no input no result', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(() => { })
       expect(subject()).toBeUndefined()
 
       await spec.done()
     })
   })
-  incubator('string input no result', (title, spec) => {
-    test(title, async () => {
+  incubator('string input no result', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec((_x: string) => { })
       expect(subject('abc')).toBeUndefined()
 
       await spec.done()
     })
   })
-  incubator('string input returns same string', (title, spec) => {
-    test(title, async () => {
+  incubator('string input returns same string', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec((x: string) => x)
       expect(subject('abc')).toEqual('abc')
 
       await spec.done()
     })
   })
-  incubator('no input, string result', (title, spec) => {
-    test(title, async () => {
+  incubator('no input, string result', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(() => 'abc')
       const actual = subject()
       expect(actual).toBe('abc')
@@ -542,16 +542,16 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('undefined input, undefined result', (title, spec) => {
-    test(title, async () => {
+  incubator('undefined input, undefined result', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec((_a: any, _b: any) => undefined)
       const actual = subject(undefined, undefined)
       expect(actual).toBe(undefined)
       await spec.done()
     })
   })
-  incubator('primitive inputs, simple result', (title, spec) => {
-    test(title, async () => {
+  incubator('primitive inputs, simple result', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec((x: number, y: number) => x + y)
       const actual = subject(1, 2)
 
@@ -560,8 +560,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('no input, array output', (title, spec) => {
-    test(title, async () => {
+  incubator('no input, array output', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(() => [1, 2, 'c'])
       const actual = subject()
       expect(actual).toEqual([1, 2, 'c'])
@@ -569,8 +569,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('empty array inputs', (title, spec) => {
-    test(title, async () => {
+  incubator('empty array inputs', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', [])
 
@@ -578,8 +578,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('array inputs', (title, spec) => {
-    test(title, async () => {
+  incubator('array inputs', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', ['--version'])
 
@@ -587,8 +587,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('insert value to input array', (title, spec) => {
-    test(title, async () => {
+  incubator('insert value to input array', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function passthroughArray(value: string[]) {
         value.push('c')
         return value
@@ -598,8 +598,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('update value in input array', (title, spec) => {
-    test(title, async () => {
+  incubator('update value in input array', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function passthroughArray(value: string[]) {
         value[1] = 'c'
         return value
@@ -610,8 +610,8 @@ describe('function', () => {
     })
   })
   // version 8
-  incubator('update value in output array', (title, spec) => {
-    test.skip(title, async () => {
+  incubator('update value in output array', (specName, spec) => {
+    test.skip(specName, async () => {
       const subject = await spec(() => {
         return {
           get() { return [1, 2, 3] },
@@ -628,8 +628,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('expend array by assignment', (title, spec) => {
-    test(title, async () => {
+  incubator('expend array by assignment', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function passthroughArray(value: string[]) {
         value[2] = 'c'
         return value
@@ -639,8 +639,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('throwing error', (title, spec) => {
-    test(title, async () => {
+  incubator('throwing error', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(() => { throw new Error('failed') })
       const err = a.throws(() => subject())
 
@@ -649,8 +649,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('throwing custom error', (title, spec) => {
-    test(title, async () => {
+  incubator('throwing custom error', (specName, spec) => {
+    test(specName, async () => {
       class CustomError extends Error {
         constructor(message: string) {
           super(message)
@@ -669,8 +669,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('immediate invoke callback', (title, spec) => {
-    test(title, async () => {
+  incubator('immediate invoke callback', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(simpleCallback.success)
       let actual
       subject(2, (_, result) => {
@@ -687,8 +687,8 @@ describe('function', () => {
     callback(value)
   }
 
-  incubator('callback receiving undefined', (title, spec) => {
-    test(title, async () => {
+  incubator('callback receiving undefined', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(echo)
       let actual: any
       subject(undefined, v => actual = v)
@@ -698,8 +698,8 @@ describe('function', () => {
     })
   })
 
-  incubator('callback receiving null', (title, spec) => {
-    test(title, async () => {
+  incubator('callback receiving null', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(echo)
       let actual: any
       subject(null, v => actual = v)
@@ -708,8 +708,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('immediate invoke throwing callback', (title, spec) => {
-    test(title, async () => {
+  incubator('immediate invoke throwing callback', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(simpleCallback.fail)
 
       const err = await a.throws(simpleCallback.increment(subject, 2))
@@ -719,8 +719,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('simple callback invoked multiple times', (title, spec) => {
-    test(title, async () => {
+  incubator('simple callback invoked multiple times', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(simpleCallback.success)
 
       expect(await simpleCallback.increment(subject, 2)).toBe(3)
@@ -729,8 +729,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('delayed callback invocation', (title, spec) => {
-    test(title, async () => {
+  incubator('delayed callback invocation', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(delayed.success)
 
       expect(await delayed.increment(subject, 2)).toBe(3)
@@ -739,8 +739,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('callback in object literal success', (title, spec) => {
-    test(title, async () => {
+  incubator('callback in object literal success', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(callbackInObjLiteral.success)
 
       expect(await callbackInObjLiteral.increment(subject, 2)).toBe(3)
@@ -748,8 +748,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('callback in object literal fail', (title, spec) => {
-    test(title, async () => {
+  incubator('callback in object literal fail', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(callbackInObjLiteral.fail)
 
       const err = await a.throws(callbackInObjLiteral.increment(subject, 2), Error)
@@ -759,8 +759,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('callback in deep object literal success', (title, spec) => {
-    test(title, async () => {
+  incubator('callback in deep object literal success', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(callbackInDeepObjLiteral.success)
 
       expect(await callbackInDeepObjLiteral.increment(subject, 2)).toBe(3)
@@ -769,8 +769,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('callback in deep object literal fail', (title, spec) => {
-    test(title, async () => {
+  incubator('callback in deep object literal fail', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(callbackInDeepObjLiteral.fail)
 
       await a.throws(callbackInDeepObjLiteral.increment(subject, 2), err => err.message === 'fail')
@@ -778,8 +778,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('synchronous callback success', (title, spec) => {
-    test(title, async () => {
+  incubator('synchronous callback success', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(synchronous.success)
 
       expect(synchronous.increment(subject, 3)).toBe(4)
@@ -787,8 +787,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('synchronous callback throws', (title, spec) => {
-    test(title, async () => {
+  incubator('synchronous callback throws', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(synchronous.fail)
 
       const err = a.throws(() => synchronous.increment(subject, 3))
@@ -798,8 +798,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('recursive two calls success', (title, spec) => {
-    test(title, async () => {
+  incubator('recursive two calls success', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(recursive.success)
 
       const actual = await recursive.decrementToZero(subject, 2)
@@ -809,8 +809,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('invoke callback after returns', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke callback after returns', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(postReturn.fireEvent)
 
       await new Promise<void>(a => {
@@ -825,24 +825,24 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('invoke fetch style: with options and callback', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke fetch style: with options and callback', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(fetch.success)
       const actual = await fetch.add(subject, 1, 2)
       expect(actual).toBe(3)
       await spec.done()
     })
   })
-  incubator('invoke fetch style: receive error in callback', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke fetch style: receive error in callback', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(fetch.fail)
       const actual = await a.throws(fetch.add(subject, 1, 2))
       expect(actual).toEqual({ message: 'fail' })
       await spec.done()
     })
   })
-  incubator('function with array arguments', (title, spec) => {
-    test(title, async () => {
+  incubator('function with array arguments', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function takeArray(name: string, args: string[]) { return { name, args } })
       const actual = subject('node', ['--version'])
 
@@ -852,8 +852,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('function with static prop', (title, spec) => {
-    test(title, async () => {
+  incubator('function with static prop', (specName, spec) => {
+    test(specName, async () => {
       const fn = Object.assign(function () { }, { a: 1 })
 
       const mock = await spec(fn)
@@ -862,19 +862,19 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('return out of scope value', (title, spec) => {
+  incubator('return out of scope value', (specName, spec) => {
     function scopingSpec(expected: number) {
       return spec(() => expected)
     }
 
-    test(title, async () => {
+    test(specName, async () => {
       await scopingSpec(1).then(subject => expect(subject()).toBe(1))
       await scopingSpec(3).then(subject => expect(subject()).toBe(3))
       await spec.done()
     })
   })
-  incubator('invoke method of input', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke method of input', (specName, spec) => {
+    test(specName, async () => {
       expect.assertions(1)
       const emitter = new EventEmitter()
       emitter.on('abc', () => expect(true).toBe(true))
@@ -883,8 +883,8 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('call toString()', (title, spec) => {
-    test(title, async () => {
+  incubator('call toString()', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(function () { })
       expect(subject.toString()).toEqual('function () { [native code] }')
 
@@ -931,8 +931,8 @@ describe('promise', () => {
     }
   }
 
-  incubator('resolve with no value', (title, spec) => {
-    test(title, async () => {
+  incubator('resolve with no value', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(noReturn.success)
       await noReturn.doSomething(subject).then((v: any) => {
         expect(v).toBeUndefined()
@@ -941,8 +941,8 @@ describe('promise', () => {
     })
   })
 
-  incubator('resolve with value', (title, spec) => {
-    test(title, async () => {
+  incubator('resolve with value', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(promise.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
@@ -954,8 +954,8 @@ describe('promise', () => {
     })
   })
 
-  incubator('reject with error', (title, spec) => {
-    test(title, async () => {
+  incubator('reject with error', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(promise.fail)
       return promise.increment(subject, 2)
         .then(() => { throw new Error('should not reach') })
@@ -966,8 +966,8 @@ describe('promise', () => {
     })
   })
 
-  incubator('promise with callback in between', (title, spec) => {
-    test(title, async () => {
+  incubator('promise with callback in between', (specName, spec) => {
+    test(specName, async () => {
       function foo(x: number, cb: AnyFunction) {
         return new Promise(a => {
           setTimeout(() => {
@@ -992,8 +992,8 @@ describe('promise', () => {
     })
   })
 
-  incubator('promise resolves to function', (title, spec) => {
-    test(title, async () => {
+  incubator('promise resolves to function', (specName, spec) => {
+    test(specName, async () => {
       const subject = await spec(promiseChain.success)
       // not using `await` to make sure the return value is a promise.
       // `await` will hide the error if the return value is not a promise.
@@ -1020,8 +1020,8 @@ describe('class', () => {
     }
   }
 
-  incubator('invoke declared method', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke declared method', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(Foo)
       const instance = new Subject(1)
       expect(instance.getValue()).toBe(1)
@@ -1029,8 +1029,8 @@ describe('class', () => {
     })
   })
 
-  incubator('invoke sub-class method', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke sub-class method', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(Boo)
 
       const instance = new Subject(1)
@@ -1039,8 +1039,8 @@ describe('class', () => {
     })
   })
 
-  incubator('invoke parent method', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke parent method', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(Boo)
 
       const instance = new Subject(1)
@@ -1049,8 +1049,8 @@ describe('class', () => {
     })
   })
 
-  incubator('create multiple instances of the same class', (title, spec) => {
-    test(title, async () => {
+  incubator('create multiple instances of the same class', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(Foo)
       const f1 = new Subject(1)
       const f2 = new Subject(2)
@@ -1060,9 +1060,9 @@ describe('class', () => {
     })
   })
 
-  incubator.sequence('ok to use super/sub-class as long as behavior is the same', (title, specs) => {
+  incubator.sequence('ok to use super/sub-class as long as behavior is the same', (specName, specs) => {
     // It is ok to use diff
-    test(title, async () => {
+    test(specName, async () => {
       const save = specs.save
       const bs = await save(Boo)
       const boo = new bs(2)
@@ -1087,8 +1087,8 @@ describe('class', () => {
       return x
     }
   }
-  incubator('class method with callback', (title, spec) => {
-    test(title, async () => {
+  incubator('class method with callback', (specName, spec) => {
+    test(specName, async () => {
       const s = await spec(WithCallback)
       const cb = new s()
 
@@ -1108,8 +1108,8 @@ describe('class', () => {
     }
   }
 
-  incubator('invoke method throws', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke method throws', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(Throwing)
       const foo = new Subject()
       a.throws(() => foo.doThrow(), e => e.message === 'thrown')
@@ -1130,8 +1130,8 @@ describe('class', () => {
       })
     }
   }
-  incubator('method return resolved promise', (title, spec) => {
-    test(title, async () => {
+  incubator('method return resolved promise', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(ResolvedPromise)
       const p = new Subject()
       expect(await p.increment(3)).toBe(4)
@@ -1140,8 +1140,8 @@ describe('class', () => {
     })
   })
 
-  incubator('method returns delayed promise', (title, spec) => {
-    test(title, async () => {
+  incubator('method returns delayed promise', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(DelayedPromise)
       const p = new Subject()
       expect(await p.increment(3)).toBe(4)
@@ -1150,8 +1150,8 @@ describe('class', () => {
     })
   })
 
-  incubator('invoke method returns delayed promise multiple times', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke method returns delayed promise multiple times', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(DelayedPromise)
       const p = new Subject()
       expect(await Promise.all([p.increment(1), p.increment(3), p.increment(7)])).toEqual([2, 4, 8])
@@ -1169,8 +1169,8 @@ describe('class', () => {
     }
   }
 
-  incubator('method invokes internal method', (title, spec) => {
-    test(title, async () => {
+  incubator('method invokes internal method', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(InvokeInternal)
       const a = new Subject()
       expect(a.do()).toBe('data')
@@ -1191,8 +1191,8 @@ describe('class', () => {
       return 'inner'
     }
   }
-  incubator('method delay invokes internal method', (title, spec) => {
-    test(title, async () => {
+  incubator('method delay invokes internal method', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(DelayedInvokeInternal)
       const a = new Subject()
       expect(await a.getDelayedInner()).toBe('inner')
@@ -1202,8 +1202,8 @@ describe('class', () => {
     })
   })
 
-  incubator.sequence('actual method is not invoked during simulation', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('actual method is not invoked during simulation', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const Subject = await save(DelayedInvokeInternal)
       const dii = new Subject()
 
@@ -1231,14 +1231,14 @@ describe('class', () => {
     }
   }
 
-  incubator('runaway promise will not be leaked and break another test', (title, spec) => {
-    test(`${title}: setup`, async () => {
+  incubator('runaway promise will not be leaked and break another test', (specName, spec) => {
+    test(`${specName}: setup`, async () => {
       const MockRejector = await spec(RejectLeak)
       const e = new MockRejector()
       await a.throws(e.reject(300), v => v === 300)
       await spec.done()
     })
-    test(`${title}: should not fail`, () => {
+    test(`${specName}: should not fail`, () => {
       return new Promise<void>(a => setImmediate(() => a()))
     })
   })
@@ -1262,8 +1262,8 @@ describe('class', () => {
     }
   }
 
-  incubator('can use class with circular reference', (title, spec) => {
-    test(title, async () => {
+  incubator('can use class with circular reference', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(ClassWithCircular)
       const f = new Subject()
 
@@ -1277,8 +1277,8 @@ describe('class', () => {
     })
   })
 
-  incubator('class with circular reference accessing', (title, spec) => {
-    test(title, async () => {
+  incubator('class with circular reference accessing', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(ClassWithCircular)
       const f = new Subject()
 
@@ -1321,8 +1321,8 @@ describe('class', () => {
   // To fix this, I need to:
   // 1. get property key and value from object without invoking getter.
   // 2. Add GetAction SetAction back
-  incubator('callback with complex object', (title, spec) => {
-    test(title, async () => {
+  incubator('callback with complex object', (specName, spec) => {
+    test(specName, async () => {
       const Subject = await spec(Ssh)
       const f = new Subject()
 
@@ -1334,8 +1334,8 @@ describe('class', () => {
     })
   })
 
-  incubator('use composite callback function', (title, spec) => {
-    test(title, async () => {
+  incubator('use composite callback function', (specName, spec) => {
+    test(specName, async () => {
       class Foo {
         on(compositeFn: any) {
           return this.internal(compositeFn)
@@ -1361,8 +1361,8 @@ describe('class', () => {
     })
   })
 
-  incubator('class with property', (title, spec) => {
-    test(title, async () => {
+  incubator('class with property', (specName, spec) => {
+    test(specName, async () => {
       const s = await spec(WithProperty)
       const p = new s()
       expect(p.do(2)).toBe(2)
@@ -1373,8 +1373,8 @@ describe('class', () => {
     })
   })
 
-  incubator('static property', (title, spec) => {
-    test(title, async () => {
+  incubator('static property', (specName, spec) => {
+    test(specName, async () => {
       const s = await spec(WithStaticProp)
       expect(s.x).toBe(1)
       expect(s.x = 3).toBe(3)
@@ -1382,8 +1382,8 @@ describe('class', () => {
     })
   })
 
-  incubator('static method', (title, spec) => {
-    test(title, async () => {
+  incubator('static method', (specName, spec) => {
+    test(specName, async () => {
       const s = await spec(WithStaticMethod)
       expect(s.do()).toBe('foo')
       await spec.done()
@@ -1392,8 +1392,8 @@ describe('class', () => {
 })
 
 describe('instance', () => {
-  incubator('passes instanceof test for 1st level class', (title, spec) => {
-    test(title, async () => {
+  incubator('passes instanceof test for 1st level class', (specName, spec) => {
+    test(specName, async () => {
       const S = await spec(Dummy)
       const s = new S()
       expect(s).toBeInstanceOf(Dummy)
@@ -1401,8 +1401,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('passes instanceof test for sub class', (title, spec) => {
-    test(title, async () => {
+  incubator('passes instanceof test for sub class', (specName, spec) => {
+    test(specName, async () => {
       const S = await spec(ChildOfDummy)
       const s = new S()
       expect(s).toBeInstanceOf(ChildOfDummy)
@@ -1411,8 +1411,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('instanceof for output instance is not supported (need custom plugin for this)', (title, spec) => {
-    test.skip(title, async () => {
+  incubator('instanceof for output instance is not supported (need custom plugin for this)', (specName, spec) => {
+    test.skip(specName, async () => {
       function fool() {
         return new ChildOfDummy()
       }
@@ -1424,8 +1424,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('instanceof for output instance if the class was used through input', (title, spec) => {
-    test(title, async () => {
+  incubator('instanceof for output instance if the class was used through input', (specName, spec) => {
+    test(specName, async () => {
       const subject = {
         in(_: any) { return },
         out() { return new ChildOfDummy() },
@@ -1439,8 +1439,8 @@ describe('instance', () => {
     })
   })
 
-  incubator.sequence('getter skips internal method calls', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('getter skips internal method calls', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const spy = await save({
         get side() {
           this.internalCall()
@@ -1463,8 +1463,8 @@ describe('instance', () => {
     })
   })
 
-  incubator.sequence('setter skips internal method calls', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('setter skips internal method calls', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const spy = await save({
         set side(v: any) {
           this.internalCall()
@@ -1485,8 +1485,8 @@ describe('instance', () => {
     })
   })
 
-  incubator.sequence('method skips internal method calls', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('method skips internal method calls', (specName, { save, simulate }) => {
+    test(specName, async () => {
       let shouldThrow = false
       class InvokeInternal {
         foo() {
@@ -1509,8 +1509,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('returning this is same as spy', (title, spec) => {
-    test(title, async () => {
+  incubator('returning this is same as spy', (specName, spec) => {
+    test(specName, async () => {
       class Fluent {
         foo() { return this }
       }
@@ -1521,8 +1521,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('static property', (title, spec) => {
-    test(title, async () => {
+  incubator('static property', (specName, spec) => {
+    test(specName, async () => {
       WithStaticProp.x = 1
       function getClass() {
         return WithStaticProp
@@ -1535,8 +1535,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('static method', (title, spec) => {
-    test(title, async () => {
+  incubator('static method', (specName, spec) => {
+    test(specName, async () => {
       function getClass() {
         return WithStaticMethod
       }
@@ -1548,8 +1548,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('constructor throws error', (title, spec) => {
-    test(title, async () => {
+  incubator('constructor throws error', (specName, spec) => {
+    test(specName, async () => {
       class Throw {
         constructor(x: string) {
           throw new Error(x)
@@ -1566,8 +1566,8 @@ describe('instance', () => {
     })
   })
 
-  incubator.sequence('instantiate with wrong primitive argument', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('instantiate with wrong primitive argument', (specName, { save, simulate }) => {
+    test(specName, async () => {
       class EchoConstructorArg {
         constructor(public value: number) { }
         echo() { return this.value }
@@ -1582,8 +1582,8 @@ describe('instance', () => {
     })
   })
 
-  incubator.sequence('instantiate with different argument is okay as long as behavior does not change', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('instantiate with different argument is okay as long as behavior does not change', (specName, { save, simulate }) => {
+    test(specName, async () => {
       class EchoConstructorArg {
         constructor(public value: string) { }
         echo() { return this.value }
@@ -1599,8 +1599,8 @@ describe('instance', () => {
     })
   })
 
-  incubator('ioc instantiate class', (title, spec) => {
-    test(title, async () => {
+  incubator('ioc instantiate class', (specName, spec) => {
+    test(specName, async () => {
       class Dummy { foo() { } }
       const s = await spec((subject: any) => new subject())
       expect(s(Dummy)).toBeInstanceOf(Dummy)
@@ -1611,14 +1611,14 @@ describe('instance', () => {
 })
 
 describe('ignoreMismatch', () => {
-  incubator.save('call after spec throws', (title, spec) => {
-    test(title, async () => {
+  incubator.save('call after spec throws', (specName, spec) => {
+    test(specName, async () => {
       await spec({})
       a.throws(() => spec.ignoreMismatch(1), InvokeMetaMethodAfterSpec)
     })
   })
-  incubator.sequence('reference object changes are ignored by default. Garbage-in garbage-out issues are handled by tests, not by the system', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('reference object changes are ignored by default. Garbage-in garbage-out issues are handled by tests, not by the system', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = (x: string) => x
       const s = await save(subject)
       expect(s('192.168.0.123')).toBe('192.168.0.123')
@@ -1629,8 +1629,8 @@ describe('ignoreMismatch', () => {
       await simulate.done()
     })
   })
-  incubator('non-primitive value are skipped (still work as normal)', (title, spec) => {
-    test(title, async () => {
+  incubator('non-primitive value are skipped (still work as normal)', (specName, spec) => {
+    test(specName, async () => {
       spec.ignoreMismatch('192.168.0.123')
       const s = await spec((x: string) => x)
       const actual = s('192.168.0.123')
@@ -1638,8 +1638,8 @@ describe('ignoreMismatch', () => {
       await spec.done()
     })
   })
-  incubator.sequence('on get', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('on get', (specName, { save, simulate }) => {
+    test(specName, async () => {
       save.ignoreMismatch(1)
       const spy = await save({ a: 1 })
       expect(spy.a).toBe(1)
@@ -1650,8 +1650,8 @@ describe('ignoreMismatch', () => {
       await simulate.done()
     })
   })
-  incubator.sequence('on set', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('on set', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = { a: 1 }
       save.ignoreMismatch(2)
       const spy = await save(subject)
@@ -1665,8 +1665,8 @@ describe('ignoreMismatch', () => {
       await simulate.done()
     })
   })
-  incubator.sequence('in invoke param', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('in invoke param', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = (x: number) => x + 1
       save.ignoreMismatch(1)
       const spy = await save(subject)
@@ -1680,8 +1680,8 @@ describe('ignoreMismatch', () => {
       await simulate.done()
     })
   })
-  incubator.sequence('in invoke param array', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('in invoke param array', (specName, { save, simulate }) => {
+    test(specName, async () => {
       const subject = (x: number[]) => x[1]
       save.ignoreMismatch(1)
       const spy = await save(subject)
@@ -1695,8 +1695,8 @@ describe('ignoreMismatch', () => {
       await simulate.done()
     })
   })
-  incubator.sequence('in instantiate param', (title, { save, simulate }) => {
-    test(title, async () => {
+  incubator.sequence('in instantiate param', (specName, { save, simulate }) => {
+    test(specName, async () => {
       class Subject {
         constructor(private value: number) { }
         getValue() {
@@ -1718,8 +1718,8 @@ describe('ignoreMismatch', () => {
 })
 
 describe('maskValue', () => {
-  incubator.save('actual value is sent to the subject', (title, spec) => {
-    test(title, async () => {
+  incubator.save('actual value is sent to the subject', (specName, spec) => {
+    test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((value: string) => expect(value).toBe('secret'))
       s('secret')
@@ -1727,15 +1727,15 @@ describe('maskValue', () => {
     })
   })
 
-  incubator.save('call after spec throws', (title, spec) => {
-    test(title, async () => {
+  incubator.save('call after spec throws', (specName, spec) => {
+    test(specName, async () => {
       await spec(() => { })
       a.throws(() => spec.maskValue('secret'), InvokeMetaMethodAfterSpec)
     })
   })
 
-  incubator('not save masked value in log', { logLevel: logLevels.all }, (title, spec, reporter) => {
-    test(title, async () => {
+  incubator('not save masked value in log', { logLevel: logLevels.all }, (specName, spec, reporter) => {
+    test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((v: string) => v)
       s('secret')
@@ -1744,8 +1744,8 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('invoke returns masked value', (title, spec) => {
-    test(title, async () => {
+  incubator('invoke returns masked value', (specName, spec) => {
+    test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((v: string) => v)
       const actual = s('secret')
@@ -1754,8 +1754,8 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('get returns masked value', (title, spec) => {
-    test(title, async () => {
+  incubator('get returns masked value', (specName, spec) => {
+    test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec({ secret: 'secret' })
       expect(s.secret).toBe('******')
@@ -1763,8 +1763,8 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('against array', (title, spec) => {
-    test(title, async () => {
+  incubator('against array', (specName, spec) => {
+    test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((v: string) => [v, 'world'])
       expect(s('secret')).toEqual(['******', 'world'])
@@ -1772,8 +1772,8 @@ describe('maskValue', () => {
     })
   })
 
-  incubator('against object', (title, spec) => {
-    test(title, async () => {
+  incubator('against object', (specName, spec) => {
+    test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((value: string) => { return { value, b: 1 } })
       expect(s('secret')).toEqual({ value: '******', b: 1 })
@@ -1782,8 +1782,8 @@ describe('maskValue', () => {
   })
 
   describe('with string', () => {
-    incubator('replace with different string', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with different string', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue('secret', 'apple')
         const s = await spec({ secret: 'secret' })
         expect(s.secret).toBe('apple')
@@ -1791,8 +1791,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with callback', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with callback', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue('secret', () => 'apple')
         const s = await spec({ secret: 'secret' })
         expect(s.secret).toBe('apple')
@@ -1802,8 +1802,8 @@ describe('maskValue', () => {
   })
 
   describe('with regex', () => {
-    incubator('using default replaceWith', (title, spec) => {
-      test(title, async () => {
+    incubator('using default replaceWith', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(/secret/)
         const s = await spec((v: string) => v)
         expect(s('some secret message')).toBe('some ****** message')
@@ -1811,8 +1811,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('does not apply to numbers', (title, spec) => {
-      test(title, async () => {
+    incubator('does not apply to numbers', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(/1234/)
         const s = await spec((v: number) => v)
         expect(s(1234)).toBe(1234)
@@ -1820,8 +1820,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with string', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with string', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(/secret/, 'miku')
         const s = await spec((v: string) => v)
         expect(s('some secret message')).toBe('some miku message')
@@ -1829,8 +1829,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with callback', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with callback', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(/secret/, () => 'miku strike')
         const s = await spec((v: string) => v)
         expect(s('some secret message')).toBe('miku strike')
@@ -1840,8 +1840,8 @@ describe('maskValue', () => {
   })
 
   describe('with number', () => {
-    incubator('using default replaceWith', (title, spec) => {
-      test(title, async () => {
+    incubator('using default replaceWith', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(3)
         spec.maskValue(1234)
         const s = await spec((v: number) => v + 1)
@@ -1852,8 +1852,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with number', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with number', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(3, 1234)
         const s = await spec((v: number) => v + 1)
         expect(s(2)).toBe(1234)
@@ -1861,8 +1861,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with callback', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with callback', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue(3, () => 1234)
         const s = await spec((v: number) => v + 1)
         expect(s(2)).toBe(1234)
@@ -1872,8 +1872,8 @@ describe('maskValue', () => {
   })
 
   describe('with predicate', () => {
-    incubator('using default replaceWith for number', (title, spec) => {
-      test(title, async () => {
+    incubator('using default replaceWith for number', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue((v: number) => v > 100)
         const s = await spec((v: number) => v + 1)
         expect(s(100)).toBe(777)
@@ -1881,8 +1881,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('using default replaceWith for string', (title, spec) => {
-      test(title, async () => {
+    incubator('using default replaceWith for string', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue((v: string) => v === 'secret')
         const s = await spec((v: string) => v)
         expect(s('secret')).toBe('******')
@@ -1890,8 +1890,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with number', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with number', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue((v: number) => v > 100, 999)
         const s = await spec((v: number) => v + 1)
         expect(s(100)).toBe(999)
@@ -1899,8 +1899,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with string', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with string', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue((v: string) => v === 'abcd', '*.*')
         const s = await spec((v: string) => v)
         expect(s('abcd')).toBe('*.*')
@@ -1908,8 +1908,8 @@ describe('maskValue', () => {
       })
     })
 
-    incubator('replace with callback', (title, spec) => {
-      test(title, async () => {
+    incubator('replace with callback', (specName, spec) => {
+      test(specName, async () => {
         spec.maskValue((v: string) => v === 'abcd', () => '*.*')
         const s = await spec((v: string) => v)
         expect(s('abcd')).toBe('*.*')

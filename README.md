@@ -252,8 +252,8 @@ import { activate } from './your-plugin'
 
 incubator.config({ plugins: [['your-plugin', activate]] })
 
-incubator('some test', (title, spec) => {
-  test(title, async () => {
+incubator('some test', (specName, spec) => {
+  test(specName, async () => {
     const s = await spec(YourPluginSubject)
     const actual = specificUsage(s)
     expect(actual).toBe(true)

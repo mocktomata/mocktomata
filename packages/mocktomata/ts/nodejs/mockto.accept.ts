@@ -22,7 +22,7 @@ mockto.simulate('', (_, spec) => {
   })
 })
 
-mockto.save(`type %s is not specable`, (title, spec) => {
+mockto.save(`type %s is not specable`, (specName, spec) => {
   test.each<[any, any]>([
     ['undefined', undefined],
     ['null', null],
@@ -31,7 +31,7 @@ mockto.save(`type %s is not specable`, (title, spec) => {
     ['symbol', Symbol()],
     ['string', 'string'],
     ['array', []]
-  ])(title, async ([, value]) => {
+  ])(specName, async ([, value]) => {
     await a.throws(() => spec(value), NotSpecable)
   })
 })
@@ -44,9 +44,9 @@ mockto.simulate('not exist', (_, spec) => {
 
 test.todo('plugin with passive spy (same as subject spy)')
 
-mockto('calling handler without options', (title, spec) => {
-  test(title, async () => {
-    expect(title).toEqual('calling handler without options')
+mockto('calling handler without options', (specName, spec) => {
+  test(specName, async () => {
+    expect(specName).toEqual('calling handler without options')
     const subject = await spec((x: number) => x)
     expect(subject(3)).toBe(3)
 
@@ -54,9 +54,9 @@ mockto('calling handler without options', (title, spec) => {
   })
 })
 
-mockto('calling handler with options', { timeout: 100 }, (title, spec) => {
-  test(title, async () => {
-    expect(title).toEqual('calling handler with options')
+mockto('calling handler with options', { timeout: 100 }, (specName, spec) => {
+  test(specName, async () => {
+    expect(specName).toEqual('calling handler with options')
     const subject = await spec((x: number) => x)
     expect(subject(3)).toBe(3)
 

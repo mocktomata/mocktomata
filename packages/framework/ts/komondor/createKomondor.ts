@@ -9,18 +9,38 @@ import { initTimeTrackers } from '../timeTracker/index.js'
 import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 
-export namespace createKomondor {
-  export type Komondor = KomondorFn & {
-    live: KomondorFn,
-    save: KomondorFn,
-    simulate: KomondorFn,
-    teardown(): Promise<void>
-  }
-
-  export type KomondorFn = (specName: string, options?: Spec.Options) => Spec & { reporter: MemoryLogReporter }
+/**
+ * Creates a `Spec` that runs in auto mode to simulate the behavior of your code.
+ */
+export type Komondor = Komondor.Fn & {
+  /**
+   * Creates a `Spec` that runs in live mode.
+   */
+  live: Komondor.Fn,
+  /**
+   * Creates a `Spec` that runs in save mode.
+   */
+  save: Komondor.Fn,
+  /**
+   * Creates a `Spec` that runs in simulate mode.
+   */
+  simulate: Komondor.Fn,
+  /**
+   * Clean up the system in case some `spec.done()` are not called.
+   */
+  teardown(): Promise<void>
 }
 
-export function createKomondor(context: AsyncContext<Mocktomata.Context>): createKomondor.Komondor {
+export namespace Komondor {
+  export type Fn = (specName: string, options?: Spec.Options) => Spec & {
+    /**
+     * An in-memory reporter containing the logs for inspection.
+     */
+    reporter: MemoryLogReporter
+  }
+}
+
+export function createKomondor(context: AsyncContext<Mocktomata.Context>): Komondor {
   const ctx = context
     .extend(loadConfig)
     .extend(loadPlugins)

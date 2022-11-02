@@ -51,16 +51,16 @@ ${configFilenames.map(c => `- ${c}`).join('\n')}`)
       if (typeof m.activate !== 'function') throw new PluginModuleNotConforming(name)
       return m
     },
-    async readSpec(title: string, invokePath: string): Promise<SpecRecord> {
+    async readSpec(specName: string, invokePath: string): Promise<SpecRecord> {
       try {
-        return JSON.parse(readSpec(specFolder, title, invokePath))
+        return JSON.parse(readSpec(specFolder, specName, invokePath))
       }
       catch (e: any) {
-        throw new SpecNotFound(title, invokePath)
+        throw new SpecNotFound(specName, invokePath)
       }
     },
-    async writeSpec(title, invokePath, record) {
-      return writeSpec(specFolder, title, invokePath, JSON.stringify(record))
+    async writeSpec(specName, invokePath, record) {
+      return writeSpec(specFolder, specName, invokePath, JSON.stringify(record))
     },
   }
 }

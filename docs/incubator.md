@@ -6,8 +6,8 @@ This is the user manual for `incubator`.
 
 - [`incubator`](#incubator)
   - [`incubator.config()`](#incubatorconfig)
-  - [`incubator(specName, (title, spec) => void)`](#incubatorspecname-title-spec--void)
-  - [`incubator.sequence(specName, (title, { save, simulate }) => void)`](#incubatorsequencespecname-title--save-simulate---void)
+  - [`incubator(specName, (specName, spec) => void)`](#incubatorspecname-specname-spec--void)
+  - [`incubator.sequence(specName, (specName, { save, simulate }) => void)`](#incubatorsequencespecname-specname--save-simulate---void)
 
 ## `incubator.config()`
 
@@ -30,16 +30,16 @@ As shown in the example above, you can load other plugins to create a specific t
 
 Note that the general configuration mechanism does not affect `incubator`.
 
-## `incubator(specName, (title, spec) => void)`
+## `incubator(specName, (specName, spec) => void)`
 
 This is the basic usage of `incubator`.
 
-It will call the handler (`(title, spec) => void`) twice.
+It will call the handler (`(specName, spec) => void`) twice.
 First in `save` mode, second in `simulate` mode.
 
 This make sure the plugin supports the test scenario correctly.
 
-## `incubator.sequence(specName, (title, { save, simulate }) => void)`
+## `incubator.sequence(specName, (specName, { save, simulate }) => void)`
 
 Allow you to run `spec` in `save` mode and in `simulate` mode sequentially.
 This is useful for writing negative tests for plugins.

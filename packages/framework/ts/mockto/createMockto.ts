@@ -11,15 +11,31 @@ import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { resolveMocktoFnArgs } from './resolveMocktoFnArgs.js'
 
-export namespace createMockto {
-  export type Mockto = MocktoFn & {
-    live: MocktoFn,
-    save: MocktoFn,
-    simulate: MocktoFn,
-    teardown(): Promise<void>
-  }
 
-  export type MocktoFn = {
+/**
+ * Create a `Spec` that runs in auto mode.
+ */
+export type Mockto = Mockto.Fn & {
+  /**
+   * Create a `Spec` that runs in live mode.
+   */
+  live: Mockto.Fn,
+  /**
+   * Create a `Spec` that runs in save mode.
+   */
+  save: Mockto.Fn,
+  /**
+   * Create a `Spec` that runs in simulate mode.
+   */
+  simulate: Mockto.Fn,
+  /**
+   * Clean up the system in case some `spec.done()` are not called.
+   */
+  teardown(): Promise<void>
+}
+
+export namespace Mockto {
+  export type Fn = {
     /**
      * Creates an automatic spec.
      * Automatic spec will record and save a record in the first run.
@@ -31,7 +47,7 @@ export namespace createMockto {
   }
 }
 
-export function createMockto(context: AsyncContext<Mocktomata.Context>): createMockto.Mockto {
+export function createMockto(context: AsyncContext<Mocktomata.Context>): Mockto {
   const ctx = context
     .extend(loadConfig)
     .extend(loadPlugins)
@@ -64,5 +80,5 @@ export function createMocktoFn(context: AsyncContext<LoadedContext>, mode?: Spec
           .extend(createLogContext)),
       reporter)
   }
-  return specFn as createMockto.MocktoFn
+  return specFn as Mockto.Fn
 }

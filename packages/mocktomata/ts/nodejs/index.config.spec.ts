@@ -1,4 +1,4 @@
-import { createMockto, createTestIO, Spec } from '@mocktomata/framework'
+import { createMockto, createTestIO, Mockto, Spec } from '@mocktomata/framework'
 import { MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_MODE, MOCKTOMATA_SPEC_NAME_FILTER } from '@mocktomata/nodejs'
 import a from 'assertron'
 import { logLevels, MemoryLogReporter } from 'standard-log'
@@ -19,15 +19,15 @@ afterEach(() => {
   delete process.env[MOCKTOMATA_SPEC_NAME_FILTER]
 })
 
-mockto('config() can only be called before using mockto', (title, spec) => {
-  test(title, async () => {
+mockto('config() can only be called before using mockto', (specName, spec) => {
+  test(specName, async () => {
     await spec({})
     a.throws(() => config({}), CannotConfigAfterUsed)
   })
 })
 
 describe('config with config()', () => {
-  let mockto: createMockto.Mockto
+  let mockto: Mockto
   afterEach(() => mockto?.teardown())
 
   test('override to live mode', async () => {
@@ -72,7 +72,7 @@ describe('config with config()', () => {
 })
 
 describe('config with env', () => {
-  let mockto: createMockto.Mockto
+  let mockto: Mockto
   afterEach(() => {
     if (mockto) return mockto.teardown()
   })
