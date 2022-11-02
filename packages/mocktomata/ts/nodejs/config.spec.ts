@@ -4,10 +4,8 @@ import a from 'assertron'
 import { logLevels, MemoryLogReporter } from 'standard-log'
 import { CannotConfigAfterUsed, config, mockto } from '../index.js'
 import { createContext } from './createContext.js'
-import { store } from './store.js'
 
 beforeEach(() => {
-  store.reset()
   delete process.env[MOCKTOMATA_MODE]
   delete process.env[MOCKTOMATA_LOG_LEVEL]
   delete process.env[MOCKTOMATA_FILE_PATH_FILTER]
@@ -15,7 +13,6 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  store.reset()
   delete process.env[MOCKTOMATA_MODE]
   delete process.env[MOCKTOMATA_LOG_LEVEL]
   delete process.env[MOCKTOMATA_FILE_PATH_FILTER]
