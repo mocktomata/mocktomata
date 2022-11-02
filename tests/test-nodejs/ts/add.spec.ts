@@ -4,8 +4,8 @@ import { Calculator } from './Calculator.js'
 
 afterAll(() => mockto.teardown())
 
-mockto('1 + 1 = 2', (title, spec) => {
-  test(title, async () => {
+mockto('1 + 1 = 2', (specName, spec) => {
+  test(specName, async () => {
     const subject = await spec(axios.default)
     const calc = new Calculator(subject)
     const actual = await calc.add(1, 1)

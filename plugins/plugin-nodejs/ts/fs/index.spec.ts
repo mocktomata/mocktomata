@@ -3,8 +3,8 @@ import { dirname } from 'dirname-filename-esm'
 import fs from 'fs'
 import path from 'path'
 
-incubator('readFileSync in string', (title, spec) => {
-  test(title, async () => {
+incubator('readFileSync in string', (specName, spec) => {
+  test(specName, async () => {
     const sfs = await spec(fs)
 
     const filePath = getFixturePath('dummy.txt')
@@ -14,8 +14,8 @@ incubator('readFileSync in string', (title, spec) => {
   })
 })
 
-incubator('readFileSync in Buffer', (title, spec) => {
-  test(title, async () => {
+incubator('readFileSync in Buffer', (specName, spec) => {
+  test(specName, async () => {
     const sfs = await spec(fs)
 
     const filePath = getFixturePath('dummy.txt')

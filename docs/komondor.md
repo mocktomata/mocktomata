@@ -43,12 +43,12 @@ Always run the spec in `live` mode.
 Actual calls will be made, and the behavior is not recorded.
 These specs are not affected by configuration.
 
-## `komondor.save(specName, [options], (title, spec) => void)`
+## `komondor.save(specName, [options], (specName, spec) => void)`
 
 Always run the spec in `save` mode regardless if a spec record exists or not.
 These specs are not affected by configuration.
 
-## `komondor.simulate(specName, [options], (title, spec) => void)`
+## `komondor.simulate(specName, [options], (specName, spec) => void)`
 
 Always run the spec in `simulate` mode.
 These specs are not affected by configuration.

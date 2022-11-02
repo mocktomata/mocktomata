@@ -4,15 +4,15 @@ import { logLevels, MemoryLogReporter } from 'standard-log'
 import { createTestContext, incubator, Spec, SpecNotFound } from '../index.js'
 import { createIncubator } from './createIncubator.js'
 
-incubator('can specify log level', { logLevel: logLevels.none }, (title, spec) => {
-  test(title, async () => {
+incubator('can specify log level', { logLevel: logLevels.none }, (specName, spec) => {
+  test(specName, async () => {
     await spec(() => { })
     await spec.done()
   })
 })
 
-incubator.save('save', (title, spec) => {
-  test(title, async () => {
+incubator.save('save', (specName, spec) => {
+  test(specName, async () => {
     const subject = await spec({ a: 1 })
     expect(subject.a).toBe(1)
     subject.a = 2
@@ -21,15 +21,15 @@ incubator.save('save', (title, spec) => {
   })
 })
 
-incubator.simulate('simulate', (title, spec) => {
-  test(title, async () => {
+incubator.simulate('simulate', (specName, spec) => {
+  test(specName, async () => {
     a.throws(() => spec({ a: 1 }), SpecNotFound)
   })
 })
 
-incubator('duo', (title, spec) => {
+incubator('duo', (specName, spec) => {
   const o = new AssertOrder(1)
-  test(title, async () => {
+  test(specName, async () => {
     const s = await spec((x: number) => {
       o.once(1)
       return x + 1
@@ -39,9 +39,9 @@ incubator('duo', (title, spec) => {
   })
 })
 
-incubator('duo with option', { timeout: 200 }, (title, spec) => {
+incubator('duo with option', { timeout: 200 }, (specName, spec) => {
   const o = new AssertOrder(1)
-  test(title, async () => {
+  test(specName, async () => {
     const s = await spec((x: number) => {
       o.once(1)
       return x + 1
@@ -54,8 +54,8 @@ incubator('duo with option', { timeout: 200 }, (title, spec) => {
 describe('reporter', () => {
   const { context } = createTestContext()
   const incubator = createIncubator(context)
-  incubator.sequence('gets memory log reporter', { logLevel: logLevels.all }, (title, { save, simulate }, reporter) => {
-    test(title, async () => {
+  incubator.sequence('gets memory log reporter', { logLevel: logLevels.all }, (specName, { save, simulate }, reporter) => {
+    test(specName, async () => {
       const subject = { a: 1 }
       const spy = await save(subject)
       expect(spy.a).toBe(1)

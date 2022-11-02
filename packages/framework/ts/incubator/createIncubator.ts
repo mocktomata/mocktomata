@@ -23,12 +23,12 @@ export namespace createIncubator {
     (specName: string, handler: Handler): void,
     (specName: string, options: Spec.Options, handler: Handler): void,
   }
-  export type Handler = (title: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
+  export type Handler = (specName: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
   export type SequenceFn = {
     (specName: string, handler: SequenceHandler): void,
     (specName: string, options: Spec.Options, handler: SequenceHandler): void,
   }
-  export type SequenceHandler = (title: string, specs: { save: Spec, simulate: Spec }, reporter: MemoryLogReporter) => void
+  export type SequenceHandler = (specName: string, specs: { save: Spec, simulate: Spec }, reporter: MemoryLogReporter) => void
   export type ConfigOptions = {
     plugins: Array<string | [pluginName: string, activate: ((context: SpecPlugin.ActivationContext) => any)]>
   }

@@ -1,9 +1,7 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.1.1/schema.json",
   "changelog": "@changesets/cli/changelog",
-  "commit": [
-    "./commit.cjs", { "skipCI": "version" }
-  ],
+  "commit": false,
   "title": "chore: version packages",
   "fixed": [
     [

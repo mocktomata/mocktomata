@@ -5,10 +5,22 @@ import type { SpecRecord } from '../spec-record/types.js'
 import type { TimeTracker } from '../timeTracker/index.js'
 
 export type Spec = {
+  /**
+   * Creates a spec'd subject to capture or replay the behavior
+   */
   <S>(subject: S): Promise<S>,
+  /**
+   * The current mode of the spec.
+   */
   readonly mode: Spec.Mode,
+  /**
+   * Indicates the spec completes.
+   */
   done(): Promise<void>,
-  ignoreMismatch(value: any): void,
+  ignoreMismatch(value: unknown): void,
+  /**
+   * Mask some sensitive value and optionally specify what to replace with.
+   */
   maskValue(value: number, replaceWith?: number | ((sensitive: number) => number)): void,
   maskValue(value: string, replaceWith?: string | ((sensitive: string) => string)): void,
   maskValue(value: RegExp, replaceWith?: string | ((sensitive: RegExpMatchArray) => string)): void,
@@ -40,7 +52,6 @@ export namespace Spec {
   }
 
   export type IO = {
-    // getConfig(): Promise<Config>,
     /**
      * Read spec record.
      * @param specRelativePath file path of where the spec was used relative to:
@@ -63,7 +74,7 @@ export namespace Spec {
 
   export type Mode = 'live' | 'save' | 'simulate' | 'auto'
 
-  export type Handler = (title: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
+  export type Handler = (specName: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
 
   export type Options = {
     /**

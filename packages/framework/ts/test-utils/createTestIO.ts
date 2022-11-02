@@ -35,8 +35,8 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
       if (!record) return Promise.reject(new SpecNotFound(specName, specRelativePath))
       return Promise.resolve(JSON.parse(record))
     },
-    async writeSpec(title, _specRelativePath, record) {
-      specStore.set(title, JSON.stringify(record))
+    async writeSpec(specName, _specRelativePath, record) {
+      specStore.set(specName, JSON.stringify(record))
     },
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       modules[moduleName] = pluginModule
