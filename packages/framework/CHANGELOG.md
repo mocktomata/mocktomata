@@ -1,5 +1,51 @@
 # Change Log
 
+## 7.0.0-beta.12
+
+### Major Changes
+
+- 54a090c: Add `defineParameterType()`.
+  The step definition is changed to use the same syntax as in `cucumber`.
+
+  It is more flexible and concise, and support extensions.
+
+### Minor Changes
+
+- 16a4dff: Add `incubator.teardown()`
+  You normally don't need to do this.
+  But if there is a bug that cause NodeJS to complain about some event leak,
+  this function can be used to clean up.
+
+  Use it during `afterAll()`:
+
+  ```ts
+  afterall(() => incubator.teardown());
+  ```
+
+  Update `standard-log`.
+  Update `async-fp`
+  Update `type-plus`
+
+  Add spec based logger.
+  Now each spec will have its own logger,
+  making it easier to figure out which spec the log comes from.
+
+  The handlers get a `reporter` which you can inspect the logs within the test.
+
+### Patch Changes
+
+- 93e654c: Rename packages:
+
+  - `@mocktomata/file-server` -> `@mocktomata/service`
+  - `@mocktomata/io-client` -> `@mocktomata/io-remote`
+  - `@mocktomata/io-fs` -> `@mocktomata/nodejs`
+
+  Remove package:
+
+  - `@mocktomata/io-local`: moved inside `@mocktomata/nodejs`
+
+- 6dd32fb: fix!: export ESM only
+
 ## 7.0.0-beta.11
 
 All notable changes to this project will be documented in this file.

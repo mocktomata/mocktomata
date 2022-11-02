@@ -1,5 +1,30 @@
 # Change Log
 
+## 7.0.0-beta.12
+
+### Patch Changes
+
+- b73a048: Move cli code to `@mocktomata/cli`
+- 93e654c: Rename packages:
+
+  - `@mocktomata/file-server` -> `@mocktomata/service`
+  - `@mocktomata/io-client` -> `@mocktomata/io-remote`
+  - `@mocktomata/io-fs` -> `@mocktomata/nodejs`
+
+  Remove package:
+
+  - `@mocktomata/io-local`: moved inside `@mocktomata/nodejs`
+
+- 6dd32fb: fix!: export ESM only
+- Updated dependencies [54a090c]
+- Updated dependencies [93e654c]
+- Updated dependencies [6dd32fb]
+- Updated dependencies [16a4dff]
+  - @mocktomata/framework@7.0.0-beta.12
+  - @mocktomata/io-remote@7.0.0-beta.12
+  - @mocktomata/nodejs@7.0.0-beta.12
+  - @mocktomata/service@7.0.0-beta.12
+
 ## 7.0.0-beta.11
 
 ### Patch Changes

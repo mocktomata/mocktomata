@@ -9,9 +9,15 @@
     "mocktomata": "7.0.0-beta.10",
     "@mocktomata/plugin-node-fetch": "1.1.10",
     "@mocktomata/plugin-nodejs": "0.1.10",
-    "@mocktomata/test-nodejs": "0.1.10"
+    "@mocktomata/test-nodejs": "0.1.10",
+    "@mocktomata/cli": "7.0.0-beta.11"
   },
   "changesets": [
-    "curvy-plums-rhyme"
+    "big-steaks-bake",
+    "curvy-plums-rhyme",
+    "hip-falcons-smash",
+    "rotten-readers-admire",
+    "shiny-peas-lay",
+    "sweet-bulldogs-smash"
   ]
 }
