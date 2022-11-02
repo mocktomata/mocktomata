@@ -38,7 +38,7 @@
     "watch": "yarn test:watch"
   },
   "dependencies": {
-    "async-fp": "^1.2.0",
+    "async-fp": "^8.0.0",
     "global-store": "^1.0.0-beta.14",
     "iso-error": "^2.0.0",
     "ramda": "^0.27.0",
