@@ -1,5 +1,5 @@
 ---
-"@mocktomata/file-server": patch
+"@mocktomata/service": patch
 ---
 
 Update `boom` to `@hapi/boom`
