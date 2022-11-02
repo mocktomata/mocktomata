@@ -26,6 +26,7 @@
     "postpack": "pinst --enable",
     "prepack": "pinst --disable",
     "publish": "pnpm publish -r --publish-branch beta && changeset tag",
+    "release": "pnpm build && changeset release",
     "service": "pnpm --filter @mocktomata/service",
     "test:browser": "pnpm --filter mocktomata test:browser",
     "test:electron": "cross-env JEST_ENV=electron jest --maxWorkers=60%",
