@@ -107,12 +107,12 @@ By the way, I have an alias `mt` if that's what you prefer.
 
 ## `komondor`
 
-Hi, I'm `komondor`.
+Hi, This is `komondor`.
 
 <!-- markdownlint-disable-next-line -->
 I used to be a guard dog. <img src="./../../images/komondor.jpg" alt="komondor" width="20"/>
 
-BUt now, I'm one of the four automata in the [mocktomata] family.
+But nowadays, I'm one of the four automata in the [mocktomata] family.
 
 I also have an alias `kd` if you think my name is too long.
 
@@ -227,12 +227,12 @@ Come check out my [user manual][`zucchini`] at a hurry!
 
 ## Incubator
 
-Hi, I am [`incubator`]. One of four automata in the [mocktomata] family.
+Greetings, I am [`incubator`]. One of four automata in the [mocktomata] family.
 
-I'm specialize in writing [plugins][plugin].
+I specialize in helping you to create [plugins][plugin].
 
 While [mocktomata] is very capable out of the box,
-there will be situations where the default behavior is not sufficient.
+there could be situations where the default behavior is not sufficient.
 
 Here is where [plugin] comes in.
 
@@ -247,7 +247,7 @@ And I'm here to help.
 Here is an example:
 
 ```ts
-import { incubator } from 'mocktomata'
+import { incubator } from '@mocktomata/framework'
 import { activate } from './your-plugin'
 
 incubator.config({ plugins: [['your-plugin', activate]] })
