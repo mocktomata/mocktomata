@@ -1,4 +1,6 @@
 name: nektos/act-manual
+on:
+  workflow_dispatch:
 jobs:
   act-local:
     runs-on: ubuntu-latest
