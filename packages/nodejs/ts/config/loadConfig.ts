@@ -1,8 +1,7 @@
 import fs from 'fs'
 import json5 from 'json5'
 import path from 'path'
-import { MOCKTOMATA_MODE, MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_SPEC_NAME_FILTER } from './constants.js'
-
+import { loadConfigFromEnv } from './loadConfigFromEnv.js'
 export namespace loadConfig {
   export type Context = { cwd: string }
 }
@@ -15,28 +14,8 @@ export async function loadConfig(context: loadConfig.Context) {
       loadFromPackageJson(context),
       ...loadFromJson(context),
     ].filter(Boolean) as Array<[string, unknown]>,
-    loadFromEnv(context)
+    loadConfigFromEnv()
   ] as const
-}
-
-function loadFromEnv(_: Context): [string, any] {
-  return ['env', reduceOr([
-    ['overrideMode', process.env[MOCKTOMATA_MODE]],
-    ['logLevel', process.env[MOCKTOMATA_LOG_LEVEL]],
-    ['filePathFilter', process.env[MOCKTOMATA_FILE_PATH_FILTER]],
-    ['specNameFilter', process.env[MOCKTOMATA_SPEC_NAME_FILTER]]
-  ])]
-}
-
-function reduceOr<V>(values: Array<[string, V] | undefined>) {
-  const result = values.reduce((p, v) => {
-    if (v === undefined) return p
-    const value = v[1]
-    if (value === undefined) return p
-    p[v[0]] = value
-    return p
-  }, {} as Record<string, unknown>)
-  return Object.keys(result).length === 0 ? undefined : result
 }
 
 function loadFromPackageJson({ cwd }: Context): [string, any] | undefined {
