@@ -11,10 +11,10 @@ describe(`mockto`, () => {
 
   describe(`mockto.live()`, () => {
     test('live with no options', () => {
-      const specName = 'live with no options'
+      const specNameInput = 'live with no options'
       return new Promise<void>(a => {
-        mockto.live(specName, async (specName, spec) => {
-          expect(specName).toEqual(specName)
+        mockto.live(specNameInput, async (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
           const s = await spec((x: number) => x + 1)
           expect(s(1)).toBe(2)
           await spec.done()
@@ -24,10 +24,10 @@ describe(`mockto`, () => {
     })
 
     test('live with options', () => {
-      const specName = 'live with options'
+      const specNameInput = 'live with options'
       return new Promise<void>(a => {
-        mockto.live(specName, { timeout: 2000 }, (specName, spec) => {
-          expect(specName).toEqual(specName)
+        mockto.live(specNameInput, { timeout: 2000 }, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
           spec((x: number) => x + 1).then(s => {
             expect(s(1)).toBe(2)
             a()
@@ -53,10 +53,10 @@ describe(`mockto`, () => {
   })
 
   test('save with no options', async () => {
-    const specName = 'save with no options'
+    const specNameInput = 'save with no options'
     await new Promise<void>(a => {
-      mockto.save(specName, (specName, spec) => {
-        expect(specName).toEqual(specName)
+      mockto.save(specNameInput, (specName, spec) => {
+        expect(specName).toEqual(specNameInput)
         spec((x: number) => x + 1).then(async s => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -66,15 +66,15 @@ describe(`mockto`, () => {
     })
 
     const { io } = await context.get()
-    const record = await io.readSpec(specName, getCallerRelativePath(() => { }))
+    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
     expect(record).not.toBeUndefined()
   })
 
   test('save with options', async () => {
-    const specName = 'save with options'
+    const specNameInput = 'save with options'
     await new Promise<void>(a => {
-      mockto.save(specName, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(specName)
+      mockto.save(specNameInput, { timeout: 100 }, (specName, spec) => {
+        expect(specName).toEqual(specNameInput)
         spec((x: number) => x + 1).then(async s => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -84,15 +84,15 @@ describe(`mockto`, () => {
     })
 
     const { io } = await context.get()
-    const record = await io.readSpec(specName, getCallerRelativePath(() => { }))
+    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
     expect(record).not.toBeUndefined()
   })
 
   test('simulate with no options', async () => {
-    const specName = 'simulate with no options'
+    const specNameInput = 'simulate with no options'
     await new Promise<void>(r => {
-      mockto.simulate(specName, (specName, spec) => {
-        expect(specName).toEqual(specName)
+      mockto.simulate(specNameInput, (specName, spec) => {
+        expect(specName).toEqual(specNameInput)
         a.throws(() => spec((x: number) => x + 1), SpecNotFound)
         r()
       })
@@ -100,10 +100,10 @@ describe(`mockto`, () => {
   })
 
   test('simulate with options', async () => {
-    const specName = 'simulate with options'
+    const specNameInput = 'simulate with options'
     await new Promise<void>(r => {
-      mockto.simulate(specName, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(specName)
+      mockto.simulate(specNameInput, { timeout: 100 }, (specName, spec) => {
+        expect(specName).toEqual(specNameInput)
         a.throws(() => spec((x: number) => x + 1), SpecNotFound)
         r()
       })
@@ -111,10 +111,10 @@ describe(`mockto`, () => {
   })
 
   test('auto with no options', async () => {
-    const specName = 'auto with no options'
+    const specNameInput = 'auto with no options'
     await new Promise<void>(a => {
-      mockto(specName, (specName, spec) => {
-        expect(specName).toEqual(specName)
+      mockto(specNameInput, (specName, spec) => {
+        expect(specName).toEqual(specNameInput)
         spec((x: number) => x + 1).then(async s => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -124,11 +124,11 @@ describe(`mockto`, () => {
     })
 
     const { io } = await context.get()
-    const record = await io.readSpec(specName, getCallerRelativePath(() => { }))
+    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
     expect(record).not.toBeUndefined()
 
     await new Promise<void>(a => {
-      mockto(specName, (_, spec) => {
+      mockto(specNameInput, (_, spec) => {
         spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -139,10 +139,10 @@ describe(`mockto`, () => {
   })
 
   test('auto with options', async () => {
-    const specName = 'auto with options'
+    const specNameInput = 'auto with options'
     await new Promise<void>(a => {
-      mockto(specName, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(specName)
+      mockto(specNameInput, { timeout: 100 }, (specName, spec) => {
+        expect(specName).toEqual(specNameInput)
         spec((x: number) => x + 1).then(async s => {
           expect(s(1)).toBe(2)
           await spec.done()
@@ -152,11 +152,11 @@ describe(`mockto`, () => {
     })
 
     const { io } = await context.get()
-    const record = await io.readSpec(specName, getCallerRelativePath(() => { }))
+    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
     expect(record).not.toBeUndefined()
 
     await new Promise<void>(a => {
-      mockto(specName, { timeout: 100 }, (_, spec) => {
+      mockto(specNameInput, { timeout: 100 }, (_, spec) => {
         spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
           expect(s(1)).toBe(2)
           await spec.done()
