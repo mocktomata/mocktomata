@@ -6,7 +6,6 @@
     "outDir": "cjs"
   },
   "exclude": [
-    "**/*.spec.*",
-    "./ts/test_util/fixturePath.ts"
+    "**/*.spec.*"
   ]
 }

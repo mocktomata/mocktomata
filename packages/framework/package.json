@@ -15,6 +15,7 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
     "import": "./esm/index.js",
