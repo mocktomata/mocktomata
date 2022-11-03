@@ -7,7 +7,7 @@ import { existsSync } from 'node:fs'
 import { createStandardLogForTest } from 'standard-log'
 import { MOCKTOMATA_FILE_PATH_FILTER, MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_MODE, MOCKTOMATA_SPEC_NAME_FILTER } from './config/constants.js'
 import { createIO } from './createIO.js'
-import { fixturePath } from './util/fixturePath.js'
+import { fixturePath } from './test_util/fixturePath.js'
 import { ensureFileNotExist } from './util/fs.js'
 
 describe(`${createIO.name}()`, () => {

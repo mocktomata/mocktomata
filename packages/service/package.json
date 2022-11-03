@@ -15,18 +15,24 @@
     "name": "Homa Wong",
     "email": "homawong@gmail.com"
   },
+  "sideEffects": false,
   "type": "module",
   "exports": {
-    "import": "./esm/index.js"
+    "import": "./esm/index.js",
+    "require": "./cjs/index.js"
   },
   "types": "./esm/index.d.ts",
   "files": [
+    "cjs",
     "esm",
-    "ts"
+    "ts",
+    "!**/*.spec.*"
   ],
   "scripts": {
-    "build": "tsc",
-    "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
+    "build": "run-p build:cjs build:esm",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc",
+    "clean": "rimraf cjs coverage esm lib libm tslib *.tsbuildinfo",
     "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --reporters=default",
     "depcheck": "depcheck",
     "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
