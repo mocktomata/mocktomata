@@ -1,5 +1,12 @@
 # @mocktomata/cli
 
+## 7.0.0-beta.13
+
+### Patch Changes
+
+- Updated dependencies [24b61b1]
+  - @mocktomata/service@7.0.0-beta.13
+
 ## 7.0.0-beta.12
 
 ### Patch Changes
