@@ -1,5 +1,14 @@
 # Change Log
 
+## 7.0.0-beta.14
+
+### Patch Changes
+
+- re-release
+- Updated dependencies
+  - @mocktomata/nodejs@7.0.0-beta.14
+  - @mocktomata/framework@7.0.0-beta.14
+
 ## 7.0.0-beta.13
 
 ### Patch Changes
