@@ -8,7 +8,7 @@ import { Mocktomata } from '../index.js'
 export function createContext(options?: { io?: Mocktomata.IO, log?: Logger }) {
   const configurator = createConfigurator()
 
-  const context = new AsyncContext(async () => {
+  const context = new AsyncContext(() => {
     const log = options?.log || createStandardLog({ reporters: [createColorLogReporter()] })
       .getLogger('mocktomata')
     const cwd = process.cwd()
