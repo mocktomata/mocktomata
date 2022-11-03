@@ -1,5 +1,18 @@
 # Change Log
 
+## 7.0.0-beta.13
+
+### Patch Changes
+
+- 24b61b1: Distribute CJS.
+  There are dependencies still on in ESM,
+  so forcing ESM only means tools like `jest` need to go through a lot to get things working.
+- Updated dependencies [24b61b1]
+  - @mocktomata/framework@7.0.0-beta.13
+  - @mocktomata/io-remote@7.0.0-beta.13
+  - @mocktomata/nodejs@7.0.0-beta.13
+  - @mocktomata/service@7.0.0-beta.13
+
 ## 7.0.0-beta.12
 
 ### Patch Changes
