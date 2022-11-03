@@ -35,7 +35,7 @@
   ],
   "scripts": {
     "build": "run-p build:cjs build:esm",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:cjs": "tsc -p ./tsconfig.cjs.json && ncp package.cjs.json cjs/package.json",
     "build:esm": "tsc",
     "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
     "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --reporters=default",
@@ -75,6 +75,7 @@
     "jest-watch-suspend": "^1.1.2",
     "jest-watch-toggle-config": "^2.0.1",
     "jest-watch-typeahead": "^2.2.0",
+    "ncp": "^2.0.0",
     "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.2",
     "standard-log": "^11.2.1",

@@ -35,7 +35,7 @@
     "test:watch": "jest --watch --maxWorkers=60%",
     "test-nodejs": "pnpm --filter @mocktomata/test-nodejs",
     "test": "turbo run test",
-    "verify": "turbo run verify",
+    "verify": "turbo run build lint coverage depcheck size",
     "version": "changeset version",
     "watch:browser": "cd packages/mocktomata && pnpm run run test:watch:browser",
     "watch:electron": "cross-env JEST_ENV=electron pnpm run test:watch",

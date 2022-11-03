@@ -2,7 +2,7 @@ const base = require('../../.jest/jest.nodejs')
 
 module.exports = {
   ...base,
-  displayName: 'file-server',
+  displayName: 'service',
   transformIgnorePatterns: [
     'node_modules/(?!(node-fetch))'
   ]
