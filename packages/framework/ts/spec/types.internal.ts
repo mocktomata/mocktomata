@@ -57,6 +57,18 @@ export type SpecRecordLive = {
 
 export namespace SpecRecordLive {
   export type Reference = SpecRecord.Reference & {
+    /**
+     * The actual subject of the reference.
+     */
+    subject?: any,
+    /**
+     * The test double (spy, or stub) or the subject.
+     * Created by a specific plugin.
+     */
+    testDouble?: any,
+    /**
+     * Not being used atm. May remove.
+     */
     overrideProfiles: SpecRecord.SubjectProfile[],
   }
   export type Action = SpecRecord.Action

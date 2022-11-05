@@ -18,9 +18,6 @@ export namespace SpecRecord {
      */
     plugin: string,
     profile: SubjectProfile,
-    subject?: any,
-
-    testDouble?: any,
     /**
      * Meta data supplied by the plugin.
      */
@@ -59,8 +56,11 @@ export namespace SpecRecord {
   }
 
   /**
-   * Subject profile.
-   * Depends on the profile, the default performer of actions are different.
+   * This profile describes what kind of subject we are dealing with.
+   *
+   * - `target`: It's the spec subject. The `target` that we are simulating (`spec(target)`).
+   * - `input`: It's a subject that pass into the system from user
+   * - `output`: It's a subject that returns from the system (e.g. from the `target`)**
    */
   export type SubjectProfile = 'target' | 'input' | 'output'
 

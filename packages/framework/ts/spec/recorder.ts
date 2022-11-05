@@ -57,7 +57,14 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   // instantiate argument: { actionId: instantiateId, site: [argIndex] }
   // getSpyId from array: no source
   const source = context.state?.source
-  const ref: SpecRecordLive.Reference = { plugin: plugin.name, profile, overrideProfiles: [], subject, testDouble: notDefined, source }
+  const ref: SpecRecordLive.Reference = {
+    plugin: plugin.name,
+    profile,
+    overrideProfiles: [],
+    subject,
+    testDouble: notDefined,
+    source
+  }
   if (spyOption?.options.inert) ref.inert = true
   const refId = context.record.addRef(ref)
   const state = { ref, refId }
