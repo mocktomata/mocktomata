@@ -1,6 +1,7 @@
 {
   "extends": "../../.tsc/tsconfig.settings.json",
   "compilerOptions": {
+    "esModuleInterop": false,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "outDir": "esm",
