@@ -15,6 +15,7 @@ describe('basic checks', () => {
       ['boolean', true],
       ['symbol', Symbol()],
       ['string', 'string'],
+      // Array is not specable because it can only be treated as object with index props.
       ['array', []]
     ])(specName, (_, value) => a.throws(() => spec(value), NotSpecable))
   })

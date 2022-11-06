@@ -1,9 +1,21 @@
 import { AnyFunction, reduceByKey } from 'type-plus'
 
+/**
+ * Convert a value to a serialized metadata.
+ *
+ * This is a generic implementation.
+ * Plugin can choose to use this implementation or create their own.
+ */
 export function metarize(value: Record<any, any> | AnyFunction) {
   return JSON.stringify([getMetaType(value), getMeta(value)])
 }
 
+/**
+ * Convert a metadata back to a value.
+ *
+ * This is a generic implementation.
+ * Plugin can choose to use this implementation or create their own.
+ */
 export function demetarize(meta: string) {
   const metaData = JSON.parse(meta)
   const base = getMetaBase(metaData[0])
