@@ -49,3 +49,4 @@ dist
 lib*
 out*
 packages/*/.tsc
+drafts
