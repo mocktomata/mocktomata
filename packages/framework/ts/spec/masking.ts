@@ -108,7 +108,7 @@ export function maskValue<T extends string | number>(value: any, maskFn: (value:
   if (Array.isArray(value)) {
     return value.map(v => maskValue(v, maskFn))
   }
-  if (typeof value === 'object') {
+  if (typeof value === 'object' && value !== null) {
     return reduceByKey(value, (v, key) => {
       v[key] = maskValue(v[key], maskFn)
       return v

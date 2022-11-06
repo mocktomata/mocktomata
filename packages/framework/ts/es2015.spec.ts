@@ -1782,6 +1782,15 @@ describe('maskValue', () => {
     })
   })
 
+  incubator('against object containing null', (specName, spec) => {
+    test(specName, async () => {
+      spec.maskValue('secret')
+      const s = await spec((value: string) => { return { value, b: null } })
+      expect(s('secret')).toEqual({ value: '******', b: null })
+      await spec.done()
+    })
+  })
+
   describe('with string', () => {
     incubator('replace with different string', (specName, spec) => {
       test(specName, async () => {
