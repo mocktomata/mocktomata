@@ -1,5 +1,11 @@
 # Change Log
 
+## 7.0.0-beta.15
+
+### Patch Changes
+
+- 9d332a9: Fix `maskValue()` to handle object with null prop.
+
 ## 7.0.0-beta.14
 
 ### Patch Changes

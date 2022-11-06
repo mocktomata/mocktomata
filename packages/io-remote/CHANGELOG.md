@@ -1,5 +1,12 @@
 # Change Log
 
+## 7.0.0-beta.15
+
+### Patch Changes
+
+- Updated dependencies [9d332a9]
+  - @mocktomata/framework@7.0.0-beta.15
+
 ## 7.0.0-beta.14
 
 ### Patch Changes
