@@ -1,5 +1,13 @@
 # Change Log
 
+## 7.0.0-beta.16
+
+### Patch Changes
+
+- re-release. try to fix the nodejs issue
+- Updated dependencies
+  - @mocktomata/framework@7.0.0-beta.16
+
 ## 7.0.0-beta.15
 
 ### Patch Changes

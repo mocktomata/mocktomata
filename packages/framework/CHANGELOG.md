@@ -1,5 +1,11 @@
 # Change Log
 
+## 7.0.0-beta.16
+
+### Patch Changes
+
+- re-release. try to fix the nodejs issue
+
 ## 7.0.0-beta.15
 
 ### Patch Changes
