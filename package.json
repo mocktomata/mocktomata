@@ -41,7 +41,8 @@
     "watch:electron": "cross-env JEST_ENV=electron pnpm run test:watch",
     "watch:jsdom": "cross-env JEST_ENV=jsdom pnpm run test:watch",
     "watch:nodejs": "cross-env JEST_ENV=nodejs pnpm run test:watch",
-    "watch": "pnpm run test:watch"
+    "watch": "pnpm run test:watch",
+    "website": "pnpm --filter website"
   },
   "husky": {
     "hooks": {

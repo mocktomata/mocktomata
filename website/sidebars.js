@@ -16,7 +16,10 @@ const sidebars = {
   mocktomata: {
     Basics: [
       'introduction',
-      'setup'
+      'setup',
+      'mockto',
+      'komondor',
+      'zucchini'
     ]
   }
   // By default, Docusaurus generates a sidebar from the docs folder structure

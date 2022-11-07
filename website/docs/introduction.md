@@ -1,6 +1,5 @@
 ---
 title: Introduction
-sidebar_position: 1
 ---
 
 <img src="/mocktomata/img/mocktomata.png" height="200px" align="right"/>
@@ -31,6 +30,7 @@ a common practice for functional styled programming.
 ```ts
 import axios from 'axios'
 import { mockto } from 'mocktomata'
+
 mockto('get friends', (specName, spec) => {
   test(specName, async () => {
     const s = await spec(axios)
@@ -44,20 +44,23 @@ mockto('get friends', (specName, spec) => {
 ```
 
 When you run this test for the first time,
-the test will make the actual call to the remote service to validate the behavior.
+I will make the actual call to the remote service to validate the behavior.
 When the test is completed,
-the behavior will be saved into a `SpecRecord`.
+I will save the behavior into a `SpecRecord`.
 
 The next time you run the test again,
-the test will be using saved `SpecRecord` to replay the behavior.
+I will use the saved `SpecRecord` to replay the behavior.
 So the test is running just like a unit test.
 
-When you want to change that behavior,
-say you want to do run it as a e2e test,
+When you want to change my behavior,
+say you want to do run the test as a e2e test,
 or the remote service have changed and you need to update the behavior,
 you can change the `SpecMode` by either:
 
 - change `mockto(...)` to `mockto.live(...)` or `mockto.save(...)` for a particular test, or
 - call `config(...)` to change the `SpecMode` for all or a filtered list of tests.
 
-[mocktomata]: https://mocktomata.github.com//mocktomata
+You can learn more about these details in subsequent sections.
+But first, let me show you how to setup [mocktomata].
+
+[mocktomata]: https://github.com/mocktomata/mocktomata/blob/master/packages/mocktomata

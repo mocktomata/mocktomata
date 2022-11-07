@@ -412,6 +412,14 @@ Error: foo`
       expect(result).toEqual(2)
     })
 
+    it('gets args from regex group', async () => {
+      defineStep(/add (\d+) \+ (\d+)/, (_, a, b) => a + b)
+
+      const { run } = scenario('regex with groups')
+      const result = await run('add 2 + 3')
+      expect(result).toEqual(5)
+    })
+
     it('can run sub step', async () => {
       defineStep('run leaf step {number}', async ({ spec }, step) => {
         const s = await spec(() => Promise.resolve(`leaf ${step}`))
