@@ -31,6 +31,7 @@ export async function createSimulateSpec(
           const { log } = await context.get()
           log.level = origLogLevel
         }
+        return loaded
       },
       async enableLog(level?: LogLevel) {
         const { log } = await context.get()

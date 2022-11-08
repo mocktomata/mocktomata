@@ -30,6 +30,7 @@ export async function createSaveSpec(
         const record = recorder.getSpecRecord(maskCriteria)
         io.writeSpec(specName, invokePath, record)
         log.debug(`Spec Record "${specName}":`, prettyPrintSpecRecord(record))
+        return record
       },
       async enableLog(level?: LogLevel) {
         const { log } = await context.get()

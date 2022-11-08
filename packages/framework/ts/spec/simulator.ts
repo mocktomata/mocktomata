@@ -242,14 +242,14 @@ function setProperty<V = any>(
   throw result
 }
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
-  const { record, plugins, maskCriteria } = context
+  const { record, plugins } = context
   const plugin = getPlugin(plugins, ref.plugin)
   const profile = ref.profile
   const subject = ref.subject
   const refId = record.getRefId(ref)
   const state = { ref, refId }
   if (profile === 'input') {
-    logCreateSpy(context, state, maskCriteria, profile, subject)
+    logCreateSpy(context, state, profile, subject)
     // about `as any`: RecordValidator does not have `addRef` and `getSpecRecord` and they are not needed for this
     ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state } as any), subject)
   }

@@ -15,8 +15,9 @@ export type Spec = {
   readonly mode: Spec.Mode,
   /**
    * Indicates the spec completes.
+   * @return the resulting `SpecRecord` for debugging purposes.
    */
-  done(): Promise<void>,
+  done(): Promise<SpecRecord>,
   ignoreMismatch(value: unknown): void,
   /**
    * Mask some sensitive value from logs and record.

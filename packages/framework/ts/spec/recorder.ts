@@ -68,7 +68,7 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   if (spyOption?.options.inert) ref.inert = true
   const refId = context.record.addRef(ref)
   const state = { ref, refId }
-  logCreateSpy(context, state, context.maskCriteria, profile, subject)
+  logCreateSpy(context, state, profile, subject)
   return ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
 }
 

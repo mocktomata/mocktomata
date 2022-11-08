@@ -1719,12 +1719,13 @@ describe('ignoreMismatch', () => {
 })
 
 describe('maskValue', () => {
-  incubator.save('actual value is sent to the subject', (specName, spec) => {
+  incubator('actual value is sent to the subject', { logLevel: logLevels.all }, (specName, spec, reporter) => {
     test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((value: string) => expect(value).toBe('secret'))
       s('secret')
       await spec.done()
+      expect(reporter.getLogMessage()).not.toContain('secret')
     })
   })
 
