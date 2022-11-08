@@ -93,7 +93,10 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
     simulate,
     sequence,
     config,
-    async teardown() {
+    /**
+     * Clean up the test environment when `spec.done()` is missing or when there are test failures.
+     */
+     async teardown() {
       const { timeTrackers } = await ctx.get()
       timeTrackers.forEach(t => t.terminate())
     }
