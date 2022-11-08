@@ -1,31 +1,29 @@
 import { reduceByKey } from 'type-plus'
 import type { MaskCriterion } from './types.internal.js'
 
-export function createMaskFn(criterion: MaskCriterion) {
-  const filter = function (v: string) { return v === criterion.value }
-  const replacer = createStringReplacer('[masked]')
-  return (value: any) => {
-    if (typeof value === 'string' && filter(value)) return replacer(value)
-
-    return value
+export function createMaskFn({ value }: MaskCriterion) {
+  function replacer(v: any) {
+    switch (true) {
+      case typeof v === 'string': {
+        let x = v as string
+        while (x.indexOf(value) >= 0) {
+          x = x.replace(value, '[masked]')
+        }
+        return x
+      }
+      case Array.isArray(v): {
+        return v.map(replacer)
+      }
+      case typeof v === 'object' && v !== null: {
+        return reduceByKey(v, (p, k) => {
+          p[k] = replacer(v[k])
+          return p
+        }, {} as typeof v)
+      }
+      default: return v
+    }
   }
-}
-
-function defaultStringReplacer(value: string) { return toMask(value) }
-
-function createStringReplacer(replaceWith: string | ((value: string) => string) | undefined) {
-  if (replaceWith === undefined) {
-    return defaultStringReplacer
-  }
-  else if (typeof replaceWith === 'string') return function (_: string) { return replaceWith }
-  return replaceWith
-}
-
-function toMask(value: string, maskChar = '*') {
-  let len = value.length
-  let result = ''
-  while (len--) result += maskChar
-  return result
+  return replacer
 }
 
 export function maskValue<T extends string | number>(value: any, maskFn: (value: T) => T): any {
