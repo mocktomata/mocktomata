@@ -19,12 +19,10 @@ export type Spec = {
   done(): Promise<void>,
   ignoreMismatch(value: unknown): void,
   /**
-   * Mask some sensitive value and optionally specify what to replace with.
+   * Mask some sensitive value from logs and record.
+   * The value will be replaced by the string `[masked]`
    */
-  maskValue(value: number, replaceWith?: number | ((sensitive: number) => number)): void,
-  maskValue(value: string, replaceWith?: string | ((sensitive: string) => string)): void,
-  maskValue(value: RegExp, replaceWith?: string | ((sensitive: RegExpMatchArray) => string)): void,
-  maskValue<V extends number | string>(value: (value: V) => boolean, replaceWith?: V | ((value: V) => V)): void,
+  maskValue(value: string): void,
 }
 
 export namespace Spec {

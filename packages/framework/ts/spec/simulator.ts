@@ -72,7 +72,7 @@ export function createSimulator(context: AsyncContext<createSpec.Context>, specN
         throw new MissingAction(record.specName, { ref, refId }, actionId, action)
       }
     },
-    addMaskValue: (value: any, replaceWith: any) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
+    addMaskValue: (value: string) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value }))
   }
 }
 

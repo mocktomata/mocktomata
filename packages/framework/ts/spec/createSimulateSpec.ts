@@ -38,8 +38,8 @@ export async function createSimulateSpec(
         log.level = level
       },
       ignoreMismatch() { },
-      maskValue(value: any, replaceWith?: any) {
-        simulator.addMaskValue(value, replaceWith)
+      maskValue(value: string) {
+        simulator.addMaskValue(value)
       },
     })
 }
