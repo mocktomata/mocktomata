@@ -5,22 +5,10 @@ import type { TimeTracker } from '../timeTracker/index.js'
 import type { SpecRecorderBuilder } from './record.js'
 import type { Spec } from './types.js'
 
-export type MaskCriterion<V extends number | string = any> = MaskNumberCriterion | MaskStringCriterion | MaskRegExpCriterion | MaskPredicateCriterion<V>
-
-export type MaskNumberCriterion = {
-  value: number, replaceWith?: number | ((value: number) => number)
-}
+export type MaskCriterion = MaskStringCriterion
 
 export type MaskStringCriterion = {
-  value: string, replaceWith?: string | ((value: string) => string)
-}
-
-export type MaskRegExpCriterion = {
-  value: RegExp, replaceWith?: string | ((value: RegExpExecArray) => string)
-}
-
-export type MaskPredicateCriterion<V extends number | string> = {
-  value: (value: V) => boolean, replaceWith?: V | ((value: V) => V)
+  value: string
 }
 
 export namespace createSpec {

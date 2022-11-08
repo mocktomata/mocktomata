@@ -1750,7 +1750,7 @@ describe('maskValue', () => {
       spec.maskValue('secret')
       const s = await spec((v: string) => v)
       const actual = s('secret')
-      expect(actual).toBe('******')
+      expect(actual).toBe('[masked]')
       await spec.done()
     })
   })
@@ -1759,7 +1759,7 @@ describe('maskValue', () => {
     test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec({ secret: 'secret' })
-      expect(s.secret).toBe('******')
+      expect(s.secret).toBe('[masked]')
       await spec.done()
     })
   })
@@ -1768,7 +1768,7 @@ describe('maskValue', () => {
     test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((v: string) => [v, 'world'])
-      expect(s('secret')).toEqual(['******', 'world'])
+      expect(s('secret')).toEqual(['[masked]', 'world'])
       await spec.done()
     })
   })
@@ -1777,7 +1777,7 @@ describe('maskValue', () => {
     test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((value: string) => { return { value, b: 1 } })
-      expect(s('secret')).toEqual({ value: '******', b: 1 })
+      expect(s('secret')).toEqual({ value: '[masked]', b: 1 })
       await spec.done()
     })
   })
@@ -1786,145 +1786,8 @@ describe('maskValue', () => {
     test(specName, async () => {
       spec.maskValue('secret')
       const s = await spec((value: string) => { return { value, b: null } })
-      expect(s('secret')).toEqual({ value: '******', b: null })
+      expect(s('secret')).toEqual({ value: '[masked]', b: null })
       await spec.done()
-    })
-  })
-
-  describe('with string', () => {
-    incubator('replace with different string', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue('secret', 'apple')
-        const s = await spec({ secret: 'secret' })
-        expect(s.secret).toBe('apple')
-        await spec.done()
-      })
-    })
-
-    incubator('replace with callback', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue('secret', () => 'apple')
-        const s = await spec({ secret: 'secret' })
-        expect(s.secret).toBe('apple')
-        await spec.done()
-      })
-    })
-  })
-
-  describe('with regex', () => {
-    incubator('using default replaceWith', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(/secret/)
-        const s = await spec((v: string) => v)
-        expect(s('some secret message')).toBe('some ****** message')
-        await spec.done()
-      })
-    })
-
-    incubator('does not apply to numbers', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(/1234/)
-        const s = await spec((v: number) => v)
-        expect(s(1234)).toBe(1234)
-        await spec.done()
-      })
-    })
-
-    incubator('replace with string', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(/secret/, 'miku')
-        const s = await spec((v: string) => v)
-        expect(s('some secret message')).toBe('some miku message')
-        await spec.done()
-      })
-    })
-
-    incubator('replace with callback', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(/secret/, () => 'miku strike')
-        const s = await spec((v: string) => v)
-        expect(s('some secret message')).toBe('miku strike')
-        await spec.done()
-      })
-    })
-  })
-
-  describe('with number', () => {
-    incubator('using default replaceWith', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(3)
-        spec.maskValue(1234)
-        const s = await spec((v: number) => v + 1)
-        expect(s(1)).toBe(2)
-        expect(s(2)).toBe(7)
-        expect(s(1233)).toBe(7777)
-        await spec.done()
-      })
-    })
-
-    incubator('replace with number', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(3, 1234)
-        const s = await spec((v: number) => v + 1)
-        expect(s(2)).toBe(1234)
-        await spec.done()
-      })
-    })
-
-    incubator('replace with callback', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue(3, () => 1234)
-        const s = await spec((v: number) => v + 1)
-        expect(s(2)).toBe(1234)
-        await spec.done()
-      })
-    })
-  })
-
-  describe('with predicate', () => {
-    incubator('using default replaceWith for number', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue((v: number) => v > 100)
-        const s = await spec((v: number) => v + 1)
-        expect(s(100)).toBe(777)
-        await spec.done()
-      })
-    })
-
-    incubator('using default replaceWith for string', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue((v: string) => v === 'secret')
-        const s = await spec((v: string) => v)
-        expect(s('secret')).toBe('******')
-        await spec.done()
-      })
-    })
-
-    incubator('replace with number', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue((v: number) => v > 100, 999)
-        const s = await spec((v: number) => v + 1)
-        expect(s(100)).toBe(999)
-        await spec.done()
-      })
-    })
-
-    incubator('replace with string', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue((v: string) => v === 'abcd', '*.*')
-        const s = await spec((v: string) => v)
-        expect(s('abcd')).toBe('*.*')
-        await spec.done()
-      })
-    })
-
-    incubator('replace with callback', (specName, spec) => {
-      test(specName, async () => {
-        spec.maskValue((v: string) => v === 'abcd', () => '*.*')
-        const s = await spec((v: string) => v)
-        expect(s('abcd')).toBe('*.*')
-        await spec.done()
-      })
     })
   })
 })
