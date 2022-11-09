@@ -1,9 +1,9 @@
 import { pick } from 'type-plus'
 import { notDefined } from '../constants.js'
-import type { SpecPlugin } from '../spec-plugin/types.js'
 import { findPlugin } from '../spec-plugin/findPlugin.js'
+import type { SpecPlugin } from '../spec-plugin/types.js'
 import type { SpecRecord } from '../spec-record/types.js'
-import { createMaskFn, maskValue } from './masking.js'
+import { maskSpecRecord } from './masking.js'
 import type { MaskCriterion, SpecRecordLive } from './types.internal.js'
 
 export function createSpecRecordBuilder(specName: string) {
@@ -176,18 +176,8 @@ function getSpecRecord(refs: SpecRecordLive.Reference[], actions: SpecRecordLive
     refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta', 'inert')),
     actions
   }
-  if (maskCriteria.length > 0) {
-    return maskCriteria.reduce((record, criterion) => maskRecord(record, criterion), record as SpecRecord)
-  }
-  return record
+  return maskSpecRecord(maskCriteria, record)
 }
-
-function maskRecord(record: SpecRecord, criterion: MaskCriterion) {
-  const maskFn = createMaskFn(criterion)
-  record.refs.forEach(ref => ref.meta = maskValue(ref.meta, maskFn))
-  return record
-}
-
 
 function getRef(record: SpecRecord, id: SpecRecord.ReferenceId | SpecRecord.ActionId): SpecRecord.Reference | undefined {
   const refId = typeof id === 'string' ? id : resolveRefId(record.actions, id)
