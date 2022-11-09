@@ -7,12 +7,12 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
   createSpy: ({ getProperty, setProperty, setMeta }, subject) => {
     setMeta(metarize(subject))
     return new Proxy(subject, {
-      get(_: any, property: string) {
-        if (!hasProperty(subject, property)) return undefined
-        return getProperty({ key: property }, () => subject[property])
+      get(_: any, key: string) {
+        if (!hasProperty(subject, key)) return undefined
+        return getProperty({ key }, () => subject[key])
       },
-      set(_, property: string, value: any) {
-        return setProperty({ key: property, value }, value => subject[property] = value)
+      set(_, key: string, value: any) {
+        return setProperty({ key, value }, value => subject[key] = value)
       }
     })
   },

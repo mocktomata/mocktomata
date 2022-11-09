@@ -9,5 +9,5 @@ export const inertPlugin: SpecPlugin<any> = {
     setSpyOptions(v, { inert: true })
     return v
   },
-  createStub: (_, v, meta) => meta
+  createStub: (_, _v, meta) => meta
 }
