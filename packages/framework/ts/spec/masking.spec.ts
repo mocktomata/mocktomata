@@ -15,7 +15,7 @@ describe('maskValue', () => {
     })
   })
 
-  incubator.save('call after spec throws', { logLevel: logLevels.all }, (specName, spec, reporter) => {
+  incubator.save('throws if called after spec', { logLevel: logLevels.all }, (specName, spec, reporter) => {
     test(specName, async () => {
       await spec(() => { })
       a.throws(() => spec.maskValue('secret'), InvokeMetaMethodAfterSpec)
@@ -84,15 +84,16 @@ describe('maskValue', () => {
     })
   })
 
-  incubator.save('works with complex object (axios)', { emitLog: true, logLevel: Infinity }, (specName, spec) => {
-    it.skip(specName, async () => {
+  incubator('works with complex object (axios)', { logLevel: Infinity }, (specName, spec, reporter) => {
+    it(specName, async () => {
       spec.maskValue('secret')
       const s = await spec(axios.default)
       const r = await s('http://postman-echo.com/get?foo=secret')
       expect(r.data.args).toEqual({ foo: '[masked]' })
       const record = await spec.done()
 
-      expect(record.actions.length).toBeLessThan(10)
+      expect(record.actions.length).toBeLessThan(20)
+      expect(reporter.getLogMessage()).not.toContain('secret')
     })
   })
 })

@@ -180,12 +180,18 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
   }
 }
 
-export function getSpy<S>(context: Recorder.Context, subject: S, options: { profile?: SpecRecord.SubjectProfile }): S {
-  const { record, state, plugins } = context
+export function getSpy<S>(context: Recorder.Context, subject: S, options: {
+  /**
+   * if true, the subject should go through masking
+   */
+  mask?: boolean,
+  profile?: SpecRecord.SubjectProfile }): S {
+  const { record, state, plugins, maskCriteria } = context
 
   const sourceRef = state.ref
   const profile = options.profile || sourceRef.profile
 
+  subject = options.mask ? maskIfNeeded(maskCriteria, subject): subject
   const ref = record.findRef(subject)
   if (ref) {
     if (ref.testDouble === notDefined) {
@@ -221,11 +227,13 @@ function addResultAction(
   const action = { type, actionId, tick: timeTracker.elapse(), payload: notDefined }
   const id = record.addAction(action)
   const resultContext = getResultContext(context, actionId)
-  const spy = getSpy(resultContext, subject, { profile: getResultProfile(context.state.ref.profile, actionType) })
+  const spy = getSpy(resultContext, subject, {
+    mask: true,
+    profile: getResultProfile(context.state.ref.profile, actionType) })
   const refId = record.findRefId(spy)
   action.payload = refId !== undefined ? refId : subject
   logAction(resultContext, resultContext.state, id, action)
-  return maskIfNeeded(context.maskCriteria, spy)
+  return spy
 }
 
 function getSubjectProfile(parentProfile: SpecRecord.SubjectProfile): SpecRecord.SubjectProfile {

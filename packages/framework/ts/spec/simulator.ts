@@ -1,6 +1,5 @@
 import type { AsyncContext } from 'async-fp'
 import type { Logger } from 'standard-log'
-import type { PartialPick } from 'type-plus'
 import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec-plugin/findPlugin.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
@@ -50,7 +49,31 @@ export function createSimulator(context: AsyncContext<createSpec.Context>, specN
     createStub: <S>(subject: S) => getContext().then(({ plugins, maskCriteria, log }) => {
       assertPluginsLoaded(plugins, specName, loaded.refs)
       record.setPlugins(plugins)
-      return createStub({
+
+      // const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
+      const plugin = findPlugin(plugins, subject)
+
+      // this is a valid case when user change their implementation to use some new features in JavaScript which existing plugins do not support.
+      // istanbul ignore next
+      if (!plugin) throw new NoSupportedPlugin(subject)
+
+      const ref = record.findRef(subject)
+
+      if (!ref) {
+        // TODO spy on extra target if the profile is `target` or `input`
+        // the code is using something new compare to what was recorded.
+        // maybe we can spy on those and collect the actions,
+        // as long as at the end they still produce the same result.
+        // we may emit a warning at `spec.done()`
+        // For now, throw an error.
+        timeTracker.stop()
+        throw new ExtraReference(record.specName, subject)
+      }
+
+      // `context.state` can only be undefined at `createSimulator()`. At that time `options.profile` is default to `target`
+      // so `context.state` will always be defined in this line.
+      const profile = 'target'
+      const context = {
         plugins,
         log,
         record,
@@ -58,7 +81,16 @@ export function createSimulator(context: AsyncContext<createSpec.Context>, specN
         maskCriteria,
         spyOptions: [],
         pendingPluginActions: []
-      }, subject, { profile: 'target' })
+      }
+
+      referenceMismatch({ plugin: plugin.name, profile, source: undefined }, ref)
+      const refId = record.getRefId(ref)
+      const state = { ref, refId }
+      logCreateStub(context, state, profile, subject)
+
+      ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
+
+      return ref.testDouble
     }),
     end: () => {
       // in `zucchini`, the simulation may ends before it starts,
@@ -91,156 +123,110 @@ function assertPluginsLoaded(plugins: SpecPlugin.Instance[], specName: string, r
   }
 }
 
-function createStub<S>(context: PartialPick<Simulator.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }): S {
-  const { record, timeTracker, plugins } = context
-
-  // const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
-  const plugin = findPlugin(plugins, subject)
-
-  // this is a valid case when user change their implementation to use some new features in JavaScript which existing plugins do not support.
-  // istanbul ignore next
-  if (!plugin) throw new NoSupportedPlugin(subject)
-
-  const ref = record.findRef(subject)
-
-  if (!ref) {
-    // TODO spy on extra target if the profile is `target` or `input`
-    // the code is using something new compare to what was recorded.
-    // maybe we can spy on those and collect the actions,
-    // as long as at the end they still produce the same result.
-    // we may emit a warning at `spec.done()`
-    // For now, throw an error.
-    timeTracker.stop()
-    throw new ExtraReference(record.specName, subject)
-  }
-
-  // `context.state` can only be undefined at `createSimulator()`. At that time `options.profile` is default to `target`
-  // so `context.state` will always be defined in this line.
-  const profile = options.profile
-
-  referenceMismatch({ plugin: plugin.name, profile, source: undefined }, ref)
-  const refId = record.getRefId(ref)
-  const state = { ref, refId }
-  logCreateStub(context, state, profile, subject)
-
-  ref.testDouble = plugin.createStub(createPluginStubContext({ ...context, state }), subject, ref.meta)
-
-  return ref.testDouble
-}
-
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
   return {
     resolve: value => resolveValue(context, value),
-    getProperty: options => getProperty(context, options),
-    setProperty: options => setProperty(context, options),
+    getProperty({ key, performer }) {
+      const { record, timeTracker, state } = context
+      performer = performer || getDefaultPerformer(state.ref.profile)
+
+      const expected = record.getNextExpectedAction()
+
+      const action: SpecRecord.GetAction = {
+        type: 'get',
+        refId: state.refId,
+        performer,
+        tick: timeTracker.elapse(),
+        key,
+      }
+
+      if (!isMatchingGetAction(action, expected)) {
+        // getProperty calls may be caused by framework access.
+        // Those calls will not be record and simply ignored.
+        return undefined
+      }
+
+      const actionId = record.addAction(action)
+      logAction(context, state, actionId, action)
+      processNextAction(context)
+
+      const resultAction = record.getExpectedResultAction(actionId)
+      // istanbul ignore next
+      if (!resultAction) {
+        logMissingResultAction(context, state, actionId, action)
+        return undefined
+      }
+
+      const resultActionId = record.addAction(resultAction)
+      const resultContext = getPropertyContext(context, actionId, key)
+
+      const result = resolveValue(resultContext, resultAction.payload)
+
+      logAction(resultContext, resultContext.state, resultActionId, resultAction)
+      if (resultAction.type === 'return') return result
+      throw result
+    },
+    setProperty({ key, performer, value }) {
+      // value can be:
+      //   `user`: actual value or spy/stub if user uses a value returned to him.
+      //   `mockto`: spy/stub (`mockto` should not perform on stub under basic usage)
+      //   `plugin`: actual value or spy/stub, just like `user`
+      const { record, timeTracker, state } = context
+
+      const expected = record.getNextExpectedAction()
+      performer = performer || getDefaultPerformer(state.ref.profile)
+      const action: SpecRecord.SetAction = {
+        type: 'set',
+        refId: state.refId,
+        performer,
+        tick: timeTracker.elapse(),
+        key,
+        value: notDefined
+      }
+
+      const actionId = record.addAction(action)
+
+      if (!expected) {
+        timeTracker.stop()
+        throw new ExtraAction(record.specName, state, actionId, action)
+      }
+
+      const ref = record.findRef(value)
+      if (ref) {
+        if (ref.testDouble === notDefined) {
+          buildTestDouble(getPropertyContext(context, actionId, key), ref)
+        }
+        action.value = record.getRefId(ref)
+      }
+      else {
+        action.value = value
+      }
+      if (!isMatchingSetAction(record, action, expected)) {
+        timeTracker.stop()
+        throw new ActionMismatch(record.specName, action, expected)
+      }
+      logAction(context, context.state, actionId, action)
+      processNextAction(context)
+      const resultAction = record.getExpectedResultAction(actionId)
+      // istanbul ignore next
+      if (!resultAction) {
+        logMissingResultAction(context, state, actionId, action)
+        return true
+      }
+      const resultActionId = record.addAction(resultAction)
+      const resultContext = getPropertyContext(context, actionId, key)
+      const result = resolveValue(resultContext, resultAction.payload)
+
+      logAction(context, resultContext.state, resultActionId, resultAction)
+      if (resultAction.type === 'return') return true
+      throw result
+    },
     invoke: options => invoke(context, options),
     instantiate: (options, handler) => instantiate(context, options, handler),
     on: options => on(context, options),
   }
 }
 
-function getProperty(
-  context: Simulator.Context,
-  { key, performer }: SpecPlugin.StubContext.getProperty.Options
-) {
-  const { record, timeTracker, state } = context
-  performer = performer || getDefaultPerformer(state.ref.profile)
-
-  const expected = record.getNextExpectedAction()
-
-  const action: SpecRecord.GetAction = {
-    type: 'get',
-    refId: state.refId,
-    performer,
-    tick: timeTracker.elapse(),
-    key,
-  }
-
-  if (!isMatchingGetAction(action, expected)) {
-    // getProperty calls may be caused by framework access.
-    // Those calls will not be record and simply ignored.
-    return undefined
-  }
-
-  const actionId = record.addAction(action)
-  logAction(context, state, actionId, action)
-  processNextAction(context)
-
-  const resultAction = record.getExpectedResultAction(actionId)
-  // istanbul ignore next
-  if (!resultAction) {
-    logMissingResultAction(context, state, actionId, action)
-    return undefined
-  }
-
-  const resultActionId = record.addAction(resultAction)
-  const resultContext = getPropertyContext(context, actionId, key)
-
-  const result = resolveValue(resultContext, resultAction.payload)
-
-  logAction(resultContext, resultContext.state, resultActionId, resultAction)
-  if (resultAction.type === 'return') return result
-  throw result
-}
-
-function setProperty<V = any>(
-  context: Simulator.Context,
-  { key, value, performer }: SpecPlugin.StubContext.setProperty.Options<V>
-): true {
-  // value can be:
-  //   `user`: actual value or spy/stub if user uses a value returned to him.
-  //   `mockto`: spy/stub (`mockto` should not perform on stub under basic usage)
-  //   `plugin`: actual value or spy/stub, just like `user`
-  const { record, timeTracker, state } = context
-
-  const expected = record.getNextExpectedAction()
-  performer = performer || getDefaultPerformer(state.ref.profile)
-  const action: SpecRecord.SetAction = {
-    type: 'set',
-    refId: state.refId,
-    performer,
-    tick: timeTracker.elapse(),
-    key,
-    value: notDefined
-  }
-
-  const actionId = record.addAction(action)
-
-  if (!expected) {
-    timeTracker.stop()
-    throw new ExtraAction(record.specName, state, actionId, action)
-  }
-
-  const ref = record.findRef(value)
-  if (ref) {
-    if (ref.testDouble === notDefined) {
-      buildTestDouble(getPropertyContext(context, actionId, key), ref)
-    }
-    action.value = record.getRefId(ref)
-  }
-  else {
-    action.value = value
-  }
-  if (!isMatchingSetAction(record, action, expected)) {
-    timeTracker.stop()
-    throw new ActionMismatch(record.specName, action, expected)
-  }
-  logAction(context, context.state, actionId, action)
-  processNextAction(context)
-  const resultAction = record.getExpectedResultAction(actionId)
-  // istanbul ignore next
-  if (!resultAction) {
-    logMissingResultAction(context, state, actionId, action)
-    return true
-  }
-  const resultActionId = record.addAction(resultAction)
-  const resultContext = getPropertyContext(context, actionId, key)
-  const result = resolveValue(resultContext, resultAction.payload)
-
-  logAction(context, resultContext.state, resultActionId, resultAction)
-  if (resultAction.type === 'return') return true
-  throw result
-}
 function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
   const { record, plugins } = context
   const plugin = getPlugin(plugins, ref.plugin)
@@ -482,6 +468,7 @@ function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction
 function resolveValue(context: Simulator.Context, value: any, handler?: () => any) {
   const { record } = context
   const valueRef = typeof value === 'string' ? record.getRef(value) : undefined
+  value = maskIfNeeded(context.maskCriteria, value)
   if (valueRef) {
     if (valueRef.testDouble === notDefined) {
       if (handler) valueRef.subject = handler()
@@ -494,10 +481,10 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
         }
       }, valueRef)
     }
-    return maskIfNeeded(context.maskCriteria, valueRef.testDouble)
+    return valueRef.testDouble
   }
   else {
-    return maskIfNeeded(context.maskCriteria, value)
+    return value
   }
 }
 function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
