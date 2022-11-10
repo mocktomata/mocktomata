@@ -4,4 +4,3 @@ packages:
   - plugins/*
   - test-plugins/*
   - tests/*
-  - website
