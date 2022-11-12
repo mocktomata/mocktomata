@@ -59,7 +59,7 @@
     "@size-limit/preset-big-lib": "^8.0.1",
     "@types/stack-utils": "^2.0.1",
     "assertron": "^10.0.0",
-    "axios": "^0.27.0",
+    "axios": "^1.0.0",
     "cross-env": "^7.0.3",
     "delay": "^5.0.0",
     "depcheck": "^1.4.3",
