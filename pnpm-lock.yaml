@@ -366,12 +366,12 @@ importers:
       '@mocktomata/nodejs': workspace:^
       '@mocktomata/plugin-fixture-cjs-a': workspace:^
       '@mocktomata/plugin-fixture-cjs-b': workspace:^
-      standard-log: 11.2.3
+      standard-log: 11.3.0
     dependencies:
       '@mocktomata/nodejs': link:../..
       '@mocktomata/plugin-fixture-cjs-a': link:../../../../test-plugins/plugin-fixture-cjs-a
       '@mocktomata/plugin-fixture-cjs-b': link:../../../../test-plugins/plugin-fixture-cjs-b
-      standard-log: 11.2.3
+      standard-log: 11.3.0
 
   packages/nodejs/fixtures/plugin-esm:
     specifiers:
@@ -382,7 +382,7 @@ importers:
       '@mocktomata/plugin-fixture-esm-a': workspace:^
       '@mocktomata/plugin-fixture-esm-b': workspace:^
       '@mocktomata/plugin-fixture-no-activate': workspace:^
-      standard-log: 11.2.3
+      standard-log: 11.3.0
     dependencies:
       '@mocktomata/nodejs': link:../..
       '@mocktomata/plugin-fixture-activate-not-fn': link:../../../../test-plugins/plugin-fixture-activate-not-fn
@@ -391,7 +391,7 @@ importers:
       '@mocktomata/plugin-fixture-esm-a': link:../../../../test-plugins/plugin-fixture-esm-a
       '@mocktomata/plugin-fixture-esm-b': link:../../../../test-plugins/plugin-fixture-esm-b
       '@mocktomata/plugin-fixture-no-activate': link:../../../../test-plugins/plugin-fixture-no-activate
-      standard-log: 11.2.3
+      standard-log: 11.3.0
 
   packages/nodejs/fixtures/two-configs:
     specifiers: {}
@@ -9400,6 +9400,16 @@ packages:
 
   /standard-log/11.2.3:
     resolution: {integrity: sha512-2hpABtbCbbqRWsW3w9ClrvDdkVZNNjXdITCAwuV8u8MAuVOE+G9egBjT8JSyAZpuwxSmcQsHQVaF4nR56P4ntw==}
+    dependencies:
+      '@just-func/types': 0.4.0
+      iso-error: 4.4.0
+      ms: 2.1.3
+      type-plus: 4.16.0
+      upper-case: 2.0.2
+    dev: false
+
+  /standard-log/11.3.0:
+    resolution: {integrity: sha512-S5M4WL4Q9LrS37SvW4htqewDbLLuPTkvNUgql/TDU2hWqyIQ1iBgOFLkkST78kxSMWbt1uUT7daBFKIfaQI4Pg==}
     dependencies:
       '@just-func/types': 0.4.0
       iso-error: 4.4.0
