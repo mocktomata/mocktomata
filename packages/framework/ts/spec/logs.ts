@@ -2,7 +2,7 @@ import { logLevels } from 'standard-log'
 import { tersify } from 'tersify'
 import type { SpecRecord } from '../spec-record/types.js'
 import type { Log } from '../log/types.js'
-import { maskIfNeeded } from './masking.js'
+import { maskString } from './masking.js'
 import { prettifyAction } from './prettifyAction.js'
 import type { MaskCriterion, Recorder } from './types.internal.js'
 
@@ -13,7 +13,7 @@ export function logCreateSpy(
   subject: any
 ) {
   log.on(logLevels.trace, log => log(
-    `${ref.plugin} <ref:${refId}> create ${profile} spy: ${maskIfNeeded(maskCriteria, tersify(subject, { maxLength: Infinity }))}`
+    `${ref.plugin} <ref:${refId}> create ${profile} spy: ${maskString(maskCriteria, tersify(subject, { maxLength: Infinity }))}`
   ))
 }
 
@@ -32,7 +32,7 @@ export function logCreateStub(
   profile: SpecRecord.SubjectProfile,
   subjectOrMeta: any
 ) {
-  log.on(logLevels.trace, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${maskIfNeeded(maskCriteria, tersify(subjectOrMeta))}`))
+  log.on(logLevels.trace, log => log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${maskString(maskCriteria, tersify(subjectOrMeta))}`))
 }
 
 // istanbul ignore next

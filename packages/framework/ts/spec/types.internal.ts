@@ -50,6 +50,10 @@ export namespace SpecRecordLive {
      */
     subject?: any,
     /**
+     * A masked version of the subject.
+     */
+    masked?: any,
+    /**
      * The test double (spy, or stub) or the subject.
      * Created by a specific plugin.
      */

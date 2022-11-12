@@ -9,7 +9,6 @@ import { getArgumentContext, getPropertyContext, getResultContext, getThisContex
 import { isMatchingGetAction, isMatchingInstantiateAction, isMatchingInvokeAction, isMatchingSetAction } from './actionMatches.js'
 import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors.js'
 import { logAction, logCreateSpy, logCreateStub, logMissingResultAction, logRecordingTimeout } from './logs.js'
-import { maskIfNeeded } from './masking.js'
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
 import { getDefaultPerformer } from './subjectProfile.js'
@@ -141,8 +140,13 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
       }
 
       if (!isMatchingGetAction(action, expected)) {
-        // getProperty calls may be caused by framework access.
-        // Those calls will not be record and simply ignored.
+        // This can happen for a few cases:
+        //
+        // 1. when `mocktomata` getting the value internally.
+        // 2. test-runner/assertion library scans the object.
+        //
+        // returning undefined can mess up assertion library presentation
+        // may need to back track and return the last known get result.
         return undefined
       }
 
@@ -468,7 +472,6 @@ function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction
 function resolveValue(context: Simulator.Context, value: any, handler?: () => any) {
   const { record } = context
   const valueRef = typeof value === 'string' ? record.getRef(value) : undefined
-  value = maskIfNeeded(context.maskCriteria, value)
   if (valueRef) {
     if (valueRef.testDouble === notDefined) {
       if (handler) valueRef.subject = handler()
