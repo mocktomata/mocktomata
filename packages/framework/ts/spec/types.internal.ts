@@ -5,10 +5,9 @@ import type { TimeTracker } from '../timeTracker/index.js'
 import type { SpecRecorderBuilder } from './record.js'
 import type { Spec } from './types.js'
 
-export type MaskCriterion = MaskStringCriterion
-
-export type MaskStringCriterion = {
-  value: string
+export type MaskCriterion = {
+  value: string | RegExp,
+  replaceWith?: string
 }
 
 export namespace createSpec {

@@ -6,7 +6,7 @@ import { InvokeMetaMethodAfterSpec } from './errors.js'
 
 afterAll(incubator.teardown)
 
-describe(`maskValue()`, () => {
+describe(`maskValue(string)`, () => {
   incubator('actual value is sent to the subject', { logLevel: logLevels.all }, (specName, spec, reporter) => {
     test(specName, async () => {
       spec.maskValue('secret')
@@ -90,6 +90,27 @@ describe(`maskValue()`, () => {
         simulate.maskValue('secret')
         const s = await simulate({ someProp: 'secret' })
         expect(s.someProp).toBe('[masked]')
+        await simulate.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+    })
+  })
+
+  incubator.sequence('replace with custom value', { logLevel: logLevels.all }, (specName, { save, simulate }, reporter) => {
+    test(specName, async () => {
+      // the input object is serialized thus masked.
+      // so the result received during simulation is also masked
+      {
+        save.maskValue('secret', 'bird')
+        const s = await save({ someProp: 'secret' })
+        expect(s.someProp).toBe('secret')
+        await save.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+      {
+        simulate.maskValue('secret', 'bird')
+        const s = await simulate({ someProp: 'secret' })
+        expect(s.someProp).toBe('bird')
         await simulate.done()
         expect(reporter.getLogMessage()).not.toContain('secret')
       }
@@ -195,6 +216,71 @@ describe(`maskValue()`, () => {
         const record = await simulate.done()
 
         expect(record.actions.length).toBeLessThan(20)
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+    })
+  })
+})
+
+describe(`maskValue(regex)`, () => {
+  incubator.sequence('masks the matched value', { logLevel: logLevels.all }, (specName, { save, simulate }, reporter) => {
+    test(specName, async () => {
+      {
+        save.maskValue(/secret/)
+        const s = await save((v: string) => `some ${v}`)
+        const actual = s('secret')
+        expect(actual).toBe('some secret')
+        await save.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+      {
+        simulate.maskValue(/secret/)
+        const s = await simulate((v: string) => `some ${v}`)
+        const actual = s('secret')
+        expect(actual).toBe('some [masked]')
+        await simulate.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+    })
+  })
+
+  incubator.sequence('masks the matched value greedy', { logLevel: logLevels.all }, (specName, { save, simulate }, reporter) => {
+    test(specName, async () => {
+      {
+        save.maskValue(/secret/g)
+        const s = await save((v: string) => `some ${v} and ${v}`)
+        const actual = s('secret')
+        expect(actual).toBe('some secret and secret')
+        await save.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+      {
+        simulate.maskValue(/secret/)
+        const s = await simulate((v: string) => `some ${v} and ${v}`)
+        const actual = s('secret')
+        expect(actual).toBe('some [masked] and [masked]')
+        await simulate.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+    })
+  })
+
+  incubator.sequence('replace with custom value', { logLevel: logLevels.all }, (specName, { save, simulate }, reporter) => {
+    test(specName, async () => {
+      // the input object is serialized thus masked.
+      // so the result received during simulation is also masked
+      {
+        save.maskValue(/secret/, 'bird')
+        const s = await save({ someProp: 'secret' })
+        expect(s.someProp).toBe('secret')
+        await save.done()
+        expect(reporter.getLogMessage()).not.toContain('secret')
+      }
+      {
+        simulate.maskValue(/secret/, 'bird')
+        const s = await simulate({ someProp: 'secret' })
+        expect(s.someProp).toBe('bird')
+        await simulate.done()
         expect(reporter.getLogMessage()).not.toContain('secret')
       }
     })

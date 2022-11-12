@@ -32,7 +32,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
     end: () => timeTracker?.stop(),
     getSpecRecord: (maskValues: MaskCriterion[]) => record.getSpecRecord(maskValues),
     addInertValue: (subject: any) => getContext().then(ctx => ctx.spyOptions.push({ subject, options: { plugin: '@mocktomata/inert', inert: true } })),
-    addMaskValue: (value: string) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value }))
+    addMaskValue: (value: string | RegExp, replaceWith?: string) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
   }
 }
 
