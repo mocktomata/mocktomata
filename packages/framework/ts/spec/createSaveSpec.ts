@@ -1,11 +1,10 @@
 import type { AsyncContext } from 'async-fp'
-import type { LogLevel } from 'standard-log'
 import { prettyPrintSpecRecord } from '../utils/index.js'
 import { assertMockable } from './assertMockable.js'
 import { assertSpecName } from './assertSpecName.js'
 import { createRecorder } from './recorder.js'
-import type { Spec } from './types.js'
 import type { createSpec } from './types.internal.js'
+import type { Spec } from './types.js'
 
 export async function createSaveSpec(
   context: AsyncContext<createSpec.Context>,
@@ -29,12 +28,8 @@ export async function createSaveSpec(
         const { io, maskCriteria, log } = await context.get()
         const record = recorder.getSpecRecord(maskCriteria)
         io.writeSpec(specName, invokePath, record)
-        log.debug(`Spec Record "${specName}":`, prettyPrintSpecRecord(record))
+        log.debug(`Spec Record "${specName}":`,  prettyPrintSpecRecord(record))
         return record
-      },
-      async enableLog(level?: LogLevel) {
-        const { log } = await context.get()
-        log.level = level
       },
       ignoreMismatch(value: any) {
         const valueType = typeof value

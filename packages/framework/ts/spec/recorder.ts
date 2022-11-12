@@ -7,7 +7,6 @@ import type { SpecRecord } from '../spec-record/types.js'
 import { createTimeTracker, TimeTracker } from '../timeTracker/index.js'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal/index.js'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs.js'
-import { maskIfNeeded } from './masking.js'
 import { createSpecRecordBuilder } from './record.js'
 import { getDefaultPerformer } from './subjectProfile.js'
 import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
@@ -29,7 +28,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
     return c = ctx.extend(() => ({ record, spyOptions: [] })).get()
   }
   return {
-    createSpy: <S>(subject: S) => getContext().then(ctx => createSpy(ctx, subject, { profile: 'target' })),
+    createSpy: <S>(subject: S) => getContext().then(ctx => createSpyRef(ctx, subject, { profile: 'target' })?.testDouble),
     end: () => timeTracker?.stop(),
     getSpecRecord: (maskValues: MaskCriterion[]) => record.getSpecRecord(maskValues),
     addInertValue: (subject: any) => getContext().then(ctx => ctx.spyOptions.push({ subject, options: { plugin: '@mocktomata/inert', inert: true } })),
@@ -37,8 +36,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
   }
 }
 
-function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }) {
-  // console.info('createSpy', context)
+function createSpyRef<S>(context: PartialPick<Recorder.Context, 'state'>, subject: S, options: { profile: SpecRecord.SubjectProfile }) {
   const spyOption = context.spyOptions.find(o => o.subject === subject)
   const plugin = spyOption?.options.plugin ? getPlugin(context.plugins, spyOption.options.plugin) : findPlugin(context.plugins, subject)
   // this is a valid case because there will be new feature in JavaScript that existing plugin will not support
@@ -69,7 +67,8 @@ function createSpy<S>(context: PartialPick<Recorder.Context, 'state'>, subject: 
   const refId = context.record.addRef(ref)
   const state = { ref, refId }
   logCreateSpy(context, state, profile, subject)
-  return ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
+  ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state }), subject)
+  return ref
 }
 
 export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.SpyContext<any> {
@@ -185,22 +184,25 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: {
    * if true, the subject should go through masking
    */
   mask?: boolean,
-  profile?: SpecRecord.SubjectProfile }): S {
-  const { record, state, plugins, maskCriteria } = context
+  profile?: SpecRecord.SubjectProfile
+}): S {
+  const { record, state, plugins } = context
 
   const sourceRef = state.ref
   const profile = options.profile || sourceRef.profile
 
-  subject = options.mask ? maskIfNeeded(maskCriteria, subject): subject
   const ref = record.findRef(subject)
   if (ref) {
+    // subject already have a ref.
+    // e.g. when an input spy is being returned in a function call
     if (ref.testDouble === notDefined) {
       const plugin = getPlugin(plugins, ref.plugin)
       ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state: { ...state, source: undefined } }), ref.subject)
     }
     return ref.testDouble
   }
-  return createSpy(context, subject, { profile }) || subject
+  const spyRef = createSpyRef(context, subject, { profile })
+  return spyRef?.testDouble || subject
 }
 
 function handleResult(
@@ -229,7 +231,8 @@ function addResultAction(
   const resultContext = getResultContext(context, actionId)
   const spy = getSpy(resultContext, subject, {
     mask: true,
-    profile: getResultProfile(context.state.ref.profile, actionType) })
+    profile: getResultProfile(context.state.ref.profile, actionType)
+  })
   const refId = record.findRefId(spy)
   action.payload = refId !== undefined ? refId : subject
   logAction(resultContext, resultContext.state, id, action)

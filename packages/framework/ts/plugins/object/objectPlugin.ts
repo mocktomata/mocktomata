@@ -18,8 +18,8 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, string> = {
   },
   createStub: ({ getProperty, setProperty }, _, meta) => {
     return new Proxy(demetarize(meta), {
-      get(_: any, property: string) {
-        return getProperty({ key: property })
+      get(_: any, key: string) {
+        return getProperty({ key })
       },
       set(_, key: string, value: any) {
         return setProperty({ key, value })
