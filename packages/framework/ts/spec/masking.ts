@@ -18,6 +18,8 @@ function maskValue<T extends string | number>(value: any, maskFn: (value: T) => 
     return value.map(v => maskValue(v, maskFn))
   }
   if (typeof value === 'object' && value !== null) {
+    // istanbul ignore next - this is not hit right now because no plugin saving meta as an object.
+    // this could change with plugins
     return reduceByKey(value, (v, key) => {
       v[key] = maskValue(v[key], maskFn)
       return v
@@ -49,49 +51,19 @@ function createMaskFn({ value, replaceWith = '[masked]' }: MaskCriterion) {
 }
 
 function createStringMaskFn(value: string, replaceWith: string) {
-  function replacer(v: any) {
-    switch (true) {
-      case typeof v === 'string': {
-        let x = v as string
-        while (x.indexOf(value) >= 0) {
-          x = x.replace(value, replaceWith)
-        }
-        return x
-      }
-      case Array.isArray(v): {
-        return v.map(replacer)
-      }
-      case typeof v === 'object' && v !== null: {
-        return reduceByKey(v, (p, k) => {
-          p[k] = replacer(v[k])
-          return p
-        }, {} as typeof v)
-      }
-      default: return v
+  function replacer(v: string) {
+    while (v.indexOf(value) >= 0) {
+      v = v.replace(value, replaceWith)
     }
+    return v
   }
   return replacer
 }
 
 
 function createRegexMaskFn(regex: RegExp, replaceWith: string) {
-  function replacer(v: any) {
-    switch (true) {
-      case typeof v === 'string': {
-        const x = v as string
-        return x.replace(regex, replaceWith)
-      }
-      case Array.isArray(v): {
-        return v.map(replacer)
-      }
-      case typeof v === 'object' && v !== null: {
-        return reduceByKey(v, (p, k) => {
-          p[k] = replacer(v[k])
-          return p
-        }, {} as typeof v)
-      }
-      default: return v
-    }
+  function replacer(v: string) {
+    return v.replace(regex, replaceWith)
   }
   return replacer
 }
