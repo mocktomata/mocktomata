@@ -21,9 +21,10 @@ export type Spec = {
   ignoreMismatch(value: unknown): void,
   /**
    * Mask some sensitive value from logs and record.
-   * The value will be replaced by the string `[masked]`
+   * @param value value to mask for
+   * @param replaceWith value to replace with (Default: `[masked]`)
    */
-  maskValue(value: string): void,
+  maskValue(value: string | RegExp, replaceWith?: string): void,
 }
 
 export namespace Spec {

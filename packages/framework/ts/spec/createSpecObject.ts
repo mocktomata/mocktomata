@@ -18,9 +18,8 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
     if (s) return s
     const { mode, specName, options, specRelativePath } = await context.get()
     const spec = s = await createSpec(context, specName, specRelativePath, mode, options)
-    // if (initState.enableLog) spec.enableLog(initState.logLevel)
     initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))
-    initState.maskCriteria.forEach(v => spec.maskValue(v.value))
+    initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
     return spec
   }
 
@@ -28,9 +27,9 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
     if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
     else initState.ignoreValues.push(value)
   }
-  function maskValue(value: any) {
+  function maskValue(value: string | RegExp, replaceWith?: string) {
     if (s) throw new InvokeMetaMethodAfterSpec('maskValue')
-    initState.maskCriteria.push({ value })
+    initState.maskCriteria.push({ value, replaceWith })
   }
 
   let actualMode: Spec.Mode

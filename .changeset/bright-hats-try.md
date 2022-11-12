@@ -2,8 +2,12 @@
 "@mocktomata/framework": patch
 ---
 
-`maskValue()` now masks logs and the resulting `SpecRecord` only.
-The value will pass through the system intact as needed.
+Changed `maskValue()` behavior.
+
+It now only accept `string` or `RegExp`, and the `replaceWith` only accepts `string`.
+
+It now masks logs and the resulting `SpecRecord` only.
+The value will pass through the system intact when possible.
 
 This is needed so that during `save` mode the sensitive information can be passed correctly to the spec subject.
 

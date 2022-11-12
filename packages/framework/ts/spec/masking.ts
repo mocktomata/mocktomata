@@ -39,15 +39,47 @@ export function maskString(maskCriteria: MaskCriterion[], value: string) {
   }, value)
 }
 
-function createMaskFn({ value }: MaskCriterion) {
+function createMaskFn({ value, replaceWith = '[masked]' }: MaskCriterion) {
+  if (typeof value === 'string') {
+    return createStringMaskFn(value, replaceWith)
+  }
+  else {
+    return createRegexMaskFn(value, replaceWith)
+  }
+}
+
+function createStringMaskFn(value: string, replaceWith: string) {
   function replacer(v: any) {
     switch (true) {
       case typeof v === 'string': {
         let x = v as string
         while (x.indexOf(value) >= 0) {
-          x = x.replace(value, '[masked]')
+          x = x.replace(value, replaceWith)
         }
         return x
+      }
+      case Array.isArray(v): {
+        return v.map(replacer)
+      }
+      case typeof v === 'object' && v !== null: {
+        return reduceByKey(v, (p, k) => {
+          p[k] = replacer(v[k])
+          return p
+        }, {} as typeof v)
+      }
+      default: return v
+    }
+  }
+  return replacer
+}
+
+
+function createRegexMaskFn(regex: RegExp, replaceWith: string) {
+  function replacer(v: any) {
+    switch (true) {
+      case typeof v === 'string': {
+        const x = v as string
+        return x.replace(regex, replaceWith)
       }
       case Array.isArray(v): {
         return v.map(replacer)
