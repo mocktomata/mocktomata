@@ -179,8 +179,8 @@ describe(`maskValue(string)`, () => {
       // so the system can find the original reference,
       // thus able to return the original value
       spec.maskValue('secret')
-      const s = await spec((v: Record<string, string>) => v)
-      expect(s({ value: 'secret' })).toEqual({ value: 'secret' })
+      const s = await spec((v: Record<string, string>) => ({ value2: v.value }))
+      expect(s({ value: 'secret' })).toEqual({ value2: 'secret' })
       await spec.done()
       expect(reporter.getLogMessage()).not.toContain('secret')
     })

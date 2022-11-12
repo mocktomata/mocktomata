@@ -2,9 +2,10 @@ import type { Log } from '../log/types.js'
 import { DuplicatePlugin, PluginNotConforming } from './errors.js'
 import type { SpecPlugin } from './types.js'
 
-// TODO: this might need to be convert to async function so that the module
+// @TODO: this might need to be convert to async function so that the module
 // can call register asynchronously
 export function addPluginModule({ log }: Log.Context, plugins: SpecPlugin.Instance[], moduleName: string, pluginModule: SpecPlugin.Module) {
+  // istanbul ignore next -- tested from fixture
   if (typeof pluginModule.activate !== 'function') {
     log.warn(`${moduleName} does not export an 'activate()' function.`)
     return plugins
