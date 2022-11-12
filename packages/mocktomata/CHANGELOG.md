@@ -1,5 +1,16 @@
 # Change Log
 
+## 7.0.0-beta.17
+
+### Patch Changes
+
+- Updated dependencies [4b4501e]
+- Updated dependencies [47f1174]
+  - @mocktomata/framework@7.0.0-beta.17
+  - @mocktomata/io-remote@7.0.0-beta.17
+  - @mocktomata/nodejs@7.0.0-beta.17
+  - @mocktomata/service@7.0.0-beta.17
+
 ## 7.0.0-beta.16
 
 ### Patch Changes

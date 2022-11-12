@@ -1,5 +1,11 @@
 # @mocktomata/cli
 
+## 7.0.0-beta.17
+
+### Patch Changes
+
+- @mocktomata/service@7.0.0-beta.17
+
 ## 7.0.0-beta.16
 
 ### Patch Changes
