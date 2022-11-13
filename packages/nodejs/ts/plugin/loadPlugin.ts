@@ -1,7 +1,7 @@
-import { PluginNotFound, SpecPlugin } from '@mocktomata/framework'
+import { PluginNotFound } from '@mocktomata/framework'
 
 // istanbul ignore next
-export async function loadPlugin(cwd: string, id: string): Promise<SpecPlugin.Module> {
+export async function loadPlugin(cwd: string, id: string): Promise<any> {
   try {
     return await import(id)
   }

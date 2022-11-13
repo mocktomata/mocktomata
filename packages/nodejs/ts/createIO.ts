@@ -47,8 +47,9 @@ ${configFilenames.map(c => `- ${c}`).join('\n')}`)
     },
     // istanbul ignore next test through `@unional/fixture`
     async loadPlugin(name: string) {
-      const m = await loadPlugin(cwd, name)
-      if (typeof m.activate !== 'function') throw new PluginModuleNotConforming(name)
+      let m = await loadPlugin(cwd, name)
+      if (typeof m.default?.activate === 'function') m = m.default
+      else if (typeof m.activate !== 'function') throw new PluginModuleNotConforming(name)
       return m
     },
     async readSpec(specName: string, invokePath: string): Promise<SpecRecord> {
