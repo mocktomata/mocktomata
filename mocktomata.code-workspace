@@ -1,14 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "../website"
-		}
-	],
-	"settings": {
-		"terminal.integrated.defaultProfile.windows": "pwsh",
-		"typescript.tsdk": "node_modules/typescript/lib"
-	}
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../website"
+    }
+  ],
+  "settings": {
+    "terminal.integrated.defaultProfile.windows": "pwsh",
+    "typescript.tsdk": "node_modules/typescript/lib"
+  }
 }

@@ -79,10 +79,12 @@ export namespace Spec {
   export type Options = {
     /**
      * How long will the spec wait before consider the subject failed to return.
+     * Default to 3000 ms.
      */
     timeout?: number,
     /**
-     * Log level to log interactions.
+     * Log level to log the behavior.
+     * Default to `logLevels.info`
      *
      * They are saved in memory and available through the `reporter`.
      *

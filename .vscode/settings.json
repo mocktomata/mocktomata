@@ -1,5 +1,4 @@
 {
-  "jestrunner.jestCommand": "yarn run test",
   "cSpell.ignorePaths": [
     "**/package-lock.json",
     "**/node_modules/**",
@@ -19,7 +18,7 @@
     "mtmt",
     "numericality",
     "unstyle"
-  ],"terminal.integrated.defaultProfile.windows": "pwsh",
+  ],
   "files.watcherExclude": {
     "**/.git/objects/**": true,
     "**/.git/subtree-cache/**": true,
