@@ -2,7 +2,7 @@
 "@mocktomata/framework": minor
 ---
 
-Add `incubator.teardown()`
+Add `incubator.cleanup()`
 You normally don't need to do this.
 But if there is a bug that cause NodeJS to complain about some event leak,
 this function can be used to clean up.
@@ -10,7 +10,7 @@ this function can be used to clean up.
 Use it during `afterAll()`:
 
 ```ts
-afterall(() => incubator.teardown())
+afterall(() => incubator.cleanup())
 ```
 
 Update `standard-log`.

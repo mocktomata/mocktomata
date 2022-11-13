@@ -31,7 +31,7 @@ export type Mockto = Mockto.Fn & {
   /**
    * Clean up the system in case some `spec.done()` are not called.
    */
-  teardown(): Promise<void>
+  cleanup(): Promise<void>
 }
 
 export namespace Mockto {
@@ -59,7 +59,7 @@ export function createMockto(context: AsyncContext<Mocktomata.Context>): Mockto 
       live: createMocktoFn(ctx, 'live'),
       save: createMocktoFn(ctx, 'save'),
       simulate: createMocktoFn(ctx, 'simulate'),
-      async teardown() {
+      async cleanup() {
         const { timeTrackers } = await ctx.get()
         timeTrackers.forEach(t => t.terminate())
       },

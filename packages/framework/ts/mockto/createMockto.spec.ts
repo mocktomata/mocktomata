@@ -7,7 +7,7 @@ describe(`mockto`, () => {
   const { context } = createTestContext()
   const mockto = createMockto(context)
 
-  afterAll(() => mockto.teardown())
+  afterAll(() => mockto.cleanup())
 
   describe(`mockto.live()`, () => {
     test('live with no options', () => {

@@ -28,7 +28,7 @@ mockto('config() can only be called before using mockto', (specName, spec) => {
 
 describe('config with config()', () => {
   let mockto: Mockto
-  afterEach(() => mockto?.teardown())
+  afterEach(() => mockto?.cleanup())
 
   test('override to live mode', async () => {
     const { config, context } = createContext({ io: createTestIO() })
@@ -74,7 +74,7 @@ describe('config with config()', () => {
 describe('config with env', () => {
   let mockto: Mockto
   afterEach(() => {
-    if (mockto) return mockto.teardown()
+    if (mockto) return mockto.cleanup()
   })
 
   test('override as live mode', () => {

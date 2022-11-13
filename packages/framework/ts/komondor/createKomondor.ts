@@ -28,7 +28,7 @@ export type Komondor = Komondor.Fn & {
   /**
    * Clean up the system in case some `spec.done()` are not called.
    */
-  teardown(): Promise<void>
+  cleanup(): Promise<void>
 }
 
 export namespace Komondor {
@@ -52,7 +52,7 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): Komon
       live: createKomondorFn(ctx, 'live'),
       save: createKomondorFn(ctx, 'save'),
       simulate: createKomondorFn(ctx, 'simulate'),
-      async teardown() {
+      async cleanup() {
         const { timeTrackers } = await ctx.get()
         timeTrackers.forEach(t => t.terminate())
       }
