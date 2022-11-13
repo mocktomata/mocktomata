@@ -15,4 +15,9 @@ export namespace Mocktomata {
   // }
   export type IOContext = { io: IO }
   export type Context = IOContext & Log.Context & Config.Context
+
+  /**
+   * Activation Context for plugin.
+   */
+  export type ActivationContext = SpecPlugin.ActivationContext
 }
