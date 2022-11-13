@@ -1,1 +1,3 @@
-export function activate() { }
+export default {
+  activate() { }
+}
