@@ -6,7 +6,7 @@ import { createKomondor, createTestContext } from '../index.js'
 const { context } = createTestContext()
 const k = createKomondor(context)
 
-afterAll(() => k.teardown())
+afterAll(() => k.cleanup())
 
 describe(`kd.live()`, () => {
   it('can invoke with no options', async () => {

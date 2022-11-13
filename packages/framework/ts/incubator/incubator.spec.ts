@@ -77,18 +77,18 @@ describe('reporter', () => {
 
 })
 
-describe('teardown()', () => {
-  it('teardown any not done spec', async () => {
+describe('cleanup()', () => {
+  it('cleanup any not done spec', async () => {
     const { context } = createTestContext()
     const incubator = createIncubator(context)
     const { spec, reporter } = await new Promise<{ spec: Spec, reporter: MemoryLogReporter }>(
-      a => incubator.save('teardown', (_, spec, reporter) => a({ spec, reporter }))
+      a => incubator.save('cleanup', (_, spec, reporter) => a({ spec, reporter }))
     )
     const foo = await spec(() => { })
     foo()
     // await spec.done()
-    await incubator.teardown()
+    await incubator.cleanup()
     const messages = reporter.getLogMessages()
-    a.satisfies(messages, some(/teardown: done\(\) was not called/))
+    a.satisfies(messages, some(/cleanup: done\(\) was not called/))
   })
 })

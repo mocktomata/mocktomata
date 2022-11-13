@@ -92,9 +92,9 @@ mockto('get friends', (specName, spec) => {
   })
 })
 
-// as a best practice, call `teardown()` at the end of all test,
+// as a best practice, call `cleanup()` at the end of all test,
 // so I can close any loose ends in case you forget to do `await spec.done()` in a test.
-afterAll(() => mockto.teardown())
+afterAll(() => mockto.cleanup())
 ```
 
 I will determine automatically to either perform the actual actions,
@@ -135,7 +135,7 @@ test('get friends', async () => {
   await spec.done()
 })
 
-afterAll(() => komondor.teardown())
+afterAll(() => komondor.cleanup())
 ```
 
 So you can see [`mockto`] and me are pretty similar.
@@ -177,7 +177,7 @@ test('get friends', async () => {
   await done()
 })
 
-afterAll(() => scenario.teardown())
+afterAll(() => scenario.cleanup())
 ```
 
 While that makes me looks like [`komondor`],
@@ -217,7 +217,7 @@ test('get friends', async () => {
   await done()
 })
 
-afterAll(() => scenario.teardown())
+afterAll(() => scenario.cleanup())
 ```
 
 If you understand how powerful I am,
@@ -262,7 +262,7 @@ incubator('some test', (specName, spec) => {
   })
 })
 
-afterAll(() => incubator.teardown())
+afterAll(() => incubator.cleanup())
 ```
 
 The basic way to utilize me is very simular to [`mockto`].

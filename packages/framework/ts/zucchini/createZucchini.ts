@@ -45,7 +45,7 @@ function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store)
       live: createScenarioFn(ctx, store, 'live'),
       save: createScenarioFn(ctx, store, 'save'),
       simulate: createScenarioFn(ctx, store, 'simulate'),
-      async teardown() {
+      async cleanup() {
         const { timeTrackers } = await ctx.get()
         timeTrackers.forEach(t => t.terminate())
       },

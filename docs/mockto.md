@@ -22,7 +22,7 @@ so you may need to repeat the `name` in `describe(name, handler)` in the `specNa
   - [`mockto.live(specName, [options], (specName, spec) => void)`](#mocktolivespecname-options-specname-spec--void)
   - [`mockto.save(specName, [options], (specName, spec) => void)`](#mocktosavespecname-options-specname-spec--void)
   - [`mockto.simulate(specName, [options], (specName, spec) => void)`](#mocktosimulatespecname-options-specname-spec--void)
-  - [`mockto.teardown()`](#mocktoteardown)
+  - [`mockto.cleanup()`](#mocktocleanup)
   - [Tips and Tricks](#tips-and-tricks)
     - [TDD Workflow](#tdd-workflow)
     - [Lazy TDD Workflow](#lazy-tdd-workflow)
@@ -92,16 +92,16 @@ These specs are not affected by configuration.
 Always run the spec in `simulate` mode.
 These specs are not affected by configuration.
 
-## `mockto.teardown()`
+## `mockto.cleanup()`
 
 `mockto` internally has a time tracker to make sure you have called `spec.done()` at the end of each test,
 because that is a very common mistake.
 
 But test runner like `jest` will emit a warning if there are open handles at the end of the test suite (for each file).
-`mockto.teardown()` will clear those handles and emit necessary warnings.
+`mockto.cleanup()` will clear those handles and emit necessary warnings.
 
 ```ts
-afterAll(() => mockto.teardown())
+afterAll(() => mockto.cleanup())
 
 mockto('some test', (specName, spec) => {
   test(specName, async () => { ... })

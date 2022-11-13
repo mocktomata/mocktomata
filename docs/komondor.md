@@ -53,16 +53,16 @@ These specs are not affected by configuration.
 Always run the spec in `simulate` mode.
 These specs are not affected by configuration.
 
-## `komondor.teardown()`
+## `komondor.cleanup()`
 
 `komondor` internally has a time tracker to make sure you have called `spec.done()` at the end of each test,
 because that is a very common mistake.
 
 But test runner like `jest` will emit a warning if there are open handles at the end of the test suite (for each file).
-`komondor.teardown()` will clear those handles and emit necessary warnings.
+`komondor.cleanup()` will clear those handles and emit necessary warnings.
 
 ```ts
-afterAll(() => komondor.teardown())
+afterAll(() => komondor.cleanup())
 
 test('some test', async () => {
   const spec = komondor('some test')

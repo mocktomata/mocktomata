@@ -7,7 +7,7 @@ import { logLevels } from 'standard-log'
 
 describe(`${createZucchini.name}()`, () => {
   const { scenario, defineStep, defineParameterType } = createZucchini(createTestContext().context)
-  afterAll(() => scenario.teardown())
+  afterAll(() => scenario.cleanup())
   describe(`${scenario.name}()`, () => {
     describe(`setup()`, () => {
       it('throws MissingStep if not defined', async () => {
@@ -98,7 +98,7 @@ Error: foo`
 
     describe(`run()`, () => {
       const { scenario, defineStep } = createZucchini(createTestContext().context)
-      afterAll(() => scenario.teardown())
+      afterAll(() => scenario.cleanup())
       it('throws MissingStep if not defined', async () => {
         const { run } = scenario('no handler')
         await a.throws(() => run('no setup handler'), MissingStep)
@@ -168,7 +168,7 @@ Error: foo`
 
     describe(`teardown()`, () => {
       const { scenario, defineStep } = createZucchini(createTestContext().context)
-      afterAll(() => scenario.teardown())
+      afterAll(() => scenario.cleanup())
       it('throws MissingStep if not defined', async () => {
         const { teardown } = scenario('no handler')
         a.throws(() => teardown('no teardown handler'), MissingStep)
@@ -258,7 +258,7 @@ Error: foo`
 
     describe(`ensure()`, () => {
       const { scenario, defineStep } = createZucchini(createTestContext().context)
-      afterAll(() => scenario.teardown())
+      afterAll(() => scenario.cleanup())
       it('throws MissingStep if not defined', async () => {
         const { ensure } = scenario('no handler')
         a.throws(() => ensure('no ensure handler'), MissingStep)
@@ -480,7 +480,7 @@ Error: foo`
 
   describe(`scenario.save()`, () => {
     const { scenario, defineStep } = createZucchini(createTestContext().context)
-    afterAll(() => scenario.teardown())
+    afterAll(() => scenario.cleanup())
     it('forces save', async () => {
       let count = 0
       defineStep('entrophy', async ({ spec }) => {
@@ -504,7 +504,7 @@ Error: foo`
 
   describe(`scenario.simulate()`, () => {
     const { scenario } = createZucchini(createTestContext().context)
-    afterAll(() => scenario.teardown())
+    afterAll(() => scenario.cleanup())
     it('forces simulate', async () => {
       const { spec } = scenario.simulate('forces simulate')
       a.throws(() => spec({}), SpecNotFound)

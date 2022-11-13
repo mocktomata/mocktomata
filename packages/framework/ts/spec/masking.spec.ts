@@ -4,7 +4,7 @@ import { logLevels } from 'standard-log'
 import { incubator } from '../index.js'
 import { InvokeMetaMethodAfterSpec } from './errors.js'
 
-afterAll(incubator.teardown)
+afterAll(incubator.cleanup)
 
 describe(`maskValue(string)`, () => {
   incubator('actual value is sent to the subject', { logLevel: logLevels.all }, (specName, spec, reporter) => {
