@@ -21,7 +21,7 @@ export namespace Zucchini {
     mode: Spec.Mode,
     runSubStep: StepCaller,
     spec<T>(subject: T): Promise<T>,
-  } & Pick<Spec, 'maskValue'>
+  } & Pick<Spec, 'maskValue' | 'ignoreMismatch'>
 
   export type StepHandler = (context: StepContext, ...args: any[]) => any
 }
@@ -64,7 +64,7 @@ function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mo
 
     const { spec, modeProperty, done, ignoreMismatch, maskValue } = createSpecFns(ctx)
     const modeFn = function mode() { return modeProperty.get() }
-    const subCtx = ctx.extend({ spec, modeFn, maskValue })
+    const subCtx = ctx.extend({ spec, modeFn, maskValue, ignoreMismatch })
     return {
       /**
        * Ensure the test environment is clean before the test starts.
@@ -125,7 +125,7 @@ function createInertStepCaller(context: AsyncContext<Spec.Context>, store: Store
     catch (err) {
       if (shouldLogError) {
         log.warn(
-`scenario${mode === 'auto' ? '' : `.${mode}`}(${specName})
+          `scenario${mode === 'auto' ? '' : `.${mode}`}(${specName})
 - ${stepName}(${clause}) throws, is it safe to ignore?
 
 ${err}`)
@@ -145,13 +145,13 @@ function createStepCaller(context: AsyncContext<InvokeHandlerContext>, store: St
 
 type InvokeHandlerContext = Spec.Context & {
   spec: <T>(subject: T) => Promise<T>
-} & Pick<Spec, 'maskValue'>
+} & Pick<Spec, 'maskValue' | 'ignoreMismatch'>
 
 async function invokeHandler(context: AsyncContext<InvokeHandlerContext>, store: Store, stepName: string, entry: Step, clause: string, inputs: any[]) {
   const runSubStep = createStepCaller(context, store, stepName)
-  const { spec, maskValue, mode } = await context.get()
+  const { spec, maskValue, mode, ignoreMismatch } = await context.get()
   const args = buildHandlerArgs(entry, clause, inputs)
-  return entry.handler({ spec, clause, maskValue, mode, runSubStep }, ...args)
+  return entry.handler({ spec, clause, maskValue, mode, runSubStep, ignoreMismatch }, ...args)
 }
 
 function buildHandlerArgs(entry: Step, clause: string, inputs: any[]) {

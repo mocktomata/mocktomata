@@ -9,11 +9,12 @@
     "yarn.lock"
   ],
   "cSpell.words": [
-    "Mockto",
     "demetarize",
+    "komondor",
     "memfs",
     "metarize",
     "mjson",
+    "Mockto",
     "mocktomata",
     "mtmt",
     "numericality",
