@@ -1,3 +1,4 @@
+import { prettyPrintSpecRecord } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
 import t from 'assert'
 import a from 'assertron'
@@ -73,12 +74,21 @@ describe('server behavior', () => {
 
   test('write spec', async () => {
     const id = buildId('abc')
-    const response = await fetch(buildUrl(`specs/${id}`), { method: 'POST', body: '{"a": 1 }' })
+    const body = prettyPrintSpecRecord({
+      refs: [],
+      actions: []
+    })
+    const response = await fetch(buildUrl(`specs/${id}`), {
+      method: 'POST', body
+    })
     expect(response.status).toBe(204)
 
     const actual = await (await fetch(buildUrl(`specs/${id}`))).json()
 
-    expect(actual).toEqual({ a: 1 })
+    expect(actual).toEqual({
+      refs: [],
+      actions: []
+    })
   })
 })
 

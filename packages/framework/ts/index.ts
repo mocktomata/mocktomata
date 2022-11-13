@@ -11,6 +11,5 @@ export * from './spec-record/index.js'
 export * from './spec/index.js'
 export * from './test-utils/index.js'
 export type { Mocktomata } from './types.js'
-export * from './utils/index.js'
 export * from './zucchini/index.js'
 
