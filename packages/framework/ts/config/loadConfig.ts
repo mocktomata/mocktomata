@@ -33,7 +33,7 @@ function buildConfig(input: Config.Input): Config {
     plugins: resolvePlugins(input),
     filePathFilter: resolveFilePathFilter(input),
     specNameFilter: resolveSpecNameFilter(input),
-    overrideMode: resovleOverrideMode(input)
+    overrideMode: resolveOverrideMode(input)
   }
 }
 
@@ -84,7 +84,7 @@ function extractFilter(name: string, filter?: unknown) {
   return filter
 }
 
-function resovleOverrideMode(config: Config.Input) {
+function resolveOverrideMode(config: Config.Input) {
   return extractMode(config.overrideMode)
 }
 

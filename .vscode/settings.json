@@ -18,6 +18,7 @@
     "mocktomata",
     "mtmt",
     "numericality",
+    "pjson",
     "unstyle"
   ],
   "files.watcherExclude": {
