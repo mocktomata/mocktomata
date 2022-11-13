@@ -9,7 +9,7 @@ export type SpecPlugin<S = any, M = any> = {
   /**
    * Indicates if the plugin can handle the specified subject.
    */
-  support(subject: any): boolean,
+  support(subject: unknown): boolean,
   /**
    * Creates a spy that captures the interactions with the specified subject.
    * @param context Provides tools needed to record the subject's behavior.
