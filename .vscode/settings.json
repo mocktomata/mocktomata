@@ -19,6 +19,7 @@
     "mocktomata",
     "mtmt",
     "numericality",
+    "pinst",
     "pjson",
     "tersify",
     "tsbuildinfo",
