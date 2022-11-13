@@ -11,6 +11,7 @@
   "cSpell.words": [
     "demetarize",
     "komondor",
+    "libm",
     "memfs",
     "metarize",
     "mjson",
@@ -19,6 +20,8 @@
     "mtmt",
     "numericality",
     "pjson",
+    "tersify",
+    "tsbuildinfo",
     "unstyle"
   ],
   "files.watcherExclude": {

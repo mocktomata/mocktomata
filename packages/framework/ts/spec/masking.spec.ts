@@ -200,7 +200,7 @@ describe(`maskValue(string)`, () => {
     it(specName, async () => {
       {
         save.maskValue('secret')
-        const s = await save(axios.default)
+        const s = await save(axios)
         const r = await s('http://postman-echo.com/get?foo=secret')
         expect(r.data.args).toEqual({ foo: 'secret' })
         const record = await save.done()
@@ -210,7 +210,7 @@ describe(`maskValue(string)`, () => {
       }
       {
         simulate.maskValue('secret')
-        const s = await simulate(axios.default)
+        const s = await simulate(axios)
         const r = await s('http://postman-echo.com/get?foo=secret')
         expect(r.data.args).toEqual({ foo: '[masked]' })
         const record = await simulate.done()

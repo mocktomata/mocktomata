@@ -38,7 +38,7 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.1.3",
     "mocktomata": "workspace:^"
   },
   "devDependencies": {
