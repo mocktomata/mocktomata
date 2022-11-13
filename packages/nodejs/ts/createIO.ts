@@ -1,4 +1,4 @@
-import { Log, Mocktomata, PluginModuleNotConforming, SpecNotFound, SpecRecord } from '@mocktomata/framework'
+import { Log, Mocktomata, PluginModuleNotConforming, prettyPrintSpecRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework'
 import path from 'node:path'
 import { reduceByKey } from 'type-plus'
 import { loadConfig } from './config/index.js'
@@ -61,7 +61,7 @@ ${configFilenames.map(c => `- ${c}`).join('\n')}`)
       }
     },
     async writeSpec(specName, invokePath, record) {
-      return writeSpec(specFolder, specName, invokePath, JSON.stringify(record))
+      return writeSpec(specFolder, specName, invokePath, prettyPrintSpecRecord(record))
     },
   }
 }

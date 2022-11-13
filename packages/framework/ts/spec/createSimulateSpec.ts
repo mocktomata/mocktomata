@@ -29,7 +29,7 @@ export async function createSimulateSpec(
       },
       ignoreMismatch() { },
       maskValue(value: string, replaceWith?: string) {
-        simulator.addMaskValue(value)
+        simulator.addMaskValue(value, replaceWith)
       },
     })
 }
