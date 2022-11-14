@@ -147,7 +147,7 @@ For the second case:
 
 If we strictly enforce the action order, the tests will become brittle.
 
-To accomodate this,
+To accommodate this,
 
 - handle reference id difference between original and actual
 - get action can be made multiple times

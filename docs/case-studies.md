@@ -75,7 +75,7 @@ ref3.then(ref4 => {
 // <act:6> <ref:4 act:5> -> <ref:5>
 // <ref:5> create output stub: json() { ... }
 // <act:7> you invoke <ref:5>(<ref:6>)
-// <ref:6> create input spy: { arti: ... } = ArtificalData
+// <ref:6> create input spy: { arti: ... } = ArtificialData
 // <act:8> <ref:5 act:7> -> <ref:7>
 // <ref:7> create output stub: { ... } = json
 // <act:9> <ref:3 act:4> -> <ref:8>
@@ -83,7 +83,7 @@ ref3.then(ref4 => {
 // ... it can be existing reference, this is just the case when Result is new
 (await spec($.ajax))({
   success(response) {
-    const json = response.json({ arti: ... } as ArtificalData)
+    const json = response.json({ arti: ... } as ArtificialData)
     return {} as Result
   }
 } as Options) as Result2
@@ -103,7 +103,7 @@ ref3.then(ref4 => {
 // <ref:4> create input spy: args => { ... } = Handler
 // <act:5> I invoke <ref:4>(<ref:5>)
 // <ref:5> create output stub: args
-// ... args is artifical for this example.
+// ... args is artificial for this example.
 // ... the handler to perform whatever function
 // ... skip over all args access / invoke (if any) actions
 // <act:6> <ref:4 act:5> -> <ref:6>

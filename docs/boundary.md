@@ -59,7 +59,7 @@ function getFollowers(github: GitHub, username: string) {
       if (err) r(err)
       else {
         // massage the response in some way that make sense to your application.
-        const response = messege(res)
+        const response = message(res)
         a(response)
       }
     })
@@ -160,7 +160,7 @@ You can execute the test steps in different context:
 Sometimes the input used in test are environment or time dependent, e.g. absolute path, `new Date()`, or random number.
 Those value does not work well with `mocktomata` because `mocktomata` will compare the actions performed to make sure they are the same.
 
-For those values, you can use `artifact()` to tell `komonodor` to ignore them during validation.
+For those values, you can use `artifact()` to tell `komondor` to ignore them during validation.
 
 ## API
 
