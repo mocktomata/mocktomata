@@ -16,7 +16,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mocktomata/mocktomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git",
+    "directory": "packages/mocktomata"
   },
   "license": "MIT",
   "author": {
@@ -55,10 +56,10 @@
     "watch": "pnpm run test:watch"
   },
   "dependencies": {
-    "@mocktomata/service": "workspace:^",
     "@mocktomata/framework": "workspace:^",
     "@mocktomata/io-remote": "workspace:^",
     "@mocktomata/nodejs": "workspace:^",
+    "@mocktomata/service": "workspace:^",
     "async-fp": "^8.0.2",
     "global-store": "^1.0.0-beta.21",
     "standard-log": "^11.2.1",

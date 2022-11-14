@@ -12,7 +12,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mocktomata/mocktomata.git"
+    "url": "https://github.com/mocktomata/mocktomata.git",
+    "directory": "packages/nodejs"
   },
   "license": "MIT",
   "author": {
