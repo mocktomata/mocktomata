@@ -1,6 +1,7 @@
 {
   "name": "@mocktomata/cli",
-  "version": "7.0.0-beta.17",
+  "version": "7.0.0",
+  "private": true,
   "description": "mocktomata cli",
   "keywords": [
     "boundary",

@@ -1,5 +1,47 @@
 # Change Log
 
+## 7.0.0
+
+### Major Changes
+
+- 66f800c: Rename `teardown()` to `cleanup()`.
+
+  So that it won't confuse with `const { teardown } = scenario()`.
+
+### Patch Changes
+
+- 24b61b1: Distribute CJS.
+  There are dependencies still on in ESM,
+  so forcing ESM only means tools like `jest` need to go through a lot to get things working.
+- b73a048: Move cli code to `@mocktomata/cli`
+- 93e654c: Rename packages:
+
+  - `@mocktomata/file-server` -> `@mocktomata/service`
+  - `@mocktomata/io-client` -> `@mocktomata/io-remote`
+  - `@mocktomata/io-fs` -> `@mocktomata/nodejs`
+
+  Remove package:
+
+  - `@mocktomata/io-local`: moved inside `@mocktomata/nodejs`
+
+- 6dd32fb: fix!: export ESM only
+- 05127fd: re-release. try to fix the nodejs issue
+- Updated dependencies [54a090c]
+- Updated dependencies [66f800c]
+- Updated dependencies [4b4501e]
+- Updated dependencies [47f1174]
+- Updated dependencies [424b643]
+- Updated dependencies [24b61b1]
+- Updated dependencies [9d332a9]
+- Updated dependencies [93e654c]
+- Updated dependencies [6dd32fb]
+- Updated dependencies [05127fd]
+- Updated dependencies [16a4dff]
+  - @mocktomata/framework@7.0.0
+  - @mocktomata/service@7.0.0
+  - @mocktomata/io-remote@7.0.0
+  - @mocktomata/nodejs@7.0.0
+
 ## 7.0.0-beta.17
 
 ### Patch Changes

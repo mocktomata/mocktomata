@@ -1,5 +1,18 @@
 # @mocktomata/cli
 
+## 7.0.0
+
+### Patch Changes
+
+- b73a048: Move cli code to `@mocktomata/cli`
+- 05127fd: re-release. try to fix the nodejs issue
+- Updated dependencies [424b643]
+- Updated dependencies [24b61b1]
+- Updated dependencies [93e654c]
+- Updated dependencies [6dd32fb]
+- Updated dependencies [05127fd]
+  - @mocktomata/service@7.0.0
+
 ## 7.0.0-beta.17
 
 ### Patch Changes

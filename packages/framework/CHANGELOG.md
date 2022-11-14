@@ -1,5 +1,93 @@
 # Change Log
 
+## 7.0.0
+
+### Major Changes
+
+- 54a090c: Add `defineParameterType()`.
+  The step definition is changed to use the same syntax as in `cucumber`.
+
+  It is more flexible and concise, and support extensions.
+
+- 66f800c: Rename `teardown()` to `cleanup()`.
+
+  So that it won't confuse with `const { teardown } = scenario()`.
+
+- 4b4501e: Changed `maskValue()` behavior.
+
+  It now only accept `string` or `RegExp`, and the `replaceWith` only accepts `string`.
+
+  It now masks logs and the resulting `SpecRecord` only.
+  The value will pass through the system intact when possible.
+
+  This is needed so that during `save` mode the sensitive information can be passed correctly to the spec subject.
+
+  This means in certain cases the `save` mode and `simulate` mode will pass the original sensitive value or the masked value around.
+  During test, you should not assert the sensitive value directly.
+
+  You can however assert the record does not contain the sensitive information by setting `logLevel` to `logLevels.all`,
+  and inspect the log message.
+
+  The log message under `logLevels.all` will contain the spec record.
+
+  For example:
+
+  ```ts
+  import { logLevels } from "standard-log";
+  import { mt } from "mocktomata";
+  mt("...", (specName, spec, reporter) => {
+    it(specName, async () => {
+      // ...
+      await spec.done();
+      expect(reporter.getLogMessage()).not.toContain("sensitive");
+    });
+  });
+  ```
+
+- 47f1174: Fix `maskValue()` to mask correctly when working with complex subject such as axios
+
+### Minor Changes
+
+- 16a4dff: Add `incubator.cleanup()`
+  You normally don't need to do this.
+  But if there is a bug that cause NodeJS to complain about some event leak,
+  this function can be used to clean up.
+
+  Use it during `afterAll()`:
+
+  ```ts
+  afterall(() => incubator.cleanup());
+  ```
+
+  Update `standard-log`.
+  Update `async-fp`
+  Update `type-plus`
+
+  Add spec based logger.
+  Now each spec will have its own logger,
+  making it easier to figure out which spec the log comes from.
+
+  The handlers get a `reporter` which you can inspect the logs within the test.
+
+### Patch Changes
+
+- 24b61b1: Distribute CJS.
+  There are dependencies still on in ESM,
+  so forcing ESM only means tools like `jest` need to go through a lot to get things working.
+- 9d332a9: Fix `maskValue()` to handle object with null prop.
+- 93e654c: Rename packages:
+
+  - `@mocktomata/file-server` -> `@mocktomata/service`
+  - `@mocktomata/io-client` -> `@mocktomata/io-remote`
+  - `@mocktomata/io-fs` -> `@mocktomata/nodejs`
+
+  Remove package:
+
+  - `@mocktomata/io-local`: moved inside `@mocktomata/nodejs`
+
+- 6dd32fb: fix!: export ESM only
+- 05127fd: re-release. try to fix the nodejs issue
+
 ## 7.0.0-beta.17
 
 ### Patch Changes
