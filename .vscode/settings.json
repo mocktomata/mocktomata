@@ -21,9 +21,12 @@
     "numericality",
     "pinst",
     "pjson",
+    "pnpm",
+    "pwsh",
     "tersify",
     "tsbuildinfo",
-    "unstyle"
+    "unstyle",
+    "xvfb"
   ],
   "files.watcherExclude": {
     "**/.git/objects/**": true,
