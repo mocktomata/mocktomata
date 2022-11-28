@@ -749,7 +749,7 @@ describe('function', () => {
     })
   })
   incubator('callback in object literal fail', { emitLog: true, logLevel: Infinity }, (specName, spec) => {
-    test.only(specName, async () => {
+    test(specName, async () => {
       const subject = await spec(callbackInObjLiteral.fail)
 
       const err = await a.throws(callbackInObjLiteral.increment(subject, 2), Error)
