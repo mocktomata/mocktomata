@@ -9,6 +9,7 @@
     "yarn.lock"
   ],
   "cSpell.words": [
+    "aspec",
     "demetarize",
     "komondor",
     "libm",
@@ -25,6 +26,7 @@
     "pwsh",
     "tersify",
     "tsbuildinfo",
+    "ungap",
     "unstyle",
     "xvfb"
   ],

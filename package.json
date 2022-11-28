@@ -56,7 +56,7 @@
     "@types/jest": "^29.0.0",
     "@types/md5": "^2.3.2",
     "@types/mkdirp": "^1.0.1",
-    "@types/node": "^16.0.0",
+    "@types/node": "^16.18.3",
     "@types/node-fetch": "^2.6.2",
     "@types/tmp": "^0.2.3",
     "@typescript-eslint/eslint-plugin": "^5.32.0",

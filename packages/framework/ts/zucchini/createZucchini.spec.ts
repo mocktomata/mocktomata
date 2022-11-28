@@ -255,7 +255,6 @@ Error: foo`
       })
     })
 
-
     describe(`ensure()`, () => {
       const { scenario, defineStep } = createZucchini(createTestContext().context)
       afterAll(() => scenario.cleanup())

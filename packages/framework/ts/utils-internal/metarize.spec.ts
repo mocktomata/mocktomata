@@ -1,3 +1,4 @@
+import { stringify } from '@ungap/structured-clone/json'
 import { metarize, demetarize } from './metarize.js'
 
 test('empty object', () => {
@@ -78,7 +79,7 @@ test('composite function', () => {
 
 function testMetarize(subject: any, expectedMeta: any, expected: any) {
   const meta = metarize(subject)
-  expect(meta).toBe(JSON.stringify(expectedMeta))
+  expect(meta).toBe(stringify(expectedMeta))
   const result = demetarize(meta)
   if (typeof expected === 'function') {
     expect(typeof result).toBe('function')
