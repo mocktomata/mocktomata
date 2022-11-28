@@ -28,7 +28,10 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
     return c = ctx.extend(() => ({ record, spyOptions: [] })).get()
   }
   return {
-    createSpy: <S>(subject: S) => getContext().then(ctx => createSpyRef(ctx, subject, { profile: 'target' })?.testDouble),
+    createSpy: <S>(subject: S) => getContext().then(ctx => {
+      const ref = ctx.record.findRef(subject) ?? createSpyRef(ctx, subject, { profile: 'target' })
+      return ref?.testDouble
+    }),
     end: () => timeTracker?.stop(),
     getSpecRecord: (maskValues: MaskCriterion[]) => record.getSpecRecord(maskValues),
     addInertValue: (subject: any) => getContext().then(ctx => ctx.spyOptions.push({ subject, options: { plugin: '@mocktomata/inert', inert: true } })),
@@ -186,21 +189,19 @@ export function getSpy<S>(context: Recorder.Context, subject: S, options: {
   mask?: boolean,
   profile?: SpecRecord.SubjectProfile
 }): S {
-  const { record, state, plugins } = context
-
-  const sourceRef = state.ref
-  const profile = options.profile || sourceRef.profile
+  const { record, state } = context
 
   const ref = record.findRef(subject)
   if (ref) {
     // subject already have a ref.
     // e.g. when an input spy is being returned in a function call
     if (ref.testDouble === notDefined) {
-      const plugin = getPlugin(plugins, ref.plugin)
+      const plugin = getPlugin(context.plugins, ref.plugin)
       ref.testDouble = plugin.createSpy(createPluginSpyContext({ ...context, state: { ...state, source: undefined } }), ref.subject)
     }
     return ref.testDouble
   }
+  const profile = options.profile || state.ref.profile
   const spyRef = createSpyRef(context, subject, { profile })
   return spyRef?.testDouble || subject
 }

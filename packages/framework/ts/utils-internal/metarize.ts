@@ -1,3 +1,4 @@
+import { parse, stringify } from '@ungap/structured-clone/json'
 import { AnyFunction, reduceByKey } from 'type-plus'
 
 /**
@@ -7,7 +8,7 @@ import { AnyFunction, reduceByKey } from 'type-plus'
  * Plugin can choose to use this implementation or create their own.
  */
 export function metarize(value: Record<any, any> | AnyFunction) {
-  return JSON.stringify([getMetaType(value), getMeta(value)])
+  return stringify([getMetaType(value), getMeta(value)])
 }
 
 /**
@@ -17,7 +18,7 @@ export function metarize(value: Record<any, any> | AnyFunction) {
  * Plugin can choose to use this implementation or create their own.
  */
 export function demetarize(meta: string) {
-  const metaData = JSON.parse(meta)
+  const metaData = parse(meta)
   const base = getMetaBase(metaData[0])
   return Object.assign(base, metaData[1])
 }

@@ -13,6 +13,6 @@
   },
   "include": [
     "ts",
-    "typings"
+    "types"
   ]
 }
