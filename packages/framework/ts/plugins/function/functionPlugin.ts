@@ -6,9 +6,7 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> 
   name: 'function',
   support: subject => {
     if (typeof subject !== 'function') return false
-
     if (hasPropertyInPrototype(subject)) return false
-
     return true
   },
   /**

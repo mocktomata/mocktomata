@@ -5,6 +5,7 @@ import type { Log } from '../log/types.js'
 import { maskString } from './masking.js'
 import { prettifyAction } from './prettifyAction.js'
 import type { MaskCriterion, Recorder } from './types.internal.js'
+import { getCallSites } from '../index.js'
 
 export function logCreateSpy(
   { log, maskCriteria }: Log.Context & { maskCriteria: MaskCriterion[] },
@@ -18,7 +19,11 @@ export function logCreateSpy(
 }
 
 export function logAction({ log }: Log.Context, state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
-  log.on(logLevels.trace, () => prettifyAction(state, actionId, action))
+  log.on(logLevels.trace, (log, level) => {
+    const msg = prettifyAction(state, actionId, action)
+    if (level >= logLevels.planck) { log(msg, ...getCallSites().slice(3).map(c => c.toString())) }
+    else { log(msg) }
+  })
 }
 
 // istanbul ignore next

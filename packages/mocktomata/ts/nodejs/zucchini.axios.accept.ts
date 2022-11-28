@@ -21,7 +21,7 @@ it('uses step along with spec', async () => {
 })
 
 it('works with axios throwing error', async () => {
-  const { spec, done } = scenario('axios with error', { emitLog: true, logLevel: Infinity })
+  const { spec, done } = scenario('axios with error')
   const s = await spec(axios)
   // `+` is not valid
   const err = await a.throws<AxiosError>(s(`http://api.mathjs.org/v4/?expr=1+1`))
