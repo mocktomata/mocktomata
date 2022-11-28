@@ -1,0 +1,40 @@
+axios with error
+{
+  "refs": [
+    {"plugin":"@mocktomata/function","profile":"target","meta":"[[1,[1,8]],[2,[[2,3],[4,5],[6,7]]],[0,\"type\"],[0,\"function\"],[0,\"name\"],[0,\"wrap\"],[0,\"length\"],[0,0],[2,[[9,10]]],[0,\"VERSION\"],[0,\"1.1.3\"]]"},
+    {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}},
+    {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":0,"key":0},"meta":"http://api.mathjs.org/v4/?expr=1+1"},
+    {"plugin":"@mocktomata/promise","profile":"output","source":{"type":"result","id":0},"meta":"rejected-promise"},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":2,"key":1},"meta":"[[1,[1,8]],[2,[[2,3],[4,5],[6,7]]],[0,\"type\"],[0,\"function\"],[0,\"name\"],[0,\"\"],[0,\"length\"],[0,1],[2,[]]]"},
+    {"plugin":"@mocktomata/error","profile":"output","source":{"type":"argument","id":3,"key":0},"meta":"[[1,[1,4]],[2,[[2,3]]],[0,\"type\"],[0,\"object\"],[2,[[5,6],[7,8],[9,10]]],[0,\"message\"],[0,\"Request failed with status code 400\"],[0,\"name\"],[0,\"AxiosError\"],[0,\"code\"],[0,\"ERR_BAD_REQUEST\"]]"},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":6},"meta":"AxiosError"},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":8},"meta":"ERR_BAD_REQUEST"},
+    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"result","id":10},"meta":"[[1,[1,4]],[2,[[2,3]]],[0,\"type\"],[0,\"object\"],[2,[[5,6],[7,8],[9,10]]],[0,\"status\"],[0,400],[0,\"statusText\"],[0,\"Bad Request\"],[0,\"data\"],[0,\"Error: Unexpected part \\\"1\\\" (char 3)\"]]"},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":16},"meta":"Bad Request"},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":20},"meta":"Error: Unexpected part \"1\" (char 3)"}
+  ],
+  "actions": [
+    {"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":["2"],"tick":0},
+    {"type":"return","actionId":0,"tick":23,"payload":"3"},
+    {"type":"invoke","refId":"3","performer":"plugin","site":"then","thisArg":"1","payload":["1","4"],"tick":210},
+    {"type":"invoke","refId":"4","performer":"mockto","thisArg":"1","payload":["5"],"tick":4},
+    {"type":"return","actionId":3,"tick":3,"payload":"1"},
+    {"type":"return","actionId":2,"tick":1,"payload":"1"},
+    {"type":"get","refId":"5","performer":"user","tick":2,"key":"name"},
+    {"type":"return","actionId":6,"tick":1,"payload":"6"},
+    {"type":"get","refId":"5","performer":"user","tick":2,"key":"code"},
+    {"type":"return","actionId":8,"tick":1,"payload":"7"},
+    {"type":"get","refId":"5","performer":"user","tick":2,"key":"response"},
+    {"type":"return","actionId":10,"tick":1,"payload":"8"},
+    {"type":"get","refId":"8","performer":"user","tick":53,"key":"status"},
+    {"type":"return","actionId":12,"tick":2,"payload":400},
+    {"type":"get","refId":"5","performer":"user","tick":1,"key":"response"},
+    {"type":"return","actionId":14,"tick":1,"payload":"8"},
+    {"type":"get","refId":"8","performer":"user","tick":1,"key":"statusText"},
+    {"type":"return","actionId":16,"tick":1,"payload":"9"},
+    {"type":"get","refId":"5","performer":"user","tick":3,"key":"response"},
+    {"type":"return","actionId":18,"tick":1,"payload":"8"},
+    {"type":"get","refId":"8","performer":"user","tick":1,"key":"data"},
+    {"type":"return","actionId":20,"tick":1,"payload":"10"}
+  ]
+}

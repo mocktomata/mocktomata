@@ -1,4 +1,5 @@
 import type { AsyncContext } from 'async-fp'
+import { prettyPrintSpecRecord } from '../spec-record/index.js'
 import { assertMockable } from './assertMockable.js'
 import { assertSpecName } from './assertSpecName.js'
 import { createSimulator } from './simulator.js'
@@ -12,13 +13,17 @@ export async function createSimulateSpec(
   options: Spec.Options
 ): Promise<Spec> {
   assertSpecName(specName)
-  const { io } = await context.get()
+  const { io, log } = await context.get()
   const loaded = await io.readSpec(specName, invokePath)
   const simulator = createSimulator(context, specName, loaded, options)
-
+  let starting = true
   return Object.assign(
     async <S>(subject: S) => {
       assertMockable(subject)
+      if (starting) {
+        log.debug(`Simulating Spec Record "${specName}":`, prettyPrintSpecRecord(loaded))
+        starting = false
+      }
       return simulator.createStub<S>(subject)
     },
     {
