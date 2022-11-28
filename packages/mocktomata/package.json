@@ -28,7 +28,8 @@
   "type": "module",
   "exports": {
     "import": "./esm/index.js",
-    "require": "./cjs/index.js"
+    "require": "./cjs/index.js",
+    "types": "./esm/index.d.ts"
   },
   "types": "./esm/index.d.ts",
   "files": [
