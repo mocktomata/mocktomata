@@ -49,7 +49,7 @@
   "dependencies": {
     "@cucumber/cucumber-expressions": "^16.0.0",
     "async-fp": "^8.0.2",
-    "iso-error": "^4.4.0",
+    "iso-error": "^5.0.0",
     "stack-utils": "^2.0.3",
     "standard-log": "^11.2.1",
     "tersify": "^3.10.5",
