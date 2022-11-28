@@ -67,7 +67,7 @@
     "@mocktomata/plugin-fixture-esm-b": "workspace:^",
     "@mocktomata/plugin-fixture-no-activate": "workspace:^",
     "@unional/fixture": "^3.2.6",
-    "assertron": "^10.0.0",
+    "assertron": "^11.0.0",
     "cross-env": "^7.0.3",
     "depcheck": "^1.4.3",
     "dirname-filename-esm": "^1.1.1",
