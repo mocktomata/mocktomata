@@ -108,7 +108,7 @@ importers:
       '@types/stack-utils': ^2.0.1
       '@types/ungap__structured-clone': ^0.3.0
       '@ungap/structured-clone': ^1.0.1
-      assertron: ^10.0.0
+      assertron: ^11.0.0
       async-fp: ^8.0.2
       axios: ^1.1.3
       cross-env: ^7.0.3
@@ -146,7 +146,7 @@ importers:
       '@size-limit/preset-big-lib': 8.0.1_size-limit@8.0.1
       '@types/stack-utils': 2.0.1
       '@types/ungap__structured-clone': 0.3.0
-      assertron: 10.0.0
+      assertron: 11.0.0
       axios: 1.1.3
       cross-env: 7.0.3
       delay: 5.0.0
@@ -171,7 +171,7 @@ importers:
       '@kayahr/jest-electron-runner': ^29.0.0
       '@mocktomata/framework': workspace:^
       '@mocktomata/plugin-fixture-dummy': workspace:^
-      assertron: ^10.0.0
+      assertron: ^11.0.0
       cross-env: ^7.0.3
       cross-fetch: ^3.1.4
       depcheck: ^1.4.3
@@ -193,7 +193,7 @@ importers:
     devDependencies:
       '@kayahr/jest-electron-runner': 29.0.0
       '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
-      assertron: 10.0.0
+      assertron: 11.0.0
       cross-env: 7.0.3
       depcheck: 1.4.3
       jest: 29.2.1
@@ -217,7 +217,7 @@ importers:
       '@mocktomata/plugin-fixture-deep-link': workspace:^
       '@mocktomata/plugin-fixture-dummy': workspace:^
       '@mocktomata/service': workspace:^
-      assertron: ^10.0.0
+      assertron: ^11.0.0
       async-fp: ^8.0.2
       axios: ^1.1.3
       cross-env: ^7.0.3
@@ -256,7 +256,7 @@ importers:
       '@kayahr/jest-electron-runner': 29.0.0
       '@mocktomata/plugin-fixture-deep-link': link:../../test-plugins/plugin-fixture-deep-link
       '@mocktomata/plugin-fixture-dummy': link:../../test-plugins/plugin-fixture-dummy
-      assertron: 10.0.0
+      assertron: 11.0.0
       axios: 1.1.3
       cross-env: 7.0.3
       depcheck: 1.4.3
@@ -291,7 +291,7 @@ importers:
       '@mocktomata/plugin-fixture-esm-b': workspace:^
       '@mocktomata/plugin-fixture-no-activate': workspace:^
       '@unional/fixture': ^3.2.6
-      assertron: ^10.0.0
+      assertron: ^11.0.0
       cross-env: ^7.0.3
       depcheck: ^1.4.3
       dirname-filename-esm: ^1.1.1
@@ -331,7 +331,7 @@ importers:
       '@mocktomata/plugin-fixture-esm-b': link:../../test-plugins/plugin-fixture-esm-b
       '@mocktomata/plugin-fixture-no-activate': link:../../test-plugins/plugin-fixture-no-activate
       '@unional/fixture': 3.2.6
-      assertron: 10.0.0
+      assertron: 11.0.0
       cross-env: 7.0.3
       depcheck: 1.4.3
       dirname-filename-esm: 1.1.1
@@ -410,7 +410,7 @@ importers:
       '@mocktomata/nodejs': workspace:^
       '@types/hapi__hapi': ^20.0.12
       '@types/node-fetch': ^2.6.2
-      assertron: ^10.0.0
+      assertron: ^11.0.0
       cross-env: ^7.0.3
       depcheck: ^1.4.3
       jest: ^29.2.1
@@ -437,7 +437,7 @@ importers:
     devDependencies:
       '@types/hapi__hapi': 20.0.12
       '@types/node-fetch': 2.6.2
-      assertron: 10.0.0
+      assertron: 11.0.0
       cross-env: 7.0.3
       depcheck: 1.4.3
       jest: 29.2.1
@@ -3202,8 +3202,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /assertron/10.0.0:
-    resolution: {integrity: sha512-u4bl3Yrj5rEtYr0FoSAyK9CUKxUv/N8dd+kts5FNkXHuFqjwJi4BxN8rMNyrS3FmCKdRv0FBwP/YNDtSNN0AnA==}
+  /assertron/11.0.0:
+    resolution: {integrity: sha512-O62f9TJzBYgf3oQ9y2Pq5aLqOcFxCb7v8sr0yLnUtqR0IFxwnVs9v3LRkRH/YnXt0cK5DpuG0nfLXCJ/v6nTqA==}
     engines: {node: '>= 10'}
     dependencies:
       is-promise: 4.0.0
@@ -3211,7 +3211,7 @@ packages:
       path-equal: 1.2.2
       satisfier: 5.4.2
       tersify: 3.10.5
-      type-plus: 4.14.1
+      type-plus: 4.18.0
     dev: true
 
   /assign-symbols/1.0.0:
@@ -6810,7 +6810,7 @@ packages:
       jest: '>=23'
     dependencies:
       chalk: 2.4.2
-      jest: 29.2.1_@types+node@16.18.3
+      jest: 29.2.1
       unpartial: 0.6.4
     dev: true
 
@@ -6822,7 +6822,7 @@ packages:
       jest-validate: '>= 23.4.0'
     dependencies:
       chalk: 4.1.2
-      jest: 29.2.1_@types+node@16.18.3
+      jest: 29.2.1
       jest-validate: 29.3.1
     dev: true
 
@@ -6846,7 +6846,7 @@ packages:
     dependencies:
       ansi-escapes: 5.0.0
       chalk: 4.1.2
-      jest: 29.2.1_@types+node@16.18.3
+      jest: 29.2.1
       jest-regex-util: 29.0.0
       jest-watcher: 29.1.2
       slash: 4.0.0
