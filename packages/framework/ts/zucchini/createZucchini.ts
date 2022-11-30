@@ -14,7 +14,7 @@ import { createStore, Step, Store } from './store.js'
 import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions'
 
 export namespace Zucchini {
-  export type StepCaller = (clause: string | RegExp, ...inputs: any[]) => Promise<any>
+  export type StepCaller = (clause: string, ...inputs: any[]) => Promise<any>
 
   export type StepContext = {
     clause: string,

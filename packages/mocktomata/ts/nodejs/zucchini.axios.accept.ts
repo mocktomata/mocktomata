@@ -1,3 +1,4 @@
+import { Zucchini } from '@mocktomata/framework'
 import { a } from 'assertron'
 import axios, { AxiosError } from 'axios'
 import { defineStep, scenario } from './index.js'
@@ -31,4 +32,16 @@ it('works with axios throwing error', async () => {
   expect(err.response?.statusText).toEqual('Bad Request')
   expect(err.response?.data).toEqual('Error: Unexpected part "1" (char 3)')
   await done()
+})
+
+function add(step: Zucchini.StepCaller, a: number, b: number): Promise<number> {
+  return step(`${a} + ${b}`)
+}
+
+it('can define custom function to run the step', async () => {
+  const { run, done } = scenario('with custom step function')
+
+  const plus = await add(run, 2, 3)
+  expect(plus).toEqual(5)
+  return done()
 })
