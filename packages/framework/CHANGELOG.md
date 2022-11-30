@@ -1,5 +1,12 @@
 # Change Log
 
+## 7.0.4
+
+### Patch Changes
+
+- 91273a1a: Fix `StepCaller` type.
+  It should accepts only `string`, not `string | RegExp`.
+
 ## 7.0.3
 
 ## 7.0.2
