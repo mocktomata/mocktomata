@@ -748,7 +748,7 @@ describe('function', () => {
       await spec.done()
     })
   })
-  incubator('callback in object literal fail', { emitLog: true, logLevel: Infinity }, (specName, spec) => {
+  incubator('callback in object literal fail', (specName, spec) => {
     test(specName, async () => {
       const subject = await spec(callbackInObjLiteral.fail)
 
