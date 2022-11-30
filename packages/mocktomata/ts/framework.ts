@@ -7,6 +7,3 @@ export {
   NotSpecable, PluginModuleNotConforming, PluginNotConforming, PluginNotFound,
   PluginsNotLoaded, SpecIDCannotBeEmpty, SpecNotFound
 } from '@mocktomata/framework'
-export type { MismatchActionModel, Mocktomata, Spec, SpecPlugin, SpecRecord } from '@mocktomata/framework'
-
-
