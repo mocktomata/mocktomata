@@ -1,5 +1,15 @@
 # Change Log
 
+## 7.0.3
+
+### Patch Changes
+
+- dfc83796: Export `Komondor` and `Zucchini` types
+  - @mocktomata/framework@7.0.3
+  - @mocktomata/nodejs@7.0.3
+  - @mocktomata/io-remote@7.0.3
+  - @mocktomata/service@7.0.3
+
 ## 7.0.2
 
 ### Patch Changes
