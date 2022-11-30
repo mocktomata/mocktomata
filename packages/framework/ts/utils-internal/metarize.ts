@@ -1,5 +1,5 @@
-import { parse, stringify } from '@ungap/structured-clone/json'
 import { AnyFunction, reduceByKey } from 'type-plus'
+import { parse, stringify } from './metarize.ctx.js'
 
 /**
  * Convert a value to a serialized metadata.
