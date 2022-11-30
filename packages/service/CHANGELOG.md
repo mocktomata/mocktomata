@@ -1,5 +1,13 @@
 # Change Log
 
+## 7.0.2
+
+### Patch Changes
+
+- Updated dependencies [1dcffc11]
+  - @mocktomata/framework@7.0.2
+  - @mocktomata/nodejs@7.0.2
+
 ## 7.0.1
 
 ### Patch Changes
