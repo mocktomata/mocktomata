@@ -1,5 +1,5 @@
-import { stringify } from '@ungap/structured-clone/json'
-import { metarize, demetarize } from './metarize.js'
+import { stringify } from './metarize.ctx.js'
+import { demetarize, metarize } from './metarize.js'
 
 test('empty object', () => {
   testMetarize({}, [{ type: 'object' }, {}], {})
