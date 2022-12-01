@@ -1,3 +1,4 @@
+import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions'
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
@@ -11,7 +12,6 @@ import { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { createStore, Step, Store } from './store.js'
-import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions'
 
 export namespace Zucchini {
   export type StepCaller = (clause: string, ...inputs: any[]) => Promise<any>
@@ -84,7 +84,7 @@ function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mo
        * Directly spec a subject and test away.
        * It is the same `spec()` as in `komondor` and `mockto`.
        */
-      spec,
+      spec: spec as <T>(subject: T) => Promise<T>,
       /**
        * Run a step as the test.
        *
