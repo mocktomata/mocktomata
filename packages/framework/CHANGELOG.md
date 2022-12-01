@@ -1,5 +1,11 @@
 # Change Log
 
+## 7.0.5
+
+### Patch Changes
+
+- b45c312a: Fix `Zucchini`'s `spec()` type
+
 ## 7.0.4
 
 ### Patch Changes
