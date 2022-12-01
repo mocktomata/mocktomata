@@ -1,9 +1,10 @@
 import { a } from 'assertron'
-import { createTestContext, createZucchini, SpecNotFound } from '../index.js'
-import { DuplicateStep, MissingStep } from './errors.js'
 import t from 'node:assert'
 import { has, none } from 'satisfier'
 import { logLevels } from 'standard-log'
+import { IsEqual, isType } from 'type-plus'
+import { createTestContext, createZucchini, SpecNotFound } from '../index.js'
+import { DuplicateStep, MissingStep } from './errors.js'
 
 describe(`${createZucchini.name}()`, () => {
   const { scenario, defineStep, defineParameterType } = createZucchini(createTestContext().context)
@@ -136,6 +137,7 @@ Error: foo`
       it('is working as expected', async () => {
         const save = scenario('increment')
         let s = await save.spec((x: number) => x + 1)
+        isType.t<IsEqual<typeof s, (x: number) => number>>()
         expect(s(1)).toBe(2)
         expect(save.mode()).toEqual('save')
         await save.done()
