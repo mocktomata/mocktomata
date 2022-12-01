@@ -66,17 +66,17 @@ describe(`${createZucchini.name}()`, () => {
 
       it('saves the spec within the step', async () => {
         let count = 0
-        defineStep('entrophy', async ({ spec }) => {
+        defineStep('entropy', async ({ spec }) => {
           const s = await spec(() => count++)
           return s()
         })
 
         const save = scenario.save('setup spec is saved')
-        expect(await save.setup('entrophy')).toEqual(0)
+        expect(await save.setup('entropy')).toEqual(0)
         await save.done()
 
         const sim = scenario.simulate('setup spec is saved')
-        expect(await sim.setup('entrophy')).toEqual(0)
+        expect(await sim.setup('entropy')).toEqual(0)
         await sim.done()
       })
 
@@ -117,17 +117,17 @@ Error: foo`
 
       it('saves the spec within the step', async () => {
         let count = 0
-        defineStep('entrophy', async ({ spec }) => {
+        defineStep('entropy', async ({ spec }) => {
           const s = await spec(() => count++)
           return s()
         })
 
         const save = scenario.save('run spec is saved')
-        expect(await save.run('entrophy')).toEqual(0)
+        expect(await save.run('entropy')).toEqual(0)
         await save.done()
 
         const sim = scenario.simulate('run spec is saved')
-        expect(await sim.run('entrophy')).toEqual(0)
+        expect(await sim.run('entropy')).toEqual(0)
         await sim.done()
       })
     })
@@ -225,17 +225,17 @@ Error: foo`
 
       it('saves the spec within the step', async () => {
         let count = 0
-        defineStep('entrophy', async ({ spec }) => {
+        defineStep('entropy', async ({ spec }) => {
           const s = await spec(() => count++)
           return s()
         })
 
         const save = scenario.save('teardown spec is saved')
-        expect(await save.teardown('entrophy')).toEqual(0)
+        expect(await save.teardown('entropy')).toEqual(0)
         await save.done()
 
         const sim = scenario.simulate('teardown spec is saved')
-        expect(await sim.teardown('entrophy')).toEqual(0)
+        expect(await sim.teardown('entropy')).toEqual(0)
         await sim.done()
       })
 
@@ -314,17 +314,17 @@ Error: foo`
 
       it('saves the spec within the step', async () => {
         let count = 0
-        defineStep('entrophy', async ({ spec }) => {
+        defineStep('entropy', async ({ spec }) => {
           const s = await spec(() => count++)
           return s()
         })
 
         const save = scenario.save('ensure spec is saved')
-        expect(await save.ensure('entrophy')).toEqual(0)
+        expect(await save.ensure('entropy')).toEqual(0)
         await save.done()
 
         const sim = scenario.simulate('ensure spec is saved')
-        expect(await sim.ensure('entrophy')).toEqual(0)
+        expect(await sim.ensure('entropy')).toEqual(0)
         await sim.done()
       })
 
@@ -482,21 +482,21 @@ Error: foo`
     afterAll(() => scenario.cleanup())
     it('forces save', async () => {
       let count = 0
-      defineStep('entrophy', async ({ spec }) => {
+      defineStep('entropy', async ({ spec }) => {
         const s = await spec(() => count++)
         return s()
       })
 
       const s = scenario('forces save')
-      expect(await s.setup('entrophy')).toEqual(0)
+      expect(await s.setup('entropy')).toEqual(0)
       await s.done()
 
       const save = scenario.save('forces save')
-      expect(await save.setup('entrophy')).toEqual(1)
+      expect(await save.setup('entropy')).toEqual(1)
       await save.done()
 
       const sim = scenario('forces save')
-      expect(await sim.setup('entrophy')).toEqual(1)
+      expect(await sim.setup('entropy')).toEqual(1)
       await sim.done()
     })
   })
