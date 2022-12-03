@@ -1,8 +1,13 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.1.1/schema.json",
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true,
+    "updateInternalDependents": "always"
+  },
+  "access": "public",
+  "baseBranch": "main",
   "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "title": "chore: version packages",
   "fixed": [
     [
       "@mocktomata/cli",
@@ -13,9 +18,8 @@
       "mocktomata"
     ]
   ],
+  "ignore": [],
   "linked": [],
-  "access": "public",
-  "baseBranch": "main",
-  "updateInternalDependencies": "patch",
-  "ignore": []
+  "title": "chore: version packages",
+  "updateInternalDependencies": "patch"
 }
