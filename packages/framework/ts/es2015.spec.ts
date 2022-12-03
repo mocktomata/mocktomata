@@ -508,6 +508,49 @@ describe('object', () => {
   })
 })
 
+describe(`array`, () => {
+  incubator(`empty array`, (specName, spec) => {
+    it(specName, async () => {
+      const subject = await spec((v: any[]) => v)
+      const actual = subject([])
+
+      expect(actual).toEqual([])
+
+      await spec.done()
+    })
+  })
+  incubator(`object array`, (specName, spec) => {
+    it(specName, async () => {
+      const subject = await spec((v: any[]) => v)
+      const actual = subject([{ a: 1 }])
+      expect(actual).toEqual([{ a: 1 }])
+
+      await spec.done()
+    })
+  })
+  incubator(`stub primitive array`, { emitLog: true, logLevel: Infinity }, (specName, spec) => {
+    it(specName, async () => {
+      const subject = await spec(() => [1, true, 'abc'])
+      const actual = subject()
+
+      expect(actual).toEqual([1, true, 'abc'])
+
+      await spec.done()
+    })
+  })
+  incubator(`stub object array`, { emitLog: true, logLevel: Infinity }, (specName, spec) => {
+    it(specName, async () => {
+      const subject = await spec(() => [{ a: 1 }])
+      const actual = subject()
+
+      expect(actual[0]).toEqual({ a: 1 })
+      expect(actual).toEqual([{ a: 1 }])
+
+      await spec.done()
+    })
+  })
+})
+
 describe('function', () => {
   incubator('no input no result', (specName, spec) => {
     test(specName, async () => {

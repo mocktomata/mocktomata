@@ -78,6 +78,9 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
   return {
     setSpyOptions: (subject, options) => context.spyOptions.push({ subject, options }),
     setMeta(meta) { return context.state.ref.meta = meta },
+    getSpy(value) {
+      return getSpy(context, value, {})
+    },
     getSpyId(value) {
       const { record } = context
       const spy = getSpy(context, value, {})

@@ -65,6 +65,13 @@ export namespace SpecPlugin {
      */
     setSpyOptions: SpyContext.setSpyOptions,
     /**
+     * Gets the spy of the specified value.
+     * If the value do not need to be spied on, itself is returned.
+     * This is used to get the spy of the value contained or returned by the subject of the plugin.
+     * For example, entries inside an array.
+     */
+    getSpy: <S>(value: S) => S,
+    /**
      * Gets the id of a value.
      * If the value is a spy, its id is returned.
      * If not the value itself is returned.
