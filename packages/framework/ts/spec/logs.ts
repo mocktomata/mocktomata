@@ -21,7 +21,7 @@ export function logCreateSpy(
 export function logAction({ log }: Log.Context, state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
   log.on(logLevels.trace, (log, level) => {
     const msg = prettifyAction(state, actionId, action)
-    if (level >= logLevels.planck) { log(msg, ...getCallSites().slice(3).map(c => c.toString())) }
+    if (level >= logLevels.planck) { log(msg, ...getCallSites().slice(3).map(c => `\n${c.toString()}`)) }
     else { log(msg) }
   })
 }
