@@ -1,5 +1,15 @@
 # Change Log
 
+## 7.0.7
+
+### Patch Changes
+
+- d5104f51: Change `MissingAction` behavior.
+
+  Instead of throw and failing the simulation,
+  Missing action will now emit a log instead.
+  This is because it can occurs naturally due to serialization work.
+
 ## 7.0.6
 
 ### Patch Changes
