@@ -1,5 +1,17 @@
 # Change Log
 
+## 7.0.6
+
+### Patch Changes
+
+- 7c455dd1: Fix array containing object.
+
+  The object was not properly accessed, resulting `{ x: undefined }`.
+
+- 7953176a: Improve planck level action logs format.
+
+  Now callstacks are printed in separate lines
+
 ## 7.0.5
 
 ### Patch Changes
