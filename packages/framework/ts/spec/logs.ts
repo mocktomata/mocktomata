@@ -41,7 +41,21 @@ export function logCreateStub(
 }
 
 // istanbul ignore next
-export function logMissingResultAction({ log }: Log.Context, state: Recorder.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
+export function logMissingResultAction({ log }: Log.Context, state: prettifyAction.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
   log.error(`Result action for ${prettifyAction(state, actionId, action)} not found.`)
   log.error(`Since all in-between actions should be processed, this is likely some kind of recording error.`)
+}
+
+export function logMissingActionAtDone({ log }: Log.Context, state: prettifyAction.State, specName: string, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
+  log.info(`'${specName}' has actions remains when the simulation is done.
+This could caused by additional work such as serialization,
+or extracting information for recording.
+
+It MIGHT also cause by some unforeseen issues.
+
+Emitting this log so that you are aware of it.
+This log might be removed in the future.
+
+The next expecting action is:
+${prettifyAction(state, actionId, action)}`)
 }

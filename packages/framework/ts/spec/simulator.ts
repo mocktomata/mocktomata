@@ -7,8 +7,8 @@ import type { SpecRecord } from '../spec-record/types.js'
 import { createTimeTracker, TimeTracker } from '../timeTracker/index.js'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils-internal/index.js'
 import { isMatchingGetAction, isMatchingInstantiateAction, isMatchingInvokeAction, isMatchingSetAction } from './actionMatches.js'
-import { ActionMismatch, ExtraAction, ExtraReference, MissingAction, NoSupportedPlugin, PluginsNotLoaded } from './errors.js'
-import { logAction, logCreateSpy, logCreateStub, logMissingResultAction, logRecordingTimeout } from './logs.js'
+import { ActionMismatch, ExtraAction, ExtraReference, NoSupportedPlugin, PluginsNotLoaded } from './errors.js'
+import { logAction, logCreateSpy, logCreateStub, logMissingActionAtDone, logMissingResultAction, logRecordingTimeout } from './logs.js'
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
 import { getDefaultPerformer } from './subjectProfile.js'
@@ -31,9 +31,11 @@ export namespace Simulator {
 
 export function createSimulator(context: AsyncContext<createSpec.Context>, specName: string, loaded: SpecRecord, options: Spec.Options) {
   let timeTracker: TimeTracker
-  const ctx = context.extend(async ({ timeTrackers, log }) => {
+  let log: Logger
+  const ctx = context.extend(async (ctx) => {
+    log = ctx.log
     timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
-    timeTrackers.push(timeTracker)
+    ctx.timeTrackers.push(timeTracker)
     return {}
   })
   const record = createSpecRecordValidator(specName, loaded)
@@ -96,11 +98,11 @@ export function createSimulator(context: AsyncContext<createSpec.Context>, specN
       // so `timeTracker` can be undefined.
       timeTracker?.stop()
       const action = record.getNextExpectedAction()
-      if (action) {
+      if (action && log) {
         const actionId = record.getNextActionId()
         const ref = record.getLoadedRef(actionId)!
         const refId = record.getLoadedRefId(ref)
-        throw new MissingAction(record.specName, { ref, refId }, actionId, action)
+        logMissingActionAtDone({ log }, { ref, refId }, record.specName, actionId, action)
       }
     },
     addMaskValue: (value: string | RegExp, replaceWith?: string) => getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
@@ -431,7 +433,7 @@ function processNextAction(context: Simulator.Context) {
         }
         else {
           // No pending action found.
-          // one possiblity is that the next action is comming in through next tick
+          // one possibility is that the next action is comming in through next tick
           // i.e. these calls `setTimeout(() => processNextAction(context), 0)`
           //
           // ignore and wait for next tick to happen.
