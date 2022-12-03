@@ -1,5 +1,11 @@
 # @mocktomata/cli
 
+## 7.0.7
+
+### Patch Changes
+
+- @mocktomata/service@7.0.7
+
 ## 7.0.6
 
 ### Patch Changes
