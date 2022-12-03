@@ -1,12 +1,19 @@
 {
   "folders": [
     {
+      "name": "mocktomata",
       "path": "."
     },
     {
+      "name": "website",
       "path": "../website"
     },
     {
+      "name": "training-ground",
+      "path": "../training-ground"
+    },
+    {
+      "name": ".github",
       "path": "../.github"
     }
   ],
