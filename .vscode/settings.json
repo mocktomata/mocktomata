@@ -45,6 +45,7 @@
       "url": "http://json.schemastore.org/tsconfig"
     }
   ],
+  "markdownlint.ignore": ".markdownlintignore",
   "search.exclude": {
     "**/bower_components": true,
     "**/node_modules": true,
