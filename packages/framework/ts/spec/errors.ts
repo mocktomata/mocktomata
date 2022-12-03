@@ -43,6 +43,7 @@ export class ExtraAction extends MocktomataError {
   }
 }
 
+// istanbul ignore next this is not used at the moment
 export class MissingAction extends MocktomataError {
   constructor(public specName: string, public state: prettifyAction.State, public actionId: number, public action: SpecRecord.Action, options?: ModuleError.Options) {
     super(`Recorded data for '${specName}' expecting action:

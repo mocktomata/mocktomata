@@ -1,7 +1,7 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
 import { AnyFunction } from 'type-plus'
-import { ActionMismatch, ExtraAction, ExtraReference, incubator, MissingAction, NotSpecable, SpecIDCannotBeEmpty } from './index.js'
+import { ActionMismatch, ExtraAction, ExtraReference, incubator, NotSpecable, SpecIDCannotBeEmpty } from './index.js'
 import { InvokeMetaMethodAfterSpec } from './spec/index.js'
 import { callbackInDeepObjLiteral, callbackInObjLiteral, ChildOfDummy, delayed, Dummy, fetch, postReturn, recursive, simpleCallback, synchronous, WithProperty, WithStaticMethod, WithStaticProp } from './test-artifacts/index.js'
 
@@ -39,14 +39,15 @@ describe('basic checks', () => {
 })
 
 describe('get', () => {
-  incubator.sequence('missing action throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('missing action emits log', (specName, { save, simulate }, reporter) => {
     test(specName, async () => {
       const subject = { a: 1 }
       const spy = await save(subject)
       expect(spy.a).toBe(1)
       await save.done()
       await simulate(subject)
-      a.throws(simulate.done(), MissingAction)
+      await simulate.done()
+      expect(reporter.getLogMessage()).toMatch(/when the simulation is done/)
     })
   })
   // @TODO: 💡 not sure if we should support this behavior
@@ -65,14 +66,15 @@ describe('get', () => {
 })
 
 describe('set', () => {
-  incubator.sequence('missing action throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('missing action emits log', (specName, { save, simulate }, reporter) => {
     test(specName, async () => {
       const subject = { a: 1 }
       const spy = await save(subject)
       spy.a = 2
       await save.done()
       await simulate(subject)
-      a.throws(simulate.done(), MissingAction)
+      await simulate.done()
+      expect(reporter.getLogMessage()).toMatch(/when the simulation is done/)
     })
   })
   incubator.sequence('extra set throws ExtraAction', (specName, { save, simulate }) => {
@@ -84,7 +86,7 @@ describe('set', () => {
       a.throws(() => stub.a = 2, ExtraAction)
     })
   })
-  incubator.sequence('in place of different action throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('in place of different action throws ActionMismatch', (specName, { save, simulate }) => {
     test(specName, async () => {
       const subject = { a: 1, foo() { } }
       const spy = await save(subject)
@@ -152,7 +154,7 @@ describe('set', () => {
 })
 
 describe('invoke', () => {
-  incubator.sequence('missing call throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('missing call emits log', (specName, { save, simulate }, reporter) => {
     test(specName, async () => {
       const subject = () => { }
       const spy = await save(subject)
@@ -160,7 +162,8 @@ describe('invoke', () => {
       await save.done()
 
       await simulate(subject)
-      await a.throws(simulate.done(), MissingAction)
+      await simulate.done()
+      expect(reporter.getLogMessage()).toMatch(/when the simulation is done/)
     })
   })
   incubator.sequence('extra call throws ExtraAction', (specName, { save, simulate }) => {
@@ -172,7 +175,7 @@ describe('invoke', () => {
       a.throws(() => stub(), ExtraAction)
     })
   })
-  incubator.sequence('in place of different action throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('in place of different action throws ActionMismatch', (specName, { save, simulate }) => {
     test(specName, async () => {
       const subject = Object.assign(function () { }, { a: 1 })
       const spy = await save(subject)
@@ -242,14 +245,15 @@ describe('instantiate', () => {
     // must exist at least one method for class plugin to identify it.
     foo() { }
   }
-  incubator.sequence('missing call throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('missing call emits log', (specName, { save, simulate }, reporter) => {
     test(specName, async () => {
       const spy = await save(Subject)
       new spy()
       await save.done()
 
       await simulate(Subject)
-      await a.throws(simulate.done(), MissingAction)
+      await simulate.done()
+      expect(reporter.getLogMessage()).toMatch(/when the simulation is done/)
     })
   })
   incubator.sequence('extra call throws ExtraAction', (specName, { save, simulate }) => {
@@ -260,7 +264,7 @@ describe('instantiate', () => {
       a.throws(() => new stub(), ExtraAction)
     })
   })
-  incubator.sequence('in place of different action throws MissingAction', (specName, { save, simulate }) => {
+  incubator.sequence('in place of different action throws ActionMismatch', (specName, { save, simulate }) => {
     test(specName, async () => {
       const spy = await save(Subject)
       new spy().a = 0
@@ -528,7 +532,7 @@ describe(`array`, () => {
       await spec.done()
     })
   })
-  incubator(`stub primitive array`, { emitLog: true, logLevel: Infinity }, (specName, spec) => {
+  incubator(`stub primitive array`, (specName, spec) => {
     it(specName, async () => {
       const subject = await spec(() => [1, true, 'abc'])
       const actual = subject()
@@ -538,7 +542,7 @@ describe(`array`, () => {
       await spec.done()
     })
   })
-  incubator(`stub object array`, { emitLog: true, logLevel: Infinity }, (specName, spec) => {
+  incubator(`stub object array`, (specName, spec) => {
     it(specName, async () => {
       const subject = await spec(() => [{ a: 1 }])
       const actual = subject()
