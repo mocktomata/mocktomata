@@ -1,6 +1,15 @@
-import base from '../../.jest/jest.nodejs.js'
+import { withChalk } from '@repobuddy/jest';
+import preset from '@repobuddy/jest/presets/ts-esm'
+import localPreset from '../../.jest/preset.js'
 
+const chalkedPreset = withChalk(preset, 'cjs')
+
+/** @type {import('jest').Config} */
 export default {
-  ...base,
-  displayName: 'mocktomata'
+  ...chalkedPreset,
+  moduleNameMapper: {
+    ...chalkedPreset.moduleNameMapper,
+    ...localPreset.moduleNameMapper,
+  },
+  displayName: 'cli'
 }

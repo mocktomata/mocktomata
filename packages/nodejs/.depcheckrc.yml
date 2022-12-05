@@ -1,4 +1,5 @@
 ignores:
   - '@mocktomata/plugin-fixture-*'
+  - '@repobuddy/jest'
   - jest-*
   - ts-jest

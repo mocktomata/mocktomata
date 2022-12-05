@@ -3,6 +3,7 @@ ignores:
   - '@kayahr/jest-electron-runner'
   - '@mocktomata/plugin-fixture-deep-link'
   - '@mocktomata/plugin-fixture-dummy'
+  - '@repobuddy/jest'
   - jest-*
   - param-case
   - pascal-case
