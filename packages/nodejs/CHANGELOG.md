@@ -1,5 +1,12 @@
 # Change Log
 
+## 7.0.8
+
+### Patch Changes
+
+- Updated dependencies [68985c0f]
+  - @mocktomata/framework@7.0.8
+
 ## 7.0.7
 
 ### Patch Changes
