@@ -8,5 +8,8 @@ export default {
     ...preset.moduleNameMapper,
     ...localPreset.moduleNameMapper,
   },
+  coveragePathIgnorePatterns: [
+    '<rootDir>/ts/test-artifacts',
+  ],
   displayName: 'framework'
 }
