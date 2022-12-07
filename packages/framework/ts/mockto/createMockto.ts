@@ -7,7 +7,7 @@ import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { initTimeTrackers } from '../timeTracker/index.js'
-import { LoadedContext } from '../types.internal.js'
+import type { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { resolveMocktoFnArgs } from './resolveMocktoFnArgs.js'
 
@@ -75,7 +75,10 @@ export function createMocktoFn(context: AsyncContext<LoadedContext>, mode?: Spec
     handler(specName,
       createSpecObject(
         context
-          .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(specFn) })
+          .extend({
+            options, reporter, specName,
+            specRelativePath: options.testRelativePath ?? getCallerRelativePath(specFn)
+          })
           .extend(getEffectiveSpecModeContext(mode))
           .extend(createLogContext)),
       reporter)

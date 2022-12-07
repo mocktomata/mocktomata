@@ -1,14 +1,15 @@
 import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions'
 import type { AsyncContext } from 'async-fp'
-import { createMemoryLogReporter } from 'standard-log'
+import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
+import type { SpecRecord } from '../index.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import { createSpecFns, getEffectiveSpecModeContext } from '../spec/index.js'
 import type { Spec } from '../spec/types.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { initTimeTrackers } from '../timeTracker/createTimeTracker.js'
-import { LoadedContext } from '../types.internal.js'
+import type { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { createStore, Step, Store } from './store.js'
@@ -24,6 +25,19 @@ export namespace Zucchini {
   } & Pick<Spec, 'maskValue' | 'ignoreMismatch'>
 
   export type StepHandler = (context: StepContext, ...args: any[]) => any
+
+  export type Fn = (specName: string, options?: Spec.Options) => {
+    ensure: Zucchini.StepCaller,
+    setup: Zucchini.StepCaller,
+    run: Zucchini.StepCaller,
+    teardown: Zucchini.StepCaller,
+    spec: <T>(subject: T) => Promise<T>,
+    done: () => Promise<SpecRecord>,
+    ignoreMismatch: (value: any) => void,
+    maskValue: Spec.MaskValueFn,
+    mode: () => Spec.Mode,
+    reporter: MemoryLogReporter
+  }
 }
 
 export function createZucchini(context: AsyncContext<Mocktomata.Context>) {
@@ -53,12 +67,12 @@ function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store)
   )
 }
 
-function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mode?: Spec.Mode) {
+function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mode?: Spec.Mode): Zucchini.Fn {
   return function scenario(specName: string, options: Spec.Options = { timeout: 3000 }) {
     const reporter = createMemoryLogReporter()
 
     const ctx = context
-      .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(scenario) })
+      .extend({ options, reporter, specName, specRelativePath: options.testRelativePath ?? getCallerRelativePath(scenario) })
       .extend(getEffectiveSpecModeContext(mode))
       .extend(createLogContext)
 
@@ -169,7 +183,6 @@ function lookupStep(store: Store, clause: string) {
   if (!entry) throw new MissingStep(clause)
   return entry
 }
-
 
 function createStepFns(store: Store) {
   function assertNoDuplicate(clause: string | RegExp, handler: Zucchini.StepHandler) {

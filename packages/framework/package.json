@@ -27,9 +27,10 @@
     "cjs",
     "esm",
     "ts",
-    "!ts/test-artifacts",
+    "!**/test-artifacts",
     "!**/*.mock.*",
-    "!**/*.spec.*"
+    "!**/*.spec.*",
+    "!**/*.test-setup.*"
   ],
   "scripts": {
     "build": "run-p build:esm build:cjs",

@@ -29,6 +29,7 @@ export async function createSaveSpec(
         const record = recorder.getSpecRecord(maskCriteria)
         io.writeSpec(specName, invokePath, record)
         log.debug(`Spec Record "${specName}":`,  prettyPrintSpecRecord(record))
+        log.trace(`Spec Record "${specName}" written to: ${invokePath}`)
         return record
       },
       ignoreMismatch(value: any) {
