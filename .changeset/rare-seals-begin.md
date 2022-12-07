@@ -4,10 +4,17 @@
 
 Add `Zucchini.Fn` and `Spec.MaskValueFn` type.
 
-Add `Spec.Options.testRelativePath`.
-This allows tests to create helper functions and specify where the test actually written.
+Add `Spec.Options.ssf`.
+This allows tests to create helper functions.
 
-Note that it must be a relative path. You can get it by:
+```ts
+// some-helpers.ts
+function someHelperFunction(..., options?: Spec.Options) {
+  return komondor(..., { ...options, ssf: someHelperFunction })
+}
 
-- CommonJS: `path.relative(process.cwd(), __filename)`
-- ESM: `path.relative(process.cwd(), filename(import.meta))` using (`dirname-filename-esm`)
+// the-test.spec.ts
+it('...', () => {
+  const spec = someHelperFunction(...)
+})
+```

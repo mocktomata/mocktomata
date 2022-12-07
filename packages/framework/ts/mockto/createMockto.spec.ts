@@ -1,6 +1,4 @@
 import a from 'assertron'
-import { filename } from 'dirname-filename-esm'
-import { relative } from 'node:path'
 import { logLevels } from 'standard-log'
 import { record } from 'type-plus'
 import { createMockto, createTestContext, getCallerRelativePath, SpecNotFound } from '../index.js'
@@ -267,10 +265,7 @@ describe(`mockto`, () => {
 
   // The indirect usage is not really like this,
   // but for test this is sufficient
-  indirectMockto(mockto, 'indirect usage', {
-    logLevel: Infinity,
-    testRelativePath: relative(process.cwd(), filename(import.meta)),
-  }, async (_, spec, reporter) => {
+  indirectMockto(mockto, 'indirect usage', { logLevel: Infinity }, async (_, spec, reporter) => {
     it('can specify testRelativePath for indirect usage', async () => {
       await spec.done()
       // need to skip `ts/` and `.ts` from match.

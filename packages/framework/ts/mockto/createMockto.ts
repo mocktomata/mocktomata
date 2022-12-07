@@ -77,7 +77,7 @@ export function createMocktoFn(context: AsyncContext<LoadedContext>, mode?: Spec
         context
           .extend({
             options, reporter, specName,
-            specRelativePath: options.testRelativePath ?? getCallerRelativePath(specFn)
+            specRelativePath: getCallerRelativePath(options.ssf ?? specFn)
           })
           .extend(getEffectiveSpecModeContext(mode))
           .extend(createLogContext)),
