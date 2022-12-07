@@ -1,5 +1,15 @@
 # Change Log
 
+## 7.1.0
+
+### Patch Changes
+
+- Updated dependencies [1b8a98a4]
+  - @mocktomata/framework@7.1.0
+  - @mocktomata/io-remote@7.1.0
+  - @mocktomata/nodejs@7.1.0
+  - @mocktomata/service@7.1.0
+
 ## 7.0.8
 
 ### Patch Changes

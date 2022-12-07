@@ -1,5 +1,26 @@
 # Change Log
 
+## 7.1.0
+
+### Minor Changes
+
+- 1b8a98a4: Add `Zucchini.Fn` and `Spec.MaskValueFn` type.
+
+  Add `Spec.Options.ssf`.
+  This allows tests to create helper functions.
+
+  ```ts
+  // some-helpers.ts
+  function someHelperFunction(..., options?: Spec.Options) {
+    return komondor(..., { ...options, ssf: someHelperFunction })
+  }
+
+  // the-test.spec.ts
+  it('...', () => {
+    const spec = someHelperFunction(...)
+  })
+  ```
+
 ## 7.0.8
 
 ### Patch Changes
