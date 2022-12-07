@@ -96,6 +96,23 @@ export namespace Spec {
      *
      * By default this is false to avoid cluttering the test result.
      */
-    emitLog?: boolean
+    emitLog?: boolean,
+    /**
+     * Specify the path of the test relative to `cwd`.
+     * You can get that by:
+     * - CommonJS: `path.relative(process.cwd(), __filename)`
+     * - ESM: `path.relative(process.cwd(), filename(import.meta))`
+     * - Browser: TBD
+     *
+     * If not specified, it will be the file path where `mocktomata` is invoked.
+     *
+     * i.e.:
+     * `mockto(...)`,
+     * `komondor(...)`
+     * `scenario(...)`
+     */
+    testRelativePath?: string
   }
+
+  export type MaskValueFn = (value: string | RegExp, replaceWith?: string | undefined) => void
 }

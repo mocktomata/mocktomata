@@ -6,7 +6,7 @@ import { loadPlugins } from '../spec-plugin/index.js'
 import { createSpecObject, getEffectiveSpecModeContext, Spec } from '../spec/index.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { initTimeTrackers } from '../timeTracker/index.js'
-import { LoadedContext } from '../types.internal.js'
+import type { LoadedContext } from '../types.internal.js'
 import type { Mocktomata } from '../types.js'
 
 /**
@@ -67,7 +67,10 @@ function createKomondorFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode
     return Object.assign(
       createSpecObject(
         context
-          .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(komondorFn) })
+          .extend({
+            options, reporter, specName,
+            specRelativePath: options.testRelativePath ?? getCallerRelativePath(komondorFn)
+          })
           .extend(getEffectiveSpecModeContext(mode))
           .extend(createLogContext)),
       { reporter })
