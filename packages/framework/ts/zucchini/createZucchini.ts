@@ -72,7 +72,7 @@ function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mo
     const reporter = createMemoryLogReporter()
 
     const ctx = context
-      .extend({ options, reporter, specName, specRelativePath: options.testRelativePath ?? getCallerRelativePath(scenario) })
+      .extend({ options, reporter, specName, specRelativePath: getCallerRelativePath(options.ssf ?? scenario) })
       .extend(getEffectiveSpecModeContext(mode))
       .extend(createLogContext)
 

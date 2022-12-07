@@ -1,7 +1,5 @@
 import { a } from 'assertron'
-import { filename } from 'dirname-filename-esm'
 import t from 'node:assert'
-import { relative } from 'node:path'
 import { has, none } from 'satisfier'
 import { logLevels } from 'standard-log'
 import { IsEqual, isType } from 'type-plus'
@@ -352,10 +350,7 @@ Error: foo`
     })
 
     it('can specify testRelativePath for indirect usage', async () => {
-      const { done, reporter } = indirectZucchini(scenario, 'indirect usage', {
-        logLevel: Infinity,
-        testRelativePath: relative(process.cwd(), filename(import.meta)),
-      })
+      const { done, reporter } = indirectZucchini(scenario, 'indirect usage', { logLevel: Infinity })
       await done()
       // need to skip `ts/` and `.ts` from match.
       // jest run from `ts` or `esm` depends on it is `test:watch` vs `test` or `coverage`

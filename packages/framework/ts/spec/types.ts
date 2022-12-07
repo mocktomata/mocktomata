@@ -1,4 +1,5 @@
 import type { Logger, MemoryLogReporter } from 'standard-log'
+import { AnyFunction } from 'type-plus'
 import type { Log } from '../log/types.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import type { SpecRecord } from '../spec-record/types.js'
@@ -98,20 +99,17 @@ export namespace Spec {
      */
     emitLog?: boolean,
     /**
-     * Specify the path of the test relative to `cwd`.
-     * You can get that by:
-     * - CommonJS: `path.relative(process.cwd(), __filename)`
-     * - ESM: `path.relative(process.cwd(), filename(import.meta))`
-     * - Browser: TBD
+     * Specify the function that invokes `mocktomata` if it is not invoked from the test directly.
      *
-     * If not specified, it will be the file path where `mocktomata` is invoked.
-     *
-     * i.e.:
+     * i.e., the function which calls:
      * `mockto(...)`,
      * `komondor(...)`
      * `scenario(...)`
+     *
+     * This is used to get the relative path of the test file.
+     * Specify this when you create some indirect function in a different file for setting up tests.
      */
-    testRelativePath?: string
+    ssf?: AnyFunction,
   }
 
   export type MaskValueFn = (value: string | RegExp, replaceWith?: string | undefined) => void

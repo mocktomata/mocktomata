@@ -69,7 +69,7 @@ function createKomondorFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode
         context
           .extend({
             options, reporter, specName,
-            specRelativePath: options.testRelativePath ?? getCallerRelativePath(komondorFn)
+            specRelativePath: getCallerRelativePath(options.ssf ?? komondorFn)
           })
           .extend(getEffectiveSpecModeContext(mode))
           .extend(createLogContext)),
