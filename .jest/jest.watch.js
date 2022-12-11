@@ -5,10 +5,10 @@ module.exports = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
     [
-      'jest-watch-toggle-config', { 'setting': 'verbose' }
+      'jest-watch-toggle-config-2', { 'setting': 'verbose' }
     ],
     [
-      'jest-watch-toggle-config', { 'setting': 'collectCoverage' }
+      'jest-watch-toggle-config-2', { 'setting': 'collectCoverage' }
     ]
   ]
 }

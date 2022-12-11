@@ -1,4 +1,4 @@
-import preset from '@repobuddy/jest/presets/ts'
+import preset from '@repobuddy/jest/presets/ts-watch'
 import deepmerge from 'deepmerge'
 import localPreset from '../../.jest/preset.js'
 
