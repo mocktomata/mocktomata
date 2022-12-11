@@ -1,5 +1,6 @@
 ignores:
   - '@mocktomata/plugin-fixture-*'
   - '@repobuddy/jest'
+  - deepmerge
   - jest-*
   - ts-jest

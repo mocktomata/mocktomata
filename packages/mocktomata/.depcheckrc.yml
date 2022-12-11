@@ -4,6 +4,7 @@ ignores:
   - '@mocktomata/plugin-fixture-deep-link'
   - '@mocktomata/plugin-fixture-dummy'
   - '@repobuddy/jest'
+  - deepmerge
   - jest-*
   - param-case
   - pascal-case

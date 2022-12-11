@@ -1,15 +1,10 @@
-import { withChalk } from '@repobuddy/jest'
-import preset from '@repobuddy/jest/presets/ts-esm'
+import preset from '@repobuddy/jest/presets/ts'
+import deepmerge from 'deepmerge'
 import localPreset from '../../.jest/preset.js'
 
-const base = withChalk(preset)
-
 /** @type {import('jest').Config} */
-export default {
-  ...base,
-  moduleNameMapper: {
-    ...base.moduleNameMapper,
-    ...localPreset.moduleNameMapper,
-  },
+export default deepmerge(
+  preset, {
+  moduleNameMapper: localPreset.moduleNameMapper,
   displayName: 'nodejs'
-}
+})
