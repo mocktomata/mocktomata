@@ -53,18 +53,18 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> 
     })
   },
   createStub: ({ getProperty, setProperty, invoke }, _, meta) => {
-    const base = demetarize(meta);
+    const base = demetarize(meta)
     const stub = new Proxy(base, {
       apply: function (_, thisArg, args: any[]) {
         return invoke({ thisArg, args })
       },
-      get(target: any, property: string) {
-        if (property === 'call' || property === 'apply' || property === 'toString') return target[property]
+      get(target: any, key: string) {
+        if (key === 'call' || key === 'apply' || key === 'toString') return target[key]
 
-        return getProperty({ key: property })
+        return getProperty({ key })
       },
-      set(_, property: string, value: any) {
-        return setProperty({ key: property, value })
+      set(_, key: string, value: any) {
+        return setProperty({ key, value })
       }
     })
     return stub
