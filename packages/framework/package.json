@@ -58,7 +58,7 @@
     "type-plus": "^4.14.1"
   },
   "devDependencies": {
-    "@repobuddy/jest": "^1.2.0",
+    "@repobuddy/jest": "^2.0.0",
     "@size-limit/preset-big-lib": "^8.0.1",
     "@types/stack-utils": "^2.0.1",
     "@types/ungap__structured-clone": "^0.3.0",
