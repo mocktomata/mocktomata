@@ -392,12 +392,12 @@ importers:
       '@mocktomata/nodejs': workspace:^
       '@mocktomata/plugin-fixture-cjs-a': workspace:^
       '@mocktomata/plugin-fixture-cjs-b': workspace:^
-      standard-log: 11.5.0
+      standard-log: 11.5.1
     dependencies:
       '@mocktomata/nodejs': link:../..
       '@mocktomata/plugin-fixture-cjs-a': link:../../../../test-plugins/plugin-fixture-cjs-a
       '@mocktomata/plugin-fixture-cjs-b': link:../../../../test-plugins/plugin-fixture-cjs-b
-      standard-log: 11.5.0
+      standard-log: 11.5.1
 
   packages/nodejs/fixtures/plugin-esm:
     specifiers:
@@ -408,7 +408,7 @@ importers:
       '@mocktomata/plugin-fixture-esm-a': workspace:^
       '@mocktomata/plugin-fixture-esm-b': workspace:^
       '@mocktomata/plugin-fixture-no-activate': workspace:^
-      standard-log: 11.5.0
+      standard-log: 11.5.1
     dependencies:
       '@mocktomata/nodejs': link:../..
       '@mocktomata/plugin-fixture-activate-not-fn': link:../../../../test-plugins/plugin-fixture-activate-not-fn
@@ -417,7 +417,7 @@ importers:
       '@mocktomata/plugin-fixture-esm-a': link:../../../../test-plugins/plugin-fixture-esm-a
       '@mocktomata/plugin-fixture-esm-b': link:../../../../test-plugins/plugin-fixture-esm-b
       '@mocktomata/plugin-fixture-no-activate': link:../../../../test-plugins/plugin-fixture-no-activate
-      standard-log: 11.5.0
+      standard-log: 11.5.1
 
   packages/nodejs/fixtures/two-configs:
     specifiers: {}
@@ -2283,7 +2283,7 @@ packages:
       read-pkg-up: 7.0.1
       resolve.imports: 1.2.3
       satisfier: 5.4.2
-      ts-jest: 29.0.3_uo52wfafpsvhxs5nuzgmkssvwi
+      ts-jest: 29.0.3_4z6d7nuynxrl4uveazftj6diza
       type-plus: 4.18.1
     dev: true
 
@@ -9812,6 +9812,16 @@ packages:
       type-plus: 4.18.1
       upper-case: 2.0.2
 
+  /standard-log/11.5.1:
+    resolution: {integrity: sha512-cA0+vIloNK0rUIi92XnCa0hOQEwFqyZt/nTuPpWTfv2WsqfIGdGyAM1Q2WLalXYPisCnSaxSQ673ecjE21oY3w==}
+    dependencies:
+      '@just-func/types': 0.5.0
+      iso-error: 5.0.0
+      ms: 2.1.3
+      type-plus: 5.0.0
+      upper-case: 2.0.2
+    dev: false
+
   /static-extend/0.1.2:
     resolution: {integrity: sha512-72E9+uLc27Mt718pMHt9VMNiAL4LMsmDbBva8mxWUCkT07fSzEGMYUCk0XWY6lp0j6RBAG4cJ3mWuZv2OE3s0g==}
     engines: {node: '>=0.10.0'}
@@ -10086,7 +10096,7 @@ packages:
       schema-utils: 3.1.1
       serialize-javascript: 6.0.0
       terser: 5.14.2
-      webpack: 5.74.0
+      webpack: 5.74.0_webpack-cli@5.0.0
     dev: true
 
   /terser/5.14.2:
