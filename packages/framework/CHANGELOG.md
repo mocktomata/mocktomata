@@ -1,5 +1,11 @@
 # Change Log
 
+## 7.1.1
+
+### Patch Changes
+
+- daf55a94: Update `type-plus`
+
 ## 7.1.0
 
 ### Minor Changes
