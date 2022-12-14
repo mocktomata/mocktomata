@@ -54,7 +54,7 @@
     "json5": "^2.2.1",
     "mkdirp": "^1.0.4",
     "sanitize-filename": "^1.6.3",
-    "type-plus": "^4.14.1"
+    "type-plus": "^5.0.0"
   },
   "devDependencies": {
     "@jest/globals": "^29.2.1",
