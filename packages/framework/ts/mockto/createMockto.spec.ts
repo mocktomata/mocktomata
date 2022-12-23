@@ -273,4 +273,35 @@ describe(`mockto`, () => {
       expect(reporter.getLogMessage()).toMatch('/mockto/createMockto.spec')
     })
   })
+
+  describe('mocking', () => {
+    mockto.mock('requires to specify mock', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('stubbed')
+      })
+    })
+    mockto('direct accepts mock but ignore it', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+      })
+    })
+    mockto.live('live accepts mock but ignore it', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+      })
+    })
+    mockto.save('save accepts mock but ignore it', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+      })
+    })
+  })
 })

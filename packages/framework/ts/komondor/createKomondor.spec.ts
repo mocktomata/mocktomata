@@ -95,3 +95,46 @@ it('gets memory log reporter', async () => {
     /^mocktomata:gets memory log reporter:simulate/
   ))
 })
+
+describe(`kd.mock()`, () => {
+  it(`requires to specify a mock`, async () => {
+    const spec = k.mock('requires to specify a mock')
+    const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+    const r = s('value')
+    expect(r).toBe('stubbed')
+  })
+  it('direct accepts mock but ignore it', async () => {
+    const spec = k('direct accepts mock but ignore it')
+    const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+    const r = s('value')
+    expect(r).toBe('value')
+  })
+  it('live accepts mock but ignore it', async () => {
+    const spec = k.live('live accepts mock but ignore it')
+    const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+    const r = s('value')
+    expect(r).toBe('value')
+  })
+  it('save accepts mock but ignore it', async () => {
+    const spec = k.save('save accepts mock but ignore it')
+    const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+    const r = s('value')
+    expect(r).toBe('value')
+  })
+  it('simulate accepts mock but ignore it', async () => {
+    {
+      const spec = k.save('simulate accepts mock but ignore it')
+      const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+      const r = s('value')
+      expect(r).toBe('value')
+      await spec.done()
+    }
+    {
+      const spec = k.simulate('simulate accepts mock but ignore it')
+      const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+      const r = s('value')
+      expect(r).toBe('value')
+      await spec.done()
+    }
+  })
+})

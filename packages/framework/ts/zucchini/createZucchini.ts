@@ -27,11 +27,18 @@ export namespace Zucchini {
   export type StepHandler = (context: StepContext, ...args: any[]) => any
 
   export type Fn = (specName: string, options?: Spec.Options) => {
+    spec: <S>(subject: S, options?: { mock?: S }) => Promise<S>
+  } & ScenarioBase
+
+  export type MockFn = (specName: string, options?: Spec.Options) => {
+    spec: <S>(subject: S, options: { mock: S }) => Promise<S>
+  } & ScenarioBase
+
+  export type ScenarioBase = {
     ensure: Zucchini.StepCaller,
     setup: Zucchini.StepCaller,
     run: Zucchini.StepCaller,
     teardown: Zucchini.StepCaller,
-    spec: <T>(subject: T) => Promise<T>,
     done: () => Promise<SpecRecord>,
     ignoreMismatch: (value: any) => void,
     maskValue: Spec.MaskValueFn,
@@ -58,6 +65,7 @@ function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store)
     {
       live: createScenarioFn(ctx, store, 'live'),
       save: createScenarioFn(ctx, store, 'save'),
+      mock: createScenarioFn(ctx, store, 'mock') as Zucchini.MockFn,
       simulate: createScenarioFn(ctx, store, 'simulate'),
       async cleanup() {
         const { timeTrackers } = await ctx.get()
