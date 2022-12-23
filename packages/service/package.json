@@ -1,6 +1,6 @@
 {
   "name": "@mocktomata/service",
-  "version": "7.1.1",
+  "version": "7.2.0",
   "description": "mocktomata service implementation",
   "homepage": "https://github.com/mocktomata/mocktomata/tree/main/packages/service",
   "bugs": {

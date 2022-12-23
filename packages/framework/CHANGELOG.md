@@ -1,5 +1,11 @@
 # Change Log
 
+## 7.2.0
+
+### Minor Changes
+
+- 60cf772a: Add mocking support
+
 ## 7.1.1
 
 ### Patch Changes
