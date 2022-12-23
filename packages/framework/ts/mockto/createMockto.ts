@@ -29,6 +29,10 @@ export type Mockto = Mockto.Fn & {
    */
   simulate: Mockto.Fn,
   /**
+   * Creates a `Spec` that runs in mock mode.
+   */
+   mock: Mockto.MockFn,
+  /**
    * Clean up the system in case some `spec.done()` are not called.
    */
   cleanup(): Promise<void>
@@ -45,6 +49,16 @@ export namespace Mockto {
     (specName: string, handler: Spec.Handler): void,
     (specName: string, options: Spec.Options, handler: Spec.Handler): void,
   }
+  export type MockFn = {
+    /**
+     * Creates an automatic spec.
+     * Automatic spec will record and save a record in the first run.
+     * In subsequent runs, the saved record will be used to simulate the behavior.
+     * @param specName Name of the spec. Every test in the same file must have a unique spec name.
+     */
+    (specName: string, handler: Spec.MockHandler): void,
+    (specName: string, options: Spec.Options, handler: Spec.MockHandler): void,
+  }
 }
 
 export function createMockto(context: AsyncContext<Mocktomata.Context>): Mockto {
@@ -58,6 +72,7 @@ export function createMockto(context: AsyncContext<Mocktomata.Context>): Mockto 
     {
       live: createMocktoFn(ctx, 'live'),
       save: createMocktoFn(ctx, 'save'),
+      mock: createMocktoFn(ctx, 'mock'),
       simulate: createMocktoFn(ctx, 'simulate'),
       async cleanup() {
         const { timeTrackers } = await ctx.get()

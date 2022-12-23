@@ -521,4 +521,42 @@ Error: foo`
       a.throws(() => spec({}), SpecNotFound)
     })
   })
+
+  describe('mocking', () => {
+    it(`requires to specify a mock`, async () => {
+      const { spec } = scenario.mock('requires to specify a mock')
+      const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+      const r = s('value')
+      expect(r).toBe('stubbed')
+    })
+    it('direct accepts mock but ignore it', async () => {
+      const { spec } = scenario('direct accepts mock but ignore it')
+      const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+      const r = s('value')
+      expect(r).toBe('value')
+    })
+
+    it('live accepts mock but ignore it', async () => {
+      const { spec } = scenario.live('live accepts mock but ignore it')
+      const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+      const r = s('value')
+      expect(r).toBe('value')
+    })
+    it('save/sim accepts mock but ignore it', async () => {
+      {
+        const { spec, done } = scenario.save('save accepts mock but ignore it')
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+        await done()
+      }
+      {
+        const { spec, done } = scenario.simulate('save accepts mock but ignore it')
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+        await done()
+      }
+    })
+  })
 })

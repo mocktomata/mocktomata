@@ -43,10 +43,10 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
     // e.g. in `scenario`.
     return createActualSpec(initState).then(a => a.done())
   }
-  const spec = (subject: any) => createActualSpec(initState).then(aspec => {
+  const spec = (subject: any, options?: any) => createActualSpec(initState).then(aspec => {
     actualSpec = aspec
     actualMode = aspec.mode
-    return aspec(subject)
+    return aspec(subject, options)
   })
   return { spec, modeProperty, ignoreMismatch, maskValue, done }
 }

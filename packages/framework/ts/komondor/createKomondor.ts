@@ -4,6 +4,7 @@ import { loadConfig } from '../config/index.js'
 import { createLogContext } from '../log/createLogContext.js'
 import { loadPlugins } from '../spec-plugin/index.js'
 import { createSpecObject, getEffectiveSpecModeContext, Spec } from '../spec/index.js'
+import { MockSpec } from '../spec/types.js'
 import { getCallerRelativePath } from '../test-utils/index.js'
 import { initTimeTrackers } from '../timeTracker/index.js'
 import type { LoadedContext } from '../types.internal.js'
@@ -26,6 +27,10 @@ export type Komondor = Komondor.Fn & {
    */
   simulate: Komondor.Fn,
   /**
+   * Creates a `Spec` that runs in mock mode.
+   */
+  mock: Komondor.MockFn,
+  /**
    * Clean up the system in case some `spec.done()` are not called.
    */
   cleanup(): Promise<void>
@@ -33,6 +38,12 @@ export type Komondor = Komondor.Fn & {
 
 export namespace Komondor {
   export type Fn = (specName: string, options?: Spec.Options) => Spec & {
+    /**
+     * An in-memory reporter containing the logs for inspection.
+     */
+    reporter: MemoryLogReporter
+  }
+  export type MockFn = (specName: string, options?: Spec.Options) => MockSpec & {
     /**
      * An in-memory reporter containing the logs for inspection.
      */
@@ -51,6 +62,7 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): Komon
     {
       live: createKomondorFn(ctx, 'live'),
       save: createKomondorFn(ctx, 'save'),
+      mock: createKomondorFn(ctx, 'mock'),
       simulate: createKomondorFn(ctx, 'simulate'),
       async cleanup() {
         const { timeTrackers } = await ctx.get()

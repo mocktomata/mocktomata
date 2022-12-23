@@ -9,26 +9,36 @@ export type Spec = {
   /**
    * Creates a spec'd subject to capture or replay the behavior
    */
-  <S>(subject: S): Promise<S>,
+  <S>(subject: S, options?: { mock?: S }): Promise<S>,
+} & Spec.Base
+
+export type MockSpec = {
   /**
-   * The current mode of the spec.
+   * Creates a spec'd subject to capture or replay the behavior
    */
-  readonly mode: Spec.Mode,
-  /**
-   * Indicates the spec completes.
-   * @return the resulting `SpecRecord` for debugging purposes.
-   */
-  done(): Promise<SpecRecord>,
-  ignoreMismatch(value: unknown): void,
-  /**
-   * Mask some sensitive value from logs and record.
-   * @param value value to mask for
-   * @param replaceWith value to replace with (Default: `[masked]`)
-   */
-  maskValue(value: string | RegExp, replaceWith?: string): void,
-}
+  <S>(subject: S, options: { mock: S }): Promise<S>,
+} & Spec.Base
 
 export namespace Spec {
+  export type Base = {
+    /**
+     * The current mode of the spec.
+     */
+    readonly mode: Spec.Mode,
+    /**
+     * Indicates the spec completes.
+     * @return the resulting `SpecRecord` for debugging purposes.
+     */
+    done(): Promise<SpecRecord>,
+    ignoreMismatch(value: unknown): void,
+    /**
+     * Mask some sensitive value from logs and record.
+     * @param value value to mask for
+     * @param replaceWith value to replace with (Default: `[masked]`)
+     */
+    maskValue(value: string | RegExp, replaceWith?: string): void,
+  }
+
   export type Config = {
     overrideMode?: OverrideMode,
     filePathFilter?: RegExp,
@@ -73,9 +83,10 @@ export namespace Spec {
     writeSpec(specName: string, specRelativePath: string, record: SpecRecord): Promise<void>
   }
 
-  export type Mode = 'live' | 'save' | 'simulate' | 'auto'
+  export type Mode = 'live' | 'save' | 'simulate' | 'auto' | 'mock'
 
   export type Handler = (specName: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
+  export type MockHandler = (specName: string, spec: MockSpec, reporter: MemoryLogReporter) => void | Promise<any>
 
   export type Options = {
     /**
