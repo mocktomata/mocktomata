@@ -27,11 +27,11 @@ export namespace Zucchini {
   export type StepHandler = (context: StepContext, ...args: any[]) => any
 
   export type Fn = (specName: string, options?: Spec.Options) => {
-    spec: <S>(subject: S, options?: { mock?: S }) => Promise<S>
+    spec: <S>(subject: S, options?: { mock?: Partial<S> }) => Promise<S>
   } & ScenarioBase
 
   export type MockFn = (specName: string, options?: Spec.Options) => {
-    spec: <S>(subject: S, options: { mock: S }) => Promise<S>
+    spec: <S>(subject: S, options: { mock: Partial<S> }) => Promise<S>
   } & ScenarioBase
 
   export type ScenarioBase = {

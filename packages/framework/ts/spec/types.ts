@@ -9,14 +9,14 @@ export type Spec = {
   /**
    * Creates a spec'd subject to capture or replay the behavior
    */
-  <S>(subject: S, options?: { mock?: S }): Promise<S>,
+  <S>(subject: S, options?: { mock?: Partial<S> }): Promise<S>,
 } & Spec.Base
 
 export type MockSpec = {
   /**
    * Creates a spec'd subject to capture or replay the behavior
    */
-  <S>(subject: S, options: { mock: S }): Promise<S>,
+  <S>(subject: S, options: { mock: Partial<S> }): Promise<S>,
 } & Spec.Base
 
 export namespace Spec {
