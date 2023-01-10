@@ -47,7 +47,7 @@
   "dependencies": {
     "@mocktomata/framework": "workspace:^",
     "cross-fetch": "^3.1.4",
-    "iso-error": "^5.0.0"
+    "iso-error": "^6.0.0"
   },
   "devDependencies": {
     "@kayahr/jest-electron-runner": "^29.0.0",
