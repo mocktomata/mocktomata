@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { logLevels } from 'standard-log'
 import { record } from 'type-plus'
 import { createMockto, createTestContext, getCallerRelativePath, SpecNotFound } from '../index.js'
@@ -53,119 +53,156 @@ describe(`mockto`, () => {
     })
   })
 
-  test('save with no options', async () => {
-    const specNameInput = 'save with no options'
-    await new Promise<void>(a => {
-      mockto.save(specNameInput, (specName, spec) => {
-        expect(specName).toEqual(specNameInput)
-        spec((x: number) => x + 1).then(async s => {
-          expect(s(1)).toBe(2)
-          await spec.done()
-          a()
+  describe(`mockto.save()`, () => {
+    test('save with no options', async () => {
+      const specNameInput = 'save with no options'
+      await new Promise<void>(a => {
+        mockto.save(specNameInput, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
+          spec((x: number) => x + 1).then(async s => {
+            expect(s(1)).toBe(2)
+            await spec.done()
+            a()
+          })
+        })
+      })
+
+      const { io } = await context.get()
+      const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
+      expect(record).not.toBeUndefined()
+    })
+
+    test('save with options', async () => {
+      const specNameInput = 'save with options'
+      await new Promise<void>(a => {
+        mockto.save(specNameInput, { timeout: 100 }, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
+          spec((x: number) => x + 1).then(async s => {
+            expect(s(1)).toBe(2)
+            await spec.done()
+            a()
+          })
+        })
+      })
+
+      const { io } = await context.get()
+      const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
+      expect(record).not.toBeUndefined()
+    })
+  })
+
+  describe(`mockto.simulate()`, () => {
+    test('simulate with no options', async () => {
+      const specNameInput = 'simulate with no options'
+      await new Promise<void>(r => {
+        mockto.simulate(specNameInput, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
+          a.throws(() => spec((x: number) => x + 1), SpecNotFound)
+          r()
         })
       })
     })
 
-    const { io } = await context.get()
-    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
-    expect(record).not.toBeUndefined()
-  })
-
-  test('save with options', async () => {
-    const specNameInput = 'save with options'
-    await new Promise<void>(a => {
-      mockto.save(specNameInput, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(specNameInput)
-        spec((x: number) => x + 1).then(async s => {
-          expect(s(1)).toBe(2)
-          await spec.done()
-          a()
-        })
-      })
-    })
-
-    const { io } = await context.get()
-    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
-    expect(record).not.toBeUndefined()
-  })
-
-  test('simulate with no options', async () => {
-    const specNameInput = 'simulate with no options'
-    await new Promise<void>(r => {
-      mockto.simulate(specNameInput, (specName, spec) => {
-        expect(specName).toEqual(specNameInput)
-        a.throws(() => spec((x: number) => x + 1), SpecNotFound)
-        r()
-      })
-    })
-  })
-
-  test('simulate with options', async () => {
-    const specNameInput = 'simulate with options'
-    await new Promise<void>(r => {
-      mockto.simulate(specNameInput, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(specNameInput)
-        a.throws(() => spec((x: number) => x + 1), SpecNotFound)
-        r()
-      })
-    })
-  })
-
-  test('auto with no options', async () => {
-    const specNameInput = 'auto with no options'
-    await new Promise<void>(a => {
-      mockto(specNameInput, (specName, spec) => {
-        expect(specName).toEqual(specNameInput)
-        spec((x: number) => x + 1).then(async s => {
-          expect(s(1)).toBe(2)
-          await spec.done()
-          a()
-        })
-      })
-    })
-
-    const { io } = await context.get()
-    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
-    expect(record).not.toBeUndefined()
-
-    await new Promise<void>(a => {
-      mockto(specNameInput, (_, spec) => {
-        spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
-          expect(s(1)).toBe(2)
-          await spec.done()
-          a()
+    test('simulate with options', async () => {
+      const specNameInput = 'simulate with options'
+      await new Promise<void>(r => {
+        mockto.simulate(specNameInput, { timeout: 100 }, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
+          a.throws(() => spec((x: number) => x + 1), SpecNotFound)
+          r()
         })
       })
     })
   })
 
-  test('auto with options', async () => {
-    const specNameInput = 'auto with options'
-    await new Promise<void>(a => {
-      mockto(specNameInput, { timeout: 100 }, (specName, spec) => {
-        expect(specName).toEqual(specNameInput)
-        spec((x: number) => x + 1).then(async s => {
-          expect(s(1)).toBe(2)
-          await spec.done()
-          a()
+  describe(`mockto()`, () => {
+    test('auto with no options', async () => {
+      const specNameInput = 'auto with no options'
+      await new Promise<void>(a => {
+        mockto(specNameInput, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
+          spec((x: number) => x + 1).then(async s => {
+            expect(s(1)).toBe(2)
+            await spec.done()
+            a()
+          })
+        })
+      })
+
+      const { io } = await context.get()
+      const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
+      expect(record).not.toBeUndefined()
+
+      await new Promise<void>(a => {
+        mockto(specNameInput, (_, spec) => {
+          spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
+            expect(s(1)).toBe(2)
+            await spec.done()
+            a()
+          })
         })
       })
     })
 
-    const { io } = await context.get()
-    const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
-    expect(record).not.toBeUndefined()
-
-    await new Promise<void>(a => {
-      mockto(specNameInput, { timeout: 100 }, (_, spec) => {
-        spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
-          expect(s(1)).toBe(2)
-          await spec.done()
-          a()
+    test('auto with options', async () => {
+      const specNameInput = 'auto with options'
+      await new Promise<void>(a => {
+        mockto(specNameInput, { timeout: 100 }, (specName, spec) => {
+          expect(specName).toEqual(specNameInput)
+          spec((x: number) => x + 1).then(async s => {
+            expect(s(1)).toBe(2)
+            await spec.done()
+            a()
+          })
         })
       })
-    })
 
+      const { io } = await context.get()
+      const record = await io.readSpec(specNameInput, getCallerRelativePath(() => { }))
+      expect(record).not.toBeUndefined()
+
+      await new Promise<void>(a => {
+        mockto(specNameInput, { timeout: 100 }, (_, spec) => {
+          spec(() => { throw new Error('should not reach') }).then(async (s: any) => {
+            expect(s(1)).toBe(2)
+            await spec.done()
+            a()
+          })
+        })
+      })
+
+    })
+  })
+
+  describe('mockto.mock()', () => {
+    mockto.mock('requires to specify mock', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('stubbed')
+      })
+    })
+    mockto('direct accepts mock but ignore it', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+      })
+    })
+    mockto.live('live accepts mock but ignore it', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+      })
+    })
+    mockto.save('save accepts mock but ignore it', async (specName, spec) => {
+      it(specName, async () => {
+        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
+        const r = s('value')
+        expect(r).toBe('value')
+      })
+    })
   })
 
   test.todo('spec name supports other characters (standard-log restricts them). Need to transform those chars')
@@ -271,37 +308,6 @@ describe(`mockto`, () => {
       // need to skip `ts/` and `.ts` from match.
       // jest run from `ts` or `esm` depends on it is `test:watch` vs `test` or `coverage`
       expect(reporter.getLogMessage()).toMatch('/mockto/createMockto.spec')
-    })
-  })
-
-  describe('mocking', () => {
-    mockto.mock('requires to specify mock', async (specName, spec) => {
-      it(specName, async () => {
-        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
-        const r = s('value')
-        expect(r).toBe('stubbed')
-      })
-    })
-    mockto('direct accepts mock but ignore it', async (specName, spec) => {
-      it(specName, async () => {
-        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
-        const r = s('value')
-        expect(r).toBe('value')
-      })
-    })
-    mockto.live('live accepts mock but ignore it', async (specName, spec) => {
-      it(specName, async () => {
-        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
-        const r = s('value')
-        expect(r).toBe('value')
-      })
-    })
-    mockto.save('save accepts mock but ignore it', async (specName, spec) => {
-      it(specName, async () => {
-        const s = await spec((v: string) => v, { mock: () => 'stubbed' })
-        const r = s('value')
-        expect(r).toBe('value')
-      })
     })
   })
 })
