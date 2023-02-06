@@ -1,7 +1,7 @@
 can inspect logs
 {
   "refs": [
-    {"plugin":"@mocktomata/function","profile":"target","meta":"[[1,[1,8]],[2,[[2,3],[4,5],[6,7]]],[0,\"type\"],[0,\"function\"],[0,\"name\"],[0,\"inc\"],[0,\"length\"],[0,1],[2,[]]]"},
+    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"inc\",\"length\":1,\"props\":{}}"},
     {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}}
   ],
   "actions": [

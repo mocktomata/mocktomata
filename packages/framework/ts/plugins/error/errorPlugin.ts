@@ -1,7 +1,7 @@
 import { SerializableConverter } from 'iso-error'
 import type { SpecPlugin } from '../../spec-plugin/types.js'
+import { demetarize, metarize } from '../../spec/metarize.js'
 import { hasProperty } from '../../utils-internal/index.js'
-import { demetarize, metarize } from '../../utils-internal/metarize.js'
 
 const converter = new SerializableConverter()
 

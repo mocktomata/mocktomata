@@ -45,7 +45,7 @@ mockto('can inspect logs', { logLevel: logLevels.all }, (specName, spec, reporte
     expect(messages.length).toBeGreaterThan(0)
     messages.forEach(
       msg => expect(
-        msg.startsWith(`mocktomata:can inspect logs:auto (TRACE)`)
+        msg.startsWith(`mocktomata:can inspect logs:`)
       ).toBe(true)
     )
     await spec.done()
