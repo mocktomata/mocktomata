@@ -1,6 +1,7 @@
 import type { SpecPlugin } from '../../spec-plugin/types.js'
+import { demetarize, metarize } from '../../spec/metarize.js'
 import {
-  demetarize, hasProperty, isBaseObject, metarize
+  hasProperty, isBaseObject
 } from '../../utils-internal/index.js'
 
 export const instancePlugin: SpecPlugin<Record<string | number, any>, { base: string, classConstructor: string, functionCalls: string[] }> = {

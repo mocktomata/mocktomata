@@ -1,4 +1,4 @@
-import type { Logger, MemoryLogReporter } from 'standard-log'
+import type { MemoryLogReporter } from 'standard-log'
 import { AnyFunction } from 'type-plus'
 import type { Log } from '../log/types.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
@@ -49,7 +49,6 @@ export namespace Spec {
   export type Context = {
     timeTrackers: TimeTracker[],
     plugins: SpecPlugin.Instance[],
-    log: Logger,
     io: IO,
     config: {
       overrideMode?: Mode,
@@ -60,7 +59,7 @@ export namespace Spec {
     options: Options,
     mode: Mode,
     specRelativePath: string
-  }
+  } & Log.Context
 
   export type IO = {
     /**
