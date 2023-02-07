@@ -1,3 +1,4 @@
+import { json } from '@mocktomata/framework'
 import fs from 'fs'
 import json5 from 'json5'
 import path from 'path'
@@ -21,7 +22,7 @@ export async function loadConfig(context: loadConfig.Context) {
 function loadFromPackageJson({ cwd }: Context): [string, any] | undefined {
   const filepath = path.resolve(cwd, 'package.json')
   if (fs.existsSync(filepath)) {
-    const pjson = JSON.parse(fs.readFileSync(filepath, 'utf-8'))
+    const pjson = json.parse(fs.readFileSync(filepath, 'utf-8'))
     if (pjson.mocktomata) return ['package.json', pjson.mocktomata]
   }
   return undefined

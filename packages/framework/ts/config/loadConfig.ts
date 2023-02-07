@@ -57,8 +57,8 @@ function extractEcmaVersion(input?: unknown) {
   if (!input) return undefined
   if (typeof input !== 'string') throw new ConfigPropertyInvalid('ecmaVersion', input!, { ssf: loadConfig })
   const version = input.toLowerCase()
-  if (version !== 'es2015') throw new ConfigPropertyInvalid('ecmaVersion', input!, { ssf: loadConfig })
-  return version
+  if (!['es2015', 'es2020'].includes(version)) throw new ConfigPropertyInvalid('ecmaVersion', input!, { ssf: loadConfig })
+  return version as 'es2015' | 'es2020'
 }
 
 function resolvePlugins(config: Config.Input) {

@@ -1,3 +1,4 @@
+import { json } from '@mocktomata/framework'
 import * as f from 'cross-fetch'
 
 export function createFakeServerFetch() {
@@ -13,27 +14,27 @@ export function createFakeServerFetch() {
     async (url: RequestInfo, init?: RequestInit) => {
       const uri = extractUri(url as string)
       if (uri === 'mocktomata/info') {
-        return new f.Response(JSON.stringify({
+        return new f.Response(json.stringify({
           url: 'http://localhost:3999',
           version: '1.0',
         }))
       }
       else if (uri === 'mocktomata/config') {
-        return new f.Response(JSON.stringify({
+        return new f.Response(json.stringify({
           plugins: ['@mocktomata/plugin-fixture-dummy']
         }))
       }
       // istanbul ignore next
       else if (uri.startsWith('mocktomata/specs/')) {
         const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
-        const { specName } = JSON.parse(atob(id))
+        const { specName } = json.parse(atob(id))
         if (init && init.method === 'POST') {
-          specs[specName] = JSON.parse(init.body as string)
+          specs[specName] = json.parse(init.body as string)
           return new f.Response(undefined)
         }
         else {
           if (specs[specName])
-            return new f.Response(JSON.stringify(specs[specName]))
+            return new f.Response(json.stringify(specs[specName]))
           else
             return new f.Response(undefined, { status: 404 })
         }

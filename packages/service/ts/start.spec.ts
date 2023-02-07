@@ -1,4 +1,4 @@
-import { prettyPrintSpecRecord } from '@mocktomata/framework'
+import { json, prettyPrintSpecRecord } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
 import t from 'assert'
 import a from 'assertron'
@@ -24,14 +24,14 @@ describe('server behavior', () => {
   let server: PromiseValue<ReturnType<typeof start>>
   beforeAll(async () => {
     const cwd = dirSync().name
-    fs.writeFileSync(path.join(cwd, 'package.json'), JSON.stringify({ mocktomata: { logLevel: 'trace' } }))
+    fs.writeFileSync(path.join(cwd, 'package.json'), json.stringify({ mocktomata: { logLevel: 'trace' } }))
     const sl = createStandardLog()
     const log = sl.getLogger('test')
     const io = createIO({ cwd, log })
     await io.writeSpec('exist', '', { actions: [], refs: [] })
     log.info('file-server test: starting server...')
     server = await start({ cwd, port: 3456 })
-    log.info('file-server test: started server...', JSON.stringify(server.info, undefined, '\n'))
+    log.info('file-server test: started server...', json.stringify(server.info, undefined, '\n'))
   })
   afterAll(() => {
     return server.stop()
@@ -45,8 +45,8 @@ describe('server behavior', () => {
     const response = await fetch(buildUrl('info'))
     const actual = await response.text()
 
-    const pjson = JSON.parse(readFileSync(path.resolve('./package.json'), 'utf-8'))
-    t.strictEqual(actual, JSON.stringify({
+    const pjson = json.parse(readFileSync(path.resolve('./package.json'), 'utf-8'))
+    t.strictEqual(actual, json.stringify({
       name: 'mocktomata',
       version: pjson.version,
       url: `http://localhost:${server.info.port}`,
@@ -93,5 +93,5 @@ describe('server behavior', () => {
 })
 
 function buildId(specName: string, specRelativePath = '') {
-  return btoa(JSON.stringify({ specName, specRelativePath }))
+  return btoa(json.stringify({ specName, specRelativePath }))
 }

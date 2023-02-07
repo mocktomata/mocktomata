@@ -1,12 +1,12 @@
 import boom from '@hapi/boom'
 import { RequestInfo, Server, ServerInfo, ServerRoute } from '@hapi/hapi'
-import type { Mocktomata, SpecPlugin } from '@mocktomata/framework'
-import { findInstalledPlugins, createIO } from '@mocktomata/nodejs'
-import { atob } from './base64.js'
-import { createStandardLog } from 'standard-log'
-import { createColorLogReporter } from 'standard-log-color'
+import { json, Mocktomata, SpecPlugin } from '@mocktomata/framework'
+import { createIO, findInstalledPlugins } from '@mocktomata/nodejs'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { createStandardLog } from 'standard-log'
+import { createColorLogReporter } from 'standard-log-color'
+import { atob } from './base64.js'
 
 export namespace start {
   export type Config = {
@@ -62,8 +62,8 @@ function infoRoute(ctx: Context, server: Server): ServerRoute {
     method: 'GET',
     path: '/mocktomata/info',
     handler: async (request) => {
-      const pjson = JSON.parse(readFileSync(resolve('./package.json'), 'utf-8'))
-      return JSON.stringify({
+      const pjson = json.parse(readFileSync(resolve('./package.json'), 'utf-8'))
+      return json.stringify({
         name: 'mocktomata',
         version: pjson.version,
         url: getReflectiveUrl(request.info, server.info),
@@ -80,7 +80,7 @@ function configRoute({ repo }: Context): ServerRoute {
     options: { cors: true },
     handler: async () => {
       const config = await repo.loadConfig()
-      return JSON.stringify(config)
+      return json.stringify(config)
     }
   }
 }
@@ -91,7 +91,7 @@ function specGetRoute({ repo }: Context): ServerRoute {
     path: '/mocktomata/specs/{id}',
     handler: async (request) => {
       try {
-        const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
+        const { specName, specRelativePath } = json.parse(atob(request.params.id))
         return await repo.readSpec(specName, specRelativePath)
       }
       catch (e: any) {
@@ -106,8 +106,8 @@ function specPostRoute({ repo }: Context): ServerRoute {
     method: 'POST',
     path: '/mocktomata/specs/{id}',
     handler: async (request, h) => {
-      const { specName, specRelativePath } = JSON.parse(atob(request.params.id))
-      await repo.writeSpec(specName, specRelativePath, JSON.parse(request.payload as string))
+      const { specName, specRelativePath } = json.parse(atob(request.params.id))
+      await repo.writeSpec(specName, specRelativePath, json.parse(request.payload as string))
       return h.response()
     }
   }

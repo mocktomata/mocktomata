@@ -1,5 +1,6 @@
 import type { Logger } from 'standard-log'
 import { es2015 } from '../es2015.js'
+import { es2020 } from '../es2020.js'
 import { Log } from '../log/types.js'
 import { addPluginModule } from './addPluginModule.js'
 import { PluginModuleNotConforming, PluginNotFound } from './errors.js'
@@ -12,7 +13,13 @@ export namespace loadPlugins {
 export async function loadPlugins({ config, io, log }: Log.Context & { config: SpecPlugin.Config, io: SpecPlugin.IO }): Promise<loadPlugins.ExtendedContext> {
   // check `config.ecmaVersion` in the future
   const plugins: SpecPlugin.Instance[] = []
-  addPluginModule({ log }, plugins, es2015.name, es2015)
+  if (config.ecmaVersion === 'es2015') {
+    addPluginModule({ log }, plugins, es2015.name, es2015)
+  }
+  if (config.ecmaVersion === 'es2020') {
+    addPluginModule({ log }, plugins, es2020.name, es2020)
+  }
+
   const pluginNames = config.plugins
   for (let i = 0; i < pluginNames.length; i++) {
     const name = pluginNames[i]

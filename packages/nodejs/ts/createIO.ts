@@ -1,4 +1,4 @@
-import { Log, Mocktomata, PluginModuleNotConforming, prettyPrintSpecRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework'
+import { json, Log, Mocktomata, PluginModuleNotConforming, prettyPrintSpecRecord, SpecNotFound, SpecRecord } from '@mocktomata/framework'
 import path from 'node:path'
 import { reduceByKey } from 'type-plus'
 import { loadConfig } from './config/index.js'
@@ -54,7 +54,7 @@ ${configFilenames.map(c => `- ${c}`).join('\n')}`)
     },
     async readSpec(specName: string, invokePath: string): Promise<SpecRecord> {
       try {
-        return JSON.parse(readSpec(specFolder, specName, invokePath))
+        return json.parse(readSpec(specFolder, specName, invokePath))
       }
       catch (e: any) {
         throw new SpecNotFound(specName, invokePath)

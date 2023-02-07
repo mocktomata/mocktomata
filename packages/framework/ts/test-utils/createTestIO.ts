@@ -4,6 +4,7 @@ import { es2015 } from '../es2015.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import { SpecNotFound } from '../spec/index.js'
 import type { Mocktomata } from '../types.js'
+import { json } from '../json.js'
 
 export namespace createTestIO {
   export type Options = {
@@ -33,10 +34,10 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
     readSpec(specName, specRelativePath) {
       const record = specStore.get(specName)
       if (!record) return Promise.reject(new SpecNotFound(specName, specRelativePath))
-      return Promise.resolve(JSON.parse(record))
+      return Promise.resolve(json.parse(record))
     },
     async writeSpec(specName, _specRelativePath, record) {
-      specStore.set(specName, JSON.stringify(record))
+      specStore.set(specName, json.stringify(record))
     },
     addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
       modules[moduleName] = pluginModule
