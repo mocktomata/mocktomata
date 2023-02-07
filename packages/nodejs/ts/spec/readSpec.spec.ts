@@ -1,3 +1,4 @@
+import { json } from '@mocktomata/framework'
 import t from 'assert'
 import a from 'assertron'
 import { dirSync } from 'tmp'
@@ -10,7 +11,7 @@ test('not exist spec throws SpecNotFound', async () => {
 })
 test('retrieve record for saved spec', async () => {
   const tmp = dirSync()
-  const expected = JSON.stringify({ actions: [], expectation: 'some expectation' })
+  const expected = json.stringify({ actions: [], expectation: 'some expectation' })
   await writeSpec(tmp.name, 'retrieve', '', expected)
 
   const actual = await readSpec(tmp.name, 'retrieve', '')

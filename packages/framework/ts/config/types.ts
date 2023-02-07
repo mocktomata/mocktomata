@@ -9,15 +9,13 @@ export namespace Config {
     overrideMode?: Spec.OverrideMode,
     filePathFilter?: string,
     specNameFilter?: string,
-    ecmaVersion?: 'es2015',
-    plugins?: string[],
     logLevel?: LogMethodNames | number,
     /**
      * Should logs be emitted.
      * Default to true.
      */
     emitLog?: boolean
-  }
+  } & Partial<SpecPlugin.Config>
 
   export type IO = {
     loadConfig(): Promise<Input>

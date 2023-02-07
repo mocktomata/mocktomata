@@ -27,7 +27,7 @@ export type SpecPlugin<S = any, M = any> = {
 
 export namespace SpecPlugin {
   export type Config = {
-    ecmaVersion: 'es2015',
+    ecmaVersion: 'es2015' | 'es2020',
     plugins: string[]
   }
 

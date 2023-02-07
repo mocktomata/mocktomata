@@ -1,3 +1,4 @@
+import { json } from '../json.js'
 import { fromMetaObj, toMetaObj } from './metarize.ctx.js'
 
 /**
@@ -7,7 +8,7 @@ import { fromMetaObj, toMetaObj } from './metarize.ctx.js'
  * Plugin can choose to use this implementation or create their own.
  */
 export function metarize(value: unknown) {
-	return JSON.stringify(toMetaObj(value))
+	return json.stringify(toMetaObj(value))
 }
 /**
  * Convert a metadata back to a value.
@@ -16,5 +17,5 @@ export function metarize(value: unknown) {
  * Plugin can choose to use this implementation or create their own.
  */
 export function demetarize(meta: string) {
-	return fromMetaObj(JSON.parse(meta))
+	return fromMetaObj(json.parse(meta))
 }
