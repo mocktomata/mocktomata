@@ -4,12 +4,13 @@ import { errorPlugin } from './plugins/error/index.js'
 import { functionPlugin } from './plugins/function/index.js'
 import { inertPlugin } from './plugins/inertValue/index.js'
 import { instancePlugin } from './plugins/instance/index.js'
+import { keyedSymbolPlugin } from './plugins/keyedSymbol/keyedSymbolPlugin.js'
 import { nullPlugin } from './plugins/null/index.js'
 import { objectPlugin } from './plugins/object/index.js'
 import { promisePlugin } from './plugins/promise/index.js'
-import type { SpecPlugin } from './spec-plugin/types.js'
 import { stringPlugin } from './plugins/string/index.js'
 import { undefinedPlugin } from './plugins/undefined/index.js'
+import type { SpecPlugin } from './spec-plugin/types.js'
 
 export const es2015 = {
   name: '@mocktomata',
@@ -18,6 +19,7 @@ export const es2015 = {
     register(undefinedPlugin)
     register(nullPlugin)
     register(stringPlugin)
+    register(keyedSymbolPlugin)
     register(objectPlugin)
     register(functionPlugin)
     register(instancePlugin)
