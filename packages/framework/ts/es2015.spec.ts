@@ -1,6 +1,6 @@
 import a from 'assertron'
 import { EventEmitter } from 'events'
-import { AnyFunction } from 'type-plus'
+import type { AnyFunction } from 'type-plus'
 import {
 	ActionMismatch,
 	ExtraAction,
