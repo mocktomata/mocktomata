@@ -39,8 +39,7 @@ export function toMetaObj(value: unknown): any {
 			if (Array.isArray(value)) {
 				return {
 					type: 'array',
-					props: extractArrayProps(value),
-					items: value.map(toMetaObj)
+					props: extractProps(value)
 				}
 			} else {
 				return {
@@ -74,13 +73,11 @@ export function fromMetaObj(metaObj: any) {
 		case 'undefined': {
 			return undefined
 		}
-		case 'object': {
+		case 'object':
+		case 'array': {
 			return metaObj.props
 		}
-		case 'array': {
-			const a = metaObj.items.map(fromMetaObj)
-			return Object.assign(a, metaObj.props)
-		}
+		// istanbul ignore next
 		default: {
 			throw new Error(`not expected meta type: ${metaObj.type}`)
 		}
@@ -104,8 +101,4 @@ function extractProps(value: any) {
 		},
 		{} as any
 	)
-}
-
-function extractArrayProps(value: any) {
-	return extractProps(value)
 }
