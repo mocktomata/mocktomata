@@ -1,12 +1,13 @@
-import { configurator, incubator } from './index.js'
-
-beforeAll(() =>
-	configurator.config({
-		ecmaVersion: 'es2020'
-	})
-)
+import { createIncubator } from './incubator/createIncubator.js'
+import { createTestContext } from './index.js'
 
 describe('bigint', () => {
+	const incubator = createIncubator(
+		createTestContext({
+			config: { ecmaVersion: 'es2020' }
+		}).context
+	)
+
 	function giveBig() {
 		return 9007199254740991n
 	}
