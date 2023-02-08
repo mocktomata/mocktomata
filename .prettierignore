@@ -1,0 +1,6 @@
+cjs/
+coverage/
+esm/
+fixtures/
+lib/
+pnpm-lock.yaml
