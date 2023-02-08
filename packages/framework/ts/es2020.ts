@@ -14,20 +14,20 @@ import { undefinedPlugin } from './plugins/undefined/index.js'
 import type { SpecPlugin } from './spec-plugin/types.js'
 
 export const es2020 = {
-  name: '@mocktomata',
-  activate({ register }: SpecPlugin.ActivationContext) {
-    register(inertPlugin)
-    register(undefinedPlugin)
-    register(nullPlugin)
-    register(stringPlugin)
-    register(keyedSymbolPlugin)
-    register(objectPlugin)
-    register(functionPlugin)
-    register(instancePlugin)
-    register(classPlugin)
-    register(arrayPlugin)
-    register(errorPlugin)
-    register(promisePlugin)
-    register(bigIntPlugin)
-  }
+	name: '@mocktomata',
+	activate({ register }: SpecPlugin.ActivationContext) {
+		register(inertPlugin)
+		register(undefinedPlugin)
+		register(nullPlugin)
+		register(stringPlugin)
+		register(keyedSymbolPlugin)
+		register(objectPlugin)
+		register(functionPlugin)
+		register(instancePlugin)
+		register(classPlugin)
+		register(arrayPlugin)
+		register(errorPlugin)
+		register(promisePlugin)
+		register(bigIntPlugin)
+	}
 }

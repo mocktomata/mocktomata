@@ -1,38 +1,38 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "packages/framework"
-    },
-    {
-      "path": "test-plugins/plugin-fixture-dummy/tsconfig.lib.json"
-    },
-    {
-      "path": "test-plugins/plugin-fixture-dummy/tsconfig.libm.json"
-    },
-    {
-      "path": "packages/nodejs"
-    },
-    {
-      "path": "packages/service"
-    },
-    {
-      "path": "packages/io-remote"
-    },
-    {
-      "path": "packages/mocktomata"
-    },
-    {
-      "path": "packages/cli"
-    },
-    {
-      "path": "plugins/plugin-node-fetch"
-    },
-    {
-      "path": "plugins/plugin-nodejs"
-    },
-    {
-      "path": "tests/test-nodejs"
-    }
-  ]
+	"files": [],
+	"references": [
+		{
+			"path": "packages/framework"
+		},
+		{
+			"path": "test-plugins/plugin-fixture-dummy/tsconfig.lib.json"
+		},
+		{
+			"path": "test-plugins/plugin-fixture-dummy/tsconfig.libm.json"
+		},
+		{
+			"path": "packages/nodejs"
+		},
+		{
+			"path": "packages/service"
+		},
+		{
+			"path": "packages/io-remote"
+		},
+		{
+			"path": "packages/mocktomata"
+		},
+		{
+			"path": "packages/cli"
+		},
+		{
+			"path": "plugins/plugin-node-fetch"
+		},
+		{
+			"path": "plugins/plugin-nodejs"
+		},
+		{
+			"path": "tests/test-nodejs"
+		}
+	]
 }

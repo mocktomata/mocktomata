@@ -1,22 +1,19 @@
 {
-  "extends": "../../.tsc/tsconfig.settings.json",
-  "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "outDir": "esm",
-    "rootDir": "ts",
-    "target": "ES2020"
-  },
-  "references": [
-    {
-      "path": "../framework"
-    },
-    {
-      "path": "../nodejs"
-    }
-  ],
-  "include": [
-    "ts",
-    "typings"
-  ]
+	"extends": "../../.tsc/tsconfig.settings.json",
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"outDir": "esm",
+		"rootDir": "ts",
+		"target": "ES2020"
+	},
+	"references": [
+		{
+			"path": "../framework"
+		},
+		{
+			"path": "../nodejs"
+		}
+	],
+	"include": ["ts", "typings"]
 }

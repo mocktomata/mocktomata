@@ -1,3 +1,3 @@
 {
-  "extends": "./tsconfig.libm.json"
+	"extends": "./tsconfig.libm.json"
 }

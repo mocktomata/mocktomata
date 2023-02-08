@@ -2,32 +2,36 @@ import { incubator } from '../index.js'
 import { activate as decrementActivate } from './decrementPlugin.mock.js'
 import { activate as incrementActivate } from './incrementPlugin.mock.js'
 
-beforeAll(() => incubator.config({
-  plugins: [['incrementPlugin', incrementActivate]]
-}))
+beforeAll(() =>
+	incubator.config({
+		plugins: [['incrementPlugin', incrementActivate]]
+	})
+)
 
 describe('use increment', () => {
-  incubator('increment plugin is loaded', (specName, spec) => {
-    test(specName, async () => {
-      const s = await spec((x: number) => x)
-      expect(s(1)).toBe(2)
+	incubator('increment plugin is loaded', (specName, spec) => {
+		test(specName, async () => {
+			const s = await spec((x: number) => x)
+			expect(s(1)).toBe(2)
 
-      await spec.done()
-    })
-  })
+			await spec.done()
+		})
+	})
 })
 
 describe('use decrement', () => {
-  beforeAll(() => incubator.config({
-    plugins: [['decrement', decrementActivate]]
-  }))
+	beforeAll(() =>
+		incubator.config({
+			plugins: [['decrement', decrementActivate]]
+		})
+	)
 
-  // can't find a way to hack in the AsyncContext protection! :)
-  incubator('call config again replaces the plugins', (specName, spec) => {
-    test(specName, async () => {
-      const s = await spec((x: number) => x)
-      expect(s(2)).toBe(1)
-      await spec.done()
-    })
-  })
+	// can't find a way to hack in the AsyncContext protection! :)
+	incubator('call config again replaces the plugins', (specName, spec) => {
+		test(specName, async () => {
+			const s = await spec((x: number) => x)
+			expect(s(2)).toBe(1)
+			await spec.done()
+		})
+	})
 })

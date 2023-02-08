@@ -1,4 +1,3 @@
-
 # The problem
 
 Boundary is where two systems meet and communicate with each other using data structures and primitive types.
@@ -52,26 +51,29 @@ import { test } from 'ava'
 
 // test subject
 function getFollowers(github: GitHub, username: string) {
-  return new Promise((a, r) => {
-    github.users.getFollowersForUser({
-      username
-    }, (err, res) => {
-      if (err) r(err)
-      else {
-        // massage the response in some way that make sense to your application.
-        const response = message(res)
-        a(response)
-      }
-    })
-  })
+	return new Promise((a, r) => {
+		github.users.getFollowersForUser(
+			{
+				username
+			},
+			(err, res) => {
+				if (err) r(err)
+				else {
+					// massage the response in some way that make sense to your application.
+					const response = message(res)
+					a(response)
+				}
+			}
+		)
+	})
 }
 
 test('get follower of a user', t => {
-  const github = new GitHub()
+	const github = new GitHub()
 
-  const followers = await getFollowers(github, 'someRealUser')
+	const followers = await getFollowers(github, 'someRealUser')
 
-  // assert `followers` is correct.
+	// assert `followers` is correct.
 })
 ```
 
@@ -118,9 +120,7 @@ you can now tell `mocktomata` to save the result.
 To do that, all you need to do is changing the call from `spec()` to `spec.save()` and provide a `id`:
 
 ```ts
-  const s = await spec.save(
-    'github getFollowersForUser',
-    github.users.getFollowersForUser)
+const s = await spec.save('github getFollowersForUser', github.users.getFollowersForUser)
 ```
 
 Note that the `id` needs to be unique across all tests.
@@ -137,9 +137,7 @@ The way to do it is extremely simple.
 All you need is to change the call from `spec.save()` to `spec.simulate()`:
 
 ```ts
-  const s = await spec.simulate(
-    'github getFollowersForUser',
-    github.users.getFollowersForUser)
+const s = await spec.simulate('github getFollowersForUser', github.users.getFollowersForUser)
 ```
 
 That's it! Now your test will be run using the saved result and not making actual remote calls.

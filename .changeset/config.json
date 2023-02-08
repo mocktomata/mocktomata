@@ -1,25 +1,25 @@
 {
-  "$schema": "https://unpkg.com/@changesets/config@2.1.1/schema.json",
-  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
-    "onlyUpdatePeerDependentsWhenOutOfRange": true,
-    "updateInternalDependents": "always"
-  },
-  "access": "public",
-  "baseBranch": "main",
-  "changelog": "@changesets/cli/changelog",
-  "commit": false,
-  "fixed": [
-    [
-      "@mocktomata/cli",
-      "@mocktomata/framework",
-      "@mocktomata/nodejs",
-      "@mocktomata/io-remote",
-      "@mocktomata/service",
-      "mocktomata"
-    ]
-  ],
-  "ignore": [],
-  "linked": [],
-  "title": "chore: version packages",
-  "updateInternalDependencies": "patch"
+	"$schema": "https://unpkg.com/@changesets/config@2.1.1/schema.json",
+	"___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+		"onlyUpdatePeerDependentsWhenOutOfRange": true,
+		"updateInternalDependents": "always"
+	},
+	"access": "public",
+	"baseBranch": "main",
+	"changelog": "@changesets/cli/changelog",
+	"commit": false,
+	"fixed": [
+		[
+			"@mocktomata/cli",
+			"@mocktomata/framework",
+			"@mocktomata/nodejs",
+			"@mocktomata/io-remote",
+			"@mocktomata/service",
+			"mocktomata"
+		]
+	],
+	"ignore": [],
+	"linked": [],
+	"title": "chore: version packages",
+	"updateInternalDependencies": "patch"
 }

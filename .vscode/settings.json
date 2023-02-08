@@ -1,58 +1,56 @@
 {
-  "cSpell.ignorePaths": [
-    "**/package-lock.json",
-    "**/node_modules/**",
-    "**/vscode-extension/**",
-    "**/.git/objects/**",
-    ".vscode",
-    ".vscode-insiders",
-    "yarn.lock"
-  ],
-  "cSpell.words": [
-    "aspec",
-    "demetarize",
-    "kayahr",
-    "komondor",
-    "libm",
-    "memfs",
-    "metarize",
-    "mjson",
-    "Mockto",
-    "mocktomata",
-    "mtmt",
-    "numericality",
-    "pinst",
-    "pjson",
-    "pnpm",
-    "pwsh",
-    "repobuddy",
-    "tersify",
-    "tsbuildinfo",
-    "ungap",
-    "unstyle",
-    "xvfb"
-  ],
-  "files.watcherExclude": {
-    "**/.git/objects/**": true,
-    "**/.git/subtree-cache/**": true,
-    "**/node_modules/**": true,
-    "**/old/**": true,
-    "**/v6/**": true
-  },
-  "json.schemas": [
-    {
-      "fileMatch": [
-        "tsconfig.*.json"
-      ],
-      "url": "http://json.schemastore.org/tsconfig"
-    }
-  ],
-  "markdownlint.ignore": ".markdownlintignore",
-  "search.exclude": {
-    "**/bower_components": true,
-    "**/node_modules": true,
-    "**/old": true,
-    "**/v6": true
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
+	"cSpell.ignorePaths": [
+		"**/package-lock.json",
+		"**/node_modules/**",
+		"**/vscode-extension/**",
+		"**/.git/objects/**",
+		".vscode",
+		".vscode-insiders",
+		"yarn.lock"
+	],
+	"cSpell.words": [
+		"aspec",
+		"demetarize",
+		"kayahr",
+		"komondor",
+		"libm",
+		"memfs",
+		"metarize",
+		"mjson",
+		"Mockto",
+		"mocktomata",
+		"mtmt",
+		"numericality",
+		"pinst",
+		"pjson",
+		"pnpm",
+		"pwsh",
+		"repobuddy",
+		"tersify",
+		"tsbuildinfo",
+		"ungap",
+		"unstyle",
+		"xvfb"
+	],
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+		"**/node_modules/**": true,
+		"**/old/**": true,
+		"**/v6/**": true
+	},
+	"json.schemas": [
+		{
+			"fileMatch": ["tsconfig.*.json"],
+			"url": "http://json.schemastore.org/tsconfig"
+		}
+	],
+	"markdownlint.ignore": ".markdownlintignore",
+	"search.exclude": {
+		"**/bower_components": true,
+		"**/node_modules": true,
+		"**/old": true,
+		"**/v6": true
+	},
+	"typescript.tsdk": "node_modules/typescript/lib"
 }

@@ -4,6 +4,6 @@ import localPreset from '../../.jest/preset.js'
 
 /** @type {import('jest').Config} */
 export default deepmerge(preset, {
-  moduleNameMapper: localPreset.moduleNameMapper,
-  displayName: 'cli'
+	moduleNameMapper: localPreset.moduleNameMapper,
+	displayName: 'cli'
 })

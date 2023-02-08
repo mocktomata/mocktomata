@@ -13,5 +13,5 @@ jobs:
     secrets: inherit
 
   docgen:
-      uses: unional/.github/.github/workflows/yarn-docs.yml@main
-      needs: release
+    uses: unional/.github/.github/workflows/yarn-docs.yml@main
+    needs: release

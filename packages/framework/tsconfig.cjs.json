@@ -1,12 +1,10 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "outDir": "cjs",
-  },
-  // some spec files use `import.meta`
-  "exclude": [
-    "**/*.spec.*"
-  ]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"module": "CommonJS",
+		"moduleResolution": "Node",
+		"outDir": "cjs"
+	},
+	// some spec files use `import.meta`
+	"exclude": ["**/*.spec.*"]
 }

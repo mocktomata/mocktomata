@@ -4,36 +4,52 @@ import cp from 'child_process'
 import { classPlugin } from './classPlugin.js'
 
 test('false for simple function', () => {
-  a.false(classPlugin.support((x: any) => x))
-  a.false(classPlugin.support(function () { return }))
+	a.false(classPlugin.support((x: any) => x))
+	a.false(
+		classPlugin.support(function () {
+			return
+		})
+	)
 })
 
 test('false for object', () => {
-  const obj = {
-    f() { return }
-  }
+	const obj = {
+		f() {
+			return
+		}
+	}
 
-  a.false(classPlugin.support(obj))
+	a.false(classPlugin.support(obj))
 })
 
 test('false for method in object', () => {
-  const obj = {
-    f() { return }
-  }
-  a.false(classPlugin.support(obj.f))
+	const obj = {
+		f() {
+			return
+		}
+	}
+	a.false(classPlugin.support(obj.f))
 })
 
 test('true for class with at lease one method', () => {
-  class F { f() { return } }
-  t(classPlugin.support(F))
+	class F {
+		f() {
+			return
+		}
+	}
+	t(classPlugin.support(F))
 })
 
 test('child class is true', () => {
-  class Parent { do() { return 'do' } }
-  class Child extends Parent { }
-  t(classPlugin.support(Child))
+	class Parent {
+		do() {
+			return 'do'
+		}
+	}
+	class Child extends Parent {}
+	t(classPlugin.support(Child))
 })
 
 test('spawn is not a class', () => {
-  a.false(classPlugin.support(cp.spawn))
+	a.false(classPlugin.support(cp.spawn))
 })

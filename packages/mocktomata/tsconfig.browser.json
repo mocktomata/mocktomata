@@ -1,21 +1,19 @@
 {
-  "compilerOptions": {
-    "downlevelIteration": true,
-    "esModuleInterop": true,
-    "lib": [
-      "DOM"
-    ],
-    "module": "ESNext",
-    "moduleResolution": "Node",
-    "newLine": "LF",
-    "noUnusedLocals": true,
-    "removeComments": false,
-    "inlineSources": true,
-    "inlineSourceMap": true,
-    "strict": true,
-    "target": "ES2020",
-    // "skipLibCheck": true,
-    // "outDir": ".no-where",
-    "rootDir": "ts"
-  }
+	"compilerOptions": {
+		"downlevelIteration": true,
+		"esModuleInterop": true,
+		"lib": ["DOM"],
+		"module": "ESNext",
+		"moduleResolution": "Node",
+		"newLine": "LF",
+		"noUnusedLocals": true,
+		"removeComments": false,
+		"inlineSources": true,
+		"inlineSourceMap": true,
+		"strict": true,
+		"target": "ES2020",
+		// "skipLibCheck": true,
+		// "outDir": ".no-where",
+		"rootDir": "ts"
+	}
 }

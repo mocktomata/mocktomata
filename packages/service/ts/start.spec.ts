@@ -14,84 +14,88 @@ import { start } from './index.js'
 const fetch = f.default
 
 test('if a port is specified and not available, will throw an error', async () => {
-  const runningServer = await start({ port: 3710 })
-  const e = await a.throws<Error & Record<string, any>>(start({ port: Number(runningServer.info.port) }))
-  await runningServer.stop()
-  expect(e.code).toBe('EADDRINUSE')
+	const runningServer = await start({ port: 3710 })
+	const e = await a.throws<Error & Record<string, any>>(start({ port: Number(runningServer.info.port) }))
+	await runningServer.stop()
+	expect(e.code).toBe('EADDRINUSE')
 })
 
 describe('server behavior', () => {
-  let server: PromiseValue<ReturnType<typeof start>>
-  beforeAll(async () => {
-    const cwd = dirSync().name
-    fs.writeFileSync(path.join(cwd, 'package.json'), json.stringify({ mocktomata: { logLevel: 'trace' } }))
-    const sl = createStandardLog()
-    const log = sl.getLogger('test')
-    const io = createIO({ cwd, log })
-    await io.writeSpec('exist', '', { actions: [], refs: [] })
-    log.info('file-server test: starting server...')
-    server = await start({ cwd, port: 3456 })
-    log.info('file-server test: started server...', json.stringify(server.info, undefined, '\n'))
-  })
-  afterAll(() => {
-    return server.stop()
-  })
+	let server: PromiseValue<ReturnType<typeof start>>
+	beforeAll(async () => {
+		const cwd = dirSync().name
+		fs.writeFileSync(path.join(cwd, 'package.json'), json.stringify({ mocktomata: { logLevel: 'trace' } }))
+		const sl = createStandardLog()
+		const log = sl.getLogger('test')
+		const io = createIO({ cwd, log })
+		await io.writeSpec('exist', '', { actions: [], refs: [] })
+		log.info('file-server test: starting server...')
+		server = await start({ cwd, port: 3456 })
+		log.info('file-server test: started server...', json.stringify(server.info, undefined, '\n'))
+	})
+	afterAll(() => {
+		return server.stop()
+	})
 
-  function buildUrl(path: string) {
-    return `http://${server.info.address}:${server.info.port}/mocktomata/${path}`
-  }
+	function buildUrl(path: string) {
+		return `http://${server.info.address}:${server.info.port}/mocktomata/${path}`
+	}
 
-  test('get mocktomata info', async () => {
-    const response = await fetch(buildUrl('info'))
-    const actual = await response.text()
+	test('get mocktomata info', async () => {
+		const response = await fetch(buildUrl('info'))
+		const actual = await response.text()
 
-    const pjson = json.parse(readFileSync(path.resolve('./package.json'), 'utf-8'))
-    t.strictEqual(actual, json.stringify({
-      name: 'mocktomata',
-      version: pjson.version,
-      url: `http://localhost:${server.info.port}`,
-      plugins: []
-    }))
-  })
-  test('get config', async () => {
-    const response = await fetch(buildUrl('config'))
-    const actual = await response.json()
-    expect(actual).toEqual({
-      logLevel: 'trace'
-    })
-  })
-  test('read not exist spec gets 404', async () => {
-    const response = await fetch(buildUrl(`specs/${buildId('not exist')}`))
+		const pjson = json.parse(readFileSync(path.resolve('./package.json'), 'utf-8'))
+		t.strictEqual(
+			actual,
+			json.stringify({
+				name: 'mocktomata',
+				version: pjson.version,
+				url: `http://localhost:${server.info.port}`,
+				plugins: []
+			})
+		)
+	})
+	test('get config', async () => {
+		const response = await fetch(buildUrl('config'))
+		const actual = await response.json()
+		expect(actual).toEqual({
+			logLevel: 'trace'
+		})
+	})
+	test('read not exist spec gets 404', async () => {
+		const response = await fetch(buildUrl(`specs/${buildId('not exist')}`))
 
-    expect(response.status).toBe(404)
-  })
-  test('read spec', async () => {
-    const response = await fetch(buildUrl(`specs/${buildId('exist')}`))
+		expect(response.status).toBe(404)
+	})
+	test('read spec', async () => {
+		const response = await fetch(buildUrl(`specs/${buildId('exist')}`))
 
-    expect(response.status).toBe(200)
-    expect(await response.json()).toEqual({ 'actions': [], 'refs': [] })
-  })
+		expect(response.status).toBe(200)
+		expect(await response.json()).toEqual({ actions: [], refs: [] })
+	})
 
-  test('write spec', async () => {
-    const id = buildId('abc')
-    const body = prettyPrintSpecRecord({
-      refs: [],
-      actions: []
-    })
-    const response = await fetch(buildUrl(`specs/${id}`), {
-      method: 'POST', body
-    })
-    expect(response.status).toBe(204)
+	test('write spec', async () => {
+		const id = buildId('abc')
+		const body = prettyPrintSpecRecord({
+			refs: [],
+			actions: []
+		})
+		const response = await fetch(buildUrl(`specs/${id}`), {
+			method: 'POST',
+			body
+		})
+		expect(response.status).toBe(204)
 
-    const actual = await (await fetch(buildUrl(`specs/${id}`))).json()
+		const actual = await (await fetch(buildUrl(`specs/${id}`))).json()
 
-    expect(actual).toEqual({
-      refs: [],
-      actions: []
-    })
-  })
+		expect(actual).toEqual({
+			refs: [],
+			actions: []
+		})
+	})
 })
 
 function buildId(specName: string, specRelativePath = '') {
-  return btoa(json.stringify({ specName, specRelativePath }))
+	return btoa(json.stringify({ specName, specRelativePath }))
 }

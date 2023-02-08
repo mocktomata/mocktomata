@@ -1,1 +1,1 @@
-export * from './functionPlugin.js';
+export * from './functionPlugin.js'

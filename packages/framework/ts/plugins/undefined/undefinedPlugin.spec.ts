@@ -1,5 +1,5 @@
-import { undefinedPlugin } from './undefinedPlugin.js';
+import { undefinedPlugin } from './undefinedPlugin.js'
 
 test('support undefined', () => {
-  expect(undefinedPlugin.support(undefined)).toBe(true)
+	expect(undefinedPlugin.support(undefined)).toBe(true)
 })

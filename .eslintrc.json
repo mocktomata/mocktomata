@@ -1,27 +1,21 @@
 {
-  "env": {
-    "es6": true,
-    "jest": true,
-    "node": true
-  },
-  "extends": "plugin:harmony/latest",
-  "overrides": [
-    {
-      "extends": "plugin:harmony/ts-recommended",
-      "files": [
-        "*.ts",
-        "*.tsx"
-      ],
-      "rules": {
-        "@typescript-eslint/type-annotation-spacing": "off",
-        "harmony/ts-member-delimiter-style": "off",
-        "brace-style": "off",
-        "no-use-before-define": "off"
-      }
-    }
-  ],
-  "parserOptions": {
-    "sourceType": "module"
-  },
-  "root": true
+	"env": {
+		"es6": true,
+		"jest": true,
+		"node": true
+	},
+	"extends": "plugin:harmony/latest",
+	"overrides": [
+		{
+			"extends": "plugin:harmony/ts-prettier",
+			"files": ["*.ts", "*.tsx"],
+			"rules": {
+				"no-use-before-define": "off"
+			}
+		}
+	],
+	"parserOptions": {
+		"sourceType": "module"
+	},
+	"root": true
 }

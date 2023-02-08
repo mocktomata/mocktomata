@@ -6,47 +6,55 @@ import { MaskCriterion } from './types.internal.js'
 import type { Spec } from './types.js'
 
 export function createSpecObject(context: AsyncContext<Spec.Context>) {
-  const { spec, modeProperty: mode, ignoreMismatch, maskValue, done } = createSpecFns(context)
-  return Object.assign(Object.defineProperties(spec, { mode }), { ignoreMismatch, maskValue, done }) as any
+	const { spec, modeProperty: mode, ignoreMismatch, maskValue, done } = createSpecFns(context)
+	return Object.assign(Object.defineProperties(spec, { mode }), { ignoreMismatch, maskValue, done }) as any
 }
 
 export function createSpecFns(context: AsyncContext<Spec.Context>) {
-  let s: Spec | undefined
-  type InitState = { enableLog: boolean, ignoreValues: any[], maskCriteria: MaskCriterion[], logLevel?: LogLevel }
-  const initState: InitState = { enableLog: false, ignoreValues: [], maskCriteria: [] }
-  async function createActualSpec(initState: InitState) {
-    if (s) return s
-    const { mode, specName, options, specRelativePath } = await context.get()
-    const spec = s = await createSpec(context, specName, specRelativePath, mode, options)
-    initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))
-    initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
-    return spec
-  }
+	let s: Spec | undefined
+	type InitState = {
+		enableLog: boolean
+		ignoreValues: any[]
+		maskCriteria: MaskCriterion[]
+		logLevel?: LogLevel
+	}
+	const initState: InitState = { enableLog: false, ignoreValues: [], maskCriteria: [] }
+	async function createActualSpec(initState: InitState) {
+		if (s) return s
+		const { mode, specName, options, specRelativePath } = await context.get()
+		const spec = (s = await createSpec(context, specName, specRelativePath, mode, options))
+		initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))
+		initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
+		return spec
+	}
 
-  function ignoreMismatch(value: any) {
-    if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
-    else initState.ignoreValues.push(value)
-  }
-  function maskValue(value: string | RegExp, replaceWith?: string) {
-    if (s) throw new InvokeMetaMethodAfterSpec('maskValue')
-    initState.maskCriteria.push({ value, replaceWith })
-  }
+	function ignoreMismatch(value: any) {
+		if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
+		else initState.ignoreValues.push(value)
+	}
+	function maskValue(value: string | RegExp, replaceWith?: string) {
+		if (s) throw new InvokeMetaMethodAfterSpec('maskValue')
+		initState.maskCriteria.push({ value, replaceWith })
+	}
 
-  let actualMode: Spec.Mode
-  const modeProperty = {
-    get() { return actualMode }
-  }
-  let actualSpec: Spec
-  function done() {
-    if (actualSpec) return actualSpec.done()
-    // spec can be not used at all,
-    // e.g. in `scenario`.
-    return createActualSpec(initState).then(a => a.done())
-  }
-  const spec = (subject: any, options?: any) => createActualSpec(initState).then(aspec => {
-    actualSpec = aspec
-    actualMode = aspec.mode
-    return aspec(subject, options)
-  })
-  return { spec, modeProperty, ignoreMismatch, maskValue, done }
+	let actualMode: Spec.Mode
+	const modeProperty = {
+		get() {
+			return actualMode
+		}
+	}
+	let actualSpec: Spec
+	function done() {
+		if (actualSpec) return actualSpec.done()
+		// spec can be not used at all,
+		// e.g. in `scenario`.
+		return createActualSpec(initState).then(a => a.done())
+	}
+	const spec = (subject: any, options?: any) =>
+		createActualSpec(initState).then(aspec => {
+			actualSpec = aspec
+			actualMode = aspec.mode
+			return aspec(subject, options)
+		})
+	return { spec, modeProperty, ignoreMismatch, maskValue, done }
 }

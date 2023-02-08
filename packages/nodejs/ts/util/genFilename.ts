@@ -13,17 +13,22 @@ const baseDirLenLimit = 240
 const filenameLenLimit = 80
 
 export function genFilename(baseDir: string, id: string, dupId = 0) {
-  // istanbul ignore next
-  if (process.platform === 'win32' && baseDir.length > baseDirLenLimit) throw new MocktomataError('the project is too deep in the folder to use Mocktomata. Please move the project closer to root.')
+	// istanbul ignore next
+	if (process.platform === 'win32' && baseDir.length > baseDirLenLimit)
+		throw new MocktomataError(
+			'the project is too deep in the folder to use Mocktomata. Please move the project closer to root.'
+		)
 
-  const dupIdLen = dupId ? String(dupId).length : 0
-  const lenLimit = Math.min(filenameLenLimit, baseDirLenLimit - baseDir.length) - dupIdLen
+	const dupIdLen = dupId ? String(dupId).length : 0
+	const lenLimit = Math.min(filenameLenLimit, baseDirLenLimit - baseDir.length) - dupIdLen
 
-  if (!id) id = 'empty'
-  const f = sanitize(id).replace(/\s/g, '-')
+	if (!id) id = 'empty'
+	const f = sanitize(id).replace(/\s/g, '-')
 
-  if (f.length > lenLimit - dupIdLen) {
-    return dupIdLen ? `${f.slice(0, lenLimit - dupIdLen - 3)}...${dupId}` : `${f.slice(0, lenLimit - dupIdLen - 3)}...`
-  }
-  return dupIdLen ? `${f}${dupId}` : f
+	if (f.length > lenLimit - dupIdLen) {
+		return dupIdLen
+			? `${f.slice(0, lenLimit - dupIdLen - 3)}...${dupId}`
+			: `${f.slice(0, lenLimit - dupIdLen - 3)}...`
+	}
+	return dupIdLen ? `${f}${dupId}` : f
 }

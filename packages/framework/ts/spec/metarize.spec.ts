@@ -77,7 +77,7 @@ it('object property is skipped', () => {
 
 it('function property is skipped', () => {
 	testMetarize({
-		subject: { f: function() {} },
+		subject: { f: function () {} },
 		expectedMetaObj: { type: 'object', props: {} },
 		expected: {}
 	})

@@ -1,6 +1,6 @@
 const base = require('../../.jest/jest.nodejs')
 
 module.exports = {
-  ...base,
-  displayName: 'plugin-nodejs',
+	...base,
+	displayName: 'plugin-nodejs'
 }

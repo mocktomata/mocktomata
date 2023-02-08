@@ -143,7 +143,7 @@ conn.close()
 // ... <ref:4> is target spy while this should be input spy
 // ... does it mean that it should be a different instance (<ref:9>)?
 // ... or should it change its behavior along the way?
-(await spec(fs)).readdir('path', (err, result) => console.info(result.toString())) as undefined
+;(await spec(fs)).readdir('path', (err, result) => console.info(result.toString())) as undefined
 
 // <ref:0> create target stub: fs
 // <act:0> you access <ref:0>.readdirSync
@@ -214,7 +214,7 @@ buffer.toString('utf-8')
 // <act:24> I invoke <ref:9>()
 // <act:25> <ref:9 act:24> -> <ref:12>
 const fs = await spec(require('fs'))
-const rs = fs.createReadStream('foo.txt');
-rs.on('readable', (() => console.log(`readable: ${rs.read()}`)) as Handler1);
-rs.on('end', (() => console.log('end')) as Handler2);
+const rs = fs.createReadStream('foo.txt')
+rs.on('readable', (() => console.log(`readable: ${rs.read()}`)) as Handler1)
+rs.on('end', (() => console.log('end')) as Handler2)
 ```

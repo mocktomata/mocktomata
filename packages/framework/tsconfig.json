@@ -1,18 +1,12 @@
 {
-  "extends": "../../.tsc/tsconfig.settings.json",
-  "compilerOptions": {
-    "lib": [
-      "DOM",
-      "es2015"
-    ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "outDir": "esm",
-    "rootDir": "ts",
-    "target": "ES2020"
-  },
-  "include": [
-    "ts",
-    "types"
-  ]
+	"extends": "../../.tsc/tsconfig.settings.json",
+	"compilerOptions": {
+		"lib": ["DOM", "es2015"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"outDir": "esm",
+		"rootDir": "ts",
+		"target": "ES2020"
+	},
+	"include": ["ts", "types"]
 }

@@ -1,9 +1,9 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "module": "commonjs",
-    "outDir": "lib",
-    "target": "es5",
-    "tsBuildInfoFile": ".tsc/lib.buildInfo"
-  }
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"module": "commonjs",
+		"outDir": "lib",
+		"target": "es5",
+		"tsBuildInfoFile": ".tsc/lib.buildInfo"
+	}
 }

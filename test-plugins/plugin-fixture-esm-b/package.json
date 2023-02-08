@@ -1,9 +1,9 @@
 {
-  "name": "@mocktomata/plugin-fixture-esm-b",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    "import": "./index.mjs"
-  }
+	"name": "@mocktomata/plugin-fixture-esm-b",
+	"version": "1.0.0",
+	"private": true,
+	"type": "module",
+	"exports": {
+		"import": "./index.mjs"
+	}
 }

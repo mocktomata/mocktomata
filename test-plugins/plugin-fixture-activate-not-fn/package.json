@@ -1,6 +1,6 @@
 {
-  "name": "@mocktomata/plugin-fixture-activate-not-fn",
-  "version": "1.0.10",
-  "private": true,
-  "license": "MIT"
+	"name": "@mocktomata/plugin-fixture-activate-not-fn",
+	"version": "1.0.10",
+	"private": true,
+	"license": "MIT"
 }

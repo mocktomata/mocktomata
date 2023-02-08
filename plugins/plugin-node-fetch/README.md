@@ -9,6 +9,7 @@ npm install --save-dev @mocktomata/plugin-node-fetch
 ```
 
 komondor.json
+
 ```js
 {
   "plugins": [

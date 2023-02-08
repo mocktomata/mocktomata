@@ -1,6 +1,6 @@
 {
-  "name": "@mocktomata/plugin-fixture-cjs-b",
-  "version": "1.0.0",
-  "private": true,
-  "main": "./index.cjs"
+	"name": "@mocktomata/plugin-fixture-cjs-b",
+	"version": "1.0.0",
+	"private": true,
+	"main": "./index.cjs"
 }

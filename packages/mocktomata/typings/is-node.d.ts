@@ -1,4 +1,4 @@
 declare module 'is-node' {
-  const isNode: boolean
-  export default isNode
+	const isNode: boolean
+	export default isNode
 }

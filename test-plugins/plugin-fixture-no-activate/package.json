@@ -1,6 +1,6 @@
 {
-  "name": "@mocktomata/plugin-fixture-no-activate",
-  "version": "1.0.10",
-  "private": true,
-  "license": "MIT"
+	"name": "@mocktomata/plugin-fixture-no-activate",
+	"version": "1.0.10",
+	"private": true,
+	"license": "MIT"
 }

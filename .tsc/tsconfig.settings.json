@@ -1,24 +1,22 @@
 {
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "downlevelIteration": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "es2015"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "newLine": "LF",
-    "noUnusedLocals": true,
-    // This is added just in case tsconfig.json forgot to have `noEmit: true`
-    "outDir": ".nowhere",
-    "removeComments": false,
-    // type-plus need this at the moment
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "strict": true
-  }
+	"compilerOptions": {
+		"composite": true,
+		"declaration": true,
+		"declarationMap": true,
+		"downlevelIteration": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"lib": ["es2015"],
+		"module": "commonjs",
+		"moduleResolution": "node",
+		"newLine": "LF",
+		"noUnusedLocals": true,
+		// This is added just in case tsconfig.json forgot to have `noEmit: true`
+		"outDir": ".nowhere",
+		"removeComments": false,
+		// type-plus need this at the moment
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true
+	}
 }

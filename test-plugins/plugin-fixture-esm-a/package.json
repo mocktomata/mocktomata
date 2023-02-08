@@ -1,11 +1,11 @@
 {
-  "name": "@mocktomata/plugin-fixture-esm-a",
-  "version": "1.0.0",
-  "type": "module",
-  "exports": {
-    "import": "./index.js"
-  },
-  "files": [
-    "lib"
-  ]
+	"name": "@mocktomata/plugin-fixture-esm-a",
+	"version": "1.0.0",
+	"type": "module",
+	"exports": {
+		"import": "./index.js"
+	},
+	"files": [
+		"lib"
+	]
 }

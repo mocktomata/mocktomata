@@ -149,15 +149,15 @@
   For example:
 
   ```ts
-  import { logLevels } from "standard-log";
-  import { mt } from "mocktomata";
-  mt("...", (specName, spec, reporter) => {
-    it(specName, async () => {
-      // ...
-      await spec.done();
-      expect(reporter.getLogMessage()).not.toContain("sensitive");
-    });
-  });
+  import { logLevels } from 'standard-log'
+  import { mt } from 'mocktomata'
+  mt('...', (specName, spec, reporter) => {
+  	it(specName, async () => {
+  		// ...
+  		await spec.done()
+  		expect(reporter.getLogMessage()).not.toContain('sensitive')
+  	})
+  })
   ```
 
 - 47f1174: Fix `maskValue()` to mask correctly when working with complex subject such as axios
@@ -172,7 +172,7 @@
   Use it during `afterAll()`:
 
   ```ts
-  afterall(() => incubator.cleanup());
+  afterall(() => incubator.cleanup())
   ```
 
   Update `standard-log`.
@@ -228,15 +228,15 @@
   For example:
 
   ```ts
-  import { logLevels } from "standard-log";
-  import { mt } from "mocktomata";
-  mt("...", (specName, spec, reporter) => {
-    it(specName, async () => {
-      // ...
-      await spec.done();
-      expect(reporter.getLogMessage()).not.toContain("sensitive");
-    });
-  });
+  import { logLevels } from 'standard-log'
+  import { mt } from 'mocktomata'
+  mt('...', (specName, spec, reporter) => {
+  	it(specName, async () => {
+  		// ...
+  		await spec.done()
+  		expect(reporter.getLogMessage()).not.toContain('sensitive')
+  	})
+  })
   ```
 
 - 47f1174: Fix `maskValue()` to mask correctly when working with complex subject such as axios
@@ -286,7 +286,7 @@
   Use it during `afterAll()`:
 
   ```ts
-  afterall(() => incubator.teardown());
+  afterall(() => incubator.teardown())
   ```
 
   Update `standard-log`.

@@ -1,5 +1,5 @@
 # https://github.com/cla-assistant/cla-assistant
-name: "CLA Assistant"
+name: 'CLA Assistant'
 on:
   issue_comment:
     types: [created]
@@ -18,10 +18,10 @@ jobs:
           # the below token should have repo scope and must be manually added by you in the repository's secret
           PERSONAL_ACCESS_TOKEN: ${{ secrets.RERUN_WORKFLOW_TOKEN }}
         with:
-          path-to-signatures: "signatures/version1/cla.json"
-          path-to-document: "https://github.com/mocktomata/.github/blob/main/CLA.md" # e.g. a CLA or a DCO document
+          path-to-signatures: 'signatures/version1/cla.json'
+          path-to-document: 'https://github.com/mocktomata/.github/blob/main/CLA.md' # e.g. a CLA or a DCO document
           # branch should not be protected
-          branch: "CLA"
+          branch: 'CLA'
           allowlist: renovate[bot],dependabot
           # the followings are the optional inputs - If the optional inputs are not given, then default values will be taken
           #remote-organization-name: enter the remote organization name where the signatures should be stored (Default is storing the signatures in the same repository)

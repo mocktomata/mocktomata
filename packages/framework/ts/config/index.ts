@@ -4,4 +4,3 @@ export * from './errors.js'
 export * from './loadConfig.js'
 
 export const configurator = createConfigurator()
-

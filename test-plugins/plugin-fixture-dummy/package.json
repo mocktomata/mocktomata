@@ -1,43 +1,43 @@
 {
-  "name": "@mocktomata/plugin-fixture-dummy",
-  "version": "1.1.10",
-  "private": true,
-  "description": "mocktomata dummy plugin for internal testing",
-  "keywords": [
-    "mocktomata-plugin"
-  ],
-  "homepage": "https://github.com/mocktomata/mocktomata",
-  "bugs": {
-    "url": "https://github.com/mocktomata/mocktomata/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mocktomata/mocktomata.git"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Homa Wong",
-    "email": "homawong@gmail.com"
-  },
-  "main": "lib/index.js",
-  "module": "libm/index.js",
-  "jsnext:main": "libm/index.js",
-  "typings": "lib/index.d.ts",
-  "files": [
-    "lib",
-    "libm",
-    "ts"
-  ],
-  "scripts": {
-    "build": "pnpm run build:lib && pnpm run build:libm",
-    "build:lib": "tsc -p tsconfig.lib.json",
-    "build:libm": "tsc -p tsconfig.libm.json",
-    "clean": "rimraf lib libm .tsc"
-  },
-  "dependencies": {
-    "@mocktomata/framework": "workspace:^"
-  },
-  "engines": {
-    "node": ">= 14.16"
-  }
+	"name": "@mocktomata/plugin-fixture-dummy",
+	"version": "1.1.10",
+	"private": true,
+	"description": "mocktomata dummy plugin for internal testing",
+	"keywords": [
+		"mocktomata-plugin"
+	],
+	"homepage": "https://github.com/mocktomata/mocktomata",
+	"bugs": {
+		"url": "https://github.com/mocktomata/mocktomata/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mocktomata/mocktomata.git"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Homa Wong",
+		"email": "homawong@gmail.com"
+	},
+	"main": "lib/index.js",
+	"module": "libm/index.js",
+	"jsnext:main": "libm/index.js",
+	"typings": "lib/index.d.ts",
+	"files": [
+		"lib",
+		"libm",
+		"ts"
+	],
+	"scripts": {
+		"build": "pnpm run build:lib && pnpm run build:libm",
+		"build:lib": "tsc -p tsconfig.lib.json",
+		"build:libm": "tsc -p tsconfig.libm.json",
+		"clean": "rimraf lib libm .tsc"
+	},
+	"dependencies": {
+		"@mocktomata/framework": "workspace:^"
+	},
+	"engines": {
+		"node": ">= 14.16"
+	}
 }

@@ -22,7 +22,7 @@ export const arrayPlugin: SpecPlugin<any[], { meta: string; items: string[] }> =
 				return getProperty({ key }, () => (target as any)[key])
 			},
 			set(target, key: any, value) {
-				return setProperty({ key, value }, (value) => {
+				return setProperty({ key, value }, value => {
 					subject[key] = target[key] = value
 				})
 			}

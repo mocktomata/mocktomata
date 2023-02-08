@@ -1,34 +1,29 @@
 {
-  "extends": "../../.tsc/tsconfig.settings.json",
-  "compilerOptions": {
-    "lib": [
-      "DOM"
-    ],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "outDir": "esm",
-    "rootDir": "ts",
-    "target": "ES2020"
-  },
-  "references": [
-    {
-      "path": "../framework"
-    },
-    {
-      "path": "../service"
-    },
-    {
-      "path": "../io-remote"
-    },
-    {
-      "path": "../nodejs"
-    },
-    {
-      "path": "../../test-plugins/plugin-fixture-dummy"
-    }
-  ],
-  "include": [
-    "ts",
-    "typings"
-  ]
+	"extends": "../../.tsc/tsconfig.settings.json",
+	"compilerOptions": {
+		"lib": ["DOM"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"outDir": "esm",
+		"rootDir": "ts",
+		"target": "ES2020"
+	},
+	"references": [
+		{
+			"path": "../framework"
+		},
+		{
+			"path": "../service"
+		},
+		{
+			"path": "../io-remote"
+		},
+		{
+			"path": "../nodejs"
+		},
+		{
+			"path": "../../test-plugins/plugin-fixture-dummy"
+		}
+	],
+	"include": ["ts", "typings"]
 }

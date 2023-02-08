@@ -201,7 +201,7 @@ describe('invoke', () => {
 	})
 	incubator.sequence('in place of different action throws ActionMismatch', (specName, { save, simulate }) => {
 		test(specName, async () => {
-			const subject = Object.assign(function() {}, { a: 1 })
+			const subject = Object.assign(function () {}, { a: 1 })
 			const spy = await save(subject)
 			spy()
 			spy.a = 2
@@ -218,7 +218,7 @@ describe('invoke', () => {
 		test.skip(specName, async () => {
 			// This test is not the right test
 			// Can't remember what it should be
-			const subject = Object.assign(function() {}, { a: 1 })
+			const subject = Object.assign(function () {}, { a: 1 })
 			const spy = await save(subject)
 			spy()
 			spy.a = 2
@@ -990,7 +990,7 @@ describe('function', () => {
 	})
 	incubator('function with static prop', (specName, spec) => {
 		test(specName, async () => {
-			const fn = Object.assign(function() {}, { a: 1 })
+			const fn = Object.assign(function () {}, { a: 1 })
 
 			const mock = await spec(fn)
 			expect(mock.a).toBe(1)
@@ -1021,7 +1021,7 @@ describe('function', () => {
 	})
 	incubator('call toString()', (specName, spec) => {
 		test(specName, async () => {
-			const subject = await spec(function() {})
+			const subject = await spec(function () {})
 			expect(subject.toString()).toEqual('function () { [native code] }')
 
 			await spec.done()
@@ -1489,7 +1489,7 @@ describe('class', () => {
 				}
 			}
 			const fn = Object.assign(
-				function() {
+				function () {
 					return
 				},
 				{

@@ -1,1 +1,1 @@
-declare module 'cross-fetch';
+declare module 'cross-fetch'
