@@ -45,7 +45,7 @@
 	},
 	"dependencies": {
 		"@hapi/boom": "^10.0.0",
-		"@hapi/hapi": "^20.2.2",
+		"@hapi/hapi": "^21.0.0",
 		"@mocktomata/framework": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
 		"standard-log": "^11.5.0",
