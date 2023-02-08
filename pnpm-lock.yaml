@@ -30,7 +30,7 @@ importers:
       npm-check-updates: ^16.0.5
       npm-run-all: ^4.1.5
       pinst: ^3.0.0
-      rimraf: ^3.0.2
+      rimraf: ^4.0.0
       turbo: ^1.4.3
       typescript: ~4.9.0
     devDependencies:
@@ -60,7 +60,7 @@ importers:
       npm-check-updates: 16.0.5
       npm-run-all: 4.1.5
       pinst: 3.0.0
-      rimraf: 3.0.2
+      rimraf: 4.1.2
       turbo: 1.4.3
       typescript: 4.9.3
 
@@ -81,7 +81,7 @@ importers:
       jest-watch-toggle-config-2: ^2.1.0
       jest-watch-typeahead: ^2.2.0
       npm-run-all: ^4.1.5
-      rimraf: ^3.0.2
+      rimraf: ^4.0.0
       ts-jest: ^29.0.3
       typescript: ~4.9.0
       validate.js: ^0.13.1
@@ -103,7 +103,7 @@ importers:
       jest-watch-toggle-config-2: 2.1.0_jest@29.2.1
       jest-watch-typeahead: 2.2.0_jest@29.2.1
       npm-run-all: 4.1.5
-      rimraf: 3.0.2
+      rimraf: 4.1.2
       ts-jest: 29.0.3_4z6d7nuynxrl4uveazftj6diza
       typescript: 4.9.3
 
@@ -132,7 +132,7 @@ importers:
       json-bigint: ^1.0.0
       ncp: ^2.0.0
       npm-run-all: ^4.1.5
-      rimraf: ^3.0.2
+      rimraf: ^4.0.0
       satisfier: ^5.4.2
       size-limit: ^8.0.1
       stack-utils: ^2.0.3
@@ -171,7 +171,7 @@ importers:
       json-bigint: 1.0.0
       ncp: 2.0.0
       npm-run-all: 4.1.5
-      rimraf: 3.0.2
+      rimraf: 4.1.2
       satisfier: 5.4.2
       size-limit: 8.0.1
       standard-log-color: 11.5.0_standard-log@11.5.0
@@ -195,7 +195,7 @@ importers:
       jest-watch-typeahead: ^2.2.0
       ncp: ^2.0.0
       npm-run-all: ^4.1.5
-      rimraf: ^3.0.2
+      rimraf: ^4.0.0
       ts-jest: ^29.0.3
       typescript: ~4.9.0
     dependencies:
@@ -215,7 +215,7 @@ importers:
       jest-watch-typeahead: 2.2.0_jest@29.2.1
       ncp: 2.0.0
       npm-run-all: 4.1.5
-      rimraf: 3.0.2
+      rimraf: 4.1.2
       ts-jest: 29.0.3_uo52wfafpsvhxs5nuzgmkssvwi
       typescript: 4.9.3
 
@@ -247,7 +247,7 @@ importers:
       npm-run-all: ^4.1.5
       param-case: ^3.0.4
       pascal-case: ^3.1.2
-      rimraf: ^3.0.2
+      rimraf: ^4.0.0
       source-map-loader: ^4.0.0
       standard-log: ^11.5.0
       standard-log-color: ^11.5.0
@@ -286,7 +286,7 @@ importers:
       npm-run-all: 4.1.5
       param-case: 3.0.4
       pascal-case: 3.1.2
-      rimraf: 3.0.2
+      rimraf: 4.1.2
       source-map-loader: 4.0.0_webpack@5.74.0
       ts-jest: 29.0.3_4z6d7nuynxrl4uveazftj6diza
       ts-loader: 9.3.1_ioost42n2pkm3q6vbnx4ypyu7a
@@ -323,7 +323,7 @@ importers:
       mkdirp: ^1.0.4
       ncp: ^2.0.0
       npm-run-all: ^4.1.5
-      rimraf: ^3.0.2
+      rimraf: ^4.0.0
       sanitize-filename: ^1.6.3
       satisfier: ^5.4.2
       standard-log: ^11.5.0
@@ -362,7 +362,7 @@ importers:
       jest-watch-typeahead: 2.2.0_jest@29.2.1
       ncp: 2.0.0
       npm-run-all: 4.1.5
-      rimraf: 3.0.2
+      rimraf: 4.1.2
       satisfier: 5.4.2
       standard-log: 11.5.0
       tmp: 0.2.1
@@ -9280,6 +9280,12 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+
+  /rimraf/4.1.2:
+    resolution: {integrity: sha512-BlIbgFryTbw3Dz6hyoWFhKk+unCcHMSkZGrTFVAx2WmttdBSonsdtRlwiuTbDqTKr+UlXIUqJVS4QT5tUzGENQ==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dev: true
 
   /roarr/2.15.4:
     resolution: {integrity: sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A==}
