@@ -1,7 +1,9 @@
 {
 	"extends": "../../.tsc/tsconfig.settings.json",
 	"compilerOptions": {
-		"lib": ["DOM"],
+		"lib": [
+			"DOM"
+		],
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
 		"outDir": "esm",
@@ -25,5 +27,8 @@
 			"path": "../../test-plugins/plugin-fixture-dummy"
 		}
 	],
-	"include": ["ts", "typings"]
+	"include": [
+		"ts",
+		"typings"
+	]
 }

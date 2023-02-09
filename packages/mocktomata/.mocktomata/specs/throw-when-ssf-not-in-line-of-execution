@@ -1,0 +1,11 @@
+throw when ssf not in line of execution
+{
+  "refs": [
+    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"\",\"length\":0,\"props\":{}}"},
+    {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}}
+  ],
+  "actions": [
+    {"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":[],"tick":0},
+    {"type":"return","actionId":0,"tick":1,"payload":"1"}
+  ]
+}
