@@ -6,7 +6,7 @@ const projects = process.env.JEST_ENV
 		}.cjs`
 	]
 	: [
-		'<rootDir>/packages/*/jest.config.cjs'
+		'<rootDir>/packages/*/jest.config.mjs'
 		// '<rootDir>/packages/*/jest.config.electron.js',
 		// '<rootDir>/packages/*/jest.config.jsdom.cjs'
 	]

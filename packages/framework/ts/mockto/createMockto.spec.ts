@@ -1,7 +1,7 @@
 import { a } from 'assertron'
 import { logLevels } from 'standard-log'
 import { record } from 'type-plus'
-import { createMockto, createTestContext, getCallerRelativePath, SpecNotFound } from '../index.js'
+import { createMockto, createTestContext, SpecNotFound } from '../index.js'
 import { indirectMockto } from './indirectMockto.test-setup.js'
 
 describe(`mockto`, () => {
@@ -68,10 +68,7 @@ describe(`mockto`, () => {
 			})
 
 			const { io } = await context.get()
-			const record = await io.readSpec(
-				specNameInput,
-				getCallerRelativePath(() => {})
-			)
+			const record = await io.readSpec(specNameInput, '')
 			expect(record).not.toBeUndefined()
 		})
 
@@ -89,10 +86,7 @@ describe(`mockto`, () => {
 			})
 
 			const { io } = await context.get()
-			const record = await io.readSpec(
-				specNameInput,
-				getCallerRelativePath(() => {})
-			)
+			const record = await io.readSpec(specNameInput, '')
 			expect(record).not.toBeUndefined()
 		})
 	})
@@ -136,10 +130,7 @@ describe(`mockto`, () => {
 			})
 
 			const { io } = await context.get()
-			const record = await io.readSpec(
-				specNameInput,
-				getCallerRelativePath(() => {})
-			)
+			const record = await io.readSpec(specNameInput, '')
 			expect(record).not.toBeUndefined()
 
 			await new Promise<void>(a => {
@@ -169,10 +160,7 @@ describe(`mockto`, () => {
 			})
 
 			const { io } = await context.get()
-			const record = await io.readSpec(
-				specNameInput,
-				getCallerRelativePath(() => {})
-			)
+			const record = await io.readSpec(specNameInput, '')
 			expect(record).not.toBeUndefined()
 
 			await new Promise<void>(a => {
