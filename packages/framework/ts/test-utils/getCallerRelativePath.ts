@@ -16,15 +16,15 @@ export function getCallerRelativePath(subject: AnyFunction): string {
 	It should be a function you called directly in the test.`)
 	}
 
-	return tryGetPathnameFromUrl(raw) || raw
+	return tryGetPathnameFromUrl(raw)
 }
 
 function tryGetPathnameFromUrl(raw: string) {
 	try {
 		return new URL(raw).pathname
-		// istanbul ignore next
 	} catch (cause: any) {
 		if (raw) return raw
+		// istanbul ignore next
 		throw new MocktomataError(
 			`Unable to extract relative path from ${raw}.
 	This is an unexpected case.
