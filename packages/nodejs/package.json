@@ -66,7 +66,7 @@
 		"@mocktomata/plugin-fixture-esm-a": "workspace:^",
 		"@mocktomata/plugin-fixture-esm-b": "workspace:^",
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
-		"@repobuddy/jest": "^2.1.0",
+		"@repobuddy/jest": "^3.0.0",
 		"@unional/fixture": "^3.2.6",
 		"assertron": "^11.0.0",
 		"cross-env": "^7.0.3",

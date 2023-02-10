@@ -56,7 +56,7 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.10",
-		"@repobuddy/jest": "^2.1.0",
+		"@repobuddy/jest": "^3.0.0",
 		"ansi-colors": "^4.1.1",
 		"deepmerge": "^4.2.2",
 		"depcheck": "^1.4.3",

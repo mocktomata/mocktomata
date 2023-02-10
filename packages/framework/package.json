@@ -57,7 +57,7 @@
 		"type-plus": "^5.0.0"
 	},
 	"devDependencies": {
-		"@repobuddy/jest": "^2.1.0",
+		"@repobuddy/jest": "^3.0.0",
 		"@size-limit/preset-big-lib": "^8.0.1",
 		"@types/json-bigint": "^1.0.1",
 		"@types/stack-utils": "^2.0.1",
