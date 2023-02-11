@@ -42,7 +42,7 @@
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
-		"node-fetch": "^2.6.7"
+		"node-fetch": "^3.0.0"
 	},
 	"devDependencies": {
 		"@types/node-fetch": "^2.6.2",
