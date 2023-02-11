@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import delay from 'delay'
 import { createTimeTracker } from './index.js'
 
@@ -31,7 +32,7 @@ test('first elapse() returns 0', async () => {
 })
 
 test('duration returns total duration since first elapse() call', async () => {
-	const timeTracker = createTimeTracker(testOptions, notCalled)
+	const timeTracker = createTimeTracker({ timeout: 200 }, notCalled)
 	timeTracker.elapse()
 	await delay(5)
 	timeTracker.elapse()
