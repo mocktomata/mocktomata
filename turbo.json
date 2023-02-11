@@ -66,6 +66,42 @@
 				"tsconfig.*",
 				"package.json"
 			]
+		},
+		"test:electron": {
+			"dependsOn": [
+				"build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				"jest.config.*",
+				"tsconfig.*",
+				"package.json"
+			]
+		},
+		"test:jsdom": {
+			"dependsOn": [
+				"build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				"jest.config.*",
+				"tsconfig.*",
+				"package.json"
+			]
+		},
+		"test:nodejs": {
+			"dependsOn": [
+				"build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				"jest.config.*",
+				"tsconfig.*",
+				"package.json"
+			]
 		}
 	}
 }
