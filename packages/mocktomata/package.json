@@ -50,8 +50,8 @@
 		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
 		"nuke": "pnpm run clean && rimraf node_modules",
 		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
-		"test:electron": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.cjs --reporters=default",
-		"test:jsdom": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.jsdom.cjs --reporters=default",
+		"test:electron": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --reporters=default",
+		"test:jsdom": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.jsdom.mjs --reporters=default",
 		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --watch",
 		"verify": "npm-run-all -p lint build coverage test:jsdom test:electron -p depcheck",
 		"watch": "pnpm run test:watch"
