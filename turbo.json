@@ -17,7 +17,7 @@
 		},
 		"coverage": {
 			"dependsOn": [
-				"^build"
+				"build"
 			],
 			"inputs": [
 				"fixtures",
@@ -57,7 +57,7 @@
 		},
 		"test": {
 			"dependsOn": [
-				"^build"
+				"build"
 			],
 			"inputs": [
 				"fixtures",
