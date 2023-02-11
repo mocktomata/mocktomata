@@ -3,15 +3,13 @@ import { createIO } from '@mocktomata/nodejs'
 import t from 'assert'
 import a from 'assertron'
 import fs, { readFileSync } from 'fs'
-import f from 'node-fetch'
+import fetch from 'node-fetch'
 import path from 'path'
 import { createStandardLog } from 'standard-log'
 import { dirSync } from 'tmp'
 import { PromiseValue } from 'type-plus'
 import { btoa } from './base64.js'
 import { start } from './index.js'
-
-const fetch = f.default
 
 test('if a port is specified and not available, will throw an error', async () => {
 	const runningServer = await start({ port: 3710 })
