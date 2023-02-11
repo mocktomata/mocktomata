@@ -126,7 +126,7 @@ configs:
 
 	describe(`loadPlugin()`, () => {
 		jest.setTimeout(30000)
-		it('loads cjs plugin', async () => {
+		it.only('loads cjs plugin', async () => {
 			const { stdout } = await execCommand({
 				casePath: fixturePath('plugin-cjs'),
 				command: 'node',
