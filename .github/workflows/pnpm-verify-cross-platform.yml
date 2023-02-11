@@ -31,10 +31,13 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
       - name: Install Dependencies
         run: pnpm install
-      - name: Verify with headless
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: pnpm verify
+
+      - name: Run tests (Linux)
+        run: xvfb-run -a pnpm verify
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+      - name: Run tests (Windows/Mac)
+        run: pnpm verify
+        if: ${{ matrix.os != 'ubuntu-latest' }}
 
       - name: codecov
         if: matrix.os == 'ubuntu-latest' && matrix.node-version == 16
