@@ -99,7 +99,9 @@ export namespace Spec {
 		timeout?: number
 		/**
 		 * Log level to log the behavior.
-		 * Default to `logLevels.info`
+		 *
+		 * Defaults to `logLevels.info` when `emitLog` is false,
+		 * Defaults to `logLevels.debug` when `emitLog` is true.
 		 *
 		 * They are saved in memory and available through the `reporter`.
 		 *

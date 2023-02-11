@@ -1,4 +1,4 @@
-import { toLogLevel } from 'standard-log'
+import { logLevels, toLogLevel } from 'standard-log'
 import { record } from 'type-plus'
 import type { Spec } from '../spec/types.js'
 import type { Mocktomata } from '../types.js'
@@ -31,7 +31,7 @@ export async function loadConfig({ io, configurator, log }: Mocktomata.Context) 
 function buildConfig(input: Config.Input): Config {
 	return {
 		emitLog: input.emitLog,
-		logLevel: resolveLogLevel(input.logLevel),
+		logLevel: resolveLogLevel(input.logLevel) ?? (input.emitLog ? logLevels.debug : undefined),
 		ecmaVersion: resolveEcmaVersion(input),
 		plugins: resolvePlugins(input),
 		filePathFilter: resolveFilePathFilter(input),
