@@ -2,35 +2,70 @@
 	"$schema": "https://turborepo.org/schema.json",
 	"pipeline": {
 		"build": {
-			"dependsOn": ["^build"]
+			"dependsOn": [
+				"^build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				"tsconfig.*",
+				"package.json"
+			]
 		},
 		"clean": {
 			"cache": false
 		},
 		"coverage": {
-			"dependsOn": ["^build"]
+			"dependsOn": [
+				"^build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				"jest.config.*",
+				"tsconfig.*",
+				"package.json"
+			]
 		},
 		"depcheck": {
-			"dependsOn": ["build"]
+			"dependsOn": [
+				"build"
+			]
 		},
 		"dev": {
 			"cache": false
 		},
 		"lint": {
-			"dependsOn": ["^build"]
+			"dependsOn": [
+				"^build"
+			]
 		},
 		"nuke": {
 			"cache": false
 		},
 		"size": {
-			"dependsOn": ["build"]
+			"dependsOn": [
+				"build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				".size-limit.*",
+				"tsconfig.*",
+				"package.json"
+			]
 		},
 		"test": {
-			"dependsOn": ["^build"]
-		},
-		"watch": {
-			"dependsOn": ["^build"],
-			"inputs": ["ts/*.ts", "ts/*.tsx", "ts/**/*.ts", "ts/**/*.tsx"]
+			"dependsOn": [
+				"^build"
+			],
+			"inputs": [
+				"fixtures",
+				"ts",
+				"jest.config.*",
+				"tsconfig.*",
+				"package.json"
+			]
 		}
 	}
 }
