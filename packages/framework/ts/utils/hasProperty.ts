@@ -1,5 +1,8 @@
 import type { SpecRecord } from '../spec-record/types.js'
 
+/**
+ * Does the subject has the specified property.
+ */
 export function hasProperty(subject: any, property: SpecRecord.SupportedKeyTypes): boolean {
 	if (typeof property === 'string') {
 		const propNames = Object.getOwnPropertyNames(subject)

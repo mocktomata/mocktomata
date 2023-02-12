@@ -1,21 +1,26 @@
 /* eslint-disable no-console */
 import delay from 'delay'
+import { createStandardLogForTest } from 'standard-log'
 import { createTimeTracker } from './index.js'
 
 const testOptions = { timeout: 10 }
 const notCalled = () => {
 	throw new Error('should not reach')
 }
-test('not started until elapse() is called', async () => {
+it('not started until elapse() is called', async () => {
+	const sl = createStandardLogForTest()
+	const log = sl.getLogger('test')
 	let called = false
-	createTimeTracker(testOptions, () => (called = true))
+	createTimeTracker({ log }, testOptions, () => (called = true))
 	await delay(10)
 	expect(called).not.toBeTruthy()
 })
 
-test('invoke the callback when timeout is reached', async () => {
+it('invoke the callback when timeout is reached', async () => {
+	const sl = createStandardLogForTest()
+	const log = sl.getLogger('test')
 	let called = false
-	const timeTracker = createTimeTracker(testOptions, () => (called = true))
+	const timeTracker = createTimeTracker({ log }, testOptions, () => (called = true))
 	timeTracker.elapse()
 	await delay(40)
 
@@ -23,16 +28,20 @@ test('invoke the callback when timeout is reached', async () => {
 	expect(called).toBeTruthy()
 })
 
-test('first elapse() returns 0', async () => {
-	const timeTracker = createTimeTracker(testOptions, notCalled)
+it('first elapse() returns 0', async () => {
+	const sl = createStandardLogForTest()
+	const log = sl.getLogger('test')
+	const timeTracker = createTimeTracker({ log }, testOptions, notCalled)
 	const elapsed = timeTracker.elapse()
 	timeTracker.stop()
 
 	expect(elapsed).toBe(0)
 })
 
-test('duration returns total duration since first elapse() call', async () => {
-	const timeTracker = createTimeTracker({ timeout: 200 }, notCalled)
+it('duration returns total duration since first elapse() call', async () => {
+	const sl = createStandardLogForTest()
+	const log = sl.getLogger('test')
+	const timeTracker = createTimeTracker({ log }, { timeout: 200 }, notCalled)
 	timeTracker.elapse()
 	await delay(5)
 	timeTracker.elapse()
@@ -46,8 +55,10 @@ test('duration returns total duration since first elapse() call', async () => {
 	expect(actual).toBeLessThanOrEqual(5000)
 })
 
-test('elapse() returns time passed since last elapse() call', async () => {
-	const timeTracker = createTimeTracker({ timeout: 2000 }, notCalled)
+it('elapse() returns time passed since last elapse() call', async () => {
+	const sl = createStandardLogForTest()
+	const log = sl.getLogger('test')
+	const timeTracker = createTimeTracker({ log }, { timeout: 2000 }, notCalled)
 
 	let elapsedTotal = timeTracker.elapse()
 	await delay(30)

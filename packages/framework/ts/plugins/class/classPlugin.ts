@@ -23,8 +23,8 @@ export const classPlugin: SpecPlugin<new (...args: any[]) => void> = {
 	createStub(context, subject, meta) {
 		const base = subject || demetarize(meta)
 		const Stub: any = function (...args: any[]) {
-			return context.instantiate({ args }, ({ args }) => {
-				const _this = new base(...args)
+			return context.instantiate({ args }, () => {
+				const _this = new Object()
 				Object.setPrototypeOf(_this, new.target.prototype)
 				return _this
 			})

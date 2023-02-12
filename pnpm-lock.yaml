@@ -114,6 +114,7 @@ importers:
       '@size-limit/preset-big-lib': ^8.0.1
       '@types/json-bigint': ^1.0.1
       '@types/stack-utils': ^2.0.1
+      '@types/ws': ^8.5.4
       assertron: ^11.0.0
       async-fp: ^8.0.2
       axios: ^1.1.3
@@ -138,23 +139,25 @@ importers:
       stack-utils: ^2.0.3
       standard-log: ^11.5.0
       standard-log-color: ^11.5.0
-      tersify: ^3.11.1
+      tersify: ^3.12.0
       ts-jest: ^29.0.3
       type-plus: ^5.0.0
       typescript: ~4.9.0
+      ws: ^8.12.0
     dependencies:
       '@cucumber/cucumber-expressions': 16.0.0
       async-fp: 8.0.2
       iso-error: 6.0.0
       stack-utils: 2.0.5
       standard-log: 11.5.0
-      tersify: 3.11.1
+      tersify: 3.12.0
       type-plus: 5.0.0
     devDependencies:
       '@repobuddy/jest': 3.0.0_s6sz67gjuqxo3yz6awcqiigb4e
       '@size-limit/preset-big-lib': 8.0.1_size-limit@8.0.1
       '@types/json-bigint': 1.0.1
       '@types/stack-utils': 2.0.1
+      '@types/ws': 8.5.4
       assertron: 11.0.0
       axios: 1.1.3
       cross-env: 7.0.3
@@ -177,6 +180,7 @@ importers:
       standard-log-color: 11.5.0_standard-log@11.5.0
       ts-jest: 29.0.3_paidv7bukt2brxbb3eloz7dc64
       typescript: 4.9.3
+      ws: 8.12.0
 
   packages/io-remote:
     specifiers:
@@ -1995,7 +1999,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.4.2
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
       chalk: 4.1.2
       jest-message-util: 29.2.1
       jest-util: 29.2.1
@@ -2492,7 +2496,7 @@ packages:
       '@jest/schemas': 29.4.2
       '@types/istanbul-lib-coverage': 2.0.4
       '@types/istanbul-reports': 3.0.1
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
       '@types/yargs': 17.0.22
       chalk: 4.1.2
     dev: true
@@ -3021,7 +3025,7 @@ packages:
   /@types/graceful-fs/4.1.5:
     resolution: {integrity: sha512-anKkLmZZ+xm4p8JWBf4hElkM4XR+EZeA2M9BAkkTldmcyDY4mbdIJnRghDJH3Ov5ooY7/UAoENtmdMSkaAd7Cw==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
     dev: true
 
   /@types/graceful-fs/4.1.6:
@@ -3118,7 +3122,7 @@ packages:
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
     dev: true
 
   /@types/md5/2.3.2:
@@ -3192,7 +3196,7 @@ packages:
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
     dev: true
 
   /@types/semver/6.2.3:
@@ -3213,6 +3217,12 @@ packages:
 
   /@types/tough-cookie/4.0.2:
     resolution: {integrity: sha512-Q5vtl1W5ue16D+nIaW8JWebSSraJVlK+EthKn7e7UcD4KWsaSJ8BqGPXNaPghgtcn/fhvrN17Tv8ksUsQpiplw==}
+    dev: true
+
+  /@types/ws/8.5.4:
+    resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
+    dependencies:
+      '@types/node': 18.13.0
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -3241,7 +3251,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
     dev: true
     optional: true
 
@@ -3411,7 +3421,7 @@ packages:
       rimraf: 3.0.2
       standard-log: 11.5.0
       standard-log-color: 11.5.0_standard-log@11.5.0
-      tersify: 3.11.1
+      tersify: 3.12.0
       type-plus: 4.18.1
     dev: true
 
@@ -3919,7 +3929,7 @@ packages:
       iso-error: 4.4.0
       path-equal: 1.2.2
       satisfier: 5.4.2
-      tersify: 3.11.1
+      tersify: 3.12.0
       type-plus: 4.18.1
     dev: true
 
@@ -4144,7 +4154,7 @@ packages:
     dependencies:
       ansi-align: 3.0.1
       camelcase: 7.0.0
-      chalk: 5.1.2
+      chalk: 5.2.0
       cli-boxes: 3.0.0
       string-width: 5.1.2
       type-fest: 2.19.0
@@ -7393,7 +7403,7 @@ packages:
     dependencies:
       '@jest/types': 29.4.2
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -7850,7 +7860,7 @@ packages:
       '@jest/test-result': 29.2.1
       '@jest/transform': 29.2.1
       '@jest/types': 29.4.2
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
       chalk: 4.1.2
       cjs-module-lexer: 1.2.2
       collect-v8-coverage: 1.0.1
@@ -8188,7 +8198,7 @@ packages:
     resolution: {integrity: sha512-ROHTZ+oj7sBrgtv46zZ84uWky71AoYi0vEV9CdEtc1FQunsoAGe5HbQmW76nI5QWdvECVPrSi1MCVUmizSavMg==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@types/node': 18.11.13
+      '@types/node': 18.13.0
       jest-util: 29.2.1
       merge-stream: 2.0.0
       supports-color: 8.1.1
@@ -8351,7 +8361,7 @@ packages:
       whatwg-encoding: 2.0.0
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
-      ws: 8.9.0
+      ws: 8.12.0
       xml-name-validator: 4.0.0
     transitivePeerDependencies:
       - bufferutil
@@ -10355,7 +10365,7 @@ packages:
   /satisfier/5.4.2:
     resolution: {integrity: sha512-K1QPzEPjiC/7FcwiCwRH218SS3OVEWlx56EcHI+tZIf+TaAs+OHwwruAD4ke6xvRk/QniwSPkP98o9Oo84RxGQ==}
     dependencies:
-      tersify: 3.11.1
+      tersify: 3.12.0
     dev: true
 
   /saxes/6.0.0:
@@ -11071,8 +11081,8 @@ packages:
       source-map-support: 0.5.21
     dev: true
 
-  /tersify/3.11.1:
-    resolution: {integrity: sha512-W/Kv1z+cgDRsI10p9CyCZJ+gopPUVOz1/h7OPntr6D52iIHQTbsg40MBUoaG82q8IgD/GKoWhoujg/rOxQW7SA==}
+  /tersify/3.12.0:
+    resolution: {integrity: sha512-ZHcWac9kRE7nWRWv4ifq37drWy5cIO9BkgYebc2vcQ7A66OMoUA+wqrNylQswmSTLoSUkxTWLYrIISYLFBpl8g==}
     dependencies:
       acorn: 8.8.0
       is-buffer: 2.0.5
@@ -11590,26 +11600,26 @@ packages:
   /type-plus/4.14.1:
     resolution: {integrity: sha512-Xk6qb+HILmW+03NNMMk7UiUQYroEu9ta36JOZNZX003AYRhWf8+sdE2HPf/p1DIK0/FpjzHWfRNZsIEI0+oJIA==}
     dependencies:
-      tersify: 3.11.1
+      tersify: 3.12.0
       unpartial: 1.0.4
     dev: false
 
   /type-plus/4.18.1:
     resolution: {integrity: sha512-/Dq0K/TUedajerhr2JuXhw44V2tiAniGvyZJL23PqxjUzxrXeASWvfi01Bo8o6mudRXJL/sfBD+KZiHSzrhZ9g==}
     dependencies:
-      tersify: 3.11.1
+      tersify: 3.12.0
       unpartial: 1.0.4
 
   /type-plus/5.0.0:
     resolution: {integrity: sha512-nKp5pOQDldmR9BdEjLplLFwiXTVhOK2kReBSgVJ65URDLXCqENYzVDCONaExADIIc1CAGzvzTkB0TUgMAWR2qQ==}
     dependencies:
-      tersify: 3.11.1
+      tersify: 3.12.0
       unpartial: 1.0.4
 
   /type-plus/5.6.0:
     resolution: {integrity: sha512-LAIvZzs6mKXYHzwRfGeOuWKsE5jHndwWlLheulMl6eWDSGa1bfZCd0aLQSMgP3HZTbazx/P2UumCqtOz5AMctA==}
     dependencies:
-      tersify: 3.11.1
+      tersify: 3.12.0
       unpartial: 1.0.4
     dev: true
 
@@ -12153,12 +12163,12 @@ packages:
       signal-exit: 3.0.7
     dev: true
 
-  /ws/8.5.0:
-    resolution: {integrity: sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==}
+  /ws/8.12.0:
+    resolution: {integrity: sha512-kU62emKIdKVeEIOIKVegvqpXMSTAMLJozpHZaJNDYqBjzlSYXQGviYwN1osDLJ9av68qHd4a2oSjd7yD4pacig==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
+      utf-8-validate: '>=5.0.2'
     peerDependenciesMeta:
       bufferutil:
         optional: true
@@ -12166,8 +12176,8 @@ packages:
         optional: true
     dev: true
 
-  /ws/8.9.0:
-    resolution: {integrity: sha512-Ja7nszREasGaYUYCI2k4lCKIRTt+y7XuqVoHR44YpI49TtryyqbqvDMn5eqfW7e6HzTukDRIsXqzVHScqRcafg==}
+  /ws/8.5.0:
+    resolution: {integrity: sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1

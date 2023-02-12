@@ -1,6 +1,6 @@
 import type { SpecPlugin } from '../../spec-plugin/types.js'
 import { demetarize, metarize } from '../../spec/metarize.js'
-import { hasProperty } from '../../utils-internal/index.js'
+import { hasProperty } from '../../utils/index.js'
 
 export const arrayPlugin: SpecPlugin<any[], { meta: string; items: string[] }> = {
 	name: 'array',

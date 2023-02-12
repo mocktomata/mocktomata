@@ -58,7 +58,7 @@ export function createSimulator(
 	let log: Logger
 	const ctx = context.extend(async ctx => {
 		log = ctx.log
-		timeTracker = createTimeTracker(options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
+		timeTracker = createTimeTracker(ctx, options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
 		ctx.timeTrackers.push(timeTracker)
 		return {}
 	})
@@ -119,6 +119,7 @@ export function createSimulator(
 				return ref.testDouble
 			}),
 		end: () => {
+			log.debug('simulation ends')
 			// in `zucchini`, the simulation may ends before it starts,
 			// so `timeTracker` can be undefined.
 			timeTracker?.stop()
