@@ -34,7 +34,7 @@ it('works with axios throwing error', async () => {
 	await done()
 })
 
-function add(step: Zucchini.StepCaller, a: number, b: number): Promise<number> {
+function add(step: Zucchini.StepCaller<number>, a: number, b: number) {
 	return step(`${a} + ${b}`)
 }
 

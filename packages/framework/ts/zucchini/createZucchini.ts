@@ -15,12 +15,12 @@ import { DuplicateStep, MissingStep } from './errors.js'
 import { createStore, Step, Store } from './store.js'
 
 export namespace Zucchini {
-	export type StepCaller = (clause: string, ...inputs: any[]) => Promise<any>
+	export type StepCaller<T = any> = (clause: string, ...inputs: any[]) => Promise<T>
 
 	export type StepContext = {
 		clause: string
 		mode: Spec.Mode
-		runSubStep: StepCaller
+		runSubStep: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
 		spec<T>(subject: T): Promise<T>
 	} & Pick<Spec, 'maskValue' | 'ignoreMismatch'>
 
@@ -41,10 +41,10 @@ export namespace Zucchini {
 	} & ScenarioBase
 
 	export type ScenarioBase = {
-		ensure: Zucchini.StepCaller
-		setup: Zucchini.StepCaller
-		run: Zucchini.StepCaller
-		teardown: Zucchini.StepCaller
+		ensure: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
+		setup: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
+		run: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
+		teardown: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
 		done: () => Promise<SpecRecord>
 		ignoreMismatch: (value: any) => void
 		maskValue: Spec.MaskValueFn

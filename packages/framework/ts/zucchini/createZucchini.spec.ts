@@ -103,6 +103,15 @@ Error: foo`
 					})
 				)
 			})
+
+			it('can specify the return type', async () => {
+				defineStep('return number {int}', async (_, value) => Number(value))
+
+				const { setup } = scenario('passes clause to the context')
+
+				const actual = await setup<number>('return number 234')
+				t.strictEqual(actual, 234)
+			})
 		})
 
 		describe(`run()`, () => {
