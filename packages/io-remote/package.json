@@ -19,15 +19,17 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
+		"types": "./esm/index.d.ts",
 		"import": "./esm/index.js",
-		"require": "./cjs/index.js"
+		"default": "./cjs/index.js"
 	},
+	"main": "./cjs/index.js",
 	"types": "./esm/index.d.ts",
 	"files": [
 		"cjs",
 		"esm",
 		"ts",
-		"!**/*.spec.*",
+		"!**/*.{spec,test,unit,accept,integrate,system}.*",
 		"!**/test-util"
 	],
 	"scripts": {
