@@ -274,6 +274,19 @@ describe(`maskValue(string)`, () => {
 			})
 		}
 	)
+
+	incubator('mask return value', (specName, spec) => {
+		it(specName, async () => {
+			spec.maskValue('secret')
+			const s = await spec(() => ({ value: 'secret' }))
+
+			const r = s()
+			expect(r.value).toEqual(spec.mode === 'save' ? 'secret' : '[masked]')
+
+			const record = await spec.done()
+			expect(JSON.stringify(record)).not.toContain('secret')
+		})
+	})
 })
 
 describe(`maskValue(regex)`, () => {
