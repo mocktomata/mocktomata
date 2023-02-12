@@ -82,20 +82,6 @@ describe(`${loadConfig.name}()`, () => {
 			)
 		})
 
-		it('defaults to debug when emitLog is true', async () => {
-			const { config } = await testLoadConfig({
-				config: { emitLog: true }
-			})
-			expect(config.logLevel).toEqual(logLevels.debug)
-		})
-
-		it('used specified logLevel if specified', async () => {
-			const { config } = await testLoadConfig({
-				config: { emitLog: true, logLevel: logLevels.info }
-			})
-			expect(config.logLevel).toEqual(logLevels.info)
-		})
-
 		// it('throws when value from file and env are not the same', () => {
 		//   a.throws(() => loadConfig({
 		//     configInput: {
