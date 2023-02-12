@@ -1,3 +1,6 @@
+/**
+ * Does the subject any any property in its prototype
+ */
 export function hasPropertyInPrototype(subject: any) {
 	let proto = subject.prototype
 	while (proto !== undefined && proto !== Object.prototype) {

@@ -1,3 +1,4 @@
+import { Logger } from 'standard-log'
 import type { Spec } from '../spec/types.js'
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
@@ -10,6 +11,7 @@ export function initTimeTrackers(): TimeTrackersContext {
 }
 
 export function createTimeTracker(
+	{ log }: { log: Logger },
 	{ timeout = 1000 }: Pick<Spec.Options, 'timeout'>,
 	onTimeout: (elapsed: number) => void
 ) {
@@ -40,6 +42,7 @@ export function createTimeTracker(
 				// as the live code can be fast at local,
 				// but the simulation code very slow in CI.
 				handle = setTimeout(() => this.terminate(), timeout * 3)
+				log.trace(`timeTracker:setTimeout`)
 				return 0
 			} else {
 				const newTick = new Date().getTime()
@@ -47,8 +50,9 @@ export function createTimeTracker(
 				prevTick = newTick
 
 				clearTimeout(handle)
+				log.trace(`timeTracker:clearTimeout`)
 				handle = setTimeout(() => this.terminate(), timeout * 3)
-
+				log.trace(`timeTracker:setTimeout`)
 				return elapsed
 			}
 		},
@@ -58,6 +62,7 @@ export function createTimeTracker(
 		stop() {
 			const duration = this.duration()
 			clearTimeout(handle)
+			log.trace(`timeTracker:clearTimeout`)
 			handle = undefined
 			return duration
 		},

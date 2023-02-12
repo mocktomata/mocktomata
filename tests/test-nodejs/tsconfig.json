@@ -13,5 +13,8 @@
 			"path": "../../packages/mocktomata"
 		}
 	],
-	"include": ["ts", "typings"]
+	"include": [
+		"ts",
+		"typings"
+	]
 }

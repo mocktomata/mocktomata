@@ -12,5 +12,8 @@
 			"path": "../../packages/framework"
 		}
 	],
-	"include": ["ts", "typings"]
+	"include": [
+		"ts",
+		"typings"
+	]
 }
