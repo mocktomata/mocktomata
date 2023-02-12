@@ -119,7 +119,7 @@ export function createSimulator(
 				return ref.testDouble
 			}),
 		end: () => {
-			log.debug('simulation ends')
+			log.trace('simulation ends')
 			// in `zucchini`, the simulation may ends before it starts,
 			// so `timeTracker` can be undefined.
 			timeTracker?.stop()
