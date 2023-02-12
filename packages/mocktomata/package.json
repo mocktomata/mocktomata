@@ -1,103 +1,107 @@
 {
-  "name": "mocktomata",
-  "version": "7.2.0",
-  "description": "A Behavior Tracking and Simulation System",
-  "keywords": [
-    "boundary",
-    "boundary-testing",
-    "fixture",
-    "testing",
-    "testing-framework",
-    "testing-tools"
-  ],
-  "homepage": "https://github.com/mocktomata/mocktomata",
-  "bugs": {
-    "url": "https://github.com/mocktomata/mocktomata/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mocktomata/mocktomata.git",
-    "directory": "packages/mocktomata"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Homa Wong",
-    "email": "homawong@gmail.com"
-  },
-  "sideEffects": false,
-  "type": "module",
-  "exports": {
-    "import": "./esm/index.js",
-    "require": "./cjs/index.js",
-    "types": "./esm/index.d.ts"
-  },
-  "types": "./esm/index.d.ts",
-  "files": [
-    "cjs",
-    "dist",
-    "esm",
-    "ts",
-    "!**/*.spec.*"
-  ],
-  "scripts": {
-    "build": "run-p build:cjs build:esm",
-    "build:browser": "webpack -c webpack.config.cjs",
-    "build:cjs": "tsc -p ./tsconfig.cjs.json && ncp package.cjs.json cjs/package.json",
-    "build:esm": "tsc",
-    "clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
-    "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --coverage --reporters=default",
-    "depcheck": "depcheck",
-    "lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-    "nuke": "pnpm run clean && rimraf node_modules",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
-    "test:electron": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --reporters=default",
-    "test:jsdom": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.jsdom.mjs --reporters=default",
-    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --watch",
-    "verify": "npm-run-all -p lint build coverage test:jsdom test:electron -p depcheck",
-    "watch": "pnpm run test:watch"
-  },
-  "dependencies": {
-    "@mocktomata/framework": "workspace:^",
-    "@mocktomata/io-remote": "workspace:^",
-    "@mocktomata/nodejs": "workspace:^",
-    "@mocktomata/service": "workspace:^",
-    "async-fp": "^8.0.2",
-    "global-store": "^1.0.0-beta.21",
-    "standard-log": "^11.5.0",
-    "standard-log-color": "^11.5.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.18.10",
-    "@kayahr/jest-electron-runner": "^29.0.0",
-    "@mocktomata/plugin-fixture-deep-link": "workspace:^",
-    "@mocktomata/plugin-fixture-dummy": "workspace:^",
-    "@repobuddy/jest": "^3.0.0",
-    "@types/ws": "^8.5.4",
-    "assertron": "^11.0.0",
-    "axios": "^1.1.3",
-    "cross-env": "^7.0.3",
-    "deepmerge": "^4.2.2",
-    "depcheck": "^1.4.3",
-    "jest": "^29.4.2",
-    "jest-environment-jsdom": "^29.2.1",
-    "jest-validate": "29.4.2",
-    "jest-watch-suspend": "^1.1.2",
-    "jest-watch-toggle-config-2": "^2.1.0",
-    "jest-watch-typeahead": "^2.2.2",
-    "ncp": "^2.0.0",
-    "npm-run-all": "^4.1.5",
-    "param-case": "^3.0.4",
-    "pascal-case": "^3.1.2",
-    "rimraf": "^3.0.2",
-    "source-map-loader": "^4.0.0",
-    "ts-jest": "^29.0.3",
-    "ts-loader": "^9.3.1",
-    "typescript": "~4.9.0",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^5.0.0",
-    "ws": "^8.12.0"
-  },
-  "engines": {
-    "node": ">= 14.16"
-  }
+	"name": "mocktomata",
+	"version": "7.2.0",
+	"description": "A Behavior Tracking and Simulation System",
+	"keywords": [
+		"boundary",
+		"boundary-testing",
+		"fixture",
+		"testing",
+		"testing-framework",
+		"testing-tools"
+	],
+	"homepage": "https://github.com/mocktomata/mocktomata",
+	"bugs": {
+		"url": "https://github.com/mocktomata/mocktomata/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/mocktomata/mocktomata.git",
+		"directory": "packages/mocktomata"
+	},
+	"license": "MIT",
+	"author": {
+		"name": "Homa Wong",
+		"email": "homawong@gmail.com"
+	},
+	"sideEffects": false,
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./esm/index.d.ts",
+			"import": "./esm/index.js",
+			"default": "./cjs/index.js"
+		},
+		"./plugins": {
+			"types": "./esm/plugins.d.ts",
+			"import": "./esm/plugins.js",
+			"default": "./cjs/plugins.js"
+		}
+	},
+	"main": "./cjs/index.js",
+	"types": "./esm/index.d.ts",
+	"files": [
+		"cjs",
+		"esm",
+		"ts",
+		"!**/*.{spec,test,unit,accept,integrate,system}.*"
+	],
+	"scripts": {
+		"build": "run-p build:cjs build:esm",
+		"build:browser": "webpack -c webpack.config.cjs",
+		"build:cjs": "tsc -p ./tsconfig.cjs.json && ncp package.cjs.json cjs/package.json",
+		"build:esm": "tsc",
+		"clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
+		"coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --coverage --reporters=default",
+		"depcheck": "depcheck",
+		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
+		"nuke": "pnpm run clean && rimraf node_modules",
+		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
+		"test:electron": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --reporters=default",
+		"test:jsdom": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.jsdom.mjs --reporters=default",
+		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --watch",
+		"verify": "npm-run-all -p lint build coverage test:jsdom test:electron -p depcheck",
+		"watch": "pnpm run test:watch"
+	},
+	"dependencies": {
+		"@mocktomata/framework": "workspace:^",
+		"@mocktomata/io-remote": "workspace:^",
+		"@mocktomata/nodejs": "workspace:^",
+		"@mocktomata/service": "workspace:^",
+		"async-fp": "^8.0.2",
+		"global-store": "^1.0.0-beta.21",
+		"standard-log": "^11.5.0",
+		"standard-log-color": "^11.5.0"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.18.10",
+		"@kayahr/jest-electron-runner": "^29.0.0",
+		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
+		"@mocktomata/plugin-fixture-dummy": "workspace:^",
+		"@repobuddy/jest": "^3.0.0",
+		"assertron": "^11.0.0",
+		"cross-env": "^7.0.3",
+		"deepmerge": "^4.2.2",
+		"depcheck": "^1.4.3",
+		"jest": "^29.4.2",
+		"jest-environment-jsdom": "^29.2.1",
+		"jest-validate": "29.4.2",
+		"jest-watch-suspend": "^1.1.2",
+		"jest-watch-toggle-config-2": "^2.1.0",
+		"jest-watch-typeahead": "^2.2.2",
+		"ncp": "^2.0.0",
+		"npm-run-all": "^4.1.5",
+		"param-case": "^3.0.4",
+		"pascal-case": "^3.1.2",
+		"rimraf": "^3.0.2",
+		"source-map-loader": "^4.0.0",
+		"ts-jest": "^29.0.3",
+		"ts-loader": "^9.3.1",
+		"typescript": "~4.9.0",
+		"webpack": "^5.74.0",
+		"webpack-cli": "^5.0.0"
+	},
+	"engines": {
+		"node": ">= 14.16"
+	}
 }
