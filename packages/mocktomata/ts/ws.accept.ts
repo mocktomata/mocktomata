@@ -1,7 +1,16 @@
 import * as ws from 'ws'
-import { incubator } from './incubator/index.js'
+import { mockto } from './index.js'
 
-incubator('open-close', (specName, spec) => {
+// While normally I should use `incubator`,
+// or test it under `framework`,
+// this needs a local echo-server to be up.
+// see https://www.lob.com/blog/websocket-org-is-down-here-is-an-alternative
+// on how to setup an echo-server locally to test this.
+//
+// Due to this, I won't be able to making the actual call during CI.
+// so I resort to just doing simulation here.
+
+mockto('open-close', (specName, spec) => {
 	it(specName, async () => {
 		const WS = await spec(ws.WebSocket)
 		const c = new WS('ws://localhost:10000')
@@ -14,7 +23,7 @@ incubator('open-close', (specName, spec) => {
 	})
 })
 
-incubator('echo using ws', (specName, spec) => {
+mockto('echo using ws', (specName, spec) => {
 	it(specName, async () => {
 		const WS = await spec(ws.WebSocket)
 
