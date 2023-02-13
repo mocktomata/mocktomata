@@ -1,7 +1,7 @@
 import { fetch } from 'cross-fetch'
-import { incubator } from './index.js'
+import { mockto } from 'mocktomata'
 
-incubator('find kidnap worthy breed', (specName, spec) => {
+mockto('find kidnap worthy breed', (specName, spec) => {
 	it(specName, async () => {
 		const f = await spec(fetch)
 		const r = await f('https://api.thecatapi.com/v1/breeds?limit=10')
