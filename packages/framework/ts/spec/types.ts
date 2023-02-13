@@ -33,7 +33,16 @@ export namespace Spec {
 		ignoreMismatch(value: unknown): void
 		/**
 		 * Mask some sensitive value from logs and record.
-		 * @param value value to mask for
+		 *
+		 * The value is check against each log message,
+		 * and each metadata in the record.
+		 *
+		 * @param value value to mask for.
+		 * When the value is string, it will be used to replace each occurance within the logs and records.
+		 *
+		 * When the value is regex, it will be check against each log and each metadata in the record.
+		 * Most of the time, regex with start and end anchor (`^` and `$`) will not work as expected.
+		 *
 		 * @param replaceWith value to replace with (Default: `[masked]`)
 		 */
 		maskValue(value: string | RegExp, replaceWith?: string): void
