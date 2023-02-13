@@ -2,6 +2,8 @@ import { a } from 'assertron'
 import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js'
 import { getServerInfo } from './getServerInfo.js'
 
+// @todo simplify logic to not retry on next port if url is specified.
+
 test('will try to search for server', async () => {
 	const fetch = (() => {
 		let count = 0
@@ -38,7 +40,15 @@ test('will try to search for server', async () => {
 test('throws when specific server is not available', async () => {
 	const fetch = () => Promise.reject({ code: 'ECONNREFUSED' })
 
-	await a.throws(getServerInfo({ fetch, location }, { url: 'http://localhost:4321' }), ServerNotAvailable)
+	await a.throws(
+		getServerInfo(
+			{ fetch, location },
+			{
+				url: 'http://localhost:4321'
+			}
+		),
+		ServerNotAvailable
+	)
 })
 
 test('throws when server is not up', async () => {

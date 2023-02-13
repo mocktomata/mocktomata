@@ -1,7 +1,10 @@
-export interface CreateIOOptions {
+import type { Log } from '@mocktomata/framework'
+
+export type ServiceOptions = {
 	/**
-	 * URL to the komondor server.
-	 * This is used by browser tests to connect to the komondor server.
+	 * URL to the mocktomata service.
 	 */
 	url: string
 }
+
+export type CreateIOOptions = ServiceOptions & Log.Context
