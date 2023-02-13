@@ -1,11 +1,11 @@
-import { createMockto, createTestIO, Mockto, Spec } from '@mocktomata/framework'
+import { createMockto, createTestIO, type Mockto, type Spec } from '@mocktomata/framework'
 import {
 	MOCKTOMATA_FILE_PATH_FILTER,
 	MOCKTOMATA_LOG_LEVEL,
 	MOCKTOMATA_MODE,
 	MOCKTOMATA_SPEC_NAME_FILTER
 } from '@mocktomata/nodejs'
-import a from 'assertron'
+import { a } from 'assertron'
 import { logLevels, MemoryLogReporter } from 'standard-log'
 import { CannotConfigAfterUsed, config, mockto } from '../index.js'
 import { createContext } from './createContext.js'

@@ -1,4 +1,4 @@
-import { Spec } from '@mocktomata/framework'
+import type { Spec } from '@mocktomata/framework'
 import { AsyncContext } from 'async-fp'
 import { createStore } from 'global-store'
 import type { config } from './config.js'

@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { startsWith } from 'satisfier'
 import {
 	createTestContext,

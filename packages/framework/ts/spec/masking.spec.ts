@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import axios from 'axios'
 import { logLevels } from 'standard-log'
 import { incubator } from '../index.js'

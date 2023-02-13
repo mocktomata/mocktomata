@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { EventEmitter } from 'events'
 import type { AnyFunction } from 'type-plus'
 import {
