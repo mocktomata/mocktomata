@@ -1,5 +1,15 @@
 # Change Log
 
+## 8.0.1
+
+### Patch Changes
+
+- Updated dependencies [0e7724f1]
+  - @mocktomata/framework@8.0.1
+  - @mocktomata/io-remote@8.0.1
+  - @mocktomata/nodejs@8.0.1
+  - @mocktomata/service@8.0.1
+
 ## 8.0.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
 	"name": "@mocktomata/cli",
-	"version": "8.0.0",
+	"version": "8.0.1",
 	"private": true,
 	"description": "mocktomata cli",
 	"keywords": [

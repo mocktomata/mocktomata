@@ -1,5 +1,11 @@
 # Change Log
 
+## 8.0.1
+
+### Patch Changes
+
+- 0e7724f1: add `json-bigint` as dependency
+
 ## 8.0.0
 
 ### Major Changes
