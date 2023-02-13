@@ -1,4 +1,5 @@
 const GeneratorFunction = function* () {
+	// istanbul ignore next
 	yield undefined
 }.constructor
 
