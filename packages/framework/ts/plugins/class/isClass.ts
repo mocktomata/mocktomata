@@ -1,6 +1,8 @@
-import { hasPropertyInPrototype } from '../../utils/index.js'
+import { isGeneratorFunction, hasPropertyInPrototype } from '../../utils/index.js'
 
 export function isClass(subject: unknown) {
-	return typeof subject === 'function' && hasPropertyInPrototype(subject)
-}
+	if (typeof subject !== 'function') return false
 
+	if (isGeneratorFunction(subject)) return false
+	return hasPropertyInPrototype(subject)
+}

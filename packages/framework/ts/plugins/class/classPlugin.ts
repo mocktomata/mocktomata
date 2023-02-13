@@ -30,7 +30,9 @@ export const classPlugin: SpecPlugin<new (...args: any[]) => void> = {
 			})
 		}
 
-		Object.setPrototypeOf(Stub.prototype, base.prototype)
+		// `base` can be `{}` which has no prototype.
+		// default to `null` in that case
+		Object.setPrototypeOf(Stub.prototype, base.prototype ?? null)
 		Object.setPrototypeOf(Stub, base)
 
 		return Stub
