@@ -1,5 +1,43 @@
 # Change Log
 
+## 8.0.0
+
+### Major Changes
+
+- 26d8a59a: Update `metarize()` to capture less info.
+  There is need to metarize deep props as those are handled by another instance.
+
+  This simplify the record and the spec record is more readable.
+  No need to use `@ungap/structured-clone` anymore.
+
+### Minor Changes
+
+- f8bac214: Add bigint support.
+  Add support for `ecmaVersion: 'es2020'`.
+  This is experimental at the moment.
+  The only new thing it supports is bigint.
+- f884ee26: Adjust `main`, `exports`, and `files` fields.
+- c300537f: Add support for keyed symbol
+- 9dde7ae4: Supports array object with custom methods.
+
+  This is similar to support functions with custom methods,
+  just apply to array object.
+
+- f7a37a52: Support generators
+
+### Patch Changes
+
+- 26119f95: Throw errors when unable to resolve relative path from `ssf`
+- 6400b462: Can specify type on step callers
+- 9652b58c: default `logLevel` to `debug` when `emitLog` is `true`.
+- 35290046: Fix `classPlugin` to not calling subject's constructure during simulation.
+  This enable support of the `ws` package,
+  as `ws.WebSocket` will create the connection in the constructor.
+
+  Exports the build-in plugins for building custom plugins.
+
+- f7a37a52: Remove some dead code
+
 ## 7.2.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # @mocktomata/cli
 
+## 8.0.0
+
+### Minor Changes
+
+- f884ee26: Adjust `main`, `exports`, and `files` fields.
+- f884ee26: Rename alias `mtmt` to `mt`
+
+### Patch Changes
+
+- Updated dependencies [f884ee26]
+  - @mocktomata/service@8.0.0
+
 ## 7.2.0
 
 ### Patch Changes
