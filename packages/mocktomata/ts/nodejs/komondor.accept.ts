@@ -1,5 +1,5 @@
 import { SpecIDCannotBeEmpty } from '@mocktomata/framework'
-import a from 'assertron'
+import { a } from 'assertron'
 import { kd } from '../index.js'
 
 function noop() {}

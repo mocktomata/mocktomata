@@ -1,4 +1,4 @@
-import { json, Mocktomata, SpecNotFound, SpecPlugin, SpecRecord } from '@mocktomata/framework'
+import { json, SpecNotFound, type Mocktomata, type SpecPlugin, type SpecRecord } from '@mocktomata/framework'
 import { buildUrl } from './buildUrl.js'
 import { getServerInfo } from './getServerInfo.js'
 import type { Context } from './types.internal.js'

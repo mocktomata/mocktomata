@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
 import path from 'path'
 import { getCallerRelativePath } from './getCallerRelativePath.js'

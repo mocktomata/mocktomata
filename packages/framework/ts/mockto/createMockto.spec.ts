@@ -178,32 +178,45 @@ describe(`mockto`, () => {
 	})
 
 	describe('mockto.mock()', () => {
-		mockto.mock('requires to specify mock', async (specName, spec) => {
+		mockto.mock('requires to specify mock', (specName, spec) => {
 			it(specName, async () => {
 				const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 				const r = s('value')
 				expect(r).toBe('stubbed')
+				await spec.done()
 			})
 		})
-		mockto('direct accepts mock but ignore it', async (specName, spec) => {
+
+		mockto.mock('spec.mode returns mock', (specName, spec) => {
+			it(specName, async () => {
+				await spec((v: string) => v, { mock: () => 'stubbed'})
+				expect(spec.mode).toEqual('mock')
+				await spec.done()
+			})
+		})
+
+		mockto('direct accepts mock but ignore it', (specName, spec) => {
 			it(specName, async () => {
 				const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 				const r = s('value')
 				expect(r).toBe('value')
+				await spec.done()
 			})
 		})
-		mockto.live('live accepts mock but ignore it', async (specName, spec) => {
+		mockto.live('live accepts mock but ignore it', (specName, spec) => {
 			it(specName, async () => {
 				const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 				const r = s('value')
 				expect(r).toBe('value')
+				await spec.done()
 			})
 		})
-		mockto.save('save accepts mock but ignore it', async (specName, spec) => {
+		mockto.save('save accepts mock but ignore it', (specName, spec) => {
 			it(specName, async () => {
 				const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 				const r = s('value')
 				expect(r).toBe('value')
+				await spec.done()
 			})
 		})
 	})

@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { AsyncContext } from 'async-fp'
 import { createStandardLogForTest } from 'standard-log'
 import { createTestContext, createTestIO, ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'

@@ -1,6 +1,6 @@
 import { json } from '@mocktomata/framework'
 import t from 'assert'
-import a from 'assertron'
+import { a } from 'assertron'
 import { dirSync } from 'tmp'
 import { readSpec, writeSpec } from './index.js'
 

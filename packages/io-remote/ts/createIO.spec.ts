@@ -1,4 +1,4 @@
-import { SpecNotFound, SpecRecord } from '@mocktomata/framework'
+import { SpecNotFound, type SpecRecord } from '@mocktomata/framework'
 import { a } from 'assertron'
 import { createIOInternal } from './createIO.internal.js'
 import { createFakeServerFetch } from './test-util/index.js'

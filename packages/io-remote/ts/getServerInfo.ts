@@ -1,6 +1,6 @@
 import { buildUrl } from './buildUrl.js'
 import { ServerNotAvailable, ServerNotAvailableAtPortRange } from './errors.js'
-import type { CreateIOOptions } from './types.js'
+import type { ServiceOptions } from './types.js'
 
 export type ServerInfo = {
 	name: string
@@ -18,7 +18,7 @@ export type Context = {
 	}
 }
 
-export async function getServerInfo(context: Context, options?: CreateIOOptions): Promise<ServerInfo> {
+export async function getServerInfo(context: Context, options?: ServiceOptions): Promise<ServerInfo> {
 	return options ? tryGetServerInfo(context, options.url) : lookupServerInfo(context)
 }
 

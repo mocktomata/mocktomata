@@ -1,7 +1,7 @@
 import { json, prettyPrintSpecRecord } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
 import t from 'assert'
-import a from 'assertron'
+import { a } from 'assertron'
 import fs, { readFileSync } from 'fs'
 import f from 'node-fetch'
 import path from 'path'

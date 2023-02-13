@@ -1,4 +1,4 @@
-import a from 'assertron'
+import { a } from 'assertron'
 import { EventEmitter } from 'events'
 import type { AnyFunction } from 'type-plus'
 import {
@@ -629,6 +629,25 @@ describe(`array`, () => {
 			expect(r[2]).toEqual(3)
 			expect(r.hiddenValue).toEqual(4)
 			expect(r.foo()).toEqual('foo')
+			await spec.done()
+		})
+	})
+
+	incubator('supports change value in returned array', (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(() => [1, 2, 3])
+			const r = s()
+			r[1] = 4
+			expect(r[1]).toEqual(4)
+			await spec.done()
+		})
+	})
+
+	incubator(`using returned array built-in function`, (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(() => [1, 2, 3])
+			const r = s().map(x => x + 1)
+			expect(r).toEqual([2, 3, 4])
 			await spec.done()
 		})
 	})
@@ -1777,6 +1796,20 @@ describe('instance', () => {
 	})
 })
 
+describe('error', () => {
+	incubator('set error property', (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(() => {
+				throw new Error('ha')
+			})
+			const err: any = a.throws(s)
+			err.x = 1
+			expect(err.x).toEqual(1)
+			await spec.done()
+		})
+	})
+})
+
 describe('ignoreMismatch', () => {
 	incubator.save('call after spec throws', (specName, spec) => {
 		test(specName, async () => {
@@ -1906,6 +1939,24 @@ describe('symbol', () => {
 		it(specName, async () => {
 			const s = await spec(takeSymbol)
 			expect(s(Symbol.for('abc'))).toEqual(Symbol.for('abc'))
+			await spec.done()
+		})
+	})
+})
+
+describe('generator', () => {
+	function* foo() {
+		yield 'a'
+		yield 'b'
+		yield 'c'
+	}
+	incubator('yield', (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(foo)
+			const i = s()
+			expect(i.next()).toEqual({ done: false, value: 'a' })
+			expect(i.next()).toEqual({ done: false, value: 'b' })
+			expect(i.next()).toEqual({ done: false, value: 'c' })
 			await spec.done()
 		})
 	})

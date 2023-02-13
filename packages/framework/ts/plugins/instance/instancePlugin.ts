@@ -43,7 +43,10 @@ export const instancePlugin: SpecPlugin<
 	createStub: ({ getProperty, setProperty, resolve, invoke }, _, meta) => {
 		const base = demetarize(meta.base)
 		const classConstructor = resolve(meta.classConstructor)
-		Object.setPrototypeOf(base, Object.getPrototypeOf(classConstructor).prototype)
+		const classProto = Object.getPrototypeOf(classConstructor)
+		// `classProto` can be `{}` which has no prototype.
+		// default to `null` in that case
+		Object.setPrototypeOf(base, classProto.prototype ?? null)
 		const stub = new Proxy(base, {
 			get(_: any, property: string) {
 				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === property) {

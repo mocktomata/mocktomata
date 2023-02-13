@@ -26,13 +26,7 @@
 			"path": "packages/cli"
 		},
 		{
-			"path": "plugins/plugin-node-fetch"
-		},
-		{
-			"path": "plugins/plugin-nodejs"
-		},
-		{
-			"path": "tests/test-nodejs"
+			"path": "tests/nodejs"
 		}
 	]
 }
