@@ -1,5 +1,26 @@
 # Change Log
 
+## 8.0.0
+
+### Minor Changes
+
+- f884ee26: Adjust `main`, `exports`, and `files` fields.
+
+### Patch Changes
+
+- Updated dependencies [26119f95]
+- Updated dependencies [f8bac214]
+- Updated dependencies [f884ee26]
+- Updated dependencies [6400b462]
+- Updated dependencies [c300537f]
+- Updated dependencies [9dde7ae4]
+- Updated dependencies [f7a37a52]
+- Updated dependencies [26d8a59a]
+- Updated dependencies [9652b58c]
+- Updated dependencies [35290046]
+- Updated dependencies [f7a37a52]
+  - @mocktomata/framework@8.0.0
+
 ## 7.2.0
 
 ### Patch Changes
