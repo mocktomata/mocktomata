@@ -8,7 +8,6 @@ export async function createLiveSpec(): Promise<Spec> {
 		async done() {
 			return { refs: [], actions: [] }
 		},
-		enableLog: () => {},
 		ignoreMismatch() {},
 		maskValue() {}
 	})

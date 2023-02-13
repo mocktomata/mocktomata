@@ -632,6 +632,25 @@ describe(`array`, () => {
 			await spec.done()
 		})
 	})
+
+	incubator('supports change value in returned array', (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(() => [1, 2, 3])
+			const r = s()
+			r[1] = 4
+			expect(r[1]).toEqual(4)
+			await spec.done()
+		})
+	})
+
+	incubator(`using returned array built-in function`, (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(() => [1, 2, 3])
+			const r = s().map(x => x + 1)
+			expect(r).toEqual([2, 3, 4])
+			await spec.done()
+		})
+	})
 })
 
 describe('function', () => {
@@ -1772,6 +1791,20 @@ describe('instance', () => {
 			const s = await spec((subject: any) => new subject())
 			expect(s(Dummy)).toBeInstanceOf(Dummy)
 
+			await spec.done()
+		})
+	})
+})
+
+describe('error', () => {
+	incubator('set error property', (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec(() => {
+				throw new Error('ha')
+			})
+			const err: any = a.throws(s)
+			err.x = 1
+			expect(err.x).toEqual(1)
 			await spec.done()
 		})
 	})
