@@ -145,6 +145,7 @@ importers:
       '@cucumber/cucumber-expressions': 16.0.0
       async-fp: 8.0.2
       iso-error: 6.0.0
+      json-bigint: 1.0.0
       stack-utils: 2.0.5
       standard-log: 11.5.0
       tersify: 3.12.0
@@ -166,7 +167,6 @@ importers:
       jest-watch-suspend: 1.1.2_jest@29.4.2
       jest-watch-toggle-config-2: 2.1.0_jest@29.4.2
       jest-watch-typeahead: 2.2.2_jest@29.4.2
-      json-bigint: 1.0.0
       ncp: 2.0.0
       npm-run-all: 4.1.5
       rimraf: 3.0.2
@@ -4079,7 +4079,7 @@ packages:
 
   /bignumber.js/9.1.1:
     resolution: {integrity: sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==}
-    dev: true
+    dev: false
 
   /binary-extensions/2.2.0:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
@@ -8334,7 +8334,7 @@ packages:
     resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
     dependencies:
       bignumber.js: 9.1.1
-    dev: true
+    dev: false
 
   /json-buffer/3.0.0:
     resolution: {integrity: sha512-CuUqjv0FUZIdXkHPI8MezCnFCdaTAacej1TZYulLoAg1h/PhwkdXFN4V/gzY4g+fMBCOV2xF+rp7t2XD2ns/NQ==}
