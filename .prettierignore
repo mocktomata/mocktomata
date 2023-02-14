@@ -3,4 +3,5 @@ coverage/
 esm/
 fixtures/
 lib/
-pnpm-lock.yaml
+*.yml
+*.yaml
