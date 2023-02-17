@@ -1,5 +1,11 @@
 # @mocktomata/cli
 
+## 8.0.2
+
+### Patch Changes
+
+- @mocktomata/service@8.0.2
+
 ## 8.0.1
 
 ### Patch Changes

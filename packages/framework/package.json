@@ -1,6 +1,6 @@
 {
 	"name": "@mocktomata/framework",
-	"version": "8.0.1",
+	"version": "8.0.2",
 	"description": "mocktomata framework package",
 	"homepage": "https://github.com/mocktomata/mocktomata",
 	"bugs": {

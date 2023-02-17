@@ -1,5 +1,12 @@
 # Change Log
 
+## 8.0.2
+
+### Patch Changes
+
+- @mocktomata/framework@8.0.2
+- @mocktomata/nodejs@8.0.2
+
 ## 8.0.1
 
 ### Patch Changes
