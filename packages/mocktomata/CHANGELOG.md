@@ -1,5 +1,19 @@
 # Change Log
 
+## 8.0.3
+
+### Patch Changes
+
+- 728b7912: Add browser field spec in the `exports` field.
+  And it has to come before `import`.
+
+  Also create a stub version of the mocktomata.
+
+  - @mocktomata/framework@8.0.3
+  - @mocktomata/nodejs@8.0.3
+  - @mocktomata/io-remote@8.0.3
+  - @mocktomata/service@8.0.3
+
 ## 8.0.2
 
 ### Patch Changes
