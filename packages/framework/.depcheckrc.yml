@@ -1,6 +1,6 @@
 ignores:
   - '@repobuddy/jest'
-  - '@size-limit/preset-*'
+  - '@size-limit/*'
   - deepmerge
   - jest-*
   - ts-jest
