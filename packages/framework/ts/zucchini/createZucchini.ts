@@ -217,7 +217,8 @@ function createStepFns(store: Store) {
 	function assertNoDuplicate(clause: string | RegExp, handler: Zucchini.StepHandler) {
 		const str = typeof clause === 'string' ? clause : clause.source
 		const step = store.steps.find(s => s.expression.source === str)
-		if (step && step.handler !== handler) throw new DuplicateStep(clause)
+		if (step && step.handler !== handler && step.handler.toString() !== handler.toString())
+			throw new DuplicateStep(clause, step.handler, handler)
 	}
 	const r = new ParameterTypeRegistry()
 	const f = new ExpressionFactory(r)

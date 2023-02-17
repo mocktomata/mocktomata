@@ -399,6 +399,22 @@ Error: foo`
 			a.throws(() => defineStep(/abc/, () => 4), DuplicateStep)
 		})
 
+		it('does not throw DuplicateStep if it is the same handler', () => {
+			function handler() {}
+			defineStep('same ref', handler)
+			defineStep('same ref', handler)
+		})
+
+		it('does not throw DuplicateStep if the handler is identical', () => {
+			// `vitest` (and may be `jest` too) can load the ESM module file twice,
+			// in two different worker which share scope.
+			// Resulting the `defineStep()` is called twice with different handler reference.
+			const h1 = function handler() {}
+			const h2 = function handler() {}
+			defineStep('same ref', h1)
+			defineStep('same ref', h2)
+		})
+
 		it('can define step with arguments', async () => {
 			defineStep(`step with {}`, (_, arg) => arg + 1)
 

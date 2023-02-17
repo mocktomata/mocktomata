@@ -13,13 +13,14 @@ describe(`${MissingStep.name}()`, () => {
 })
 
 describe(`${DuplicateStep.name}()`, () => {
+	const h = () => {}
 	it('accepts string clause', () => {
-		const e = new DuplicateStep('some step')
-		expect(e.message).toEqual(`Step 'some step' already defined`)
+		const e = new DuplicateStep('some step', h, h)
+		expect(e.message).toMatch(/^Step 'some step' already defined/)
 	})
 
 	it('accepts regex', () => {
-		const e = new DuplicateStep(/some step/)
-		expect(e.message).toEqual(`Step /some step/ already defined`)
+		const e = new DuplicateStep(/some step/, h, h)
+		expect(e.message).toMatch(/^Step \/some step\/ already defined/)
 	})
 })
