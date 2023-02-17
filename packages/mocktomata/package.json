@@ -30,7 +30,7 @@
 		".": {
 			"types": "./esm/index.d.ts",
 			"import": "./esm/index.js",
-			"default": "./cjs/index.js"
+			"default": "./cjs/browser.js"
 		},
 		"./plugins": {
 			"types": "./esm/plugins.d.ts",
@@ -39,6 +39,7 @@
 		}
 	},
 	"main": "./cjs/index.js",
+	"browser": "./cjs/browser.js",
 	"types": "./esm/index.d.ts",
 	"files": [
 		"cjs",
