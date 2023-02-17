@@ -1,5 +1,13 @@
 # Change Log
 
+## 8.0.4
+
+### Patch Changes
+
+- Updated dependencies [b90ed403]
+  - @mocktomata/framework@8.0.4
+  - @mocktomata/nodejs@8.0.4
+
 ## 8.0.3
 
 ### Patch Changes
