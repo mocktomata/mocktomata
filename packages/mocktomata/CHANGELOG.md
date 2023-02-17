@@ -1,5 +1,22 @@
 # Change Log
 
+## 8.0.2
+
+### Patch Changes
+
+- f6180980: Add browser spec.
+  When it is accidentially picked up by bundler,
+  it should pickup the browser version to avoid getting nodejs code into it,
+  causing build problems.
+
+  The browser version is not yet working.
+  This is a stop gap solution.
+
+  - @mocktomata/framework@8.0.2
+  - @mocktomata/nodejs@8.0.2
+  - @mocktomata/io-remote@8.0.2
+  - @mocktomata/service@8.0.2
+
 ## 8.0.1
 
 ### Patch Changes
