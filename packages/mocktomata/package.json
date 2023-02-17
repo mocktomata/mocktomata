@@ -29,8 +29,9 @@
 	"exports": {
 		".": {
 			"types": "./esm/index.d.ts",
+			"browser": "./esm/browser.js",
 			"import": "./esm/index.js",
-			"default": "./cjs/browser.js"
+			"default": "./cjs/index.js"
 		},
 		"./plugins": {
 			"types": "./esm/plugins.d.ts",
