@@ -7,7 +7,7 @@ import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
 import { getCallerRelativePath } from '../testutils/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
-import type { LoadedContext } from '../types.internal.js'
+import type { LoadedContext } from '../context.js'
 import type { Mocktomata } from '../types.js'
 import { resolveMocktoFnArgs } from './mockto.utils.js'
 
