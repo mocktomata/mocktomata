@@ -4,12 +4,11 @@ import * as ws from 'ws'
 // While normally I should use `incubator`,
 // or test it under `framework`,
 // this needs a local echo-server to be up.
-// see https://www.lob.com/blog/websocket-org-is-down-here-is-an-alternative
-// on how to setup an echo-server locally to test this.
 //
 // Due to this, I won't be able to making the actual call during CI.
 // so I resort to just doing simulation here.
-
+//
+// see README on how to set it up.
 mockto('open-close', (specName, spec) => {
 	it(specName, async () => {
 		const WS = await spec(ws.WebSocket)

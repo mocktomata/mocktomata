@@ -32,6 +32,8 @@
 		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
 		"nuke": "pnpm run clean && rimraf node_modules",
 		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+		"test:save": "cross-env MOCKTOMATA_MODE=save NODE_OPTIONS=--experimental-vm-modules jest",
+		"test:simulate": "cross-env MOCKTOMATA_MODE=simulate NODE_OPTIONS=--experimental-vm-modules jest",
 		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
 		"verify": "npm-run-all -p lint build coverage -p depcheck",
 		"watch": "pnpm run test:watch"
