@@ -5,5 +5,5 @@
 		"moduleResolution": "Node",
 		"outDir": "cjs"
 	},
-	"exclude": ["**/*.spec.*", "./ts/test_util/fixturePath.ts"]
+	"exclude": ["**/*.spec.*", "./ts/testutils/fixture.ts"]
 }

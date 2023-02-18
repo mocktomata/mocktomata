@@ -1,5 +1,5 @@
 import { createKomondor, createMockto, createZucchini } from '@mocktomata/framework'
-import { createContext } from './createContext.js'
+import { createContext } from './context.js'
 
 export { incubator } from '@mocktomata/framework'
 

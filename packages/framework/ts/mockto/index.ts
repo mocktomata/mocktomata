@@ -1,1 +1,1 @@
-export * from './createMockto.js'
+export * from './mockto.js'

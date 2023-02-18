@@ -29,6 +29,7 @@
 		"prepare": "husky install",
 		"publish": "pnpm publish -r --publish-branch beta && changeset tag",
 		"release": "pnpm build && changeset publish",
+		"size": "turbo run size",
 		"service": "pnpm --filter @mocktomata/service",
 		"test:browser": "pnpm --filter mocktomata test:browser",
 		"test:electron": "turbo run test:electron",

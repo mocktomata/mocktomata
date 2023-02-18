@@ -1,1 +1,1 @@
-export * from './classPlugin.js'
+export * from './class_plugin.js'

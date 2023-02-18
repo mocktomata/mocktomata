@@ -2,7 +2,7 @@ import a, { AssertOrder } from 'assertron'
 import { some } from 'satisfier'
 import { logLevels, MemoryLogReporter } from 'standard-log'
 import { createTestContext, incubator, Spec, SpecNotFound } from '../index.js'
-import { createIncubator } from './createIncubator.js'
+import { createIncubator } from './create_incubator.js'
 
 incubator('can specify log level', { logLevel: logLevels.none }, (specName, spec) => {
 	test(specName, async () => {

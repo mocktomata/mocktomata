@@ -1,10 +1,10 @@
 import type { AsyncContext } from 'async-fp'
 import type { Logger } from 'standard-log'
 import { notDefined } from '../constants.js'
-import { findPlugin, getPlugin } from '../spec-plugin/findPlugin.js'
+import { findPlugin, getPlugin } from '../spec-plugin/index.js'
 import type { SpecPlugin } from '../spec-plugin/types.js'
-import type { SpecRecord } from '../spec-record/types.js'
-import { createTimeTracker, TimeTracker } from '../timeTracker/index.js'
+import { getDefaultPerformer, type SpecRecord } from '../spec-record/index.js'
+import { createTimeTracker, TimeTracker } from '../time_trackter/index.js'
 import {
 	getArgumentContext,
 	getPropertyContext,
@@ -16,7 +16,7 @@ import {
 	isMatchingInstantiateAction,
 	isMatchingInvokeAction,
 	isMatchingSetAction
-} from './actionMatches.js'
+} from './action.js'
 import { ActionMismatch, ExtraAction, ExtraReference, NoSupportedPlugin, PluginsNotLoaded } from './errors.js'
 import {
 	logAction,
@@ -28,7 +28,6 @@ import {
 } from './logs.js'
 import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
-import { getDefaultPerformer } from './subjectProfile.js'
 import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
 import type { Spec } from './types.js'
 import { referenceMismatch } from './validations.js'

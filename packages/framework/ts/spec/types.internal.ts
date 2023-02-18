@@ -1,7 +1,7 @@
 import type { Logger } from 'standard-log'
 import type { SpecPlugin } from '../spec-plugin/types.js'
 import type { SpecRecord } from '../spec-record/types.js'
-import type { TimeTracker } from '../timeTracker/index.js'
+import type { TimeTracker } from '../time_trackter/index.js'
 import type { SpecRecorderBuilder } from './record.js'
 import type { Spec } from './types.js'
 

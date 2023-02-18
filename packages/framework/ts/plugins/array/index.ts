@@ -1,1 +1,1 @@
-export * from './arrayPlugin.js'
+export * from './array_plugin.js'

@@ -1,1 +1,1 @@
-export * from './inertValuePlugin.js'
+export * from './inert_value_plugin.js'

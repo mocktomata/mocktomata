@@ -1,4 +1,2 @@
-export * from './hasProperty.js'
-export * from './hasPropertyInPrototype.js'
-export * from './isBaseObject.js'
-export * from './isGeneratorFunction.js'
+export * from './object.utils.js'
+export * from './function.utils.js'
