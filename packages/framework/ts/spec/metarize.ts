@@ -1,4 +1,4 @@
-import { AnyRecord, reduceByKey } from 'type-plus'
+import { type AnyFunction, type AnyRecord, reduceByKey } from 'type-plus'
 
 export type FunctionMeta = {
 	type: 'function'
@@ -55,12 +55,16 @@ export type SpecMeta =
 	| ObjectMeta
 
 /**
- * Convert a value to a serialized metadata.
+ * Metarize a value.
+ *
+ * A metarized value can be saved in the `SpecRecord`
+ * and restore from it.
  *
  * This is a generic implementation.
  * Plugin can choose to use this implementation or create their own.
  */
-export function metarize(value: unknown): SpecMeta {
+// export function metarize(value: Record<string | number, any>): ObjectMeta
+export function metarize<S = unknown, M = SpecMeta>(value: S): M extends SpecMeta ? M : never {
 	switch (typeof value) {
 		case 'function': {
 			return {
@@ -68,13 +72,13 @@ export function metarize(value: unknown): SpecMeta {
 				name: value.name,
 				length: value.length,
 				props: extractProps(value)
-			}
+			} as any
 		}
 		case 'bigint': {
 			return {
 				type: 'bigint',
 				value: value.toString()
-			}
+			} as any
 		}
 		case 'symbol': {
 			const key = Symbol.keyFor(value)
@@ -82,31 +86,31 @@ export function metarize(value: unknown): SpecMeta {
 			return {
 				type: 'symbol',
 				key
-			}
+			} as any
 		}
 		case 'undefined': {
 			return {
 				type: 'undefined'
-			}
+			} as any
 		}
 		case 'object': {
-			if (value === null) return value
+			if (value === null) return value as any
 			if (Array.isArray(value)) {
 				return {
 					type: 'array',
 					props: extractProps(value)
-				}
+				} as any
 			} else {
 				return {
 					type: 'object',
 					props: extractProps(value)
-				}
+				} as any
 			}
 		}
 		case 'number':
 		case 'boolean':
 		case 'string':
-			return value
+			return value as any
 		// istanbul ignore next
 		default: {
 			console.warn(`unexpected meta type: ${typeof value}
@@ -118,12 +122,20 @@ Please open an issue at https://github.com/mocktomata/mocktomata/issues`)
 }
 
 /**
- * Convert a metadata back to a value.
+ * Convert a metarized value back to the original value.
  *
  * This is a generic implementation.
  * Plugin can choose to use this implementation or create their own.
  */
-export function demetarize(metaObj: SpecMeta) {
+export function demetarize(metaObj: FunctionMeta): AnyFunction
+export function demetarize(metaObj: BigIntMeta): bigint
+export function demetarize(metaObj: SymbolMeta): symbol
+export function demetarize(metaObj: UndefinedMeta): undefined
+export function demetarize<T = any>(metaObj: ArrayMeta): T[]
+export function demetarize(metaObj: ObjectMeta): Record<string | number, any>
+export function demetarize<T extends null | number | boolean | string>(metaObj: T): T
+export function demetarize(metaObj: SpecMeta): any
+export function demetarize(metaObj: any) {
 	if (metaObj === null || typeof metaObj !== 'object') return metaObj
 
 	switch (metaObj.type) {
