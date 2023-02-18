@@ -1,4 +1,5 @@
 import { a } from 'assertron'
+import { assertType } from 'type-plus'
 import { demetarize, metarize } from './metarize.js'
 
 it('works with empty object', () => {
@@ -47,6 +48,7 @@ it('works with symbol with description', () => {
 it('throws when subject is symbol without description', () => {
 	a.throws(() => metarize(Symbol()))
 })
+
 it('works with object with primitive values', () => {
 	testMetarize({
 		subject: {
@@ -66,6 +68,7 @@ it('works with object with primitive values', () => {
 		}
 	})
 })
+
 it('object property is skipped', () => {
 	testMetarize({
 		subject: { a: '1', o: {} },
@@ -81,12 +84,18 @@ it('function property is skipped', () => {
 		expected: {}
 	})
 })
+
 it('array property is skipped', () => {
 	testMetarize({
 		subject: { a: ['a'] },
 		metarized: { type: 'object', props: {} },
 		expected: {}
 	})
+})
+
+it('return type to never if M is not SpecMeta', () => {
+	const r = metarize<any, { a: number }>({})
+	assertType.isNever(r)
 })
 
 function testMetarize({

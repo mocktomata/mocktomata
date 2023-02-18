@@ -7,7 +7,5 @@ export const stringPlugin: SpecPlugin<string, string> = {
 		setMeta(subject)
 		return subject
 	},
-	createStub: (_, _subject, meta) => {
-		return meta
-	}
+	createStub: (_, _subject, meta) => meta
 }

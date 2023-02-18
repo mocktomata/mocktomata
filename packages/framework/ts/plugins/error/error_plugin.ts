@@ -15,7 +15,7 @@ export const errorPlugin: SpecPlugin<Error & Record<any, any>, { err: ObjectMeta
 		})
 		setMeta(meta)
 		const spy = new Proxy(subject, {
-			get(target: any, key: string) {
+			get(target, key: string) {
 				if (!hasProperty(subject, key)) return undefined
 				const prop = subject[key]
 				if (typeof prop === 'function') {
@@ -34,7 +34,7 @@ export const errorPlugin: SpecPlugin<Error & Record<any, any>, { err: ObjectMeta
 		return spy
 	},
 	createStub: ({ getProperty, setProperty, invoke }, _subject, meta) => {
-		const base: any = converter.fromSerializable(demetarize(meta.err) as any)
+		const base = converter.fromSerializable(demetarize(meta.err))
 		const stub = new Proxy(base, {
 			get(_: any, key: string) {
 				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === key) {
