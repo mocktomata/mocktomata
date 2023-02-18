@@ -1,47 +1,46 @@
 import { a } from 'assertron'
-import { toMetaObj } from './metarize.ctx.js'
 import { demetarize, metarize } from './metarize.js'
 
 it('works with empty object', () => {
 	testMetarize({
 		subject: {},
-		expectedMetaObj: { type: 'object', props: {} }
+		metarized: { type: 'object', props: {} }
 	})
 })
 
 it('works with primitive values', () => {
 	testMetarize({
 		subject: true,
-		expectedMetaObj: true
+		metarized: true
 	})
 
 	testMetarize({
 		subject: 0,
-		expectedMetaObj: 0
+		metarized: 0
 	})
 
 	testMetarize({
 		subject: 'abc',
-		expectedMetaObj: 'abc'
+		metarized: 'abc'
 	})
 	testMetarize({
 		subject: null,
-		expectedMetaObj: null
+		metarized: null
 	})
 	testMetarize({
 		subject: undefined,
-		expectedMetaObj: { type: 'undefined' }
+		metarized: { type: 'undefined' }
 	})
 	testMetarize({
 		subject: 9007199254740991n,
-		expectedMetaObj: { type: 'bigint', value: '9007199254740991' }
+		metarized: { type: 'bigint', value: '9007199254740991' }
 	})
 })
 
 it('works with symbol with description', () => {
 	testMetarize({
 		subject: Symbol.for('abc'),
-		expectedMetaObj: { type: 'symbol', key: 'abc' }
+		metarized: { type: 'symbol', key: 'abc' }
 	})
 })
 
@@ -56,7 +55,7 @@ it('works with object with primitive values', () => {
 			num: 1,
 			n: null
 		},
-		expectedMetaObj: {
+		metarized: {
 			type: 'object',
 			props: {
 				s: 'abc',
@@ -70,7 +69,7 @@ it('works with object with primitive values', () => {
 it('object property is skipped', () => {
 	testMetarize({
 		subject: { a: '1', o: {} },
-		expectedMetaObj: { type: 'object', props: { a: '1' } },
+		metarized: { type: 'object', props: { a: '1' } },
 		expected: { a: '1' }
 	})
 })
@@ -78,14 +77,14 @@ it('object property is skipped', () => {
 it('function property is skipped', () => {
 	testMetarize({
 		subject: { f: function () {} },
-		expectedMetaObj: { type: 'object', props: {} },
+		metarized: { type: 'object', props: {} },
 		expected: {}
 	})
 })
 it('array property is skipped', () => {
 	testMetarize({
 		subject: { a: ['a'] },
-		expectedMetaObj: { type: 'object', props: {} },
+		metarized: { type: 'object', props: {} },
 		expected: {}
 	})
 })
@@ -93,21 +92,16 @@ it('array property is skipped', () => {
 function testMetarize({
 	subject,
 	expected,
-	expectedMetaObj,
-	expectedMeta
+	metarized
 }: {
 	logLevel?: number
 	subject: unknown
 	expected?: any
-	expectedMetaObj?: any
-	expectedMeta?: string
+	metarized?: any
 }) {
-	if (expectedMetaObj) {
-		expect(toMetaObj(subject)).toEqual(expectedMetaObj)
-	}
 	const meta = metarize(subject)
-	if (expectedMeta) {
-		expect(meta).toEqual(expectedMeta)
+	if (metarized) {
+		expect(meta).toEqual(metarized)
 	}
 	const actual = demetarize(meta)
 	expect(actual).toEqual(expected === undefined ? subject : expected)

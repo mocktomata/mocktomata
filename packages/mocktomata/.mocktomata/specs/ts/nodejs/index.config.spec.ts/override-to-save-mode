@@ -1,7 +1,7 @@
 override to save mode
 {
   "refs": [
-    {"plugin":"@mocktomata/object","profile":"target","meta":"{\"type\":\"object\",\"props\":{}}"}
+    {"plugin":"@mocktomata/object","profile":"target","meta":{"type":"object","props":{}}}
   ],
   "actions": [
     

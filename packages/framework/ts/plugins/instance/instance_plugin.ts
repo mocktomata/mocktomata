@@ -1,10 +1,10 @@
+import { demetarize, metarize, type SpecMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { demetarize, metarize } from '../../spec/metarize.js'
 import { hasProperty, isBaseObject } from '../../utils/index.js'
 
 export const instancePlugin: SpecPlugin<
 	Record<string | number, any>,
-	{ base: string; classConstructor: string; functionCalls: string[] }
+	{ base: SpecMeta; classConstructor: string; functionCalls: string[] }
 > = {
 	name: 'instance',
 	support: subject => {
@@ -48,7 +48,7 @@ export const instancePlugin: SpecPlugin<
 		// default to `null` in that case
 		const proto = classProto.prototype ? Object.create(classProto.prototype) : null
 		Object.setPrototypeOf(base, proto)
-		const stub = new Proxy(base, {
+		const stub = new Proxy(base as any, {
 			get(_: any, property: string) {
 				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === property) {
 					return (...args: any[]) => {

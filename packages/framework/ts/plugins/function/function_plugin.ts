@@ -1,9 +1,9 @@
 import type { AnyFunction } from 'type-plus'
+import { demetarize, metarize, type FunctionMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { demetarize, metarize } from '../../spec/metarize.js'
 import { hasProperty, hasPropertyInPrototype, isGeneratorFunction } from '../../utils/index.js'
 
-export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> = {
+export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, FunctionMeta> = {
 	name: 'function',
 	support: subject => {
 		if (typeof subject !== 'function') return false
@@ -37,7 +37,7 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> 
 	 * })
 	 */
 	createSpy: ({ getProperty, setProperty, invoke, setMeta }, subject) => {
-		setMeta(metarize(subject))
+		setMeta(metarize(subject) as FunctionMeta)
 		return new Proxy(subject, {
 			apply(_, thisArg, args: any[]) {
 				return invoke({ thisArg, args }, ({ thisArg, args }) => {
@@ -56,7 +56,7 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, string> 
 	},
 	createStub: ({ getProperty, setProperty, invoke }, _, meta) => {
 		const base = demetarize(meta)
-		const stub = new Proxy(base, {
+		const stub = new Proxy(base as any, {
 			apply: function (_, thisArg, args: any[]) {
 				return invoke({ thisArg, args })
 			},

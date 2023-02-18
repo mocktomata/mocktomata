@@ -1,33 +1,33 @@
 open-close
 {
   "refs": [
-    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":"{\"type\":\"function\",\"name\":\"WebSocket\",\"length\":3,\"props\":{\"CONNECTING\":0,\"OPEN\":1,\"CLOSING\":2,\"CLOSED\":3}}","parent":"1"}},
-    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":"{\"type\":\"function\",\"name\":\"EventEmitter\",\"length\":1,\"props\":{\"usingDomains\":false}}","parent":"2"}},
-    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"\",\"length\":0,\"props\":{}}"},
+    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":{"type":"function","name":"WebSocket","length":3,"props":{"CONNECTING":0,"OPEN":1,"CLOSING":2,"CLOSED":3}},"parent":"1"}},
+    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":{"type":"function","name":"EventEmitter","length":1,"props":{"usingDomains":false}},"parent":"2"}},
+    {"plugin":"@mocktomata/function","profile":"target","meta":{"type":"function","name":"","length":0,"props":{}}},
     {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":0,"key":0},"meta":"ws://localhost:10000"},
-    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"result","id":0},"meta":{"base":"{\"type\":\"object\",\"props\":{\"_eventsCount\":0,\"_binaryType\":\"nodebuffer\",\"_closeCode\":1006,\"_closeFrameReceived\":false,\"_closeFrameSent\":false,\"_closeTimer\":null,\"_paused\":false,\"_protocol\":\"\",\"_readyState\":0,\"_receiver\":null,\"_sender\":null,\"_socket\":null,\"_bufferedAmount\":0,\"_isServer\":false,\"_redirects\":0,\"_url\":\"ws://localhost:10000\"}}","classConstructor":"0","functionCalls":["on","on","close"]}},
+    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"result","id":0},"meta":{"base":{"type":"object","props":{"_eventsCount":0,"_binaryType":"nodebuffer","_closeCode":1006,"_closeFrameReceived":false,"_closeFrameSent":false,"_closeTimer":null,"_paused":false,"_protocol":"","_readyState":0,"_receiver":null,"_sender":null,"_socket":null,"_bufferedAmount":0,"_isServer":false,"_redirects":0,"_url":"ws://localhost:10000"}},"classConstructor":"0","functionCalls":["on","on","close"]}},
     {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":"open"},
-    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":2,"key":1},"meta":"{\"type\":\"function\",\"name\":\"\",\"length\":0,\"props\":{}}"},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":2,"key":1},"meta":{"type":"function","name":"","length":0,"props":{}}},
     {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":4,"key":0},"meta":"close"},
-    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":4,"key":1},"meta":"{\"type\":\"function\",\"name\":\"\",\"length\":1,\"props\":{}}"},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":4,"key":1},"meta":{"type":"function","name":"","length":1,"props":{}}},
     {"plugin":"@mocktomata/undefined","profile":"output","source":{"type":"result","id":7}},
-    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"argument","id":10,"key":1},"meta":{"base":"{\"type\":\"object\",\"props\":{}}","classConstructor":"11","functionCalls":[]}},
-    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":"{\"type\":\"function\",\"name\":\"Buffer\",\"length\":3,\"props\":{\"poolSize\":8192}}","parent":"12"}},
-    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":"{\"type\":\"function\",\"name\":\"Uint8Array\",\"length\":3,\"props\":{}}","parent":"13"}},
-    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":"{\"type\":\"function\",\"name\":\"TypedArray\",\"length\":0,\"props\":{}}","parent":"2"}}
+    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"argument","id":10,"key":1},"meta":{"base":{"type":"object","props":{}},"classConstructor":"11","functionCalls":[]}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"Buffer","length":3,"props":{"poolSize":8192}},"parent":"12"}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"Uint8Array","length":3,"props":{}},"parent":"13"}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"TypedArray","length":0,"props":{}},"parent":"2"}}
   ],
   "actions": [
     {"type":"instantiate","refId":"0","performer":"user","payload":["3"],"tick":0},
-    {"type":"return","actionId":0,"tick":10,"payload":"4"},
-    {"type":"invoke","refId":"4","performer":"user","site":"on","thisArg":"4","payload":["5","6"],"tick":1},
-    {"type":"return","actionId":2,"tick":1,"payload":"4"},
+    {"type":"return","actionId":0,"tick":11,"payload":"4"},
+    {"type":"invoke","refId":"4","performer":"user","site":"on","thisArg":"4","payload":["5","6"],"tick":0},
+    {"type":"return","actionId":2,"tick":0,"payload":"4"},
     {"type":"invoke","refId":"4","performer":"user","site":"on","thisArg":"4","payload":["7","8"],"tick":0},
     {"type":"return","actionId":4,"tick":0,"payload":"4"},
-    {"type":"invoke","refId":"6","performer":"mockto","thisArg":"4","payload":[],"tick":9},
+    {"type":"invoke","refId":"6","performer":"mockto","thisArg":"4","payload":[],"tick":7},
     {"type":"invoke","refId":"4","performer":"user","site":"close","thisArg":"4","payload":[],"tick":0},
-    {"type":"return","actionId":7,"tick":0,"payload":"9"},
+    {"type":"return","actionId":7,"tick":1,"payload":"9"},
     {"type":"return","actionId":6,"tick":0,"payload":"9"},
-    {"type":"invoke","refId":"8","performer":"mockto","thisArg":"4","payload":[1005,"10"],"tick":3},
+    {"type":"invoke","refId":"8","performer":"mockto","thisArg":"4","payload":[1005,"10"],"tick":2},
     {"type":"return","actionId":10,"tick":0,"payload":"9"}
   ]
 }
