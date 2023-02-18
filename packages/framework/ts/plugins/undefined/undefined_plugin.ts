@@ -1,4 +1,4 @@
-import type { SpecPlugin } from '../../spec-plugin/types.js'
+import type { SpecPlugin } from '../../spec_plugin/types.js'
 
 export const undefinedPlugin: SpecPlugin<string> = {
 	name: 'undefined',

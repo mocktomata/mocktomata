@@ -1,4 +1,4 @@
-import type { SpecPlugin } from '../../spec-plugin/types.js'
+import type { SpecPlugin } from '../../spec_plugin/types.js'
 import { isPromise } from './promise_plugin.utils.js'
 
 export const promisePlugin: SpecPlugin<Promise<any>, string> = {

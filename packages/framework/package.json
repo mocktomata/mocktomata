@@ -29,7 +29,7 @@
 		"cjs",
 		"esm",
 		"ts",
-		"!**/test-artifacts",
+		"!**/test_artifacts",
 		"!**/*.mock.*",
 		"!**/*.{spec,test,unit,accept,integrate,system}.*",
 		"!**/*.test-setup.*"

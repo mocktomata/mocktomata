@@ -11,7 +11,7 @@ import { objectPlugin } from './plugins/object/index.js'
 import { promisePlugin } from './plugins/promise/index.js'
 import { stringPlugin } from './plugins/string/index.js'
 import { undefinedPlugin } from './plugins/undefined/index.js'
-import type { SpecPlugin } from './spec-plugin/types.js'
+import type { SpecPlugin } from './spec_plugin/types.js'
 
 export const es2020 = {
 	name: '@mocktomata',

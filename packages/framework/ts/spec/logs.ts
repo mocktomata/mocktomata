@@ -1,6 +1,6 @@
 import { logLevels } from 'standard-log'
 import { tersify } from 'tersify'
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 import type { Log } from '../log/types.js'
 import { maskString } from './masking.js'
 import { prettifyAction } from './action.format.js'

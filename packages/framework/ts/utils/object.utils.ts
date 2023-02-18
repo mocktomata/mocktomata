@@ -1,4 +1,4 @@
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 
 export function isBaseObject(value: any) {
 	return value === null || (value.__proto__ === null && value.constructor.name === 'Object')

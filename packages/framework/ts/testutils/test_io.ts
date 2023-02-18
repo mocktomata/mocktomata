@@ -1,7 +1,7 @@
 import { requiredDeep } from 'type-plus'
 import type { Config } from '../config/types.js'
 import { es2015 } from '../es2015.js'
-import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
 import { SpecNotFound } from '../spec/index.js'
 import type { Mocktomata } from '../types.js'
 import { json } from '../json.js'

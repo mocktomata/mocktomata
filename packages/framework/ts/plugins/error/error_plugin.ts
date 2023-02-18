@@ -1,5 +1,5 @@
 import { SerializableConverter } from 'iso-error'
-import type { SpecPlugin } from '../../spec-plugin/types.js'
+import type { SpecPlugin } from '../../spec_plugin/types.js'
 import { demetarize, metarize } from '../../spec/metarize.js'
 import { hasProperty } from '../../utils/index.js'
 

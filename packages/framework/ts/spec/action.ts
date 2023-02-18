@@ -1,4 +1,4 @@
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 import type { SpecRecordValidator } from './record.js'
 
 export function isMatchingGetAction(

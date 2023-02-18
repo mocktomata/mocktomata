@@ -16,7 +16,7 @@ import {
 	missSupportPluginModule,
 	noActivatePluginModule,
 	pluginModuleA
-} from '../test-artifacts/index.js'
+} from '../test_artifacts/index.js'
 
 /**
  * Plugin order is reversed so that most specific plugin are checked first.

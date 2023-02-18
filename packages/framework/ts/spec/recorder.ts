@@ -1,16 +1,16 @@
 import type { AsyncContext } from 'async-fp'
 import type { PartialPick } from 'type-plus'
 import { notDefined } from '../constants.js'
-import { findPlugin, getPlugin } from '../spec-plugin/index.js'
-import type { SpecPlugin } from '../spec-plugin/types.js'
-import { getDefaultPerformer, type SpecRecord } from '../spec-record/index.js'
+import { findPlugin, getPlugin } from '../spec_plugin/index.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
+import { getDefaultPerformer, type SpecRecord } from '../spec_record/index.js'
 import { createTimeTracker, TimeTracker } from '../time_trackter/index.js'
 import {
 	getArgumentContext,
 	getPropertyContext,
 	getResultContext,
 	getThisContext
-} from '../utils-internal/index.js'
+} from '../utils_internal/index.js'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs.js'
 import { createSpecRecordBuilder } from './record.js'
 import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'

@@ -1,8 +1,8 @@
 import { pick } from 'type-plus'
 import { notDefined } from '../constants.js'
-import { findPlugin } from '../spec-plugin/index.js'
-import type { SpecPlugin } from '../spec-plugin/types.js'
-import type { SpecRecord } from '../spec-record/types.js'
+import { findPlugin } from '../spec_plugin/index.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 import { maskSpecRecord } from './masking.js'
 import type { MaskCriterion, SpecRecordLive } from './types.internal.js'
 

@@ -1,8 +1,8 @@
 import type { MemoryLogReporter } from 'standard-log'
 import { AnyFunction } from 'type-plus'
 import type { Log } from '../log/types.js'
-import type { SpecPlugin } from '../spec-plugin/types.js'
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 import type { TimeTracker } from '../time_trackter/index.js'
 
 export type Spec = {

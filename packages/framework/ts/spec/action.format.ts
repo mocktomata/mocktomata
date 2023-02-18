@@ -2,7 +2,7 @@
 // istanbul ignore file
 import { tersify } from 'tersify'
 import { notDefined } from '../constants.js'
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 
 export namespace prettifyAction {
 	export type Options = OptionsForGetInvoke | OptionsForReturnThrow

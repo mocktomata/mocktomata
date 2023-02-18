@@ -1,4 +1,4 @@
-import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
 
 // istanbul ignore next
 const incrementPlugin: SpecPlugin = {

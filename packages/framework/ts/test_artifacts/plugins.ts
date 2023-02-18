@@ -1,6 +1,6 @@
 // istanbul ignore file
 
-import type { SpecPlugin } from '../spec-plugin/types.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
 
 export const echoPluginModule: SpecPlugin.Module = {
 	activate(context) {

@@ -24,7 +24,7 @@ import {
 	WithProperty,
 	WithStaticMethod,
 	WithStaticProp
-} from './test-artifacts/index.js'
+} from './test_artifacts/index.js'
 
 describe('basic checks', () => {
 	incubator.save(`type %s is not specable`, (specName, spec) => {

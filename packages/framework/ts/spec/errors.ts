@@ -1,7 +1,7 @@
 import { ModuleError } from 'iso-error'
 import { tersify } from 'tersify'
 import { MocktomataError } from '../errors.js'
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 import { prettifyAction } from './action.format.js'
 import type { Recorder } from './types.internal.js'
 

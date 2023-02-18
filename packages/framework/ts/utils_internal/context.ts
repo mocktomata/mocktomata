@@ -1,4 +1,4 @@
-import type { SpecRecord } from '../spec-record/types.js'
+import type { SpecRecord } from '../spec_record/types.js'
 import type { Recorder } from '../spec/types.internal.js'
 
 export function getPropertyContext<C extends { state: Recorder.State }>(
