@@ -2,4 +2,4 @@
 '@mocktomata/cli': patch
 ---
 
-Update `clibuilder`
+Update `clibuilder`.
