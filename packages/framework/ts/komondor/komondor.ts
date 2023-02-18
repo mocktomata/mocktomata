@@ -1,14 +1,14 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
-import { createLogContext } from '../log/log_context.js'
-import { loadPlugins } from '../spec_plugin/index.js'
-import { createSpecObject, getEffectiveSpecModeContext, Spec } from '../spec/index.js'
-import { MockSpec } from '../spec/types.js'
-import { getCallerRelativePath } from '../testutils/index.js'
-import { initTimeTrackers } from '../time_trackter/index.js'
 import type { LoadedContext } from '../context.js'
+import { createLogContext } from '../log/log_context.js'
+import { createSpecObject, getEffectiveSpecModeContext, type Spec } from '../spec/index.js'
+import type { MockSpec } from '../spec/types.js'
+import { loadPlugins } from '../spec_plugin/index.js'
+import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
+import { getCallerRelativePath } from '../utils_internal/index.js'
 
 /**
  * Creates a `Spec` that runs in auto mode to simulate the behavior of your code.
