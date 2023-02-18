@@ -364,4 +364,29 @@ describe(`maskValue(regex)`, () => {
 			})
 		}
 	)
+
+	incubator.sequence(
+		'greedy regex only applies to the string value, not the whole meta',
+		{ logLevel: logLevels.all },
+		(specName, { save, simulate }, reporter) => {
+			test(specName, async () => {
+				// the input object is serialized thus masked.
+				// so the result received during simulation is also masked
+				{
+					save.maskValue(/secret.*/)
+					const s = await save({ someProp: 'secret value' })
+					expect(s.someProp).toBe('secret value')
+					await save.done()
+					expect(reporter.getLogMessage()).not.toContain('secret value')
+				}
+				{
+					simulate.maskValue(/secret.*/)
+					const s = await simulate({ someProp: 'secret value' })
+					expect(s.someProp).toBe('[masked]')
+					await simulate.done()
+					expect(reporter.getLogMessage()).not.toContain('secret value')
+				}
+			})
+		}
+	)
 })

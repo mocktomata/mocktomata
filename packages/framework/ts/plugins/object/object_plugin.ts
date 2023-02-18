@@ -1,8 +1,8 @@
-import { demetarize, metarize } from '../../spec/metarize.js'
+import { demetarize, metarize, ObjectMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
 import { hasProperty } from '../../utils/index.js'
 
-export const objectPlugin: SpecPlugin<Record<string | number, any>> = {
+export const objectPlugin: SpecPlugin<Record<string | number, any>, ObjectMeta> = {
 	name: 'object',
 	support: subject => subject !== null && typeof subject === 'object',
 	createSpy: ({ getProperty, setProperty, setMeta }, subject) => {
@@ -18,7 +18,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>> = {
 		})
 	},
 	createStub: ({ getProperty, setProperty }, _, meta) => {
-		return new Proxy(demetarize(meta) as any, {
+		return new Proxy(demetarize(meta), {
 			get(_: any, key: string) {
 				return getProperty({ key })
 			},
