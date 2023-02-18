@@ -1,8 +1,11 @@
 {
-  "mocktomata": {
-    "ecmaVersion": "ES2015",
-    "mocktomataDir": ".mockto",
-    "plugins": ["@mocktomata/plugin-fixture-dummy"],
-    "logLevel": "trace"
-  }
+	"name": "fixtures-pjson",
+	"mocktomata": {
+		"ecmaVersion": "ES2015",
+		"mocktomataDir": ".mockto",
+		"plugins": [
+			"@mocktomata/plugin-fixture-dummy"
+		],
+		"logLevel": "trace"
+	}
 }

@@ -1,17 +1,18 @@
 {
-  "dependencies": {
-    "@mocktomata/nodejs": "workspace:^",
-    "@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
-    "@mocktomata/plugin-fixture-deep-link": "workspace:^",
-    "@mocktomata/plugin-fixture-dummy": "workspace:^",
-    "@mocktomata/plugin-fixture-esm-a": "workspace:^",
-    "@mocktomata/plugin-fixture-esm-b": "workspace:^",
-    "@mocktomata/plugin-fixture-no-activate": "workspace:^",
-    "standard-log": "11.5.1"
-  },
-  "mocktomata": {
-    "plugins": [
-      "plugin-a"
-    ]
-  }
+	"name": "fixtures-plugin-esm",
+	"dependencies": {
+		"@mocktomata/nodejs": "workspace:^",
+		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
+		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
+		"@mocktomata/plugin-fixture-dummy": "workspace:^",
+		"@mocktomata/plugin-fixture-esm-a": "workspace:^",
+		"@mocktomata/plugin-fixture-esm-b": "workspace:^",
+		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
+		"standard-log": "11.5.1"
+	},
+	"mocktomata": {
+		"plugins": [
+			"plugin-a"
+		]
+	}
 }
