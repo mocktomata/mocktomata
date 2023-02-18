@@ -1,14 +1,14 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
+import type { LoadedContext } from '../context.js'
 import { createLogContext } from '../log/log_context.js'
-import { loadPlugins } from '../spec_plugin/index.js'
 import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
-import { getCallerRelativePath } from '../testutils/index.js'
+import { loadPlugins } from '../spec_plugin/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
-import type { LoadedContext } from '../context.js'
 import type { Mocktomata } from '../types.js'
+import { getCallerRelativePath } from '../utils_internal/index.js'
 import { resolveMocktoFnArgs } from './mockto.utils.js'
 
 /**

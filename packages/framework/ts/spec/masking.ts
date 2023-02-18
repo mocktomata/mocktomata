@@ -1,5 +1,5 @@
 import { reduceByKey } from 'type-plus'
-import { SpecRecord } from '../index.js'
+import type { SpecRecord } from '../spec_record/index.js'
 import type { MaskCriterion } from './types.internal.js'
 
 export function maskSpecRecord(maskCriteria: MaskCriterion[], record: SpecRecord) {
