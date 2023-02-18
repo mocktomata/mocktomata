@@ -1,8 +1,8 @@
 import type { SpecPlugin } from '../../spec_plugin/types.js'
 
-export const undefinedPlugin: SpecPlugin<string> = {
+export const undefinedPlugin: SpecPlugin<undefined> = {
 	name: 'undefined',
 	support: subject => typeof subject === 'undefined',
 	createSpy: (_, subject) => subject,
-	createStub: (_, _subject, meta) => meta
+	createStub: () => undefined
 }

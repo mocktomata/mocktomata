@@ -1,7 +1,7 @@
 calling handler with options
 {
   "refs": [
-    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"\",\"length\":1,\"props\":{}}"},
+    {"plugin":"@mocktomata/function","profile":"target","meta":{"type":"function","name":"","length":1,"props":{}}},
     {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}}
   ],
   "actions": [
