@@ -8,8 +8,9 @@ import { createMocktoFn } from '../mockto/mockto.js'
 import { resolveMocktoFnArgs } from '../mockto/mockto.utils.js'
 import { loadPlugins, SpecPlugin } from '../spec_plugin/index.js'
 import { createSpecObject, Spec } from '../spec/index.js'
-import { createTestIO, getCallerRelativePath } from '../testutils/index.js'
+import { createTestIO } from '../testutils/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
+import { getCallerRelativePath } from '../utils_internal/index.js'
 
 export namespace createIncubator {
 	export type Context = Log.Context & { io: createTestIO.TestIO } & Config.Context
