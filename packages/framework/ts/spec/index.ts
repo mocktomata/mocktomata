@@ -1,5 +1,5 @@
-export * from './createSpecObject.js'
+export * from './spec_object.js'
 export * from './errors.js'
-export * from './getEffectiveSpecMode.js'
+export * from './spec_mode.js'
 export * from './metarize.js'
 export type { Spec } from './types.js'

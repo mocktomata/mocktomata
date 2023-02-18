@@ -3,7 +3,7 @@ import { tersify } from 'tersify'
 import type { SpecRecord } from '../spec-record/types.js'
 import type { Log } from '../log/types.js'
 import { maskString } from './masking.js'
-import { prettifyAction } from './prettifyAction.js'
+import { prettifyAction } from './action.format.js'
 import type { MaskCriterion, Recorder } from './types.internal.js'
 import { getCallSites } from '../index.js'
 

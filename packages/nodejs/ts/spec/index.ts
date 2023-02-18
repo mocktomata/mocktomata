@@ -1,2 +1,1 @@
-export * from './readSpec.js'
-export * from './writeSpec.js'
+export * from './spec_file.js'

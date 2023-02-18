@@ -1,4 +1,4 @@
-export * from './config/constants.js'
-export * from './config/loadConfigFromEnv.js'
-export * from './createIO.js'
+export * from './config/index.js'
+export * from './io.js'
 export { findInstalledPlugins } from './plugin/index.js'
+

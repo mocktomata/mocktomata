@@ -1,1 +1,1 @@
-export * from './objectPlugin.js'
+export * from './object_plugin.js'

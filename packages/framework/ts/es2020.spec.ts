@@ -1,4 +1,4 @@
-import { createIncubator } from './incubator/createIncubator.js'
+import { createIncubator } from './incubator/create_incubator.js'
 import { createTestContext } from './index.js'
 
 describe('bigint', () => {

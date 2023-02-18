@@ -3,7 +3,7 @@ import { AsyncContext } from 'async-fp'
 import { createStandardLogForTest } from 'standard-log'
 import { createTestContext, createTestIO, ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'
 import { loadPlugins } from '../spec-plugin/index.js'
-import { initTimeTrackers } from '../timeTracker/createTimeTracker.js'
+import { initTimeTrackers } from '../time_trackter/time_tracker.js'
 import { createSimulator } from './simulator.js'
 import type { createSpec } from './types.internal.js'
 

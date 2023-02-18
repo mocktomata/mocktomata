@@ -1,2 +1,2 @@
 export * from './plugins.js'
-export * from './testSubjects.js'
+export * from './test_subjects.js'

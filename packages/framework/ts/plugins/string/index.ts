@@ -1,1 +1,1 @@
-export * from './stringPlugin.js'
+export * from './string_plugin.js'

@@ -1,1 +1,1 @@
-export * from './errorPlugin.js'
+export * from './error_plugin.js'

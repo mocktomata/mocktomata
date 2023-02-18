@@ -1,1 +1,1 @@
-export * from './bigIntPlugin.js'
+export * from './bigInt_plugin.js'
