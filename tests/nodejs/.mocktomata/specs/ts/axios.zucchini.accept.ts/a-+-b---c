@@ -1,33 +1,33 @@
 a + b - c
 {
   "refs": [
-    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"wrap\",\"length\":0,\"props\":{\"VERSION\":\"1.1.3\"}}"},
+    {"plugin":"@mocktomata/function","profile":"target","meta":{"type":"function","name":"wrap","length":0,"props":{"VERSION":"1.3.3"}}},
     {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}},
     {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":0,"key":0},"meta":"http://api.mathjs.org/v4/?expr=2%2b3"},
     {"plugin":"@mocktomata/promise","profile":"output","source":{"type":"result","id":0},"meta":"resolved-promise"},
-    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":"{\"type\":\"function\",\"name\":\"\",\"length\":1,\"props\":{}}"},
-    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"argument","id":3,"key":0},"meta":"{\"type\":\"object\",\"props\":{\"status\":200,\"statusText\":\"OK\",\"data\":5}}"},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":{"type":"function","name":"","length":1,"props":{}}},
+    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"argument","id":3,"key":0},"meta":{"type":"object","props":{"status":200,"statusText":"OK","data":5}}},
     {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":8,"key":0},"meta":"http://api.mathjs.org/v4/?expr=5-1"},
     {"plugin":"@mocktomata/promise","profile":"output","source":{"type":"result","id":8},"meta":"resolved-promise"},
-    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":10,"key":0},"meta":"{\"type\":\"function\",\"name\":\"\",\"length\":1,\"props\":{}}"},
-    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"argument","id":11,"key":0},"meta":"{\"type\":\"object\",\"props\":{\"status\":200,\"statusText\":\"OK\",\"data\":4}}"}
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":10,"key":0},"meta":{"type":"function","name":"","length":1,"props":{}}},
+    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"argument","id":11,"key":0},"meta":{"type":"object","props":{"status":200,"statusText":"OK","data":4}}}
   ],
   "actions": [
     {"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":["2"],"tick":0},
-    {"type":"return","actionId":0,"tick":17,"payload":"3"},
-    {"type":"invoke","refId":"3","performer":"plugin","site":"then","thisArg":"1","payload":["4"],"tick":227},
-    {"type":"invoke","refId":"4","performer":"mockto","thisArg":"1","payload":["5"],"tick":0},
+    {"type":"return","actionId":0,"tick":18,"payload":"3"},
+    {"type":"invoke","refId":"3","performer":"plugin","site":"then","thisArg":"1","payload":["4"],"tick":179},
+    {"type":"invoke","refId":"4","performer":"mockto","thisArg":"1","payload":["5"],"tick":1},
     {"type":"return","actionId":3,"tick":0,"payload":"1"},
     {"type":"return","actionId":2,"tick":0,"payload":"1"},
     {"type":"get","refId":"5","performer":"user","tick":0,"key":"data"},
     {"type":"return","actionId":6,"tick":0,"payload":5},
-    {"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":["6"],"tick":2},
+    {"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":["6"],"tick":1},
     {"type":"return","actionId":8,"tick":1,"payload":"7"},
-    {"type":"invoke","refId":"7","performer":"plugin","site":"then","thisArg":"1","payload":["8"],"tick":171},
-    {"type":"invoke","refId":"8","performer":"mockto","thisArg":"1","payload":["9"],"tick":0},
+    {"type":"invoke","refId":"7","performer":"plugin","site":"then","thisArg":"1","payload":["8"],"tick":172},
+    {"type":"invoke","refId":"8","performer":"mockto","thisArg":"1","payload":["9"],"tick":1},
     {"type":"return","actionId":11,"tick":0,"payload":"1"},
     {"type":"return","actionId":10,"tick":0,"payload":"1"},
-    {"type":"get","refId":"9","performer":"user","tick":1,"key":"data"},
+    {"type":"get","refId":"9","performer":"user","tick":0,"key":"data"},
     {"type":"return","actionId":14,"tick":0,"payload":4}
   ]
 }

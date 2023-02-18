@@ -1,14 +1,14 @@
+import { ArrayMeta, demetarize, metarize } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { demetarize, metarize } from '../../spec/metarize.js'
 import { hasProperty } from '../../utils/index.js'
 
-export const arrayPlugin: SpecPlugin<any[], { meta: string; items: string[] }> = {
+export const arrayPlugin: SpecPlugin<any[], { meta: ArrayMeta; items: string[] }> = {
 	name: 'array',
 	support: Array.isArray,
 	createSpy({ setMeta, getSpy, getSpyId, getProperty, setProperty }, subject) {
 		const items = subject.map(getSpy)
 		setMeta({
-			meta: metarize(subject),
+			meta: metarize(subject) as ArrayMeta,
 			items: items.map(getSpyId)
 		})
 		return new Proxy(items, {

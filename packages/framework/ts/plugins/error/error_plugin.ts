@@ -1,16 +1,16 @@
 import { SerializableConverter } from 'iso-error'
+import { demetarize, metarize, type ObjectMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { demetarize, metarize } from '../../spec/metarize.js'
 import { hasProperty } from '../../utils/index.js'
 
 const converter = new SerializableConverter()
 
-export const errorPlugin: SpecPlugin<Error & Record<any, any>, { err: string; functionCalls: string[] }> = {
+export const errorPlugin: SpecPlugin<Error & Record<any, any>, { err: ObjectMeta; functionCalls: string[] }> = {
 	name: 'error',
 	support: subject => subject instanceof Error,
 	createSpy: ({ getProperty, invoke, setProperty, setMeta }, subject) => {
 		const meta = setMeta({
-			err: metarize(converter.toSerializable(subject)),
+			err: metarize(converter.toSerializable(subject))as ObjectMeta,
 			functionCalls: []
 		})
 		setMeta(meta)
@@ -34,7 +34,7 @@ export const errorPlugin: SpecPlugin<Error & Record<any, any>, { err: string; fu
 		return spy
 	},
 	createStub: ({ getProperty, setProperty, invoke }, _subject, meta) => {
-		const base: any = converter.fromSerializable(demetarize(meta.err))
+		const base: any = converter.fromSerializable(demetarize(meta.err) as any)
 		const stub = new Proxy(base, {
 			get(_: any, key: string) {
 				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === key) {
