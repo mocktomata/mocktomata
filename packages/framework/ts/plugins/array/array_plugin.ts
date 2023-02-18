@@ -8,7 +8,7 @@ export const arrayPlugin: SpecPlugin<any[], { meta: ArrayMeta; items: string[] }
 	createSpy({ setMeta, getSpy, getSpyId, getProperty, setProperty }, subject) {
 		const items = subject.map(getSpy)
 		setMeta({
-			meta: metarize(subject) as ArrayMeta,
+			meta: metarize(subject),
 			items: items.map(getSpyId)
 		})
 		return new Proxy(items, {
@@ -31,12 +31,12 @@ export const arrayPlugin: SpecPlugin<any[], { meta: ArrayMeta; items: string[] }
 	createStub({ getProperty, setProperty, resolve }, _, { meta, items }) {
 		const base = Object.assign(items.map(resolve), demetarize(meta))
 		return new Proxy(base, {
-			get(_: any, key: string) {
+			get(_, key: string) {
 				const a = Array.prototype[key as any]
 				if (a) return a
 				return getProperty({ key })
 			},
-			set(target: any, property: any, value: any) {
+			set(target, property: any, value) {
 				target[property] = value
 				return setProperty({ key: property, value })
 			}

@@ -5,8 +5,8 @@ export const bigIntPlugin: SpecPlugin<bigint, BigIntMeta> = {
 	name: 'bigint',
 	support: v => typeof v === 'bigint',
 	createSpy: ({ setMeta }, v) => {
-		setMeta(metarize(v) as BigIntMeta)
+		setMeta(metarize(v))
 		return v
 	},
-	createStub: (_, _v, meta) => demetarize(meta) as bigint
+	createStub: (_, _v, meta) => demetarize(meta)
 }

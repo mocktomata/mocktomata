@@ -47,7 +47,7 @@ export const instancePlugin: SpecPlugin<
 		// `classProto` can be `{}` which has no prototype.
 		// default to `null` in that case
 		Object.setPrototypeOf(base, classProto.prototype ?? null)
-		const stub = new Proxy(base as any, {
+		const stub = new Proxy(base, {
 			get(_: any, property: string) {
 				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === property) {
 					return (...args: any[]) => {

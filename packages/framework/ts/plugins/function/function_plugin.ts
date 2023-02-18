@@ -37,7 +37,7 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, Function
 	 * })
 	 */
 	createSpy: ({ getProperty, setProperty, invoke, setMeta }, subject) => {
-		setMeta(metarize(subject) as FunctionMeta)
+		setMeta(metarize(subject))
 		return new Proxy(subject, {
 			apply(_, thisArg, args: any[]) {
 				return invoke({ thisArg, args }, ({ thisArg, args }) => {
@@ -56,7 +56,7 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, Function
 	},
 	createStub: ({ getProperty, setProperty, invoke }, _, meta) => {
 		const base = demetarize(meta)
-		const stub = new Proxy(base as any, {
+		const stub = new Proxy(base, {
 			apply: function (_, thisArg, args: any[]) {
 				return invoke({ thisArg, args })
 			},
