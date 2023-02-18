@@ -73,7 +73,7 @@
 		"depcheck": "^1.4.3",
 		"dirname-filename-esm": "^1.1.1",
 		"jest": "^29.4.2",
-		"jest-validate": "29.4.2",
+		"jest-validate": "29.4.3",
 		"jest-watch-suspend": "^1.1.2",
 		"jest-watch-toggle-config-2": "^2.1.0",
 		"jest-watch-typeahead": "^2.2.2",

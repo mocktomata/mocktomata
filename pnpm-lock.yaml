@@ -59,8 +59,8 @@ importers:
         specifier: ^29.4.3
         version: 29.4.3(@types/node@18.14.0)
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-repeat:
         specifier: ^2.0.0
         version: 2.0.0(jest@29.4.3)
@@ -129,8 +129,8 @@ importers:
         specifier: ^1.0.0
         version: 1.0.0
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-suspend:
         specifier: ^1.1.2
         version: 1.1.2(jest@29.4.3)
@@ -220,8 +220,8 @@ importers:
         specifier: ^29.4.2
         version: 29.4.3
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-suspend:
         specifier: ^1.1.2
         version: 1.1.2(jest@29.4.3)
@@ -287,8 +287,8 @@ importers:
         specifier: ^29.4.2
         version: 29.4.3
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-suspend:
         specifier: ^1.1.2
         version: 1.1.2(jest@29.4.3)
@@ -375,8 +375,8 @@ importers:
         specifier: ^29.2.1
         version: 29.4.3
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-suspend:
         specifier: ^1.1.2
         version: 1.1.2(jest@29.4.3)
@@ -493,8 +493,8 @@ importers:
         specifier: ^29.4.2
         version: 29.4.3
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-suspend:
         specifier: ^1.1.2
         version: 1.1.2(jest@29.4.3)
@@ -641,8 +641,8 @@ importers:
         specifier: ^29.4.2
         version: 29.4.3(@types/node@18.14.0)
       jest-validate:
-        specifier: 29.4.2
-        version: 29.4.2
+        specifier: 29.4.3
+        version: 29.4.3
       jest-watch-suspend:
         specifier: ^1.1.2
         version: 1.1.2(jest@29.4.3)
@@ -6796,18 +6796,6 @@ packages:
 
   /jest-validate@29.2.1:
     resolution: {integrity: sha512-DZVX5msG6J6DL5vUUw+++6LEkXUsPwB5R7fsfM7BXdz2Ipr0Ib046ak+8egrwAR++pvSM/5laxLK977ieIGxkQ==}
-    engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
-    dependencies:
-      '@jest/types': 29.4.3
-      camelcase: 6.3.0
-      chalk: 4.1.2
-      jest-get-type: 29.4.3
-      leven: 3.1.0
-      pretty-format: 29.4.3
-    dev: true
-
-  /jest-validate@29.4.2:
-    resolution: {integrity: sha512-tto7YKGPJyFbhcKhIDFq8B5od+eVWD/ySZ9Tvcp/NGCvYA4RQbuzhbwYWtIjMT5W5zA2W0eBJwu4HVw34d5G6Q==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.4.3
