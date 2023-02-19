@@ -8,9 +8,9 @@ import { createSpecFns, getEffectiveSpecModeContext } from '../spec/index.js'
 import type { Spec } from '../spec/types.js'
 import { loadPlugins } from '../spec_plugin/index.js'
 import type { SpecRecord } from '../spec_record/index.js'
+import { StackFrameContext } from '../stack_frame.js'
 import { initTimeTrackers } from '../time_trackter/time_tracker.js'
 import type { Mocktomata } from '../types.js'
-import { getCallerRelativePath } from '../utils_internal/index.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { createStore, Step, Store } from './store.js'
 
@@ -53,21 +53,24 @@ export namespace Zucchini {
 	}
 }
 
-export function createZucchini(context: AsyncContext<Mocktomata.Context>) {
+export function createZucchini(ctx: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext) {
 	const { store } = createStore()
-	const scenario = createScenario(context, store)
+	const scenario = createScenario(ctx, store)
 	const { defineStep, defineParameterType } = createStepFns(store)
 	return { scenario, defineStep, defineParameterType }
 }
 
-function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store) {
+function createScenario(
+	{ context, stackFrame: stack }: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext,
+	store: Store
+) {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
-	return Object.assign(createScenarioFn(ctx, store), {
-		live: createScenarioFn(ctx, store, 'live'),
-		save: createScenarioFn(ctx, store, 'save'),
-		mock: createScenarioFn(ctx, store, 'mock') as Zucchini.MockFn,
-		simulate: createScenarioFn(ctx, store, 'simulate'),
+	return Object.assign(createScenarioFn({ context: ctx, stackFrame: stack }, store), {
+		live: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'live'),
+		save: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'save'),
+		mock: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'mock') as Zucchini.MockFn,
+		simulate: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
 			timeTrackers.forEach(t => t.terminate())
@@ -75,7 +78,11 @@ function createScenario(context: AsyncContext<Mocktomata.Context>, store: Store)
 	})
 }
 
-function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mode?: Spec.Mode): Zucchini.Fn {
+function createScenarioFn(
+	{ context, stackFrame: stack }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
+	store: Store,
+	mode?: Spec.Mode
+): Zucchini.Fn {
 	return function scenario(specName: string, options: Spec.Options = { timeout: 3000 }) {
 		const reporter = createMemoryLogReporter()
 
@@ -84,7 +91,7 @@ function createScenarioFn(context: AsyncContext<LoadedContext>, store: Store, mo
 				options,
 				reporter,
 				specName,
-				specRelativePath: getCallerRelativePath(options.ssf ?? scenario)
+				specRelativePath: stack.getCallerRelativePath(options.ssf ?? scenario)
 			})
 			.extend(getEffectiveSpecModeContext(mode))
 			.extend(createLogContext)

@@ -2,14 +2,14 @@ import { createKomondor, createMockto, createTestContext, createZucchini } from 
 
 export { incubator } from '@mocktomata/framework'
 
-const { context, config } = createTestContext()
-const { scenario, defineStep, defineParameterType } = createZucchini(context)
+const { context, config, stackFrame } = createTestContext()
+const { scenario, defineStep, defineParameterType } = createZucchini({ context, stackFrame })
 
 export { config }
 export { scenario, defineStep, defineParameterType }
 
-export const komondor = createKomondor(context)
+export const komondor = createKomondor({ context, stackFrame })
 export const kd = komondor
 
-export const mockto = createMockto(context)
+export const mockto = createMockto({ context, stackFrame })
 export const mt = mockto

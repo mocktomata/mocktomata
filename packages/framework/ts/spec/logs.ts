@@ -2,7 +2,7 @@ import { logLevels } from 'standard-log'
 import { tersify } from 'tersify'
 import type { Log } from '../log/types.js'
 import type { SpecRecord } from '../spec_record/types.js'
-import { getCallSites } from '../utils_internal/index.js'
+import { StackFrameContext } from '../stack_frame.js'
 import { prettifyAction } from './action.format.js'
 import { maskString } from './masking.js'
 import type { MaskCriterion, Recorder } from './types.internal.js'
@@ -24,7 +24,7 @@ export function logCreateSpy(
 }
 
 export function logAction(
-	{ log }: Log.Context,
+	{ log, stackFrame }: Log.Context & StackFrameContext,
 	state: Recorder.State,
 	actionId: SpecRecord.ActionId,
 	action: SpecRecord.Action
@@ -32,12 +32,7 @@ export function logAction(
 	log.on(logLevels.trace, (log, level) => {
 		const msg = prettifyAction(state, actionId, action)
 		if (level >= logLevels.planck) {
-			log(
-				msg,
-				...getCallSites()
-					.slice(3)
-					.map(c => `\n${c.toString()}`)
-			)
+			log(msg, ...stackFrame.getCallSites(3).map(c => `\n${c.toString()}`))
 		} else {
 			log(msg)
 		}
