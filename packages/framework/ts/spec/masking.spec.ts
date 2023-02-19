@@ -1,7 +1,7 @@
 import { a } from 'assertron'
-import axios from 'axios'
 import { logLevels } from 'standard-log'
 import { incubator } from '../index.js'
+import { createTestAxios } from '../test_artifacts/test_subjects.js'
 import { InvokeMetaMethodAfterSpec } from './errors.js'
 
 afterAll(incubator.cleanup)
@@ -253,7 +253,7 @@ describe(`maskValue(string)`, () => {
 			it(specName, async () => {
 				{
 					save.maskValue('secret')
-					const s = await save(axios)
+					const s = await save(createTestAxios())
 					const r = await s('http://postman-echo.com/get?foo=secret')
 					expect(r.data.args).toEqual({ foo: 'secret' })
 					const record = await save.done()
@@ -263,7 +263,7 @@ describe(`maskValue(string)`, () => {
 				}
 				{
 					simulate.maskValue('secret')
-					const s = await simulate(axios)
+					const s = await simulate(createTestAxios())
 					const r = await s('http://postman-echo.com/get?foo=secret')
 					expect(r.data.args).toEqual({ foo: '[masked]' })
 					const record = await simulate.done()

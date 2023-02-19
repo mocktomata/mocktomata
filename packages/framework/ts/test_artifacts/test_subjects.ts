@@ -1,3 +1,5 @@
+import axios from 'axios'
+import { setImmediate } from 'timers'
 import type { AnyFunction } from 'type-plus'
 
 export class Dummy {
@@ -199,4 +201,10 @@ export class ApiGateway {
 			})
 		})
 	}
+}
+
+export function createTestAxios() {
+	return axios.create({
+		adapter: 'http'
+	})
 }
