@@ -4,7 +4,6 @@
 		"declaration": true,
 		"declarationMap": true,
 		"downlevelIteration": true,
-		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"isolatedModules": true,
 		"lib": ["es2015"],

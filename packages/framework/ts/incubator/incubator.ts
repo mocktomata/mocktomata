@@ -1,5 +1,4 @@
-import { createTestContext } from '../testutils/index.js'
+import { createTestContext } from '../testing/index.js'
 import { createIncubator } from './create_incubator.js'
 
-const { context } = createTestContext()
-export const incubator = createIncubator(context)
+export const incubator = createIncubator(createTestContext())

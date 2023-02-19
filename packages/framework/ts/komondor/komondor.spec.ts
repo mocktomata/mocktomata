@@ -4,8 +4,7 @@ import { logLevels } from 'standard-log'
 import { createKomondor, createTestContext } from '../index.js'
 import { indirectKomondor } from './komondor.test-setup.js'
 
-const { context } = createTestContext()
-const k = createKomondor(context)
+const k = createKomondor(createTestContext())
 
 afterAll(() => k.cleanup())
 

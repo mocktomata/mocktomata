@@ -5,8 +5,8 @@ import { createMockto, createTestContext, SpecNotFound } from '../index.js'
 import { indirectMockto } from './mockto.test-setup.js'
 
 describe(`mockto`, () => {
-	const { context } = createTestContext()
-	const mockto = createMockto(context)
+	const { context, stackFrame: stack } = createTestContext()
+	const mockto = createMockto({ context, stackFrame: stack })
 
 	afterAll(() => mockto.cleanup())
 
@@ -40,8 +40,7 @@ describe(`mockto`, () => {
 		// TODO: live mode should proxy spec subject,
 		// to capture interactions into logs.
 		it.skip('can log interactions', () => {
-			const { context } = createTestContext()
-			const mockto = createMockto(context)
+			const mockto = createMockto(createTestContext())
 			return new Promise<void>(a => {
 				mockto.live('live has enableLog method', { logLevel: logLevels.all }, async (_, spec, reporter) => {
 					const s = await spec(() => {})
@@ -189,7 +188,7 @@ describe(`mockto`, () => {
 
 		mockto.mock('spec.mode returns mock', (specName, spec) => {
 			it(specName, async () => {
-				await spec((v: string) => v, { mock: () => 'stubbed'})
+				await spec((v: string) => v, { mock: () => 'stubbed' })
 				expect(spec.mode).toEqual('mock')
 				await spec.done()
 			})
@@ -250,8 +249,8 @@ describe(`mockto`, () => {
 
 	describe('config', () => {
 		test('override to live mode', async () => {
-			const { context } = createTestContext({ config: { overrideMode: 'live' } })
-			const mockto = createMockto(context)
+			const { context, stackFrame: stack } = createTestContext({ config: { overrideMode: 'live' } })
+			const mockto = createMockto({ context, stackFrame: stack })
 
 			await new Promise<void>(a => {
 				mockto('force live', async (_, spec) => {
@@ -265,8 +264,8 @@ describe(`mockto`, () => {
 		})
 
 		test('overrideMode has no effect on save and simulate', async () => {
-			const { context } = createTestContext({ config: { overrideMode: 'live' } })
-			const mockto = createMockto(context)
+			const { context, stackFrame: stack } = createTestContext({ config: { overrideMode: 'live' } })
+			const mockto = createMockto({ context, stackFrame: stack })
 
 			await new Promise<void>(a => {
 				mockto.save('force live', async (_, spec) => {
@@ -285,13 +284,13 @@ describe(`mockto`, () => {
 		})
 
 		test('overrideMode for specific spec name', async () => {
-			const { context } = createTestContext({
+			const { context, stackFrame: stack } = createTestContext({
 				config: {
 					overrideMode: 'live',
 					specNameFilter: 'to-live'
 				}
 			})
-			const mockto = createMockto(context)
+			const mockto = createMockto({ context, stackFrame: stack })
 
 			await new Promise<void>(a => {
 				mockto('not affected', async (_, spec) => {

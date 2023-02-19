@@ -8,8 +8,7 @@ import { DuplicateStep, MissingStep } from './errors.js'
 import { indirectZucchini } from './zucchini.test-setup.js'
 
 describe(`${createZucchini.name}()`, () => {
-	const testContext = createTestContext()
-	const { scenario, defineStep, defineParameterType } = createZucchini(testContext.context)
+	const { scenario, defineStep, defineParameterType } = createZucchini(createTestContext())
 	afterAll(() => scenario.cleanup())
 	describe(`${scenario.name}()`, () => {
 		describe(`setup()`, () => {
@@ -115,7 +114,7 @@ Error: foo`
 		})
 
 		describe(`run()`, () => {
-			const { scenario, defineStep } = createZucchini(createTestContext().context)
+			const { scenario, defineStep } = createZucchini(createTestContext())
 			afterAll(() => scenario.cleanup())
 			it('throws MissingStep if not defined', async () => {
 				const { run } = scenario('no handler')
@@ -186,7 +185,7 @@ Error: foo`
 		})
 
 		describe(`teardown()`, () => {
-			const { scenario, defineStep } = createZucchini(createTestContext().context)
+			const { scenario, defineStep } = createZucchini(createTestContext())
 			afterAll(() => scenario.cleanup())
 			it('throws MissingStep if not defined', async () => {
 				const { teardown } = scenario('no handler')
@@ -281,7 +280,7 @@ Error: foo`
 		})
 
 		describe(`ensure()`, () => {
-			const { scenario, defineStep } = createZucchini(createTestContext().context)
+			const { scenario, defineStep } = createZucchini(createTestContext())
 			afterAll(() => scenario.cleanup())
 			it('throws MissingStep if not defined', async () => {
 				const { ensure } = scenario('no handler')
@@ -527,7 +526,7 @@ Error: foo`
 	})
 
 	describe(`scenario.save()`, () => {
-		const { scenario, defineStep } = createZucchini(createTestContext().context)
+		const { scenario, defineStep } = createZucchini(createTestContext())
 		afterAll(() => scenario.cleanup())
 		it('forces save', async () => {
 			let count = 0
@@ -551,7 +550,7 @@ Error: foo`
 	})
 
 	describe(`scenario.simulate()`, () => {
-		const { scenario } = createZucchini(createTestContext().context)
+		const { scenario } = createZucchini(createTestContext())
 		afterAll(() => scenario.cleanup())
 		it('forces simulate', async () => {
 			const { spec } = scenario.simulate('forces simulate')

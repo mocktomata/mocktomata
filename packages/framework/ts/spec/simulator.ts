@@ -4,6 +4,7 @@ import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec_plugin/index.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import { getDefaultPerformer, type SpecRecord } from '../spec_record/index.js'
+import type { StackFrameContext } from '../stack_frame.js'
 import { createTimeTracker, TimeTracker } from '../time_trackter/index.js'
 import {
 	getArgumentContext,
@@ -44,7 +45,7 @@ export namespace Simulator {
 		pendingPluginActions: Array<
 			SpecPlugin.StubContext.PluginAction & { ref: SpecRecordLive.Reference; refId: SpecRecord.ReferenceId }
 		>
-	}
+	} & StackFrameContext
 }
 
 export function createSimulator(
@@ -71,7 +72,7 @@ export function createSimulator(
 
 	return {
 		createStub: <S>(subject: S) =>
-			getContext().then(({ plugins, maskCriteria, log }) => {
+			getContext().then(({ plugins, maskCriteria, log, stackFrame }) => {
 				assertPluginsLoaded(plugins, specName, loaded.refs)
 				record.setPlugins(plugins)
 
@@ -104,6 +105,7 @@ export function createSimulator(
 					record,
 					timeTracker,
 					maskCriteria,
+					stackFrame,
 					spyOptions: [],
 					pendingPluginActions: []
 				}
