@@ -319,9 +319,6 @@ importers:
       '@mocktomata/framework':
         specifier: workspace:^
         version: link:../framework
-      '@mocktomata/io-remote':
-        specifier: workspace:^
-        version: link:../io-remote
       '@mocktomata/nodejs':
         specifier: workspace:^
         version: link:../nodejs

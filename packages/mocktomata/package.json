@@ -69,7 +69,6 @@
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
-		"@mocktomata/io-remote": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
 		"@mocktomata/service": "workspace:^",
 		"async-fp": "^8.0.2",
