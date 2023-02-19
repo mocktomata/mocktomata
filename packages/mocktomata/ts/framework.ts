@@ -19,5 +19,12 @@ export {
 	PluginNotFound,
 	PluginsNotLoaded,
 	SpecIDCannotBeEmpty,
-	SpecNotFound
+	SpecNotFound,
+	type Komondor,
+	type MismatchActionModel,
+	type Mocktomata,
+	type Spec,
+	type SpecPlugin,
+	type SpecRecord,
+	type Zucchini
 } from '@mocktomata/framework'
