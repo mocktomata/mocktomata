@@ -1,9 +1,5 @@
 {
-	"name": "mocktomata",
 	"private": true,
-	"workspaces": [
-		"packages/*"
-	],
 	"scripts": {
 		"build": "turbo run build",
 		"build:watch": "tsc -b -w",
@@ -39,11 +35,6 @@
 		"test": "turbo run test",
 		"verify": "turbo run build lint coverage depcheck size",
 		"version": "changeset version"
-	},
-	"husky": {
-		"hooks": {
-			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
-		}
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.26.0",

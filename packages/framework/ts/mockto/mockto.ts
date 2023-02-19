@@ -6,9 +6,9 @@ import { createLogContext } from '../log/log_context.js'
 import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
 import { loadPlugins } from '../spec_plugin/index.js'
+import { StackFrameContext } from '../stack_frame.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
-import { getCallerRelativePath } from '../utils_internal/index.js'
 import { resolveMocktoFnArgs } from './mockto.utils.js'
 
 /**
@@ -60,14 +60,17 @@ export namespace Mockto {
 	}
 }
 
-export function createMockto(context: AsyncContext<Mocktomata.Context>): Mockto {
+export function createMockto({
+	context,
+	stackFrame: stack
+}: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext): Mockto {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
-	return Object.assign(createMocktoFn(ctx), {
-		live: createMocktoFn(ctx, 'live'),
-		save: createMocktoFn(ctx, 'save'),
-		mock: createMocktoFn(ctx, 'mock'),
-		simulate: createMocktoFn(ctx, 'simulate'),
+	return Object.assign(createMocktoFn({ context: ctx, stackFrame: stack }), {
+		live: createMocktoFn({ context: ctx, stackFrame: stack }, 'live'),
+		save: createMocktoFn({ context: ctx, stackFrame: stack }, 'save'),
+		mock: createMocktoFn({ context: ctx, stackFrame: stack }, 'mock'),
+		simulate: createMocktoFn({ context: ctx, stackFrame: stack }, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
 			timeTrackers.forEach(t => t.terminate())
@@ -75,7 +78,10 @@ export function createMockto(context: AsyncContext<Mocktomata.Context>): Mockto 
 	})
 }
 
-export function createMocktoFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode) {
+export function createMocktoFn(
+	{ context, stackFrame: stack }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
+	mode?: Spec.Mode
+) {
 	const specFn = (...args: any[]) => {
 		const { specName, options = { timeout: 3000 }, handler } = resolveMocktoFnArgs(args)
 		const reporter = createMemoryLogReporter()
@@ -88,7 +94,7 @@ export function createMocktoFn(context: AsyncContext<LoadedContext>, mode?: Spec
 						options,
 						reporter,
 						specName,
-						specRelativePath: getCallerRelativePath(options.ssf ?? specFn)
+						specRelativePath: stack.getCallerRelativePath(options.ssf ?? specFn)
 					})
 					.extend(getEffectiveSpecModeContext(mode))
 					.extend(createLogContext)
