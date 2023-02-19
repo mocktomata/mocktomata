@@ -6,14 +6,14 @@ import { createLogContext } from '../log/log_context.js'
 import { Log } from '../log/types.js'
 import { createMocktoFn } from '../mockto/mockto.js'
 import { resolveMocktoFnArgs } from '../mockto/mockto.utils.js'
-import { loadPlugins, SpecPlugin } from '../spec_plugin/index.js'
 import { createSpecObject, Spec } from '../spec/index.js'
-import { createTestIO } from '../testutils/index.js'
+import { loadPlugins, SpecPlugin } from '../spec_plugin/index.js'
+import { StackFrameContext } from '../stack_frame.js'
+import { createTestIO } from '../testing/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
-import { getCallerRelativePath } from '../utils_internal/index.js'
 
 export namespace createIncubator {
-	export type Context = Log.Context & { io: createTestIO.TestIO } & Config.Context
+	export type Context = Log.Context & { io: createTestIO.TestIO } & Config.Context & StackFrameContext
 	export type IncubatorFn = {
 		/**
 		 * Creates an automatic incubator spec.
@@ -39,7 +39,10 @@ export namespace createIncubator {
 	}
 }
 
-export function createIncubator(context: AsyncContext<createIncubator.Context>) {
+export function createIncubator({
+	context,
+	stackFrame: stack
+}: { context: AsyncContext<createIncubator.Context> } & StackFrameContext) {
 	let ctxValue: { plugins: SpecPlugin.Instance[] } | undefined
 	let pluginInstances: SpecPlugin.Instance[] | undefined
 
@@ -69,25 +72,38 @@ export function createIncubator(context: AsyncContext<createIncubator.Context>) 
 		if (!ctxValue) pluginInstances = plugins
 		else ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
 	}
-	const save = createMocktoFn(ctx, 'save')
-	const simulate = createMocktoFn(ctx, 'simulate')
+	const save = createMocktoFn({ context: ctx, stackFrame: stack }, 'save')
+	const simulate = createMocktoFn({ context: ctx, stackFrame: stack }, 'simulate')
 	const sequence: createIncubator.SequenceFn = (...args: any[]) => {
 		const {
 			specName,
 			options = { timeout: 3000 },
 			handler
 		} = resolveMocktoFnArgs<createIncubator.SequenceHandler>(args)
-		const specRelativePath = getCallerRelativePath(sequence)
 		const reporter = createMemoryLogReporter()
 		handler(
 			specName,
 			{
 				save: createSpecObject(
-					ctx.extend({ mode: 'save', specName, options, reporter, specRelativePath }).extend(createLogContext)
+					ctx
+						.extend({
+							mode: 'save',
+							specName,
+							options,
+							reporter,
+							specRelativePath: stack.getCallerRelativePath(sequence)
+						})
+						.extend(createLogContext)
 				),
 				simulate: createSpecObject(
 					ctx
-						.extend({ mode: 'simulate', specName, options, reporter, specRelativePath })
+						.extend({
+							mode: 'simulate',
+							specName,
+							options,
+							reporter,
+							specRelativePath: stack.getCallerRelativePath(sequence)
+						})
 						.extend(createLogContext)
 				)
 			},

@@ -52,8 +52,7 @@ incubator('duo with option', { timeout: 200 }, (specName, spec) => {
 })
 
 describe('reporter', () => {
-	const { context } = createTestContext()
-	const incubator = createIncubator(context)
+	const incubator = createIncubator(createTestContext())
 	incubator.sequence(
 		'gets memory log reporter',
 		{ logLevel: logLevels.all },
@@ -78,8 +77,7 @@ describe('reporter', () => {
 
 describe('cleanup()', () => {
 	it('cleanup any not done spec', async () => {
-		const { context } = createTestContext()
-		const incubator = createIncubator(context)
+		const incubator = createIncubator(createTestContext())
 		const { spec, reporter } = await new Promise<{ spec: Spec; reporter: MemoryLogReporter }>(a =>
 			incubator.save('cleanup', (_, spec, reporter) => a({ spec, reporter }))
 		)

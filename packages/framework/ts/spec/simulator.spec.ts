@@ -3,6 +3,7 @@ import { AsyncContext } from 'async-fp'
 import { createStandardLogForTest } from 'standard-log'
 import { createTestContext, createTestIO, ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'
 import { loadPlugins } from '../spec_plugin/index.js'
+import { createStackFrameContext } from '../nodejs/index.js'
 import { initTimeTrackers } from '../time_trackter/time_tracker.js'
 import { createSimulator } from './simulator.js'
 import type { createSpec } from './types.internal.js'
@@ -23,6 +24,7 @@ test('simulate without plugin install throws', () => {
 	const io = createTestIO()
 	const sl = createStandardLogForTest()
 	const log = sl.getLogger('mocktomata')
+	const { stackFrame: stack } = createStackFrameContext(process.cwd())
 	const context = new AsyncContext<createSpec.Context>({
 		io,
 		log,
@@ -33,7 +35,8 @@ test('simulate without plugin install throws', () => {
 		config: {},
 		plugins: [],
 		timeTrackers: [],
-		maskCriteria: []
+		maskCriteria: [],
+		stackFrame: stack
 	})
 	const simulator = createSimulator(
 		context,

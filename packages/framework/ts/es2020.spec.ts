@@ -5,7 +5,7 @@ describe('bigint', () => {
 	const incubator = createIncubator(
 		createTestContext({
 			config: { ecmaVersion: 'es2020' }
-		}).context
+		})
 	)
 
 	function giveBig() {

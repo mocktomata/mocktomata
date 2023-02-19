@@ -6,9 +6,9 @@ import { createLogContext } from '../log/log_context.js'
 import { createSpecObject, getEffectiveSpecModeContext, type Spec } from '../spec/index.js'
 import type { MockSpec } from '../spec/types.js'
 import { loadPlugins } from '../spec_plugin/index.js'
+import { StackFrameContext } from '../stack_frame.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
-import { getCallerRelativePath } from '../utils_internal/index.js'
 
 /**
  * Creates a `Spec` that runs in auto mode to simulate the behavior of your code.
@@ -57,14 +57,17 @@ export namespace Komondor {
 	}
 }
 
-export function createKomondor(context: AsyncContext<Mocktomata.Context>): Komondor {
+export function createKomondor({
+	context,
+	stackFrame: stack
+}: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext): Komondor {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
-	return Object.assign(createKomondorFn(ctx), {
-		live: createKomondorFn(ctx, 'live'),
-		save: createKomondorFn(ctx, 'save'),
-		mock: createKomondorFn(ctx, 'mock'),
-		simulate: createKomondorFn(ctx, 'simulate'),
+	return Object.assign(createKomondorFn({ context: ctx, stackFrame: stack }), {
+		live: createKomondorFn({ context: ctx, stackFrame: stack }, 'live'),
+		save: createKomondorFn({ context: ctx, stackFrame: stack }, 'save'),
+		mock: createKomondorFn({ context: ctx, stackFrame: stack }, 'mock'),
+		simulate: createKomondorFn({ context: ctx, stackFrame: stack }, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
 			timeTrackers.forEach(t => t.terminate())
@@ -72,8 +75,11 @@ export function createKomondor(context: AsyncContext<Mocktomata.Context>): Komon
 	})
 }
 
-function createKomondorFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode) {
-	const komondorFn = (specName: string, options: Spec.Options = { timeout: 3000 }) => {
+function createKomondorFn(
+	{ context, stackFrame: stack }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
+	mode?: Spec.Mode
+) {
+	const komondorFn = function komondorFn(specName: string, options: Spec.Options = { timeout: 3000 }) {
 		const reporter = createMemoryLogReporter()
 
 		return Object.assign(
@@ -83,7 +89,7 @@ function createKomondorFn(context: AsyncContext<LoadedContext>, mode?: Spec.Mode
 						options,
 						reporter,
 						specName,
-						specRelativePath: getCallerRelativePath(options.ssf ?? komondorFn)
+						specRelativePath: stack.getCallerRelativePath(options.ssf ?? komondorFn)
 					})
 					.extend(getEffectiveSpecModeContext(mode))
 					.extend(createLogContext)
