@@ -2,8 +2,8 @@ ignorePatterns:
   - ./poc
 ignores:
   - '@kayahr/jest-electron-runner'
-  - '@mocktomata/server'
-  - '@mocktomata/nodejs'
-  - '@mocktomata/plugin-fixture-dummy'
+  - '@mocktomata/service'
+  - '@repobuddy/jest'
+  - deepmerge
   - jest-*
   - ts-jest
