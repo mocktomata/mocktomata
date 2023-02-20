@@ -1,3 +1,6 @@
 import { start } from '@mocktomata/service'
 
-start()
+(async () => {
+	const server = await start({ port: 3698 })
+	console.info(server.info)
+})()

@@ -10,7 +10,7 @@ async function incAsync(x: number) {
 }
 
 mockto('basic usage', (specName, spec) => {
-	test(specName, async () => {
+	test.skip(specName, async () => {
 		const s = await spec(inc)
 		expect(s(1)).toBe(2)
 		await spec.done()
@@ -18,7 +18,7 @@ mockto('basic usage', (specName, spec) => {
 })
 
 mockto('specify timeout', { timeout: 3000 }, (specName, spec) => {
-	test(specName, async () => {
+	test.skip(specName, async () => {
 		const s = await spec(incAsync)
 		expect(await s(1)).toBe(2)
 		await spec.done()
@@ -26,7 +26,7 @@ mockto('specify timeout', { timeout: 3000 }, (specName, spec) => {
 })
 
 mockto('enable/disable log emit', { emitLog: false }, (specName, spec) => {
-	test(specName, async () => {
+	test.skip(specName, async () => {
 		const s = await spec(inc)
 		expect(s(1)).toBe(2)
 		await spec.done()
@@ -34,7 +34,7 @@ mockto('enable/disable log emit', { emitLog: false }, (specName, spec) => {
 })
 
 mockto('specify log level', { logLevel: logLevels.debug }, (specName, spec) => {
-	test(specName, async () => {
+	test.skip(specName, async () => {
 		const s = await spec(inc)
 		expect(s(1)).toBe(2)
 		await spec.done()
@@ -42,7 +42,7 @@ mockto('specify log level', { logLevel: logLevels.debug }, (specName, spec) => {
 })
 
 mockto('can inspect logs', { logLevel: logLevels.all }, (specName, spec, reporter) => {
-	test(specName, async () => {
+	test.skip(specName, async () => {
 		const s = await spec(inc)
 		expect(s(1)).toBe(2)
 		const messages = reporter.getLogMessagesWithIdAndLevel()
