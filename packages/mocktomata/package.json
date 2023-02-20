@@ -58,6 +58,7 @@
 		"depcheck": "depcheck",
 		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
 		"nuke": "pnpm run clean && rimraf node_modules",
+		"start": "node ./scripts/start_server.mjs",
 		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
 		"test:save": "cross-env MOCKTOMATA_MODE=save NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
 		"test:simulate": "cross-env MOCKTOMATA_MODE=simulate NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
@@ -69,6 +70,7 @@
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
+		"@mocktomata/io-remote": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
 		"@mocktomata/service": "workspace:^",
 		"async-fp": "^8.0.2",

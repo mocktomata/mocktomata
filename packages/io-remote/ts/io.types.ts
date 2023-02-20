@@ -7,4 +7,4 @@ export type ServiceOptions = {
 	url: string
 }
 
-export type CreateIOOptions = ServiceOptions & Log.Context
+export type IOOptions = ServiceOptions & Log.Context

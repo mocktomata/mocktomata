@@ -1,13 +1,17 @@
 import { json, SpecNotFound, type Mocktomata, type SpecPlugin, type SpecRecord } from '@mocktomata/framework'
-import { buildUrl } from './url.js'
+import { IOOptions } from './io.types.js'
 import { getServerInfo } from './server_info.js'
-import type { Context } from './types.internal.js'
-import type { CreateIOOptions } from './types.js'
+import { buildUrl } from './url.js'
 
-export async function createIOInternal(ctx: Context, options?: CreateIOOptions): Promise<Mocktomata.IO> {
-	const info = await getServerInfo(ctx, options)
+export type Context = {
+	fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>
+	importModule(moduleSpecifier: string): Promise<SpecPlugin.Module>
+}
+
+export async function createIOInternal(ctx: Context, options: IOOptions): Promise<Mocktomata.IO> {
 	return {
 		async loadConfig() {
+			const info = await getServerInfo(ctx, options)
 			// @TODO add browser config?
 			const url = buildUrl(info.url, `config`)
 			const response = await ctx.fetch(url)
@@ -17,6 +21,7 @@ export async function createIOInternal(ctx: Context, options?: CreateIOOptions):
 			return ctx.importModule(name)
 		},
 		async readSpec(specName: string, specRelativePath: string): Promise<SpecRecord> {
+			const info = await getServerInfo(ctx, options)
 			const id = btoa(json.stringify({ specName, specRelativePath }))
 			const response = await ctx.fetch(buildUrl(info.url, `specs/${id}`))
 			if (response.status === 404) {
@@ -25,6 +30,7 @@ export async function createIOInternal(ctx: Context, options?: CreateIOOptions):
 			return response.json()
 		},
 		async writeSpec(specName, specRelativePath, record) {
+			const info = await getServerInfo(ctx, options)
 			const id = btoa(json.stringify({ specName, specRelativePath }))
 			const response = await ctx.fetch(buildUrl(info.url, `specs/${id}`), {
 				method: 'POST',
