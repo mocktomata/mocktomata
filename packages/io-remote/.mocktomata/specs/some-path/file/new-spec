@@ -1,0 +1,9 @@
+new spec
+{
+  "refs": [
+    
+  ],
+  "actions": [
+    {"type":"invoke","refId":"1","performer":"user","thisArg":"0","payload":[],"tick":0}
+  ]
+}

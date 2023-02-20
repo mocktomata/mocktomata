@@ -1,10 +1,17 @@
-import { SpecNotFound, type SpecRecord } from '@mocktomata/framework'
+import { Mocktomata, SpecNotFound, type SpecRecord } from '@mocktomata/framework'
+import dummy from '@mocktomata/plugin-fixture-dummy'
 import { a } from 'assertron'
+import fetch from 'cross-fetch'
 import { createStandardLogForTest } from 'standard-log'
 import { ServerNotAvailable } from './errors.js'
 import { Context, createIOInternal } from './io.internal.js'
-import { createFakeServerFetch, newMemoryContext } from './io.mock.js'
-import fetch from 'cross-fetch'
+import { newMemoryContext } from './io.mock.js'
+import { importModule } from './platform.js'
+
+const importModuleStub = async () => {
+	throw new Error('not supported')
+}
+const url = 'http://localhost:3699'
 
 async function setupIOTest(context: Context = { fetch, importModule: importModuleStub }) {
 	const sl = createStandardLogForTest()
@@ -13,89 +20,59 @@ async function setupIOTest(context: Context = { fetch, importModule: importModul
 	return { io, reporter: sl.reporter }
 }
 
-describe(`loadConfig()`, () => {
-	it(`throws ${ServerNotAvailable.name} when service is down`, async () => {
-		const { io } = await setupIOTest()
-		a.throws(io.loadConfig(), ServerNotAvailable)
-	})
+let io: Mocktomata.IO
 
+beforeAll(async () => {
+	const sl = createStandardLogForTest()
+	const log = sl.getLogger('test')
+	io = await createIOInternal({ fetch, importModule }, { url, log })
+})
+
+it(`throws ${ServerNotAvailable.name} when service is down`, async () => {
+	const { io } = await setupIOTest()
+	a.throws(io.loadConfig(), ServerNotAvailable)
+})
+
+describe(`loadConfig()`, () => {
 	it('returns config', async () => {
 		const { io } = await setupIOTest(newMemoryContext())
 		const config = await io.loadConfig()
 		expect(config).toEqual({ ecmaVersion: 'es2015', plugins: [] })
 	})
-})
 
-const importModuleStub = async () => {
-	throw new Error('not supported')
-}
-const url = 'http://localhost:3698'
-
-test('read not exist spec throws SpecNotFound', async () => {
-	const fetch = createFakeServerFetch()
-	const sl = createStandardLogForTest()
-	const log = sl.getLogger('test')
-	const io = await createIOInternal({ fetch, importModule: importModuleStub }, { url, log })
-
-	await a.throws(io.readSpec('not exist', 'some-path/file'), SpecNotFound)
-})
-
-test('read existing spec', async () => {
-	const fetch = createFakeServerFetch()
-	const sl = createStandardLogForTest()
-	const log = sl.getLogger('test')
-	const io = await createIOInternal({ fetch, importModule: importModuleStub }, { url, log })
-
-	const actual = await io.readSpec('exist', 'some-path/file')
-
-	expect(actual).toEqual({ actions: [] })
-})
-
-test('write spec', async () => {
-	const fetch = createFakeServerFetch()
-	const sl = createStandardLogForTest()
-	const log = sl.getLogger('test')
-	const io = await createIOInternal({ fetch, importModule: importModuleStub }, { url, log })
-
-	const record: SpecRecord = {
-		refs: [],
-		actions: [{ type: 'invoke', refId: '1', performer: 'user', thisArg: '0', payload: [], tick: 0 }]
-	}
-	await io.writeSpec('new spec', 'some-path/file', record)
-
-	const spec = fetch.specs['new spec']
-	expect(spec).toEqual(record)
-})
-
-describe('loadConfig()', () => {
-	test('returns installed plugin', async () => {
-		const fetch = createFakeServerFetch()
-		const sl = createStandardLogForTest()
-		const log = sl.getLogger('test')
-		const io = await createIOInternal({ fetch, importModule: importModuleStub }, { url, log })
-
-		const list = await (await io.loadConfig()).plugins
-		expect(list).toEqual(['@mocktomata/plugin-fixture-dummy'])
+	it('returns config (live)', async () => {
+		const config = await io.loadConfig()
+		expect(config).toEqual({
+			plugins: ['@mocktomata/plugin-fixture-dummy']
+		})
 	})
 })
 
-describe('loadPlugin()', () => {
-	test('load existing plugin', async () => {
-		const dummy = { activate() {} }
-		const fetch = createFakeServerFetch()
-		const sl = createStandardLogForTest()
-		const log = sl.getLogger('test')
-		const io = await createIOInternal({ fetch, importModule: () => Promise.resolve(dummy) }, { url, log })
+describe(`readSpec()`, () => {
+	it(`throws SpecNotFound if the spec does not exist`, async () => {
+		await a.throws(io.readSpec('not exist', 'some-path/file'), SpecNotFound)
+	})
+})
 
+describe(`writeSpec()`, () => {
+	it('writes spec', async () => {
+		const record: SpecRecord = {
+			refs: [],
+			actions: [{ type: 'invoke', refId: '1', performer: 'user', thisArg: '0', payload: [], tick: 0 }]
+		}
+		await io.writeSpec('new spec', 'some-path/file', record)
+
+		const spec = await io.readSpec('new spec', 'some-path/file')
+		expect(spec).toEqual(record)
+	})
+})
+
+// This is not ready.
+// Need to figure out how to serve modules from hapi.
+describe('loadPlugin()', () => {
+	it.skip('loads defined plugin', async () => {
 		const p = await io.loadPlugin(`@mocktomata/plugin-fixture-dummy`)
 
-		expect(p).toBe(dummy)
+		expect(p).toEqual(dummy)
 	})
 })
-
-// describe('loadConfig()', () => {
-//   test('load...', async () => {
-//     const io = await createClientIO()
-//     await io.loadConfig()
-//   })
-// })

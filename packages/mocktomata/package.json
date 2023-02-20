@@ -83,7 +83,7 @@
 		"@kayahr/jest-electron-runner": "^29.0.0",
 		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
-		"@repobuddy/jest": "^3.0.1",
+		"@repobuddy/jest": "^3.1.0",
 		"assertron": "^11.0.0",
 		"cross-env": "^7.0.3",
 		"deepmerge": "^4.2.2",

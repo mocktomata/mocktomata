@@ -3,12 +3,12 @@ import * as f from 'cross-fetch'
 import type { Context } from './io.internal.js'
 import type { ServerInfo } from './server_info.js'
 
-export function newMemoryContext(
-	store = {
+export function newMemoryContext({ url } = { url: 'http://localhost:3699' }): Context {
+	const store = {
 		info: {
 			name: 'mocktomata',
 			version: '8.0.4',
-			url: 'http://localhost:3698'
+			url
 		} satisfies ServerInfo,
 		config: {
 			ecmaVersion: 'es2015',
@@ -16,7 +16,6 @@ export function newMemoryContext(
 		} satisfies Config.Input,
 		modules: {} as Record<string, SpecPlugin.Module>
 	}
-): Context {
 	const urlBase = store.info.url
 	return {
 		async fetch(url) {
