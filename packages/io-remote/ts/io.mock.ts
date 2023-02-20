@@ -1,5 +1,39 @@
-import { json } from '@mocktomata/framework'
+import { Config, json, SpecPlugin } from '@mocktomata/framework'
 import * as f from 'cross-fetch'
+import type { Context } from './io.internal.js'
+import type { ServerInfo } from './server_info.js'
+
+export function newMemoryContext(
+	store = {
+		info: {
+			name: 'mocktomata',
+			version: '8.0.4',
+			url: 'http://localhost:3698'
+		} satisfies ServerInfo,
+		config: {
+			ecmaVersion: 'es2015',
+			plugins: []
+		} satisfies Config.Input,
+		modules: {} as Record<string, SpecPlugin.Module>
+	}
+): Context {
+	const urlBase = store.info.url
+	return {
+		async fetch(url) {
+			switch (true) {
+				case url === `${urlBase}/api/info`:
+					return new Response(JSON.stringify(store.info))
+				case url === `${urlBase}/api/config`:
+					return new Response(JSON.stringify(store.config))
+				default:
+					throw new Error(`not supported: ${url}`)
+			}
+		},
+		async importModule(moduleSpecifier) {
+			return store.modules[moduleSpecifier]
+		}
+	}
+}
 
 export function createFakeServerFetch() {
 	const specs: Record<string, any> = {
@@ -13,22 +47,22 @@ export function createFakeServerFetch() {
 	return Object.assign(
 		async (url: RequestInfo, init?: RequestInit) => {
 			const uri = extractUri(url as string)
-			if (uri === 'mocktomata/info') {
+			if (uri === 'api/info') {
 				return new f.Response(
 					json.stringify({
 						url: 'http://localhost:3999',
 						version: '1.0'
 					})
 				)
-			} else if (uri === 'mocktomata/config') {
+			} else if (uri === 'api/config') {
 				return new f.Response(
 					json.stringify({
 						plugins: ['@mocktomata/plugin-fixture-dummy']
 					})
 				)
 				// istanbul ignore next
-			} else if (uri.startsWith('mocktomata/specs/')) {
-				const id = /mocktomata\/specs\/(.*)/.exec(uri)![1]
+			} else if (uri.startsWith('api/specs/')) {
+				const id = /api\/specs\/(.*)/.exec(uri)![1]
 				const { specName } = json.parse(atob(id))
 				if (init && init.method === 'POST') {
 					specs[specName] = json.parse(init.body as string)
