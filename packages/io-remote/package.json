@@ -41,7 +41,6 @@
 		"depcheck": "depcheck",
 		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
 		"nuke": "pnpm run clean && rimraf node_modules",
-		"serve": "mt serve --port 3698",
 		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --reporters=default",
 		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --watch",
 		"verify": "npm-run-all -p lint build coverage -p depcheck",
@@ -54,8 +53,8 @@
 	},
 	"devDependencies": {
 		"@kayahr/jest-electron-runner": "^29.0.0",
-		"@mocktomata/cli": "workspace:^",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
+		"@mocktomata/service": "workspace:^",
 		"assertron": "^11.0.0",
 		"cross-env": "^7.0.3",
 		"depcheck": "^1.4.3",
