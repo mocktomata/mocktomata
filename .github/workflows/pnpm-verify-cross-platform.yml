@@ -32,10 +32,10 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Run tests (Linux)
+      - name: Verify (Linux)
         run: xvfb-run -a pnpm verify
         if: ${{ matrix.os == 'ubuntu-latest' }}
-      - name: Run tests (Windows/Mac)
+      - name: Verify (Windows/Mac)
         run: pnpm verify
         if: ${{ matrix.os != 'ubuntu-latest' }}
 
