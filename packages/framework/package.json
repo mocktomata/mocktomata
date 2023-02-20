@@ -21,15 +21,19 @@
 	"exports": {
 		".": {
 			"types": "./esm/index.d.ts",
-			"import": "./esm/index.js"
+			"import": "./esm/index.js",
+			"default": "./cjs/index.js"
 		},
 		"./nodejs": {
 			"types": "./esm/nodejs/index.d.ts",
-			"import": "./esm/nodejs/index.js"
+			"import": "./esm/nodejs/index.js",
+			"default": "./cjs/nodejs/index.js"
+
 		},
 		"./testing": {
 			"types": "./esm/testing/index.d.ts",
-			"import": "./esm/testing/index.js"
+			"import": "./esm/testing/index.js",
+			"default": "./cjs/testing/index.js"
 		}
 	},
 	"main": "./cjs/index.js",
