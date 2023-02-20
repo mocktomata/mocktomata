@@ -3,7 +3,7 @@ import dummy from '@mocktomata/plugin-fixture-dummy'
 import { a } from 'assertron'
 import fetch from 'cross-fetch'
 import { createStandardLogForTest } from 'standard-log'
-import { ServerNotAvailable } from './errors.js'
+import { ServiceNotAvailable } from './errors.js'
 import { Context, createIOInternal } from './io.internal.js'
 import { newMemoryContext } from './io.mock.js'
 import { importModule } from './platform.js'
@@ -28,9 +28,9 @@ beforeAll(async () => {
 	io = await createIOInternal({ fetch, importModule }, { url, log })
 })
 
-it(`throws ${ServerNotAvailable.name} when service is down`, async () => {
+it(`throws ${ServiceNotAvailable.name} when service is down`, async () => {
 	const { io } = await setupIOTest()
-	a.throws(io.loadConfig(), ServerNotAvailable)
+	a.throws(io.loadConfig(), ServiceNotAvailable)
 })
 
 describe(`loadConfig()`, () => {

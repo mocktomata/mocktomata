@@ -1,5 +1,5 @@
 import { a } from 'assertron'
-import { ServerNotAvailable } from './errors.js'
+import { ServiceNotAvailable } from './errors.js'
 import { getServerInfo } from './server_info.js'
 
 it('throws when server is not available', async () => {
@@ -8,7 +8,7 @@ it('throws when server is not available', async () => {
 			{ fetch: () => Promise.reject({ code: 'ECONNREFUSED' }) },
 			{ url: 'http://localhost:4321' }
 		),
-		ServerNotAvailable
+		ServiceNotAvailable
 	)
 })
 
