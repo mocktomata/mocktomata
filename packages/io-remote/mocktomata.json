@@ -1,0 +1,5 @@
+{
+	"plugins": [
+		"@mocktomata/plugin-fixture-dummy"
+	]
+}

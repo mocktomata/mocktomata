@@ -1,6 +1,5 @@
 import { a } from 'assertron'
 import { EventEmitter } from 'events'
-import { setImmediate } from 'timers'
 import type { AnyFunction } from 'type-plus'
 import {
 	ActionMismatch,
