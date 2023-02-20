@@ -1,9 +1,13 @@
-import base from '../../.jest/jest.electron.render.js'
+import preset from '@repobuddy/jest/presets/electron-ts-watch'
+import deepmerge from 'deepmerge'
+import localPreset from '../../.jest/preset.js'
 
 /** @type {import('jest').Config} */
-export default {
-	...base,
-	displayName: 'io-remote',
+export default deepmerge(preset, {
+	displayName: 'io-remote:electron-renderer',
+	moduleNameMapper: localPreset.moduleNameMapper,
+	runner: '@kayahr/jest-electron-runner',
+	testEnvironment: '@kayahr/jest-electron-runner/environment',
 	globalSetup: './scripts/start_server.cjs',
 	globalTeardown: './scripts/stop_server.cjs'
-}
+})
