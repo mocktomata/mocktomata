@@ -36,7 +36,10 @@ export async function start(options?: start.Options) {
 	// istanbul ignore next
 	const port = options?.port ?? config.server?.port ?? 80
 	const context = { config, repo, cwd }
-	const server = new Server({ port, routes: { cors: true } })
+	const server = new Server({
+		port,
+		routes: { cors: true }
+	})
 	await server.start()
 	server.route([
 		infoRoute(context, server),
@@ -60,7 +63,7 @@ type Context = {
 function infoRoute(ctx: Context, server: Server): ServerRoute {
 	return {
 		method: 'GET',
-		path: '/mocktomata/info',
+		path: '/api/info',
 		handler: async request => {
 			const pjson = json.parse(readFileSync(resolve('./package.json'), 'utf-8'))
 			return json.stringify({
@@ -76,7 +79,7 @@ function infoRoute(ctx: Context, server: Server): ServerRoute {
 function configRoute({ repo }: Context): ServerRoute {
 	return {
 		method: 'GET',
-		path: '/mocktomata/config',
+		path: '/api/config',
 		options: { cors: true },
 		handler: async () => {
 			const config = await repo.loadConfig()
@@ -88,7 +91,7 @@ function configRoute({ repo }: Context): ServerRoute {
 function specGetRoute({ repo }: Context): ServerRoute {
 	return {
 		method: 'GET',
-		path: '/mocktomata/specs/{id}',
+		path: '/api/specs/{id}',
 		handler: async request => {
 			try {
 				const { specName, specRelativePath } = json.parse(atob(request.params.id))
@@ -103,7 +106,7 @@ function specGetRoute({ repo }: Context): ServerRoute {
 function specPostRoute({ repo }: Context): ServerRoute {
 	return {
 		method: 'POST',
-		path: '/mocktomata/specs/{id}',
+		path: '/api/specs/{id}',
 		handler: async (request, h) => {
 			const { specName, specRelativePath } = json.parse(atob(request.params.id))
 			await repo.writeSpec(specName, specRelativePath, json.parse(request.payload as string))
@@ -115,10 +118,10 @@ function specPostRoute({ repo }: Context): ServerRoute {
 /**
  * If request is calling from local, return as localhost.
  */
-// istanbul ignore next
 function getReflectiveUrl(requestInfo: RequestInfo, serverInfo: ServerInfo) {
 	if (requestInfo.remoteAddress === '127.0.0.1') {
 		return `${serverInfo.protocol}://localhost:${serverInfo.port}`
 	}
+	// istanbul ignore next
 	return serverInfo.uri
 }
