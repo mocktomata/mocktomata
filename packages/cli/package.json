@@ -53,11 +53,13 @@
 		"@mocktomata/service": "workspace:^",
 		"chalk": "^5.1.2",
 		"clibuilder": "^8.0.10",
+		"uni-require": "^1.0.0",
 		"validate.js": "^0.13.1"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.10",
 		"@repobuddy/jest": "^3.0.1",
+		"@types/node": "^16",
 		"ansi-colors": "^4.1.1",
 		"deepmerge": "^4.2.2",
 		"depcheck": "^1.4.3",

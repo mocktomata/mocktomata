@@ -1,9 +1,8 @@
 {
 	"extends": "../../.tsc/tsconfig.settings.json",
 	"compilerOptions": {
-		"lib": ["DOM"],
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"module": "Node16",
+		"moduleResolution": "Node16",
 		"outDir": "lib",
 		"rootDir": "ts",
 		"target": "ES2020"
