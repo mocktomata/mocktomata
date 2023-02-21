@@ -28,7 +28,7 @@ export async function loadConfig({ io, configurator, log }: Mocktomata.Context) 
 	return { config }
 }
 
-function buildConfig(input: Config.Input): Config {
+export function buildConfig(input: Config.Input, _input2?: Config.Input): Config {
 	return {
 		emitLog: input.emitLog,
 		logLevel: resolveLogLevel(input.logLevel),
