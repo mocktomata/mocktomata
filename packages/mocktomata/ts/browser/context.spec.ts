@@ -8,6 +8,13 @@ describe(`getConfig()`, () => {
 		await getContext().asyncContext.get()
 		a.throws(config, CannotConfigAfterUsed)
 	})
+
+	it('can configure url', async () => {
+		const { config, getContext } = newContext()
+		config({ url: 'http://localhost:3699' })
+		const r = await getContext().asyncContext.get()
+		expect(r.config.ecmaVersion).toEqual(`es2015`)
+	})
 })
 
 describe(`getContext()`, () => {

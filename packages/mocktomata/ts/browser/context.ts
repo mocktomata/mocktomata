@@ -46,12 +46,6 @@ export function newContext() {
 			if (config) throw new CannotConfigAfterUsed()
 			configOptions = requiredDeep(configOptions, options)
 		},
-		/**
-		 * getting the config for inspection
-		 */
-		getConfig() {
-			return config
-		},
 		getContext() {
 			const stackFrameContext = createStackFrameContext(configOptions.url)
 			return {
