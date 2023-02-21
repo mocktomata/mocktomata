@@ -1,5 +1,7 @@
 const { globalSetup } = require('@mocktomata/service/testing')
 
 module.exports = async function () {
-	await globalSetup(3700)
+	await globalSetup({
+		cwd: './fixtures/service'
+	})
 }

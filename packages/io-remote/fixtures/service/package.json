@@ -1,0 +1,5 @@
+{
+  "devDependencies": {
+    "@mocktomata/plugin-fixture-dummy": "workspace:^"
+  }
+}

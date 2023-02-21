@@ -1,9 +1,14 @@
-import preset from '@repobuddy/jest/presets/ts-watch'
-import deepmerge from 'deepmerge'
-import localPreset from '../../.jest/preset.js'
-
+import { watchPlugins } from '@repobuddy/jest'
 /** @type {import('jest').Config} */
-export default deepmerge(preset, {
-	moduleNameMapper: localPreset.moduleNameMapper,
-	displayName: 'mocktomata'
-})
+const config = {
+	projects: [
+		'./jest.electron.mjs',
+		'./jest.jsdom.mjs',
+		'./jest.nodejs.mjs'
+	],
+	globalSetup: './scripts/jest/global_setup.cjs',
+	globalTeardown: './scripts/jest/global_teardown.cjs',
+	watchPlugins
+}
+
+export default config
