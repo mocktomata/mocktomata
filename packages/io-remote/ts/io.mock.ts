@@ -3,7 +3,7 @@ import * as f from 'cross-fetch'
 import type { Context } from './io.internal.js'
 import type { ServerInfo } from './server_info.js'
 
-export function newMemoryContext({ url } = { url: 'http://localhost:3699' }): Context {
+export function newMemoryContext({ url } = { url: 'http://localhost:3789' }): Context {
 	const store = {
 		info: {
 			name: 'mocktomata',

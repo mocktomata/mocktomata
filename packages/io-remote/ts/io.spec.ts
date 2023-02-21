@@ -11,7 +11,7 @@ import { importModule } from './platform.js'
 const importModuleStub = async () => {
 	throw new Error('not supported')
 }
-const url = 'http://localhost:3699'
+const url = 'http://localhost:3789'
 
 async function setupIOTest(context: Context = { fetch, importModule: importModuleStub }) {
 	const sl = createStandardLogForTest()
