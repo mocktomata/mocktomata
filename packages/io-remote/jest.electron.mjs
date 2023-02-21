@@ -4,8 +4,8 @@ import localPreset from '../../.jest/preset.js'
 
 /** @type {import('jest').Config} */
 export default deepmerge(preset, {
-	displayName: 'io-remote:electron-renderer',
+	displayName: 'mocktomata:electron-renderer',
 	moduleNameMapper: localPreset.moduleNameMapper,
-	globalSetup: './scripts/start_server.cjs',
-	globalTeardown: './scripts/stop_server.cjs'
+	globalSetup: './scripts/jest/global_setup.cjs',
+	globalTeardown: './scripts/jest/global_teardown.cjs'
 })
