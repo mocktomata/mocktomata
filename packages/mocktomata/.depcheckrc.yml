@@ -6,6 +6,7 @@ ignores:
   - '@repobuddy/jest'
   - deepmerge
   - jest-*
+  - karma-*
   - param-case
   - pascal-case
   - source-map-loader
