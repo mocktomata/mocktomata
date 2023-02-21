@@ -1,11 +1,16 @@
-import { createConfigurator, type Mocktomata } from '@mocktomata/framework'
+import {
+	buildConfig,
+	CannotConfigAfterUsed,
+	Config,
+	createConfigurator,
+	type Mocktomata
+} from '@mocktomata/framework'
 import { createStackFrameContext } from '@mocktomata/framework/nodejs'
 import { createIO } from '@mocktomata/io-remote'
 import { AsyncContext } from 'async-fp'
 import { createStandardLog, type Logger } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import { requiredDeep, RequiredPick } from 'type-plus'
-import { NotConfigured } from './errors.js'
 
 export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
@@ -35,18 +40,29 @@ export type ConfigOptions = {
 
 export function newContext() {
 	let configOptions: RequiredPick<ConfigOptions, 'url'> = { url: 'http://localhost:3698' }
+	let config: Config
 	return {
 		config(options: ConfigOptions) {
+			if (config) throw new CannotConfigAfterUsed()
 			configOptions = requiredDeep(configOptions, options)
 		},
+		/**
+		 * getting the config for inspection
+		 */
+		getConfig() {
+			return config
+		},
 		getContext() {
-			if (!configOptions) throw new NotConfigured()
-
-			const context = {
-				...createStackFrameContext(configOptions.url)
+			const stackFrameContext = createStackFrameContext(configOptions.url)
+			return {
+				asyncContext: new AsyncContext(async () => {
+					const log = createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
+					const io = await createIO({ url: configOptions.url, log })
+					config = buildConfig(await io.loadConfig())
+					return { io, config, log, ...stackFrameContext }
+				}),
+				...stackFrameContext
 			}
-
-			return context
 		}
 	}
 }

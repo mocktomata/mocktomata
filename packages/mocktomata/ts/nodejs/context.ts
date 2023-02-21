@@ -1,3 +1,4 @@
+import { buildConfig, Config } from '@mocktomata/framework'
 import { createConfigurator, type Mocktomata } from '@mocktomata/framework'
 import { createStackFrameContext } from '@mocktomata/framework/nodejs'
 import { createIO } from '@mocktomata/nodejs'
@@ -19,4 +20,33 @@ export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	})
 
 	return { context, config: configurator.config, ...stackContext }
+}
+
+export function newContext() {
+	let configOptions: Config.Input = {}
+	return {
+		config(options: Config.Input) {
+			configOptions = options
+		},
+		/**
+		 * getting the config for inspection
+		 */
+		getConfig() {
+			return configOptions
+		},
+		getContext() {
+			const cwd = process.cwd()
+			const stackFrameContext = createStackFrameContext(cwd)
+
+			return {
+				asyncContext: new AsyncContext(async () => {
+					const log = createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
+					const io = await createIO({ cwd, log })
+					const config = buildConfig(await io.loadConfig(), configOptions)
+					return { io, config, log, ...stackFrameContext }
+				}),
+				...stackFrameContext
+			}
+		}
+	}
 }
