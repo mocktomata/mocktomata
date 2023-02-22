@@ -41,7 +41,7 @@ export namespace createIncubator {
 
 export function createIncubator({
 	context,
-	stackFrame: stack
+	stackFrame
 }: { context: AsyncContext<createIncubator.Context> } & StackFrameContext) {
 	let ctxValue: { plugins: SpecPlugin.Instance[] } | undefined
 	let pluginInstances: SpecPlugin.Instance[] | undefined
@@ -72,8 +72,8 @@ export function createIncubator({
 		if (!ctxValue) pluginInstances = plugins
 		else ctxValue.plugins.splice(0, ctxValue.plugins.length, ...plugins)
 	}
-	const save = createMocktoFn({ context: ctx, stackFrame: stack }, 'save')
-	const simulate = createMocktoFn({ context: ctx, stackFrame: stack }, 'simulate')
+	const save = createMocktoFn({ context: ctx, stackFrame }, 'save')
+	const simulate = createMocktoFn({ context: ctx, stackFrame }, 'simulate')
 	const sequence: createIncubator.SequenceFn = (...args: any[]) => {
 		const {
 			specName,
@@ -91,7 +91,7 @@ export function createIncubator({
 							specName,
 							options,
 							reporter,
-							specRelativePath: stack.getCallerRelativePath(sequence)
+							specRelativePath: stackFrame.getCallerRelativePath(sequence)
 						})
 						.extend(createLogContext)
 				),
@@ -102,7 +102,7 @@ export function createIncubator({
 							specName,
 							options,
 							reporter,
-							specRelativePath: stack.getCallerRelativePath(sequence)
+							specRelativePath: stackFrame.getCallerRelativePath(sequence)
 						})
 						.extend(createLogContext)
 				)

@@ -62,15 +62,15 @@ export namespace Mockto {
 
 export function createMockto({
 	context,
-	stackFrame: stack
+	stackFrame
 }: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext): Mockto {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
-	return Object.assign(createMocktoFn({ context: ctx, stackFrame: stack }), {
-		live: createMocktoFn({ context: ctx, stackFrame: stack }, 'live'),
-		save: createMocktoFn({ context: ctx, stackFrame: stack }, 'save'),
-		mock: createMocktoFn({ context: ctx, stackFrame: stack }, 'mock'),
-		simulate: createMocktoFn({ context: ctx, stackFrame: stack }, 'simulate'),
+	return Object.assign(createMocktoFn({ context: ctx, stackFrame }), {
+		live: createMocktoFn({ context: ctx, stackFrame }, 'live'),
+		save: createMocktoFn({ context: ctx, stackFrame }, 'save'),
+		mock: createMocktoFn({ context: ctx, stackFrame }, 'mock'),
+		simulate: createMocktoFn({ context: ctx, stackFrame }, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
 			timeTrackers.forEach(t => t.terminate())
@@ -79,7 +79,7 @@ export function createMockto({
 }
 
 export function createMocktoFn(
-	{ context, stackFrame: stack }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
+	{ context, stackFrame }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
 	mode?: Spec.Mode
 ) {
 	const specFn = (...args: any[]) => {
@@ -94,7 +94,7 @@ export function createMocktoFn(
 						options,
 						reporter,
 						specName,
-						specRelativePath: stack.getCallerRelativePath(options.ssf ?? specFn)
+						specRelativePath: stackFrame.getCallerRelativePath(options.ssf ?? specFn)
 					})
 					.extend(getEffectiveSpecModeContext(mode))
 					.extend(createLogContext)

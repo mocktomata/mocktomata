@@ -61,16 +61,16 @@ export function createZucchini(ctx: { context: AsyncContext<Mocktomata.Context> 
 }
 
 function createScenario(
-	{ context, stackFrame: stack }: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext,
+	{ context, stackFrame }: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext,
 	store: Store
 ) {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
-	return Object.assign(createScenarioFn({ context: ctx, stackFrame: stack }, store), {
-		live: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'live'),
-		save: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'save'),
-		mock: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'mock') as Zucchini.MockFn,
-		simulate: createScenarioFn({ context: ctx, stackFrame: stack }, store, 'simulate'),
+	return Object.assign(createScenarioFn({ context: ctx, stackFrame }, store), {
+		live: createScenarioFn({ context: ctx, stackFrame }, store, 'live'),
+		save: createScenarioFn({ context: ctx, stackFrame }, store, 'save'),
+		mock: createScenarioFn({ context: ctx, stackFrame }, store, 'mock') as Zucchini.MockFn,
+		simulate: createScenarioFn({ context: ctx, stackFrame }, store, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
 			timeTrackers.forEach(t => t.terminate())
@@ -79,7 +79,7 @@ function createScenario(
 }
 
 function createScenarioFn(
-	{ context, stackFrame: stack }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
+	{ context, stackFrame }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
 	store: Store,
 	mode?: Spec.Mode
 ): Zucchini.Fn {
@@ -91,7 +91,7 @@ function createScenarioFn(
 				options,
 				reporter,
 				specName,
-				specRelativePath: stack.getCallerRelativePath(options.ssf ?? scenario)
+				specRelativePath: stackFrame.getCallerRelativePath(options.ssf ?? scenario)
 			})
 			.extend(getEffectiveSpecModeContext(mode))
 			.extend(createLogContext)

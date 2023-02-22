@@ -59,15 +59,15 @@ export namespace Komondor {
 
 export function createKomondor({
 	context,
-	stackFrame: stack
+	stackFrame
 }: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext): Komondor {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
-	return Object.assign(createKomondorFn({ context: ctx, stackFrame: stack }), {
-		live: createKomondorFn({ context: ctx, stackFrame: stack }, 'live'),
-		save: createKomondorFn({ context: ctx, stackFrame: stack }, 'save'),
-		mock: createKomondorFn({ context: ctx, stackFrame: stack }, 'mock'),
-		simulate: createKomondorFn({ context: ctx, stackFrame: stack }, 'simulate'),
+	return Object.assign(createKomondorFn({ context: ctx, stackFrame }), {
+		live: createKomondorFn({ context: ctx, stackFrame }, 'live'),
+		save: createKomondorFn({ context: ctx, stackFrame }, 'save'),
+		mock: createKomondorFn({ context: ctx, stackFrame }, 'mock'),
+		simulate: createKomondorFn({ context: ctx, stackFrame }, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
 			timeTrackers.forEach(t => t.terminate())
@@ -76,7 +76,7 @@ export function createKomondor({
 }
 
 function createKomondorFn(
-	{ context, stackFrame: stack }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
+	{ context, stackFrame }: { context: AsyncContext<LoadedContext> } & StackFrameContext,
 	mode?: Spec.Mode
 ) {
 	const komondorFn = function komondorFn(specName: string, options: Spec.Options = { timeout: 3000 }) {
@@ -89,7 +89,7 @@ function createKomondorFn(
 						options,
 						reporter,
 						specName,
-						specRelativePath: stack.getCallerRelativePath(options.ssf ?? komondorFn)
+						specRelativePath: stackFrame.getCallerRelativePath(options.ssf ?? komondorFn)
 					})
 					.extend(getEffectiveSpecModeContext(mode))
 					.extend(createLogContext)
