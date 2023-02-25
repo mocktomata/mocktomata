@@ -1,5 +1,12 @@
 # @mocktomata/cli
 
+## 8.0.5
+
+### Patch Changes
+
+- 5c26ae0f: Update `clibuilder`
+  - @mocktomata/service@8.0.5
+
 ## 8.0.4
 
 ### Patch Changes
