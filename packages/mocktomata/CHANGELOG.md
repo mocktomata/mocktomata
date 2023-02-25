@@ -1,5 +1,14 @@
 # Change Log
 
+## 8.0.5
+
+### Patch Changes
+
+- @mocktomata/framework@8.0.5
+- @mocktomata/nodejs@8.0.5
+- @mocktomata/io-remote@8.0.5
+- @mocktomata/service@8.0.5
+
 ## 8.0.4
 
 ### Patch Changes
