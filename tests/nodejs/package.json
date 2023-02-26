@@ -1,5 +1,5 @@
 {
-	"name": "tests-nodejs",
+	"name": "test-nodejs",
 	"private": true,
 	"description": "test module for mocktomata",
 	"homepage": "https://github.com/mocktomata/mocktomata",
