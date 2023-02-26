@@ -32,6 +32,7 @@
 		"test:jsdom": "turbo run test:jsdom",
 		"test:nodejs": "turbo run test:nodejs",
 		"test-nodejs": "pnpm --filter ./tests/nodejs",
+		"test-solid": "pnpm --filter ./tests/solid",
 		"test": "turbo run test",
 		"verify": "turbo run build lint coverage depcheck size",
 		"version": "changeset version"
