@@ -29,7 +29,7 @@ export const arrayPlugin: SpecPlugin<any[], { meta: string; items: string[] }> =
 		})
 	},
 	createStub({ getProperty, setProperty, resolve }, _, { meta, items }) {
-		const base = Object.assign(items.map(resolve), demetarize(meta))
+		const base = Object.assign(items.map(i => resolve(i)), demetarize(meta))
 		return new Proxy(base, {
 			get(_: any, key: string) {
 				const a = Array.prototype[key as any]

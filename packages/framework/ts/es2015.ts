@@ -1,6 +1,5 @@
 import { arrayPlugin } from './plugins/array/index.js'
 import { classPlugin } from './plugins/class/index.js'
-import { errorPlugin } from './plugins/error/index.js'
 import { functionPlugin } from './plugins/function/index.js'
 import { inertPlugin } from './plugins/inertValue/index.js'
 import { instancePlugin } from './plugins/instance/index.js'
@@ -25,7 +24,6 @@ export const es2015 = {
 		register(instancePlugin)
 		register(classPlugin)
 		register(arrayPlugin)
-		register(errorPlugin)
 		register(promisePlugin)
 	}
 }

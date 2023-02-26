@@ -169,7 +169,7 @@ export namespace SpecPlugin {
 	}
 
 	export namespace StubContext {
-		export type resolve = (value: any) => any
+		export type resolve = (value: any, handler?: () => any) => any
 
 		export type getProperty = (options: getProperty.Options) => any
 		export namespace getProperty {

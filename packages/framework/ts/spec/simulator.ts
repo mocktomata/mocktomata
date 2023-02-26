@@ -80,7 +80,10 @@ export function createSimulator(
 
 				// this is a valid case when user change their implementation to use some new features in JavaScript which existing plugins do not support.
 				// istanbul ignore next
-				if (!plugin) throw new NoSupportedPlugin(subject)
+				if (!plugin) {
+					timeTracker.stop()
+					throw new NoSupportedPlugin(subject)
+				}
 
 				const ref = record.findRef(subject)
 
@@ -155,7 +158,7 @@ function assertPluginsLoaded(plugins: SpecPlugin.Instance[], specName: string, r
 
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
 	return {
-		resolve: value => resolveValue(context, value),
+		resolve: (value, handler) => resolveValue(context, value, handler),
 		getProperty({ key, performer }) {
 			const { record, timeTracker, state } = context
 			performer = performer || getDefaultPerformer(state.ref.profile)

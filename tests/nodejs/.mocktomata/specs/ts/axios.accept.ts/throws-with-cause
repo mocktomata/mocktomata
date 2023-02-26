@@ -1,0 +1,43 @@
+throws with cause
+{
+  "refs": [
+    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":"{\"type\":\"function\",\"name\":\"HttpError\",\"length\":3,\"props\":{}}","parent":"1"}},
+    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":"{\"type\":\"function\",\"name\":\"ModuleError\",\"length\":3,\"props\":{}}","parent":"2"}},
+    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":"{\"type\":\"function\",\"name\":\"IsoError\",\"length\":2,\"props\":{}}","parent":"3"}},
+    {"plugin":"@mocktomata/class","profile":"target","meta":{"meta":"{\"type\":\"function\",\"name\":\"Error\",\"length\":1,\"props\":{\"stackTraceLimit\":100}}","parent":"4"}},
+    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"\",\"length\":0,\"props\":{}}"},
+    {"plugin":"@mocktomata/function","profile":"target","meta":"{\"type\":\"function\",\"name\":\"wrap\",\"length\":0,\"props\":{\"VERSION\":\"1.3.3\"}}"},
+    {"plugin":"@mocktomata/function","profile":"target","source":{"type":"result","id":0},"meta":"{\"type\":\"function\",\"name\":\"wrap\",\"length\":0,\"props\":{}}"},
+    {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":"http://api.mathjs.org/v4/?expr=1%2B2"},
+    {"plugin":"@mocktomata/promise","profile":"output","source":{"type":"result","id":2},"meta":"rejected-promise"},
+    {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":4}},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":4,"key":1},"meta":"{\"type\":\"function\",\"name\":\"\",\"length\":1,\"props\":{}}"},
+    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"argument","id":5,"key":0},"meta":{"base":"{\"type\":\"object\",\"props\":{\"name\":\"FailedDependency\",\"module\":\"iso-error-http\",\"status\":424}}","classConstructor":"12","functionCalls":[]}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":"{\"type\":\"function\",\"name\":\"FailedDependency\",\"length\":2,\"props\":{}}","parent":"0"}},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":8},"meta":"fail?"},
+    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"result","id":12},"meta":{"base":"{\"type\":\"object\",\"props\":{\"name\":\"NotFound\",\"module\":\"google-cloud-api\",\"code\":5}}","classConstructor":"15","functionCalls":[]}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":"{\"type\":\"function\",\"name\":\"NotFound\",\"length\":1,\"props\":{}}","parent":"16"}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":"{\"type\":\"function\",\"name\":\"GoogleCloudApiError\",\"length\":1,\"props\":{}}","parent":"1"}},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":16},"meta":"not found"}
+  ],
+  "actions": [
+    {"type":"get","refId":"5","performer":"user","tick":0,"key":"get"},
+    {"type":"return","actionId":0,"tick":2,"payload":"6"},
+    {"type":"invoke","refId":"6","performer":"user","thisArg":"5","payload":["7"],"tick":2},
+    {"type":"return","actionId":2,"tick":15,"payload":"8"},
+    {"type":"invoke","refId":"8","performer":"plugin","site":"then","thisArg":"9","payload":["9","10"],"tick":4},
+    {"type":"invoke","refId":"10","performer":"mockto","thisArg":"9","payload":["11"],"tick":3},
+    {"type":"return","actionId":5,"tick":22,"payload":"9"},
+    {"type":"return","actionId":4,"tick":1,"payload":"9"},
+    {"type":"get","refId":"11","performer":"user","tick":1,"key":"message"},
+    {"type":"return","actionId":8,"tick":2,"payload":"13"},
+    {"type":"get","refId":"11","performer":"user","tick":3,"key":"status"},
+    {"type":"return","actionId":10,"tick":1,"payload":424},
+    {"type":"get","refId":"11","performer":"user","tick":8,"key":"cause"},
+    {"type":"return","actionId":12,"tick":0,"payload":"14"},
+    {"type":"get","refId":"11","performer":"user","tick":8,"key":"cause"},
+    {"type":"return","actionId":14,"tick":1,"payload":"14"},
+    {"type":"get","refId":"14","performer":"user","tick":0,"key":"message"},
+    {"type":"return","actionId":16,"tick":1,"payload":"17"}
+  ]
+}

@@ -1,7 +1,16 @@
 export {
-	arrayPlugin, bigIntPlugin, classPlugin, errorPlugin, functionPlugin,
-	inertPlugin, instancePlugin, keyedSymbolPlugin, nullPlugin,
-	objectPlugin, promisePlugin, stringPlugin, undefinedPlugin
+	arrayPlugin,
+	bigIntPlugin,
+	classPlugin,
+	functionPlugin,
+	inertPlugin,
+	instancePlugin,
+	keyedSymbolPlugin,
+	nullPlugin,
+	objectPlugin,
+	promisePlugin,
+	stringPlugin,
+	undefinedPlugin
 } from '@mocktomata/framework'
 export type {
 	Komondor,
@@ -13,4 +22,3 @@ export type {
 	Zucchini
 } from '@mocktomata/framework'
 export * from './framework.js'
-
