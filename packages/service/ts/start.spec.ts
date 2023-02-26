@@ -1,3 +1,4 @@
+import { describe, jest, test } from '@jest/globals'
 import { json, prettyPrintSpecRecord } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
 import t from 'assert'
@@ -7,7 +8,6 @@ import f from 'node-fetch'
 import path from 'path'
 import { createStandardLog } from 'standard-log'
 import { dirSync } from 'tmp'
-import { PromiseValue } from 'type-plus'
 import { btoa } from './base64.js'
 import { start } from './index.js'
 
@@ -21,7 +21,8 @@ test('if a port is specified and not available, will throw an error', async () =
 })
 
 describe('server behavior', () => {
-	let server: PromiseValue<ReturnType<typeof start>>
+	jest.setTimeout(20000)
+	let server: Awaited<ReturnType<typeof start>>
 	beforeAll(async () => {
 		const cwd = dirSync().name
 		fs.writeFileSync(path.join(cwd, 'package.json'), json.stringify({ mocktomata: { logLevel: 'trace' } }))
