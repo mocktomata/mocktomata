@@ -53,18 +53,11 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
 		setPlugins(instances: SpecPlugin.Instance[]) {
 			plugins = instances
 		},
-		// getSpecRecord: () => getSpecRecord(refs, actions),
 		getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) =>
 			getRef({ refs, actions }, id) as ValidateReference | undefined,
 		getRefId: (ref: SpecRecord.Reference) => getRefId(refs, ref),
 		getLoadedRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef(loaded, id),
 		getLoadedRefId: (ref: SpecRecord.Reference) => getRefId(loaded.refs, ref),
-		// addRef: (ref: SpecRecord.Reference) => addRef(refs, ref),
-		// claimNextRef: () => {
-		//   const ref = refs.find(r => !r.claimed)
-		//   if (ref) ref.claimed = true
-		//   return ref
-		// },
 		findRef: (value: any) => {
 			let ref = findRefBySubjectOrTestDouble(refs, value)
 			if (ref) return ref

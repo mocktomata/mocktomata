@@ -1,6 +1,8 @@
 import type { SpecPlugin } from '../../spec_plugin/types.js'
 
-// istanbul ignore next
+/**
+ * Inert value are values added to `ignoreMismatch()`
+ */
 export const inertPlugin: SpecPlugin<any> = {
 	name: 'inert',
 	support: () => false,
