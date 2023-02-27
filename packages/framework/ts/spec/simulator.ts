@@ -4,7 +4,7 @@ import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec_plugin/index.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import { getDefaultPerformer, type SpecRecord } from '../spec_record/index.js'
-import type { StackFrameContext } from '../stack_frame.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
 import { createTimeTracker, TimeTracker } from '../time_trackter/index.js'
 import {
 	getArgumentContext,

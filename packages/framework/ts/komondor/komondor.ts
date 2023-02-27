@@ -6,7 +6,7 @@ import { createLogContext } from '../log/log_context.js'
 import { createSpecObject, getEffectiveSpecModeContext, type Spec } from '../spec/index.js'
 import type { MockSpec } from '../spec/types.js'
 import { loadPlugins } from '../spec_plugin/index.js'
-import { StackFrameContext } from '../stack_frame.js'
+import { StackFrameContext } from '../stack_frame.types.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
 
