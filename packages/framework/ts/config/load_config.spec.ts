@@ -294,40 +294,40 @@ describe(`${loadConfig.name}()`, () => {
 
 describe(`config()`, () => {
 	it('throws CannotConfigAfterUsed after mockto is used', async () => {
-		const { context, config, stackFrame: stack } = createTestContext()
-		const mockto = createMockto({ context, stackFrame: stack })
+		const { context, config, stackFrame } = createTestContext()
+		const mockto = createMockto({ context, stackFrame })
 		const spec = await new Promise<Spec>(a => mockto('some test', (_, spec) => a(spec)))
 		await spec({})
 		a.throws(() => config({}), CannotConfigAfterUsed)
 	})
 
 	it('throws CannotConfigAfterUsed after komondor is used', async () => {
-		const { context, config, stackFrame: stack } = createTestContext()
-		const kd = createKomondor({ context, stackFrame: stack })
+		const { context, config, stackFrame } = createTestContext()
+		const kd = createKomondor({ context, stackFrame })
 		const spec = kd('some test')
 		await spec({})
 		a.throws(() => config({}), CannotConfigAfterUsed)
 	})
 
 	it('throws CannotConfigAfterUsed after incubator is used', async () => {
-		const { context, config, stackFrame: stack } = createTestContext()
-		const incubator = createIncubator({ context, stackFrame: stack })
+		const { context, config, stackFrame } = createTestContext()
+		const incubator = createIncubator({ context, stackFrame })
 		const save = await new Promise<Spec>(a => incubator.sequence('some test', (_, { save }) => a(save)))
 		await save({})
 		a.throws(() => config({}), CannotConfigAfterUsed)
 	})
 
 	it('throws CannotConfigAfterUsed after zucchini is used', async () => {
-		const { context, config, stackFrame: stack } = createTestContext()
-		const { scenario } = createZucchini({ context, stackFrame: stack })
+		const { context, config, stackFrame } = createTestContext()
+		const { scenario } = createZucchini({ context, stackFrame })
 		const { spec } = scenario('some test')
 		await spec({})
 		a.throws(() => config({}), CannotConfigAfterUsed)
 	})
 
 	it('will not throw for defineStep', async () => {
-		const { context, config, stackFrame: stack } = createTestContext()
-		const { defineStep } = createZucchini({ context, stackFrame: stack })
+		const { context, config, stackFrame } = createTestContext()
+		const { defineStep } = createZucchini({ context, stackFrame })
 		defineStep('singing', async ctx => {
 			await ctx.spec({})
 		})
@@ -335,12 +335,12 @@ describe(`config()`, () => {
 	})
 
 	it('overrides log level', async () => {
-		const { context, config, stackFrame: stack } = createTestContext({
+		const { context, config, stackFrame } = createTestContext({
 			config: {
 				logLevel: 'trace'
 			}
 		})
-		const kd = createKomondor({ context, stackFrame: stack })
+		const kd = createKomondor({ context, stackFrame })
 		config({ logLevel: 'error' })
 
 		const spec = kd('overrides log level')
