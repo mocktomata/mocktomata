@@ -24,7 +24,7 @@ test('simulate without plugin install throws', () => {
 	const io = createTestIO()
 	const sl = createStandardLogForTest()
 	const log = sl.getLogger('mocktomata')
-	const { stackFrame: stack } = createStackFrameContext(process.cwd())
+	const { stackFrame } = createStackFrameContext(process.cwd())
 	const context = new AsyncContext<createSpec.Context>({
 		io,
 		log,
@@ -36,7 +36,7 @@ test('simulate without plugin install throws', () => {
 		plugins: [],
 		timeTrackers: [],
 		maskCriteria: [],
-		stackFrame: stack
+		stackFrame
 	})
 	const simulator = createSimulator(
 		context,
