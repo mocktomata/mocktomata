@@ -17,6 +17,10 @@ export class ChildOfDummy extends Dummy {
 	}
 }
 
+export function increment(v: number) {
+	return v + 1
+}
+
 export const simpleCallback = {
 	increment(remote: AnyFunction, value: number) {
 		return new Promise<number>((a, r) => {

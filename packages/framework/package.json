@@ -64,6 +64,7 @@
 	"dependencies": {
 		"@cucumber/cucumber-expressions": "^16.0.0",
 		"async-fp": "^8.0.2",
+		"error-stack-parser": "^2.1.4",
 		"iso-error": "^6.0.0",
 		"json-bigint": "^1.0.0",
 		"stack-utils": "^2.0.3",
