@@ -8,7 +8,6 @@ export function createStackFrameContext(base: string): StackFrameContext {
 	return {
 		stackFrame: {
 			getCallerRelativePath(subject: AnyFunction) {
-				Error.captureStackTrace
 				const callsite = stackUtil.at(subject)
 				const raw = callsite.file || callsite.evalOrigin
 				if (!raw) {
