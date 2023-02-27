@@ -8,7 +8,7 @@ import { createMocktoFn } from '../mockto/mockto.js'
 import { resolveMocktoFnArgs } from '../mockto/mockto.utils.js'
 import { createSpecObject, Spec } from '../spec/index.js'
 import { loadPlugins, SpecPlugin } from '../spec_plugin/index.js'
-import { StackFrameContext } from '../stack_frame.js'
+import { StackFrameContext } from '../stack_frame.types.js'
 import { newMemoryIO } from '../testing/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 

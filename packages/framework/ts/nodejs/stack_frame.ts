@@ -1,7 +1,7 @@
 import StackUtils from 'stack-utils'
 import type { AnyFunction } from 'type-plus'
 import { MocktomataError } from '../errors.js'
-import type { StackFrameContext } from '../stack_frame.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
 
 export function createStackFrameContext(base: string): StackFrameContext {
 	const stackUtil = new StackUtils({ cwd: base })
