@@ -1,7 +1,7 @@
 import { a } from 'assertron'
 import { AsyncContext } from 'async-fp'
 import { createStandardLogForTest } from 'standard-log'
-import { createTestContext, createTestIO, ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'
+import { createTestContext, newMemoryIO, ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'
 import { loadPlugins } from '../spec_plugin/index.js'
 import { createStackFrameContext } from '../nodejs/index.js'
 import { initTimeTrackers } from '../time_trackter/time_tracker.js'
@@ -21,7 +21,7 @@ test('create not expected stub throws', async () => {
 })
 
 test('simulate without plugin install throws', () => {
-	const io = createTestIO()
+	const io = newMemoryIO()
 	const sl = createStandardLogForTest()
 	const log = sl.getLogger('mocktomata')
 	const { stackFrame } = createStackFrameContext(process.cwd())

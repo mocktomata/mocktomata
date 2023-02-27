@@ -4,9 +4,9 @@ import { createColorLogReporter } from 'standard-log-color'
 import { requiredDeep } from 'type-plus'
 import { createConfigurator, resolveLogLevel } from '../config/index.js'
 import { createStackFrameContext } from '../nodejs/index.js'
-import { createTestIO } from './test_io.js'
+import { newMemoryIO } from '../memory_io.js'
 export namespace createTestContext {
-	export type Options = createTestIO.Options
+	export type Options = newMemoryIO.Options
 }
 
 export function createTestContext(options?: createTestContext.Options) {
@@ -19,7 +19,7 @@ export function createTestContext(options?: createTestContext.Options) {
 		},
 		options
 	)
-	const io = createTestIO(o)
+	const io = newMemoryIO(o)
 	const reporter = createMemoryLogReporter()
 	const reporters = o?.config?.emitLog ? [reporter, createColorLogReporter()] : [reporter]
 	const logLevel = resolveLogLevel(o.config.logLevel)

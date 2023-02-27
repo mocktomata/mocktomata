@@ -9,11 +9,11 @@ import { resolveMocktoFnArgs } from '../mockto/mockto.utils.js'
 import { createSpecObject, Spec } from '../spec/index.js'
 import { loadPlugins, SpecPlugin } from '../spec_plugin/index.js'
 import { StackFrameContext } from '../stack_frame.js'
-import { createTestIO } from '../testing/index.js'
+import { newMemoryIO } from '../testing/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 
 export namespace createIncubator {
-	export type Context = Log.Context & { io: createTestIO.TestIO } & Config.Context & StackFrameContext
+	export type Context = Log.Context & { io: newMemoryIO.TestIO } & Config.Context & StackFrameContext
 	export type IncubatorFn = {
 		/**
 		 * Creates an automatic incubator spec.
@@ -62,7 +62,7 @@ export function createIncubator({
 					// istanbul ignore next
 					if (typeof p === 'string') return p
 					const [name, activate] = p
-					io.addPluginModule(name, { activate })
+					io.addPlugin(name, { activate })
 					return name
 				})
 				return { config: { ...config, plugins } }

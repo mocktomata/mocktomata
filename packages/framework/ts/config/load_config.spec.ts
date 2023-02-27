@@ -5,7 +5,7 @@ import {
 	createKomondor,
 	createMockto,
 	createTestContext,
-	createTestIO,
+	newMemoryIO,
 	createZucchini,
 	Spec
 } from '../index.js'
@@ -15,7 +15,7 @@ describe(`${loadConfig.name}()`, () => {
 	async function testLoadConfig(options?: createTestContext.Options) {
 		// const { context } = createTestContext(options)
 		// return (await context.get()).config
-		const io = createTestIO(options)
+		const io = newMemoryIO(options)
 		const configurator = createConfigurator()
 		const sl = createStandardLogForTest()
 		const log = sl.getLogger('test')
