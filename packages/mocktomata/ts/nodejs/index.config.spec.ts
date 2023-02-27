@@ -1,4 +1,4 @@
-import { createMockto, createTestIO, type Mockto, type Spec } from '@mocktomata/framework'
+import { createMockto, newMemoryIO, type Mockto, type Spec } from '@mocktomata/framework'
 import {
 	MOCKTOMATA_FILE_PATH_FILTER,
 	MOCKTOMATA_LOG_LEVEL,
@@ -36,7 +36,7 @@ describe('config with config()', () => {
 	afterEach(() => mockto?.cleanup())
 
 	test('override to live mode', async () => {
-		const { config, context, stackFrame } = createContext({ io: createTestIO() })
+		const { config, context, stackFrame } = createContext({ io: newMemoryIO() })
 		mockto = createMockto({ context, stackFrame })
 		config({ overrideMode: 'live' })
 		const spec = await new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
@@ -49,7 +49,7 @@ describe('config with config()', () => {
 	})
 
 	test('override to save mode', async () => {
-		const { config, context, stackFrame } = createContext({ io: createTestIO() })
+		const { config, context, stackFrame } = createContext({ io: newMemoryIO() })
 		mockto = createMockto({ context, stackFrame })
 		config({ overrideMode: 'save' })
 		await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec))).then(async spec => {
@@ -125,7 +125,7 @@ describe('config with env', () => {
 	test('not matching file filler will not override mode', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'something else'
-		mockto = createMockto(createContext({ io: createTestIO() }))
+		mockto = createMockto(createContext({ io: newMemoryIO() }))
 		return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec))).then(async spec => {
 			await spec({})
 			expect(spec.mode).toBe('save')
@@ -150,7 +150,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'still'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'something else'
-		mockto = createMockto(createContext({ io: createTestIO() }))
+		mockto = createMockto(createContext({ io: newMemoryIO() }))
 		return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec))).then(async spec => {
 			await spec({})
 			expect(spec.mode).toBe('save')
@@ -161,7 +161,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'not match'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
-		mockto = createMockto(createContext({ io: createTestIO() }))
+		mockto = createMockto(createContext({ io: newMemoryIO() }))
 		return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec))).then(async spec => {
 			await spec({})
 			expect(spec.mode).toBe('save')

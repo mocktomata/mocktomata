@@ -1,23 +1,22 @@
 import { requiredDeep } from 'type-plus'
-import type { Config } from '../config/types.js'
-import { es2015 } from '../es2015.js'
-import type { SpecPlugin } from '../spec_plugin/types.js'
-import { SpecNotFound } from '../spec/index.js'
-import type { Mocktomata } from '../types.js'
-import { json } from '../json.js'
+import type { Config } from './config/types.js'
+import { es2015 } from './es2015.js'
+import type { SpecPlugin } from './spec_plugin/types.js'
+import { SpecNotFound } from './spec/index.js'
+import type { Mocktomata } from './types.js'
+import { json } from './json.js'
 
-export namespace createTestIO {
+export namespace newMemoryIO {
 	export type Options = {
 		modules?: Record<string, SpecPlugin.Module>
 		config?: Config.Input
 	}
 	export type TestIO = {
-		getAllSpecs(): IterableIterator<[string, string]>
-		addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module): void
+		addPlugin(moduleName: string, pluginModule: SpecPlugin.Module): void
 	} & Mocktomata.IO
 }
 
-export function createTestIO(options?: createTestIO.Options): createTestIO.TestIO {
+export function newMemoryIO(options?: newMemoryIO.Options): newMemoryIO.TestIO {
 	const specStore = new Map<string, string>()
 	const { config, modules } = requiredDeep(
 		{
@@ -27,10 +26,6 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
 		options
 	)
 	return {
-		// istanbul ignore next
-		getAllSpecs() {
-			return specStore.entries()
-		},
 		async loadConfig() {
 			return config
 		},
@@ -42,7 +37,7 @@ export function createTestIO(options?: createTestIO.Options): createTestIO.TestI
 		async writeSpec(specName, _specRelativePath, record) {
 			specStore.set(specName, json.stringify(record))
 		},
-		addPluginModule(moduleName: string, pluginModule: SpecPlugin.Module) {
+		addPlugin(moduleName: string, pluginModule: SpecPlugin.Module) {
 			modules[moduleName] = pluginModule
 		},
 		loadPlugin(name) {
