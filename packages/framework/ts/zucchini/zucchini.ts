@@ -2,7 +2,7 @@ import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumb
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
-import type { LoadedContext } from '../context.js'
+import type { LoadedContext } from '../context.internal.js'
 import { createLogContext } from '../log/log_context.js'
 import { createSpecFns, getEffectiveSpecModeContext } from '../spec/index.js'
 import type { Spec } from '../spec/types.js'

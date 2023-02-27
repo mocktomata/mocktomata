@@ -1,7 +1,7 @@
 import type { AsyncContext } from 'async-fp'
 import { createMemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
-import type { LoadedContext } from '../context.js'
+import type { LoadedContext } from '../context.internal.js'
 import { createLogContext } from '../log/log_context.js'
 import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
