@@ -6,6 +6,7 @@ import { StackFrameContext } from '../stack_frame.types.js'
 import { prettifyAction } from './action.format.js'
 import { maskString } from './masking.js'
 import type { MaskCriterion, Recorder } from './types.internal.js'
+import esp from 'error-stack-parser'
 
 export function logCreateSpy(
 	{ log, maskCriteria }: Log.Context & { maskCriteria: MaskCriterion[] },
@@ -24,7 +25,7 @@ export function logCreateSpy(
 }
 
 export function logAction(
-	{ log, stackFrame }: Log.Context & StackFrameContext,
+	{ log }: Log.Context & StackFrameContext,
 	state: Recorder.State,
 	actionId: SpecRecord.ActionId,
 	action: SpecRecord.Action
@@ -32,7 +33,13 @@ export function logAction(
 	log.on(logLevels.trace, (log, level) => {
 		const msg = prettifyAction(state, actionId, action)
 		if (level >= logLevels.planck) {
-			log(msg, ...stackFrame.getCallSites(3).map(c => `\n${c.toString()}`))
+			log(
+				msg,
+				...esp
+					.parse(new Error())
+					.slice(3)
+					.map(s => `\n${s.functionName} (${s.fileName}:${s.lineNumber}:${s.columnNumber})`)
+			)
 		} else {
 			log(msg)
 		}

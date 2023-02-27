@@ -7,16 +7,6 @@ export function createStackFrameContext(base: string): StackFrameContext {
 	const stackUtil = new StackUtils({ cwd: base })
 	return {
 		stackFrame: {
-			getCallSites(skipFrames = 0) {
-				return stackUtil
-					.capture()
-					.slice(skipFrames + 1)
-					.map(c => c.toString())
-				// return esp
-				// 	.parse(new Error())
-				// 	.slice(skipFrames + 1)
-				// 	.map(s => `${relative(base, s.fileName!)}:${s.columnNumber} (${s.functionName})`)
-			},
 			getCallerRelativePath(subject: AnyFunction) {
 				Error.captureStackTrace
 				const callsite = stackUtil.at(subject)
