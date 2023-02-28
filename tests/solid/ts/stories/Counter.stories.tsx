@@ -13,7 +13,7 @@ export const Default: Story = {
 }
 
 export const KD = () => {
-	const spec = kd('counter', { specRelativePath: 'ts/stories/Counter.stories.tsx' })
+	const spec = kd('counter')
 	const WrappedCounter = lazy(async () => {
 		const fn = await spec(() => Math.round(Math.random() * 100))
 		return {
