@@ -7,14 +7,24 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
+    "sb": "storybook dev -p 6006",
     "serve": "vite preview",
     "start": "vite"
   },
   "dependencies": {
-    "mocktomata": "workspace:^",
     "solid-js": "^1.6.10"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "7.0.0-beta.19",
+    "@storybook/addon-interactions": "7.0.0-beta.19",
+    "@storybook/addon-links": "7.0.0-beta.19",
+    "@storybook/blocks": "7.0.0-beta.19",
+    "@storybook/html": "7.0.0-beta.19",
+    "@storybook/html-vite": "7.0.0-beta.19",
+    "@storybook/testing-library": "0.0.14-next.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "7.0.0-beta.19",
     "typescript": "^4.9.5",
     "vite": "^4.1.1",
     "vite-plugin-solid": "^2.5.0"
