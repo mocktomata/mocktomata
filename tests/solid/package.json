@@ -12,6 +12,7 @@
     "start": "vite"
   },
   "dependencies": {
+    "@mocktomata/cli": "workspace:^",
     "solid-js": "^1.6.10"
   },
   "devDependencies": {
@@ -22,6 +23,7 @@
     "@storybook/html": "7.0.0-beta.19",
     "@storybook/html-vite": "7.0.0-beta.19",
     "@storybook/testing-library": "0.0.14-next.1",
+    "mocktomata": "workspace:^",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "storybook": "7.0.0-beta.19",
