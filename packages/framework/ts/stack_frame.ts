@@ -7,7 +7,12 @@ export function createStackFrameContext(base: string): StackFrameContext {
 		stackFrame: {
 			getCallerRelativePath() {
 				const frame = esp.parse(new Error())[2]
-				return stripPath(frame!.fileName!, base)
+				const value = stripPath(frame!.fileName!, base)
+				// for browser, `value` might contains query param, in the form of
+				// ts/stories/Counter.stories.tsx?t=1677570975497
+				// since filepath does not support `?`,
+				// this can be used for both cases.
+				return value.split('?')[0]
 			}
 		}
 	}
