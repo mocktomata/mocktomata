@@ -6,7 +6,7 @@ export function createStackFrameContext(base: string): StackFrameContext {
 	return {
 		stackFrame: {
 			getCallerRelativePath() {
-				const frame = esp.parse(new Error()).at(2)
+				const frame = esp.parse(new Error())[2]
 				return stripPath(frame!.fileName!, base)
 			}
 		}
