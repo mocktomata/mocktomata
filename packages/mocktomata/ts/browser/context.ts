@@ -2,7 +2,9 @@ import {
 	buildConfig,
 	CannotConfigAfterUsed,
 	Config,
-	createConfigurator, createStackFrameContext, type Mocktomata
+	createConfigurator,
+	createStackFrameContext,
+	type Mocktomata
 } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/io-remote'
 import { AsyncContext } from 'async-fp'
@@ -13,7 +15,7 @@ import { requiredDeep, RequiredPick } from 'type-plus'
 export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
 
-	const url= 'http://localhost:3698'
+	const url = location.origin
 	const stackContext = createStackFrameContext(url)
 
 	const context = new AsyncContext(async () => {
