@@ -4,11 +4,10 @@ import { createIncubator } from '../incubator/create_incubator.js'
 import {
 	createKomondor,
 	createMockto,
-	createTestContext,
-	newMemoryIO,
 	createZucchini,
 	Spec
 } from '../index.js'
+import { createTestContext, newMemoryIO } from '../testing/index.js'
 import { CannotConfigAfterUsed, ConfigPropertyInvalid, createConfigurator, loadConfig } from './index.js'
 
 describe(`${loadConfig.name}()`, () => {

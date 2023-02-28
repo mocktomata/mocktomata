@@ -8,7 +8,6 @@ export {
 	DuplicatePlugin,
 	ExtraAction,
 	ExtraReference,
-	incubator,
 	InvalidConfigFormat,
 	MissingAction,
 	MocktomataError,

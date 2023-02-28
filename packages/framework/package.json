@@ -24,10 +24,10 @@
 			"import": "./esm/index.js",
 			"default": "./cjs/index.js"
 		},
-		"./nodejs": {
-			"types": "./esm/nodejs/index.d.ts",
-			"import": "./esm/nodejs/index.js",
-			"default": "./cjs/nodejs/index.js"
+		"./plugins": {
+			"types": "./esm/plugins.d.ts",
+			"import": "./esm/plugins.js",
+			"default": "./cjs/plugins.js"
 		},
 		"./testing": {
 			"types": "./esm/testing/index.d.ts",
@@ -67,7 +67,7 @@
 		"error-stack-parser": "^2.1.4",
 		"iso-error": "^6.0.0",
 		"json-bigint": "^1.0.0",
-		"stack-utils": "^2.0.3",
+		"pathe": "^1.1.0",
 		"standard-log": "^11.5.0",
 		"tersify": "^3.12.0",
 		"type-plus": "^5.0.0"
@@ -77,7 +77,6 @@
 		"@size-limit/file": "^8.2.4",
 		"@size-limit/webpack": "^8.2.4",
 		"@types/json-bigint": "^1.0.1",
-		"@types/stack-utils": "^2.0.1",
 		"assertron": "^11.0.0",
 		"axios": "^1.1.3",
 		"cross-env": "^7.0.3",

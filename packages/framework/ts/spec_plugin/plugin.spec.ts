@@ -1,7 +1,6 @@
 import { a } from 'assertron'
 import { startsWith } from 'satisfier'
 import {
-	createTestContext,
 	DuplicatePlugin,
 	loadConfig,
 	loadPlugins,
@@ -9,6 +8,7 @@ import {
 	PluginNotConforming,
 	PluginNotFound
 } from '../index.js'
+import { createTestContext } from '../testing/index.js'
 import {
 	echoPluginModule,
 	missGetSpyPluginModule,

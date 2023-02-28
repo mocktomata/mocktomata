@@ -1,0 +1,22 @@
+readFileSync in Buffer
+{
+  "refs": [
+    {"plugin":"@mocktomata/object","profile":"target","meta":{"type":"object","props":{"F_OK":0,"R_OK":4,"W_OK":2,"X_OK":1}}},
+    {"plugin":"@mocktomata/function","profile":"target","source":{"type":"result","id":0},"meta":{"type":"function","name":"readFileSync","length":2,"props":{}}},
+    {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":"D:\\code\\mocktomata\\mocktomata\\tests\\nodejs\\.fixtures\\dummy.txt"},
+    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"result","id":2},"meta":{"base":{"type":"object","props":{"0":100,"1":117,"2":109,"3":109,"4":121}},"classConstructor":"4","functionCalls":["toString"]}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"Buffer","length":3,"props":{"poolSize":8192}},"parent":"5"}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"Uint8Array","length":3,"props":{}},"parent":"6"}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"TypedArray","length":0,"props":{}},"parent":"7"}},
+    {"plugin":"@mocktomata/function","profile":"output","meta":{"type":"function","name":"","length":0,"props":{}}},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":4},"meta":"dummy"}
+  ],
+  "actions": [
+    {"type":"get","refId":"0","performer":"user","tick":0,"key":"readFileSync"},
+    {"type":"return","actionId":0,"tick":0,"payload":"1"},
+    {"type":"invoke","refId":"1","performer":"user","thisArg":"0","payload":["2"],"tick":1},
+    {"type":"return","actionId":2,"tick":0,"payload":"3"},
+    {"type":"invoke","refId":"3","performer":"user","site":"toString","thisArg":"3","payload":[],"tick":1},
+    {"type":"return","actionId":4,"tick":0,"payload":"8"}
+  ]
+}

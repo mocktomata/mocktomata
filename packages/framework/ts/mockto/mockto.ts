@@ -94,7 +94,7 @@ export function createMocktoFn(
 						options,
 						reporter,
 						specName,
-						specRelativePath: stackFrame.getCallerRelativePath(options.ssf ?? specFn)
+						specRelativePath: options.specRelativePath ?? stackFrame.getCallerRelativePath()
 					})
 					.extend(getEffectiveSpecModeContext(mode))
 					.extend(createLogContext)

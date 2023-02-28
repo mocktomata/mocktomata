@@ -1,0 +1,16 @@
+readFileSync in string
+{
+  "refs": [
+    {"plugin":"@mocktomata/object","profile":"target","meta":{"type":"object","props":{"F_OK":0,"R_OK":4,"W_OK":2,"X_OK":1}}},
+    {"plugin":"@mocktomata/function","profile":"target","source":{"type":"result","id":0},"meta":{"type":"function","name":"readFileSync","length":2,"props":{}}},
+    {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":"D:\\code\\mocktomata\\mocktomata\\tests\\nodejs\\.fixtures\\dummy.txt"},
+    {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":2,"key":1},"meta":"utf-8"},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":2},"meta":"dummy"}
+  ],
+  "actions": [
+    {"type":"get","refId":"0","performer":"user","tick":0,"key":"readFileSync"},
+    {"type":"return","actionId":0,"tick":0,"payload":"1"},
+    {"type":"invoke","refId":"1","performer":"user","thisArg":"0","payload":["2","3"],"tick":1},
+    {"type":"return","actionId":2,"tick":0,"payload":"4"}
+  ]
+}

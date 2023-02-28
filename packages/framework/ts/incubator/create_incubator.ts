@@ -91,7 +91,7 @@ export function createIncubator({
 							specName,
 							options,
 							reporter,
-							specRelativePath: stackFrame.getCallerRelativePath(sequence)
+							specRelativePath: stackFrame.getCallerRelativePath()
 						})
 						.extend(createLogContext)
 				),
@@ -102,7 +102,7 @@ export function createIncubator({
 							specName,
 							options,
 							reporter,
-							specRelativePath: stackFrame.getCallerRelativePath(sequence)
+							specRelativePath: stackFrame.getCallerRelativePath()
 						})
 						.extend(createLogContext)
 				)

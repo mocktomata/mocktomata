@@ -89,7 +89,7 @@ function createKomondorFn(
 						options,
 						reporter,
 						specName,
-						specRelativePath: stackFrame.getCallerRelativePath(options.ssf ?? komondorFn)
+						specRelativePath: options.specRelativePath ?? stackFrame.getCallerRelativePath()
 					})
 					.extend(getEffectiveSpecModeContext(mode))
 					.extend(createLogContext)

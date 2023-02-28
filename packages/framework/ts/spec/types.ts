@@ -1,5 +1,4 @@
 import type { MemoryLogReporter } from 'standard-log'
-import { AnyFunction } from 'type-plus'
 import type { Log } from '../log/types.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import type { SpecRecord } from '../spec_record/types.js'
@@ -124,17 +123,18 @@ export namespace Spec {
 		 */
 		emitLog?: boolean
 		/**
-		 * Specify the function that invokes `mocktomata` if it is not invoked from the test directly.
+		 * Specify the relative path of of the spec relative to the root of the project.
 		 *
-		 * i.e., the function which calls:
-		 * `mockto(...)`,
-		 * `komondor(...)`
-		 * `scenario(...)`
+		 * If not specify,
+		 * it will be detected automatically based on there the `mockto()`, `komondor()`, or `scenario()` is called.
 		 *
-		 * This is used to get the relative path of the test file.
-		 * Specify this when you create some indirect function in a different file for setting up tests.
+		 * If you create some wrapping functions so that the calls are not made directly,
+		 * specify this so that the spec record will be saved at the correct location.
+		 *
+		 * You can also use this to organize your spec records for specific use cases,
+		 * such as creating different demos.
 		 */
-		ssf?: AnyFunction
+		specRelativePath?: string
 	}
 
 	export type MaskValueFn = (value: string | RegExp, replaceWith?: string | undefined) => void

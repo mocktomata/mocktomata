@@ -1,5 +1,5 @@
 import { createIncubator } from './incubator/create_incubator.js'
-import { createTestContext } from './index.js'
+import { createTestContext } from './testing/index.js'
 
 describe('bigint', () => {
 	const incubator = createIncubator(

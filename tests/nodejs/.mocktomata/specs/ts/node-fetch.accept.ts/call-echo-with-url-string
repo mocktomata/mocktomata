@@ -1,0 +1,40 @@
+call echo with url string
+{
+  "refs": [
+    {"plugin":"@mocktomata/function","profile":"target","meta":{"type":"function","name":"fetch","length":2,"props":{}}},
+    {"plugin":"@mocktomata/undefined","profile":"input","source":{"type":"this","id":0}},
+    {"plugin":"@mocktomata/string","profile":"input","source":{"type":"argument","id":0,"key":0},"meta":"https://postman-echo.com/get?foo=foo1"},
+    {"plugin":"@mocktomata/promise","profile":"output","source":{"type":"result","id":0},"meta":"resolved-promise"},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":2,"key":0},"meta":{"type":"function","name":"","length":1,"props":{}}},
+    {"plugin":"@mocktomata/instance","profile":"output","source":{"type":"argument","id":3,"key":0},"meta":{"base":{"type":"object","props":{"size":0,"timeout":0}},"classConstructor":"6","functionCalls":["json"]}},
+    {"plugin":"@mocktomata/class","profile":"output","meta":{"meta":{"type":"function","name":"Response","length":0,"props":{}},"parent":"7"}},
+    {"plugin":"@mocktomata/function","profile":"output","meta":{"type":"function","name":"","length":0,"props":{}}},
+    {"plugin":"@mocktomata/promise","profile":"output","source":{"type":"result","id":6},"meta":"resolved-promise"},
+    {"plugin":"@mocktomata/function","profile":"input","source":{"type":"argument","id":8,"key":0},"meta":{"type":"function","name":"","length":1,"props":{}}},
+    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"argument","id":9,"key":0},"meta":{"type":"object","props":{"url":"https://postman-echo.com/get?foo=foo1"}}},
+    {"plugin":"@mocktomata/object","profile":"output","source":{"type":"result","id":12},"meta":{"type":"object","props":{"foo":"foo1"}}},
+    {"plugin":"@mocktomata/string","profile":"output","source":{"type":"result","id":14},"meta":"foo1"}
+  ],
+  "actions": [
+    {"type":"invoke","refId":"0","performer":"user","thisArg":"1","payload":["2"],"tick":0},
+    {"type":"return","actionId":0,"tick":38,"payload":"3"},
+    {"type":"invoke","refId":"3","performer":"plugin","site":"then","thisArg":"1","payload":["4"],"tick":410},
+    {"type":"invoke","refId":"4","performer":"mockto","thisArg":"1","payload":["5"],"tick":1},
+    {"type":"return","actionId":3,"tick":0,"payload":"1"},
+    {"type":"return","actionId":2,"tick":0,"payload":"1"},
+    {"type":"invoke","refId":"5","performer":"user","site":"json","thisArg":"5","payload":[],"tick":1},
+    {"type":"return","actionId":6,"tick":0,"payload":"8"},
+    {"type":"invoke","refId":"8","performer":"plugin","site":"then","thisArg":"1","payload":["9"],"tick":2},
+    {"type":"invoke","refId":"9","performer":"mockto","thisArg":"1","payload":["10"],"tick":0},
+    {"type":"return","actionId":9,"tick":0,"payload":"1"},
+    {"type":"return","actionId":8,"tick":0,"payload":"1"},
+    {"type":"get","refId":"10","performer":"user","tick":1,"key":"args"},
+    {"type":"return","actionId":12,"tick":0,"payload":"11"},
+    {"type":"get","refId":"11","performer":"user","tick":1,"key":"foo"},
+    {"type":"return","actionId":14,"tick":0,"payload":"12"},
+    {"type":"get","refId":"11","performer":"user","tick":0,"key":"foo"},
+    {"type":"return","actionId":16,"tick":0,"payload":"12"},
+    {"type":"get","refId":"11","performer":"user","tick":0,"key":"foo"},
+    {"type":"return","actionId":18,"tick":0,"payload":"12"}
+  ]
+}

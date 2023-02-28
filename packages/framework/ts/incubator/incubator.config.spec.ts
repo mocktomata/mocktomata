@@ -1,6 +1,6 @@
-import { incubator } from '../index.js'
 import { activate as decrementActivate } from './decrement_plugin.mock.js'
 import { activate as incrementActivate } from './increment_plugin.mock.js'
+import { incubator } from './index.js'
 
 beforeAll(() =>
 	incubator.config({

@@ -1,8 +1,6 @@
 import { a } from 'assertron'
 import type { AnyFunction } from 'type-plus'
-import {
-	incubator
-} from './index.js'
+import { incubator } from './incubator/index.js'
 import {
 	ChildOfDummy,
 	Dummy,

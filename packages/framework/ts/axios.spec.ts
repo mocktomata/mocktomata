@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { incubator } from './index.js'
+import { incubator } from './incubator/index.js'
 
 describe(`request()`, () => {
 	// ? Should this be valid case? is it possible that the save miss some get prop records?

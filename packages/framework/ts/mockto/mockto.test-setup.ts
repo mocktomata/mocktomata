@@ -6,5 +6,5 @@ export function indirectMockto(
 	options: Spec.Options,
 	handler: Spec.Handler
 ) {
-	return mockto(specName, { ...options, ssf: indirectMockto }, handler)
+	return mockto(specName, options, handler)
 }

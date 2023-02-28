@@ -1,7 +1,8 @@
 import { a } from 'assertron'
 import { IsoError } from 'iso-error'
 import { HttpError } from 'iso-error-web'
-import { ActionMismatch, incubator } from './index.js'
+import { incubator } from './incubator/index.js'
+import { ActionMismatch } from './index.js'
 import { ChildOfDummy, Dummy, WithStaticMethod, WithStaticProp } from './test_artifacts/index.js'
 
 incubator('spec the class first to support instanceof for output instance', (specName, spec) => {

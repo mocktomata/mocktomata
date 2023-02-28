@@ -1,4 +1,4 @@
-import { incubator } from './index.js'
+import { incubator } from './incubator/index.js'
 
 describe('generator', () => {
 	function* foo() {

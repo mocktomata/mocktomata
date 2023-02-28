@@ -91,7 +91,7 @@ function createScenarioFn(
 				options,
 				reporter,
 				specName,
-				specRelativePath: stackFrame.getCallerRelativePath(options.ssf ?? scenario)
+				specRelativePath: options.specRelativePath ?? stackFrame.getCallerRelativePath()
 			})
 			.extend(getEffectiveSpecModeContext(mode))
 			.extend(createLogContext)
