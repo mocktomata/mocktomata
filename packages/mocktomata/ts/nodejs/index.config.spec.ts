@@ -1,4 +1,5 @@
-import { createMockto, newMemoryIO, type Mockto, type Spec } from '@mocktomata/framework'
+import { createMockto, type Mockto, type Spec } from '@mocktomata/framework'
+import { newMemoryIO } from '@mocktomata/framework/testing'
 import {
 	MOCKTOMATA_FILE_PATH_FILTER,
 	MOCKTOMATA_LOG_LEVEL,

@@ -1,4 +1,4 @@
-import { incubator } from './index.js'
+import { incubator } from './incubator/index.js'
 
 incubator.sequence('get value from return object keeps last value', (specName, { save, simulate }) => {
 	function create() {

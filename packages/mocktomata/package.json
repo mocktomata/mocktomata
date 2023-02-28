@@ -37,6 +37,11 @@
 			"types": "./esm/plugins.d.ts",
 			"import": "./esm/plugins.js",
 			"default": "./cjs/plugins.js"
+		},
+		"./testing": {
+			"types": "./esm/testing.d.ts",
+			"import": "./esm/testing.js",
+			"default": "./cjs/testing.js"
 		}
 	},
 	"main": "./cjs/index.js",

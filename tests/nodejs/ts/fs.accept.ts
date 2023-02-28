@@ -1,9 +1,9 @@
-import { incubator } from 'mocktomata'
+import { mockto } from 'mocktomata'
 import { dirname } from 'dirname-filename-esm'
 import * as fs from 'fs'
 import * as path from 'path'
 
-incubator('readFileSync in string', (specName, spec) => {
+mockto('readFileSync in string', (specName, spec) => {
 	test(specName, async () => {
 		const sfs = await spec(fs)
 
@@ -14,7 +14,7 @@ incubator('readFileSync in string', (specName, spec) => {
 	})
 })
 
-incubator('readFileSync in Buffer', (specName, spec) => {
+mockto('readFileSync in Buffer', (specName, spec) => {
 	test(specName, async () => {
 		const sfs = await spec(fs)
 

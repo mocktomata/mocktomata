@@ -1,7 +1,7 @@
-import { incubator } from 'mocktomata'
+import { mockto } from 'mocktomata'
 import fetch from 'node-fetch'
 
-incubator('call echo with url string', (specName, spec) => {
+mockto('call echo with url string', (specName, spec) => {
 	test(specName, async () => {
 		const f = await spec(fetch.default)
 

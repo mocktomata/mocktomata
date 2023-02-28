@@ -1,5 +1,5 @@
 import { logLevels } from 'standard-log'
-import { incubator } from '../index.js'
+import { incubator } from '../incubator/index.js'
 import { increment } from '../test_artifacts/index.js'
 
 incubator('log action with trace', { logLevel: logLevels.planck }, (specName, spec, reporter) => {

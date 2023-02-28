@@ -1,6 +1,6 @@
 import { a } from 'assertron'
 import { logLevels } from 'standard-log'
-import { incubator } from '../index.js'
+import { incubator } from '../incubator/index.js'
 import { createTestAxios } from '../test_artifacts/test_subjects.js'
 import { InvokeMetaMethodAfterSpec } from './errors.js'
 

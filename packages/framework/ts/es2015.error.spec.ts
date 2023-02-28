@@ -3,7 +3,7 @@ import { ModuleError, SerializableConverter } from 'iso-error'
 import plugin, { InvalidArgument } from 'iso-error-google-cloud-api'
 import { BadRequest, HttpError } from 'iso-error-web'
 import { isType } from 'type-plus'
-import { incubator } from './index.js'
+import { incubator } from './incubator/index.js'
 
 describe('error', () => {
 	incubator('set error property', (specName, spec) => {

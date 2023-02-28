@@ -1,11 +1,11 @@
 import { a } from 'assertron'
 import { EventEmitter } from 'events'
 import type { AnyFunction } from 'type-plus'
+import { incubator } from './incubator/index.js'
 import {
 	ActionMismatch,
 	ExtraAction,
 	ExtraReference,
-	incubator,
 	NotSpecable,
 	SpecIDCannotBeEmpty
 } from './index.js'

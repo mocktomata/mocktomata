@@ -1,7 +1,10 @@
 import { a } from 'assertron'
+import { filename } from 'dirname-filename-esm'
+import { relative } from 'node:path'
 import { some } from 'satisfier'
 import { logLevels } from 'standard-log'
-import { createKomondor, createTestContext } from '../index.js'
+import { createKomondor } from '../index.js'
+import { createTestContext } from '../testing/index.js'
 import { indirectKomondor } from './komondor.test-setup.js'
 
 const k = createKomondor(createTestContext())
@@ -52,8 +55,11 @@ describe(`kd.save()`, () => {
 		expect(spec.reporter.logs.length).toBe(1)
 	})
 
-	it('can specify testRelativePath for indirect usage', async () => {
-		const { done, reporter } = indirectKomondor(k, 'indirect usage', { logLevel: Infinity })
+	it('can specify specRelativePath for indirect usage', async () => {
+		const { done, reporter } = indirectKomondor(k, 'indirect usage', {
+			logLevel: Infinity,
+			specRelativePath: relative(process.cwd(), filename(import.meta))
+		})
 		await done()
 		// need to skip `ts/` and `.ts` from match.
 		// jest run from `ts` or `esm` depends on it is `test:watch` vs `test` or `coverage`

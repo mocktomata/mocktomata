@@ -2,10 +2,8 @@ import {
 	buildConfig,
 	CannotConfigAfterUsed,
 	Config,
-	createConfigurator,
-	type Mocktomata
+	createConfigurator, createStackFrameContext, type Mocktomata
 } from '@mocktomata/framework'
-import { createStackFrameContext } from '@mocktomata/framework/nodejs'
 import { createIO } from '@mocktomata/io-remote'
 import { AsyncContext } from 'async-fp'
 import { createStandardLog, type Logger } from 'standard-log'
@@ -15,13 +13,13 @@ import { requiredDeep, RequiredPick } from 'type-plus'
 export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
 
-	const cwd = process.cwd()
-	const stackContext = createStackFrameContext(cwd)
+	const url= 'http://localhost:3698'
+	const stackContext = createStackFrameContext(url)
 
 	const context = new AsyncContext(async () => {
 		const log =
 			options?.log || createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
-		const io = options?.io || (await createIO({ url: 'http://localhost:3698', log }))
+		const io = options?.io || (await createIO({ url, log }))
 		return { io, log, configurator, ...stackContext }
 	})
 

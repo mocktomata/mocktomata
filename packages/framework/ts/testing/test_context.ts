@@ -3,8 +3,9 @@ import { createMemoryLogReporter, createStandardLog, logLevels } from 'standard-
 import { createColorLogReporter } from 'standard-log-color'
 import { requiredDeep } from 'type-plus'
 import { createConfigurator, resolveLogLevel } from '../config/index.js'
-import { createStackFrameContext } from '../nodejs/index.js'
+import { createStackFrameContext } from '../stack_frame.js'
 import { newMemoryIO } from '../memory_io.js'
+
 export namespace createTestContext {
 	export type Options = newMemoryIO.Options
 }

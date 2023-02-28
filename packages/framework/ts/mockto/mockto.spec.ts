@@ -1,7 +1,10 @@
 import { a } from 'assertron'
+import { filename } from 'dirname-filename-esm'
+import { relative } from 'node:path'
 import { logLevels } from 'standard-log'
 import { record } from 'type-plus'
-import { createMockto, createTestContext, SpecNotFound } from '../index.js'
+import { createMockto, SpecNotFound } from '../index.js'
+import { createTestContext } from '../testing/index.js'
 import { indirectMockto } from './mockto.test-setup.js'
 
 const { context, stackFrame } = createTestContext()
@@ -322,11 +325,19 @@ describe('maskValue()', () => {
 
 // The indirect usage is not really like this,
 // but for test this is sufficient
-indirectMockto(mockto, 'indirect usage', { logLevel: Infinity }, async (_, spec, reporter) => {
-	it('can specify testRelativePath for indirect usage', async () => {
-		await spec.done()
-		// need to skip `ts/` and `.ts` from match.
-		// jest run from `ts` or `esm` depends on it is `test:watch` vs `test` or `coverage`
-		expect(reporter.getLogMessage()).toMatch('/mockto/mockto.spec')
-	})
-})
+indirectMockto(
+	mockto,
+	'indirect usage',
+	{
+		logLevel: Infinity,
+		specRelativePath: relative(process.cwd(), filename(import.meta))
+	},
+	async (_, spec, reporter) => {
+		it('can specify specRelativePath for indirect usage', async () => {
+			await spec.done()
+			// need to skip `ts/` and `.ts` from match.
+			// jest run from `ts` or `esm` depends on it is `test:watch` vs `test` or `coverage`
+			expect(reporter.getLogMessage()).toMatch('/mockto/mockto.spec')
+		})
+	}
+)
