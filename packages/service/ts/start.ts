@@ -4,7 +4,7 @@ import { json, Mocktomata, SpecPlugin } from '@mocktomata/framework'
 import { createIO, findInstalledPlugins } from '@mocktomata/nodejs'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { createStandardLog } from 'standard-log'
+import { createStandardLog, Logger } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import { atob } from './base64.js'
 
@@ -35,7 +35,7 @@ export async function start(options?: start.Options) {
 	// can't add test for port 80. will fail during CI
 	// istanbul ignore next
 	const port = options?.port ?? config.server?.port ?? 80
-	const context = { config, repo, cwd }
+	const context = { config, repo, cwd, log }
 	const server = new Server({
 		port,
 		routes: { cors: true }
@@ -58,19 +58,21 @@ export async function start(options?: start.Options) {
 type Context = {
 	repo: Mocktomata.IO
 	cwd: string
+	log: Logger
 }
 
-function infoRoute(ctx: Context, server: Server): ServerRoute {
+function infoRoute({ cwd, log }: Context, server: Server): ServerRoute {
 	return {
 		method: 'GET',
 		path: '/api/info',
 		handler: async request => {
+			log.info('/api/info called')
 			const pjson = json.parse(readFileSync(resolve('./package.json'), 'utf-8'))
 			return json.stringify({
 				name: 'mocktomata',
 				version: pjson.version,
 				url: getReflectiveUrl(request.info, server.info),
-				plugins: await findInstalledPlugins(ctx.cwd)
+				plugins: await findInstalledPlugins(cwd)
 			})
 		}
 	}
@@ -88,13 +90,14 @@ function configRoute({ repo }: Context): ServerRoute {
 	}
 }
 
-function specGetRoute({ repo }: Context): ServerRoute {
+function specGetRoute({ repo, log }: Context): ServerRoute {
 	return {
 		method: 'GET',
 		path: '/api/specs/{id}',
 		handler: async request => {
 			try {
 				const { specName, specRelativePath } = json.parse(atob(request.params.id))
+				log.info('get spec', specName, specRelativePath)
 				return await repo.readSpec(specName, specRelativePath)
 			} catch (e: any) {
 				throw boom.notFound(e.message)
@@ -103,12 +106,13 @@ function specGetRoute({ repo }: Context): ServerRoute {
 	}
 }
 
-function specPostRoute({ repo }: Context): ServerRoute {
+function specPostRoute({ repo, log }: Context): ServerRoute {
 	return {
 		method: 'POST',
 		path: '/api/specs/{id}',
 		handler: async (request, h) => {
 			const { specName, specRelativePath } = json.parse(atob(request.params.id))
+			log.info('write spec', specName, specRelativePath)
 			await repo.writeSpec(specName, specRelativePath, json.parse(request.payload as string))
 			return h.response()
 		}
