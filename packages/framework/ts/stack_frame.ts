@@ -21,10 +21,6 @@ export function createStackFrameContext(base: string): StackFrameContext {
 const rePathSeparatorLeftTrim = new RegExp(`^${path.sep}+`)
 
 function stripPath(path_: string, stripPath: string) {
-	if (!stripPath || stripPath.length === 0) {
-		return path_
-	}
-
 	path_ = path.normalize(path_)
 	stripPath = path.normalize(stripPath)
 	const pos = path_.indexOf(stripPath)
