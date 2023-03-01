@@ -1,3 +1,4 @@
+import { Logger } from 'standard-log'
 import type { RequiredPick } from 'type-plus'
 import type { SpecRecord } from '../spec_record/types.js'
 
@@ -83,6 +84,7 @@ export namespace SpecPlugin {
 		setProperty: SpyContext.setProperty
 		invoke: SpyContext.invoke
 		instantiate: SpyContext.instantiate
+		log: Logger
 	}
 	export namespace SpyContext {
 		export type setMeta<M> = (meta: M) => M
@@ -166,6 +168,7 @@ export namespace SpecPlugin {
 		invoke: StubContext.invoke
 		instantiate: StubContext.instantiate
 		on: StubContext.on
+		log: Logger
 	}
 
 	export namespace StubContext {

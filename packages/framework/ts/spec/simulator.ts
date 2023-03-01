@@ -160,6 +160,7 @@ function assertPluginsLoaded(plugins: SpecPlugin.Instance[], specName: string, r
 
 function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubContext {
 	return {
+		log: context.log,
 		resolve: (value, handler) => resolveValue(context, value, handler),
 		getProperty({ key, performer }) {
 			const { record, timeTracker, state } = context

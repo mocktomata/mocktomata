@@ -1,6 +1,7 @@
 import { demetarize, metarize, type SpecMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
 import { hasProperty, isBaseObject } from '../../utils/index.js'
+import { isClass } from '../class/class_plugin.utils.js'
 
 export const instancePlugin: SpecPlugin<
 	Record<string | number, any>,
@@ -40,10 +41,16 @@ export const instancePlugin: SpecPlugin<
 
 		return spy
 	},
-	createStub: ({ getProperty, setProperty, resolve, invoke }, _, meta) => {
+	createStub: ({ getProperty, setProperty, resolve, invoke, log }, _, meta) => {
 		const base = demetarize(meta.base)
 		const classConstructor = resolve(meta.classConstructor)
 		const classProto = Object.getPrototypeOf(classConstructor)
+		if (!isClass(classProto) && !isBuiltInClass(classProto)) {
+			log.warn(`Detected an instance with unrecognized class: ${classProto.name}.
+
+You need to spec that class for 'instanceof' to work correctly.`)
+		}
+
 		// `classProto` can be `{}` which has no prototype.
 		// default to `null` in that case
 		const proto = classProto.prototype ? Object.create(classProto.prototype) : null
@@ -64,4 +71,11 @@ export const instancePlugin: SpecPlugin<
 		})
 		return stub
 	}
+}
+
+function isBuiltInClass(classProto: any) {
+	// generator is detected as a class with no name
+	if (!classProto.name) return true
+
+	return ['Error', 'Map', 'Set'].indexOf(classProto.name) >= 0
 }

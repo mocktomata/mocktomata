@@ -17,6 +17,16 @@ describe('error', () => {
 			await spec.done()
 		})
 	})
+	incubator('emit warning when throw custom Error with specing first', (specName, spec) => {
+		test.skip(specName, async () => {
+			const s = await spec(() => {
+				throw new HttpError(424, 'pre cond')
+			})
+			const err = await a.throws(() => s(), HttpError)
+			expect(err.status).toBe(424)
+			await spec.done()
+		})
+	})
 	incubator('throw custom Error (cannot restore inheritance)', (specName, spec) => {
 		test(specName, async () => {
 			await spec(HttpError)
