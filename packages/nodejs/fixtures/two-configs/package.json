@@ -1,5 +1,6 @@
 {
 	"name": "fixtures-two-configs",
+	"private": true,
 	"mocktomata": {
 		"plugins": [
 			"plugin-a"

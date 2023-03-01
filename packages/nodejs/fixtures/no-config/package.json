@@ -1,3 +1,4 @@
 {
-	"name": "fixtures-no-config"
+	"name": "fixtures-no-config",
+	"private": true
 }

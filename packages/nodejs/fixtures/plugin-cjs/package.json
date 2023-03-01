@@ -1,5 +1,6 @@
 {
   "name": "fixtures-plugin-cjs",
+	"private": true,
   "dependencies": {
     "@mocktomata/nodejs": "workspace:^",
     "@mocktomata/plugin-fixture-cjs-a": "workspace:^",
@@ -10,6 +11,5 @@
     "plugins": [
       "plugin-a"
     ]
-  },
-  "version": null
+  }
 }

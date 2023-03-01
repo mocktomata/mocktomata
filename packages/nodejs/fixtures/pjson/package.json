@@ -1,5 +1,6 @@
 {
 	"name": "fixtures-pjson",
+	"private": true,
 	"mocktomata": {
 		"ecmaVersion": "ES2015",
 		"mocktomataDir": ".mockto",

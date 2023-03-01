@@ -1,5 +1,6 @@
 {
 	"name": "fixtures-plugin-esm",
+	"private": true,
 	"dependencies": {
 		"@mocktomata/nodejs": "workspace:^",
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
@@ -14,6 +15,5 @@
 		"plugins": [
 			"plugin-a"
 		]
-	},
-	"version": null
+	}
 }

@@ -1,10 +1,10 @@
 {
 	"name": "fixtures-has-plugins",
+	"private": true,
 	"dependencies": {
 		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^"
-	},
-	"version": null
+	}
 }
