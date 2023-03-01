@@ -34,7 +34,7 @@ export async function start(options?: start.Options) {
 	const config = (await repo.loadConfig()) as start.Config
 	// can't add test for port 80. will fail during CI
 	// istanbul ignore next
-	const port = options?.port ?? config.server?.port ?? 80
+	const port = options?.port ?? config.server?.port ?? 3698
 	const context = { config, repo, cwd, log }
 	const server = new Server({
 		port,

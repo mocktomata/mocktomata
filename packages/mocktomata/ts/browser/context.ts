@@ -15,13 +15,14 @@ import { requiredDeep, RequiredPick } from 'type-plus'
 export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
 
-	const url = location.origin
-	const stackContext = createStackFrameContext(url)
+	const port = 3698
+	const url = `http://localhost:${port}`
+	const stackContext = createStackFrameContext(location.origin)
 
 	const context = new AsyncContext(async () => {
 		const log =
 			options?.log || createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
-		const io = options?.io || (await createIO({ url: 'http://localhost:3698', log }))
+		const io = options?.io || (await createIO({ url, log }))
 		return { io, log, configurator, ...stackContext }
 	})
 

@@ -8,8 +8,7 @@ export const serveCommand = command({
 	description: 'Starts a local server to serve requests from client (browser)',
 	options: {
 		port: {
-			description: 'port number',
-			// default: 3698
+			description: 'port number (default: 3698)',
 			type: z.optional(z.number())
 		}
 	},
