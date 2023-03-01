@@ -1,5 +1,25 @@
 # Change Log
 
+## 9.0.0
+
+### Minor Changes
+
+- 60102758: Change url to `/api`
+
+### Patch Changes
+
+- d04470e0: Update port to 3689 as it used to be.
+- 6cce9bab: Move `stack-utils` usage to context.
+  This allow us to use a different implementation for browsers.
+- Updated dependencies [6cce9bab]
+- Updated dependencies [ccece292]
+- Updated dependencies [5cc6cdf4]
+- Updated dependencies [35edfc6f]
+- Updated dependencies [6b11a647]
+- Updated dependencies [50792504]
+  - @mocktomata/framework@9.0.0
+  - @mocktomata/nodejs@9.0.0
+
 ## 8.0.5
 
 ### Patch Changes

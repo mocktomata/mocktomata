@@ -1,5 +1,33 @@
 # Change Log
 
+## 9.0.0
+
+### Major Changes
+
+- 5cc6cdf4: Remove extra serialization of the metadata.
+  This extra serialization is not needed.
+
+  Masking on metadata will work correctly when this is removed.
+
+  It's a breaking change as the `SpecRecord` are incompatible.
+
+- 35edfc6f: Fixing prototype chain.
+
+  Remove `errorPlugin` as it is no longer needed.
+
+  This change causes a breaking change as the `classPlugin` have changed it metadata.
+
+### Patch Changes
+
+- 6cce9bab: Move `stack-utils` usage to context.
+  This allow us to use a different implementation for browsers.
+- ccece292: Lower timeTracker log to `planck`
+- 6b11a647: Improve types of `metarize()` and `demetarize()`.
+
+  Remove the extra type assertions.
+
+- 50792504: Fix some internal circular dependencies
+
 ## 8.0.5
 
 ## 8.0.4

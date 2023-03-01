@@ -1,5 +1,20 @@
 # @mocktomata/cli
 
+## 9.0.0
+
+### Patch Changes
+
+- d04470e0: Update port to 3689 as it used to be.
+- c7458885: Fix ESM usage.
+
+  The path resolution of `uni-require` might have some problem.
+  Will fix if needed.
+
+- Updated dependencies [d04470e0]
+- Updated dependencies [6cce9bab]
+- Updated dependencies [60102758]
+  - @mocktomata/service@9.0.0
+
 ## 8.0.5
 
 ### Patch Changes

@@ -1,5 +1,32 @@
 # Change Log
 
+## 9.0.0
+
+### Major Changes
+
+- 35edfc6f: Fixing prototype chain.
+
+  Remove `errorPlugin` as it is no longer needed.
+
+  This change causes a breaking change as the `classPlugin` have changed it metadata.
+
+### Patch Changes
+
+- 6cce9bab: Move `stack-utils` usage to context.
+  This allow us to use a different implementation for browsers.
+- Updated dependencies [d04470e0]
+- Updated dependencies [6cce9bab]
+- Updated dependencies [ccece292]
+- Updated dependencies [5cc6cdf4]
+- Updated dependencies [60102758]
+- Updated dependencies [35edfc6f]
+- Updated dependencies [6b11a647]
+- Updated dependencies [50792504]
+  - @mocktomata/service@9.0.0
+  - @mocktomata/framework@9.0.0
+  - @mocktomata/nodejs@9.0.0
+  - @mocktomata/io-remote@9.0.0
+
 ## 8.0.5
 
 ### Patch Changes
