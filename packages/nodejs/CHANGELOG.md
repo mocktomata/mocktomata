@@ -1,5 +1,19 @@
 # Change Log
 
+## 9.0.0
+
+### Patch Changes
+
+- 6cce9bab: Move `stack-utils` usage to context.
+  This allow us to use a different implementation for browsers.
+- Updated dependencies [6cce9bab]
+- Updated dependencies [ccece292]
+- Updated dependencies [5cc6cdf4]
+- Updated dependencies [35edfc6f]
+- Updated dependencies [6b11a647]
+- Updated dependencies [50792504]
+  - @mocktomata/framework@9.0.0
+
 ## 8.0.5
 
 ### Patch Changes

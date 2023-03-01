@@ -14,5 +14,6 @@
 		"plugins": [
 			"plugin-a"
 		]
-	}
+	},
+	"version": null
 }

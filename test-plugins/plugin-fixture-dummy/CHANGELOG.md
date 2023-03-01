@@ -1,5 +1,17 @@
 # Change Log
 
+## 1.1.11
+
+### Patch Changes
+
+- Updated dependencies [6cce9bab]
+- Updated dependencies [ccece292]
+- Updated dependencies [5cc6cdf4]
+- Updated dependencies [35edfc6f]
+- Updated dependencies [6b11a647]
+- Updated dependencies [50792504]
+  - @mocktomata/framework@9.0.0
+
 ## 1.1.10 (2022-08-06)
 
 **Note:** Version bump only for package @mocktomata/plugin-fixture-dummy
