@@ -1,7 +1,7 @@
 # Mocktomata
 
 [![NPM version][npm-image]][npm-url]
-[![NPM downloads][downloads-image]][downloads-url]
+[![NPM downloads][downloads-image]][npm-url]
 
 [![GitHub NodeJS][github-nodejs]][github-action-url]
 [![Codecov][codecov-image]][codecov-url]
@@ -30,7 +30,6 @@ To understand more about us, please take a look at <https://mocktomata.github.io
 [codecov-image]: https://codecov.io/gh/mocktomata/mocktomata/branch/main/graph/badge.svg
 [codecov-url]: https://codecov.io/gh/mocktomata/mocktomata
 [downloads-image]: https://img.shields.io/npm/dm/mocktomata.svg?style=flat
-[downloads-url]: https://npmjs.org/package/mocktomata
 [github-action-url]: https://github.com/mocktomata/mocktomata/actions
 [github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/release/badge.svg
 [mocktomata]: https://github.com/mocktomata/mocktomata/blob/main/packages/mocktomata
