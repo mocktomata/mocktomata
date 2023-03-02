@@ -1,15 +1,26 @@
 import { CannotConfigAfterUsed } from '@mocktomata/framework'
-import { store } from './store.js'
 
-export namespace config {
-	export type Options = {
-		clientOptions?: {
-			url: string
-		}
-	}
+export type Options = {
+	url?: string
+	ecmaVersion?: 'es2015' | 'es2020'
+	plugins?: string[]
 }
 
-export function config(options: config.Options) {
-	if (store.value.config) throw new CannotConfigAfterUsed()
-	store.value.config = options
+export function newConfigurator() {
+	const options: Options = {
+		ecmaVersion: 'es2015',
+		url: 'http://localhost:3698'
+	}
+	let getCalled = false
+	return [
+		function getConfig() {
+			getCalled = true
+			return options
+		},
+		function config(input: Options) {
+			if (getCalled) throw new CannotConfigAfterUsed()
+			if (input.url) options.url = input.url
+			if (input.ecmaVersion) options.ecmaVersion = input.ecmaVersion
+		}
+	] as const
 }
