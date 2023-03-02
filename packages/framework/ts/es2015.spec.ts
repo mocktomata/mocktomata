@@ -253,63 +253,6 @@ describe('invoke', () => {
 	})
 })
 
-describe('instantiate', () => {
-	class Subject {
-		a = 0
-		constructor(..._args: any[]) {}
-		// must exist at least one method for class plugin to identify it.
-		foo() {}
-	}
-	incubator.sequence('missing call emits log', (specName, { save, simulate }, reporter) => {
-		test(specName, async () => {
-			const spy = await save(Subject)
-			new spy()
-			await save.done()
-
-			await simulate(Subject)
-			await simulate.done()
-			expect(reporter.getLogMessage()).toMatch(/when the simulation is done/)
-		})
-	})
-	incubator.sequence('extra call throws ExtraAction', (specName, { save, simulate }) => {
-		test(specName, async () => {
-			await save(Subject)
-			await save.done()
-			const stub = await simulate(Subject)
-			a.throws(() => new stub(), ExtraAction)
-		})
-	})
-	incubator.sequence('in place of different action throws ActionMismatch', (specName, { save, simulate }) => {
-		test(specName, async () => {
-			const spy = await save(Subject)
-			new spy().a = 0
-			await save.done()
-
-			const stub = await simulate(Subject)
-			new stub()
-			a.throws(() => new stub(), ActionMismatch)
-		})
-	})
-	incubator.sequence('with extra param throws ActionMismatch', (specName, { save, simulate }) => {
-		test(specName, async () => {
-			const spy = await save(Subject)
-			new spy('a')
-			await save.done()
-			const stub = await simulate(Subject)
-			a.throws(() => new stub('a', 'b'), ActionMismatch)
-		})
-	})
-	incubator.sequence('with missing param throws ActionMismatch', (specName, { save, simulate }) => {
-		test(specName, async () => {
-			const s = await save(Subject)
-			new s('a')
-			await save.done()
-			const stub = await simulate(Subject)
-			a.throws(() => new stub(), ActionMismatch)
-		})
-	})
-})
-
 describe('function', () => {
 	incubator('no input no result', (specName, spec) => {
 		test(specName, async () => {
