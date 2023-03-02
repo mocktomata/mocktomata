@@ -4,12 +4,7 @@ import localPreset from '../../.jest/preset.js'
 const config = {
 	displayName: 'jsdom',
 	preset: '@repobuddy/jest/presets/jsdom-ts-watch',
-	moduleNameMapper: localPreset.moduleNameMapper,
-	testPathIgnorePatterns: [
-		'<rootDir>/node_modules/',
-		// fail to run these probably due to the adapter: html issue.
-		'<rootDir>/ts/browser/'
-	]
+	moduleNameMapper: localPreset.moduleNameMapper
 }
 
 export default config
