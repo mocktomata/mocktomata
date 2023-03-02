@@ -1,5 +1,11 @@
 # Change Log
 
+## 9.0.1
+
+### Patch Changes
+
+- 384f74f3: Add warning on missing class for 'instanceof' check.
+
 ## 9.0.0
 
 ### Major Changes
