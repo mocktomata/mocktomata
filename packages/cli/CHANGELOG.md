@@ -1,5 +1,11 @@
 # @mocktomata/cli
 
+## 9.0.1
+
+### Patch Changes
+
+- @mocktomata/service@9.0.1
+
 ## 9.0.0
 
 ### Patch Changes
