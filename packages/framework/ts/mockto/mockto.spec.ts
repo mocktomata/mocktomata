@@ -1,6 +1,5 @@
 import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
-import { relative } from 'node:path'
 import { logLevels } from 'standard-log'
 import { record } from 'type-plus'
 import { createMockto, SpecNotFound } from '../index.js'
@@ -330,7 +329,7 @@ indirectMockto(
 	'indirect usage',
 	{
 		logLevel: Infinity,
-		specRelativePath: relative(process.cwd(), filename(import.meta))
+		specPath: filename(import.meta)
 	},
 	async (_, spec, reporter) => {
 		it('can specify specRelativePath for indirect usage', async () => {

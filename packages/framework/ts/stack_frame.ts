@@ -5,9 +5,9 @@ import type { StackFrameContext } from './stack_frame.types.js'
 export function createStackFrameContext(base: string): StackFrameContext {
 	return {
 		stackFrame: {
-			getCallerRelativePath() {
-				const frame = esp.parse(new Error())[2]
-				const value = stripPath(frame!.fileName!, base)
+			getCallerRelativePath(filepath) {
+				const subject = filepath ?? esp.parse(new Error())[2]!.fileName!
+				const value = stripPath(subject, base)
 				// for browser, `value` might contains query param, in the form of
 				// ts/stories/Counter.stories.tsx?t=1677570975497
 				// since filepath does not support `?`,

@@ -123,18 +123,18 @@ export namespace Spec {
 		 */
 		emitLog?: boolean
 		/**
-		 * Specify the relative path of of the spec relative to the root of the project.
+		 * Specify the spec file path.
 		 *
 		 * If not specify,
 		 * it will be detected automatically based on there the `mockto()`, `komondor()`, or `scenario()` is called.
 		 *
 		 * If you create some wrapping functions so that the calls are not made directly,
-		 * specify this so that the spec record will be saved at the correct location.
+		 * you need to specify this so that the spec record will be saved at the correct location.
 		 *
 		 * You can also use this to organize your spec records for specific use cases,
 		 * such as creating different demos.
 		 */
-		specRelativePath?: string
+		specPath?: string
 	}
 
 	export type MaskValueFn = (value: string | RegExp, replaceWith?: string | undefined) => void
