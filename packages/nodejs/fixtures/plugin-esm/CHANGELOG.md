@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- @mocktomata/nodejs@9.0.2
+- @mocktomata/plugin-fixture-dummy@1.1.13
+
+## null
+
+### Patch Changes
+
 - @mocktomata/nodejs@9.0.1
 - @mocktomata/plugin-fixture-dummy@1.1.12
 
