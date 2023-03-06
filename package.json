@@ -18,6 +18,7 @@
 		"nodejs": "pnpm --filter @mocktomata/nodejs",
 		"nuke": "pnpm --no-bail --filter=* nuke && pnpm --no-bail nuke:local",
 		"nuke:local": "rimraf node_modules",
+		"plugin-axios": "pnpm --filter ./plugins/axios",
 		"plugin-nodejs": "pnpm --filter @mocktomata/plugin-nodejs",
 		"plugin-ws": "pnpm --filter @mocktomata/plugin-ws",
 		"postpack": "pinst --enable",

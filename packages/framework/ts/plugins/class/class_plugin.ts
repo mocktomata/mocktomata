@@ -1,5 +1,5 @@
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { demetarize, metarize } from '../../spec/metarize.js'
+import { demetarize, metarize } from '../../utils/index.js'
 import { isClass } from './class_plugin.utils.js'
 
 export const classPlugin: SpecPlugin<new (...args: any[]) => void, { meta: any; parent: string }> = {

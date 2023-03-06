@@ -171,23 +171,26 @@ incubator('constructor throws error', (specName, spec) => {
 	})
 })
 
-incubator.sequence('instantiate with wrong primitive argument', (specName, { save, simulate }) => {
-	test(specName, async () => {
-		class EchoConstructorArg {
-			constructor(public value: number) {}
-			echo() {
-				return this.value
+incubator.sequence(
+	'instantiate with wrong primitive argument',
+	(specName, { save, simulate }) => {
+		test(specName, async () => {
+			class EchoConstructorArg {
+				constructor(public value: number) {}
+				echo() {
+					return this.value
+				}
 			}
-		}
 
-		const s = await save({ EchoConstructorArg })
-		new s.EchoConstructorArg(1)
-		await save.done()
+			const s = await save({ EchoConstructorArg })
+			new s.EchoConstructorArg(1)
+			await save.done()
 
-		const s2 = await simulate({ EchoConstructorArg })
-		a.throws(() => new s2.EchoConstructorArg(2), ActionMismatch)
-	})
-})
+			const s2 = await simulate({ EchoConstructorArg })
+			a.throws(() => new s2.EchoConstructorArg(2), ActionMismatch)
+		})
+	}
+)
 
 incubator.sequence(
 	'instantiate with different argument is okay as long as behavior does not change',
@@ -223,19 +226,16 @@ incubator('ioc instantiate class', (specName, spec) => {
 	})
 })
 
-incubator(
-	`instantiate parent class`,
-	(specName, spec) => {
-		it(specName, async () => {
-			function willThrow() {
-				throw new HttpError(424, 'pre cond', { cause: new IsoError('internal cause') })
-			}
-			await spec(HttpError)
-			const s = await spec(willThrow)
-			const e = a.throws(s, HttpError)
-			expect(e).toBeInstanceOf(HttpError)
-			expect(e.cause).toBeInstanceOf(IsoError)
-			await spec.done()
-		})
-	}
-)
+incubator(`instantiate parent class`, (specName, spec) => {
+	it(specName, async () => {
+		function willThrow() {
+			throw new HttpError(424, 'pre cond', { cause: new IsoError('internal cause') })
+		}
+		await spec(HttpError)
+		const s = await spec(willThrow)
+		const e = a.throws(s, HttpError)
+		expect(e).toBeInstanceOf(HttpError)
+		expect(e.cause).toBeInstanceOf(IsoError)
+		await spec.done()
+	})
+})

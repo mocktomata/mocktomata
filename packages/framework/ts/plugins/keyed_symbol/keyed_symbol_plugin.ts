@@ -1,4 +1,4 @@
-import { demetarize, metarize, SymbolMeta } from '../../spec/metarize.js'
+import { demetarize, metarize, type SymbolMeta } from '../../utils/index.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
 
 export const keyedSymbolPlugin: SpecPlugin<symbol, SymbolMeta> = {

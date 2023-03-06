@@ -1,0 +1,4 @@
+ignores:
+  - '@repobuddy/jest'
+  - jest-*
+  - ts-jest

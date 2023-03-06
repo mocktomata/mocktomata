@@ -35,7 +35,7 @@ export namespace createIncubator {
 		reporter: MemoryLogReporter
 	) => void
 	export type ConfigOptions = {
-		plugins: Array<string | [pluginName: string, activate: (context: SpecPlugin.ActivationContext) => any]>
+		plugins: Array<string | SpecPlugin>
 	}
 }
 
@@ -61,9 +61,12 @@ export function createIncubator({
 				const plugins = options.plugins.map(p => {
 					// istanbul ignore next
 					if (typeof p === 'string') return p
-					const [name, activate] = p
-					io.addPlugin(name, { activate })
-					return name
+					io.addPlugin(p.name, {
+						activate({ register }) {
+							register(p)
+						}
+					})
+					return p.name
 				})
 				return { config: { ...config, plugins } }
 			})

@@ -1,6 +1,8 @@
-import { demetarize, metarize, type SpecMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { hasProperty, isBaseObject } from '../../utils/index.js'
+import {
+	demetarize, hasProperty, isBaseObject,
+	metarize, type SpecMeta
+} from '../../utils/index.js'
 import { isClass } from '../class/class_plugin.utils.js'
 
 export const instancePlugin: SpecPlugin<

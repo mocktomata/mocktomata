@@ -1,5 +1,5 @@
-import { BigIntMeta, demetarize, metarize } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
+import { type BigIntMeta, demetarize, metarize } from '../../utils/index.js'
 
 export const bigIntPlugin: SpecPlugin<bigint, BigIntMeta> = {
 	name: 'bigint',

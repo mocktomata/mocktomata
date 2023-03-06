@@ -1,7 +1,7 @@
 import type { SpecPlugin } from '../spec_plugin/types.js'
 
-// istanbul ignore next
-const decrementPlugin: SpecPlugin = {
+export const decrementPlugin: SpecPlugin = {
+	name: 'decrement',
 	support: s => typeof s === 'number',
 	createSpy: (_, s) => s - 1,
 	createStub: (_, s) => s - 1

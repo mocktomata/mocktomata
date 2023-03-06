@@ -1,7 +1,13 @@
 import type { AnyFunction } from 'type-plus'
-import { demetarize, metarize, type FunctionMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { hasProperty, hasPropertyInPrototype, isGeneratorFunction } from '../../utils/index.js'
+import {
+	demetarize,
+	hasProperty,
+	hasPropertyInPrototype,
+	isGeneratorFunction,
+	metarize,
+	type FunctionMeta
+} from '../../utils/index.js'
 
 export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, FunctionMeta> = {
 	name: 'function',

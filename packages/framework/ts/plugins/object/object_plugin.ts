@@ -1,6 +1,5 @@
-import { demetarize, metarize, ObjectMeta } from '../../spec/metarize.js'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import { hasProperty } from '../../utils/index.js'
+import { demetarize, hasProperty, metarize, type ObjectMeta } from '../../utils/index.js'
 
 export const objectPlugin: SpecPlugin<Record<string | number, any>, ObjectMeta> = {
 	name: 'object',
