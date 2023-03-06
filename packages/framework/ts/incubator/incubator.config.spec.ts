@@ -1,37 +1,21 @@
-import { decrementPlugin } from './decrement_plugin.mock.js'
-import { incrementPlugin } from './increment_plugin.mock.js'
+import { a } from 'assertron'
+import { some } from 'satisfier'
 import { incubator } from './index.js'
+import { numberLoggerPlugin } from './number_logger_plugin.mock.js'
 
-beforeAll(() =>
-	incubator.config({
-		plugins: [incrementPlugin]
-	})
-)
-
-describe('use increment', () => {
-	incubator('increment plugin is loaded', (specName, spec) => {
-		test(specName, async () => {
-			const s = await spec((x: number) => x)
-			expect(s(1)).toBe(2)
-
-			await spec.done()
-		})
-	})
-})
-
-describe('use decrement', () => {
+describe('use number logger', () => {
 	beforeAll(() =>
 		incubator.config({
-			plugins: [decrementPlugin]
+			plugins: [numberLoggerPlugin]
 		})
 	)
 
-	// can't find a way to hack in the AsyncContext protection! :)
-	incubator('call config again replaces the plugins', (specName, spec) => {
+	incubator('the plugin is invoked', (specName, spec, reporter) => {
 		test(specName, async () => {
 			const s = await spec((x: number) => x)
-			expect(s(2)).toBe(1)
+			expect(s(2)).toBe(2)
 			await spec.done()
+			a.satisfies(reporter.getLogMessagesWithIdAndLevel(), some(/\(INFO\) log on number 2/))
 		})
 	})
 })
