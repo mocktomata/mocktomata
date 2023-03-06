@@ -65,7 +65,7 @@
 		"typescript": "~4.9.0"
 	},
 	"peerDependencies": {
-		"mocktomata": "9.0.2"
+		"mocktomata": "workspace:^"
 	},
 	"engines": {
 		"node": ">= 14.16"
