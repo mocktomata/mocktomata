@@ -4,9 +4,10 @@ import type { SpecRecord } from '../spec_record/types.js'
 
 export type SpecPlugin<S = any, M = any> = {
 	/**
-	 * Name of the plugin. This is needed only if there are multiple plugins in a package.
+	 * Name of the plugin.
+	 * This is used to identify the plugin in the spec record and logs.
 	 */
-	name?: string
+	name: string
 	/**
 	 * Indicates if the plugin can handle the specified subject.
 	 */

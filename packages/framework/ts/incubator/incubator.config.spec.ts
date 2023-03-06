@@ -1,10 +1,10 @@
-import { activate as decrementActivate } from './decrement_plugin.mock.js'
-import { activate as incrementActivate } from './increment_plugin.mock.js'
+import { decrementPlugin } from './decrement_plugin.mock.js'
+import { incrementPlugin } from './increment_plugin.mock.js'
 import { incubator } from './index.js'
 
 beforeAll(() =>
 	incubator.config({
-		plugins: [['incrementPlugin', incrementActivate]]
+		plugins: [incrementPlugin]
 	})
 )
 
@@ -22,7 +22,7 @@ describe('use increment', () => {
 describe('use decrement', () => {
 	beforeAll(() =>
 		incubator.config({
-			plugins: [['decrement', decrementActivate]]
+			plugins: [decrementPlugin]
 		})
 	)
 

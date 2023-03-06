@@ -34,7 +34,7 @@ test('load plugins in reverse order', async () => {
 
 	a.satisfies(
 		plugins.map(p => p.name),
-		startsWith(['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy'])
+		startsWith(['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy/echo'])
 	)
 })
 

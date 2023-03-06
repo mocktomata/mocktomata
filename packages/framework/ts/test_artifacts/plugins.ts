@@ -9,6 +9,7 @@ export const echoPluginModule: SpecPlugin.Module = {
 }
 
 export const echoPlugin: SpecPlugin = {
+	name: 'echo',
 	support() {
 		return true
 	},

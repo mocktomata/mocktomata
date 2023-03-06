@@ -66,7 +66,8 @@ function createSpyRef<S>(
 	// this is a valid case because there will be new feature in JavaScript that existing plugin will not support
 	// istanbul ignore next
 	if (!plugin) {
-		context.log.warn(`Unable to locate a plugin:`, subject)
+		if (typeof subject !== 'number' && typeof subject !== 'boolean')
+			context.log.warn(`Unable to locate a plugin:`, subject)
 		return undefined
 	}
 
