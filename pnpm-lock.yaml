@@ -723,10 +723,6 @@ importers:
         version: 4.9.5
 
   plugins/axios:
-    dependencies:
-      mocktomata:
-        specifier: workspace:^
-        version: link:../../packages/mocktomata
     devDependencies:
       '@jest/globals':
         specifier: ^29.4.2
@@ -758,6 +754,9 @@ importers:
       jest-watch-typeahead:
         specifier: ^2.2.2
         version: 2.2.2(jest@29.4.3)
+      mocktomata:
+        specifier: workspace:^
+        version: link:../../packages/mocktomata
       ncp:
         specifier: ^2.0.0
         version: 2.0.0
