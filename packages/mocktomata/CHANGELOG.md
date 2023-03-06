@@ -1,5 +1,20 @@
 # Change Log
 
+## 9.1.0
+
+### Minor Changes
+
+- 39f30fbc: Export `incubator` for plugins.
+  Export a few utils for plugins.
+
+### Patch Changes
+
+- Updated dependencies [39f30fbc]
+  - @mocktomata/framework@9.1.0
+  - @mocktomata/io-remote@9.1.0
+  - @mocktomata/nodejs@9.1.0
+  - @mocktomata/service@9.1.0
+
 ## 9.0.2
 
 ### Patch Changes
