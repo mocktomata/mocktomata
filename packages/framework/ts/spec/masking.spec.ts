@@ -248,7 +248,9 @@ describe(`maskValue(string)`, () => {
 
 	incubator.sequence(
 		'works with complex object (axios)',
-		{ logLevel: Infinity },
+		{
+			logLevel: Infinity
+		},
 		(specName, { save, simulate }, reporter) => {
 			it(specName, async () => {
 				{
