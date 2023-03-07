@@ -1,5 +1,13 @@
 # Change Log
 
+## 9.1.1
+
+### Patch Changes
+
+- 612e3a2c: Keep object and function prop keys during `metarize()`.
+
+  So that `Object.keys()` or serialization will have the right information to process the stubs.
+
 ## 9.1.0
 
 ### Minor Changes

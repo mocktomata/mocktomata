@@ -1,5 +1,11 @@
 # @mocktomata/plugin-axios
 
+## 1.0.1
+
+### Patch Changes
+
+- mocktomata@9.1.1
+
 ## 1.0.0
 
 ### Major Changes
