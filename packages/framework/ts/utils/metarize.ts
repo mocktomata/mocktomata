@@ -178,6 +178,9 @@ function extractProps(value: any) {
 					(typeof descriptor.value !== 'object' && typeof descriptor.value !== 'function')
 				) {
 					p[key] = descriptor.value
+				} else if (typeof key !== 'string' || ['constructor'].indexOf(key) === -1) {
+					// keeps an empty object so that Object.keys will contain the right information
+					p[key] = {}
 				}
 			}
 			return p
