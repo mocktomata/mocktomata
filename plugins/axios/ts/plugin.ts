@@ -13,9 +13,11 @@ export const plugin: SpecPlugin = {
 	createSpy: ({ getProperty, setProperty, setMeta }, subject) => {
 		setMeta(metarize(subject))
 		return new Proxy(subject, {
-			get(_: any, key: string) {
+			get(_target: any, key: string) {
 				if (!hasProperty(subject, key)) return undefined
-				if (['interceptors'].indexOf(key) >= 0) return subject[key]
+				if (key === 'interceptors') {
+					return subject[key]
+				}
 				return getProperty({ key }, () => subject[key])
 			},
 			set(_, key: string, value: any) {
@@ -25,12 +27,13 @@ export const plugin: SpecPlugin = {
 	},
 	createStub: ({ getProperty, setProperty }, _, meta) => {
 		return new Proxy(demetarize(meta), {
-			get(_: any, key: string) {
-				if (key === 'interceptors')
+			get(_target: any, key: string) {
+				if (key === 'interceptors') {
 					return {
 						request: dummyInterceptorManager,
 						response: dummyInterceptorManager
 					}
+				}
 				return getProperty({ key })
 			},
 			set(_, key: string, value: any) {
@@ -40,8 +43,22 @@ export const plugin: SpecPlugin = {
 	}
 }
 
+const dummyHeaders = {
+	set() {},
+	setAccept() {},
+	setAuthorization() {},
+	setContentEncoding() {},
+	setContentLength() {},
+	setContentType() {},
+	setUserAgent() {}
+}
+
 const dummyInterceptorManager = {
 	clear: () => {},
 	eject: () => {},
-	use: () => {}
+	use: (handler: any) => {
+		handler({
+			headers: dummyHeaders
+		})
+	}
 }
