@@ -107,7 +107,7 @@ function createScenarioFn(
 			 *
 			 * Any error occurs in these steps are ignored completely.
 			 */
-			ensure: createInertStepCaller(subCtx, store, 'ensure', false),
+			ensure: createInertStepCaller(subCtx, store, 'ensure', 'trace'),
 			/**
 			 * Setup the test environment.
 			 * This is the `Given` step.
@@ -153,7 +153,7 @@ function createInertStepCaller(
 	context: AsyncContext<Spec.Context>,
 	store: Store,
 	stepName: string,
-	shouldLogError = true
+	errorLogMethod: 'warn' | 'trace' = 'warn'
 ) {
 	return async function inertStep(clause: string, ...inputs: any[]) {
 		const entry = lookupStep(store, clause)
@@ -163,14 +163,12 @@ function createInertStepCaller(
 			log.debug(`${stepName}(${clause})`)
 			return await invokeHandler(context, store, stepName, entry, clause, inputs)
 		} catch (err) {
-			if (shouldLogError) {
-				log.warn(
-					`scenario${mode === 'auto' ? '' : `.${mode}`}(${specName})
+			log[errorLogMethod](
+				`scenario${mode === 'auto' ? '' : `.${mode}`}(${specName})
 - ${stepName}(${clause}) throws, is it safe to ignore?
 
 ${err}`
-				)
-			}
+			)
 		}
 	}
 }
