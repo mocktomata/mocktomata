@@ -1,5 +1,11 @@
 # @mocktomata/plugin-axios
 
+## 1.0.3
+
+### Patch Changes
+
+- acb1bbd1: Revert last change. It is actually not needed.
+
 ## 1.0.2
 
 ### Patch Changes
