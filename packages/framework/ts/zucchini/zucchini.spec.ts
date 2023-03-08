@@ -1,7 +1,7 @@
 import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
 import t from 'node:assert'
-import { has, none } from 'satisfier'
+import { has, none, some } from 'satisfier'
 import { logLevels } from 'standard-log'
 import { IsEqual, isType } from 'type-plus'
 import { createZucchini, SpecNotFound } from '../index.js'
@@ -371,6 +371,24 @@ Error: foo`
 
   Error: foo`
 						]
+					})
+				)
+			})
+
+			it('will emits warning when the step throws at trace level', async () => {
+				defineStep('throw step', () => {
+					throw new Error('foo')
+				})
+				const { ensure, reporter } = scenario('throwing ensure will pass and emit warning at trace level', {
+					logLevel: logLevels.trace
+				})
+				await ensure('throw step')
+				a.satisfies(
+					reporter.logs,
+					some({
+						id: 'mocktomata:throwing ensure will pass and emit warning at trace level:auto',
+						level: logLevels.trace,
+						args: some(/is it safe to ignore?/)
 					})
 				)
 			})
