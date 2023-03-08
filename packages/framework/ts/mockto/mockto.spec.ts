@@ -116,7 +116,7 @@ describe(`mockto.simulate()`, () => {
 })
 
 describe(`mockto()`, () => {
-	test.only('auto with no options', async () => {
+	test('auto with no options', async () => {
 		const specNameInput = 'auto with no options'
 		await new Promise<void>(a => {
 			mockto(specNameInput, (specName, spec) => {
