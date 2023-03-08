@@ -13,7 +13,7 @@ export const plugin: SpecPlugin = {
 	createSpy: ({ getProperty, setProperty, setMeta }, subject) => {
 		setMeta(metarize(subject))
 		return new Proxy(subject, {
-			get(_target: any, key: string) {
+			get(_target, key: string) {
 				if (!hasProperty(subject, key)) return undefined
 				if (key === 'interceptors') {
 					return subject[key]
@@ -43,22 +43,8 @@ export const plugin: SpecPlugin = {
 	}
 }
 
-const dummyHeaders = {
-	set() {},
-	setAccept() {},
-	setAuthorization() {},
-	setContentEncoding() {},
-	setContentLength() {},
-	setContentType() {},
-	setUserAgent() {}
-}
-
 const dummyInterceptorManager = {
 	clear: () => {},
 	eject: () => {},
-	use: (handler: any) => {
-		handler({
-			headers: dummyHeaders
-		})
-	}
+	use: () => {}
 }
