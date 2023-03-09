@@ -1,5 +1,15 @@
 # Change Log
 
+## 9.1.2
+
+### Patch Changes
+
+- Updated dependencies [75ac2864]
+  - @mocktomata/framework@9.1.2
+  - @mocktomata/io-remote@9.1.2
+  - @mocktomata/nodejs@9.1.2
+  - @mocktomata/service@9.1.2
+
 ## 9.1.1
 
 ### Patch Changes

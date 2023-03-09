@@ -1,5 +1,11 @@
 # Change Log
 
+## 9.1.2
+
+### Patch Changes
+
+- 75ac2864: Emits trace log for ensure step when it fails.
+
 ## 9.1.1
 
 ### Patch Changes

@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- @mocktomata/plugin-fixture-dummy@1.1.16
+
+## null
+
+### Patch Changes
+
 - @mocktomata/plugin-fixture-dummy@1.1.15
 
 ## null
