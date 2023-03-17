@@ -85,7 +85,7 @@
 		"global-store": "^1.0.0-beta.21",
 		"standard-log": "^11.5.0",
 		"standard-log-color": "^11.5.0",
-		"type-plus": "^5.6.0"
+		"type-plus": "^6.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.18.10",

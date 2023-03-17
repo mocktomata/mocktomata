@@ -59,7 +59,7 @@
 		"@mocktomata/nodejs": "workspace:^",
 		"standard-log": "^11.5.0",
 		"standard-log-color": "^11.5.0",
-		"type-plus": "^5.6.0"
+		"type-plus": "^6.0.0"
 	},
 	"devDependencies": {
 		"@jest/globals": "^29.4.2",
