@@ -1,8 +1,6 @@
-import { a } from 'assertron'
 import { logLevels } from 'standard-log'
 import { incubator } from '../incubator/index.js'
 import { createTestAxios } from '../test_artifacts/test_subjects.js'
-import { InvokeMetaMethodAfterSpec } from './errors.js'
 
 afterAll(incubator.cleanup)
 
@@ -24,9 +22,11 @@ describe(`maskValue(string)`, () => {
 	incubator.save('throws if called after spec', { logLevel: logLevels.all }, (specName, spec, reporter) => {
 		test(specName, async () => {
 			await spec(() => {})
-			a.throws(() => spec.maskValue('secret'), InvokeMetaMethodAfterSpec)
+			spec.maskValue('secret')
+			await spec.done()
+			expect(reporter.getLogMessage()).not.toContain('secret')
+			expect(reporter.getLogMessage()).toContain('maskValue is called after spec is invoked')
 		})
-		expect(reporter.getLogMessage()).not.toContain('secret')
 	})
 
 	incubator(

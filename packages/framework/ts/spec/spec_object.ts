@@ -36,8 +36,11 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
 		if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
 		else initState.ignoreValues.push(value)
 	}
+	let maskLog: Promise<void> | undefined
 	function maskValue(value: string | RegExp, replaceWith?: string) {
-		if (s) throw new InvokeMetaMethodAfterSpec('maskValue')
+		if (s) {
+			maskLog = context.get().then(({ log }) => log.warn('maskValue is called after spec is invoked'))
+		}
 		initState.maskCriteria.push({ value, replaceWith })
 	}
 
@@ -48,7 +51,8 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
 		}
 	}
 	let actualSpec: Spec
-	function done() {
+	async function done() {
+		if (maskLog) await maskLog
 		if (actualSpec) return actualSpec.done()
 		// spec can be not used at all,
 		// e.g. in `scenario`.
