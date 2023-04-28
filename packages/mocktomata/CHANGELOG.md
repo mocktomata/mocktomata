@@ -1,5 +1,24 @@
 # Change Log
 
+## 9.2.0
+
+### Patch Changes
+
+- 2d567309: Fix relative path issue when running in `jsdom`.
+
+  In `jsdom`, the error path is absolute file path,
+  instead of path relative to the `location.origin`.
+
+  Need to try using `process.cwd()` when available to get the relative path.
+
+- Updated dependencies [8cb074f6]
+- Updated dependencies [2d567309]
+- Updated dependencies [5119b462]
+  - @mocktomata/framework@9.2.0
+  - @mocktomata/io-remote@9.2.0
+  - @mocktomata/nodejs@9.2.0
+  - @mocktomata/service@9.2.0
+
 ## 9.1.2
 
 ### Patch Changes

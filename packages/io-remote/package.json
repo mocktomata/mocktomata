@@ -1,6 +1,6 @@
 {
 	"name": "@mocktomata/io-remote",
-	"version": "9.1.2",
+	"version": "9.2.0",
 	"description": "mocktomata remote IO",
 	"homepage": "https://github.com/mocktomata/mocktomata/tree/main/packages/io-remote",
 	"bugs": {

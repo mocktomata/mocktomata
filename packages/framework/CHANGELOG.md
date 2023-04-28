@@ -1,5 +1,27 @@
 # Change Log
 
+## 9.2.0
+
+### Minor Changes
+
+- 5119b462: Allow passthrough if no `mock` is specified.
+
+### Patch Changes
+
+- 8cb074f6: Allow `maskValue()` to be called after `spec()`.
+
+  This is needed for `zucchini` step definitions.
+  Instead a warning will be generated.
+
+  Fixes [#530](https://github.com/mocktomata/mocktomata/issues/530)
+
+- 2d567309: Fix relative path issue when running in `jsdom`.
+
+  In `jsdom`, the error path is absolute file path,
+  instead of path relative to the `location.origin`.
+
+  Need to try using `process.cwd()` when available to get the relative path.
+
 ## 9.1.2
 
 ### Patch Changes
