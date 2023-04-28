@@ -1,4 +1,10 @@
-import { buildConfig, Config, createConfigurator, createStackFrameContext, type Mocktomata } from '@mocktomata/framework'
+import {
+	buildConfig,
+	Config,
+	createConfigurator,
+	createStackFrameContext,
+	type Mocktomata
+} from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
 import { AsyncContext } from 'async-fp'
 import { createStandardLog, type Logger } from 'standard-log'
@@ -8,7 +14,7 @@ export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
 
 	const cwd = process.cwd()
-	const stackContext = createStackFrameContext(cwd)
+	const stackContext = createStackFrameContext({ cwd })
 
 	const context = new AsyncContext(() => {
 		const log =
@@ -34,7 +40,7 @@ export function newContext() {
 		},
 		getContext() {
 			const cwd = process.cwd()
-			const stackFrameContext = createStackFrameContext(cwd)
+			const stackFrameContext = createStackFrameContext({ cwd })
 
 			return {
 				asyncContext: new AsyncContext(async () => {

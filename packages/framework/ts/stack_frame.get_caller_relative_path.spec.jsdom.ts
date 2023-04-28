@@ -4,7 +4,8 @@ import path from 'path'
 import { createStackFrameContext } from './stack_frame.js'
 
 const { stackFrame } = createStackFrameContext({
-	cwd: process.cwd()
+	cwd: process.cwd(),
+	url: location.origin
 })
 
 it('get caller file path', () => {

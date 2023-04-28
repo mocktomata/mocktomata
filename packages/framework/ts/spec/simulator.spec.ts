@@ -25,7 +25,7 @@ test('simulate without plugin install throws', () => {
 	const io = newMemoryIO()
 	const sl = createStandardLogForTest()
 	const log = sl.getLogger('mocktomata')
-	const { stackFrame } = createStackFrameContext(process.cwd())
+	const { stackFrame } = createStackFrameContext({ cwd: process.cwd() })
 	const context = new AsyncContext<createSpec.Context>({
 		io,
 		log,

@@ -15,9 +15,13 @@ import { requiredDeep, RequiredPick } from 'type-plus'
 export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
 
+	const cwd = global.process?.cwd()
 	const port = 3698
 	const url = `http://localhost:${port}`
-	const stackContext = createStackFrameContext(location.origin)
+	const stackContext = createStackFrameContext({
+		cwd,
+		url: location.origin
+	})
 
 	const context = new AsyncContext(async () => {
 		const log =
@@ -48,7 +52,7 @@ export function newContext() {
 			configOptions = requiredDeep(configOptions, options)
 		},
 		getContext() {
-			const stackFrameContext = createStackFrameContext(configOptions.url)
+			const stackFrameContext = createStackFrameContext({ url: configOptions.url })
 			return {
 				asyncContext: new AsyncContext(async () => {
 					const log = createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
