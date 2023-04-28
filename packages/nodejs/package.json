@@ -59,7 +59,7 @@
 		"type-plus": "^6.0.0"
 	},
 	"devDependencies": {
-		"@jest/globals": "^29.4.2",
+		"@jest/globals": "^29.5.0",
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
 		"@mocktomata/plugin-fixture-cjs-a": "workspace:^",
 		"@mocktomata/plugin-fixture-cjs-b": "workspace:^",
@@ -68,15 +68,14 @@
 		"@mocktomata/plugin-fixture-esm-a": "workspace:^",
 		"@mocktomata/plugin-fixture-esm-b": "workspace:^",
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
-		"@repobuddy/jest": "^3.1.1",
+		"@repobuddy/jest": "^3.3.0",
 		"@unional/fixture": "^3.2.6",
 		"assertron": "^11.0.0",
 		"cross-env": "^7.0.3",
 		"deepmerge": "^4.2.2",
 		"depcheck": "^1.4.3",
 		"dirname-filename-esm": "^1.1.1",
-		"jest": "^29.4.2",
-		"jest-validate": "29.5.0",
+		"jest": "^29.5.0",
 		"jest-watch-suspend": "^1.1.2",
 		"jest-watch-toggle-config-2": "^2.1.0",
 		"jest-watch-typeahead": "^2.2.2",
@@ -86,7 +85,7 @@
 		"satisfier": "^5.4.2",
 		"standard-log": "^11.5.0",
 		"tmp": "^0.2.1",
-		"ts-jest": "^29.0.3",
+		"ts-jest": "^29.1.0",
 		"typescript": "~5.0.0"
 	},
 	"engines": {
