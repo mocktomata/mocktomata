@@ -195,6 +195,16 @@ describe('mockto.mock()', () => {
 		})
 	})
 
+	mockto.mock('passthrough without mock', (specName, spec) => {
+		it(specName, async () => {
+			const s = await spec((v: string) => `${v} stubbed`)
+			const r = s('value')
+			expect(r).toEqual('value stubbed')
+			const record = await spec.done()
+			expect(record.actions.length).toBeGreaterThan(0)
+		})
+	})
+
 	mockto('direct accepts mock but ignore it', (specName, spec) => {
 		it(specName, async () => {
 			const s = await spec((v: string) => v, { mock: () => 'stubbed' })

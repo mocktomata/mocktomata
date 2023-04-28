@@ -11,12 +11,6 @@ export type Spec = {
 	<S>(subject: S, options?: { mock?: Partial<S> }): Promise<S>
 } & Spec.Base
 
-export type MockSpec = {
-	/**
-	 * Creates a spec'd subject to capture or replay the behavior
-	 */
-	<S>(subject: S, options: { mock: Partial<S> }): Promise<S>
-} & Spec.Base
 
 export namespace Spec {
 	export type Base = {
@@ -95,7 +89,7 @@ export namespace Spec {
 	export type Handler = (specName: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
 	export type MockHandler = (
 		specName: string,
-		spec: MockSpec,
+		spec: Spec,
 		reporter: MemoryLogReporter
 	) => void | Promise<any>
 

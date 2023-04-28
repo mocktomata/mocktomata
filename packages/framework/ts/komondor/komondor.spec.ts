@@ -106,6 +106,25 @@ describe(`kd.mock()`, () => {
 		const r = s('value')
 		expect(r).toBe('stubbed')
 	})
+	it('passthrough if no mock is specified', async () => {
+		{
+			const spec = k.mock('passthrough without mock')
+			const s = await spec((v: string) => `${v} stubbed`)
+			const r = s('value')
+			expect(r).toBe('value stubbed')
+			const record = await spec.done()
+			expect(record.actions.length).toBeGreaterThan(0)
+		}
+		{
+			const spec = k.mock('passthrough without mock')
+			const s = await spec((v: string) => `${v} stubbed`)
+			const r = s('value')
+			expect(r).toBe('value stubbed')
+			const record = await spec.done()
+			expect(record.actions.length).toBeGreaterThan(0)
+		}
+	})
+
 	it('direct accepts mock but ignore it', async () => {
 		const spec = k('direct accepts mock but ignore it')
 		const s = await spec((v: string) => v, { mock: () => 'stubbed' })

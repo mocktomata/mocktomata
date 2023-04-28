@@ -1,12 +1,11 @@
 import type { AsyncContext } from 'async-fp'
-import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
+import { createMemoryLogReporter, type MemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
 import type { LoadedContext } from '../context.internal.js'
 import { createLogContext } from '../log/log_context.js'
 import { createSpecObject, getEffectiveSpecModeContext, type Spec } from '../spec/index.js'
-import type { MockSpec } from '../spec/types.js'
 import { loadPlugins } from '../spec_plugin/index.js'
-import { StackFrameContext } from '../stack_frame.types.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
 
@@ -29,7 +28,7 @@ export type Komondor = Komondor.Fn & {
 	/**
 	 * Creates a `Spec` that runs in mock mode.
 	 */
-	mock: Komondor.MockFn
+	mock: Komondor.Fn
 	/**
 	 * Clean up the system in case some `spec.done()` are not called.
 	 */
@@ -41,15 +40,6 @@ export namespace Komondor {
 		specName: string,
 		options?: Spec.Options
 	) => Spec & {
-		/**
-		 * An in-memory reporter containing the logs for inspection.
-		 */
-		reporter: MemoryLogReporter
-	}
-	export type MockFn = (
-		specName: string,
-		options?: Spec.Options
-	) => MockSpec & {
 		/**
 		 * An in-memory reporter containing the logs for inspection.
 		 */

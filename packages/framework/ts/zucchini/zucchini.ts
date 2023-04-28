@@ -33,13 +33,6 @@ export namespace Zucchini {
 		spec: <S>(subject: S, options?: { mock?: Partial<S> }) => Promise<S>
 	} & ScenarioBase
 
-	export type MockFn = (
-		specName: string,
-		options?: Spec.Options
-	) => {
-		spec: <S>(subject: S, options: { mock: Partial<S> }) => Promise<S>
-	} & ScenarioBase
-
 	export type ScenarioBase = {
 		ensure: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
 		setup: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
@@ -69,7 +62,7 @@ function createScenario(
 	return Object.assign(createScenarioFn({ context: ctx, stackFrame }, store), {
 		live: createScenarioFn({ context: ctx, stackFrame }, store, 'live'),
 		save: createScenarioFn({ context: ctx, stackFrame }, store, 'save'),
-		mock: createScenarioFn({ context: ctx, stackFrame }, store, 'mock') as Zucchini.MockFn,
+		mock: createScenarioFn({ context: ctx, stackFrame }, store, 'mock'),
 		simulate: createScenarioFn({ context: ctx, stackFrame }, store, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()

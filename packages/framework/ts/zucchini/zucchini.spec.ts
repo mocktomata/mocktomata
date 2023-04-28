@@ -4,7 +4,7 @@ import t from 'node:assert'
 import { has, none, some } from 'satisfier'
 import { logLevels } from 'standard-log'
 import { IsEqual, isType } from 'type-plus'
-import { createZucchini, SpecNotFound } from '../index.js'
+import { SpecNotFound, createZucchini } from '../index.js'
 import { createTestContext } from '../testing/index.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { indirectZucchini } from './zucchini.test-setup.js'
@@ -582,8 +582,8 @@ Error: foo`
 	})
 
 	describe('mocking', () => {
-		it(`requires to specify a mock`, async () => {
-			const { spec } = scenario.mock('requires to specify a mock')
+		it(`specify a mock when calling the spec function`, async () => {
+			const { spec } = scenario.mock('specify a mock')
 			const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 			const r = s('value')
 			expect(r).toBe('stubbed')
@@ -615,6 +615,24 @@ Error: foo`
 				const r = s('value')
 				expect(r).toBe('value')
 				await done()
+			}
+		})
+		it('passthrough if no mock is specified', async () => {
+			{
+				const { spec, done } = scenario.mock('passthrough without mock')
+				const s = await spec((v: string) => `${v} stubbed`)
+				const r = s('value')
+				expect(r).toBe('value stubbed')
+				const record = await done()
+				expect(record.actions.length).toBeGreaterThan(0)
+			}
+			{
+				const { spec, done } = scenario.mock('passthrough without mock')
+				const s = await spec((v: string) => `${v} stubbed`)
+				const r = s('value')
+				expect(r).toBe('value stubbed')
+				const record = await done()
+				expect(record.actions.length).toBeGreaterThan(0)
 			}
 		})
 	})

@@ -81,7 +81,7 @@ async function createSpec(
 		case 'simulate':
 			return createSimulateSpec(ctx, specName, invokeRelativePath, options)
 		case 'mock':
-			return createMockSpec()
+			return createMockSpec(ctx, specName, invokeRelativePath, options)
 		// istanbul ignore next
 		default:
 			throw new Error(`Unknown mode: ${mode}`)
