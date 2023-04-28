@@ -1,3 +1,4 @@
+import 'setimmediate'
 import { a } from 'assertron'
 import type { AnyFunction } from 'type-plus'
 import { incubator } from './incubator/index.js'

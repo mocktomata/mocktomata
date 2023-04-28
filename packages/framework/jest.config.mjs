@@ -1,18 +1,12 @@
-import preset from '@repobuddy/jest/presets/ts-watch'
-import localPreset from '../../.jest/preset.js'
-
+import { watchPlugins } from '@repobuddy/jest'
 /** @type {import('jest').Config} */
 const config = {
-	displayName: 'framework',
-	preset: '@repobuddy/jest/presets/ts-watch',
-	moduleNameMapper: {
-		...preset.moduleNameMapper,
-		...localPreset.moduleNameMapper
-	},
-	coveragePathIgnorePatterns: [
-		'\\.(spec|test|unit|accept|integrate|system)(\\..*)?\\.(js|jsx|cjs|mjs|ts|tsx|cts|mts)$',
-		'<rootDir>/ts/test-artifacts'
+	coveragePathIgnorePatterns: ['<rootDir>/ts/test-artifacts'],
+	projects: [
+		'./jest.jsdom.mjs',
+		'./jest.nodejs.mjs'
 	],
+	watchPlugins
 }
 
 export default config
