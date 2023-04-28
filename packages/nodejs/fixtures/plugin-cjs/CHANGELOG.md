@@ -4,6 +4,12 @@
 
 ### Patch Changes
 
+- @mocktomata/nodejs@9.2.0
+
+## null
+
+### Patch Changes
+
 - @mocktomata/nodejs@9.1.2
 
 ## null

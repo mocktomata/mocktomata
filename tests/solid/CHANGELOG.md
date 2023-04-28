@@ -1,5 +1,12 @@
 # test-solid
 
+## 0.0.7
+
+### Patch Changes
+
+- Updated dependencies [85390511]
+  - @mocktomata/cli@9.2.0
+
 ## 0.0.6
 
 ### Patch Changes

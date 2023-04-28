@@ -1,5 +1,15 @@
 # Change Log
 
+## 9.2.0
+
+### Patch Changes
+
+- Updated dependencies [8cb074f6]
+- Updated dependencies [2d567309]
+- Updated dependencies [5119b462]
+  - @mocktomata/framework@9.2.0
+  - @mocktomata/nodejs@9.2.0
+
 ## 9.1.2
 
 ### Patch Changes

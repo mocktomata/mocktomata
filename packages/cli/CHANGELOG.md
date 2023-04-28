@@ -1,5 +1,12 @@
 # @mocktomata/cli
 
+## 9.2.0
+
+### Patch Changes
+
+- 85390511: Update docs
+  - @mocktomata/service@9.2.0
+
 ## 9.1.2
 
 ### Patch Changes

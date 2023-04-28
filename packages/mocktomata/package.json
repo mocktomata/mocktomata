@@ -1,6 +1,6 @@
 {
 	"name": "mocktomata",
-	"version": "9.1.2",
+	"version": "9.2.0",
 	"description": "A Behavior Tracking and Simulation System",
 	"keywords": [
 		"boundary",
@@ -75,7 +75,7 @@
 		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --watch",
 		"verify": "npm-run-all -p lint build coverage test:jsdom test:electron -p depcheck",
 		"watch": "pnpm run test:watch",
-    "w": "pnpm run test:watch"
+		"w": "pnpm run test:watch"
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
