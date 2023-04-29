@@ -15,7 +15,7 @@ import { requiredDeep, RequiredPick } from 'type-plus'
 export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const configurator = createConfigurator()
 
-	const cwd = global.process?.cwd()
+	const cwd = global.process?.cwd?.()
 	const port = 3698
 	const url = `http://localhost:${port}`
 	const stackContext = createStackFrameContext({
