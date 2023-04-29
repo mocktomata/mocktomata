@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.18
+
+### Patch Changes
+
+- @mocktomata/framework@9.2.1
+
 ## 1.1.17
 
 ### Patch Changes

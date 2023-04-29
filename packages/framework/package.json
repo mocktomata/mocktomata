@@ -1,6 +1,6 @@
 {
 	"name": "@mocktomata/framework",
-	"version": "9.2.0",
+	"version": "9.2.1",
 	"description": "mocktomata framework package",
 	"homepage": "https://github.com/mocktomata/mocktomata",
 	"bugs": {
