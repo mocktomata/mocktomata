@@ -1,6 +1,6 @@
 {
 	"name": "@mocktomata/plugin-fixture-dummy",
-	"version": "1.1.17",
+	"version": "1.1.18",
 	"private": true,
 	"description": "mocktomata dummy plugin for internal testing",
 	"keywords": [

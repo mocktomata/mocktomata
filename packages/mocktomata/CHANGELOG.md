@@ -1,5 +1,15 @@
 # Change Log
 
+## 9.2.1
+
+### Patch Changes
+
+- 39b9c9ec: support `global.process.cwd` might be undefined.
+  - @mocktomata/framework@9.2.1
+  - @mocktomata/nodejs@9.2.1
+  - @mocktomata/io-remote@9.2.1
+  - @mocktomata/service@9.2.1
+
 ## 9.2.0
 
 ### Patch Changes

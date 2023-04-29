@@ -1,5 +1,11 @@
 # Change Log
 
+## 9.2.1
+
+### Patch Changes
+
+- @mocktomata/framework@9.2.1
+
 ## 9.2.0
 
 ### Patch Changes
