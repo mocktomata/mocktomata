@@ -322,7 +322,7 @@ describe('config', () => {
 })
 
 describe('maskValue()', () => {
-	mockto.live('explicit live mode returns sensitive info', (specName, spec) => {
+	mockto.live('has no effect in live mode', (specName, spec) => {
 		test(specName, async () => {
 			spec.maskValue('secret')
 			const s = await spec((v: string) => v)
