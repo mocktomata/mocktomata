@@ -82,7 +82,7 @@
 		"@mocktomata/io-remote": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
 		"@mocktomata/service": "workspace:^",
-		"async-fp": "^9.0.0",
+		"async-fp": "^9.0.11",
 		"global-store": "^1.0.0-beta.21",
 		"standard-log": "^11.5.0",
 		"standard-log-color": "^11.5.0",
