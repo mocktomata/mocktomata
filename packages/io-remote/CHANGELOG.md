@@ -1,5 +1,12 @@
 # Change Log
 
+## 9.2.2
+
+### Patch Changes
+
+- Updated dependencies [98b38dbf]
+  - @mocktomata/framework@9.2.2
+
 ## 9.2.1
 
 ### Patch Changes

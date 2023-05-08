@@ -1,5 +1,11 @@
 # test-solid
 
+## 0.0.9
+
+### Patch Changes
+
+- @mocktomata/cli@9.2.2
+
 ## 0.0.8
 
 ### Patch Changes

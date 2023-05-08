@@ -1,5 +1,11 @@
 # Change Log
 
+## 9.2.2
+
+### Patch Changes
+
+- 98b38dbf: Update `async-fp`
+
 ## 9.2.1
 
 ## 9.2.0
