@@ -1,5 +1,12 @@
 # @mocktomata/plugin-axios
 
+## 2.0.2
+
+### Patch Changes
+
+- Updated dependencies [98b38dbf]
+  - mocktomata@9.2.2
+
 ## 2.0.1
 
 ### Patch Changes

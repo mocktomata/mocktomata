@@ -1,5 +1,16 @@
 # Change Log
 
+## 9.2.2
+
+### Patch Changes
+
+- 98b38dbf: Update `async-fp`
+- Updated dependencies [98b38dbf]
+  - @mocktomata/framework@9.2.2
+  - @mocktomata/io-remote@9.2.2
+  - @mocktomata/nodejs@9.2.2
+  - @mocktomata/service@9.2.2
+
 ## 9.2.1
 
 ### Patch Changes
