@@ -71,7 +71,7 @@
 		"pathe": "^1.1.0",
 		"standard-log": "^11.5.0",
 		"tersify": "^3.12.0",
-		"type-plus": "^6.0.0"
+		"type-plus": "^7.0.0"
 	},
 	"devDependencies": {
 		"@repobuddy/jest": "^3.3.0",
