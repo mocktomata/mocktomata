@@ -58,7 +58,7 @@
 		"@mocktomata/framework": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
 		"standard-log": "^11.5.0",
-		"standard-log-color": "^11.5.0",
+		"standard-log-color": "^12.0.0",
 		"type-plus": "^7.0.0"
 	},
 	"devDependencies": {
