@@ -99,7 +99,7 @@
 		"size-limit": "^8.2.4",
 		"standard-log-color": "^11.5.0",
 		"ts-jest": "^29.1.0",
-		"typescript": "~5.0.0"
+		"typescript": "~5.1.0"
 	},
 	"engines": {
 		"node": ">=14.16"
