@@ -8,7 +8,10 @@ const config = {
 	],
 	globalSetup: './scripts/jest/global_setup.cjs',
 	globalTeardown: './scripts/jest/global_teardown.cjs',
-	watchPlugins
+	watchPlugins: [
+		...watchPlugins,
+		'jest-watch-repeat'
+	]
 }
 
 export default config
