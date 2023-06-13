@@ -1,5 +1,13 @@
 # Change Log
 
+## 9.2.3
+
+### Patch Changes
+
+- 42f30357: Update `standard-log` to v12
+- 3d0784c3: Re-exports needed types and code from `standard-log`.
+  This should fix the "Inferred type cannot be named" issue.
+
 ## 9.2.2
 
 ### Patch Changes

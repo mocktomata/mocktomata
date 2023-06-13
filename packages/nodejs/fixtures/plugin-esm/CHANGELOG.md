@@ -4,6 +4,14 @@
 
 ### Patch Changes
 
+- Updated dependencies [42f30357]
+  - @mocktomata/nodejs@9.2.3
+  - @mocktomata/plugin-fixture-dummy@1.1.20
+
+## null
+
+### Patch Changes
+
 - @mocktomata/nodejs@9.2.2
 - @mocktomata/plugin-fixture-dummy@1.1.19
 

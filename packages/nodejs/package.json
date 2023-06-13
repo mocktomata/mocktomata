@@ -1,6 +1,6 @@
 {
 	"name": "@mocktomata/nodejs",
-	"version": "9.2.2",
+	"version": "9.2.3",
 	"description": "provides external dependencies from nodejs for mocktomata",
 	"keywords": [
 		"mocktomata",
