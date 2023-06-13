@@ -1,11 +1,11 @@
 import type { AsyncContext } from 'async-fp'
-import type { Logger } from 'standard-log'
 import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec_plugin/index.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import { getDefaultPerformer, type SpecRecord } from '../spec_record/index.js'
 import type { StackFrameContext } from '../stack_frame.types.js'
-import { createTimeTracker, TimeTracker } from '../time_trackter/index.js'
+import type { Logger } from '../standard_log.types.js'
+import { TimeTracker, createTimeTracker } from '../time_trackter/index.js'
 import {
 	getArgumentContext,
 	getPropertyContext,
@@ -27,9 +27,9 @@ import {
 	logMissingResultAction,
 	logRecordingTimeout
 } from './logs.js'
-import { createSpecRecordValidator, SpecRecordValidator, ValidateReference } from './record.js'
+import { SpecRecordValidator, ValidateReference, createSpecRecordValidator } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
-import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
+import type { MaskCriterion, Recorder, SpecRecordLive, createSpec } from './types.internal.js'
 import type { Spec } from './types.js'
 import { referenceMismatch } from './validations.js'
 

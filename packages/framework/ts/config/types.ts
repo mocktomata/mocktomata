@@ -1,7 +1,7 @@
-import { LogMethodNames } from 'standard-log'
 import type { Log } from '../log/types.js'
-import type { SpecPlugin } from '../spec_plugin/types.js'
 import type { Spec } from '../spec/types.js'
+import type { SpecPlugin } from '../spec_plugin/types.js'
+import type { LogMethodNames } from '../standard_log.types.js'
 
 export type Config = Spec.Config & SpecPlugin.Config & Log.Config
 export namespace Config {

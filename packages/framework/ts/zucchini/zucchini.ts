@@ -1,6 +1,6 @@
 import { ExpressionFactory, ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions'
 import type { AsyncContext } from 'async-fp'
-import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
+import { createMemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
 import type { LoadedContext } from '../context.internal.js'
 import { createLogContext } from '../log/log_context.js'
@@ -8,11 +8,12 @@ import { createSpecFns, getEffectiveSpecModeContext } from '../spec/index.js'
 import type { Spec } from '../spec/types.js'
 import { loadPlugins } from '../spec_plugin/index.js'
 import type { SpecRecord } from '../spec_record/index.js'
-import { StackFrameContext } from '../stack_frame.types.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
+import type { MemoryLogReporter } from '../standard_log.types.js'
 import { initTimeTrackers } from '../time_trackter/time_tracker.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
-import { createStore, Step, Store } from './store.js'
+import { Step, Store, createStore } from './store.js'
 
 export namespace Zucchini {
 	export type StepCaller<T = any> = (clause: string, ...inputs: any[]) => Promise<T>

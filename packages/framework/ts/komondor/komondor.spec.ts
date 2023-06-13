@@ -1,8 +1,7 @@
 import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
 import { some } from 'satisfier'
-import { logLevels } from 'standard-log'
-import { createKomondor } from '../index.js'
+import { createKomondor, logLevels } from '../index.js'
 import { createTestContext } from '../testing/index.js'
 import { indirectKomondor } from './komondor.test-setup.js'
 

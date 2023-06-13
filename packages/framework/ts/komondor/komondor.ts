@@ -1,11 +1,12 @@
 import type { AsyncContext } from 'async-fp'
-import { createMemoryLogReporter, type MemoryLogReporter } from 'standard-log'
+import { createMemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
 import type { LoadedContext } from '../context.internal.js'
 import { createLogContext } from '../log/log_context.js'
 import { createSpecObject, getEffectiveSpecModeContext, type Spec } from '../spec/index.js'
 import { loadPlugins } from '../spec_plugin/index.js'
 import type { StackFrameContext } from '../stack_frame.types.js'
+import { type MemoryLogReporter } from '../standard_log.types.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
 

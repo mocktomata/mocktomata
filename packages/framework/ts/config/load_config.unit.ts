@@ -1,11 +1,12 @@
 import { a } from 'assertron'
-import { createStandardLogForTest, logLevels } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log'
 import { createIncubator } from '../incubator/create_incubator.js'
 import {
 	createKomondor,
 	createMockto,
 	createZucchini,
-	Spec
+	logLevels,
+	type Spec
 } from '../index.js'
 import { createTestContext, newMemoryIO } from '../testing/index.js'
 import { CannotConfigAfterUsed, ConfigPropertyInvalid, createConfigurator, loadConfig } from './index.js'

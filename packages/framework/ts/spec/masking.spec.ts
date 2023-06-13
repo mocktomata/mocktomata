@@ -1,5 +1,5 @@
-import { logLevels } from 'standard-log'
 import { incubator } from '../incubator/index.js'
+import { logLevels } from '../standard_log.types.js'
 import { createTestAxios } from '../test_artifacts/test_subjects.js'
 
 afterAll(incubator.cleanup)

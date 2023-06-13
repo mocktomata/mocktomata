@@ -1,5 +1,5 @@
-import { Logger } from 'standard-log'
 import type { Spec } from '../spec/types.js'
+import type { Logger } from '../standard_log.types.js'
 
 export type TimeTracker = ReturnType<typeof createTimeTracker>
 export type TimeTrackersContext = {

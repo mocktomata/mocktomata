@@ -1,12 +1,12 @@
-import { logLevels } from 'standard-log'
+import esp from 'error-stack-parser'
 import { tersify } from 'tersify'
 import type { Log } from '../log/types.js'
 import type { SpecRecord } from '../spec_record/types.js'
 import { StackFrameContext } from '../stack_frame.types.js'
+import { logLevels } from '../standard_log.types.js'
 import { prettifyAction } from './action.format.js'
 import { maskString } from './masking.js'
 import type { MaskCriterion, Recorder } from './types.internal.js'
-import esp from 'error-stack-parser'
 
 export function logCreateSpy(
 	{ log, maskCriteria }: Log.Context & { maskCriteria: MaskCriterion[] },

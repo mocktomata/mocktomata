@@ -1,7 +1,6 @@
 import a, { AssertOrder } from 'assertron'
 import { some } from 'satisfier'
-import { logLevels, MemoryLogReporter } from 'standard-log'
-import { SpecNotFound, type Spec } from '../index.js'
+import { SpecNotFound, logLevels, type MemoryLogReporter, type Spec } from '../index.js'
 import { createTestContext } from '../testing/index.js'
 import { createIncubator } from './create_incubator.js'
 import { incubator } from './index.js'

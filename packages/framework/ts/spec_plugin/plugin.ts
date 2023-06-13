@@ -1,7 +1,7 @@
-import type { Logger } from 'standard-log'
 import { es2015 } from '../es2015.js'
 import { es2020 } from '../es2020.js'
 import { Log } from '../log/types.js'
+import type { Logger } from '../standard_log.types.js'
 import { PluginModuleNotConforming, PluginNotFound } from './errors.js'
 import { addPluginModule } from './plugin_module.js'
 import type { SpecPlugin } from './types.js'

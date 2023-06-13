@@ -1,10 +1,11 @@
 import { AsyncContext } from 'async-fp'
-import { createMemoryLogReporter, createStandardLog, logLevels } from 'standard-log'
+import { createMemoryLogReporter, createStandardLog } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import { requiredDeep } from 'type-plus'
 import { createConfigurator, resolveLogLevel } from '../config/index.js'
-import { createStackFrameContext } from '../stack_frame.js'
 import { newMemoryIO } from '../memory_io.js'
+import { createStackFrameContext } from '../stack_frame.js'
+import { logLevels } from '../standard_log.types.js'
 
 export namespace createTestContext {
 	export type Options = newMemoryIO.Options

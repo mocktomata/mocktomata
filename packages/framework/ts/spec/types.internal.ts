@@ -1,4 +1,4 @@
-import type { Logger } from 'standard-log'
+import type { Logger } from '../standard_log.types.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import type { SpecRecord } from '../spec_record/types.js'
 import type { StackFrameContext } from '../stack_frame.types.js'
