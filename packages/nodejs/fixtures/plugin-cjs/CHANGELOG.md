@@ -4,6 +4,13 @@
 
 ### Patch Changes
 
+- Updated dependencies [42f30357]
+  - @mocktomata/nodejs@9.2.3
+
+## null
+
+### Patch Changes
+
 - @mocktomata/nodejs@9.2.2
 
 ## null

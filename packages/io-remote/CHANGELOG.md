@@ -1,5 +1,14 @@
 # Change Log
 
+## 9.2.3
+
+### Patch Changes
+
+- 42f30357: Update `standard-log` to v12
+- Updated dependencies [42f30357]
+- Updated dependencies [3d0784c3]
+  - @mocktomata/framework@9.2.3
+
 ## 9.2.2
 
 ### Patch Changes
