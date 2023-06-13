@@ -2,7 +2,7 @@ import { Mocktomata, SpecNotFound, type SpecRecord } from '@mocktomata/framework
 import dummy from '@mocktomata/plugin-fixture-dummy'
 import { a } from 'assertron'
 import fetch from 'cross-fetch'
-import { createStandardLogForTest } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log/testing'
 import { ServiceNotAvailable } from './errors.js'
 import { Context, createIOInternal } from './io.internal.js'
 import { newMemoryContext } from './io.mock.js'

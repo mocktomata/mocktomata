@@ -1,5 +1,5 @@
 import { a } from 'assertron'
-import { createStandardLogForTest } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log/testing'
 import { createIncubator } from '../incubator/create_incubator.js'
 import {
 	createKomondor,

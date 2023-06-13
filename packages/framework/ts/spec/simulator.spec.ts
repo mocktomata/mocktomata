@@ -1,6 +1,6 @@
 import { a } from 'assertron'
 import { AsyncContext } from 'async-fp'
-import { createStandardLogForTest } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log/testing'
 import { ExtraReference, loadConfig, PluginsNotLoaded } from '../index.js'
 import { createStackFrameContext } from '../stack_frame.js'
 import { loadPlugins } from '../spec_plugin/index.js'

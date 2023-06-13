@@ -1,4 +1,4 @@
-import { createStandardLogForTest } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log/testing'
 import { createIO } from '@mocktomata/nodejs'
 
 const sl = createStandardLogForTest()

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import delay from 'delay'
-import { createStandardLogForTest } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log/testing'
 import { createTimeTracker } from './index.js'
 
 const testOptions = { timeout: 10 }

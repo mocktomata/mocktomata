@@ -57,8 +57,8 @@
 		"@hapi/hapi": "^20.2.2",
 		"@mocktomata/framework": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
-		"standard-log": "^11.5.0",
-		"standard-log-color": "^11.5.0",
+		"standard-log": "^12.1.2",
+		"standard-log-color": "^12.1.2",
 		"type-plus": "^7.0.0"
 	},
 	"devDependencies": {

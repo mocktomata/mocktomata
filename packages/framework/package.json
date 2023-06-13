@@ -69,7 +69,7 @@
 		"iso-error": "^6.0.0",
 		"json-bigint": "^1.0.0",
 		"pathe": "^1.1.0",
-		"standard-log": "^11.5.0",
+		"standard-log": "^12.1.2",
 		"tersify": "^3.12.0",
 		"type-plus": "^7.0.0"
 	},
@@ -97,7 +97,7 @@
 		"satisfier": "^5.4.2",
 		"setimmediate": "^1.0.5",
 		"size-limit": "^8.2.4",
-		"standard-log-color": "^11.5.0",
+		"standard-log-color": "^12.1.2",
 		"ts-jest": "^29.1.0",
 		"typescript": "~5.1.0"
 	},

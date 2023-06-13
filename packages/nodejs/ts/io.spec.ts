@@ -4,7 +4,7 @@ import { execCommand } from '@unional/fixture'
 import { a } from 'assertron'
 import t from 'node:assert'
 import { existsSync } from 'node:fs'
-import { createStandardLogForTest } from 'standard-log'
+import { createStandardLogForTest } from 'standard-log/testing'
 import {
 	MOCKTOMATA_FILE_PATH_FILTER,
 	MOCKTOMATA_LOG_LEVEL,
