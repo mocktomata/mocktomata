@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"lib": [
 			"DOM",
-			"es2015"
+      "DOM.Iterable",
+			"es2015",
 		],
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",

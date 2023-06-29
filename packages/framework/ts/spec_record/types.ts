@@ -139,8 +139,7 @@ export namespace SpecRecord {
 	export type Performer = 'user' | 'mockto' | 'plugin'
 
 	/**
-	 * Key types that works with `komondor`.
-	 * Note that `symbol` is not supported.
+	 * Key types that works with `mocktomata`.
 	 */
-	export type SupportedKeyTypes = string | number
+	export type SupportedKeyTypes = string | number | symbol
 }

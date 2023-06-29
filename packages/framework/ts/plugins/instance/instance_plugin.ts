@@ -1,8 +1,5 @@
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import {
-	demetarize, hasProperty, isBaseObject,
-	metarize, type SpecMeta
-} from '../../utils/index.js'
+import { demetarize, hasProperty, isBaseObject, metarize, type SpecMeta } from '../../utils/index.js'
 import { isClass } from '../class/class_plugin.utils.js'
 
 export const instancePlugin: SpecPlugin<
@@ -24,11 +21,11 @@ export const instancePlugin: SpecPlugin<
 			functionCalls: []
 		})
 		const spy = new Proxy(subject, {
-			get(target: any, key: string) {
+			get(target, key: any, receiver) {
 				if (!hasProperty(subject, key)) return undefined
 				const prop = subject[key]
 				if (typeof prop === 'function') {
-					return (...args: any[]) => {
+					return function (...args: any[]) {
 						meta.functionCalls.push(key)
 						return invoke({ site: key, thisArg: spy, args }, ({ args }) => prop.apply(target, args))
 					}
@@ -58,14 +55,24 @@ You need to spec that class for 'instanceof' to work correctly.`)
 		const proto = classProto.prototype ? Object.create(classProto.prototype) : null
 		Object.setPrototypeOf(base, proto)
 		const stub = new Proxy(base as any, {
-			get(_: any, property: string) {
-				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === property) {
+			get(_: any, key: any) {
+				if (meta.functionCalls.length > 0 && meta.functionCalls[0] === key) {
 					return (...args: any[]) => {
 						meta.functionCalls.shift()
-						return invoke({ site: property, thisArg: stub, args })
+						return invoke({ site: key, thisArg: stub, args })
 					}
 				}
-				return getProperty({ key: property })
+				const prop = getProperty({ key })
+				if (typeof key === 'symbol') {
+					console.log('sym.desc', key.description)
+					if (key.description) {
+						const y = Symbol.for(key.description)
+
+						console.log(y, key === y, key === Symbol.iterator)
+					}
+				}
+				console.log('key', key, prop)
+				return prop
 			},
 			set(_, key: string, value: any) {
 				return setProperty({ key, value })
