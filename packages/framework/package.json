@@ -75,7 +75,7 @@
 	},
 	"devDependencies": {
 		"@repobuddy/jest": "^3.3.0",
-		"@size-limit/file": "^8.2.4",
+		"@size-limit/file": "^9.0.0",
 		"@size-limit/webpack": "^8.2.4",
 		"@types/json-bigint": "^1.0.1",
 		"assertron": "^11.0.0",
