@@ -96,7 +96,7 @@
 		"rimraf": "^3.0.2",
 		"satisfier": "^5.4.2",
 		"setimmediate": "^1.0.5",
-		"size-limit": "^8.2.4",
+		"size-limit": "^9.0.0",
 		"standard-log-color": "^12.1.2",
 		"ts-jest": "^29.1.0",
 		"typescript": "~5.1.0"
