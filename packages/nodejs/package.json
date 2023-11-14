@@ -54,7 +54,7 @@
 		"@mocktomata/framework": "workspace:^",
 		"find-installed-packages": "^3.0.1",
 		"json5": "^2.2.1",
-		"mkdirp": "^2.0.0",
+		"mkdirp": "^3.0.0",
 		"sanitize-filename": "^1.6.3",
 		"type-plus": "^7.0.0"
 	},
