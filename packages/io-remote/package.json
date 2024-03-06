@@ -69,7 +69,7 @@
 		"rimraf": "^5.0.0",
 		"standard-log": "^12.1.2",
 		"ts-jest": "^29.1.0",
-		"typescript": "~5.1.0"
+		"typescript": "~5.4.0"
 	},
 	"engines": {
 		"node": ">= 14.16"
