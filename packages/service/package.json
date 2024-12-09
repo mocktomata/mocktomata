@@ -63,7 +63,7 @@
 	},
 	"devDependencies": {
 		"@jest/globals": "^29.5.0",
-		"@repobuddy/jest": "^3.3.0",
+		"@repobuddy/jest": "^4.0.0",
 		"@types/hapi__hapi": "^20.0.12",
 		"@types/node": "^18.0.0",
 		"@types/node-fetch": "^2.6.2",
