@@ -9,3 +9,4 @@ allowBuilds:
   core-js: true
   electron: true
   esbuild: true
+  fsevents: true
