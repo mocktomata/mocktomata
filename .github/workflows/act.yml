@@ -10,13 +10,11 @@ jobs:
       - run: apt update
       - run: apt install -y libnss3-dev libgdk-pixbuf2.0-dev libgtk-3-dev libxss-dev libasound2
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v4
+      - name: Use Node.js lts/*
+        uses: actions/setup-node@v6
         with:
-          version: 7.14.1
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
+          node-version: lts/*
           cache: pnpm
 
       - name: Install Dependencies
