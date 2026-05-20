@@ -3,4 +3,5 @@ ignores:
   - '@repobuddy/jest'
   - deepmerge
   - jest-*
+  - rimraf
   - ts-jest

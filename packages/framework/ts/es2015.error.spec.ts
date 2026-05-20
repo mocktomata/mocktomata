@@ -77,7 +77,7 @@ describe('error', () => {
 			expect(err.name).toEqual(BadRequest.name)
 			expect(err.cause?.name).toEqual(InvalidArgument.name)
 			// expect(err.cause?.message).toBe('not found')
-			expect(err.module).toBe('iso-error-http')
+			expect(err.module).toBe('iso-error-web/http')
 			await spec.done()
 		})
 	})
