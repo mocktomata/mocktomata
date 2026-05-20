@@ -7,7 +7,7 @@ on:
       - beta
 jobs:
   code:
-    uses: ./.github/workflows/pnpm-verify-cross-platform.yml
+    uses: mocktomata/.github/.github/workflows/pnpm-verify-cross-platform.yml@main
   release:
     uses: mocktomata/.github/.github/workflows/pnpm-release-changeset.yml@main
     needs: code
