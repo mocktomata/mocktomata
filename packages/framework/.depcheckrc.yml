@@ -3,5 +3,6 @@ ignores:
   - '@size-limit/*'
   - deepmerge
   - jest-*
+  - rimraf
   - ts-jest
   - tslib
