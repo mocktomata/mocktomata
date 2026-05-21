@@ -5,4 +5,4 @@ on:
     types: [opened, synchronize]
 jobs:
   code:
-    uses: ./.github/workflows/pnpm-verify-cross-platform.yml
+    uses: mocktomata/.github/.github/workflows/pnpm-verify-cross-platform.yml@main

@@ -11,6 +11,7 @@ ignores:
   - pascal-case
   - source-map-loader
   - standard-log-color
+  - rimraf
   - ts-jest
   - ts-loader
   - webpack-cli
