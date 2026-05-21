@@ -10,3 +10,5 @@ allowBuilds:
   electron: true
   esbuild: true
   fsevents: true
+overrides:
+  ts-jest: '~29.3.4'
