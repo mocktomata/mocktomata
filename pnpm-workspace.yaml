@@ -12,3 +12,4 @@ allowBuilds:
   fsevents: true
 overrides:
   ts-jest: '~29.3.4'
+  '@kayahr/jest-electron-runner': '29.7.0'
