@@ -48,7 +48,7 @@ jobs:
 
       - name: codecov
         if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v6
 
   all-checks:
     needs: [verify]
