@@ -82,9 +82,9 @@ importers:
       npm-check-updates:
         specifier: ^16.7.5
         version: 16.14.20
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       pinst:
         specifier: ^3.0.0
         version: 3.0.0
@@ -149,9 +149,9 @@ importers:
       jest-watch-typeahead:
         specifier: ^2.2.2
         version: 2.2.2(jest@29.7.0(@types/node@16.18.126))
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -246,9 +246,9 @@ importers:
       ncp:
         specifier: ^2.0.0
         version: 2.0.0
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -322,9 +322,9 @@ importers:
       ncp:
         specifier: ^2.0.0
         version: 2.0.0
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -434,9 +434,9 @@ importers:
       ncp:
         specifier: ^2.0.0
         version: 2.0.0
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       param-case:
         specifier: ^3.0.4
         version: 3.0.4
@@ -549,9 +549,9 @@ importers:
       ncp:
         specifier: ^2.0.0
         version: 2.0.0
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -703,9 +703,9 @@ importers:
       node-fetch:
         specifier: ^2.6.7
         version: 2.7.0(encoding@0.1.13)
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       tmp:
         specifier: ^0.2.1
         version: 0.2.5
@@ -763,9 +763,9 @@ importers:
       ncp:
         specifier: ^2.0.0
         version: 2.0.0
-      npm-run-all:
-        specifier: ^4.1.5
-        version: 4.1.5
+      npm-run-all2:
+        specifier: ^5.0.0
+        version: 5.0.2
       ts-jest:
         specifier: ~29.4.0
         version: 29.4.11(@babel/core@7.29.6)(@jest/transform@29.7.0)(@jest/types@30.4.1)(babel-jest@29.7.0(@babel/core@7.29.6))(jest-util@29.7.0)(jest@29.7.0(@types/node@18.19.130))(typescript@5.1.6)
@@ -6575,6 +6575,11 @@ packages:
     resolution: {integrity: sha512-kIDMIo4aBm6xg7jOttupWZamsZRkAqMqwqqbVXnUqstY5+tapvv6bkH/qMR76jdgV+YljEUCyWx3hRYMrJiAgA==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
+  npm-run-all2@5.0.2:
+    resolution: {integrity: sha512-S2G6FWZ3pNWAAKm2PFSOtEAG/N+XO/kz3+9l6V91IY+Y3XFSt7Lp7DV92KCgEboEW0hRTu0vFaMe4zXDZYaOyA==}
+    engines: {node: '>= 10'}
+    hasBin: true
+
   npm-run-all@4.1.5:
     resolution: {integrity: sha512-Oo82gJDAVcaMdi3nuoKFavkIHBRVqQ1qvMb+9LHk/cF4P6B2m8aP04hGf7oL6wZ9BuGwX1onlLhpuoofSyoQDQ==}
     engines: {node: '>= 4'}
@@ -6878,6 +6883,11 @@ packages:
 
   pidtree@0.3.1:
     resolution: {integrity: sha512-qQbW94hLHEqCg7nhby4yRC7G2+jYHY4Rguc2bjw7Uug4GIJuu1tvf2uHaZv5Q8zdt+WKJ6qK1FOI6amaWUo5FA==}
+    engines: {node: '>=0.10'}
+    hasBin: true
+
+  pidtree@0.5.0:
+    resolution: {integrity: sha512-9nxspIM7OpZuhBxPg73Zvyq7j1QMPMPsGKTqRc2XOaFQauDvoNz9fM1Wdkjmeo7l9GXOZiRs97sPkuayl39wjA==}
     engines: {node: '>=0.10'}
     hasBin: true
 
@@ -16432,6 +16442,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  npm-run-all2@5.0.2:
+    dependencies:
+      ansi-styles: 5.2.0
+      cross-spawn: 7.0.6
+      memorystream: 0.3.1
+      minimatch: 3.1.5
+      pidtree: 0.5.0
+      read-pkg: 5.2.0
+      shell-quote: 1.8.3
+
   npm-run-all@4.1.5:
     dependencies:
       ansi-styles: 3.2.1
@@ -16742,6 +16762,8 @@ snapshots:
   picomatch@4.0.4: {}
 
   pidtree@0.3.1: {}
+
+  pidtree@0.5.0: {}
 
   pify@3.0.0: {}
 
