@@ -199,8 +199,8 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0(size-limit@9.0.0)
       '@size-limit/webpack':
-        specifier: ^9.0.0
-        version: 9.0.0(@swc/core@1.15.33)(size-limit@9.0.0)
+        specifier: ^12.0.0
+        version: 12.1.0(@swc/core@1.15.33)(size-limit@9.0.0)
       '@types/json-bigint':
         specifier: ^1.0.1
         version: 1.0.4
@@ -2567,11 +2567,11 @@ packages:
     peerDependencies:
       size-limit: 9.0.0
 
-  '@size-limit/webpack@9.0.0':
-    resolution: {integrity: sha512-0YwdvmBj9rS4bXE/PY9vSdc5lCiQXmT0794EsG7yvlDMWyrWa/dsgcRok/w0MoZstfuLaS6lv03VI5UJRFU/lg==}
-    engines: {node: ^18.0.0 || >=20.0.0}
+  '@size-limit/webpack@12.1.0':
+    resolution: {integrity: sha512-3v/evOHskR0eVD6hpRO9jFpRPkpJb+GhqKJGxrqf1j1ZeoYu9A8v8iT3+U4TJOXTZbCbJ+Q6lWRBPFEcLZbNuw==}
+    engines: {node: ^20.0.0 || ^22.0.0 || >=24.0.0}
     peerDependencies:
-      size-limit: 9.0.0
+      size-limit: 12.1.0
 
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
@@ -6443,6 +6443,11 @@ packages:
   nanoid@3.3.12:
     resolution: {integrity: sha512-ZB9RH/39qpq5Vu6Y+NmUaFhQR6pp+M2Xt76XBnEwDaGcVAqhlvxrl3B2bKS5D3NH3QR76v3aSrKaF/Kiy7lEtQ==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
+    hasBin: true
+
+  nanoid@5.1.16:
+    resolution: {integrity: sha512-kVrnsrJqMR8+oLJnGEmSWw9BivK5mt7H3FZatVRjrc5wGqFYuBxX1yG7+A7Gi5AefkX6t/oCkizcQgpu0cY1dQ==}
+    engines: {node: ^18 || >=20}
     hasBin: true
 
   nanomatch@1.2.13:
@@ -10906,9 +10911,9 @@ snapshots:
       semver: 7.5.4
       size-limit: 9.0.0
 
-  '@size-limit/webpack@9.0.0(@swc/core@1.15.33)(size-limit@9.0.0)':
+  '@size-limit/webpack@12.1.0(@swc/core@1.15.33)(size-limit@9.0.0)':
     dependencies:
-      nanoid: 3.3.12
+      nanoid: 5.1.16
       size-limit: 9.0.0
       webpack: 5.106.2(@swc/core@1.15.33)
     transitivePeerDependencies:
@@ -16168,6 +16173,8 @@ snapshots:
       minimatch: 3.1.5
 
   nanoid@3.3.12: {}
+
+  nanoid@5.1.16: {}
 
   nanomatch@1.2.13:
     dependencies:
