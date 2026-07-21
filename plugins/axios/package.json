@@ -62,7 +62,7 @@
 		"jest": "^29.5.0",
 		"jest-watch-suspend": "^1.1.2",
 		"jest-watch-toggle-config-2": "^2.1.0",
-		"jest-watch-typeahead": "^2.2.2",
+		"jest-watch-typeahead": "^3.0.0",
 		"mocktomata": "workspace:^",
 		"ncp": "^2.0.0",
 		"npm-run-all2": "^5.0.0",
