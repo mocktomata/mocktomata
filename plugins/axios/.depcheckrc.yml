@@ -1,4 +1,5 @@
 ignores:
   - '@repobuddy/jest'
+  - cross-env
   - jest-*
   - ts-jest

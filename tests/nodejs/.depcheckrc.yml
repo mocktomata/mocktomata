@@ -1,3 +1,4 @@
 ignores:
+  - cross-env
   - jest-*
   - ts-jest
