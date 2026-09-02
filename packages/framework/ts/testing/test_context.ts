@@ -5,7 +5,7 @@ import { requiredDeep } from 'type-plus'
 import { createConfigurator, resolveLogLevel } from '../config/index.js'
 import { newMemoryIO } from '../memory_io.js'
 import { createStackFrameContext } from '../stack_frame.js'
-import { logLevels } from '../standard_log.types.js'
+import { logLevels, type Logger, type MemoryLogReporter } from '../standard_log.types.js'
 
 export namespace createTestContext {
 	export type Options = newMemoryIO.Options
@@ -22,11 +22,14 @@ export function createTestContext(options?: createTestContext.Options) {
 		options
 	)
 	const io = newMemoryIO(o)
-	const reporter = createMemoryLogReporter()
+	// Annotated explicitly: standard-log 13 declares these symbols in its own
+	// deep modules rather than flattening them through `export *`, so an
+	// inferred type here is not portable across a pnpm layout (TS2742).
+	const reporter: MemoryLogReporter = createMemoryLogReporter()
 	const reporters = o?.config?.emitLog ? [reporter, createColorLogReporter()] : [reporter]
 	const logLevel = resolveLogLevel(o.config.logLevel)
 	const sl = createStandardLog({ logLevel, reporters })
-	const log = sl.getLogger('mocktomata')
+	const log: Logger = sl.getLogger('mocktomata')
 	const configurator = createConfigurator()
 	const stackContext = createStackFrameContext({ cwd: process.cwd() })
 	const context = new AsyncContext({ io, log, configurator, ...stackContext })

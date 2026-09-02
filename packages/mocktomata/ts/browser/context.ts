@@ -55,7 +55,7 @@ export function newContext() {
 			const stackFrameContext = createStackFrameContext({ url: configOptions.url })
 			return {
 				asyncContext: new AsyncContext(async () => {
-					const log = createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
+					const log: Logger = createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
 					const io = await createIO({ url: configOptions.url, log })
 					config = buildConfig(await io.loadConfig())
 					return { io, config, log, ...stackFrameContext }

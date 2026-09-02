@@ -1,6 +1,19 @@
 minimumReleaseAge: 1440
 minimumReleaseAgeStrict: true
 
+minimumReleaseAgeExclude:
+  # Temporary, exact-version only. These are the freshly republished upstreams
+  # this repo exists to consume; each was published hours ago and each was
+  # verified to carry SLSA provenance (`npm view <pkg>@<v> dist.attestations`)
+  # before being listed here. Exact versions, so nothing can slide forward.
+  # Remove once they age past the 1440-minute soak.
+  - standard-log@13.0.1
+  - tersify@4.0.6
+  - iso-error@6.0.5
+  - iso-error-google-cloud-api@6.0.8
+  - google-cloud-api@7.0.2
+  - unpartial@1.0.7
+
 packages:
   - packages/*
   - packages/nodejs/fixtures/*
