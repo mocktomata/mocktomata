@@ -4,6 +4,7 @@ ignores:
   - '@kayahr/jest-electron-runner'
   - '@mocktomata/service'
   - '@repobuddy/jest'
+  - cross-env
   - deepmerge
   - jest-*
   - rimraf

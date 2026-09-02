@@ -1,6 +1,7 @@
 ignores:
   - '@mocktomata/plugin-fixture-*'
   - '@repobuddy/jest'
+  - cross-env
   - deepmerge
   - jest-*
   - rimraf

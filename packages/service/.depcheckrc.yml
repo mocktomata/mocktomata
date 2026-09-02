@@ -1,5 +1,6 @@
 ignores:
   - '@repobuddy/jest'
+  - cross-env
   - deepmerge
   - jest-*
   - rimraf
