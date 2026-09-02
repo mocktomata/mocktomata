@@ -1,3 +1,24 @@
 {
-	"extends": ["github>unional/renovate-preset"]
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["github>unional/renovate-preset"],
+	"dependencyDashboard": true,
+	"packageRules": [
+		{
+			"description": "Dev-only and CI updates merge themselves. platformAutomerge hands the merge to GitHub so it goes through branch protection natively rather than a bot pushing past it.",
+			"matchDepTypes": ["devDependencies", "action"],
+			"matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+			"automerge": true,
+			"platformAutomerge": true
+		},
+		{
+			"description": "Runtime dependencies ship to consumers, so they stay manual: each one needs a changeset and a look at what actually changed.",
+			"matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
+			"automerge": false
+		},
+		{
+			"description": "Majors are always a human call, whatever the depType.",
+			"matchUpdateTypes": ["major"],
+			"automerge": false
+		}
+	]
 }
