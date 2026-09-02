@@ -1,5 +1,12 @@
 # @mocktomata/cli
 
+## 9.2.4
+
+### Patch Changes
+
+- Updated dependencies [0f3de8f]
+  - @mocktomata/service@9.2.4
+
 ## 9.2.3
 
 ### Patch Changes

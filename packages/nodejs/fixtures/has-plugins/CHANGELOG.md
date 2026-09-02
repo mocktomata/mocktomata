@@ -1,5 +1,11 @@
 # fixtures-has-plugins
 
+## 0.0.1
+
+### Patch Changes
+
+- @mocktomata/plugin-fixture-dummy@1.1.21
+
 ## null
 
 ### Patch Changes
