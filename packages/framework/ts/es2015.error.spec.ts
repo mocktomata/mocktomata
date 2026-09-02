@@ -68,7 +68,10 @@ describe('error', () => {
 								d => typeof d === 'object' && typeof d.error === 'object'
 							)
 						) {
-							options.cause = converter.fromSerializable(e.response.data.error, { ssf: request })
+							// iso-error-google-cloud-api@6 wraps `google.rpc.Status` in an
+							// `error` field, matching Google's HTTP mapping, so the converter
+							// now consumes the whole wrapper rather than the unwrapped status.
+							options.cause = converter.fromSerializable(e.response.data, { ssf: request })
 						}
 						throw new BadRequest('bad request', options)
 					}

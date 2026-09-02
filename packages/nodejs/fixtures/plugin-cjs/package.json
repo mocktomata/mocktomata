@@ -5,7 +5,7 @@
     "@mocktomata/nodejs": "workspace:^",
     "@mocktomata/plugin-fixture-cjs-a": "workspace:^",
     "@mocktomata/plugin-fixture-cjs-b": "workspace:^",
-    "standard-log": "12.1.2"
+    "standard-log": "13.0.1"
   },
   "mocktomata": {
     "plugins": [

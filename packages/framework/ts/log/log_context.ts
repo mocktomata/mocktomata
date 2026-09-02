@@ -1,7 +1,7 @@
 import { createStandardLog } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import type { Spec } from '../spec/types.js'
-import { logLevels, type MemoryLogReporter } from '../standard_log.types.js'
+import { logLevels, type Logger, type MemoryLogReporter } from '../standard_log.types.js'
 import type { Log } from './types.js'
 
 export function createLogContext({
@@ -21,6 +21,9 @@ export function createLogContext({
 	const logLevel = options.logLevel ?? config.logLevel ?? (emitLog ? logLevels.debug : undefined)
 	const reporters = emitLog ? [createColorLogReporter(), reporter] : [reporter]
 	const sl = createStandardLog({ logLevel, reporters })
-	const log = sl.getLogger(`mocktomata:${specName}:${mode}`)
+	// Annotated explicitly: standard-log 13 declares these symbols in its own
+	// deep modules rather than flattening them through `export *`, so an
+	// inferred type here is not portable across a pnpm layout (TS2742).
+	const log: Logger = sl.getLogger(`mocktomata:${specName}:${mode}`)
 	return { log, logLevel }
 }

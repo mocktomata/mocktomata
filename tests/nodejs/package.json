@@ -65,7 +65,7 @@
 	},
 	"dependencies": {
 		"iso-error": "^6.0.0",
-		"iso-error-google-cloud-api": "^5.2.0",
+		"iso-error-google-cloud-api": "^6.0.8",
 		"iso-error-web": "^2.3.0"
 	}
 }
