@@ -226,8 +226,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.2
       iso-error-google-cloud-api:
-        specifier: ^5.2.0
-        version: 5.2.6(iso-error@6.0.3)
+        specifier: ^6.0.0
+        version: 6.0.6(iso-error@6.0.3)
       iso-error-web:
         specifier: ^2.3.0
         version: 2.4.1
@@ -5185,6 +5185,10 @@ packages:
     resolution: {integrity: sha512-pkYMA/YnGHkqTPCvOhAF7Hhmq4q2YXP4Xk3QUNXoDgFdb4Hq+j2tvrKHrek0tiv9q7Gxe4jY9t1sAZj2aCBJoA==}
     engines: {node: '>= 8'}
 
+  google-cloud-api@7.0.0:
+    resolution: {integrity: sha512-Xo55dL4haYugxfNy0I5KXoSWU+02X8wre0pGqRMhm/ZMw3Qy+Mexh5vYUvVnngHT+Ru8mWoJO3Ccc2BZkdGIJg==}
+    engines: {node: '>= 8'}
+
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
     engines: {node: '>= 0.4'}
@@ -5701,6 +5705,12 @@ packages:
 
   iso-error-google-cloud-api@5.2.6:
     resolution: {integrity: sha512-VhAzUF3sl5deRn63GLC0aT092c+UCf3pafhqTB9gDzhZGhHUTN+g7Fes4kgJXqMftuE9GXWNsyJqhKivDkrXrw==}
+    engines: {node: '>= 8'}
+    peerDependencies:
+      iso-error: '>= 4'
+
+  iso-error-google-cloud-api@6.0.6:
+    resolution: {integrity: sha512-N+5GTapEQWF9Okjcmdk7Wqs1A0djsgBR8Ub+fjTKLGPnF4VX7JYb0GMn/4xo0OKeJGKuiILWN+KWyrzHamfDqQ==}
     engines: {node: '>= 8'}
     peerDependencies:
       iso-error: '>= 4'
@@ -14621,6 +14631,11 @@ snapshots:
       iso-error: 6.0.3
       type-plus: 7.6.2
 
+  google-cloud-api@7.0.0:
+    dependencies:
+      iso-error: 6.0.3
+      type-plus: 7.6.2
+
   gopd@1.2.0: {}
 
   got@11.8.6:
@@ -15103,6 +15118,11 @@ snapshots:
   iso-error-google-cloud-api@5.2.6(iso-error@6.0.3):
     dependencies:
       google-cloud-api: 4.1.1
+      iso-error: 6.0.3
+
+  iso-error-google-cloud-api@6.0.6(iso-error@6.0.3):
+    dependencies:
+      google-cloud-api: 7.0.0
       iso-error: 6.0.3
 
   iso-error-web@2.4.1:
