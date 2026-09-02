@@ -7,5 +7,5 @@
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^"
 	},
-	"version": "0.0.0"
+	"version": "0.0.1"
 }
