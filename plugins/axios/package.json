@@ -67,7 +67,7 @@
 		"ncp": "^2.0.0",
 		"npm-run-all2": "^5.0.0",
 		"ts-jest": "^29.1.0",
-		"typescript": "~5.1.0"
+		"typescript": "~5.9.0"
 	},
 	"peerDependencies": {
 		"mocktomata": "workspace:^"
