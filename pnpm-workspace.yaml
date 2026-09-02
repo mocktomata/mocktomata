@@ -8,7 +8,6 @@ minimumReleaseAgeExclude:
   # before being listed here. Exact versions, so nothing can slide forward.
   # Remove once they age past the 1440-minute soak.
   - standard-log@13.0.1
-  - standard-log-color@13.0.1
   - tersify@4.0.6
   - iso-error@6.0.5
   - iso-error-google-cloud-api@6.0.8
