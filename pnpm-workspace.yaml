@@ -1,3 +1,6 @@
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+
 packages:
   - packages/*
   - packages/nodejs/fixtures/*
