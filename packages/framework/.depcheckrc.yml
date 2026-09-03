@@ -1,9 +1,10 @@
 ignores:
-  - '@repobuddy/jest'
-  - '@size-limit/*'
-  - cross-env
-  - deepmerge
-  - jest-*
+  # Bin-only tools: invoked from `scripts`, never imported, so depcheck cannot see them.
+  - '@vitest/coverage-v8'
+  - depcheck
+  - npm-run-all2
   - rimraf
-  - ts-jest
-  - tslib
+  - tsdown
+  - typescript
+  # Loaded by name through vitest's `environment: 'jsdom'`, not imported.
+  - jsdom

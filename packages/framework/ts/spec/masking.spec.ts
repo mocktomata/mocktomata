@@ -4,20 +4,21 @@ import { createTestAxios } from '../test_artifacts/test_subjects.js'
 
 afterAll(incubator.cleanup)
 
-describe(`maskValue(string)`, () => {
-	incubator(
-		'actual value is sent to the subject',
-		{ logLevel: logLevels.all },
-		(specName, spec, reporter) => {
-			test(specName, async () => {
-				spec.maskValue('secret')
-				const s = await spec((value: string) => expect(value).toBe('secret'))
-				s('secret')
-				await spec.done()
-				expect(reporter.getLogMessage()).not.toContain('secret')
+describe('maskValue(string)', () => {
+	incubator('actual value is sent to the subject', { logLevel: logLevels.all }, (specName, spec, reporter) => {
+		test(specName, async () => {
+			spec.maskValue('secret')
+			// The subject must return nothing: whatever it returns is recorded, and vitest's
+			// `expect()` returns a chai assertion whose property access throws on an unknown
+			// key — which is exactly what tersifying the recorded value does.
+			const s = await spec((value: string) => {
+				expect(value).toBe('secret')
 			})
-		}
-	)
+			s('secret')
+			await spec.done()
+			expect(reporter.getLogMessage()).not.toContain('secret')
+		})
+	})
 
 	incubator.save('throws if called after spec', { logLevel: logLevels.all }, (specName, spec, reporter) => {
 		test(specName, async () => {
@@ -186,40 +187,32 @@ describe(`maskValue(string)`, () => {
 		}
 	)
 
-	incubator(
-		'invoke with array gets original value',
-		{ logLevel: logLevels.all },
-		(specName, spec, reporter) => {
-			test(specName, async () => {
-				// The outout gets value from input,
-				// so the system can find the original reference,
-				// thus able to return the original value
-				spec.maskValue('secret')
-				const s = await spec((v: string[]) => [v[1], v[0]])
-				expect(s(['secret', 'world'])).toEqual(['world', 'secret'])
-				await spec.done()
-				expect(reporter.getLogMessage()).not.toContain('secret')
-			})
-		}
-	)
+	incubator('invoke with array gets original value', { logLevel: logLevels.all }, (specName, spec, reporter) => {
+		test(specName, async () => {
+			// The outout gets value from input,
+			// so the system can find the original reference,
+			// thus able to return the original value
+			spec.maskValue('secret')
+			const s = await spec((v: string[]) => [v[1], v[0]])
+			expect(s(['secret', 'world'])).toEqual(['world', 'secret'])
+			await spec.done()
+			expect(reporter.getLogMessage()).not.toContain('secret')
+		})
+	})
 
-	incubator(
-		'invoke returning object gets original value',
-		{ logLevel: logLevels.all },
-		(specName, spec, reporter) => {
-			test(specName, async () => {
-				// Return value of a function is scanned and match against input.
-				// therefore the original secret value can be pass through.
-				spec.maskValue('secret')
-				const s = await spec((value: string) => {
-					return { value, b: 1 }
-				})
-				expect(s('secret')).toEqual({ value: 'secret', b: 1 })
-				await spec.done()
-				expect(reporter.getLogMessage()).not.toContain('secret')
+	incubator('invoke returning object gets original value', { logLevel: logLevels.all }, (specName, spec, reporter) => {
+		test(specName, async () => {
+			// Return value of a function is scanned and match against input.
+			// therefore the original secret value can be pass through.
+			spec.maskValue('secret')
+			const s = await spec((value: string) => {
+				return { value, b: 1 }
 			})
-		}
-	)
+			expect(s('secret')).toEqual({ value: 'secret', b: 1 })
+			await spec.done()
+			expect(reporter.getLogMessage()).not.toContain('secret')
+		})
+	})
 
 	incubator('against object as input', { logLevel: logLevels.all }, (specName, spec, reporter) => {
 		test(specName, async () => {
@@ -227,7 +220,9 @@ describe(`maskValue(string)`, () => {
 			// so the system can find the original reference,
 			// thus able to return the original value
 			spec.maskValue('secret')
-			const s = await spec((v: Record<string, string>) => ({ value2: v.value }))
+			const s = await spec((v: Record<string, string>) => ({
+				value2: v.value
+			}))
 			expect(s({ value: 'secret' })).toEqual({ value2: 'secret' })
 			await spec.done()
 			expect(reporter.getLogMessage()).not.toContain('secret')
@@ -249,7 +244,7 @@ describe(`maskValue(string)`, () => {
 	incubator.sequence(
 		'works with complex object (axios)',
 		{
-			logLevel: Infinity
+			logLevel: Number.POSITIVE_INFINITY
 		},
 		(specName, { save, simulate }, reporter) => {
 			it(specName, async () => {
@@ -291,7 +286,7 @@ describe(`maskValue(string)`, () => {
 	})
 })
 
-describe(`maskValue(regex)`, () => {
+describe('maskValue(regex)', () => {
 	incubator.sequence(
 		'masks the matched value',
 		{ logLevel: logLevels.all },

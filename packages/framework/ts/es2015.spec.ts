@@ -1,16 +1,12 @@
+import { EventEmitter } from 'node:events'
 import { a } from 'assertron'
-import { EventEmitter } from 'events'
 import { incubator } from './incubator/index.js'
-import {
-	ActionMismatch,
-	ExtraAction,
-	ExtraReference,
-	NotSpecable,
-	SpecIDCannotBeEmpty
-} from './index.js'
+import { ActionMismatch, ExtraAction, ExtraReference, NotSpecable, SpecIDCannotBeEmpty } from './index.js'
 import {
 	callbackInDeepObjLiteral,
-	callbackInObjLiteral, delayed, fetch,
+	callbackInObjLiteral,
+	delayed,
+	fetch,
 	postReturn,
 	recursive,
 	simpleCallback,
@@ -18,7 +14,7 @@ import {
 } from './test_artifacts/index.js'
 
 describe('basic checks', () => {
-	incubator.save(`type %s is not specable`, (specName, spec) => {
+	incubator.save('type %s is not specable', (specName, spec) => {
 		test.each<[any, any]>([
 			['undefined', undefined],
 			['null', null],
@@ -28,7 +24,9 @@ describe('basic checks', () => {
 			['string', 'string'],
 			// Array is not specable because it can only be treated as object with index props.
 			['array', []]
-		])(specName, (_, value) => a.throws(() => spec(value), NotSpecable))
+		])(specName, async (_, value) => {
+			await a.throws(() => spec(value), NotSpecable)
+		})
 	})
 	function noop() {}
 
@@ -63,21 +61,18 @@ describe('get', () => {
 		})
 	})
 	// @TODO: 💡 not sure if we should support this behavior
-	incubator.sequence(
-		'extra action not performed before gets value from subject',
-		(specName, { save, simulate }) => {
-			test.skip(specName, async () => {
-				const subject = { a: 1, b: 2 }
-				const spy = await save(subject)
-				expect(spy.a).toBe(1)
-				await save.done()
-				const stub = await simulate(subject)
-				expect(stub.a).toBe(1)
-				expect(stub.b).toBe(2)
-				await simulate.done()
-			})
-		}
-	)
+	incubator.sequence('extra action not performed before gets value from subject', (specName, { save, simulate }) => {
+		test.skip(specName, async () => {
+			const subject = { a: 1, b: 2 }
+			const spy = await save(subject)
+			expect(spy.a).toBe(1)
+			await save.done()
+			const stub = await simulate(subject)
+			expect(stub.a).toBe(1)
+			expect(stub.b).toBe(2)
+			await simulate.done()
+		})
+	})
 })
 
 describe('set', () => {
@@ -192,7 +187,7 @@ describe('invoke', () => {
 	})
 	incubator.sequence('in place of different action throws ActionMismatch', (specName, { save, simulate }) => {
 		test(specName, async () => {
-			const subject = Object.assign(function () {}, { a: 1 })
+			const subject = Object.assign(() => {}, { a: 1 })
 			const spy = await save(subject)
 			spy()
 			spy.a = 2
@@ -209,7 +204,7 @@ describe('invoke', () => {
 		test.skip(specName, async () => {
 			// This test is not the right test
 			// Can't remember what it should be
-			const subject = Object.assign(function () {}, { a: 1 })
+			const subject = Object.assign(() => {}, { a: 1 })
 			const spy = await save(subject)
 			spy()
 			spy.a = 2
@@ -437,7 +432,7 @@ describe('function', () => {
 	incubator('immediate invoke callback', (specName, spec) => {
 		test(specName, async () => {
 			const subject = await spec(simpleCallback.success)
-			let actual
+			let actual: any
 			subject(2, (_, result) => {
 				actual = result
 			})
@@ -456,7 +451,7 @@ describe('function', () => {
 		test(specName, async () => {
 			const subject = await spec(echo)
 			let actual: any
-			subject(undefined, v => (actual = v))
+			subject(undefined, (v) => (actual = v))
 
 			expect(actual).toBeUndefined()
 			await spec.done()
@@ -467,7 +462,7 @@ describe('function', () => {
 		test(specName, async () => {
 			const subject = await spec(echo)
 			let actual: any
-			subject(null, v => (actual = v))
+			subject(null, (v) => (actual = v))
 
 			expect(actual).toBeNull()
 			await spec.done()
@@ -537,7 +532,7 @@ describe('function', () => {
 		test(specName, async () => {
 			const subject = await spec(callbackInDeepObjLiteral.fail)
 
-			await a.throws(callbackInDeepObjLiteral.increment(subject, 2), err => err.message === 'fail')
+			await a.throws(callbackInDeepObjLiteral.increment(subject, 2), (err) => err.message === 'fail')
 
 			await spec.done()
 		})
@@ -577,7 +572,7 @@ describe('function', () => {
 		test(specName, async () => {
 			const subject = await spec(postReturn.fireEvent)
 
-			await new Promise<void>(a => {
+			await new Promise<void>((a) => {
 				let called = 0
 				subject('event', 3, () => {
 					called++
@@ -619,7 +614,7 @@ describe('function', () => {
 	})
 	incubator('function with static prop', (specName, spec) => {
 		test(specName, async () => {
-			const fn = Object.assign(function () {}, { a: 1 })
+			const fn = Object.assign(() => {}, { a: 1 })
 
 			const mock = await spec(fn)
 			expect(mock.a).toBe(1)
@@ -633,8 +628,8 @@ describe('function', () => {
 		}
 
 		test(specName, async () => {
-			await scopingSpec(1).then(subject => expect(subject()).toBe(1))
-			await scopingSpec(3).then(subject => expect(subject()).toBe(3))
+			await scopingSpec(1).then((subject) => expect(subject()).toBe(1))
+			await scopingSpec(3).then((subject) => expect(subject()).toBe(3))
 			await spec.done()
 		})
 	})
@@ -650,7 +645,7 @@ describe('function', () => {
 	})
 	incubator('call toString()', (specName, spec) => {
 		test(specName, async () => {
-			const subject = await spec(function () {})
+			const subject = await spec(() => {})
 			expect(subject.toString()).toEqual('function () { [native code] }')
 
 			await spec.done()

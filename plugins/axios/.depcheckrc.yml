@@ -1,5 +1,9 @@
 ignores:
-  - '@repobuddy/jest'
-  - cross-env
-  - jest-*
-  - ts-jest
+  # Bin-only tools: invoked from `scripts`, never imported, so depcheck cannot see them.
+  - '@vitest/coverage-v8'
+  - depcheck
+  - npm-run-all2
+  - rimraf
+  - tsdown
+  - typescript
+  - jsdom

@@ -1,18 +1,14 @@
 ignores:
-  - '@babel/core'
-  - '@kayahr/jest-electron-runner'
+  # Bin-only tools: invoked from `scripts`, never imported, so depcheck cannot see them.
+  - '@vitest/coverage-v8'
+  - depcheck
+  - npm-run-all2
+  - rimraf
+  - tsdown
+  - typescript
+  - jsdom
+  # Wraps the `test:save` / `test:simulate` scripts.
+  - cross-env
+  # Installed so the plugin-loading specs have real plugins on disk to resolve.
   - '@mocktomata/plugin-fixture-deep-link'
   - '@mocktomata/plugin-fixture-dummy'
-  - '@repobuddy/jest'
-  - cross-env
-  - deepmerge
-  - jest-*
-  - karma-*
-  - param-case
-  - pascal-case
-  - source-map-loader
-  - standard-log-color
-  - rimraf
-  - ts-jest
-  - ts-loader
-  - webpack-cli

@@ -5,25 +5,11 @@
 	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Debug Jest Tests",
 			"type": "node",
 			"request": "launch",
-			"runtimeArgs": [
-				"--inspect-brk",
-				"${workspaceRoot}/node_modules/jest/bin/jest",
-				"--runInBand",
-				"--coverage",
-				"false"
-			],
-			"console": "integratedTerminal",
-			"internalConsoleOptions": "neverOpen"
-		},
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "Jest All",
-			"program": "${workspaceRoot}/node_modules/jest/bin/jest",
-			"args": ["--runInBand", "--coverage", "false"],
+			"name": "Vitest All",
+			"program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+			"args": ["run"],
 			"sourceMaps": true,
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen"
@@ -31,9 +17,9 @@
 		{
 			"type": "node",
 			"request": "launch",
-			"name": "Jest Current File",
-			"program": "${workspaceRoot}/node_modules/jest/bin/jest",
-			"args": ["${file}"],
+			"name": "Vitest Current File",
+			"program": "${workspaceRoot}/node_modules/vitest/vitest.mjs",
+			"args": ["run", "${file}"],
 			"sourceMaps": true,
 			"console": "integratedTerminal",
 			"internalConsoleOptions": "neverOpen"

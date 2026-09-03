@@ -1,13 +1,13 @@
-import { describe, jest, test } from '@jest/globals'
+import t from 'node:assert'
+import fs, { readFileSync } from 'node:fs'
+import path from 'node:path'
 import { json, prettyPrintSpecRecord } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
-import t from 'assert'
 import { a } from 'assertron'
-import fs, { readFileSync } from 'fs'
 import f from 'node-fetch'
-import path from 'path'
 import { createStandardLogForTest } from 'standard-log/testing'
 import { dirSync } from 'tmp'
+import { describe, test, vi } from 'vitest'
 import { btoa } from './base64.js'
 import { start } from './index.js'
 
@@ -21,7 +21,7 @@ it('throws EADDRINUSE if the specified port is being used (hapi)', async () => {
 })
 
 describe('server behavior', () => {
-	jest.setTimeout(20000)
+	vi.setConfig({ testTimeout: 20000 })
 	let server: Awaited<ReturnType<typeof start>>
 	beforeAll(async () => {
 		const cwd = dirSync().name
