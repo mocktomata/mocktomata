@@ -47,7 +47,9 @@ mockto('can inspect logs', { logLevel: logLevels.all }, (specName, spec, reporte
 		expect(s(1)).toBe(2)
 		const messages = reporter.getLogMessagesWithIdAndLevel()
 		expect(messages.length).toBeGreaterThan(0)
-		messages.forEach(msg => expect(msg.startsWith(`mocktomata:can inspect logs:`)).toBe(true))
+		messages.forEach((msg) => {
+			expect(msg.startsWith('mocktomata:can inspect logs:')).toBe(true)
+		})
 		await spec.done()
 	})
 })

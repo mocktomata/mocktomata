@@ -11,7 +11,7 @@ beforeAll(() => {
 incubator('using headers', (specName, spec) => {
 	it(specName, async () => {
 		const s = await spec(axios)
-		s.interceptors.request.use(r => {
+		s.interceptors.request.use((r) => {
 			r.headers.set('Content-Type', 'application/json')
 			return r
 		})

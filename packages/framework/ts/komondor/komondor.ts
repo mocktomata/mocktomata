@@ -6,7 +6,7 @@ import { createLogContext } from '../log/log_context.js'
 import { createSpecObject, getEffectiveSpecModeContext, type Spec } from '../spec/index.js'
 import { loadPlugins } from '../spec_plugin/index.js'
 import type { StackFrameContext } from '../stack_frame.types.js'
-import { type MemoryLogReporter } from '../standard_log.types.js'
+import type { MemoryLogReporter } from '../standard_log.types.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
 
@@ -51,7 +51,9 @@ export namespace Komondor {
 export function createKomondor({
 	context,
 	stackFrame
-}: { context: AsyncContext<Mocktomata.Context> } & StackFrameContext): Komondor {
+}: {
+	context: AsyncContext<Mocktomata.Context>
+} & StackFrameContext): Komondor {
 	const ctx = context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers)
 
 	return Object.assign(createKomondorFn({ context: ctx, stackFrame }), {
@@ -61,7 +63,9 @@ export function createKomondor({
 		simulate: createKomondorFn({ context: ctx, stackFrame }, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
-			timeTrackers.forEach(t => t.terminate())
+			timeTrackers.forEach((t) => {
+				t.terminate()
+			})
 		}
 	})
 }

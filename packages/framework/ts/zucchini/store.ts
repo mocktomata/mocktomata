@@ -1,5 +1,5 @@
-import { Expression } from '@cucumber/cucumber-expressions'
-import { AnyFunction } from 'type-plus'
+import type { Expression } from '@cucumber/cucumber-expressions'
+import type { AnyFunction } from 'type-plus'
 
 export type Step = {
 	expression: Expression

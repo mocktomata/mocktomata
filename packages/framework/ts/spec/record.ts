@@ -31,11 +31,13 @@ type ValidateRecord = {
 	actions: Array<SpecRecordLive.Action & Record<string, any>>
 }
 
-export type ValidateReference = SpecRecordLive.Reference & { claimed?: boolean }
+export type ValidateReference = SpecRecordLive.Reference & {
+	claimed?: boolean
+}
 
 export function createSpecRecordValidator(specName: string, loaded: SpecRecord) {
 	const record: ValidateRecord = {
-		refs: loaded.refs.map(r => ({
+		refs: loaded.refs.map((r) => ({
 			...r,
 			overrideProfiles: [],
 			testDouble: notDefined,
@@ -66,7 +68,7 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
 			// `value` is primitive
 			if (!plugin) return undefined
 
-			ref = refs.find(r => r.plugin === plugin.name && !r.claimed)
+			ref = refs.find((r) => r.plugin === plugin.name && !r.claimed)
 			if (ref) {
 				ref.claimed = true
 				ref.subject = value
@@ -85,7 +87,7 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
 		// },
 
 		getExpectedResultAction: (actionId: SpecRecord.ActionId) =>
-			loaded.actions.find(a => (a.type == 'return' || a.type === 'throw') && a.actionId === actionId) as
+			loaded.actions.find((a) => (a.type === 'return' || a.type === 'throw') && a.actionId === actionId) as
 				| SpecRecord.ResultActions
 				| undefined,
 		addAction: (action: SpecRecordLive.Action) => {
@@ -178,7 +180,7 @@ function getSpecRecord(
 	maskCriteria: MaskCriterion[]
 ): SpecRecord {
 	const record = {
-		refs: refs.map(ref => pick(ref, 'plugin', 'profile', 'source', 'meta', 'inert')),
+		refs: refs.map((ref) => pick(ref, 'plugin', 'profile', 'source', 'meta', 'inert')),
 		actions
 	}
 	return maskSpecRecord(maskCriteria, record)
@@ -202,9 +204,9 @@ function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
 }
 
 function findRefBySubjectOrTestDouble<R extends ValidateReference>(refs: R[], value: any): R | undefined {
-	const ref = refs.find(r => r.testDouble === value || r.subject === value)
+	const ref = refs.find((r) => r.testDouble === value || r.subject === value)
 	if (ref) return ref
-	const nextRef = refs.find(r => !r.claimed)
+	const nextRef = refs.find((r) => !r.claimed)
 	if (nextRef?.inert) {
 		// special handling for inert value.
 		// setting subject to the meta to use the recorded value
@@ -215,7 +217,7 @@ function findRefBySubjectOrTestDouble<R extends ValidateReference>(refs: R[], va
 }
 
 function findRefIdBySubjectOrTestDouble(refs: SpecRecordLive.Reference[], value: any) {
-	const i = refs.findIndex(r => r.testDouble === value || r.subject === value)
+	const i = refs.findIndex((r) => r.testDouble === value || r.subject === value)
 	if (i !== -1) return String(i)
 	return undefined
 }

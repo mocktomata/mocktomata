@@ -1,5 +1,5 @@
-import { functionPlugin } from './index.js'
 import { Dummy } from '../../test_artifacts/index.js'
+import { functionPlugin } from './index.js'
 
 test('do not supports primitive types other than functions', () => {
 	expect(functionPlugin.support(undefined)).toBe(false)
@@ -19,7 +19,7 @@ test('support simple function', () => {
 		})
 	).toBeTruthy()
 	expect(
-		functionPlugin.support(function () {
+		functionPlugin.support(() => {
 			return
 		})
 	).toBeTruthy()

@@ -1,94 +1,94 @@
 // istanbul ignore file
 
-import type { SpecPlugin } from '../spec_plugin/types.js'
+import type { SpecPlugin } from "../spec_plugin/types.js";
 
 export const echoPluginModule: SpecPlugin.Module = {
 	activate(context) {
-		context.register(echoPlugin)
-	}
-}
+		context.register(echoPlugin);
+	},
+};
 
 export const echoPlugin: SpecPlugin = {
-	name: 'echo',
+	name: "echo",
 	support() {
-		return true
+		return true;
 	},
 	createSpy(_, s) {
-		return s
+		return s;
 	},
 	createStub(_, s) {
-		return s
-	}
-}
+		return s;
+	},
+};
 
 export const pluginModuleA: SpecPlugin.Module = {
 	activate(context) {
-		context.register(pluginA)
-	}
-}
+		context.register(pluginA);
+	},
+};
 
 export const pluginA: SpecPlugin = {
-	name: 'plugin-a',
+	name: "plugin-a",
 	support() {
-		return true
+		return true;
 	},
 	createSpy() {
-		return {}
+		return {};
 	},
 	createStub() {
-		return {}
-	}
-}
+		return {};
+	},
+};
 
 export const missGetSpyPluginModule = {
 	activate(context: any) {
-		context.register(missGetSpyPlugin)
-	}
-}
+		context.register(missGetSpyPlugin);
+	},
+};
 
 export const missGetSpyPlugin = {
 	support() {
-		return false
+		return false;
 	},
 	createStub() {
-		return {}
+		return {};
 	},
 	serialize() {
-		return ''
-	}
-}
+		return "";
+	},
+};
 export const missGetStubPluginModule = {
 	activate(context: any) {
-		context.register(missGetStubPlugin)
-	}
-}
+		context.register(missGetStubPlugin);
+	},
+};
 
 export const missGetStubPlugin = {
 	support() {
-		return false
+		return false;
 	},
 	createSpy() {
-		return {}
+		return {};
 	},
 	serialize() {
-		return ''
-	}
-}
+		return "";
+	},
+};
 export const missSupportPluginModule = {
 	activate(context: any) {
-		context.register(missSupportPlugin)
-	}
-}
+		context.register(missSupportPlugin);
+	},
+};
 
 export const missSupportPlugin = {
 	createSpy() {
-		return {}
+		return {};
 	},
 	createStub() {
-		return {}
+		return {};
 	},
 	serialize() {
-		return ''
-	}
-}
-export const noActivatePluginModule = {}
+		return "";
+	},
+};
+export const noActivatePluginModule = {};

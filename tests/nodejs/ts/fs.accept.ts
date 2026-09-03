@@ -1,7 +1,7 @@
-import { mockto } from 'mocktomata'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
 import { dirname } from 'dirname-filename-esm'
-import * as fs from 'fs'
-import * as path from 'path'
+import { mockto } from 'mocktomata'
 
 mockto('readFileSync in string', (specName, spec) => {
 	test(specName, async () => {
@@ -9,7 +9,7 @@ mockto('readFileSync in string', (specName, spec) => {
 
 		const filePath = getFixturePath('dummy.txt')
 		const data = sfs.readFileSync(filePath, 'utf-8')
-		expect(data).toEqual(`dummy`)
+		expect(data).toEqual('dummy')
 		await spec.done()
 	})
 })
@@ -20,7 +20,7 @@ mockto('readFileSync in Buffer', (specName, spec) => {
 
 		const filePath = getFixturePath('dummy.txt')
 		const data = sfs.readFileSync(filePath)
-		expect(data.toString()).toEqual(`dummy`)
+		expect(data.toString()).toEqual('dummy')
 		await spec.done()
 	})
 })

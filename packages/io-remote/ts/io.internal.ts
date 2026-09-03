@@ -1,5 +1,5 @@
-import { json, SpecNotFound, type Mocktomata, type SpecPlugin, type SpecRecord } from '@mocktomata/framework'
-import { IOOptions } from './io.types.js'
+import { json, type Mocktomata, SpecNotFound, type SpecPlugin, type SpecRecord } from '@mocktomata/framework'
+import type { IOOptions } from './io.types.js'
 import { getServerInfo } from './server_info.js'
 import { buildUrl } from './url.js'
 
@@ -13,7 +13,7 @@ export async function createIOInternal(ctx: Context, options: IOOptions): Promis
 		async loadConfig() {
 			const info = await getServerInfo(ctx, options)
 			// @TODO add browser config?
-			const url = buildUrl(info.url, `config`)
+			const url = buildUrl(info.url, 'config')
 			const response = await ctx.fetch(url)
 			return response.json()
 		},

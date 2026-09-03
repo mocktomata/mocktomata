@@ -21,7 +21,7 @@ export const plugin: SpecPlugin = {
 				return getProperty({ key }, () => subject[key])
 			},
 			set(_, key: string, value: any) {
-				return setProperty({ key, value }, value => (subject[key] = value))
+				return setProperty({ key, value }, (value) => (subject[key] = value))
 			}
 		})
 	},

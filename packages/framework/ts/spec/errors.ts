@@ -1,4 +1,4 @@
-import { ModuleError } from 'iso-error'
+import type { ModuleError } from 'iso-error'
 import { tersify } from 'tersify'
 import { MocktomataError } from '../errors.js'
 import type { SpecRecord } from '../spec_record/types.js'
@@ -7,27 +7,35 @@ import type { Recorder } from './types.internal.js'
 
 export class SpecIDCannotBeEmpty extends MocktomataError {
 	constructor(options?: ModuleError.Options) {
-		super(`The spec id cannot be an empty string. It should uniquely identify the spec.`, options)
+		super('The spec id cannot be an empty string. It should uniquely identify the spec.', options)
 	}
 }
 
 export class SpecNotFound extends MocktomataError {
-	constructor(public specName: string, public specRelativePath: string, options?: ModuleError.Options) {
+	constructor(
+		public specName: string,
+		public specRelativePath: string,
+		options?: ModuleError.Options
+	) {
 		super(`Unable to find the spec record for ${specRelativePath}: '${specName}'`, options)
 	}
 }
 
 export class NotSpecable extends MocktomataError {
-	constructor(public subject: any, options?: ModuleError.Options) {
-		super(
-			`The subject ${tersify(subject, { maxLength: 50 })} is not supported by any loaded plugins`,
-			options
-		)
+	constructor(
+		public subject: any,
+		options?: ModuleError.Options
+	) {
+		super(`The subject ${tersify(subject, { maxLength: 50 })} is not supported by any loaded plugins`, options)
 	}
 }
 
 export class ExtraReference extends MocktomataError {
-	constructor(public specName: string, public subject: any, options?: ModuleError.Options) {
+	constructor(
+		public specName: string,
+		public subject: any,
+		options?: ModuleError.Options
+	) {
 		super(
 			`Recorded data for '${specName}' does not expect a new reference to be created: ${tersify(subject, {
 				maxLength: 50
@@ -37,7 +45,9 @@ export class ExtraReference extends MocktomataError {
 	}
 }
 
-export type MismatchActionModel = Partial<SpecRecord.Action> & { plugin?: string }
+export type MismatchActionModel = Partial<SpecRecord.Action> & {
+	plugin?: string
+}
 
 export class ExtraAction extends MocktomataError {
 	constructor(
@@ -48,11 +58,7 @@ export class ExtraAction extends MocktomataError {
 		options?: ModuleError.Options
 	) {
 		super(
-			`Recorded data for '${specName}' does not expect action ${actionId}: ${prettifyAction(
-				state,
-				actionId,
-				action
-			)}`,
+			`Recorded data for '${specName}' does not expect action ${actionId}: ${prettifyAction(state, actionId, action)}`,
 			options
 		)
 	}
@@ -95,29 +101,33 @@ ${tersifyAction(actual)}`,
 
 export class NoSupportedPlugin extends MocktomataError {
 	// istanbul ignore next
-	constructor(public subject: any, options?: ModuleError.Options) {
+	constructor(
+		public subject: any,
+		options?: ModuleError.Options
+	) {
 		super(`Unable to find plugin that supports ${tersify(subject)}`, options)
 	}
 }
 
 export class PluginsNotLoaded extends MocktomataError {
-	constructor(public specName: string, public plugins: string[], options?: ModuleError.Options) {
-		super(
-			`The following plugins are used in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`,
-			options
-		)
+	constructor(
+		public specName: string,
+		public plugins: string[],
+		options?: ModuleError.Options
+	) {
+		super(`The following plugins are used in spec '${specName}' but not loaded:\n  ${plugins.join('\n  ')}`, options)
 	}
 }
 
 export class InvokeMetaMethodAfterSpec extends MocktomataError {
-	constructor(public method: string, options?: ModuleError.Options) {
-		super(
-			`Cannot call 'spec.${method}()' after creating spec subject. Please make these call before that.`,
-			options
-		)
+	constructor(
+		public method: string,
+		options?: ModuleError.Options
+	) {
+		super(`Cannot call 'spec.${method}()' after creating spec subject. Please make these call before that.`, options)
 	}
 }
 
 function tersifyAction(action: MismatchActionModel | undefined): string {
-	return tersify(action, { maxLength: Infinity })
+	return tersify(action, { maxLength: Number.POSITIVE_INFINITY })
 }

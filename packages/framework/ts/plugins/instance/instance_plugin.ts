@@ -1,8 +1,5 @@
 import type { SpecPlugin } from '../../spec_plugin/types.js'
-import {
-	demetarize, hasProperty, isBaseObject,
-	metarize, type SpecMeta
-} from '../../utils/index.js'
+import { demetarize, hasProperty, isBaseObject, metarize, type SpecMeta } from '../../utils/index.js'
 import { isClass } from '../class/class_plugin.utils.js'
 
 export const instancePlugin: SpecPlugin<
@@ -10,7 +7,7 @@ export const instancePlugin: SpecPlugin<
 	{ base: SpecMeta; classConstructor: string; functionCalls: string[] }
 > = {
 	name: 'instance',
-	support: subject => {
+	support: (subject) => {
 		if (subject === null) return false
 		if (typeof subject !== 'object') return false
 		return !isBaseObject(Object.getPrototypeOf(subject))
@@ -32,12 +29,11 @@ export const instancePlugin: SpecPlugin<
 						meta.functionCalls.push(key)
 						return invoke({ site: key, thisArg: spy, args }, ({ args }) => prop.apply(target, args))
 					}
-				} else {
-					return getProperty({ key }, () => prop)
 				}
+				return getProperty({ key }, () => prop)
 			},
 			set(_, property: string, value: any) {
-				return setProperty({ key: property, value }, value => (subject[property] = value))
+				return setProperty({ key: property, value }, (value) => (subject[property] = value))
 			}
 		})
 

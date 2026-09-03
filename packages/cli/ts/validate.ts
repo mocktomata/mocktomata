@@ -5,7 +5,7 @@ export function validate(context: any, value: any, constraints: any) {
 	if (failure === undefined) return true
 
 	context.ui.showHelp(context)
-	Object.keys(failure).forEach(k => {
+	Object.keys(failure).forEach((k) => {
 		const messages = failure[k]
 		context.ui.error(...messages)
 	})

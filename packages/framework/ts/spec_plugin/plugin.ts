@@ -1,6 +1,6 @@
 import { es2015 } from '../es2015.js'
 import { es2020 } from '../es2020.js'
-import { Log } from '../log/types.js'
+import type { Log } from '../log/types.js'
 import type { Logger } from '../standard_log.types.js'
 import { PluginModuleNotConforming, PluginNotFound } from './errors.js'
 import { addPluginModule } from './plugin_module.js'
@@ -14,7 +14,10 @@ export async function loadPlugins({
 	config,
 	io,
 	log
-}: Log.Context & { config: SpecPlugin.Config; io: SpecPlugin.IO }): Promise<loadPlugins.ExtendedContext> {
+}: Log.Context & {
+	config: SpecPlugin.Config
+	io: SpecPlugin.IO
+}): Promise<loadPlugins.ExtendedContext> {
 	// check `config.ecmaVersion` in the future
 	const plugins: SpecPlugin.Instance[] = []
 	if (config.ecmaVersion === 'es2015') {
@@ -59,15 +62,12 @@ async function tryLoad({ io, log }: { io: SpecPlugin.IO; log: Logger }, name: st
 	throw new PluginModuleNotConforming(name)
 }
 
-export function findPlugin<S>(
-	plugins: SpecPlugin.Instance[],
-	subject: S
-): SpecPlugin.Instance<S> | undefined {
-	return plugins.find(p => p.support(subject))
+export function findPlugin<S>(plugins: SpecPlugin.Instance[], subject: S): SpecPlugin.Instance<S> | undefined {
+	return plugins.find((p) => p.support(subject))
 }
 
 export function getPlugin(plugins: SpecPlugin.Instance[], plugin: string) {
-	const p = plugins.find(p => p.name === plugin)
+	const p = plugins.find((p) => p.name === plugin)
 	if (!p) throw new PluginNotFound(plugin)
 	return p
 }

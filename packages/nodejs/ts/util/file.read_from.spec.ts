@@ -1,4 +1,4 @@
-import t from 'assert'
+import t from 'node:assert'
 import { dirSync } from 'tmp'
 import { readFrom, writeTo } from './index.js'
 

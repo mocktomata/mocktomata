@@ -1,6 +1,6 @@
+import path from 'node:path'
 import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
-import path from 'path'
 import { createStackFrameContext } from './stack_frame.js'
 
 const { stackFrame } = createStackFrameContext({

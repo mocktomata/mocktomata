@@ -1,10 +1,9 @@
 import type { AsyncContext } from 'async-fp'
 import { prettyPrintSpecRecord } from '../spec_record/index.js'
-import { assertMockable } from './asserts.js'
-import { assertSpecName } from './asserts.js'
+import { assertMockable, assertSpecName } from './asserts.js'
 import { createSimulator } from './simulator.js'
-import { createSpec } from './types.internal.js'
-import { Spec } from './types.js'
+import type { createSpec } from './types.internal.js'
+import type { Spec } from './types.js'
 
 export async function createSimulateSpec(
 	context: AsyncContext<createSpec.Context>,

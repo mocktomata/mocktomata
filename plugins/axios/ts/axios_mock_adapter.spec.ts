@@ -33,7 +33,9 @@ incubator('mock get failure with iso-error', (specName, spec) => {
 		converter.addPlugin(webPlugin)
 
 		const mock = new MockAdapter.default(i)
-		mock.onGet().reply(409, { error: converter.toSerializable(new Conflict('name conflict')) })
+		mock.onGet().reply(409, {
+			error: converter.toSerializable(new Conflict('name conflict'))
+		})
 
 		await spec(AxiosError)
 		const s = await spec(i)
@@ -56,7 +58,9 @@ incubator('bad mock get failure with iso-error', (specName, spec) => {
 		converter.addPlugin(webPlugin)
 
 		const mock = new MockAdapter.default(i)
-		mock.onGet().reply(409, { error: converter.toSerializable(new Conflict('name conflict')) })
+		mock.onGet().reply(409, {
+			error: converter.toSerializable(new Conflict('name conflict'))
+		})
 
 		await spec(AxiosError)
 		const s = await spec(i)

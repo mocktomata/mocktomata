@@ -2,10 +2,12 @@ import { createKomondor, createMockto, createZucchini } from '@mocktomata/framew
 import { createContext } from './context.js'
 
 const { context, config, stackFrame } = createContext()
-const { scenario, defineStep, defineParameterType } = createZucchini({ context, stackFrame })
+const { scenario, defineStep, defineParameterType } = createZucchini({
+	context,
+	stackFrame
+})
 
-export { config }
-export { scenario, defineStep, defineParameterType }
+export { config, defineParameterType, defineStep, scenario }
 
 export const komondor = createKomondor({ context, stackFrame })
 export const kd = komondor

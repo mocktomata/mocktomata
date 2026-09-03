@@ -1,25 +1,25 @@
 {
-  "folders": [
-    {
-      "name": "mocktomata",
-      "path": "."
-    },
-    {
-      "name": "website",
-      "path": "../website"
-    },
-    {
-      "name": "training-ground",
-      "path": "../training-ground"
-    },
-    {
-      "name": ".github",
-      "path": "../.github"
-    }
-  ],
-  "settings": {
-    "terminal.integrated.defaultProfile.windows": "pwsh",
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "liveServer.settings.multiRootWorkspaceName": "website"
-  }
+	"folders": [
+		{
+			"name": "mocktomata",
+			"path": "."
+		},
+		{
+			"name": "website",
+			"path": "../website"
+		},
+		{
+			"name": "training-ground",
+			"path": "../training-ground"
+		},
+		{
+			"name": ".github",
+			"path": "../.github"
+		}
+	],
+	"settings": {
+		"terminal.integrated.defaultProfile.windows": "pwsh",
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"liveServer.settings.multiRootWorkspaceName": "website"
+	}
 }

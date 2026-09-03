@@ -1,9 +1,9 @@
 import type { AsyncContext } from 'async-fp'
+import { SpecNotFound } from './errors.js'
 import { createSaveSpec } from './save_spec.js'
 import { createSimulateSpec } from './simulate_spec.js'
-import { SpecNotFound } from './errors.js'
-import type { Spec } from './types.js'
 import type { createSpec } from './types.internal.js'
+import type { Spec } from './types.js'
 
 export async function createAutoSpec(
 	context: AsyncContext<createSpec.Context>,
@@ -16,6 +16,6 @@ export async function createAutoSpec(
 	} catch (e: any) {
 		// istanbul ignore next
 		if (e instanceof SpecNotFound) return createSaveSpec(context, specName, specPath, options)
-		else throw e
+		throw e
 	}
 }

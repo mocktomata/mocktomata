@@ -1,11 +1,11 @@
-import { start } from '@mocktomata/service'
+import type { start } from '@mocktomata/service'
 import colors from 'ansi-colors'
 import { testCommand } from 'clibuilder'
 import { serveCommand } from './serve_command.js'
 
 test('out of range port number emits error message', async () => {
 	const { messages } = await testCommand(serveCommand, 'serve --port 90000')
-	expect(messages).toContain(`Port must be a valid port number`)
+	expect(messages).toContain('Port must be a valid port number')
 })
 
 test('display started message', async () => {

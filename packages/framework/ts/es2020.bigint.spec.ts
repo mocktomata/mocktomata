@@ -10,7 +10,7 @@ const incubator = createIncubator(
 function giveBig() {
 	return 9007199254740991n
 }
-incubator(`handles bigint as return value`, (specName, spec) => {
+incubator('handles bigint as return value', (specName, spec) => {
 	it(specName, async () => {
 		const s = await spec(giveBig)
 		expect(s()).toEqual(9007199254740991n)

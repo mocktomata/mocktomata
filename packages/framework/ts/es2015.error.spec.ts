@@ -1,5 +1,5 @@
 import { a } from 'assertron'
-import { ModuleError, SerializableConverter } from 'iso-error'
+import { type ModuleError, SerializableConverter } from 'iso-error'
 import plugin, { InvalidArgument } from 'iso-error-google-cloud-api'
 import { BadRequest, HttpError } from 'iso-error-web'
 import { isType } from 'type-plus'
@@ -49,7 +49,13 @@ describe('error', () => {
 						data: {
 							error: {
 								code: 3,
-								details: [{ '@type': 'google-cloud-api/CauseInfo', causes: [], message: 'not found' }],
+								details: [
+									{
+										'@type': 'google-cloud-api/CauseInfo',
+										causes: [],
+										message: 'not found'
+									}
+								],
 								message: 'not found'
 							}
 						}
@@ -59,19 +65,21 @@ describe('error', () => {
 
 			const s = await spec(request)
 			const err = await a.throws<ModuleError>(
-				s().then(undefined, e => {
+				s().then(undefined, (e) => {
 					const options: any = {}
 					if (e.response) {
 						if (
 							isType<{ error: Record<any, any> }>(
 								e.response.data,
-								d => typeof d === 'object' && typeof d.error === 'object'
+								(d) => typeof d === 'object' && typeof d.error === 'object'
 							)
 						) {
 							// iso-error-google-cloud-api@6 wraps `google.rpc.Status` in an
 							// `error` field, matching Google's HTTP mapping, so the converter
 							// now consumes the whole wrapper rather than the unwrapped status.
-							options.cause = converter.fromSerializable(e.response.data, { ssf: request })
+							options.cause = converter.fromSerializable(e.response.data, {
+								ssf: request
+							})
 						}
 						throw new BadRequest('bad request', options)
 					}

@@ -84,7 +84,7 @@ it('kept function property as empty object', () => {
 	// The empty object is only used for keeping the key defined.
 	// During simulation the plugin will return the actual value using `getProperty()`
 	testMetarize({
-		subject: { f: function () {} },
+		subject: { f: () => {} },
 		metarized: { type: 'object', props: { f: {} } },
 		expected: { f: {} }
 	})

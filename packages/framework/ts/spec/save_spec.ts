@@ -1,7 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { prettyPrintSpecRecord } from '../spec_record/index.js'
-import { assertMockable } from './asserts.js'
-import { assertSpecName } from './asserts.js'
+import { assertMockable, assertSpecName } from './asserts.js'
 import { createRecorder } from './recorder.js'
 import type { createSpec } from './types.internal.js'
 import type { Spec } from './types.js'

@@ -1,0 +1,49 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.11/schema.json",
+	"extends": ["@repobuddy/biome/recommended"],
+	"files": {
+		"includes": [
+			"!**/.pnpm-store",
+			"!**/.turbo",
+			"!**/coverage",
+			"!**/dist",
+			"!**/esm",
+			"!**/lib",
+			"!**/libm",
+			"!**/node_modules",
+			"!**/fixtures",
+			"!**/test_artifacts",
+			"!**/*.tsbuildinfo",
+			"!packages/framework/plugins",
+			"!packages/framework/testing",
+			"!tests/solid/ts/logo.svg",
+			"!skills-lock.json",
+			"!pnpm-lock.yaml"
+		]
+	},
+	"linter": {
+		"rules": {
+			"style": {
+				// Bare `fs` / `path` resolve only on Node. The `node:` form is the portable one, and
+				// this keeps the repo from drifting back.
+				"useNodejsImportProtocol": "error"
+			},
+			"suspicious": {
+				// These are published type signatures: `void | Promise<any>` for a handler that may
+				// return nothing, and `new (...args: any[]) => void` for a constructor. Rewriting the
+				// `void`s to `undefined` to satisfy the rule would change the packages' public types.
+				"noConfusingVoidType": "off"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			// `quoteStyle` and `semicolons` restate what `@repobuddy/biome/recommended` sets: biome
+			// replaces `javascript.formatter` wholesale rather than merging it, so naming any key
+			// here would otherwise drop the rest back to biome's defaults.
+			"quoteStyle": "single",
+			"semicolons": "asNeeded",
+			"trailingCommas": "none"
+		}
+	}
+}

@@ -7,7 +7,7 @@ import {
 	MOCKTOMATA_SPEC_NAME_FILTER
 } from '@mocktomata/nodejs'
 import { a } from 'assertron'
-import { logLevels, MemoryLogReporter } from 'standard-log'
+import { logLevels, type MemoryLogReporter } from 'standard-log'
 import { CannotConfigAfterUsed, config, mockto } from '../index.js'
 import { createContext } from './context.js'
 
@@ -37,10 +37,12 @@ describe('config with config()', () => {
 	afterEach(() => mockto?.cleanup())
 
 	test('override to live mode', async () => {
-		const { config, context, stackFrame } = createContext({ io: newMemoryIO() })
+		const { config, context, stackFrame } = createContext({
+			io: newMemoryIO()
+		})
 		mockto = createMockto({ context, stackFrame })
 		config({ overrideMode: 'live' })
-		const spec = await new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec)))
+		const spec = await new Promise<Spec>((a) => mockto('override to live mode', (_, spec) => a(spec)))
 		// before calling `spec()`,
 		// `spec.mode` is `undefined`.
 		// This is because the work is done within a pending promise,
@@ -50,14 +52,16 @@ describe('config with config()', () => {
 	})
 
 	test('override to save mode', async () => {
-		const { config, context, stackFrame } = createContext({ io: newMemoryIO() })
+		const { config, context, stackFrame } = createContext({
+			io: newMemoryIO()
+		})
 		mockto = createMockto({ context, stackFrame })
 		config({ overrideMode: 'save' })
-		await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec))).then(async spec => {
+		await new Promise<Spec>((a) => mockto('override to save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			await spec.done()
 		})
-		await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec))).then(async spec => {
+		await new Promise<Spec>((a) => mockto('override to save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('save')
 		})
@@ -67,7 +71,7 @@ describe('config with config()', () => {
 		const { context, config, stackFrame } = createContext()
 		config({ logLevel: logLevels.all })
 		mockto = createMockto({ context, stackFrame })
-		return new Promise<{ spec: Spec; reporter: MemoryLogReporter }>(a =>
+		return new Promise<{ spec: Spec; reporter: MemoryLogReporter }>((a) =>
 			mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
 		).then(async ({ spec, reporter }) => {
 			await spec({})
@@ -85,7 +89,7 @@ describe('config with env', () => {
 	test('override as live mode', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		mockto = createMockto(createContext())
-		return new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('override to live mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('live')
 		})
@@ -94,11 +98,11 @@ describe('config with env', () => {
 	test('override to save mode', async () => {
 		process.env[MOCKTOMATA_MODE] = 'save'
 		mockto = createMockto(createContext())
-		await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec))).then(async spec => {
+		await new Promise<Spec>((a) => mockto('override to save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			await spec.done()
 		})
-		await new Promise<Spec>(a => mockto('override to save mode', (_, spec) => a(spec))).then(async spec => {
+		await new Promise<Spec>((a) => mockto('override to save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('save')
 		})
@@ -107,7 +111,7 @@ describe('config with env', () => {
 	test('mode is case insensitive', () => {
 		process.env[MOCKTOMATA_MODE] = 'lIvE'
 		mockto = createMockto(createContext())
-		return new Promise<Spec>(a => mockto('overide to live mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('overide to live mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('live')
 		})
@@ -117,7 +121,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
 		mockto = createMockto(createContext())
-		return new Promise<Spec>(a => mockto('overide to live mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('overide to live mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('live')
 		})
@@ -127,7 +131,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'something else'
 		mockto = createMockto(createContext({ io: newMemoryIO() }))
-		return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('still in save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('save')
 		})
@@ -137,11 +141,11 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_MODE] = 'live'
 		process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'filtered'
 		mockto = createMockto(createContext())
-		await new Promise<Spec>(a => mockto('this match filtered', (_, spec) => a(spec))).then(async spec => {
+		await new Promise<Spec>((a) => mockto('this match filtered', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('live')
 		})
-		await new Promise<Spec>(a => mockto('this does not match', (_, spec) => a(spec))).then(async spec => {
+		await new Promise<Spec>((a) => mockto('this does not match', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('save')
 		})
@@ -152,7 +156,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'still'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'something else'
 		mockto = createMockto(createContext({ io: newMemoryIO() }))
-		return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('still in save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('save')
 		})
@@ -163,7 +167,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'not match'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
 		mockto = createMockto(createContext({ io: newMemoryIO() }))
-		return new Promise<Spec>(a => mockto('still in save mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('still in save mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('save')
 		})
@@ -174,7 +178,7 @@ describe('config with env', () => {
 		process.env[MOCKTOMATA_SPEC_NAME_FILTER] = 'live'
 		process.env[MOCKTOMATA_FILE_PATH_FILTER] = 'config.spec'
 		mockto = createMockto(createContext())
-		return new Promise<Spec>(a => mockto('override to live mode', (_, spec) => a(spec))).then(async spec => {
+		return new Promise<Spec>((a) => mockto('override to live mode', (_, spec) => a(spec))).then(async (spec) => {
 			await spec({})
 			expect(spec.mode).toBe('live')
 		})
@@ -183,7 +187,7 @@ describe('config with env', () => {
 	test('enable log', () => {
 		process.env[MOCKTOMATA_LOG_LEVEL] = 'trace'
 		mockto = createMockto(createContext())
-		return new Promise<{ spec: Spec; reporter: MemoryLogReporter }>(a =>
+		return new Promise<{ spec: Spec; reporter: MemoryLogReporter }>((a) =>
 			mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
 		).then(async ({ spec, reporter }) => {
 			await spec({})
@@ -194,7 +198,7 @@ describe('config with env', () => {
 	test('enable log is case insensitive', () => {
 		process.env[MOCKTOMATA_LOG_LEVEL] = 'tRacE'
 		mockto = createMockto(createContext())
-		return new Promise<{ spec: Spec; reporter: MemoryLogReporter }>(a =>
+		return new Promise<{ spec: Spec; reporter: MemoryLogReporter }>((a) =>
 			mockto('log enabled', (_, spec, reporter) => a({ spec, reporter }))
 		).then(async ({ spec, reporter }) => {
 			await spec({})

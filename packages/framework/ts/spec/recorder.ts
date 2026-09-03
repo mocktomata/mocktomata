@@ -4,28 +4,17 @@ import { notDefined } from '../constants.js'
 import { findPlugin, getPlugin } from '../spec_plugin/index.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import { getDefaultPerformer, type SpecRecord } from '../spec_record/index.js'
-import { createTimeTracker, TimeTracker } from '../time_trackter/index.js'
-import {
-	getArgumentContext,
-	getPropertyContext,
-	getResultContext,
-	getThisContext
-} from '../utils_internal/index.js'
+import { createTimeTracker, type TimeTracker } from '../time_trackter/index.js'
+import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils_internal/index.js'
 import { logAction, logCreateSpy, logRecordingTimeout } from './logs.js'
 import { createSpecRecordBuilder } from './record.js'
 import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
 import type { Spec } from './types.js'
 
-export function createRecorder(
-	context: AsyncContext<createSpec.Context>,
-	specName: string,
-	options: Spec.Options
-) {
+export function createRecorder(context: AsyncContext<createSpec.Context>, specName: string, options: Spec.Options) {
 	let timeTracker: TimeTracker
 	const ctx = context.extend(async ({ timeTrackers, log }) => {
-		timeTracker = createTimeTracker({ log }, options, elapsed =>
-			logRecordingTimeout({ log }, specName, elapsed)
-		)
+		timeTracker = createTimeTracker({ log }, options, (elapsed) => logRecordingTimeout({ log }, specName, elapsed))
 		timeTrackers.push(timeTracker)
 		return { timeTracker }
 	})
@@ -39,15 +28,18 @@ export function createRecorder(
 	}
 	return {
 		createSpy: <S>(subject: S) =>
-			getContext().then(ctx => {
+			getContext().then((ctx) => {
 				const ref = ctx.record.findRef(subject) ?? createSpyRef(ctx, subject, { profile: 'target' })
 				return ref?.testDouble
 			}),
 		end: () => timeTracker?.stop(),
 		getSpecRecord: (maskValues: MaskCriterion[]) => record.getSpecRecord(maskValues),
 		addInertValue: (subject: any) =>
-			getContext().then(ctx =>
-				ctx.spyOptions.push({ subject, options: { plugin: '@mocktomata/inert', inert: true } })
+			getContext().then((ctx) =>
+				ctx.spyOptions.push({
+					subject,
+					options: { plugin: '@mocktomata/inert', inert: true }
+				})
 			),
 		addMaskValue: (value: string | RegExp, replaceWith?: string) =>
 			getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
@@ -59,7 +51,7 @@ function createSpyRef<S>(
 	subject: S,
 	options: { profile: SpecRecord.SubjectProfile }
 ) {
-	const spyOption = context.spyOptions.find(o => o.subject === subject)
+	const spyOption = context.spyOptions.find((o) => o.subject === subject)
 	const plugin = spyOption?.options.plugin
 		? getPlugin(context.plugins, spyOption.options.plugin)
 		: findPlugin(context.plugins, subject)
@@ -67,7 +59,7 @@ function createSpyRef<S>(
 	// istanbul ignore next
 	if (!plugin) {
 		if (typeof subject !== 'number' && typeof subject !== 'boolean')
-			context.log.warn(`Unable to locate a plugin:`, subject)
+			context.log.warn('Unable to locate a plugin:', subject)
 		return undefined
 	}
 
@@ -228,7 +220,10 @@ export function getSpy<S>(
 		if (ref.testDouble === notDefined) {
 			const plugin = getPlugin(context.plugins, ref.plugin)
 			ref.testDouble = plugin.createSpy(
-				createPluginSpyContext({ ...context, state: { ...state, source: undefined } }),
+				createPluginSpyContext({
+					...context,
+					state: { ...state, source: undefined }
+				}),
 				ref.subject
 			)
 		}
@@ -259,7 +254,12 @@ function addResultAction(
 	subject: any
 ) {
 	const { record, timeTracker } = context
-	const action = { type, actionId, tick: timeTracker.elapse(), payload: notDefined }
+	const action = {
+		type,
+		actionId,
+		tick: timeTracker.elapse(),
+		payload: notDefined
+	}
 	const id = record.addAction(action)
 	const resultContext = getResultContext(context, actionId)
 	const spy = getSpy(resultContext, subject, {

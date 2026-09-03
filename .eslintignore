@@ -1,9 +1,0 @@
-coverage
-dist
-lib*
-node_modules
-old
-out*
-system.js
-test-plugins
-v6

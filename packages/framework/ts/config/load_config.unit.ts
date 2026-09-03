@@ -1,13 +1,7 @@
 import { a } from 'assertron'
 import { createStandardLogForTest } from 'standard-log/testing'
 import { createIncubator } from '../incubator/create_incubator.js'
-import {
-	createKomondor,
-	createMockto,
-	createZucchini,
-	logLevels,
-	type Spec
-} from '../index.js'
+import { createKomondor, createMockto, createZucchini, logLevels, type Spec } from '../index.js'
 import { createTestContext, newMemoryIO } from '../testing/index.js'
 import { CannotConfigAfterUsed, ConfigPropertyInvalid, createConfigurator, loadConfig } from './index.js'
 
@@ -21,7 +15,7 @@ describe(`${loadConfig.name}()`, () => {
 		const log = sl.getLogger('test')
 		return loadConfig({ io, configurator, log })
 	}
-	describe(`logLevel`, () => {
+	describe('logLevel', () => {
 		it('gets undefined when not configured', async () => {
 			const result = await testLoadConfig()
 
@@ -96,7 +90,7 @@ describe(`${loadConfig.name}()`, () => {
 		//   }), ConfigPropertyMismatch)
 		// })
 	})
-	describe(`ecmaVersion`, () => {
+	describe('ecmaVersion', () => {
 		it('gets "es2015" when not configured', async () => {
 			const result = await testLoadConfig()
 
@@ -136,7 +130,7 @@ describe(`${loadConfig.name}()`, () => {
 		})
 	})
 
-	describe(`plugins`, () => {
+	describe('plugins', () => {
 		it('returns empty array if not configured', async () => {
 			const result = await testLoadConfig()
 			expect(result.config.plugins).toEqual([])
@@ -163,7 +157,7 @@ describe(`${loadConfig.name}()`, () => {
 		})
 	})
 
-	describe(`filePathFilter`, () => {
+	describe('filePathFilter', () => {
 		it('gets undefined when not configured', async () => {
 			const result = await testLoadConfig()
 
@@ -202,7 +196,7 @@ describe(`${loadConfig.name}()`, () => {
 		})
 	})
 
-	describe(`specNameFilter`, () => {
+	describe('specNameFilter', () => {
 		it('gets undefined when not configured', async () => {
 			const result = await testLoadConfig()
 
@@ -241,7 +235,7 @@ describe(`${loadConfig.name}()`, () => {
 		})
 	})
 
-	describe(`overrideMode`, () => {
+	describe('overrideMode', () => {
 		it('gets undefined when not configured', async () => {
 			const result = await testLoadConfig()
 
@@ -292,11 +286,11 @@ describe(`${loadConfig.name}()`, () => {
 	})
 })
 
-describe(`config()`, () => {
+describe('config()', () => {
 	it('throws CannotConfigAfterUsed after mockto is used', async () => {
 		const { context, config, stackFrame } = createTestContext()
 		const mockto = createMockto({ context, stackFrame })
-		const spec = await new Promise<Spec>(a => mockto('some test', (_, spec) => a(spec)))
+		const spec = await new Promise<Spec>((a) => mockto('some test', (_, spec) => a(spec)))
 		await spec({})
 		a.throws(() => config({}), CannotConfigAfterUsed)
 	})
@@ -312,7 +306,7 @@ describe(`config()`, () => {
 	it('throws CannotConfigAfterUsed after incubator is used', async () => {
 		const { context, config, stackFrame } = createTestContext()
 		const incubator = createIncubator({ context, stackFrame })
-		const save = await new Promise<Spec>(a => incubator.sequence('some test', (_, { save }) => a(save)))
+		const save = await new Promise<Spec>((a) => incubator.sequence('some test', (_, { save }) => a(save)))
 		await save({})
 		a.throws(() => config({}), CannotConfigAfterUsed)
 	})
@@ -328,7 +322,7 @@ describe(`config()`, () => {
 	it('will not throw for defineStep', async () => {
 		const { context, config, stackFrame } = createTestContext()
 		const { defineStep } = createZucchini({ context, stackFrame })
-		defineStep('singing', async ctx => {
+		defineStep('singing', async (ctx) => {
 			await ctx.spec({})
 		})
 		config({})

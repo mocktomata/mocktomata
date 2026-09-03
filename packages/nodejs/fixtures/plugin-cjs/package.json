@@ -1,16 +1,16 @@
 {
-	"name": "fixtures-plugin-cjs",
-	"private": true,
-	"dependencies": {
-		"@mocktomata/nodejs": "workspace:^",
-		"@mocktomata/plugin-fixture-cjs-a": "workspace:^",
-		"@mocktomata/plugin-fixture-cjs-b": "workspace:^",
-		"standard-log": "13.0.1"
-	},
-	"mocktomata": {
-		"plugins": [
-			"plugin-a"
-		]
-	},
-	"version": "0.0.1"
+  "name": "fixtures-plugin-cjs",
+  "private": true,
+  "dependencies": {
+    "@mocktomata/nodejs": "workspace:^",
+    "@mocktomata/plugin-fixture-cjs-a": "workspace:^",
+    "@mocktomata/plugin-fixture-cjs-b": "workspace:^",
+    "standard-log": "13.0.1"
+  },
+  "mocktomata": {
+    "plugins": [
+      "plugin-a"
+    ]
+  },
+  "version": "0.0.1"
 }

@@ -22,11 +22,7 @@ export namespace prettifyAction {
 	}
 }
 
-export function prettifyAction(
-	state: prettifyAction.State,
-	actionId: SpecRecord.ActionId,
-	action: SpecRecord.Action
-) {
+export function prettifyAction(state: prettifyAction.State, actionId: SpecRecord.ActionId, action: SpecRecord.Action) {
 	switch (action.type) {
 		case 'get':
 			return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} access <ref:${
@@ -79,5 +75,5 @@ function prettifyPerformer(performer: SpecRecord.Performer) {
 }
 
 function tersifyValue(value: any) {
-	return typeof value === 'string' ? `<ref:${value}>` : value === notDefined ? `<unknown>` : value
+	return typeof value === 'string' ? `<ref:${value}>` : value === notDefined ? '<unknown>' : value
 }

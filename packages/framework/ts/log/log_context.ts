@@ -1,7 +1,7 @@
 import { createStandardLog } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import type { Spec } from '../spec/types.js'
-import { logLevels, type Logger, type MemoryLogReporter } from '../standard_log.types.js'
+import { type Logger, logLevels, type MemoryLogReporter } from '../standard_log.types.js'
 import type { Log } from './types.js'
 
 export function createLogContext({

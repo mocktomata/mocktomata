@@ -1,6 +1,6 @@
 import {
 	buildConfig,
-	Config,
+	type Config,
 	createConfigurator,
 	createStackFrameContext,
 	type Mocktomata
@@ -17,8 +17,7 @@ export function createContext(options?: { io?: Mocktomata.IO; log?: Logger }) {
 	const stackContext = createStackFrameContext({ cwd })
 
 	const context = new AsyncContext(() => {
-		const log =
-			options?.log || createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
+		const log = options?.log || createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
 		const io = options?.io || createIO({ cwd, log })
 		return { io, log, configurator, ...stackContext }
 	})
@@ -44,7 +43,9 @@ export function newContext() {
 
 			return {
 				asyncContext: new AsyncContext(async () => {
-					const log: Logger = createStandardLog({ reporters: [createColorLogReporter()] }).getLogger('mocktomata')
+					const log: Logger = createStandardLog({
+						reporters: [createColorLogReporter()]
+					}).getLogger('mocktomata')
 					const io = await createIO({ cwd, log })
 					const config = buildConfig(await io.loadConfig(), configOptions)
 					return { io, config, log, ...stackFrameContext }

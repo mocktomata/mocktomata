@@ -1,10 +1,10 @@
+import t from 'node:assert'
 import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
-import t from 'node:assert'
 import { has, none, some } from 'satisfier'
 import { logLevels } from 'standard-log'
-import { IsEqual, isType } from 'type-plus'
-import { SpecNotFound, createZucchini } from '../index.js'
+import { type IsEqual, isType } from 'type-plus'
+import { createZucchini, SpecNotFound } from '../index.js'
 import { createTestContext } from '../testing/index.js'
 import { DuplicateStep, MissingStep } from './errors.js'
 import { indirectZucchini } from './zucchini.test-setup.js'
@@ -13,7 +13,7 @@ describe(`${createZucchini.name}()`, () => {
 	const { scenario, defineStep, defineParameterType } = createZucchini(createTestContext())
 	afterAll(() => scenario.cleanup())
 	describe(`${scenario.name}()`, () => {
-		describe(`setup()`, () => {
+		describe('setup()', () => {
 			it('throws MissingStep if not defined', async () => {
 				const { setup } = scenario('no handler')
 				a.throws(() => setup('no setup handler'), MissingStep)
@@ -115,7 +115,7 @@ Error: foo`
 			})
 		})
 
-		describe(`run()`, () => {
+		describe('run()', () => {
 			const { scenario, defineStep } = createZucchini(createTestContext())
 			afterAll(() => scenario.cleanup())
 			it('throws MissingStep if not defined', async () => {
@@ -186,7 +186,7 @@ Error: foo`
 			})
 		})
 
-		describe(`teardown()`, () => {
+		describe('teardown()', () => {
 			const { scenario, defineStep } = createZucchini(createTestContext())
 			afterAll(() => scenario.cleanup())
 			it('throws MissingStep if not defined', async () => {
@@ -281,7 +281,7 @@ Error: foo`
 			})
 		})
 
-		describe(`ensure()`, () => {
+		describe('ensure()', () => {
 			const { scenario, defineStep } = createZucchini(createTestContext())
 			afterAll(() => scenario.cleanup())
 			it('throws MissingStep if not defined', async () => {
@@ -396,7 +396,7 @@ Error: foo`
 
 		it('can specify specRelativePath for indirect usage', async () => {
 			const { done, reporter } = indirectZucchini(scenario, 'indirect usage', {
-				logLevel: Infinity,
+				logLevel: Number.POSITIVE_INFINITY,
 				specPath: filename(import.meta)
 			})
 			await done()
@@ -438,15 +438,15 @@ Error: foo`
 		})
 
 		it('can define step with arguments', async () => {
-			defineStep(`step with {}`, (_, arg) => arg + 1)
+			defineStep('step with {}', (_, arg) => arg + 1)
 
 			const { run } = scenario('template with argument')
 			const result = await run('step with 2')
-			expect(result).toEqual(`21`)
+			expect(result).toEqual('21')
 		})
 
 		it('can specify argument type as number', async () => {
-			defineStep(`step arg as number {number}`, (_, arg) => arg + 1)
+			defineStep('step arg as number {number}', (_, arg) => arg + 1)
 
 			const { run } = scenario('template with argument')
 			const result = await run('step arg as number 2')
@@ -454,7 +454,7 @@ Error: foo`
 		})
 
 		it('can specify argument type as float', async () => {
-			defineStep(`step arg as float {float}`, (_, arg) => arg + 1)
+			defineStep('step arg as float {float}', (_, arg) => arg + 1)
 
 			const { run } = scenario('template with argument')
 			const result = await run('step arg as float 2.1')
@@ -462,7 +462,7 @@ Error: foo`
 		})
 
 		it('can specify argument type as boolean', async () => {
-			defineStep(`step arg as boolean {boolean}`, (_, arg) => arg)
+			defineStep('step arg as boolean {boolean}', (_, arg) => arg)
 
 			const { run } = scenario('template with argument')
 			expect(await run('step arg as boolean true')).toEqual(true)
@@ -471,7 +471,7 @@ Error: foo`
 
 		it('works with multiple params template', async () => {
 			const values: any[] = []
-			defineStep(`two regex {word} {int} throws`, (_, a, b) => {
+			defineStep('two regex {word} {int} throws', (_, a, b) => {
 				values.push({ a, b })
 			})
 			const { setup } = scenario('setup with regex template')
@@ -515,12 +515,12 @@ Error: foo`
 			})
 			const save = scenario('sub step')
 			expect(await save.run('run with substep 1')).toEqual('first substep 1 > substep 1 > leaf 1')
-			expect(await save.teardown('run with substep 2')).toEqual(`first substep 2 > substep 2 > leaf 2`)
+			expect(await save.teardown('run with substep 2')).toEqual('first substep 2 > substep 2 > leaf 2')
 			await save.done()
 
 			const sim = scenario('sub step')
 			expect(await sim.run('run with substep 1')).toEqual('first substep 1 > substep 1 > leaf 1')
-			expect(await sim.teardown('run with substep 2')).toEqual(`first substep 2 > substep 2 > leaf 2`)
+			expect(await sim.teardown('run with substep 2')).toEqual('first substep 2 > substep 2 > leaf 2')
 			await sim.done()
 		})
 	})
@@ -536,7 +536,7 @@ Error: foo`
 				regexp: /[\w./?=]*/
 			})
 			const mm: any[] = []
-			defineStep(`{method} {uri} throws`, (_, method, uri) => {
+			defineStep('{method} {uri} throws', (_, method, uri) => {
 				mm.push(method, uri)
 			})
 
@@ -548,7 +548,7 @@ Error: foo`
 		})
 	})
 
-	describe(`scenario.save()`, () => {
+	describe('scenario.save()', () => {
 		const { scenario, defineStep } = createZucchini(createTestContext())
 		afterAll(() => scenario.cleanup())
 		it('forces save', async () => {
@@ -572,7 +572,7 @@ Error: foo`
 		})
 	})
 
-	describe(`scenario.simulate()`, () => {
+	describe('scenario.simulate()', () => {
 		const { scenario } = createZucchini(createTestContext())
 		afterAll(() => scenario.cleanup())
 		it('forces simulate', async () => {
@@ -582,7 +582,7 @@ Error: foo`
 	})
 
 	describe('mocking', () => {
-		it(`specify a mock when calling the spec function`, async () => {
+		it('specify a mock when calling the spec function', async () => {
 			const { spec } = scenario.mock('specify a mock')
 			const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 			const r = s('value')

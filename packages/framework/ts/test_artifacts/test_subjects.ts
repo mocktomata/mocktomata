@@ -1,63 +1,67 @@
-import axios from 'axios'
-import { setImmediate } from 'timers'
-import type { AnyFunction } from 'type-plus'
+import axios from "axios";
+import { setImmediate } from "timers";
+import type { AnyFunction } from "type-plus";
 
 export class Dummy {
 	// class detection requires to have at least one method defined.
 	// istanbul ignore next
 	do() {
-		return
+		return;
 	}
 }
 
 export class ChildOfDummy extends Dummy {
 	// istanbul ignore next
 	doDumber() {
-		return
+		return;
 	}
 }
 
 export function increment(v: number) {
-	return v + 1
+	return v + 1;
 }
 
 export const simpleCallback = {
 	increment(remote: AnyFunction, value: number) {
 		return new Promise<number>((a, r) => {
 			remote(value, (err: Error | undefined, response: number) => {
-				if (err) r(err)
-				a(response)
-			})
-		})
+				if (err) r(err);
+				a(response);
+			});
+		});
 	},
 	success(value: number, callback: (err: any, result: number) => void) {
-		callback(null, value + 1)
+		callback(null, value + 1);
 	},
 	fail(value: number, callback: (err: any, result?: number) => void) {
-		callback(new Error('fail'))
-	}
-}
+		callback(new Error("fail"));
+	},
+};
 
 export const fetch = {
 	add(fetch: any, x: number, y: number) {
 		return new Promise((a, r) => {
-			fetch('remoteAdd', { x, y }, (err: any, response: number | null) => {
-				if (err) r(err)
-				a(response)
-			})
-		})
+			fetch("remoteAdd", { x, y }, (err: any, response: number | null) => {
+				if (err) r(err);
+				a(response);
+			});
+		});
 	},
 	success(
 		_url: string,
 		options: { x: number; y: number },
-		callback: (err: any, response: number | null) => void
+		callback: (err: any, response: number | null) => void,
 	) {
-		callback(null, options.x + options.y)
+		callback(null, options.x + options.y);
 	},
-	fail(_url: string, _options: any, callback: (err: any, response: number | null) => void) {
-		callback({ message: 'fail' }, null)
-	}
-}
+	fail(
+		_url: string,
+		_options: any,
+		callback: (err: any, response: number | null) => void,
+	) {
+		callback({ message: "fail" }, null);
+	},
+};
 
 export const callbackInObjLiteral = {
 	increment(remote: AnyFunction, x: number) {
@@ -65,21 +69,21 @@ export const callbackInObjLiteral = {
 			remote({
 				data: x,
 				error(_xhr: any, _textStatus: string, errorThrown: Error) {
-					r(errorThrown)
+					r(errorThrown);
 				},
 				success(data: number, _textStatus: string, _xhr: any) {
-					a(data)
-				}
-			})
-		})
+					a(data);
+				},
+			});
+		});
 	},
 	success(options: { data: number; success: AnyFunction }) {
-		options.success(options.data + 1)
+		options.success(options.data + 1);
 	},
 	fail(options: { data: number; success: AnyFunction; error: AnyFunction }) {
-		options.error(null, 'failStatus', new Error('fail'))
-	}
-}
+		options.error(null, "failStatus", new Error("fail"));
+	},
+};
 
 export const callbackInDeepObjLiteral = {
 	increment(remote: AnyFunction, x: number) {
@@ -88,86 +92,86 @@ export const callbackInDeepObjLiteral = {
 				data: x,
 				handlers: {
 					error(_xhr: any, _textStatus: string, errorThrown: Error) {
-						r(errorThrown)
+						r(errorThrown);
 					},
 					success(data: number, _textStatus: string, _xhr: any) {
-						a(data)
-					}
-				}
-			})
-		})
+						a(data);
+					},
+				},
+			});
+		});
 	},
 	success(options: { data: number; handlers: { success: AnyFunction } }) {
-		options.handlers.success(options.data + 1)
+		options.handlers.success(options.data + 1);
 	},
 	fail(options: { data: number; handlers: { error: AnyFunction } }) {
-		options.handlers.error(null, 'failStatus', { message: 'fail' })
-	}
-}
+		options.handlers.error(null, "failStatus", { message: "fail" });
+	},
+};
 
 export const synchronous = {
 	increment(remote: (x: number) => number, x: number) {
-		return remote(x)
+		return remote(x);
 	},
 	success(x: number) {
-		return x + 1
+		return x + 1;
 	},
 	fail() {
-		throw new Error('fail')
-	}
-}
+		throw new Error("fail");
+	},
+};
 
 export const delayed = {
 	increment(remote: AnyFunction, x: number) {
-		return new Promise(a => {
+		return new Promise((a) => {
 			remote(x, (_: any, response: number) => {
-				a(response)
-			})
-		})
+				a(response);
+			});
+		});
 	},
 	success(a: number, callback: AnyFunction) {
-		setImmediate(() => callback(null, a + 1))
-	}
-}
+		setImmediate(() => callback(null, a + 1));
+	},
+};
 
 export const recursive = {
 	decrementToZero(remote: AnyFunction, x: number) {
-		return new Promise(a => {
+		return new Promise((a) => {
 			remote(x, (_: any, response: number) => {
-				a(response > 0 ? recursive.decrementToZero(remote, x - 1) : response)
-			})
-		})
+				a(response > 0 ? recursive.decrementToZero(remote, x - 1) : response);
+			});
+		});
 	},
 	success(a: number, callback: AnyFunction) {
-		callback(null, a - 1)
-	}
-}
+		callback(null, a - 1);
+	},
+};
 
 export const postReturn = {
 	fireEvent(name: string, times: number, callback: AnyFunction) {
 		setImmediate(() => {
-			for (let i = 0; i < times; i++) callback(name)
-		})
-		return
-	}
-}
+			for (let i = 0; i < times; i++) callback(name);
+		});
+		return;
+	},
+};
 export class WithProperty {
-	y = 1
+	y = 1;
 	do(x: any) {
-		return x
+		return x;
 	}
 }
 export class WithStaticProp {
-	static x = 1
+	static x = 1;
 }
 export class WithStaticMethod {
 	static do() {
-		return 'foo'
+		return "foo";
 	}
 }
 
 export function createTestAxios() {
 	return axios.create({
-		adapter: 'http'
-	})
+		adapter: "http",
+	});
 }

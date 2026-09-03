@@ -1,6 +1,6 @@
 import type { AsyncContext } from 'async-fp'
 import { createAutoSpec } from './auto_spec.js'
-import { createSpec } from './types.internal.js'
+import type { createSpec } from './types.internal.js'
 import type { Spec } from './types.js'
 
 export async function createMockSpec(
@@ -10,16 +10,11 @@ export async function createMockSpec(
 	options: Spec.Options
 ): Promise<Spec> {
 	const spec = Object.assign(
-		async function (subject: any, specOptions: any) {
+		async (subject: any, specOptions: any) => {
 			if (specOptions?.mock) {
 				return specOptions.mock
 			}
-			const actualSpec = ((spec as any).actualSpec = await createAutoSpec(
-				context,
-				specName,
-				specPath,
-				options
-			))
+			const actualSpec = ((spec as any).actualSpec = await createAutoSpec(context, specName, specPath, options))
 			return actualSpec(subject)
 		},
 		{

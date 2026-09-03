@@ -1,19 +1,22 @@
 import type { AsyncContext } from 'async-fp'
-import { createMemoryLogReporter, MemoryLogReporter } from 'standard-log'
+import { createMemoryLogReporter, type MemoryLogReporter } from 'standard-log'
 import { loadConfig } from '../config/index.js'
-import { Config } from '../config/types.js'
+import type { Config } from '../config/types.js'
 import { createLogContext } from '../log/log_context.js'
-import { Log } from '../log/types.js'
+import type { Log } from '../log/types.js'
 import { createMocktoFn } from '../mockto/mockto.js'
 import { resolveMocktoFnArgs } from '../mockto/mockto.utils.js'
-import { createSpecObject, Spec } from '../spec/index.js'
-import { loadPlugins, SpecPlugin } from '../spec_plugin/index.js'
-import { StackFrameContext } from '../stack_frame.types.js'
-import { newMemoryIO } from '../testing/index.js'
+import { createSpecObject, type Spec } from '../spec/index.js'
+import { loadPlugins, type SpecPlugin } from '../spec_plugin/index.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
+import type { newMemoryIO } from '../testing/index.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 
 export namespace createIncubator {
-	export type Context = Log.Context & { io: newMemoryIO.TestIO } & Config.Context & StackFrameContext
+	export type Context = Log.Context & {
+		io: newMemoryIO.TestIO
+	} & Config.Context &
+		StackFrameContext
 	export type IncubatorFn = {
 		/**
 		 * Creates an automatic incubator spec.
@@ -49,7 +52,7 @@ export function createIncubator({
 	const ctx = context
 		.extend(loadConfig)
 		.extend(loadPlugins)
-		.extend(async value => {
+		.extend(async (value) => {
 			ctxValue = value
 			return { plugins: (value.plugins = pluginInstances ?? value.plugins) }
 		})
@@ -58,7 +61,7 @@ export function createIncubator({
 	async function config(options: createIncubator.ConfigOptions) {
 		const { plugins } = await ctx
 			.extend(async ({ config, io }) => {
-				const plugins = options.plugins.map(p => {
+				const plugins = options.plugins.map((p) => {
 					// istanbul ignore next
 					if (typeof p === 'string') return p
 					io.addPlugin(p.name, {
@@ -134,7 +137,9 @@ export function createIncubator({
 		 */
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
-			timeTrackers.forEach(t => t.terminate())
+			timeTrackers.forEach((t) => {
+				t.terminate()
+			})
 		}
 	})
 }

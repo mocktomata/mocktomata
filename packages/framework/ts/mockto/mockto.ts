@@ -6,7 +6,7 @@ import { createLogContext } from '../log/log_context.js'
 import type { Spec } from '../spec/index.js'
 import { createSpecObject, getEffectiveSpecModeContext } from '../spec/index.js'
 import { loadPlugins } from '../spec_plugin/index.js'
-import { StackFrameContext } from '../stack_frame.types.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
 import { initTimeTrackers } from '../time_trackter/index.js'
 import type { Mocktomata } from '../types.js'
 import { resolveMocktoFnArgs } from './mockto.utils.js'
@@ -63,7 +63,9 @@ export function createMockto({
 		simulate: createMocktoFn({ context: ctx, stackFrame }, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
-			timeTrackers.forEach(t => t.terminate())
+			timeTrackers.forEach((t) => {
+				t.terminate()
+			})
 		}
 	})
 }

@@ -75,7 +75,7 @@ incubator('throw during get', (specName, spec) => {
 		})
 		a.throws(
 			() => subject.x,
-			e => e.message === 'thrown'
+			(e) => e.message === 'thrown'
 		)
 		await spec.done()
 	})
@@ -90,7 +90,7 @@ incubator('throw during set', (specName, spec) => {
 		})
 		a.throws(
 			() => (subject.x = 2),
-			e => e.message === 'thrown'
+			(e) => e.message === 'thrown'
 		)
 		await spec.done()
 	})
@@ -167,7 +167,7 @@ incubator('callback method success', (specName, spec) => {
 			}
 		})
 		let actual: number
-		subject.inc(3, x => (actual = x))
+		subject.inc(3, (x) => (actual = x))
 
 		expect(actual!).toBe(4)
 

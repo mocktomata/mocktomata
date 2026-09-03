@@ -21,14 +21,17 @@ export const arrayPlugin: SpecPlugin<any[], { meta: ArrayMeta; items: string[] }
 				return getProperty({ key }, () => (target as any)[key])
 			},
 			set(target, key: any, value) {
-				return setProperty({ key, value }, value => {
+				return setProperty({ key, value }, (value) => {
 					subject[key] = target[key] = value
 				})
 			}
 		})
 	},
 	createStub({ getProperty, setProperty, resolve }, _, { meta, items }) {
-		const base = Object.assign(items.map(i => resolve(i)), demetarize(meta))
+		const base = Object.assign(
+			items.map((i) => resolve(i)),
+			demetarize(meta)
+		)
 		return new Proxy(base, {
 			get(_, key: string) {
 				const a = Array.prototype[key as any]

@@ -2,7 +2,7 @@ import esp from 'error-stack-parser'
 import { tersify } from 'tersify'
 import type { Log } from '../log/types.js'
 import type { SpecRecord } from '../spec_record/types.js'
-import { StackFrameContext } from '../stack_frame.types.js'
+import type { StackFrameContext } from '../stack_frame.types.js'
 import { logLevels } from '../standard_log.types.js'
 import { prettifyAction } from './action.format.js'
 import { maskString } from './masking.js'
@@ -14,11 +14,11 @@ export function logCreateSpy(
 	profile: SpecRecord.SubjectProfile,
 	subject: any
 ) {
-	log.on(logLevels.trace, log =>
+	log.on(logLevels.trace, (log) =>
 		log(
 			`${ref.plugin} <ref:${refId}> create ${profile} spy: ${maskString(
 				maskCriteria,
-				tersify(subject, { maxLength: Infinity })
+				tersify(subject, { maxLength: Number.POSITIVE_INFINITY })
 			)}`
 		)
 	)
@@ -38,7 +38,7 @@ export function logAction(
 				...esp
 					.parse(new Error())
 					.slice(3)
-					.map(s => `\n${s.functionName} (${s.fileName}:${s.lineNumber}:${s.columnNumber})`)
+					.map((s) => `\n${s.functionName} (${s.fileName}:${s.lineNumber}:${s.columnNumber})`)
 			)
 		} else {
 			log(msg)
@@ -59,13 +59,8 @@ export function logCreateStub(
 	profile: SpecRecord.SubjectProfile,
 	subjectOrMeta: any
 ) {
-	log.on(logLevels.trace, log =>
-		log(
-			`${ref.plugin} <ref:${refId}> create ${profile} stub: ${maskString(
-				maskCriteria,
-				tersify(subjectOrMeta)
-			)}`
-		)
+	log.on(logLevels.trace, (log) =>
+		log(`${ref.plugin} <ref:${refId}> create ${profile} stub: ${maskString(maskCriteria, tersify(subjectOrMeta))}`)
 	)
 }
 
@@ -77,7 +72,7 @@ export function logMissingResultAction(
 	action: SpecRecord.Action
 ) {
 	log.error(`Result action for ${prettifyAction(state, actionId, action)} not found.`)
-	log.error(`Since all in-between actions should be processed, this is likely some kind of recording error.`)
+	log.error('Since all in-between actions should be processed, this is likely some kind of recording error.')
 }
 
 export function logMissingActionAtDone(
