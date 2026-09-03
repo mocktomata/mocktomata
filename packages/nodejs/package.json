@@ -23,32 +23,35 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
-		"types": "./esm/index.d.ts",
-		"import": "./esm/index.js",
-		"default": "./cjs/index.js"
+		".": {
+			"types": "./esm/index.d.ts",
+			"default": "./esm/index.js"
+		}
 	},
-	"main": "./cjs/index.js",
 	"types": "./esm/index.d.ts",
 	"files": [
-		"cjs",
 		"esm",
 		"ts",
 		"!**/*.{spec,test,unit,accept,integrate,system}.*",
-		"!**/test_util"
+		"!**/*.test-setup.*",
+		"!**/testutils",
+		"!**/test-util",
+		"!**/test_util",
+		"!**/test-artifacts",
+		"!**/test_artifacts"
 	],
 	"scripts": {
-		"build": "run-p build:cjs build:esm",
-		"build:cjs": "tsc -p ./tsconfig.cjs.json && ncp package.cjs.json cjs/package.json",
-		"build:esm": "tsc",
-		"clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
-		"coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --coverage --reporters=default",
+		"build": "tsdown",
+		"build:watch": "tsdown --watch",
+		"clean": "rimraf coverage esm *.tsbuildinfo",
+		"coverage": "vitest run --coverage",
 		"depcheck": "depcheck",
-		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-		"nuke": "pnpm run clean && rimraf node_modules",
-		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --reporters=default",
-		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --watch",
-		"verify": "npm-run-all -p lint build coverage -p depcheck",
-		"watch": "pnpm run test:watch"
+		"nuke": "run-s clean && rimraf node_modules",
+		"test": "vitest run",
+		"typecheck": "tsc",
+		"verify": "npm-run-all clean -p build typecheck coverage depcheck",
+		"watch": "vitest",
+		"w": "pnpm watch"
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
@@ -59,7 +62,6 @@
 		"type-plus": "^7.0.0"
 	},
 	"devDependencies": {
-		"@jest/globals": "^29.5.0",
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
 		"@mocktomata/plugin-fixture-cjs-a": "workspace:^",
 		"@mocktomata/plugin-fixture-cjs-b": "workspace:^",
@@ -68,27 +70,21 @@
 		"@mocktomata/plugin-fixture-esm-a": "workspace:^",
 		"@mocktomata/plugin-fixture-esm-b": "workspace:^",
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
-		"@repobuddy/jest": "^3.3.0",
 		"@unional/fixture": "^3.2.6",
+		"@vitest/coverage-v8": "^4.1.11",
 		"assertron": "^11.0.0",
-		"cross-env": "^7.0.3",
-		"deepmerge": "^4.2.2",
 		"depcheck": "^1.4.3",
 		"dirname-filename-esm": "^1.1.1",
-		"jest": "^29.5.0",
-		"jest-watch-suspend": "^1.1.2",
-		"jest-watch-toggle-config-2": "^2.1.0",
-		"jest-watch-typeahead": "^3.0.0",
-		"ncp": "^2.0.0",
 		"npm-run-all2": "^5.0.0",
 		"rimraf": "^5.0.0",
 		"satisfier": "^5.4.2",
 		"standard-log": "^13.0.1",
 		"tmp": "^0.2.1",
-		"ts-jest": "^29.1.0",
-		"typescript": "~5.1.0"
+		"tsdown": "^0.22.14",
+		"typescript": "~5.9.0",
+		"vitest": "^4.1.11"
 	},
 	"engines": {
-		"node": ">= 14.16"
+		"node": ">= 20"
 	}
 }

@@ -2,106 +2,39 @@
 	"$schema": "https://turbo.build/schema.json",
 	"tasks": {
 		"build": {
-			"dependsOn": [
-				"^build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				"tsconfig.*",
-				"package.json"
-			]
+			"dependsOn": ["^build"],
+			"inputs": ["package.json", "tsconfig.*", "tsdown.config.ts", "ts/**/*.tsx?"],
+			"outputs": ["esm/**", "lib/**", "libm/**"]
 		},
 		"clean": {
 			"cache": false
 		},
 		"coverage": {
-			"dependsOn": [
-				"build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				"jest.config.*",
-				"tsconfig.*",
-				"package.json"
-			]
+			"dependsOn": ["build"],
+			"inputs": ["package.json", "tsconfig.*", "vitest.config.ts", "fixtures/**", "ts/**/*.tsx?"],
+			"outputs": ["coverage/**"]
 		},
 		"depcheck": {
-			"dependsOn": [
-				"build"
-			]
+			"dependsOn": ["build"],
+			"inputs": ["package.json", ".depcheckrc.*", "ts/**/*.tsx?"]
 		},
 		"dev": {
 			"cache": false
 		},
-		"lint": {
-			"dependsOn": [
-				"^build"
-			]
-		},
 		"nuke": {
 			"cache": false
 		},
-		"size": {
-			"dependsOn": [
-				"build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				".size-limit.*",
-				"tsconfig.*",
-				"package.json"
-			]
-		},
 		"test": {
-			"dependsOn": [
-				"build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				"jest.config.*",
-				"tsconfig.*",
-				"package.json"
-			]
+			"dependsOn": ["build"],
+			"inputs": ["package.json", "tsconfig.*", "vitest.config.ts", "fixtures/**", "ts/**/*.tsx?"]
 		},
-		"test:electron": {
-			"dependsOn": [
-				"build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				"jest.config.*",
-				"tsconfig.*",
-				"package.json"
-			]
+		"typecheck": {
+			"dependsOn": ["^build"],
+			"inputs": ["package.json", "tsconfig.*", "tsdown.config.ts", "vitest.config.ts", "ts/**/*.tsx?"]
 		},
-		"test:jsdom": {
-			"dependsOn": [
-				"build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				"jest.config.*",
-				"tsconfig.*",
-				"package.json"
-			]
-		},
-		"test:nodejs": {
-			"dependsOn": [
-				"build"
-			],
-			"inputs": [
-				"fixtures",
-				"ts",
-				"jest.config.*",
-				"tsconfig.*",
-				"package.json"
-			]
+		"watch": {
+			"cache": false,
+			"persistent": true
 		}
 	}
 }

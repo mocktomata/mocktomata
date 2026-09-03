@@ -21,12 +21,6 @@ packages:
   - test-plugins/*
   - tests/*
 allowBuilds:
-  '@swc/core': true
   core-js: true
-  electron: true
   esbuild: true
   fsevents: true
-overrides:
-  ts-jest: '~29.4.0'
-  jest: '29.7.0'
-  '@kayahr/jest-electron-runner': '29.3.1'

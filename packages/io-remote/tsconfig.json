@@ -1,21 +1,4 @@
 {
-	"extends": "../../.tsc/tsconfig.settings.json",
-	"compilerOptions": {
-		"lib": ["DOM"],
-		"esModuleInterop": true,
-		"module": "Node16",
-		"moduleResolution": "node16",
-		"outDir": "esm",
-		"rootDir": "ts",
-		"target": "ES2020"
-	},
-	"references": [
-		{
-			"path": "../framework"
-		},
-		{
-			"path": "../../test-plugins/plugin-fixture-dummy"
-		}
-	],
-	"include": ["ts", "typings"]
+	"extends": "../../tsconfig.base.json",
+	"include": ["ts", "typings", "types", "tsdown.config.ts", "vitest.config.ts"]
 }
