@@ -268,7 +268,9 @@ describe('maskValue(string)', () => {
 					expect(record.actions.length).toBeLessThan(20)
 					expect(reporter.getLogMessage()).not.toContain('secret')
 				}
-			})
+				// The `save` half makes a live request to postman-echo.com, so this one needs more
+				// than the 5s default before the runner's network counts as a test failure.
+			}, 30_000)
 		}
 	)
 
