@@ -1,4 +1,4 @@
-import { Logger } from 'standard-log'
+import type { Logger } from 'standard-log'
 import type { RequiredPick } from 'type-plus'
 import type { SpecRecord } from '../spec_record/types.js'
 

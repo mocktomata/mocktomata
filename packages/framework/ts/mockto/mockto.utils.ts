@@ -5,7 +5,6 @@ export function resolveMocktoFnArgs<H = Spec.Handler>(
 ): { specName: string; options: Spec.Options | undefined; handler: H } {
 	if (args.length === 3) {
 		return { specName: args[0], options: args[1], handler: args[2] }
-	} else {
-		return { specName: args[0], options: undefined, handler: args[1] }
 	}
+	return { specName: args[0], options: undefined, handler: args[1] }
 }

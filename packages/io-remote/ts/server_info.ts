@@ -1,5 +1,5 @@
 import { ServiceNotAvailable } from './errors.js'
-import { Context } from './io.internal.js'
+import type { Context } from './io.internal.js'
 import type { ServiceOptions } from './io.types.js'
 import { buildUrl } from './url.js'
 
@@ -11,10 +11,7 @@ export type ServerInfo = {
 	plugins?: string[]
 }
 
-export async function getServerInfo(
-	{ fetch }: Pick<Context, 'fetch'>,
-	{ url }: ServiceOptions
-): Promise<ServerInfo> {
+export async function getServerInfo({ fetch }: Pick<Context, 'fetch'>, { url }: ServiceOptions): Promise<ServerInfo> {
 	try {
 		const response = await fetch(buildUrl(url, 'info'))
 		return response.json()

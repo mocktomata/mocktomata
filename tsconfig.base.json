@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"declarationMap": true,
+		"downlevelIteration": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"lib": ["ES2020", "DOM"],
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"newLine": "LF",
+		// tsdown emits; `tsc` only typechecks. Without this the bundler would silently be
+		// the only thing looking at the code, and nothing would typecheck it.
+		"noEmit": true,
+		"noUnusedLocals": true,
+		"removeComments": false,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"target": "ES2020",
+		"types": ["node", "vitest/globals"]
+	}
+}

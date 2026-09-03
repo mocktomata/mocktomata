@@ -1,5 +1,5 @@
-import { ModuleError } from 'iso-error'
-import { AnyFunction } from 'type-plus'
+import type { ModuleError } from 'iso-error'
+import type { AnyFunction } from 'type-plus'
 import { MocktomataError } from '../errors.js'
 
 export class DuplicateStep extends MocktomataError {
@@ -22,7 +22,10 @@ ${handler2.toString()}`,
 }
 
 export class MissingStep extends MocktomataError {
-	constructor(public clause: string | RegExp, options?: ModuleError.Options) {
+	constructor(
+		public clause: string | RegExp,
+		options?: ModuleError.Options
+	) {
 		super(`Step ${clauseToString(clause)} is not defined`, options)
 	}
 }

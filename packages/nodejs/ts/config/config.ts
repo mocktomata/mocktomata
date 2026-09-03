@@ -1,10 +1,12 @@
+import fs from 'node:fs'
+import path from 'node:path'
 import { json } from '@mocktomata/framework'
-import fs from 'fs'
 import json5 from 'json5'
-import path from 'path'
 import {
 	MOCKTOMATA_FILE_PATH_FILTER,
-	MOCKTOMATA_LOG_LEVEL, MOCKTOMATA_MODE, MOCKTOMATA_SPEC_NAME_FILTER
+	MOCKTOMATA_LOG_LEVEL,
+	MOCKTOMATA_MODE,
+	MOCKTOMATA_SPEC_NAME_FILTER
 } from './constants.js'
 import { reduceOr } from './reduceOr.js'
 export namespace loadConfig {
@@ -30,7 +32,7 @@ function loadFromPackageJson({ cwd }: Context): [string, any] | undefined {
 }
 
 function loadFromJson({ cwd }: Context): Array<[string, any] | undefined> {
-	return ['mocktomata.json'].map(name => {
+	return ['mocktomata.json'].map((name) => {
 		const filepath = path.resolve(cwd, name)
 		if (fs.existsSync(filepath)) {
 			const json = json5.parse(fs.readFileSync(filepath, 'utf-8'))

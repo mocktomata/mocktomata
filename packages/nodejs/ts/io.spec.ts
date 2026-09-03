@@ -1,10 +1,10 @@
-import { jest } from '@jest/globals'
+import t from 'node:assert'
+import { existsSync } from 'node:fs'
 import { SpecNotFound } from '@mocktomata/framework'
 import { execCommand } from '@unional/fixture'
 import { a } from 'assertron'
-import t from 'node:assert'
-import { existsSync } from 'node:fs'
 import { createStandardLogForTest } from 'standard-log/testing'
+import { vi } from 'vitest'
 import {
 	MOCKTOMATA_FILE_PATH_FILTER,
 	MOCKTOMATA_LOG_LEVEL,
@@ -24,14 +24,16 @@ describe(`${createIO.name}()`, () => {
 	})
 	function setupIOTest(fixture: string, envValues?: Record<string, any>) {
 		if (envValues) {
-			Object.keys(envValues).forEach(k => (process.env[k] = envValues[k]))
+			Object.keys(envValues).forEach((k) => {
+				process.env[k] = envValues[k]
+			})
 		}
 		const cwd = fixturePath(fixture)
 		const sl = createStandardLogForTest()
 		const log = sl.getLogger('test')
 		return [createIO({ cwd, log }), sl.reporter] as const
 	}
-	describe(`loadConfig()`, () => {
+	describe('loadConfig()', () => {
 		it('returns empty object when there is no config', async () => {
 			const [io] = setupIOTest('no-config')
 			const config = await io.loadConfig()
@@ -43,7 +45,7 @@ describe(`${createIO.name}()`, () => {
 			const config = await io.loadConfig()
 			expect(config).toStrictEqual({
 				ecmaVersion: 'ES2015',
-				plugins: [`@mocktomata/plugin-fixture-dummy`],
+				plugins: ['@mocktomata/plugin-fixture-dummy'],
 				mocktomataDir: '.mockto',
 				logLevel: 'trace'
 			})
@@ -58,13 +60,17 @@ describe(`${createIO.name}()`, () => {
 		it('loads from mocktomata.json', async () => {
 			const [io] = setupIOTest('mjson')
 			const config = await io.loadConfig()
-			t.deepStrictEqual(config, { plugins: ['@mocktomata/plugin-fixture-dummy'] })
+			t.deepStrictEqual(config, {
+				plugins: ['@mocktomata/plugin-fixture-dummy']
+			})
 		})
 
 		it('loads from mocktomata.json with comment', async () => {
 			const [io] = setupIOTest('mjson-with-comment')
 			const config = await io.loadConfig()
-			t.deepStrictEqual(config, { plugins: ['@mocktomata/plugin-fixture-dummy'] })
+			t.deepStrictEqual(config, {
+				plugins: ['@mocktomata/plugin-fixture-dummy']
+			})
 		})
 
 		it('loads config from environment', async () => {
@@ -90,7 +96,7 @@ describe(`${createIO.name}()`, () => {
 			const config = await io.loadConfig()
 			expect(config).toStrictEqual({
 				ecmaVersion: 'ES2015',
-				plugins: [`@mocktomata/plugin-fixture-dummy`],
+				plugins: ['@mocktomata/plugin-fixture-dummy'],
 				mocktomataDir: '.mockto',
 				logLevel: 700
 			})
@@ -124,8 +130,8 @@ configs:
 		})
 	})
 
-	describe(`loadPlugin()`, () => {
-		jest.setTimeout(60000)
+	describe('loadPlugin()', () => {
+		vi.setConfig({ testTimeout: 60000 })
 		it('loads cjs plugin', async () => {
 			const { stdout } = await execCommand({
 				casePath: fixturePath('plugin-cjs'),
@@ -205,8 +211,8 @@ configs:
 		})
 	})
 
-	describe(`readSpec()`, () => {
-		it(`reads from .mocktomata/specs by default`, async () => {
+	describe('readSpec()', () => {
+		it('reads from .mocktomata/specs by default', async () => {
 			const [io] = setupIOTest('no-config')
 			const specRecord = await io.readSpec('some spec', 'src/code-a.ts')
 			expect(specRecord).toEqual({
@@ -238,7 +244,10 @@ configs:
 			ensureFileNotExist(filePath)
 
 			const [io] = setupIOTest('no-config')
-			await io.writeSpec('some spec', './src/write-target.ts', { actions: [], refs: [] })
+			await io.writeSpec('some spec', './src/write-target.ts', {
+				actions: [],
+				refs: []
+			})
 
 			expect(existsSync(filePath)).toBeTruthy()
 		})
@@ -250,7 +259,10 @@ configs:
 			const [io] = setupIOTest('pjson')
 			// loadConfig() will have the side effect of updating the path
 			await io.loadConfig()
-			await io.writeSpec('some spec', './src/write-target.ts', { actions: [], refs: [] })
+			await io.writeSpec('some spec', './src/write-target.ts', {
+				actions: [],
+				refs: []
+			})
 
 			expect(existsSync(filePath)).toBeTruthy()
 		})

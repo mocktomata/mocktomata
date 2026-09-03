@@ -26,9 +26,7 @@ export function genFilename(baseDir: string, id: string, dupId = 0) {
 	const f = sanitize(id).replace(/\s/g, '-')
 
 	if (f.length > lenLimit - dupIdLen) {
-		return dupIdLen
-			? `${f.slice(0, lenLimit - dupIdLen - 3)}...${dupId}`
-			: `${f.slice(0, lenLimit - dupIdLen - 3)}...`
+		return dupIdLen ? `${f.slice(0, lenLimit - dupIdLen - 3)}...${dupId}` : `${f.slice(0, lenLimit - dupIdLen - 3)}...`
 	}
 	return dupIdLen ? `${f}${dupId}` : f
 }

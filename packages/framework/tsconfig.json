@@ -1,18 +1,4 @@
 {
-	"extends": "../../.tsc/tsconfig.settings.json",
-	"compilerOptions": {
-		"lib": [
-			"DOM",
-			"es2015"
-		],
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"outDir": "esm",
-		"rootDir": "ts",
-		"target": "ES2020"
-	},
-	"include": [
-		"ts",
-		"types"
-	]
+	"extends": "../../tsconfig.base.json",
+	"include": ["ts", "typings", "types", "tsdown.config.ts", "vitest.config.ts"]
 }

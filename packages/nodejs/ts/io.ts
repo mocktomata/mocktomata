@@ -1,13 +1,13 @@
+import path from 'node:path'
 import {
 	json,
-	Log,
-	Mocktomata,
+	type Log,
+	type Mocktomata,
 	PluginModuleNotConforming,
 	prettyPrintSpecRecord,
 	SpecNotFound,
-	SpecRecord
+	type SpecRecord
 } from '@mocktomata/framework'
-import path from 'node:path'
 import { reduceByKey } from 'type-plus'
 import { loadConfig } from './config/index.js'
 import { MOCKTOMATA_FOLDER, SPEC_FOLDER } from './constants.js'
@@ -25,25 +25,29 @@ export function createIO({ cwd, log }: createIO.Param): Mocktomata.IO {
 	return {
 		async loadConfig() {
 			const [configs, env] = await loadConfig({ cwd })
-			const configFilenames = configs.map(c => c[0])
+			const configFilenames = configs.map((c) => c[0])
 			if (configFilenames.length > 1) {
 				log.warn(`Multiple configurations detected.
 Please consolidate them into a single config.
 
 configs:
-${configFilenames.map(c => `- ${c}`).join('\n')}`)
+${configFilenames.map((c) => `- ${c}`).join('\n')}`)
 			}
 
 			const config = trimProps({
-				...configs.reduce((p, v) => {
-					const { ecmaVersion, mocktomataDir, plugins, logLevel, ...rest } = v[1] as any
-					const extraKeys = Object.keys(rest)
-					if (extraKeys.length > 0) {
-						log.warn(`Config file '${v[0]}' contains unrecognized properties: ${extraKeys.join(', ')}`)
-					}
+				...configs.reduce(
+					(p, v) => {
+						const { ecmaVersion, mocktomataDir, plugins, logLevel, ...rest } = v[1] as any
+						const extraKeys = Object.keys(rest)
+						if (extraKeys.length > 0) {
+							log.warn(`Config file '${v[0]}' contains unrecognized properties: ${extraKeys.join(', ')}`)
+						}
 
-					return { ...p, ecmaVersion, mocktomataDir, plugins, logLevel }
-				}, {} as Record<string, unknown>),
+						// biome-ignore lint/performance/noAccumulatingSpread: the accumulator is one flat config object and the list is the handful of config sources found on disk.
+						return { ...p, ecmaVersion, mocktomataDir, plugins, logLevel }
+					},
+					{} as Record<string, unknown>
+				),
 				...env[1]
 			})
 
@@ -64,7 +68,7 @@ ${configFilenames.map(c => `- ${c}`).join('\n')}`)
 		async readSpec(specName: string, invokePath: string): Promise<SpecRecord> {
 			try {
 				return json.parse(readSpec(specFolder, specName, invokePath))
-			} catch (e: any) {
+			} catch (_e: any) {
 				throw new SpecNotFound(specName, invokePath)
 			}
 		},

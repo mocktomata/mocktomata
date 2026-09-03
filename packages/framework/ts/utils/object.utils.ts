@@ -1,6 +1,7 @@
 import type { SpecRecord } from '../spec_record/types.js'
 
 export function isBaseObject(value: any) {
+	// biome-ignore lint/suspicious/noProto: reading `__proto__` is the point here — the check is whether the object was created with a null prototype.
 	return value === null || (value.__proto__ === null && value.constructor.name === 'Object')
 }
 
@@ -18,7 +19,7 @@ export function hasPropertyInPrototype(subject: any) {
 
 		// made a reasonable tradeoff assuming there will be at least one method in the class.
 		// after all, there will be nothing to spy/stub if there is no method.
-		if (Object.getOwnPropertyNames(proto).some(p => p !== 'constructor')) return true
+		if (Object.getOwnPropertyNames(proto).some((p) => p !== 'constructor')) return true
 		proto = nextProto
 	}
 	return false

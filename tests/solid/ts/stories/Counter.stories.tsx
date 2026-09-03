@@ -1,15 +1,15 @@
-import { Counter, CounterProps } from '../Counter'
-import { kd } from 'mocktomata'
 import type { Meta, StoryObj } from '@storybook/html'
-import { ComponentProps, lazy } from 'solid-js'
+import { kd } from 'mocktomata'
+import { type ComponentProps, lazy } from 'solid-js'
+import { Counter, type CounterProps } from '../Counter'
 
 type Story = StoryObj<CounterProps>
 
 export const Default: Story = {
 	args: {
 		initialValue: 12,
-		theme: 'default',
-	},
+		theme: 'default'
+	}
 }
 
 export const KD = () => {
@@ -17,10 +17,14 @@ export const KD = () => {
 	const WrappedCounter = lazy(async () => {
 		const fn = await spec(() => Math.round(Math.random() * 100))
 		return {
-			default: () => <>
-				<Counter initialValue={fn()} />
-				<button onClick={() => spec.done()}>Done</button>
-			</>
+			default: () => (
+				<>
+					<Counter initialValue={fn()} />
+					<button type="button" onClick={() => spec.done()}>
+						Done
+					</button>
+				</>
+			)
 		}
 	})
 
@@ -40,7 +44,7 @@ export default {
 		initialValue: { control: 'number' },
 		theme: {
 			options: ['default', 'red'],
-			control: { type: 'radio' },
-		},
-	},
+			control: { type: 'radio' }
+		}
+	}
 } as Meta<ComponentProps<typeof Counter>>

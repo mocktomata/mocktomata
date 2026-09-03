@@ -43,7 +43,10 @@ export function buildConfig(input: Config.Input, _input2?: Config.Input): Config
 export function resolveLogLevel(logLevel: unknown) {
 	if (!logLevel) return undefined
 	if (typeof logLevel === 'number') {
-		if (logLevel < 0) throw new ConfigPropertyInvalid('logLevel', logLevel, { ssf: loadConfig })
+		if (logLevel < 0)
+			throw new ConfigPropertyInvalid('logLevel', logLevel, {
+				ssf: loadConfig
+			})
 		return logLevel
 	}
 	if (typeof logLevel !== 'string') throw new ConfigPropertyInvalid('logLevel', logLevel, { ssf: loadConfig })

@@ -1,6 +1,6 @@
-import { defineStep, scenario, type Zucchini } from 'mocktomata'
 import { a } from 'assertron'
-import axios, { AxiosError } from 'axios'
+import axios, { type AxiosError } from 'axios'
+import { defineStep, scenario, type Zucchini } from 'mocktomata'
 
 afterAll(() => scenario.cleanup())
 
@@ -24,7 +24,7 @@ it('works with axios throwing error', async () => {
 	const { spec, done } = scenario('axios with error')
 	const s = await spec(axios)
 	// `+` is not valid
-	const err = await a.throws<AxiosError>(s(`http://api.mathjs.org/v4/?expr=1+1`))
+	const err = await a.throws<AxiosError>(s('http://api.mathjs.org/v4/?expr=1+1'))
 	expect(err.name).toEqual('AxiosError')
 	expect(err.code).toEqual('ERR_BAD_REQUEST')
 	expect(err.response?.status).toEqual(400)

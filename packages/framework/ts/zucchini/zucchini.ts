@@ -13,7 +13,7 @@ import type { MemoryLogReporter } from '../standard_log.types.js'
 import { initTimeTrackers } from '../time_trackter/time_tracker.js'
 import type { Mocktomata } from '../types.js'
 import { DuplicateStep, MissingStep } from './errors.js'
-import { Step, Store, createStore } from './store.js'
+import { createStore, type Step, type Store } from './store.js'
 
 export namespace Zucchini {
 	export type StepCaller<T = any> = (clause: string, ...inputs: any[]) => Promise<T>
@@ -67,7 +67,9 @@ function createScenario(
 		simulate: createScenarioFn({ context: ctx, stackFrame }, store, 'simulate'),
 		async cleanup() {
 			const { timeTrackers } = await ctx.get()
-			timeTrackers.forEach(t => t.terminate())
+			timeTrackers.forEach((t) => {
+				t.terminate()
+			})
 		}
 	})
 }
@@ -198,16 +200,17 @@ function buildHandlerArgs(entry: Step, clause: string, inputs: any[]) {
 	const args = entry.expression.match(clause)
 	if (args && args.length > 0) {
 		return [
-			...args.map(a => {
+			...args.map((a) => {
 				return a.getValue(a)
 			}),
 			...inputs
 		]
-	} else return inputs
+	}
+	return inputs
 }
 
 function lookupStep(store: Store, clause: string) {
-	const entry = store.steps.find(s => s.expression.match(clause))
+	const entry = store.steps.find((s) => s.expression.match(clause))
 	if (!entry) throw new MissingStep(clause)
 	return entry
 }
@@ -215,7 +218,7 @@ function lookupStep(store: Store, clause: string) {
 function createStepFns(store: Store) {
 	function assertNoDuplicate(clause: string | RegExp, handler: Zucchini.StepHandler) {
 		const str = typeof clause === 'string' ? clause : clause.source
-		const step = store.steps.find(s => s.expression.source === str)
+		const step = store.steps.find((s) => s.expression.source === str)
 		if (step && step.handler !== handler && step.handler.toString() !== handler.toString())
 			throw new DuplicateStep(clause, step.handler, handler)
 	}
@@ -244,21 +247,19 @@ function createStepFns(store: Store) {
 	}: IParameterTypeDefinition<T>) {
 		if (typeof useForSnippets !== 'boolean') useForSnippets = true
 		if (typeof preferForRegexpMatch !== 'boolean') preferForRegexpMatch = false
-		r.defineParameterType(
-			new ParameterType(name, regexp, null, transformer!, useForSnippets, preferForRegexpMatch)
-		)
+		r.defineParameterType(new ParameterType(name, regexp, null, transformer!, useForSnippets, preferForRegexpMatch))
 	}
 
 	defineParameterType({
 		name: 'boolean',
 		regexp: /true|false/,
-		transformer: s => s === 'true'
+		transformer: (s) => s === 'true'
 	})
 
 	defineParameterType({
 		name: 'number',
 		regexp: /[+-]?\d+/,
-		transformer: s => Number(s)
+		transformer: (s) => Number(s)
 	})
 
 	return { defineStep, defineParameterType }

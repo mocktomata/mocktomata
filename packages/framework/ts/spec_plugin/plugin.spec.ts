@@ -8,7 +8,6 @@ import {
 	PluginNotConforming,
 	PluginNotFound
 } from '../index.js'
-import { createTestContext } from '../testing/index.js'
 import {
 	echoPluginModule,
 	missGetSpyPluginModule,
@@ -17,13 +16,16 @@ import {
 	noActivatePluginModule,
 	pluginModuleA
 } from '../test_artifacts/index.js'
+import { createTestContext } from '../testing/index.js'
 
 /**
  * Plugin order is reversed so that most specific plugin are checked first.
  */
 test('load plugins in reverse order', async () => {
 	const { context } = createTestContext({
-		config: { plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-deep-link/pluginA'] },
+		config: {
+			plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-deep-link/pluginA']
+		},
 		modules: {
 			'@mocktomata/plugin-fixture-dummy': echoPluginModule,
 			'@mocktomata/plugin-fixture-deep-link/pluginA': pluginModuleA
@@ -33,7 +35,7 @@ test('load plugins in reverse order', async () => {
 	const { plugins } = await context.extend(loadConfig).extend(loadPlugins).get()
 
 	a.satisfies(
-		plugins.map(p => p.name),
+		plugins.map((p) => p.name),
 		startsWith(['@mocktomata/plugin-fixture-deep-link/pluginA/plugin-a', '@mocktomata/plugin-fixture-dummy/echo'])
 	)
 })
@@ -102,7 +104,9 @@ test('plugin missing getStub method throws', async () => {
 
 test('registering plugin with the same name throws DuplicatePlugin', async () => {
 	const { context } = createTestContext({
-		config: { plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-dummy'] },
+		config: {
+			plugins: ['@mocktomata/plugin-fixture-dummy', '@mocktomata/plugin-fixture-dummy']
+		},
 		modules: {
 			'@mocktomata/plugin-fixture-dummy': echoPluginModule
 		}

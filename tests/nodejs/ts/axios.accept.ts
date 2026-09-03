@@ -19,6 +19,7 @@ mockto('1 + 1 = 2', (specName, spec) => {
 	})
 })
 
+// biome-ignore lint/suspicious/noExportsInTest: `Calculator` is the subject under test, kept beside the spec that records it.
 export class Calculator {
 	constructor(private axios: AxiosInstance) {}
 
@@ -28,7 +29,7 @@ export class Calculator {
 	}
 }
 
-describe(`with axios-mock-adaptor`, () => {
+describe('with axios-mock-adaptor', () => {
 	mockto('throws with cause', (specName, spec) => {
 		it(specName, async () => {
 			const mock = new MockAdapter.default(axios)
@@ -51,7 +52,7 @@ describe(`with axios-mock-adaptor`, () => {
 			})
 			await spec(HttpError)
 			const s = await spec(axios)
-			const err = await a.throws(s.get(`http://api.mathjs.org/v4/?expr=1%2B2`), HttpError)
+			const err = await a.throws(s.get('http://api.mathjs.org/v4/?expr=1%2B2'), HttpError)
 			expect(err.message).toBe('fail?')
 			expect(err.status).toBe(424)
 			expect(err.cause).toBeInstanceOf(IsoError)

@@ -24,7 +24,7 @@ export function createTimeTracker(
 		 * Get the duration since the first `elapse()` call.
 		 */
 		duration() {
-			endTick = new Date().getTime()
+			endTick = Date.now()
 			return endTick - startTick
 		},
 		/**
@@ -33,7 +33,7 @@ export function createTimeTracker(
 		 */
 		elapse() {
 			if (!handle) {
-				prevTick = startTick = new Date().getTime()
+				prevTick = startTick = Date.now()
 				// When the live code is very fast,
 				// e.g. when writing plugin or internal testing
 				// the simulation can be slower than live code.
@@ -42,19 +42,18 @@ export function createTimeTracker(
 				// as the live code can be fast at local,
 				// but the simulation code very slow in CI.
 				handle = setTimeout(() => this.terminate(), timeout * 3)
-				log.planck(`timeTracker:setTimeout`)
+				log.planck('timeTracker:setTimeout')
 				return 0
-			} else {
-				const newTick = new Date().getTime()
-				const elapsed = newTick - prevTick
-				prevTick = newTick
-
-				clearTimeout(handle)
-				log.planck(`timeTracker:clearTimeout`)
-				handle = setTimeout(() => this.terminate(), timeout * 3)
-				log.planck(`timeTracker:setTimeout`)
-				return elapsed
 			}
+			const newTick = Date.now()
+			const elapsed = newTick - prevTick
+			prevTick = newTick
+
+			clearTimeout(handle)
+			log.planck('timeTracker:clearTimeout')
+			handle = setTimeout(() => this.terminate(), timeout * 3)
+			log.planck('timeTracker:setTimeout')
+			return elapsed
 		},
 		/**
 		 * Stop time tracker and return the total duration since the first `elapse()` call.
@@ -62,13 +61,13 @@ export function createTimeTracker(
 		stop() {
 			const duration = this.duration()
 			clearTimeout(handle)
-			log.planck(`timeTracker:clearTimeout`)
+			log.planck('timeTracker:clearTimeout')
 			handle = undefined
 			return duration
 		},
 		terminate() {
 			if (handle) {
-				const newTick = new Date().getTime()
+				const newTick = Date.now()
 				const elapsed = newTick - prevTick
 				onTimeout(elapsed)
 				this.stop()

@@ -11,7 +11,11 @@ import type { Spec } from './types.js'
 
 export function createSpecObject(context: AsyncContext<Spec.Context>) {
 	const { spec, modeProperty: mode, ignoreMismatch, maskValue, done } = createSpecFns(context)
-	return Object.assign(Object.defineProperties(spec, { mode }), { ignoreMismatch, maskValue, done }) as any
+	return Object.assign(Object.defineProperties(spec, { mode }), {
+		ignoreMismatch,
+		maskValue,
+		done
+	}) as any
 }
 
 export function createSpecFns(context: AsyncContext<Spec.Context>) {
@@ -22,19 +26,27 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
 		maskCriteria: MaskCriterion[]
 		logLevel?: LogLevel
 	}
-	const initState: InitState = { enableLog: false, ignoreValues: [], maskCriteria: [] }
+	const initState: InitState = {
+		enableLog: false,
+		ignoreValues: [],
+		maskCriteria: []
+	}
 	async function createActualSpec(initState: InitState) {
 		if (s) return s
 		const { mode, specName, options, specRelativePath } = await context.get()
 		const spec = (s = await createSpec(context, specName, specRelativePath, mode, options))
-		initState.ignoreValues.forEach(v => spec.ignoreMismatch(v))
-		initState.maskCriteria.forEach(v => spec.maskValue(v.value, v.replaceWith))
+		initState.ignoreValues.forEach((v) => {
+			spec.ignoreMismatch(v)
+		})
+		initState.maskCriteria.forEach((v) => {
+			spec.maskValue(v.value, v.replaceWith)
+		})
 		return spec
 	}
 
 	function ignoreMismatch(value: any) {
 		if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
-		else initState.ignoreValues.push(value)
+		initState.ignoreValues.push(value)
 	}
 	let maskLog: Promise<void> | undefined
 	function maskValue(value: string | RegExp, replaceWith?: string) {
@@ -56,10 +68,10 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
 		if (actualSpec) return actualSpec.done()
 		// spec can be not used at all,
 		// e.g. in `scenario`.
-		return createActualSpec(initState).then(a => a.done())
+		return createActualSpec(initState).then((a) => a.done())
 	}
 	const spec = (subject: any, options?: any) =>
-		createActualSpec(initState).then(aspec => {
+		createActualSpec(initState).then((aspec) => {
 			actualSpec = aspec
 			actualMode = aspec.mode
 			return aspec(subject, options)

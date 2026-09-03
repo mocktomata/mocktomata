@@ -8,9 +8,9 @@ export type Spec = {
 	/**
 	 * Creates a spec'd subject to capture or replay the behavior
 	 */
+	// biome-ignore lint/style/useShorthandFunctionType: the object form is what keeps the doc comment attached to the call signature, and the shorthand cannot intersect with `Spec.Base`.
 	<S>(subject: S, options?: { mock?: Partial<S> }): Promise<S>
 } & Spec.Base
-
 
 export namespace Spec {
 	export type Base = {
@@ -87,11 +87,7 @@ export namespace Spec {
 	export type Mode = 'live' | 'save' | 'simulate' | 'auto' | 'mock'
 
 	export type Handler = (specName: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
-	export type MockHandler = (
-		specName: string,
-		spec: Spec,
-		reporter: MemoryLogReporter
-	) => void | Promise<any>
+	export type MockHandler = (specName: string, spec: Spec, reporter: MemoryLogReporter) => void | Promise<any>
 
 	export type Options = {
 		/**

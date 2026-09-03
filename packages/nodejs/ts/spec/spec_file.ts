@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import { ensureFolderCreated, readFrom, writeTo } from '../util/index.js'
 
 export function readSpec(specFolder: string, specName: string, invokePath: string) {

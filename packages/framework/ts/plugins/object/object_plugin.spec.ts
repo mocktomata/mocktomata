@@ -1,5 +1,5 @@
-import { objectPlugin } from './object_plugin.js'
 import { Dummy } from '../../test_artifacts/index.js'
+import { objectPlugin } from './object_plugin.js'
 
 test('does not support primitives', () => {
 	expect(objectPlugin.support(1)).toBe(false)

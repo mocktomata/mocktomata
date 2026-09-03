@@ -9,7 +9,7 @@ const k = createKomondor(createTestContext())
 
 afterAll(() => k.cleanup())
 
-describe(`kd.live()`, () => {
+describe('kd.live()', () => {
 	it('can invoke with no options', async () => {
 		const spec = k.live('live with no options')
 		const s = await spec((x: number) => x + 1)
@@ -25,12 +25,14 @@ describe(`kd.live()`, () => {
 	})
 
 	it('can specify log level', async () => {
-		const spec = k.live('live has enableLog method', { logLevel: logLevels.all })
+		const spec = k.live('live has enableLog method', {
+			logLevel: logLevels.all
+		})
 		await spec(() => {})
 	})
 })
 
-describe(`kd.save()`, () => {
+describe('kd.save()', () => {
 	it('can invoke with no options', async () => {
 		const spec = k.save('save with no options')
 		const s = await spec((x: number) => x + 1)
@@ -46,7 +48,9 @@ describe(`kd.save()`, () => {
 	})
 
 	it('can specify log level', async () => {
-		const spec = k.save('save has enableLog method', { logLevel: logLevels.debug })
+		const spec = k.save('save has enableLog method', {
+			logLevel: logLevels.debug
+		})
 		await spec(() => {})
 		await spec.done()
 
@@ -55,7 +59,7 @@ describe(`kd.save()`, () => {
 
 	it('can specify specRelativePath for indirect usage', async () => {
 		const { done, reporter } = indirectKomondor(k, 'indirect usage', {
-			logLevel: Infinity,
+			logLevel: Number.POSITIVE_INFINITY,
 			specPath: filename(import.meta)
 		})
 		await done()
@@ -87,19 +91,18 @@ it('gets memory log reporter', async () => {
 
 	a.satisfies(save.reporter.getLogMessagesWithIdAndLevel(), some(/^mocktomata:gets memory log reporter:save/))
 
-	const simulate = k.simulate('gets memory log reporter', { logLevel: logLevels.all })
+	const simulate = k.simulate('gets memory log reporter', {
+		logLevel: logLevels.all
+	})
 	const stub = await simulate(subject)
 	expect(stub.a).toBe(1)
 	await simulate.done()
 
-	a.satisfies(
-		simulate.reporter.getLogMessagesWithIdAndLevel(),
-		some(/^mocktomata:gets memory log reporter:simulate/)
-	)
+	a.satisfies(simulate.reporter.getLogMessagesWithIdAndLevel(), some(/^mocktomata:gets memory log reporter:simulate/))
 })
 
-describe(`kd.mock()`, () => {
-	it(`requires to specify a mock`, async () => {
+describe('kd.mock()', () => {
+	it('requires to specify a mock', async () => {
 		const spec = k.mock('requires to specify a mock')
 		const s = await spec((v: string) => v, { mock: () => 'stubbed' })
 		const r = s('value')

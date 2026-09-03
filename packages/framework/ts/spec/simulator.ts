@@ -5,13 +5,8 @@ import type { SpecPlugin } from '../spec_plugin/types.js'
 import { getDefaultPerformer, type SpecRecord } from '../spec_record/index.js'
 import type { StackFrameContext } from '../stack_frame.types.js'
 import type { Logger } from '../standard_log.types.js'
-import { TimeTracker, createTimeTracker } from '../time_trackter/index.js'
-import {
-	getArgumentContext,
-	getPropertyContext,
-	getResultContext,
-	getThisContext
-} from '../utils_internal/index.js'
+import { createTimeTracker, type TimeTracker } from '../time_trackter/index.js'
+import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils_internal/index.js'
 import {
 	isMatchingGetAction,
 	isMatchingInstantiateAction,
@@ -27,9 +22,9 @@ import {
 	logMissingResultAction,
 	logRecordingTimeout
 } from './logs.js'
-import { SpecRecordValidator, ValidateReference, createSpecRecordValidator } from './record.js'
+import { createSpecRecordValidator, type SpecRecordValidator, type ValidateReference } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
-import type { MaskCriterion, Recorder, SpecRecordLive, createSpec } from './types.internal.js'
+import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
 import type { Spec } from './types.js'
 import { referenceMismatch } from './validations.js'
 
@@ -43,7 +38,10 @@ export namespace Simulator {
 		state: Recorder.State
 		spyOptions: Array<Recorder.SpyOption>
 		pendingPluginActions: Array<
-			SpecPlugin.StubContext.PluginAction & { ref: SpecRecordLive.Reference; refId: SpecRecord.ReferenceId }
+			SpecPlugin.StubContext.PluginAction & {
+				ref: SpecRecordLive.Reference
+				refId: SpecRecord.ReferenceId
+			}
 		>
 	} & StackFrameContext
 }
@@ -56,9 +54,9 @@ export function createSimulator(
 ) {
 	let timeTracker: TimeTracker
 	let log: Logger
-	const ctx = context.extend(async ctx => {
+	const ctx = context.extend(async (ctx) => {
 		log = ctx.log
-		timeTracker = createTimeTracker(ctx, options, elapsed => logRecordingTimeout({ log }, specName, elapsed))
+		timeTracker = createTimeTracker(ctx, options, (elapsed) => logRecordingTimeout({ log }, specName, elapsed))
 		ctx.timeTrackers.push(timeTracker)
 		return {}
 	})
@@ -146,10 +144,10 @@ function assertPluginsLoaded(plugins: SpecPlugin.Instance[], specName: string, r
 		return p
 	}, [])
 
-	const pluginsMissing = pluginsInUse.filter(p => {
+	const pluginsMissing = pluginsInUse.filter((p) => {
 		try {
 			return !getPlugin(plugins, p)
-		} catch (e: any) {
+		} catch (_e: any) {
 			return true
 		}
 	})
@@ -261,9 +259,9 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 			if (resultAction.type === 'return') return true
 			throw result
 		},
-		invoke: options => invoke(context, options),
+		invoke: (options) => invoke(context, options),
 		instantiate: (options, handler) => instantiate(context, options, handler),
-		on: options => on(context, options)
+		on: (options) => on(context, options)
 	}
 }
 
@@ -290,10 +288,7 @@ function buildTestDouble(context: Simulator.Context, ref: ValidateReference) {
 	ref.claimed = true
 }
 
-function invoke(
-	context: Simulator.Context,
-	{ thisArg, args, performer, site }: SpecPlugin.StubContext.invoke.Options
-) {
+function invoke(context: Simulator.Context, { thisArg, args, performer, site }: SpecPlugin.StubContext.invoke.Options) {
 	const { record, state, timeTracker } = context
 
 	const { ref } = state
@@ -428,7 +423,11 @@ function buildSpiedArgs(
 }
 
 function on(context: Simulator.Context, pluginAction: SpecPlugin.StubContext.PluginAction) {
-	context.pendingPluginActions.push({ ...pluginAction, ref: context.state.ref, refId: context.state.refId })
+	context.pendingPluginActions.push({
+		...pluginAction,
+		ref: context.state.ref,
+		refId: context.state.refId
+	})
 }
 
 function processNextAction(context: Simulator.Context) {
@@ -454,7 +453,7 @@ function processNextAction(context: Simulator.Context) {
 				processInvoke(context, actionId, nextAction)
 				processNextAction(context)
 			} else if (nextAction.performer === 'plugin') {
-				const pa = pendingPluginActions.find(a => a.type === nextAction.type && a.site === nextAction.site)
+				const pa = pendingPluginActions.find((a) => a.type === nextAction.type && a.site === nextAction.site)
 
 				if (pa) {
 					pendingPluginActions.splice(pendingPluginActions.indexOf(pa), 1)
@@ -467,7 +466,12 @@ function processNextAction(context: Simulator.Context) {
 								refId: pa.refId
 							}
 						},
-						{ thisArg: pa.thisArg, args: pa.args, performer: 'plugin', site: pa.site }
+						{
+							thisArg: pa.thisArg,
+							args: pa.args,
+							performer: 'plugin',
+							site: pa.site
+						}
 					)
 				} else {
 					// No pending action found.
@@ -532,15 +536,10 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
 			)
 		}
 		return valueRef.testDouble
-	} else {
-		return value
 	}
+	return value
 }
-function processInvoke(
-	context: Simulator.Context,
-	actionId: SpecRecord.ActionId,
-	action: SpecRecord.InvokeAction
-) {
+function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
 	const { record } = context
 
 	const ref = record.getRef(action.refId)!

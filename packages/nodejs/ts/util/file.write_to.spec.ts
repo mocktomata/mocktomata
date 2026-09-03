@@ -1,5 +1,5 @@
-import t from 'assert'
-import fs from 'fs'
+import t from 'node:assert'
+import fs from 'node:fs'
 import { dirSync } from 'tmp'
 import { writeTo } from './file.js'
 

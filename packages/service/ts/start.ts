@@ -1,10 +1,10 @@
-import boom from '@hapi/boom'
-import { RequestInfo, Server, ServerInfo, ServerRoute } from '@hapi/hapi'
-import { json, Mocktomata, SpecPlugin } from '@mocktomata/framework'
-import { createIO, findInstalledPlugins } from '@mocktomata/nodejs'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { createStandardLog, Logger } from 'standard-log'
+import boom from '@hapi/boom'
+import { type RequestInfo, Server, type ServerInfo, type ServerRoute } from '@hapi/hapi'
+import { json, type Mocktomata, type SpecPlugin } from '@mocktomata/framework'
+import { createIO, findInstalledPlugins } from '@mocktomata/nodejs'
+import { createStandardLog, type Logger } from 'standard-log'
 import { createColorLogReporter } from 'standard-log-color'
 import { atob } from './base64.js'
 
@@ -41,12 +41,7 @@ export async function start(options?: start.Options) {
 		routes: { cors: true }
 	})
 	await server.start()
-	server.route([
-		infoRoute(context, server),
-		configRoute(context),
-		specGetRoute(context),
-		specPostRoute(context)
-	])
+	server.route([infoRoute(context, server), configRoute(context), specGetRoute(context), specPostRoute(context)])
 	return {
 		info: server.info,
 		stop(options?: { timeout: number }) {
@@ -65,7 +60,7 @@ function infoRoute({ cwd, log }: Context, server: Server): ServerRoute {
 	return {
 		method: 'GET',
 		path: '/api/info',
-		handler: async request => {
+		handler: async (request) => {
 			log.info('/api/info called')
 			const pjson = json.parse(readFileSync(resolve('./package.json'), 'utf-8'))
 			return json.stringify({
@@ -94,7 +89,7 @@ function specGetRoute({ repo, log }: Context): ServerRoute {
 	return {
 		method: 'GET',
 		path: '/api/specs/{id}',
-		handler: async request => {
+		handler: async (request) => {
 			try {
 				const { specName, specRelativePath } = json.parse(atob(request.params.id))
 				log.info('get spec', specName, specRelativePath)

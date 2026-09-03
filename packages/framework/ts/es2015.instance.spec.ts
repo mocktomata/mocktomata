@@ -67,7 +67,7 @@ incubator.sequence('getter skips internal method calls', (specName, { save, simu
 incubator.sequence('setter skips internal method calls', (specName, { save, simulate }) => {
 	test(specName, async () => {
 		const spy = await save({
-			set side(v: any) {
+			set side(_v: any) {
 				this.internalCall()
 			},
 			internalCall() {}
@@ -76,7 +76,7 @@ incubator.sequence('setter skips internal method calls', (specName, { save, simu
 		await save.done()
 
 		const stub = await simulate({
-			set side(v: any) {
+			set side(_v: any) {
 				this.internalCall()
 			},
 			internalCall() {
@@ -171,26 +171,23 @@ incubator('constructor throws error', (specName, spec) => {
 	})
 })
 
-incubator.sequence(
-	'instantiate with wrong primitive argument',
-	(specName, { save, simulate }) => {
-		test(specName, async () => {
-			class EchoConstructorArg {
-				constructor(public value: number) {}
-				echo() {
-					return this.value
-				}
+incubator.sequence('instantiate with wrong primitive argument', (specName, { save, simulate }) => {
+	test(specName, async () => {
+		class EchoConstructorArg {
+			constructor(public value: number) {}
+			echo() {
+				return this.value
 			}
+		}
 
-			const s = await save({ EchoConstructorArg })
-			new s.EchoConstructorArg(1)
-			await save.done()
+		const s = await save({ EchoConstructorArg })
+		new s.EchoConstructorArg(1)
+		await save.done()
 
-			const s2 = await simulate({ EchoConstructorArg })
-			a.throws(() => new s2.EchoConstructorArg(2), ActionMismatch)
-		})
-	}
-)
+		const s2 = await simulate({ EchoConstructorArg })
+		a.throws(() => new s2.EchoConstructorArg(2), ActionMismatch)
+	})
+})
 
 incubator.sequence(
 	'instantiate with different argument is okay as long as behavior does not change',
@@ -226,10 +223,12 @@ incubator('ioc instantiate class', (specName, spec) => {
 	})
 })
 
-incubator(`instantiate parent class`, (specName, spec) => {
+incubator('instantiate parent class', (specName, spec) => {
 	it(specName, async () => {
 		function willThrow() {
-			throw new HttpError(424, 'pre cond', { cause: new IsoError('internal cause') })
+			throw new HttpError(424, 'pre cond', {
+				cause: new IsoError('internal cause')
+			})
 		}
 		await spec(HttpError)
 		const s = await spec(willThrow)

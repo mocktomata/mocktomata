@@ -22,7 +22,7 @@ mockto.simulate('', (_, spec) => {
 	})
 })
 
-mockto.save(`type %s is not specable`, (specName, spec) => {
+mockto.save('type %s is not specable', (specName, spec) => {
 	test.each<[any, any]>([
 		['undefined', undefined],
 		['null', null],

@@ -100,12 +100,11 @@ export function metarize<S = unknown, M = SpecMeta>(value: S): M extends SpecMet
 					type: 'array',
 					props: extractProps(value)
 				} as any
-			} else {
-				return {
-					type: 'object',
-					props: extractProps(value)
-				} as any
 			}
+			return {
+				type: 'object',
+				props: extractProps(value)
+			} as any
 		}
 		case 'number':
 		case 'boolean':

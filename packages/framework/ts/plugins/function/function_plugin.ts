@@ -2,16 +2,16 @@ import type { AnyFunction } from 'type-plus'
 import type { SpecPlugin } from '../../spec_plugin/types.js'
 import {
 	demetarize,
+	type FunctionMeta,
 	hasProperty,
 	hasPropertyInPrototype,
 	isGeneratorFunction,
-	metarize,
-	type FunctionMeta
+	metarize
 } from '../../utils/index.js'
 
 export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, FunctionMeta> = {
 	name: 'function',
-	support: subject => {
+	support: (subject) => {
 		if (typeof subject !== 'function') return false
 		if (isGeneratorFunction(subject)) return true
 		if (hasPropertyInPrototype(subject)) return false
@@ -56,16 +56,14 @@ export const functionPlugin: SpecPlugin<AnyFunction & Record<any, any>, Function
 				return getProperty({ key: property }, () => subject[property])
 			},
 			set(_, property: string, value: any) {
-				return setProperty({ key: property, value }, value => (subject[property] = value))
+				return setProperty({ key: property, value }, (value) => (subject[property] = value))
 			}
 		})
 	},
 	createStub: ({ getProperty, setProperty, invoke }, _, meta) => {
 		const base = demetarize(meta)
 		const stub = new Proxy(base, {
-			apply: function (_, thisArg, args: any[]) {
-				return invoke({ thisArg, args })
-			},
+			apply: (_, thisArg, args: any[]) => invoke({ thisArg, args }),
 			get(target: any, key: string) {
 				if (key === 'call' || key === 'apply' || key === 'toString') return target[key]
 

@@ -1,7 +1,0 @@
-cjs/
-coverage/
-esm/
-fixtures/
-lib/
-*.yml
-*.yaml

@@ -8,7 +8,7 @@ describe(`${MissingStep.name}()`, () => {
 
 	it('accepts regex', () => {
 		const e = new MissingStep(/some step/)
-		expect(e.message).toEqual(`Step /some step/ is not defined`)
+		expect(e.message).toEqual('Step /some step/ is not defined')
 	})
 })
 

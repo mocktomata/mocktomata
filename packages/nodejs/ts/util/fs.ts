@@ -1,4 +1,4 @@
-import { existsSync, rmSync } from 'fs'
+import { existsSync, rmSync } from 'node:fs'
 import mkdirp from 'mkdirp'
 
 export function ensureFolderCreated(dir: string) {

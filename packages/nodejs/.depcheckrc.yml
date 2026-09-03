@@ -1,8 +1,17 @@
 ignores:
-  - '@mocktomata/plugin-fixture-*'
-  - '@repobuddy/jest'
-  - cross-env
-  - deepmerge
-  - jest-*
+  # Bin-only tools: invoked from `scripts`, never imported, so depcheck cannot see them.
+  - '@vitest/coverage-v8'
+  - depcheck
+  - npm-run-all2
   - rimraf
-  - ts-jest
+  - tsdown
+  - typescript
+  # Installed so the plugin-loading specs have real plugins on disk to resolve.
+  - '@mocktomata/plugin-fixture-activate-not-fn'
+  - '@mocktomata/plugin-fixture-cjs-a'
+  - '@mocktomata/plugin-fixture-cjs-b'
+  - '@mocktomata/plugin-fixture-deep-link'
+  - '@mocktomata/plugin-fixture-dummy'
+  - '@mocktomata/plugin-fixture-esm-a'
+  - '@mocktomata/plugin-fixture-esm-b'
+  - '@mocktomata/plugin-fixture-no-activate'

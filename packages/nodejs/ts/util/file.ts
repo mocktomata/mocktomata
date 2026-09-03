@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import { genFilename } from './filename.js'
 
 export function readFrom(baseDir: string, id: string, dupId = 0): string {

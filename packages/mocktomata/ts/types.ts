@@ -1,5 +1,5 @@
-import { Spec } from '@mocktomata/framework'
-import { AsyncContext } from 'async-fp'
+import type { Spec } from '@mocktomata/framework'
+import type { AsyncContext } from 'async-fp'
 
 export type WorkerStore = {
 	context: AsyncContext<Spec.Context> | undefined

@@ -1,6 +1,6 @@
 import { incubator } from './incubator/index.js'
 
-incubator(`empty array`, (specName, spec) => {
+incubator('empty array', (specName, spec) => {
 	it(specName, async () => {
 		const subject = await spec((v: any[]) => v)
 		const actual = subject([])
@@ -10,7 +10,7 @@ incubator(`empty array`, (specName, spec) => {
 		await spec.done()
 	})
 })
-incubator(`object array`, (specName, spec) => {
+incubator('object array', (specName, spec) => {
 	it(specName, async () => {
 		const subject = await spec((v: any[]) => v)
 		const actual = subject([{ a: 1 }])
@@ -19,7 +19,7 @@ incubator(`object array`, (specName, spec) => {
 		await spec.done()
 	})
 })
-incubator(`stub primitive array`, (specName, spec) => {
+incubator('stub primitive array', (specName, spec) => {
 	it(specName, async () => {
 		const subject = await spec(() => [1, true, 'abc'])
 		const actual = subject()
@@ -29,7 +29,7 @@ incubator(`stub primitive array`, (specName, spec) => {
 		await spec.done()
 	})
 })
-incubator(`stub object array`, (specName, spec) => {
+incubator('stub object array', (specName, spec) => {
 	it(specName, async () => {
 		const subject = await spec(() => [{ a: 1 }])
 		const actual = subject()
@@ -40,7 +40,7 @@ incubator(`stub object array`, (specName, spec) => {
 		await spec.done()
 	})
 })
-incubator(`extended array`, (specName, spec) => {
+incubator('extended array', (specName, spec) => {
 	// while extending array object is not recommended,
 	// this make sure we handles the unique nature of it
 	it(specName, async () => {
@@ -72,10 +72,10 @@ incubator('supports change value in returned array', (specName, spec) => {
 	})
 })
 
-incubator(`using returned array built-in function`, (specName, spec) => {
+incubator('using returned array built-in function', (specName, spec) => {
 	it(specName, async () => {
 		const s = await spec(() => [1, 2, 3])
-		const r = s().map(x => x + 1)
+		const r = s().map((x) => x + 1)
 		expect(r).toEqual([2, 3, 4])
 		await spec.done()
 	})

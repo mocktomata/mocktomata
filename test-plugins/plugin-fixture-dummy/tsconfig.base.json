@@ -1,13 +1,16 @@
 {
-	"extends": "../../.tsc/tsconfig.settings.json",
 	"compilerOptions": {
+		"declaration": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
 		"lib": ["es2015"],
-		"rootDir": "ts"
+		"moduleResolution": "node",
+		"newLine": "LF",
+		"rootDir": "ts",
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"strict": true,
+		"types": ["node"]
 	},
-	"references": [
-		{
-			"path": "../../packages/framework"
-		}
-	],
 	"include": ["ts", "typings"]
 }

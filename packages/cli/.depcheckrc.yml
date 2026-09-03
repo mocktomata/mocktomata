@@ -1,17 +1,8 @@
 ignores:
-  - '@babel/core'
-  - '@kayahr/jest-electron-runner'
-  - '@mocktomata/plugin-fixture-deep-link'
-  - '@mocktomata/plugin-fixture-dummy'
-  - '@repobuddy/jest'
-  - '@types/node'
-  - deepmerge
-  - jest-*
-  - param-case
-  - pascal-case
-  - source-map-loader
+  # Bin-only tools: invoked from `scripts`, never imported, so depcheck cannot see them.
+  - '@vitest/coverage-v8'
+  - depcheck
+  - npm-run-all2
   - rimraf
-  - standard-log-color
-  - ts-jest
-  - ts-loader
-  - webpack-cli
+  - tsdown
+  - typescript

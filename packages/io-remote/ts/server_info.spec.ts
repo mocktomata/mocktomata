@@ -4,10 +4,7 @@ import { getServerInfo } from './server_info.js'
 
 it('throws when server is not available', async () => {
 	await a.throws(
-		getServerInfo(
-			{ fetch: () => Promise.reject({ code: 'ECONNREFUSED' }) },
-			{ url: 'http://localhost:4321' }
-		),
+		getServerInfo({ fetch: () => Promise.reject({ code: 'ECONNREFUSED' }) }, { url: 'http://localhost:4321' }),
 		ServiceNotAvailable
 	)
 })
@@ -24,7 +21,7 @@ it('calls server with /api/info', async () => {
 							plugins: [url]
 						})
 					}
-				} as any)
+				}) as any
 		},
 		{ url: 'https://mocktomata.com' }
 	)

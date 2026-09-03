@@ -3,7 +3,7 @@ import { demetarize, hasProperty, metarize, type ObjectMeta } from '../../utils/
 
 export const objectPlugin: SpecPlugin<Record<string | number, any>, ObjectMeta> = {
 	name: 'object',
-	support: subject => subject !== null && typeof subject === 'object',
+	support: (subject) => subject !== null && typeof subject === 'object',
 	createSpy: ({ getProperty, setProperty, setMeta }, subject) => {
 		setMeta(metarize(subject))
 		return new Proxy(subject, {
@@ -12,7 +12,7 @@ export const objectPlugin: SpecPlugin<Record<string | number, any>, ObjectMeta> 
 				return getProperty({ key }, () => subject[key])
 			},
 			set(_, key: string, value: any) {
-				return setProperty({ key, value }, value => (subject[key] = value))
+				return setProperty({ key, value }, (value) => (subject[key] = value))
 			}
 		})
 	},

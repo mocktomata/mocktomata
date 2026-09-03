@@ -30,52 +30,43 @@
 		".": {
 			"types": "./esm/index.d.ts",
 			"browser": "./esm/browser.js",
-			"import": "./esm/index.js",
-			"default": "./cjs/index.js"
+			"default": "./esm/index.js"
 		},
 		"./plugins": {
 			"types": "./esm/plugins.d.ts",
-			"import": "./esm/plugins.js",
-			"default": "./cjs/plugins.js"
+			"default": "./esm/plugins.js"
 		},
 		"./testing": {
 			"types": "./esm/testing.d.ts",
-			"import": "./esm/testing.js",
-			"default": "./cjs/testing.js"
+			"default": "./esm/testing.js"
 		}
 	},
-	"main": "./cjs/index.js",
-	"browser": "./cjs/browser.js",
 	"types": "./esm/index.d.ts",
 	"files": [
-		"cjs",
 		"esm",
 		"ts",
-		"!**/*.{spec,test,unit,accept,integrate,system}.*"
+		"!**/*.{spec,test,unit,accept,integrate,system}.*",
+		"!**/*.test-setup.*",
+		"!**/testutils",
+		"!**/test-util",
+		"!**/test_util",
+		"!**/test-artifacts",
+		"!**/test_artifacts"
 	],
 	"scripts": {
-		"build": "run-p build:cjs build:esm",
-		"build:browser": "webpack -c webpack.config.cjs",
-		"build:cjs": "tsc -p ./tsconfig.cjs.json && ncp package.cjs.json cjs/package.json",
-		"build:esm": "tsc",
-		"clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
-		"coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --coverage",
+		"build": "tsdown",
+		"build:watch": "tsdown --watch",
+		"clean": "rimraf coverage esm *.tsbuildinfo",
+		"coverage": "vitest run --coverage",
 		"depcheck": "depcheck",
-		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-		"nuke": "pnpm run clean && rimraf node_modules",
-		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
-		"test:browser": "karma start",
-		"test:save": "cross-env MOCKTOMATA_MODE=save NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
-		"test:simulate": "cross-env MOCKTOMATA_MODE=simulate NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest",
-		"test:electron": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs",
-		"tew": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --watch",
-		"test:node": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.nodejs.mjs",
-		"tnw": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.nodejs.mjs --watch",
-		"test:jsdom": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.jsdom.mjs",
-		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_NO_WARNINGS=1 jest --watch",
-		"verify": "npm-run-all -p lint build coverage test:jsdom test:electron -p depcheck",
-		"watch": "pnpm run test:watch",
-		"w": "pnpm run test:watch"
+		"nuke": "run-s clean && rimraf node_modules",
+		"test": "vitest run",
+		"typecheck": "tsc",
+		"verify": "npm-run-all clean -p build typecheck coverage depcheck",
+		"watch": "vitest",
+		"w": "pnpm watch",
+		"test:save": "cross-env MOCKTOMATA_MODE=save vitest run",
+		"test:simulate": "cross-env MOCKTOMATA_MODE=simulate vitest run"
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
@@ -89,40 +80,20 @@
 		"type-plus": "^7.0.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^8.0.0",
-		"@kayahr/jest-electron-runner": "^29.3.1",
 		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
-		"@repobuddy/jest": "^3.3.0",
+		"@vitest/coverage-v8": "^4.1.11",
 		"assertron": "^11.0.0",
 		"cross-env": "^7.0.3",
-		"deepmerge": "^4.2.2",
 		"depcheck": "^1.4.3",
-		"expect": "^29.4.3",
-		"jest": "^29.5.0",
-		"jest-environment-jsdom": "^29.5.0",
-		"jest-mock": "^29.5.0",
-		"jest-watch-repeat": "^3.0.1",
-		"jest-watch-suspend": "^1.1.2",
-		"jest-watch-toggle-config-2": "^2.1.0",
-		"jest-watch-typeahead": "^3.0.0",
-		"karma": "^6.4.1",
-		"karma-chrome-launcher": "^3.1.1",
-		"karma-jasmine": "^5.1.0",
-		"karma-webpack": "^5.0.0",
-		"ncp": "^2.0.0",
+		"jsdom": "^30.0.1",
 		"npm-run-all2": "^5.0.0",
-		"param-case": "^3.0.4",
-		"pascal-case": "^3.1.2",
 		"rimraf": "^5.0.0",
-		"source-map-loader": "^4.0.0",
-		"ts-jest": "^29.1.0",
-		"ts-loader": "^9.3.1",
-		"typescript": "~5.1.0",
-		"webpack": "^5.75.0",
-		"webpack-cli": "^5.0.0"
+		"tsdown": "^0.22.14",
+		"typescript": "~5.9.0",
+		"vitest": "^4.1.11"
 	},
 	"engines": {
-		"node": ">= 14.16"
+		"node": ">= 20"
 	}
 }

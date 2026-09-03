@@ -1,5 +1,5 @@
-import { createSignal } from 'solid-js'
 import type { Component } from 'solid-js'
+import { createSignal } from 'solid-js'
 
 export interface CounterProps {
 	initialValue?: number
@@ -13,10 +13,7 @@ export const Counter: Component<CounterProps> = (props) => {
 
 	return (
 		<div>
-			<button
-				style={{ color: getColor() }}
-				onClick={() => setCount((c) => c + 1)}
-			>
+			<button type="button" style={{ color: getColor() }} onClick={() => setCount((c) => c + 1)}>
 				Click <span>{count()}</span>
 			</button>
 		</div>

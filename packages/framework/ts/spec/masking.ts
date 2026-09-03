@@ -7,15 +7,17 @@ export function maskSpecRecord(maskCriteria: MaskCriterion[], record: SpecRecord
 
 	return maskCriteria.reduce((record, criterion) => {
 		const maskFn = createMaskFn(criterion)
-		record.refs.forEach(ref => (ref.meta = maskValue(ref.meta, maskFn)))
+		record.refs.forEach((ref) => {
+			ref.meta = maskValue(ref.meta, maskFn)
+		})
 		return record
 	}, record as SpecRecord)
 }
 
 function maskValue<T extends string | number>(value: any, maskFn: (value: T) => T): any {
-	if (isMaskSubject(value)) return maskFn(value)
+	if (isMaskSubject(value)) return maskFn(value as T)
 	if (Array.isArray(value)) {
-		return value.map(v => maskValue(v, maskFn))
+		return value.map((v) => maskValue(v, maskFn))
 	}
 	if (typeof value === 'object' && value !== null) {
 		// istanbul ignore next - this is not hit right now because no plugin saving meta as an object.
@@ -48,9 +50,8 @@ export function maskString(maskCriteria: MaskCriterion[], value: string) {
 function createMaskFn({ value, replaceWith = '[masked]' }: MaskCriterion) {
 	if (typeof value === 'string') {
 		return createStringMaskFn(value, replaceWith)
-	} else {
-		return createRegexMaskFn(value, replaceWith)
 	}
+	return createRegexMaskFn(value, replaceWith)
 }
 
 function createStringMaskFn(value: string, replaceWith: string) {

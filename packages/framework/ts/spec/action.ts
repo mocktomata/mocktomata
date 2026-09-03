@@ -22,11 +22,7 @@ export function isMatchingSetAction(
 	// wrong type
 	if (expected.type !== 'set') return false
 
-	if (
-		actual.refId !== expected.refId ||
-		actual.performer !== expected.performer ||
-		actual.key !== expected.key
-	)
+	if (actual.refId !== expected.refId || actual.performer !== expected.performer || actual.key !== expected.key)
 		return false
 
 	// compare primitive values
@@ -79,8 +75,6 @@ export function isMatchingInstantiateAction(
 	)
 }
 
-function isMatchingPayload(record: SpecRecordValidator, actualPayload: any[], expectedPayload: any[]) {
-	return (
-		actualPayload.length === expectedPayload.length && actualPayload.every((a, i) => a === expectedPayload[i])
-	)
+function isMatchingPayload(_record: SpecRecordValidator, actualPayload: any[], expectedPayload: any[]) {
+	return actualPayload.length === expectedPayload.length && actualPayload.every((a, i) => a === expectedPayload[i])
 }

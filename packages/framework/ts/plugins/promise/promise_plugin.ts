@@ -6,8 +6,8 @@ export const promisePlugin: SpecPlugin<Promise<any>, string> = {
 	support: isPromise,
 	createSpy({ invoke, setMeta }, subject) {
 		return subject.then(
-			v =>
-				new Promise(a => {
+			(v) =>
+				new Promise((a) => {
 					setMeta('resolved-promise')
 					// the plugin trigger this invoke action to capture and simulate the resolving promise invoking this very function.
 					// the `(_: any) => v` is mimicking the resolve function to be called by mockto during stub.
@@ -22,7 +22,7 @@ export const promisePlugin: SpecPlugin<Promise<any>, string> = {
 						({ args: [fn] }) => fn(v)
 					)
 				}),
-			v =>
+			(v) =>
 				new Promise((_, r) => {
 					setMeta('rejected-promise')
 					// the plugin trigger this invoke action to capture and simulate the rejecting promise invoking this very function.

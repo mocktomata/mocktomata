@@ -19,32 +19,35 @@
 	"sideEffects": false,
 	"type": "module",
 	"exports": {
-		"types": "./esm/index.d.ts",
-		"import": "./esm/index.js",
-		"default": "./cjs/index.js"
+		".": {
+			"types": "./esm/index.d.ts",
+			"default": "./esm/index.js"
+		}
 	},
-	"main": "./cjs/index.js",
 	"types": "./esm/index.d.ts",
 	"files": [
-		"cjs",
 		"esm",
 		"ts",
 		"!**/*.{spec,test,unit,accept,integrate,system}.*",
-		"!**/test-util"
+		"!**/*.test-setup.*",
+		"!**/testutils",
+		"!**/test-util",
+		"!**/test_util",
+		"!**/test-artifacts",
+		"!**/test_artifacts"
 	],
 	"scripts": {
-		"build": "run-p build:cjs build:esm",
-		"build:cjs": "tsc -p ./tsconfig.cjs.json && ncp package.cjs.json cjs/package.json",
-		"build:esm": "tsc",
-		"clean": "rimraf coverage esm lib libm tslib *.tsbuildinfo",
-		"coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --coverage --reporters=default",
+		"build": "tsdown",
+		"build:watch": "tsdown --watch",
+		"clean": "rimraf coverage esm *.tsbuildinfo",
+		"coverage": "vitest run --coverage",
 		"depcheck": "depcheck",
-		"lint": "cross-env TIMING=1 eslint --ext=ts,js,cjs,mjs .",
-		"nuke": "pnpm run clean && rimraf node_modules",
-		"test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --reporters=default",
-		"test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest -c jest.electron.mjs --watch",
-		"verify": "npm-run-all -p lint build coverage -p depcheck",
-		"watch": "pnpm run test:watch"
+		"nuke": "run-s clean && rimraf node_modules",
+		"test": "vitest run",
+		"typecheck": "tsc",
+		"verify": "npm-run-all clean -p build typecheck coverage depcheck",
+		"watch": "vitest",
+		"w": "pnpm watch"
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
@@ -52,26 +55,20 @@
 		"iso-error": "^6.0.0"
 	},
 	"devDependencies": {
-		"@kayahr/jest-electron-runner": "^29.3.1",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
 		"@mocktomata/service": "workspace:^",
-		"@repobuddy/jest": "^3.3.0",
+		"@vitest/coverage-v8": "^4.1.11",
 		"assertron": "^11.0.0",
-		"cross-env": "^7.0.3",
-		"deepmerge": "^4.2.2",
 		"depcheck": "^1.4.3",
-		"jest": "^29.5.0",
-		"jest-watch-suspend": "^1.1.2",
-		"jest-watch-toggle-config-2": "^2.1.0",
-		"jest-watch-typeahead": "^3.0.0",
-		"ncp": "^2.0.0",
+		"jsdom": "^30.0.1",
 		"npm-run-all2": "^5.0.0",
 		"rimraf": "^5.0.0",
 		"standard-log": "^13.0.1",
-		"ts-jest": "^29.1.0",
-		"typescript": "~5.1.0"
+		"tsdown": "^0.22.14",
+		"typescript": "~5.9.0",
+		"vitest": "^4.1.11"
 	},
 	"engines": {
-		"node": ">= 14.16"
+		"node": ">= 20"
 	}
 }

@@ -18,12 +18,12 @@ const promiseChain = {
 		return remote('increment', x)
 	},
 	success(_url: string, x: number) {
-		return new Promise(a => {
+		return new Promise((a) => {
 			setTimeout(a, 1)
 		}).then(() => Promise.resolve(() => x + 1))
 	},
 	fail() {
-		return new Promise(a => {
+		return new Promise((a) => {
 			setTimeout(a, 1)
 		}).then(() => Promise.reject(() => new Error('expected error')))
 	}
@@ -78,7 +78,7 @@ incubator('reject with error', (specName, spec) => {
 incubator('promise with callback in between', (specName, spec) => {
 	test(specName, async () => {
 		function foo(x: number, cb: AnyFunction) {
-			return new Promise(a => {
+			return new Promise((a) => {
 				setTimeout(() => {
 					cb('called')
 					a(x + 1)
@@ -88,14 +88,14 @@ incubator('promise with callback in between', (specName, spec) => {
 		const subject = await spec(foo)
 
 		let fooing: any
-		return new Promise<void>(a => {
+		return new Promise<void>((a) => {
 			fooing = subject(2, (msg: string) => {
 				expect(msg).toBe('called')
 				a()
 			})
 		})
 			.then(() => fooing)
-			.then(actual => {
+			.then((actual) => {
 				expect(actual).toBe(3)
 				return spec.done()
 			})

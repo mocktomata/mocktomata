@@ -1,19 +1,4 @@
 {
-	"extends": "../../.tsc/tsconfig.settings.json",
-	"compilerOptions": {
-		"module": "Node16",
-		"moduleResolution": "Node16",
-		"outDir": "lib",
-		"rootDir": "ts",
-		"target": "ES2020"
-	},
-	"references": [
-		{
-			"path": "../framework"
-		},
-		{
-			"path": "../service"
-		}
-	],
-	"include": ["ts", "typings"]
+	"extends": "../../tsconfig.base.json",
+	"include": ["ts", "typings", "types", "tsdown.config.ts", "vitest.config.ts"]
 }

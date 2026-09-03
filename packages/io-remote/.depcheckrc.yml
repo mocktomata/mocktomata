@@ -1,11 +1,11 @@
-ignorePatterns:
-  - ./poc
 ignores:
-  - '@kayahr/jest-electron-runner'
-  - '@mocktomata/service'
-  - '@repobuddy/jest'
-  - cross-env
-  - deepmerge
-  - jest-*
+  # Bin-only tools: invoked from `scripts`, never imported, so depcheck cannot see them.
+  - '@vitest/coverage-v8'
+  - depcheck
+  - npm-run-all2
   - rimraf
-  - ts-jest
+  - tsdown
+  - typescript
+  - jsdom
+  # Used by the vitest global setup that boots the service the specs talk to.
+  - '@mocktomata/service'

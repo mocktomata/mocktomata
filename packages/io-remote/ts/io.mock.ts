@@ -1,4 +1,4 @@
-import { Config, json, SpecPlugin } from '@mocktomata/framework'
+import { type Config, json, type SpecPlugin } from '@mocktomata/framework'
 import * as f from 'cross-fetch'
 import type { Context } from './io.internal.js'
 import type { ServerInfo } from './server_info.js'
@@ -53,23 +53,24 @@ export function createFakeServerFetch() {
 						version: '1.0'
 					})
 				)
-			} else if (uri === 'api/config') {
+			}
+			if (uri === 'api/config') {
 				return new f.Response(
 					json.stringify({
 						plugins: ['@mocktomata/plugin-fixture-dummy']
 					})
 				)
 				// istanbul ignore next
-			} else if (uri.startsWith('api/specs/')) {
+			}
+			if (uri.startsWith('api/specs/')) {
 				const id = /api\/specs\/(.*)/.exec(uri)![1]
 				const { specName } = json.parse(atob(id))
 				if (init && init.method === 'POST') {
 					specs[specName] = json.parse(init.body as string)
 					return new f.Response(undefined)
-				} else {
-					if (specs[specName]) return new f.Response(json.stringify(specs[specName]))
-					else return new f.Response(undefined, { status: 404 })
 				}
+				if (specs[specName]) return new f.Response(json.stringify(specs[specName]))
+				return new f.Response(undefined, { status: 404 })
 			}
 			// istanbul ignore next
 			console.error(url)

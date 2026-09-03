@@ -3,13 +3,7 @@ import { a } from 'assertron'
 import type { AnyFunction } from 'type-plus'
 import { incubator } from './incubator/index.js'
 import { ActionMismatch, ExtraAction } from './index.js'
-import {
-	ChildOfDummy,
-	Dummy,
-	WithProperty,
-	WithStaticMethod,
-	WithStaticProp
-} from './test_artifacts/index.js'
+import { ChildOfDummy, Dummy, WithProperty, WithStaticMethod, WithStaticProp } from './test_artifacts/index.js'
 
 class Foo {
 	constructor(public x: number) {}
@@ -98,10 +92,10 @@ incubator('class method with callback', (specName, spec) => {
 
 		expect(cb.justDo(1)).toBe(1)
 		expect(
-			await new Promise(a => {
+			await new Promise((a) => {
 				let total = 0
-				cb.callback(v => (total += v))
-				cb.callback(v => a(total + v))
+				cb.callback((v) => (total += v))
+				cb.callback((v) => a(total + v))
 			})
 		).toBe(2)
 		await spec.done()
@@ -120,7 +114,7 @@ incubator('invoke method throws', (specName, spec) => {
 		const foo = new Subject()
 		a.throws(
 			() => foo.doThrow(),
-			e => e.message === 'thrown'
+			(e) => e.message === 'thrown'
 		)
 		await spec.done()
 	})
@@ -134,7 +128,7 @@ class ResolvedPromise {
 
 class DelayedPromise {
 	increment(x: number) {
-		return new Promise(a => {
+		return new Promise((a) => {
 			setImmediate(() => a(x + 1))
 		})
 	}
@@ -190,7 +184,7 @@ incubator('method invokes internal method', (specName, spec) => {
 
 class DelayedInvokeInternal {
 	getDelayedInner(delay = 0) {
-		return new Promise(a => {
+		return new Promise((a) => {
 			setTimeout(() => {
 				a(this.inner())
 			}, delay)
@@ -244,11 +238,11 @@ incubator('runaway promise will not be leaked and break another test', (specName
 	test(`${specName}: setup`, async () => {
 		const MockRejector = await spec(RejectLeak)
 		const e = new MockRejector()
-		await a.throws(e.reject(300), v => v === 300)
+		await a.throws(e.reject(300), (v) => v === 300)
 		await spec.done()
 	})
 	test(`${specName}: should not fail`, () => {
-		return new Promise<void>(a => setImmediate(() => a()))
+		return new Promise<void>((a) => setImmediate(() => a()))
 	})
 })
 
@@ -276,7 +270,7 @@ incubator('can use class with circular reference', (specName, spec) => {
 		const Subject = await spec(ClassWithCircular)
 		const f = new Subject()
 
-		let actual
+		let actual: any
 		f.exec('echo', (channel: any) => {
 			actual = channel.value
 		})
@@ -291,7 +285,7 @@ incubator('class with circular reference accessing', (specName, spec) => {
 		const Subject = await spec(ClassWithCircular)
 		const f = new Subject()
 
-		let actual
+		let actual: any
 		f.exec('echo', (channel: WithCircular) => {
 			actual = channel.cirRef.value
 		})
@@ -311,7 +305,9 @@ class Channel {
 		this.listeners.push(listener)
 	}
 	emit(data: any) {
-		this.listeners.forEach(l => l(data))
+		this.listeners.forEach((l) => {
+			l(data)
+		})
 	}
 }
 class Ssh {
@@ -335,8 +331,12 @@ incubator('callback with complex object', (specName, spec) => {
 		const Subject = await spec(Ssh)
 		const f = new Subject()
 
-		let actual
-		f.exec('echo', (channel: any) => channel.stdio.on((data: any) => (actual = data)))
+		let actual: any
+		f.exec('echo', (channel: any) => {
+			channel.stdio.on((data: any) => {
+				actual = data
+			})
+		})
 
 		expect(actual).toBe('echo')
 		await spec.done()
@@ -355,7 +355,7 @@ incubator('use composite callback function', (specName, spec) => {
 			}
 		}
 		const fn = Object.assign(
-			function () {
+			() => {
 				return
 			},
 			{
@@ -423,6 +423,7 @@ incubator('passes instanceof test for sub class', (specName, spec) => {
 describe('instantiate', () => {
 	class Subject {
 		a = 0
+		// biome-ignore lint/complexity/noUselessConstructor: the specs below construct `Subject` with varying arguments; without this signature those calls do not typecheck.
 		constructor(..._args: any[]) {}
 		// must exist at least one method for class plugin to identify it.
 		foo() {}

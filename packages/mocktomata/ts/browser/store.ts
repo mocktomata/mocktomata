@@ -1,5 +1,5 @@
 import type { Spec } from '@mocktomata/framework'
-import { AsyncContext } from 'async-fp'
+import type { AsyncContext } from 'async-fp'
 import { createStore } from 'global-store'
 import type { config } from './config.js'
 
@@ -13,7 +13,7 @@ export const store = createStore<BrowserStore>({
 	moduleName: 'mocktomata',
 	key: 'f6d1823b-b529-473e-ab84-17cada707ef9',
 	version: '7.0.0',
-	initializer: current => ({
+	initializer: (current) => ({
 		config: {},
 		...current
 	})
