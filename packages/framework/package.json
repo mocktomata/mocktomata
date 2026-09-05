@@ -84,7 +84,7 @@
 		"rimraf": "^5.0.0",
 		"satisfier": "^5.4.2",
 		"setimmediate": "^1.0.5",
-		"tsdown": "^0.22.14",
+		"tsdown": "^0.23.0",
 		"typescript": "~5.9.0",
 		"vitest": "^4.1.11"
 	},

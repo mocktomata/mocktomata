@@ -80,7 +80,7 @@
 		"satisfier": "^5.4.2",
 		"standard-log": "^13.0.1",
 		"tmp": "^0.2.1",
-		"tsdown": "^0.22.14",
+		"tsdown": "^0.23.0",
 		"typescript": "~5.9.0",
 		"vitest": "^4.1.11"
 	},
