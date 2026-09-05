@@ -103,8 +103,8 @@ importers:
   packages/framework:
     dependencies:
       '@cucumber/cucumber-expressions':
-        specifier: ^17.0.0
-        version: 17.1.0
+        specifier: ^20.0.0
+        version: 20.1.0
       async-fp:
         specifier: ^9.0.11
         version: 9.0.13
@@ -1642,8 +1642,8 @@ packages:
     resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
     engines: {node: '>=20.19.0'}
 
-  '@cucumber/cucumber-expressions@17.1.0':
-    resolution: {integrity: sha512-PCv/ppsPynniKPWJr5v566daCVe+pbxQpHGrIu/Ev57cCH9Rv+X0F6lio4Id3Z64TaG7btCRLUGewIgLwmrwOA==}
+  '@cucumber/cucumber-expressions@20.1.0':
+    resolution: {integrity: sha512-KXQJChHTyHdg6HI7fHy3zpjfoS205vV1B/aJQKB82VFgMGbdVdiaSy7sTtap/5Q787anLmZt25Tg0FqQ2n4fqw==}
 
   '@discoveryjs/json-ext@0.5.7':
     resolution: {integrity: sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==}
@@ -4847,10 +4847,6 @@ packages:
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
 
-  lru-cache@11.5.1:
-    resolution: {integrity: sha512-RPimw/7aMdv2oqRrxKwvZXcPfwBrn/JZ2xYcY9Hus/6LaS3VOAKVWKWgNLCFSiOm1ESXinjsDlidVU7JlnCN2A==}
-    engines: {node: 20 || >=22}
-
   lru-cache@11.5.2:
     resolution: {integrity: sha512-4pfM1Ff0x50o0tQwb5ucw/RzNyD0/YJME6IVcStalZuMWxdt3sR3huStTtxz4PUmvZfRguvDejasvQ2kifR11g==}
     engines: {node: 20 || >=22}
@@ -6849,7 +6845,7 @@ snapshots:
       '@babel/compat-data': 8.0.0
       '@babel/helper-validator-option': 8.0.0
       browserslist: 4.28.5
-      lru-cache: 11.5.1
+      lru-cache: 11.5.2
       semver: 7.8.0
 
   '@babel/helper-create-class-features-plugin@7.29.3(@babel/core@7.29.6(supports-color@11.0.0))(supports-color@11.0.0)':
@@ -7985,7 +7981,7 @@ snapshots:
 
   '@csstools/css-tokenizer@4.0.0': {}
 
-  '@cucumber/cucumber-expressions@17.1.0':
+  '@cucumber/cucumber-expressions@20.1.0':
     dependencies:
       regexp-match-indices: 1.0.2
 
@@ -11792,8 +11788,6 @@ snapshots:
   loupe@3.2.1: {}
 
   lru-cache@10.4.3: {}
-
-  lru-cache@11.5.1: {}
 
   lru-cache@11.5.2: {}
 
