@@ -57,7 +57,7 @@
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
 		"@mocktomata/service": "workspace:^",
-		"@vitest/coverage-v8": "^4.1.11",
+		"@vitest/coverage-v8": "^5.0.0",
 		"assertron": "^11.0.0",
 		"depcheck": "^1.4.3",
 		"jsdom": "^30.0.1",
@@ -66,7 +66,7 @@
 		"standard-log": "^13.0.1",
 		"tsdown": "^0.23.0",
 		"typescript": "~5.9.0",
-		"vitest": "^4.1.11"
+		"vitest": "^5.0.0"
 	},
 	"engines": {
 		"node": ">= 20"

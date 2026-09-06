@@ -82,7 +82,7 @@
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
-		"@vitest/coverage-v8": "^4.1.11",
+		"@vitest/coverage-v8": "^5.0.0",
 		"assertron": "^11.0.0",
 		"cross-env": "^7.0.3",
 		"depcheck": "^1.4.3",
@@ -91,7 +91,7 @@
 		"rimraf": "^5.0.0",
 		"tsdown": "^0.23.0",
 		"typescript": "~5.9.0",
-		"vitest": "^4.1.11"
+		"vitest": "^5.0.0"
 	},
 	"engines": {
 		"node": ">= 20"
