@@ -51,7 +51,7 @@
 		"test:save": "cross-env MOCKTOMATA_MODE=save vitest run"
 	},
 	"devDependencies": {
-		"@vitest/coverage-v8": "^4.1.11",
+		"@vitest/coverage-v8": "^5.0.0",
 		"assertron": "^11.0.0",
 		"axios": "^1.1.3",
 		"axios-mock-adapter": "^2.0.0",
@@ -65,7 +65,7 @@
 		"rimraf": "^5.0.0",
 		"tsdown": "^0.23.0",
 		"typescript": "~5.9.0",
-		"vitest": "^4.1.11"
+		"vitest": "^5.0.0"
 	},
 	"peerDependencies": {
 		"mocktomata": "workspace:^"
