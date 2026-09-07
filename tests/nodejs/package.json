@@ -33,7 +33,7 @@
 		"@types/node-fetch": "^2.6.2",
 		"@types/ws": "^8.5.4",
 		"@vitest/coverage-v8": "^4.1.11",
-		"assertron": "^11.0.0",
+		"assertron": "^11.6.0",
 		"axios": "^1.1.3",
 		"axios-mock-adapter": "^1.21.2",
 		"cross-env": "^7.0.3",
@@ -52,7 +52,7 @@
 		"node": ">= 14.16"
 	},
 	"dependencies": {
-		"iso-error": "^6.0.0",
+		"iso-error": "^6.0.5",
 		"iso-error-google-cloud-api": "^6.0.8",
 		"iso-error-web": "^2.3.0"
 	}
