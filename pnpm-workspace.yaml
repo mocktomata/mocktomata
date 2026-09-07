@@ -1,19 +1,6 @@
 minimumReleaseAge: 1440
 minimumReleaseAgeStrict: true
 
-minimumReleaseAgeExclude:
-  # Temporary, exact-version only. These are the freshly republished upstreams
-  # this repo exists to consume; each was published hours ago and each was
-  # verified to carry SLSA provenance (`npm view <pkg>@<v> dist.attestations`)
-  # before being listed here. Exact versions, so nothing can slide forward.
-  # Remove once they age past the 1440-minute soak.
-  - standard-log@13.0.1
-  - tersify@4.0.6
-  - iso-error@6.0.5
-  - iso-error-google-cloud-api@6.0.8
-  - google-cloud-api@7.0.2
-  - unpartial@1.0.7
-
 packages:
   - packages/*
   - packages/nodejs/fixtures/*
@@ -24,3 +11,43 @@ allowBuilds:
   core-js: true
   esbuild: true
   fsevents: true
+
+# First-party packages are exempt from the soak.
+#
+# The soak exists to stop a COMPROMISED THIRD-PARTY release being pulled into a build
+# within hours of publication. It does not describe our own packages: we control what
+# goes into them, and a first-party release is reviewed before it is published, not
+# after. Applying it to ourselves only means a fresh publish is invisible to the next
+# repo in the chain for 24h.
+minimumReleaseAgeExclude:
+  - assertron
+  - satisfier
+  - tersify
+  - unpartial
+  - type-plus
+  - path-equal
+  - iso-error
+  - iso-error-web
+  - iso-error-google-cloud-api
+  - standard-log
+  - standard-log-color
+  - async-fp
+  - fsa-emitter
+  - progress-str
+  - clibuilder
+  - args-minus
+  - global-store
+  - stable-store
+  - mocktomata
+  - just-func
+  - storybook-addon-vis
+  - vitest-plugin-vis
+  - node-supported-releases
+  - '@just-func/*'
+  - '@just-web/*'
+  - '@mocktomata/*'
+  - '@repobuddy/*'
+  - '@unional/*'
+  # Not first-party, but a freshly republished upstream this repo consumes;
+  # exact version, verified to carry SLSA provenance. Remove once it ages out.
+  - google-cloud-api@7.0.2
