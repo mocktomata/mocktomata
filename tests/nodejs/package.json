@@ -52,8 +52,8 @@
 		"node": ">= 14.16"
 	},
 	"dependencies": {
-		"iso-error": "^6.0.5",
-		"iso-error-google-cloud-api": "^6.0.8",
-		"iso-error-web": "^2.3.0"
+		"iso-error": "^7.0.0",
+		"iso-error-google-cloud-api": "^7.0.0",
+		"iso-error-web": "^3.0.0"
 	}
 }

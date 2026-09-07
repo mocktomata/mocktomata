@@ -52,7 +52,7 @@
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
 		"cross-fetch": "^4.0.0",
-		"iso-error": "^6.0.5"
+		"iso-error": "^7.0.0"
 	},
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",

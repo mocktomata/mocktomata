@@ -70,7 +70,7 @@
 		"@mocktomata/plugin-fixture-esm-a": "workspace:^",
 		"@mocktomata/plugin-fixture-esm-b": "workspace:^",
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
-		"@unional/fixture": "^3.2.6",
+		"@unional/fixture": "^5.0.0",
 		"@vitest/coverage-v8": "^4.1.11",
 		"assertron": "^11.6.0",
 		"depcheck": "^1.4.3",
