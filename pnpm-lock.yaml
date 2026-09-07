@@ -27,8 +27,8 @@ importers:
         specifier: ^2.3.2
         version: 2.3.6
       '@types/mkdirp':
-        specifier: ^1.0.2
-        version: 1.0.2
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/node':
         specifier: ^24.0.0
         version: 24.13.3
@@ -2732,8 +2732,9 @@ packages:
     resolution: {integrity: sha512-zmPitbQ8+6zNutpwgcQuLcsEpn/Cj54Kbn7L5pX0Os5kdWplB7xPgEh/g+SWOB/qmows2gpuCaPyduq8ZZRnxA==}
     deprecated: This is a stub types definition. minimatch provides its own type definitions, so you do not need this installed.
 
-  '@types/mkdirp@1.0.2':
-    resolution: {integrity: sha512-o0K1tSO0Dx5X6xlU5F1D6625FawhC3dU3iqr25lluNv/+/QIVH8RLNEiVokgIZo+mz+87w/3Mkg/VvQS+J51fQ==}
+  '@types/mkdirp@2.0.0':
+    resolution: {integrity: sha512-c/iUqMymAlxLAyIK3u5SzrwkrkyOdv1XDc91T+b5FsY7Jr6ERhUD19jJHOhPW4GD6tmN6mFEorfSdks525pwdQ==}
+    deprecated: This is a stub types definition. mkdirp provides its own type definitions, so you do not need this installed.
 
   '@types/node-fetch@2.6.13':
     resolution: {integrity: sha512-QGpRVpzSaUs30JBSGPjOg4Uveu384erbHBoT1zeONvyCfwQxIkUshLAOqN/k9EjGviPRmWTTe6aH2qySWKTVSw==}
@@ -9492,9 +9493,9 @@ snapshots:
     dependencies:
       minimatch: 10.2.5
 
-  '@types/mkdirp@1.0.2':
+  '@types/mkdirp@2.0.0':
     dependencies:
-      '@types/node': 24.13.3
+      mkdirp: 2.1.6
 
   '@types/node-fetch@2.6.13':
     dependencies:
