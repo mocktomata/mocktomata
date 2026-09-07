@@ -50,4 +50,4 @@ minimumReleaseAgeExclude:
   - '@unional/*'
   # Not first-party, but a freshly republished upstream this repo consumes;
   # exact version, verified to carry SLSA provenance. Remove once it ages out.
-  - google-cloud-api@8.0.0
+  - google-cloud-api@7.0.2
