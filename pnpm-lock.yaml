@@ -42,8 +42,8 @@ importers:
         specifier: ^9.0.0
         version: 9.1.7
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       pinst:
         specifier: ^3.0.0
         version: 3.0.0
@@ -85,8 +85,8 @@ importers:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -164,8 +164,8 @@ importers:
         specifier: ^30.0.1
         version: 30.0.1
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -216,8 +216,8 @@ importers:
         specifier: ^30.0.1
         version: 30.0.1
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -286,8 +286,8 @@ importers:
         specifier: ^30.0.1
         version: 30.0.1
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -362,8 +362,8 @@ importers:
         specifier: ^1.1.1
         version: 1.1.2
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -495,8 +495,8 @@ importers:
         specifier: ^2.6.7
         version: 2.7.0(encoding@0.1.13)
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -546,8 +546,8 @@ importers:
         specifier: workspace:^
         version: link:../../packages/mocktomata
       npm-run-all2:
-        specifier: ^5.0.0
-        version: 5.0.2
+        specifier: ^9.0.0
+        version: 9.0.3
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -3071,6 +3071,10 @@ packages:
     resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
 
+  ansi-styles@7.0.0:
+    resolution: {integrity: sha512-kKvt3m4uwzqL0wlkPd09CmljPJGOZZ4D0fP65sqFSvPkMRKhNi+74MgIJ5QxE6SxqB4t4KyUFGg8+n5zjo6hew==}
+    engines: {node: '>=22'}
+
   anymatch@3.1.3:
     resolution: {integrity: sha512-KMReFUr0B4t+D+OBkjR3KYqvocp2XaSzO55UcB6mgQMd3KbcE+mWTyvVV7D/zsdEbNnV6acZUutkiHQXvTr1Rw==}
     engines: {node: '>= 8'}
@@ -4576,6 +4580,10 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
+  isexe@4.0.0:
+    resolution: {integrity: sha512-FFUtZMpoZ8RqHS3XeXEmHWLA4thH+ZxCv2lOiPIn1Xc7CxrqhWzNSDzD+/chS/zbYezmiwWLdQC09JdQKmthOw==}
+    engines: {node: '>=20'}
+
   iso-error-google-cloud-api@6.0.8:
     resolution: {integrity: sha512-S9RPmPDw7kjkXs/LDXOUvRFuFLSW2HyVEAjO4XELlIqMvPwxVS1mXMVc/ezP4yoD4JVA7nU05YRUuo0fmQsr4w==}
     engines: {node: '>= 8'}
@@ -4691,6 +4699,10 @@ packages:
 
   json-parse-even-better-errors@2.3.1:
     resolution: {integrity: sha512-xyFwyhro/JEof6Ghe2iz2NcXoj2sloNsWr/XsERDK/oiPCfaNhl5ONfp+jQdAZRQQ0IJWNzH9zIZF7li91kh2w==}
+
+  json-parse-even-better-errors@6.0.0:
+    resolution: {integrity: sha512-2/8adwnK1/+Fdjyts4r6wSpfANWw8zdNhU9U/Llk59c6O+DjSisPWPykwoL8gZmocP9Dy64S7oie2g+Mia123A==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
   json-schema-traverse@1.0.0:
     resolution: {integrity: sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==}
@@ -5123,9 +5135,18 @@ packages:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
     engines: {node: '>=0.10.0'}
 
+  npm-normalize-package-bin@6.0.0:
+    resolution: {integrity: sha512-tdt4aFn9QamlhdN3HV2D2ccpBwO5/fyjjbXUxYA6uBjyekMZcZvDq0aSj9t5Jo+tih6AYFnt/cuIRn9013e0Uw==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
+
   npm-run-all2@5.0.2:
     resolution: {integrity: sha512-S2G6FWZ3pNWAAKm2PFSOtEAG/N+XO/kz3+9l6V91IY+Y3XFSt7Lp7DV92KCgEboEW0hRTu0vFaMe4zXDZYaOyA==}
     engines: {node: '>= 10'}
+    hasBin: true
+
+  npm-run-all2@9.0.3:
+    resolution: {integrity: sha512-BQAEdU1PtYc48qYRdghW2BVTQT3VqWCoFQmO87NlM1h1PYwMCKQpUWaNyB20V26caNzFsXQDfyOdznLlHCih6g==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0, npm: '>= 10'}
     hasBin: true
 
   npm-run-path@4.0.1:
@@ -5380,6 +5401,11 @@ packages:
     engines: {node: '>=0.10'}
     hasBin: true
 
+  pidtree@1.0.0:
+    resolution: {integrity: sha512-avfAvjB9Dd0wdj3rjJX//yS+G79OO0KrS5pJHFJENjYGX6N4SMgEDBBI/yFy0lloOYSaC6XQxzpOAMPfSYFV/Q==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   pify@4.0.1:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
@@ -5538,6 +5564,10 @@ packages:
   react@18.3.1:
     resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
     engines: {node: '>=0.10.0'}
+
+  read-package-json-fast@6.0.0:
+    resolution: {integrity: sha512-PNaGjoCnw9DBA2Kl8D+8po957z778q/HOPuY2u3Bkw/JO3eC8MDx7jn/PgMtSgpcBbs+6UOjDbwReGpXmRvs0g==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
 
   read-pkg-up@7.0.1:
     resolution: {integrity: sha512-zK0TB7Xd6JpCLmlLmufqykGE+/TlOePD6qKClNW7hHDKFh/J7/7gCWGR7joEQEW1bKq3a3yUZSObOoWLFQ4ohg==}
@@ -5827,6 +5857,10 @@ packages:
   shebang-regex@3.0.0:
     resolution: {integrity: sha512-7++dFhtcx3353uBaq8DDR4NuxBetBzC7ZQOhmTQInHEd6bSrXdiEyzCvG07Z44UYdLShWUyXt5M/yhz8ekcb1A==}
     engines: {node: '>=8'}
+
+  shell-quote@1.10.0:
+    resolution: {integrity: sha512-w1aiOKwKuRgtwAReIIj89puqg+I7GvX4IbLrvmhXbzQsj1+Zwi4VO3+fa6ZF91TWSjIxoEkKnMeHcLEODK5ZXA==}
+    engines: {node: '>= 0.4'}
 
   shell-quote@1.8.3:
     resolution: {integrity: sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==}
@@ -6612,6 +6646,11 @@ packages:
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
     engines: {node: '>= 8'}
+    hasBin: true
+
+  which@7.0.0:
+    resolution: {integrity: sha512-RancgH2dmbLdHl6LRhEqvklWMgl/Hdnun0Y90KhBOLkMefg8Qa7/Zel8Sm+8HEcP6DEjzsWzpkuBQEZok58isA==}
+    engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     hasBin: true
 
   why-is-node-running@2.3.0:
@@ -9828,6 +9867,8 @@ snapshots:
 
   ansi-styles@6.2.3: {}
 
+  ansi-styles@7.0.0: {}
+
   anymatch@3.1.3:
     dependencies:
       normalize-path: 3.0.0
@@ -11520,6 +11561,8 @@ snapshots:
 
   isexe@2.0.0: {}
 
+  isexe@4.0.0: {}
+
   iso-error-google-cloud-api@6.0.8(iso-error@6.0.5):
     dependencies:
       google-cloud-api: 7.0.2
@@ -11699,6 +11742,8 @@ snapshots:
       bignumber.js: 9.3.1
 
   json-parse-even-better-errors@2.3.1: {}
+
+  json-parse-even-better-errors@6.0.0: {}
 
   json-schema-traverse@1.0.0: {}
 
@@ -12070,6 +12115,8 @@ snapshots:
 
   normalize-path@3.0.0: {}
 
+  npm-normalize-package-bin@6.0.0: {}
+
   npm-run-all2@5.0.2:
     dependencies:
       ansi-styles: 5.2.0
@@ -12079,6 +12126,17 @@ snapshots:
       pidtree: 0.5.0
       read-pkg: 5.2.0
       shell-quote: 1.8.3
+
+  npm-run-all2@9.0.3:
+    dependencies:
+      ansi-styles: 7.0.0
+      cross-spawn: 7.0.6
+      memorystream: 0.3.1
+      picomatch: 4.0.7
+      pidtree: 1.0.0
+      read-package-json-fast: 6.0.0
+      shell-quote: 1.10.0
+      which: 7.0.0
 
   npm-run-path@4.0.1:
     dependencies:
@@ -12301,6 +12359,8 @@ snapshots:
 
   pidtree@0.5.0: {}
 
+  pidtree@1.0.0: {}
+
   pify@4.0.1: {}
 
   pinst@3.0.0: {}
@@ -12451,6 +12511,11 @@ snapshots:
   react@18.3.1:
     dependencies:
       loose-envify: 1.4.0
+
+  read-package-json-fast@6.0.0:
+    dependencies:
+      json-parse-even-better-errors: 6.0.0
+      npm-normalize-package-bin: 6.0.0
 
   read-pkg-up@7.0.1:
     dependencies:
@@ -12789,6 +12854,8 @@ snapshots:
       shebang-regex: 3.0.0
 
   shebang-regex@3.0.0: {}
+
+  shell-quote@1.10.0: {}
 
   shell-quote@1.8.3: {}
 
@@ -13548,6 +13615,10 @@ snapshots:
   which@2.0.2:
     dependencies:
       isexe: 2.0.0
+
+  which@7.0.0:
+    dependencies:
+      isexe: 4.0.0
 
   why-is-node-running@2.3.0:
     dependencies:
