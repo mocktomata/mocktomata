@@ -1,5 +1,5 @@
 import { a } from 'assertron'
-import { assertType } from 'type-plus'
+import { testType } from 'type-plus'
 import { Dummy } from '../test_artifacts/test_subjects.js'
 import { demetarize, metarize } from './metarize.js'
 
@@ -120,7 +120,7 @@ it('material class', () => {
 
 it('return type to never if M is not SpecMeta', () => {
 	const r = metarize<any, { a: number }>({})
-	assertType.isNever(r)
+	testType.never<typeof r>(true)
 })
 
 function testMetarize({

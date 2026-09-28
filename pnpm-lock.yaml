@@ -21,8 +21,8 @@ importers:
         specifier: ^21.0.0
         version: 21.2.0
       '@repobuddy/biome':
-        specifier: ^2.3.1
-        version: 2.3.1(@biomejs/biome@2.5.11)
+        specifier: ^2.4.0
+        version: 2.4.0(@biomejs/biome@2.5.11)
       '@types/md5':
         specifier: ^2.3.2
         version: 2.3.6
@@ -66,8 +66,8 @@ importers:
         specifier: ^5.1.2
         version: 5.6.2
       clibuilder:
-        specifier: ^11.0.0
-        version: 11.0.0(typescript@5.9.3)
+        specifier: ^11.3.1
+        version: 11.3.1(typescript@5.9.3)
       validate.js:
         specifier: ^0.13.1
         version: 0.13.1
@@ -106,14 +106,14 @@ importers:
         specifier: ^20.0.0
         version: 20.1.0
       async-fp:
-        specifier: ^10.0.0
-        version: 10.0.0(typescript@5.9.3)
+        specifier: ^10.0.1
+        version: 10.0.1(typescript@5.9.3)
       error-stack-parser:
         specifier: ^2.1.4
         version: 2.1.4
       iso-error:
-        specifier: ^6.0.5
-        version: 6.0.5
+        specifier: ^7.0.0
+        version: 7.0.0
       json-bigint:
         specifier: ^1.0.0
         version: 1.0.0
@@ -121,17 +121,17 @@ importers:
         specifier: ^1.1.0
         version: 1.1.2
       standard-log:
-        specifier: ^13.1.0
-        version: 13.1.0(typescript@5.9.3)
+        specifier: ^13.3.1
+        version: 13.3.1(typescript@5.9.3)
       standard-log-color:
-        specifier: ^13.2.0
-        version: 13.2.0(standard-log@13.1.0(typescript@5.9.3))
+        specifier: ^13.3.1
+        version: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
       tersify:
-        specifier: ^4.0.6
-        version: 4.0.6
+        specifier: ^4.0.8
+        version: 4.0.8
       type-plus:
-        specifier: 8.0.0-beta.10
-        version: 8.0.0-beta.10(typescript@5.9.3)
+        specifier: 8.0.0-beta.12
+        version: 8.0.0-beta.12(typescript@5.9.3)
     devDependencies:
       '@types/json-bigint':
         specifier: ^1.0.1
@@ -140,8 +140,8 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       axios:
         specifier: ^1.1.3
         version: 1.18.0(debug@4.4.3(supports-color@11.0.0))(supports-color@11.0.0)
@@ -158,11 +158,11 @@ importers:
         specifier: ^1.1.1
         version: 1.1.2
       iso-error-google-cloud-api:
-        specifier: ^6.0.8
-        version: 6.0.8(iso-error@6.0.5)
+        specifier: ^7.0.1
+        version: 7.0.1(iso-error@7.0.0)(typescript@5.9.3)
       iso-error-web:
-        specifier: ^2.3.0
-        version: 2.4.3
+        specifier: ^3.0.0
+        version: 3.0.0
       jsdom:
         specifier: ^30.0.1
         version: 30.0.1
@@ -173,8 +173,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.10
       satisfier:
-        specifier: ^5.4.4
-        version: 5.4.4
+        specifier: ^5.4.6
+        version: 5.4.6
       setimmediate:
         specifier: ^1.0.5
         version: 1.0.5
@@ -197,8 +197,8 @@ importers:
         specifier: ^4.0.0
         version: 4.1.0(encoding@0.1.13)
       iso-error:
-        specifier: ^6.0.5
-        version: 6.0.5
+        specifier: ^7.0.0
+        version: 7.0.0
     devDependencies:
       '@mocktomata/plugin-fixture-dummy':
         specifier: workspace:^
@@ -210,8 +210,8 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       depcheck:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
@@ -225,8 +225,8 @@ importers:
         specifier: ^5.0.0
         version: 5.0.10
       standard-log:
-        specifier: ^13.1.0
-        version: 13.1.0(typescript@5.9.3)
+        specifier: ^13.3.1
+        version: 13.3.1(typescript@5.9.3)
       tsdown:
         specifier: ^0.23.0
         version: 0.23.0(typescript@5.9.3)
@@ -252,20 +252,20 @@ importers:
         specifier: workspace:^
         version: link:../service
       async-fp:
-        specifier: ^10.0.0
-        version: 10.0.0(typescript@5.9.3)
+        specifier: ^10.0.1
+        version: 10.0.1(typescript@5.9.3)
       global-store:
         specifier: ^1.0.0-beta.21
         version: 1.0.0-beta.21
       standard-log:
-        specifier: ^13.1.0
-        version: 13.1.0(typescript@5.9.3)
+        specifier: ^13.3.1
+        version: 13.3.1(typescript@5.9.3)
       standard-log-color:
-        specifier: ^13.2.0
-        version: 13.2.0(standard-log@13.1.0(typescript@5.9.3))
+        specifier: ^13.3.1
+        version: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
       type-plus:
-        specifier: 8.0.0-beta.10
-        version: 8.0.0-beta.10(typescript@5.9.3)
+        specifier: 8.0.0-beta.12
+        version: 8.0.0-beta.12(typescript@5.9.3)
     devDependencies:
       '@mocktomata/plugin-fixture-deep-link':
         specifier: workspace:^
@@ -277,8 +277,8 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -310,8 +310,8 @@ importers:
         specifier: workspace:^
         version: link:../framework
       find-installed-packages:
-        specifier: ^3.0.1
-        version: 3.1.1
+        specifier: ^4.0.1
+        version: 4.0.1
       json5:
         specifier: ^2.2.1
         version: 2.2.3
@@ -322,8 +322,8 @@ importers:
         specifier: ^1.6.3
         version: 1.6.4
       type-plus:
-        specifier: 8.0.0-beta.10
-        version: 8.0.0-beta.10(typescript@5.9.3)
+        specifier: 8.0.0-beta.12
+        version: 8.0.0-beta.12(typescript@5.9.3)
     devDependencies:
       '@mocktomata/plugin-fixture-activate-not-fn':
         specifier: workspace:^
@@ -350,14 +350,14 @@ importers:
         specifier: workspace:^
         version: link:../../test-plugins/plugin-fixture-no-activate
       '@unional/fixture':
-        specifier: ^5.0.0
-        version: 5.0.0(typescript@5.9.3)
+        specifier: ^6.0.2
+        version: 6.0.2(typescript@5.9.3)
       '@vitest/coverage-v8':
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       depcheck:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
@@ -371,11 +371,11 @@ importers:
         specifier: ^5.0.0
         version: 5.0.10
       satisfier:
-        specifier: ^5.4.4
-        version: 5.4.4
+        specifier: ^5.4.6
+        version: 5.4.6
       standard-log:
-        specifier: ^13.1.0
-        version: 13.1.0(typescript@5.9.3)
+        specifier: ^13.3.1
+        version: 13.3.1(typescript@5.9.3)
       tmp:
         specifier: ^0.2.1
         version: 0.2.7
@@ -420,8 +420,8 @@ importers:
         specifier: workspace:^
         version: link:../../../../test-plugins/plugin-fixture-cjs-b
       standard-log:
-        specifier: 13.2.0
-        version: 13.2.0(typescript@5.9.3)
+        specifier: 13.3.1
+        version: 13.3.1(typescript@5.9.3)
 
   packages/nodejs/fixtures/plugin-esm:
     dependencies:
@@ -447,8 +447,8 @@ importers:
         specifier: workspace:^
         version: link:../../../../test-plugins/plugin-fixture-no-activate
       standard-log:
-        specifier: 13.2.0
-        version: 13.2.0(typescript@5.9.3)
+        specifier: 13.3.1
+        version: 13.3.1(typescript@5.9.3)
 
   packages/nodejs/fixtures/two-configs: {}
 
@@ -467,14 +467,14 @@ importers:
         specifier: workspace:^
         version: link:../nodejs
       standard-log:
-        specifier: ^13.1.0
-        version: 13.1.0(typescript@5.9.3)
+        specifier: ^13.3.1
+        version: 13.3.1(typescript@5.9.3)
       standard-log-color:
-        specifier: ^13.2.0
-        version: 13.2.0(standard-log@13.1.0(typescript@5.9.3))
+        specifier: ^13.3.1
+        version: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
       type-plus:
-        specifier: 8.0.0-beta.10
-        version: 8.0.0-beta.10(typescript@5.9.3)
+        specifier: 8.0.0-beta.12
+        version: 8.0.0-beta.12(typescript@5.9.3)
     devDependencies:
       '@types/hapi__hapi':
         specifier: ^20.0.12
@@ -489,8 +489,8 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       depcheck:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
@@ -522,8 +522,8 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       axios:
         specifier: ^1.1.3
         version: 1.18.0(debug@4.4.3(supports-color@11.0.0))(supports-color@11.0.0)
@@ -537,11 +537,11 @@ importers:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
       iso-error:
-        specifier: ^6.0.5
-        version: 6.0.5
+        specifier: ^7.0.0
+        version: 7.0.0
       iso-error-web:
-        specifier: ^2.3.0
-        version: 2.4.3
+        specifier: ^3.0.0
+        version: 3.0.0
       jsdom:
         specifier: ^30.0.1
         version: 30.0.1
@@ -587,14 +587,14 @@ importers:
   tests/nodejs:
     dependencies:
       iso-error:
-        specifier: ^6.0.5
-        version: 6.0.5
+        specifier: ^7.0.0
+        version: 7.0.0
       iso-error-google-cloud-api:
-        specifier: ^6.0.8
-        version: 6.0.8(iso-error@6.0.5)
+        specifier: ^7.0.1
+        version: 7.0.1(iso-error@7.0.0)(typescript@5.9.3)
       iso-error-web:
-        specifier: ^2.3.0
-        version: 2.4.3
+        specifier: ^3.0.0
+        version: 3.0.0
     devDependencies:
       '@types/node-fetch':
         specifier: ^2.6.2
@@ -606,8 +606,8 @@ importers:
         specifier: ^4.1.11
         version: 4.1.11(vitest@4.1.11)
       assertron:
-        specifier: ^11.6.0
-        version: 11.6.0(typescript@5.9.3)
+        specifier: ^11.7.1
+        version: 11.7.1(typescript@5.9.3)
       axios:
         specifier: ^1.1.3
         version: 1.18.0(debug@4.4.3(supports-color@11.0.0))(supports-color@11.0.0)
@@ -2105,11 +2105,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@just-func/types@0.5.1':
-    resolution: {integrity: sha512-yP+XbIIT5qGI/6TOZ0lRFHq2UubCfpf+2EKQPhEwOGsvh1vJTdDTPGyNWYHmLMLT5jx8h/SR3mAAVDmYyAjpwA==}
-
-  '@just-func/types@0.6.0':
-    resolution: {integrity: sha512-5/nFEvX/QizdRCMXjo/VfW4qgBw2pX2+Sz5+aJ907d7NqXVXxEu1Hwu6k35A5INI2NtIOvplQnkm7uFqPGiL0w==}
+  '@just-func/types@0.6.1':
+    resolution: {integrity: sha512-uIE3xNCNcyIsM/YhOAEEh8xNwDhcT5KMM6F4R/aQGVijt6sMePjd7CDPeVrXd2XFks2nGiin/cEMTYhAIaXa6A==}
 
   '@manypkg/find-root@1.1.0':
     resolution: {integrity: sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA==}
@@ -2144,8 +2141,8 @@ packages:
   '@quansync/fs@1.0.0':
     resolution: {integrity: sha512-4TJ3DFtlf1L5LDMaM6CanJ/0lckGNtJcMjQ1NAV6zDmA0tEHKZtxNKin8EgPaVX1YzljbxckyT2tJrpQKAtngQ==}
 
-  '@repobuddy/biome@2.3.1':
-    resolution: {integrity: sha512-dFxQSl+lYZ5Wc9TVUxrSwze9vwC6IBpg4zcbxJkLiZPPnYLX95Zvp9zC+ChPRmc2QpyVzqH4eGnxKzHaVZ1A7Q==}
+  '@repobuddy/biome@2.4.0':
+    resolution: {integrity: sha512-YdMjhey4Y9XzDR1cOIFFNBr6O+87TkFA1pViDFEFFryYKUdJ3qN/yZpCgcL1exZsuGDxC+0540hmJmtl9wKBQQ==}
     peerDependencies:
       '@biomejs/biome': '>= 2'
 
@@ -2807,16 +2804,16 @@ packages:
   '@types/yargs@17.0.35':
     resolution: {integrity: sha512-qUHkeCyQFxMXg79wQfTtfndEC+N9ZZg76HJftDJp+qH2tV7Gj4OJi7l+PiWwJ+pWtW8GwSmqsDj/oymhrTWXjg==}
 
-  '@unional/async-context@10.0.0':
-    resolution: {integrity: sha512-m9d2Td8Ebk62HJyOrkQReJGYDTWm3WY2OJXrR4KHkT3S9mzSwtrkIpzG2jgKxAO2Di8p0j727TrdeWNws9DC3g==}
+  '@unional/async-context@10.0.1':
+    resolution: {integrity: sha512-DzMfm1m8+UORpjNbJeMoXE0D2ffLcFqa8GmXM0tCIjtQGvZDbB2WO/BvoxD9NkU1BEx3SdKS1RybNg8THUf83A==}
     engines: {node: '>= 20'}
 
-  '@unional/fixture@5.0.0':
-    resolution: {integrity: sha512-YpNWPl6MJ8P9UPXVrdCRbhfbqRx5SpDGH/YC3hjdxqySL5W/UQAs5K9Zr1Pw2i9mo7D2nt5PEAOhjk0kMCTsSg==}
+  '@unional/fixture@6.0.2':
+    resolution: {integrity: sha512-ssQcVLg6IztpHMl+O4+vOWaBvShJ724vPzXKDhFRL7VQYt3N4D37Gt/ymUFt8HGEMNTeZlURTM3mLjZ4nJNBTQ==}
     engines: {node: '>= 20'}
 
-  '@unional/gizmo@3.0.0':
-    resolution: {integrity: sha512-aRaLx44dBGBckhgzyVmErtw2AElMyqCGqc0/E+e9ugRBFPcT+Aj299VmqJDj2Tj9Biejh/KF0NbAAJ6AkwannQ==}
+  '@unional/gizmo@3.0.1':
+    resolution: {integrity: sha512-gZMtQPMMxF+7ENz0Vxv4zIWzYU8YPjmx5Wf9A/+797/4stB7j9LXF257j6VUfOSqucVJhslx+iTaWjx5rfq6wg==}
     engines: {node: '>= 20'}
 
   '@vitest/coverage-v8@4.1.11':
@@ -3137,8 +3134,8 @@ packages:
     resolution: {integrity: sha512-Izi8RQcffqCeNVgFigKli1ssklIbpHnCYc6AknXGYoB6grJqyeby7jv12JUQgmTAnIDnbck1uxksT4dzN3PWBA==}
     engines: {node: '>=12'}
 
-  assertron@11.6.0:
-    resolution: {integrity: sha512-10ISpYENayWRyH7bwz1l3jfYeyNv0W4TlJ5t2vNfPtKclHnpCXGKv0Vfr7xCGdgR843U2H3+EfUY12bOwjPDzA==}
+  assertron@11.7.1:
+    resolution: {integrity: sha512-yYkQB0r94oAdSi+qD8pMGPqh9i/wP5TOgKs9GADdYBXisPKraAEb0G4oaIufKLr1mfvsM1eOcaQSCGZxqL5tcw==}
     engines: {node: '>=20'}
 
   assign-symbols@1.0.0:
@@ -3156,8 +3153,8 @@ packages:
   ast-v8-to-istanbul@1.0.5:
     resolution: {integrity: sha512-UPAgKJFSEGMWSDr3LX4tqnAb4f7KGT8O40Tyx8wbYmmZ/yn58lNCm8h3svs3eXgiGd5AXxz8NDOvXWvicq+rJA==}
 
-  async-fp@10.0.0:
-    resolution: {integrity: sha512-x0rPkfzYgSlaCIQd3fTywJPxVYe7HivpNRBS1OGDQAu006eWLcvHzv1fLBDY1V7at4mTMmShrznxictmh8iGvw==}
+  async-fp@10.0.1:
+    resolution: {integrity: sha512-NkvstVtpof+9sKgDf2R58TO+AZmOkydeD2wUZ9BAhADuvnNNrjx+hqsBvj1p+m/5zCTkv/HOHYS4By90l0xU8w==}
     engines: {node: '>= 20'}
 
   async-limiter@1.0.1:
@@ -3406,8 +3403,8 @@ packages:
     resolution: {integrity: sha512-+W/5efTR7y5HRD7gACw9yQjqMVvEMLBHmboM/kPWam+H+Hmyrgjh6YncVKK122YZkXrLudzTuAukUw9FnMf7IQ==}
     engines: {node: 10.* || >= 12.*}
 
-  clibuilder@11.0.0:
-    resolution: {integrity: sha512-Tx+uYTToh63XxEMnRwUz/IA7jHTBM93oWRbKL5CTrez1PC+aR3qqC1Rp5GHoPBu9xCzJM3xUmQ6wGwgFaSqz/w==}
+  clibuilder@11.3.1:
+    resolution: {integrity: sha512-/H/UMlbYS/FitIU2MiqYRrZMibfpbNd1Nmz/IPkim5n8Xp36ZCKsY6u4ckJAZ4ZCvtUj9SUQ0SfkWs2qvDbJkQ==}
     engines: {node: '>= 20.19'}
 
   cliui@7.0.4:
@@ -3989,10 +3986,6 @@ packages:
     resolution: {integrity: sha512-9ZonPT4ZAK4a+1pUPVPZJapbi7O5qbbJPdYw/NOQWZZbVLdDTYM3A4R9z/DpAM08IDaFGsvPgiGZ82WEwUDWjg==}
     engines: {node: '>=14.16'}
 
-  find-installed-packages@3.1.1:
-    resolution: {integrity: sha512-aFA7JbUCysD/ACS89o2hrEdgMtXV5mm+AJBxySQXGLe7Z+TzFw5YDFlI+6WAOSTKRqbkC5v105ToO0/krRn+4A==}
-    engines: {bun: '>=1.0', node: '>=14'}
-
   find-installed-packages@4.0.1:
     resolution: {integrity: sha512-5bQRIhtLkyLRXxDsUX/GzXLx7vlfFJIlrPinxpmDD0s1n26UzA6Fxva1YOWTW3J31mDL683yZUIxohR3n7ZhUg==}
     engines: {bun: '>=1.0', node: '>=20.19'}
@@ -4207,9 +4200,9 @@ packages:
     resolution: {integrity: sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==}
     engines: {node: '>=10'}
 
-  google-cloud-api@7.0.2:
-    resolution: {integrity: sha512-FE8/VqZxDmZlaBRgoTnbKsUMMFKY4q+neaLBqyMPIZBS/3E9NZKNJrUBncvGb4gejzCdGq4pIduixuhNjatDMw==}
-    engines: {node: '>= 8'}
+  google-cloud-api@8.0.1:
+    resolution: {integrity: sha512-0O3a3xXZKVl3RnlddIG9q4yMEbbzhKU3OlUzSaYCy2PsfeWWMGNswrdvrcC2MEVGHQUsl27UWeTxI5BK47VaFQ==}
+    engines: {node: '>= 20'}
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -4579,19 +4572,19 @@ packages:
   isexe@2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
 
-  iso-error-google-cloud-api@6.0.8:
-    resolution: {integrity: sha512-S9RPmPDw7kjkXs/LDXOUvRFuFLSW2HyVEAjO4XELlIqMvPwxVS1mXMVc/ezP4yoD4JVA7nU05YRUuo0fmQsr4w==}
-    engines: {node: '>= 8'}
+  iso-error-google-cloud-api@7.0.1:
+    resolution: {integrity: sha512-h2dLdEOnfLGQ+emzn094n+XLAbpE+O4TA440K7GxXE5Ei5P7UujzYx+4BIzVIgHbgOKxcTykbl7ul6rZRFBDqA==}
+    engines: {node: '>= 20'}
     peerDependencies:
       iso-error: '>= 4'
 
-  iso-error-web@2.4.3:
-    resolution: {integrity: sha512-UnUWomR2hhnMiyIPv/AGOEvTvKqmh0ECYf5qyUHkwdWAY3X9VgjJR+4XOp9cWfwy2oSjM8dS4veEkqQewZjEuA==}
-    engines: {node: '>= 8'}
+  iso-error-web@3.0.0:
+    resolution: {integrity: sha512-KIDupINKb4yRJpWaR/3nytudIDkVtusBKskM91iumPX4TnxP0WSclG/rBZASjv06n6Iu2M+gDbDs83FkHF01DA==}
+    engines: {node: '>= 20'}
 
-  iso-error@6.0.5:
-    resolution: {integrity: sha512-e6RUrLKvZhUzkjVYozUo8RKnZsKtoEljdPyzXWJfPfn2jhZWn74xyEYYrlWDFNr/+zQcyDEmXYp7ir+hzbJ8MA==}
-    engines: {node: '>= 10'}
+  iso-error@7.0.0:
+    resolution: {integrity: sha512-GyHH/0Xyug/vO9LOr5zKI3fyEAAJuBuXYNZE+Fs5DmpUmH4oRbcR8aYyql+MGi8CY53qPcU1bNJEjC5QsesFhA==}
+    engines: {node: '>= 20'}
 
   isobject@2.1.0:
     resolution: {integrity: sha512-+OUdGJlgjOBZDfxnDjYYG6zp487z0JGNQq3cYQYg5f5hKR+syHMsaztzGeml/4kGG55CSpKSpWTY+jYGgsHLgA==}
@@ -5742,8 +5735,8 @@ packages:
   sanitize-filename@1.6.4:
     resolution: {integrity: sha512-9ZyI08PsvdQl2r/bBIGubpVdR3RR9sY6RDiWFPreA21C/EFlQhmgo20UZlNjZMMZNubusLhAQozkA0Od5J21Eg==}
 
-  satisfier@5.4.4:
-    resolution: {integrity: sha512-mjZ8PeqIuOI37rVglvx6JINVcRdXPqVWZkbg99oJyganLAvut4qlCAUDyvqbI7aYGQzF+1julBtcpL35r1NV1A==}
+  satisfier@5.4.6:
+    resolution: {integrity: sha512-xsWpHw+7sTgJjBVVJ0GC1MGwMpX4FnTjwwkZuBEjiHxhQFK10GS5Eqeh3RBT/Vp7dXOLlnY0iL5xI/7IEu918g==}
 
   saxes@6.0.0:
     resolution: {integrity: sha512-xAg7SOnEhrm5zI3puOOKyy1OMcMlIJZYNJY7xLBwSze0UjhPLnWfj2GF2EpT0jmzaJKIWKHLsaSSajf35bcYnA==}
@@ -5752,8 +5745,8 @@ packages:
   scheduler@0.23.2:
     resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
 
-  search-packages@2.2.2:
-    resolution: {integrity: sha512-P7oat53N3aSKZWM/M5qRIGLpxhWf0O/m5urSCy/OE17RbtXw/MGFRxlP6F0CcuN6x5cCumM1iM/qV/cdHD7u4w==}
+  search-packages@2.2.3:
+    resolution: {integrity: sha512-yghcqrg0uEXOerdi/jgOVsVojTvLtbhgPTydih0NmbRleXTCnY+LmixbBPV3xM79W5znY9WtzWtxE22nXSgm2Q==}
     engines: {node: '>= 18'}
 
   semver-compare@1.0.0:
@@ -5955,27 +5948,13 @@ packages:
   stackframe@1.3.4:
     resolution: {integrity: sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==}
 
-  standard-log-color@12.1.2:
-    resolution: {integrity: sha512-3ZFt/+zhX58tekK/k8KrKBBkilopvYpmMPx1j1okyaM8VTmXkodB2uJJCBmfrrXZ7F2AjuOCeZig80p1B03D+w==}
+  standard-log-color@13.3.1:
+    resolution: {integrity: sha512-CR++e1aHcpuq5bh0jFC2EbwchokUjd3L5EZ+HDl8AwXzOAtn899TkoSdIIR8CgVJX07cBlGOW8xXgZdj3mc9+Q==}
     peerDependencies:
       standard-log: '>=11.0.1'
 
-  standard-log-color@13.2.0:
-    resolution: {integrity: sha512-w3MaFAINANx5RAKr+/8OD9hIU3tURmPXeOB7vsHo51nj54gmoDg+WuNj7Fvh8npnZK6LZliufFmTmcqc11mfAQ==}
-    peerDependencies:
-      standard-log: '>=11.0.1'
-
-  standard-log@11.5.2:
-    resolution: {integrity: sha512-ucM5UTaAJgN6RQVoDHoP0K6dqJEeVbm1+V4HJ57PcykZNnzWgaXFTCJMffFdRqL/4k+ctIrtWEQxzczu+9XjhQ==}
-
-  standard-log@12.1.2:
-    resolution: {integrity: sha512-vFTFTkiZhHg8PGpp7wnOPJsQQsO2DMX1bnEAVms8LF9IdJWNGGMD+1btV5pWUkFb7p/qDHUhZqN/do+nsg0rPQ==}
-
-  standard-log@13.1.0:
-    resolution: {integrity: sha512-4oHGMLQIWaZBZ+EPgNmSpwz/tFj3XAxrvvnUj5kEwiO2EUeUk1XecdqAEjW4YGIE6YOT2AsbTUXSvIwA68cx7Q==}
-
-  standard-log@13.2.0:
-    resolution: {integrity: sha512-WFlhMhuYc7s5U1oh9JTAShgropuXzsZF0N8Wgrynzn7k+n7rFaMlQWRDNBgB2Rn+KQdXyHIQWT85703YY4VA4w==}
+  standard-log@13.3.1:
+    resolution: {integrity: sha512-WcDZypKwq35deXwUV1/ttKodpijdGYSaRVVPHHGNtAIPbvS4rC6xIs1faPtXEUBD33W4RdtJKCZ7/oV1uIrQFw==}
 
   static-extend@0.1.2:
     resolution: {integrity: sha512-72E9+uLc27Mt718pMHt9VMNiAL4LMsmDbBva8mxWUCkT07fSzEGMYUCk0XWY6lp0j6RBAG4cJ3mWuZv2OE3s0g==}
@@ -6096,11 +6075,11 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  tersify@3.12.1:
-    resolution: {integrity: sha512-VwzXGHZSOB4T27s4uvh9v8FYrNXyfVz0nBQi28TDwrZoQwT8ZJUp1W2Ff73ekN07stJSb0D+pr6iXeNeFqTI6Q==}
-
   tersify@4.0.6:
     resolution: {integrity: sha512-+z2dTeRvbPyI7qiAmBY+VgWnhhN9IuaGjgrPfeF33hI4A/Yd9KT11tbc4l8vfIA3L/5EWiE0swvxOfAckGRuzA==}
+
+  tersify@4.0.8:
+    resolution: {integrity: sha512-8SP19qXCXiWztbyJLqmCwstqtZg7F5grbSov3yh8C+fyqHgKyfMaI/c5DCMKIGDkpoKX8cIz9ZqJxN7zZDtQcQ==}
 
   test-exclude@6.0.0:
     resolution: {integrity: sha512-cAGWPIyOHU6zlmg88jwm7VRyXnMN7iV68OGAbYDk/Mh/xC/pzVPlQtY6ngoIH/5/tciuhGfvESU8GrHrcxD56w==}
@@ -6256,19 +6235,10 @@ packages:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
 
-  type-plus@5.6.0:
-    resolution: {integrity: sha512-LAIvZzs6mKXYHzwRfGeOuWKsE5jHndwWlLheulMl6eWDSGa1bfZCd0aLQSMgP3HZTbazx/P2UumCqtOz5AMctA==}
-
-  type-plus@6.8.1:
-    resolution: {integrity: sha512-yEv9ZE4Lw7fUGQOUYGtUoRJrC46Uta2U2HnpuvIVnwFVmzMP9oE5on7xOxsT39o0hk2lkFghZqlba9GvmW0/rw==}
-
-  type-plus@7.6.2:
-    resolution: {integrity: sha512-qUlXv9Y0/W56pg38m275IMD3WA03QbVoqNY16S3kmwtuA4gOT2iheyUdOp8NWrmXWpf7om98hzr7AZD/eW2jLA==}
-
-  type-plus@8.0.0-beta.10:
-    resolution: {integrity: sha512-ZdhzmQg7f8oxt5Cbivslk8o3zef8L3ibpKIeGH1ESf73y8ZEY1z9fe4Z3fTxcjmFOb8ESE1TbW/MCgEvpeLC4w==}
+  type-plus@8.0.0-beta.12:
+    resolution: {integrity: sha512-isf19V90L8JOn9VBWWwUfH8DU6G3dfPptr3R+JtraYWHqLAsXYI2f9x1HZVTkajrkSffdEbetXUXf7FcIjSIRg==}
     peerDependencies:
-      typescript: '>= 5.6.0'
+      typescript: '>= 5.4.0'
 
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
@@ -6355,12 +6325,12 @@ packages:
     resolution: {integrity: sha512-D4g+mxFeQGQHzCfnvij+R35ukJ0658Zzudw7j16p4tBBbNasKkKM4SocYxqhwT5xA7a9JYWDzKkEFyMlRi5sng==}
     engines: {node: '>=20'}
 
-  unpartial@1.0.5:
-    resolution: {integrity: sha512-yAqaXcachjgZUnM2yIkf+4KJhmyuoj7stBvlnlZpB15OYVbKnLhgJfmLW7qkpzLHCdsm1bEFvhyN9hCmlZ3uuw==}
-    engines: {node: '>=6'}
-
   unpartial@1.0.7:
     resolution: {integrity: sha512-DeyxEI3KSlmDihGAk3Js/p/Ca886ymIz39pWH3VVV/LZ36MsRETylFS37fdzWBWDjMlzB63Rdy2KLCdetOMPig==}
+    engines: {node: '>= 20'}
+
+  unpartial@1.0.8:
+    resolution: {integrity: sha512-LDZX3wrdUWQdVKLOgouW+fCqNfietx11UzdipDBRsnx1LWKBkv4FpA9OHVeSNz12STLk6oz07dgENEWnHyAgIg==}
     engines: {node: '>= 20'}
 
   unpipe@1.0.0:
@@ -6383,9 +6353,6 @@ packages:
     hasBin: true
     peerDependencies:
       browserslist: '>= 4.21.0'
-
-  upper-case@2.0.2:
-    resolution: {integrity: sha512-KgdgDGJt2TpuwBUIjgG6lzw2GWFRCW9Qkfkiv0DxqHHLYJHmtmdUIKcZd8rHgFSjopVTlw6ggzCm1b8MFQwikg==}
 
   urix@0.1.0:
     resolution: {integrity: sha512-Am1ousAhSLBeB9cG/7k7r2R0zj50uDRlZHPGbazid5s9rlF1F/QKYObEKSIunSjIOkJZqwRRLpvewjEkM7pSqg==}
@@ -8432,13 +8399,9 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@just-func/types@0.5.1':
+  '@just-func/types@0.6.1(typescript@5.9.3)':
     dependencies:
-      type-plus: 5.6.0
-
-  '@just-func/types@0.6.0(typescript@5.9.3)':
-    dependencies:
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -8485,7 +8448,7 @@ snapshots:
     dependencies:
       quansync: 1.0.0
 
-  '@repobuddy/biome@2.3.1(@biomejs/biome@2.5.11)':
+  '@repobuddy/biome@2.4.0(@biomejs/biome@2.5.11)':
     dependencies:
       '@biomejs/biome': 2.5.11
 
@@ -9573,14 +9536,14 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@unional/async-context@10.0.0(typescript@5.9.3)':
+  '@unional/async-context@10.0.1(typescript@5.9.3)':
     dependencies:
-      iso-error: 6.0.5
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      iso-error: 7.0.0
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
-  '@unional/fixture@5.0.0(typescript@5.9.3)':
+  '@unional/fixture@6.0.2(typescript@5.9.3)':
     dependencies:
       '@types/diff-match-patch': 1.0.36
       chalk: 5.6.2
@@ -9590,21 +9553,22 @@ snapshots:
       dir-compare: 4.2.0
       execa: 7.2.0
       glob: 8.1.0
-      iso-error: 6.0.5
+      iso-error: 7.0.0
       js-yaml: 4.1.1
       minimatch: 8.0.7
       pad-left: 2.1.0
       rimraf: 3.0.2
-      standard-log: 11.5.2
-      standard-log-color: 12.1.2(standard-log@11.5.2)
-      tersify: 3.12.1
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      standard-log: 13.3.1(typescript@5.9.3)
+      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+      tersify: 4.0.8
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      unpartial: 1.0.8
     transitivePeerDependencies:
       - typescript
 
-  '@unional/gizmo@3.0.0(typescript@5.9.3)':
+  '@unional/gizmo@3.0.1(typescript@5.9.3)':
     dependencies:
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -9878,14 +9842,14 @@ snapshots:
 
   assertion-error@2.0.1: {}
 
-  assertron@11.6.0(typescript@5.9.3):
+  assertron@11.7.1(typescript@5.9.3):
     dependencies:
       is-promise: 4.0.0
-      iso-error: 6.0.5
+      iso-error: 7.0.0
       path-equal: 1.2.8
-      satisfier: 5.4.4
-      tersify: 4.0.6
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      satisfier: 5.4.6
+      tersify: 4.0.8
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -9903,10 +9867,10 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 10.0.0
 
-  async-fp@10.0.0(typescript@5.9.3):
+  async-fp@10.0.1(typescript@5.9.3):
     dependencies:
-      '@unional/async-context': 10.0.0(typescript@5.9.3)
-      '@unional/gizmo': 3.0.0(typescript@5.9.3)
+      '@unional/async-context': 10.0.1(typescript@5.9.3)
+      '@unional/gizmo': 3.0.1(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -10207,18 +10171,19 @@ snapshots:
     optionalDependencies:
       '@colors/colors': 1.5.0
 
-  clibuilder@11.0.0(typescript@5.9.3):
+  clibuilder@11.3.1(typescript@5.9.3):
     dependencies:
       find-installed-packages: 4.0.1
       js-yaml: 4.1.1
       jsonc-parser: 3.3.1
       pad-right: 0.2.2
-      search-packages: 2.2.2
-      standard-log: 12.1.2
-      standard-log-color: 12.1.2(standard-log@12.1.2)
+      search-packages: 2.2.3
+      standard-log: 13.3.1(typescript@5.9.3)
+      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+      tersify: 4.0.8
       tmp: 0.2.7
       tslib: 2.8.1
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
       wordwrap: 1.0.0
       zod: 3.25.76
     transitivePeerDependencies:
@@ -10933,11 +10898,6 @@ snapshots:
       common-path-prefix: 3.0.0
       pkg-dir: 7.0.0
 
-  find-installed-packages@3.1.1:
-    dependencies:
-      temp: 0.9.4
-      unpartial: 1.0.5
-
   find-installed-packages@4.0.1:
     dependencies:
       package-manager-detector: 1.8.0
@@ -11190,10 +11150,12 @@ snapshots:
       merge2: 1.4.1
       slash: 3.0.0
 
-  google-cloud-api@7.0.2:
+  google-cloud-api@8.0.1(typescript@5.9.3):
     dependencies:
-      iso-error: 6.0.5
-      type-plus: 7.6.2
+      iso-error: 7.0.0
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
 
   gopd@1.2.0: {}
 
@@ -11523,16 +11485,18 @@ snapshots:
 
   isexe@2.0.0: {}
 
-  iso-error-google-cloud-api@6.0.8(iso-error@6.0.5):
+  iso-error-google-cloud-api@7.0.1(iso-error@7.0.0)(typescript@5.9.3):
     dependencies:
-      google-cloud-api: 7.0.2
-      iso-error: 6.0.5
+      google-cloud-api: 8.0.1(typescript@5.9.3)
+      iso-error: 7.0.0
+    transitivePeerDependencies:
+      - typescript
 
-  iso-error-web@2.4.3:
+  iso-error-web@3.0.0:
     dependencies:
-      iso-error: 6.0.5
+      iso-error: 7.0.0
 
-  iso-error@6.0.5: {}
+  iso-error@7.0.0: {}
 
   isobject@2.1.0:
     dependencies:
@@ -12689,9 +12653,9 @@ snapshots:
     dependencies:
       truncate-utf8-bytes: 1.0.2
 
-  satisfier@5.4.4:
+  satisfier@5.4.6:
     dependencies:
-      tersify: 4.0.6
+      tersify: 4.0.8
 
   saxes@6.0.0:
     dependencies:
@@ -12701,7 +12665,7 @@ snapshots:
     dependencies:
       loose-envify: 1.4.0
 
-  search-packages@2.2.2: {}
+  search-packages@2.2.3: {}
 
   semver-compare@1.0.0: {}
 
@@ -12935,58 +12899,20 @@ snapshots:
 
   stackframe@1.3.4: {}
 
-  standard-log-color@12.1.2(standard-log@11.5.2):
+  standard-log-color@13.3.1(standard-log@13.3.1(typescript@5.9.3)):
     dependencies:
       color-map: 2.0.6
-      standard-log: 11.5.2
+      standard-log: 13.3.1(typescript@5.9.3)
       supports-color: 8.1.1
-      unpartial: 1.0.7
+      unpartial: 1.0.8
 
-  standard-log-color@12.1.2(standard-log@12.1.2):
+  standard-log@13.3.1(typescript@5.9.3):
     dependencies:
-      color-map: 2.0.6
-      standard-log: 12.1.2
-      supports-color: 8.1.1
-      unpartial: 1.0.7
-
-  standard-log-color@13.2.0(standard-log@13.1.0(typescript@5.9.3)):
-    dependencies:
-      color-map: 2.0.6
-      standard-log: 13.1.0(typescript@5.9.3)
-      supports-color: 8.1.1
-      unpartial: 1.0.7
-
-  standard-log@11.5.2:
-    dependencies:
-      '@just-func/types': 0.5.1
-      iso-error: 6.0.5
+      '@just-func/types': 0.6.1(typescript@5.9.3)
+      iso-error: 7.0.0
       ms: 2.1.3
-      type-plus: 6.8.1
-      upper-case: 2.0.2
-
-  standard-log@12.1.2:
-    dependencies:
-      '@just-func/types': 0.5.1
-      iso-error: 6.0.5
-      ms: 2.1.3
-      type-plus: 7.6.2
-      upper-case: 2.0.2
-
-  standard-log@13.1.0(typescript@5.9.3):
-    dependencies:
-      '@just-func/types': 0.5.1
-      iso-error: 6.0.5
-      ms: 2.1.3
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
-    transitivePeerDependencies:
-      - typescript
-
-  standard-log@13.2.0(typescript@5.9.3):
-    dependencies:
-      '@just-func/types': 0.6.0(typescript@5.9.3)
-      iso-error: 6.0.5
-      ms: 2.1.3
-      type-plus: 8.0.0-beta.10(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      unpartial: 1.0.8
     transitivePeerDependencies:
       - typescript
 
@@ -13118,16 +13044,15 @@ snapshots:
       source-map-support: 0.5.21
     optional: true
 
-  tersify@3.12.1:
-    dependencies:
-      acorn: 8.18.0
-      is-buffer: 2.0.5
-      unpartial: 1.0.7
-
   tersify@4.0.6:
     dependencies:
       acorn: 8.18.0
-      unpartial: 1.0.7
+      unpartial: 1.0.8
+
+  tersify@4.0.8:
+    dependencies:
+      acorn: 8.18.0
+      unpartial: 1.0.8
 
   test-exclude@6.0.0:
     dependencies:
@@ -13254,22 +13179,7 @@ snapshots:
       media-typer: 0.3.0
       mime-types: 2.1.35
 
-  type-plus@5.6.0:
-    dependencies:
-      tersify: 3.12.1
-      unpartial: 1.0.7
-
-  type-plus@6.8.1:
-    dependencies:
-      tersify: 3.12.1
-      unpartial: 1.0.7
-
-  type-plus@7.6.2:
-    dependencies:
-      tersify: 3.12.1
-      unpartial: 1.0.7
-
-  type-plus@8.0.0-beta.10(typescript@5.9.3):
+  type-plus@8.0.0-beta.12(typescript@5.9.3):
     dependencies:
       tersify: 4.0.6
       typescript: 5.9.3
@@ -13344,9 +13254,9 @@ snapshots:
 
   unlimited-timeout@0.1.0: {}
 
-  unpartial@1.0.5: {}
-
   unpartial@1.0.7: {}
+
+  unpartial@1.0.8: {}
 
   unpipe@1.0.0: {}
 
@@ -13369,10 +13279,6 @@ snapshots:
       browserslist: 4.28.5
       escalade: 3.2.0
       picocolors: 1.1.1
-
-  upper-case@2.0.2:
-    dependencies:
-      tslib: 2.8.1
 
   urix@0.1.0: {}
 

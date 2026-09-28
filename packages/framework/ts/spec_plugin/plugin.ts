@@ -66,7 +66,7 @@ export function findPlugin<S>(plugins: SpecPlugin.Instance[], subject: S): SpecP
 	return plugins.find((p) => p.support(subject))
 }
 
-export function getPlugin(plugins: SpecPlugin.Instance[], plugin: string) {
+export function getPlugin(plugins: SpecPlugin.Instance[], plugin: string): SpecPlugin.Instance {
 	const p = plugins.find((p) => p.name === plugin)
 	if (!p) throw new PluginNotFound(plugin)
 	return p

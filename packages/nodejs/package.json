@@ -55,11 +55,11 @@
 	},
 	"dependencies": {
 		"@mocktomata/framework": "workspace:^",
-		"find-installed-packages": "^3.0.1",
+		"find-installed-packages": "^4.0.1",
 		"json5": "^2.2.1",
 		"mkdirp": "^2.0.0",
 		"sanitize-filename": "^1.6.3",
-		"type-plus": "8.0.0-beta.10"
+		"type-plus": "8.0.0-beta.12"
 	},
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
@@ -70,15 +70,15 @@
 		"@mocktomata/plugin-fixture-esm-a": "workspace:^",
 		"@mocktomata/plugin-fixture-esm-b": "workspace:^",
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
-		"@unional/fixture": "^5.0.0",
+		"@unional/fixture": "^6.0.2",
 		"@vitest/coverage-v8": "^4.1.11",
-		"assertron": "^11.6.0",
+		"assertron": "^11.7.1",
 		"depcheck": "^1.4.3",
 		"dirname-filename-esm": "^1.1.1",
 		"npm-run-all2": "^5.0.0",
 		"rimraf": "^5.0.0",
-		"satisfier": "^5.4.4",
-		"standard-log": "^13.1.0",
+		"satisfier": "^5.4.6",
+		"standard-log": "^13.3.1",
 		"tmp": "^0.2.1",
 		"tsdown": "^0.23.0",
 		"typescript": "~5.9.0",

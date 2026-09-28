@@ -9,7 +9,7 @@ export function addPluginModule(
 	plugins: SpecPlugin.Instance[],
 	moduleName: string,
 	pluginModule: SpecPlugin.Module
-) {
+): SpecPlugin.Instance[] {
 	// istanbul ignore next -- tested from fixture
 	if (typeof pluginModule.activate !== 'function') {
 		log.warn(`${moduleName} does not export an 'activate()' function.`)
