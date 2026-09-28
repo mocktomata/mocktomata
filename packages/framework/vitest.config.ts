@@ -13,6 +13,7 @@ export default defineConfig({
 		testTimeout: 15_000,
 		projects: [
 			{
+				extends: true,
 				test: {
 					name: 'nodejs',
 					globals: true,
@@ -21,6 +22,7 @@ export default defineConfig({
 				}
 			},
 			{
+				extends: true,
 				test: {
 					name: 'jsdom',
 					globals: true,
