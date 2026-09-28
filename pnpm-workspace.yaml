@@ -48,8 +48,3 @@ minimumReleaseAgeExclude:
   - '@mocktomata/*'
   - '@repobuddy/*'
   - '@unional/*'
-  # Not first-party, but a freshly republished upstream this repo consumes;
-  # exact version, verified to carry SLSA provenance. Remove once it ages out.
-  - google-cloud-api@7.0.2
-  # min-release-age: lift google-cloud-api@8.0.1 until 2026-09-29T10:00:00Z
-  - 'google-cloud-api@8.0.1'
