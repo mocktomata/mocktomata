@@ -3,7 +3,7 @@ import { a } from 'assertron'
 import { filename } from 'dirname-filename-esm'
 import { has, none, some } from 'satisfier'
 import { logLevels } from 'standard-log'
-import { type IsEqual, isType } from 'type-plus'
+import { testType } from 'type-plus'
 import { createZucchini, SpecNotFound } from '../index.js'
 import { createTestContext } from '../testing/index.js'
 import { DuplicateStep, MissingStep } from './errors.js'
@@ -155,7 +155,7 @@ Error: foo`
 			it('is working as expected', async () => {
 				const save = scenario('increment')
 				let s = await save.spec((x: number) => x + 1)
-				isType.t<IsEqual<typeof s, (x: number) => number>>()
+				testType.equal<typeof s, (x: number) => number>(true)
 				expect(s(1)).toBe(2)
 				expect(save.mode()).toEqual('save')
 				await save.done()
