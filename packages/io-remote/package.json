@@ -58,7 +58,7 @@
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
 		"@mocktomata/service": "workspace:^",
 		"@vitest/coverage-v8": "^4.1.11",
-		"assertron": "^11.7.0",
+		"assertron": "^11.7.1",
 		"depcheck": "^1.4.3",
 		"jsdom": "^30.0.1",
 		"npm-run-all2": "^5.0.0",
