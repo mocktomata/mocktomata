@@ -1,18 +1,12 @@
 import axios from 'axios'
 import { incubator } from 'mocktomata/plugins'
 import { plugin } from './plugin.js'
-import { startMathjsServer } from './test_artifacts/mathjs_server.js'
 
-let server: Awaited<ReturnType<typeof startMathjsServer>>
-
-beforeAll(async () => {
-	server = await startMathjsServer()
+beforeAll(() => {
 	incubator.config({
 		plugins: [plugin]
 	})
 })
-
-afterAll(() => server.close())
 
 incubator('using headers', (specName, spec) => {
 	it(specName, async () => {
@@ -24,7 +18,7 @@ incubator('using headers', (specName, spec) => {
 
 		const r = await s.request({
 			method: 'post',
-			url: server.url,
+			url: 'http://api.mathjs.org/v4/',
 			data: {
 				expr: '2*(7-3)'
 			}

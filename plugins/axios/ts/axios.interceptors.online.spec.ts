@@ -2,18 +2,12 @@ import axios from 'axios'
 import { incubator } from 'mocktomata/plugins'
 import { beforeAll, it } from 'vitest'
 import { plugin } from './plugin.js'
-import { startMathjsServer } from './test_artifacts/mathjs_server.js'
 
-let server: Awaited<ReturnType<typeof startMathjsServer>>
-
-beforeAll(async () => {
-	server = await startMathjsServer()
+beforeAll(() => {
 	incubator.config({
 		plugins: [plugin]
 	})
 })
-
-afterAll(() => server.close())
 
 incubator('skip interceptor calls in axiosInstance', (specName, spec) => {
 	it(specName, async () => {
@@ -21,7 +15,7 @@ incubator('skip interceptor calls in axiosInstance', (specName, spec) => {
 		s.interceptors.request.use((value) => value)
 		s.interceptors.response.use((value) => value)
 		const r = await s.request({
-			url: `${server.url}?expr=2*(7-3)`
+			url: 'http://api.mathjs.org/v4/?expr=2*(7-3)'
 		})
 		expect(r.data).toBe(8)
 		await spec.done()
@@ -34,7 +28,7 @@ incubator('skip interceptor calls in axios', (specName, spec) => {
 		s.interceptors.request.use((value) => value)
 		s.interceptors.response.use((value) => value)
 		const r = await s.request({
-			url: `${server.url}?expr=2*(7-3)`
+			url: 'http://api.mathjs.org/v4/?expr=2*(7-3)'
 		})
 		expect(r.data).toBe(8)
 		await spec.done()

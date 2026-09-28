@@ -44,6 +44,7 @@
 		"depcheck": "depcheck",
 		"nuke": "run-s clean && rimraf node_modules",
 		"test": "vitest run",
+		"test:online": "cross-env MOCKTOMATA_ONLINE=1 vitest run online",
 		"typecheck": "tsc",
 		"verify": "npm-run-all clean -p build typecheck coverage depcheck",
 		"watch": "vitest",

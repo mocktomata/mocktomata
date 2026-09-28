@@ -1,6 +1,10 @@
-import { defineConfig } from 'vitest/config'
+import { configDefaults, defineConfig } from 'vitest/config'
 
 const specs = 'ts/**/*.{spec,test,unit,accept,integrate,system}.ts'
+
+// `*.online.spec.ts` specs call a live third-party endpoint, so their outcome depends on that
+// service, not on this code. They stay out of the default run (and CI); `pnpm test:online` runs them.
+const online = process.env.MOCKTOMATA_ONLINE ? [] : ['ts/**/*.online.spec.ts']
 
 /**
  * Two projects, matching the two jest projects this replaces: every spec runs once under
@@ -8,9 +12,10 @@ const specs = 'ts/**/*.{spec,test,unit,accept,integrate,system}.ts'
  */
 export default defineConfig({
 	test: {
-		// Several specs here record against a live HTTP endpoint in `save` mode, so the runner's
+		// The online specs record against a live HTTP endpoint in `save` mode, so the runner's
 		// network latency, not the code, decides whether the 5s default is enough.
 		testTimeout: 15_000,
+		exclude: [...configDefaults.exclude, ...online],
 		projects: [
 			{
 				extends: true,
