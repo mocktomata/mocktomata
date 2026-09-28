@@ -1,8 +1,18 @@
 import { incubator } from '../incubator/index.js'
 import { logLevels } from '../standard_log.types.js'
+import { startEchoServer } from '../test_artifacts/echo_server.js'
 import { createTestAxios } from '../test_artifacts/test_subjects.js'
 
-afterAll(incubator.cleanup)
+let server: Awaited<ReturnType<typeof startEchoServer>>
+
+beforeAll(async () => {
+	server = await startEchoServer()
+})
+
+afterAll(async () => {
+	await server.close()
+	await incubator.cleanup()
+})
 
 describe('maskValue(string)', () => {
 	incubator('actual value is sent to the subject', { logLevel: logLevels.all }, (specName, spec, reporter) => {
@@ -251,7 +261,7 @@ describe('maskValue(string)', () => {
 				{
 					save.maskValue('secret')
 					const s = await save(createTestAxios())
-					const r = await s('http://postman-echo.com/get?foo=secret')
+					const r = await s(`${server.url}/get?foo=secret`)
 					expect(r.data.args).toEqual({ foo: 'secret' })
 					const record = await save.done()
 
@@ -261,16 +271,14 @@ describe('maskValue(string)', () => {
 				{
 					simulate.maskValue('secret')
 					const s = await simulate(createTestAxios())
-					const r = await s('http://postman-echo.com/get?foo=secret')
+					const r = await s(`${server.url}/get?foo=secret`)
 					expect(r.data.args).toEqual({ foo: '[masked]' })
 					const record = await simulate.done()
 
 					expect(record.actions.length).toBeLessThan(20)
 					expect(reporter.getLogMessage()).not.toContain('secret')
 				}
-				// The `save` half makes a live request to postman-echo.com, so this one needs more
-				// than the 5s default before the runner's network counts as a test failure.
-			}, 30_000)
+			})
 		}
 	)
 

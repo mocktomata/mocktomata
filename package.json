@@ -27,6 +27,7 @@
 		"release": "pnpm build && changeset publish",
 		"service": "pnpm --filter @mocktomata/service",
 		"test": "turbo run test",
+		"test:online": "turbo run test:online",
 		"test-nodejs": "pnpm --filter ./tests/nodejs",
 		"test-solid": "pnpm --filter ./tests/solid",
 		"typecheck": "turbo run typecheck",
