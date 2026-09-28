@@ -1,5 +1,11 @@
 # Change Log
 
+## 10.1.1
+
+### Patch Changes
+
+- 95d1406: Update `type-plus` to `8.0.0-beta.12`, and update `async-fp`, `clibuilder`, `find-installed-packages`, `iso-error`, `standard-log`, `standard-log-color`, and `tersify` to their latest versions.
+
 ## 10.1.0
 
 ### Minor Changes

@@ -1,5 +1,12 @@
 # fixtures-plugin-cjs
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [95d1406]
+  - @mocktomata/nodejs@10.1.1
+
 ## 0.0.3
 
 ### Patch Changes
