@@ -1,5 +1,12 @@
 # Change Log
 
+## 1.1.24
+
+### Patch Changes
+
+- Updated dependencies [95d1406]
+  - @mocktomata/framework@10.1.1
+
 ## 1.1.23
 
 ### Patch Changes

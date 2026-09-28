@@ -1,5 +1,13 @@
 # fixtures-plugin-esm
 
+## 0.0.4
+
+### Patch Changes
+
+- Updated dependencies [95d1406]
+  - @mocktomata/nodejs@10.1.1
+  - @mocktomata/plugin-fixture-dummy@1.1.24
+
 ## 0.0.3
 
 ### Patch Changes
