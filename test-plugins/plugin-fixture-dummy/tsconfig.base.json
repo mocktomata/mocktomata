@@ -4,7 +4,7 @@
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"lib": ["es2015"],
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"newLine": "LF",
 		"rootDir": "ts",
 		"skipLibCheck": true,
