@@ -37,7 +37,7 @@ describe('server behavior', () => {
 	})
 
 	function buildUrl(path: string) {
-		return `http://${server.info.address}:${server.info.port}/api/${path}`
+		return `http://127.0.0.1:${server.info.port}/api/${path}`
 	}
 
 	test('get mocktomata info', async () => {
