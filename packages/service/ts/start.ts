@@ -91,7 +91,7 @@ function specGetRoute({ repo, log }: Context): ServerRoute {
 		path: '/api/specs/{id}',
 		handler: async (request) => {
 			try {
-				const { specName, specRelativePath } = json.parse(atob(request.params.id))
+				const { specName, specRelativePath } = json.parse(atob(request.params.id as string))
 				log.info('get spec', specName, specRelativePath)
 				return await repo.readSpec(specName, specRelativePath)
 			} catch (e: any) {
@@ -106,7 +106,7 @@ function specPostRoute({ repo, log }: Context): ServerRoute {
 		method: 'POST',
 		path: '/api/specs/{id}',
 		handler: async (request, h) => {
-			const { specName, specRelativePath } = json.parse(atob(request.params.id))
+			const { specName, specRelativePath } = json.parse(atob(request.params.id as string))
 			log.info('write spec', specName, specRelativePath)
 			await repo.writeSpec(specName, specRelativePath, json.parse(request.payload as string))
 			return h.response()
