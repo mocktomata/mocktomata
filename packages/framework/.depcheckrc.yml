@@ -8,3 +8,5 @@ ignores:
   - typescript
   # Loaded by name through vitest's `environment: 'jsdom'`, not imported.
   - jsdom
+  # Wraps the `test:*` scripts; depcheck stopped detecting it as of cross-env v10.
+  - cross-env
