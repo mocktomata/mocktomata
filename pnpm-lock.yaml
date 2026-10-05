@@ -16,7 +16,7 @@ importers:
         version: 3.0.3
       '@commitlint/cli':
         specifier: ^21.0.0
-        version: 21.2.0(@types/node@24.13.3)(typescript@5.9.3)
+        version: 21.2.0(@types/node@24.13.3)(typescript@7.0.2)
       '@commitlint/config-conventional':
         specifier: ^21.0.0
         version: 21.2.0
@@ -54,8 +54,8 @@ importers:
         specifier: ^2.0.0
         version: 2.9.14
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
 
   packages/cli:
     dependencies:
@@ -67,7 +67,7 @@ importers:
         version: 5.6.2
       clibuilder:
         specifier: ^11.3.1
-        version: 11.3.1(typescript@5.9.3)
+        version: 11.3.1(typescript@7.0.2)
       validate.js:
         specifier: ^0.13.1
         version: 0.13.1
@@ -92,10 +92,10 @@ importers:
         version: 6.1.3
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -107,7 +107,7 @@ importers:
         version: 20.1.0
       async-fp:
         specifier: ^10.0.1
-        version: 10.0.1(typescript@5.9.3)
+        version: 10.0.1(typescript@7.0.2)
       error-stack-parser:
         specifier: ^2.1.4
         version: 2.1.4
@@ -122,16 +122,16 @@ importers:
         version: 1.1.2
       standard-log:
         specifier: ^13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
       standard-log-color:
         specifier: ^13.3.1
-        version: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+        version: 13.3.1(standard-log@13.3.1(typescript@7.0.2))
       tersify:
         specifier: ^4.0.8
         version: 4.0.8
       type-plus:
         specifier: 8.0.0-beta.12
-        version: 8.0.0-beta.12(typescript@5.9.3)
+        version: 8.0.0-beta.12(typescript@7.0.2)
     devDependencies:
       '@types/json-bigint':
         specifier: ^1.0.1
@@ -141,7 +141,7 @@ importers:
         version: 5.0.3(vitest@5.0.3)
       assertron:
         specifier: ^11.7.1
-        version: 11.7.1(typescript@5.9.3)
+        version: 11.7.1(typescript@7.0.2)
       axios:
         specifier: ^1.1.3
         version: 1.18.0(debug@4.4.3(supports-color@11.0.0))(supports-color@11.0.0)
@@ -159,7 +159,7 @@ importers:
         version: 1.1.2
       iso-error-google-cloud-api:
         specifier: ^7.0.1
-        version: 7.0.1(iso-error@7.0.0)(typescript@5.9.3)
+        version: 7.0.1(iso-error@7.0.0)(typescript@7.0.2)
       iso-error-web:
         specifier: ^3.0.0
         version: 3.0.0
@@ -180,10 +180,10 @@ importers:
         version: 1.0.5
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -211,7 +211,7 @@ importers:
         version: 5.0.3(vitest@5.0.3)
       assertron:
         specifier: ^11.7.1
-        version: 11.7.1(typescript@5.9.3)
+        version: 11.7.1(typescript@7.0.2)
       depcheck:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
@@ -226,13 +226,13 @@ importers:
         version: 6.1.3
       standard-log:
         specifier: ^13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -253,19 +253,19 @@ importers:
         version: link:../service
       async-fp:
         specifier: ^10.0.1
-        version: 10.0.1(typescript@5.9.3)
+        version: 10.0.1(typescript@7.0.2)
       global-store:
         specifier: ^1.0.0-beta.21
         version: 1.0.0-beta.21
       standard-log:
         specifier: ^13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
       standard-log-color:
         specifier: ^13.3.1
-        version: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+        version: 13.3.1(standard-log@13.3.1(typescript@7.0.2))
       type-plus:
         specifier: 8.0.0-beta.12
-        version: 8.0.0-beta.12(typescript@5.9.3)
+        version: 8.0.0-beta.12(typescript@7.0.2)
     devDependencies:
       '@mocktomata/plugin-fixture-deep-link':
         specifier: workspace:^
@@ -278,7 +278,7 @@ importers:
         version: 5.0.3(vitest@5.0.3)
       assertron:
         specifier: ^11.7.1
-        version: 11.7.1(typescript@5.9.3)
+        version: 11.7.1(typescript@7.0.2)
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -296,10 +296,10 @@ importers:
         version: 6.1.3
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -323,7 +323,7 @@ importers:
         version: 1.6.4
       type-plus:
         specifier: 8.0.0-beta.12
-        version: 8.0.0-beta.12(typescript@5.9.3)
+        version: 8.0.0-beta.12(typescript@7.0.2)
     devDependencies:
       '@mocktomata/plugin-fixture-activate-not-fn':
         specifier: workspace:^
@@ -351,13 +351,13 @@ importers:
         version: link:../../test-plugins/plugin-fixture-no-activate
       '@unional/fixture':
         specifier: ^6.0.2
-        version: 6.0.2(typescript@5.9.3)
+        version: 6.0.2(typescript@7.0.2)
       '@vitest/coverage-v8':
         specifier: ^5.0.0
         version: 5.0.3(vitest@5.0.3)
       assertron:
         specifier: ^11.7.1
-        version: 11.7.1(typescript@5.9.3)
+        version: 11.7.1(typescript@7.0.2)
       depcheck:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
@@ -375,16 +375,16 @@ importers:
         version: 5.4.6
       standard-log:
         specifier: ^13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
       tmp:
         specifier: ^0.2.1
         version: 0.2.7
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -421,7 +421,7 @@ importers:
         version: link:../../../../test-plugins/plugin-fixture-cjs-b
       standard-log:
         specifier: 13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
 
   packages/nodejs/fixtures/plugin-esm:
     dependencies:
@@ -448,7 +448,7 @@ importers:
         version: link:../../../../test-plugins/plugin-fixture-no-activate
       standard-log:
         specifier: 13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
 
   packages/nodejs/fixtures/two-configs: {}
 
@@ -468,13 +468,13 @@ importers:
         version: link:../nodejs
       standard-log:
         specifier: ^13.3.1
-        version: 13.3.1(typescript@5.9.3)
+        version: 13.3.1(typescript@7.0.2)
       standard-log-color:
         specifier: ^13.3.1
-        version: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+        version: 13.3.1(standard-log@13.3.1(typescript@7.0.2))
       type-plus:
         specifier: 8.0.0-beta.12
-        version: 8.0.0-beta.12(typescript@5.9.3)
+        version: 8.0.0-beta.12(typescript@7.0.2)
     devDependencies:
       '@types/node':
         specifier: ^24.0.0
@@ -484,7 +484,7 @@ importers:
         version: 5.0.3(vitest@5.0.3)
       assertron:
         specifier: ^11.7.1
-        version: 11.7.1(typescript@5.9.3)
+        version: 11.7.1(typescript@7.0.2)
       depcheck:
         specifier: ^1.4.3
         version: 1.4.7(supports-color@11.0.0)
@@ -502,10 +502,10 @@ importers:
         version: 0.2.7
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -517,7 +517,7 @@ importers:
         version: 5.0.3(vitest@5.0.3)
       assertron:
         specifier: ^11.7.1
-        version: 11.7.1(typescript@5.9.3)
+        version: 11.7.1(typescript@7.0.2)
       axios:
         specifier: ^1.1.3
         version: 1.18.0(debug@4.4.3(supports-color@11.0.0))(supports-color@11.0.0)
@@ -550,10 +550,10 @@ importers:
         version: 6.1.3
       tsdown:
         specifier: ^0.23.0
-        version: 0.23.0(typescript@5.9.3)
+        version: 0.23.0(typescript@7.0.2)
       typescript:
-        specifier: ~5.9.0
-        version: 5.9.3
+        specifier: ~7.0.0
+        version: 7.0.2
       vitest:
         specifier: ^5.0.0
         version: 5.0.3(@types/node@24.13.3)(@vitest/coverage-v8@5.0.3)(jsdom@30.0.1)(vite@8.2.2(@types/node@24.13.3)(jiti@2.6.1)(terser@5.47.1)(yaml@2.9.1))
@@ -2762,6 +2762,126 @@ packages:
 
   '@types/yargs@17.0.35':
     resolution: {integrity: sha512-qUHkeCyQFxMXg79wQfTtfndEC+N9ZZg76HJftDJp+qH2tV7Gj4OJi7l+PiWwJ+pWtW8GwSmqsDj/oymhrTWXjg==}
+
+  '@typescript/typescript-aix-ppc64@7.0.2':
+    resolution: {integrity: sha512-MTKKkWB7p/0E9xi1d1tHtZ5PiLkGEMIq88pK2CubZjOsLtYTLqhgIgi6zepFa+9GHZ6h05NMCkQxGKiPXMxXtQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [ppc64]
+    os: [aix]
+
+  '@typescript/typescript-darwin-arm64@7.0.2':
+    resolution: {integrity: sha512-gowzar9MwS/aRWp6f3a4KUqzRjAZjOsmGNCM6LcTgXum+dBfgsBVMN+AgvOCCbguXyick6LJhpBszxMebJ8syA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@typescript/typescript-darwin-x64@7.0.2':
+    resolution: {integrity: sha512-SZ9xZInqApNlNGc9s0W1VSsktYSOe9cFqNOIqmN1Gs8SmkjKZYFt017G4VwPxASInODuAdbTW7sXiFUf893RgA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@typescript/typescript-freebsd-arm64@7.0.2':
+    resolution: {integrity: sha512-W5NH4y/J0plIIS5b2xvTEkU7JFxyqdMAOgf+Ilhl0vHQXKO5dZoxd+C/jEtq56c4F3wk71RB4BMRQ2XdI+bwYQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [freebsd]
+
+  '@typescript/typescript-freebsd-x64@7.0.2':
+    resolution: {integrity: sha512-UMGDx5sTpzNw3WiPebH7l90IWfJggEd+egHt/q6p7/Cm3zqoV7VxkGXt+3DxPIw8CcmvAB0j3sVVfbhX+M4Tpw==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [freebsd]
+
+  '@typescript/typescript-linux-arm64@7.0.2':
+    resolution: {integrity: sha512-Qh4eU4/y3yDjnfjjyPYihMj5/ODIlmt+Bzu17OI+fiSRDW57QmU5SiN63exPRNJPKUzcc1INa1NXdrJ+MqHjUQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@typescript/typescript-linux-arm@7.0.2':
+    resolution: {integrity: sha512-gffT3xPz9sR7j/YJExkyPntrI0P2EP9XbOyWzth2/Gs0RstK+90RBcO0ncXoXy/beYll1SXw846Nf2zdnEz0QQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm]
+    os: [linux]
+
+  '@typescript/typescript-linux-loong64@7.0.2':
+    resolution: {integrity: sha512-uEHck9i8hoAzXPiYRib1O7miOnz23SxIeVl6F4LXox+qov1K35jHcEW6VHKvZI+pyvl7fZEP4MCU5LYvIq1GuQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [loong64]
+    os: [linux]
+
+  '@typescript/typescript-linux-mips64el@7.0.2':
+    resolution: {integrity: sha512-R4KvAMnE43W5Qeqb0Ly56O3mWMWIAgsMyz36DCaycd5nbg/9kzm0liw3JocfRqyJY0KPmzFjbswozXyW0DnIYA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [mips64el]
+    os: [linux]
+
+  '@typescript/typescript-linux-ppc64@7.0.2':
+    resolution: {integrity: sha512-DORx5b3sd/4S7eayxm4FQv+A7CrkUIGRaHiwI8oiHTAI1fAPWhF4J0vAlkC8biAlHSVVwxMQ3tjZ2/DVbnQiiA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [ppc64]
+    os: [linux]
+
+  '@typescript/typescript-linux-riscv64@7.0.2':
+    resolution: {integrity: sha512-wf0jqEDOjrPRnKwYRyyJDRo11KMbvMFrU+q4zqKyChODBzvlkbhNQfKvLxQCcwTpdDaXSHZTVuh0JoCrKCUMHQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [riscv64]
+    os: [linux]
+
+  '@typescript/typescript-linux-s390x@7.0.2':
+    resolution: {integrity: sha512-IkwJc3L7yhytWd/ewjyxNDfOmswCm9GWMJT/ue/dU4aZNbwZeYAetq42VyLmsmSjvoX7z74X6ZaYCtzAr0EuGw==}
+    engines: {node: '>=16.20.0'}
+    cpu: [s390x]
+    os: [linux]
+
+  '@typescript/typescript-linux-x64@7.0.2':
+    resolution: {integrity: sha512-EYdf2cNg7rgCWJnxCdJ+F3V39O8ihb37eHAu1LK8oAFizgTQbPOK7zHHXbPt8rX24COqODXeI3sIf0fCXG7H/A==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [linux]
+
+  '@typescript/typescript-netbsd-arm64@7.0.2':
+    resolution: {integrity: sha512-+polYF4MF04aPpO5FTkHran9yUQDSXqy5GiSDKpsll5jy3l3+g9QLhpf39T+ePtefhXLOGrLl0QIjkQP6VnelA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [netbsd]
+
+  '@typescript/typescript-netbsd-x64@7.0.2':
+    resolution: {integrity: sha512-8YIT0EHM/3dq10ZOVF/A7pc/YSMtbcecct4rWtexrnSCHOPcpC2KTLXfTCR6vDpnSiY12heNb1GiN/wu+T/FyA==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [netbsd]
+
+  '@typescript/typescript-openbsd-arm64@7.0.2':
+    resolution: {integrity: sha512-APT8+ClYnuYm1u9+kgGXoMj2VzWzcymwh2gNSQVySHfkRDGOTVkoWLjCmOQSaO+PoqQ57B0flRp9SA+7GnnkzQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [openbsd]
+
+  '@typescript/typescript-openbsd-x64@7.0.2':
+    resolution: {integrity: sha512-yX7s+Q0Dln0Dt9tEzZsAjXXR/+ytBM7AlglaqyeMPxQszJ1JhlJdZ6jLA+IzldHtflX81em7lDao1xXu+aRRkg==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [openbsd]
+
+  '@typescript/typescript-sunos-x64@7.0.2':
+    resolution: {integrity: sha512-dLJDGaLZ1D4HPQn62u1n8mBDkJREwMsAkCdkwd4Ieqw+x3TUyTsqY0YiBCtE6H6OzzgGk3iuZ3vFWRS+E8/d1g==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [sunos]
+
+  '@typescript/typescript-win32-arm64@7.0.2':
+    resolution: {integrity: sha512-Gyl1Vy6OsWesLzmq+EP0Fb7b4Nid5232AvcA2SFcdYreldpNtYFFofPjnt62y9hQy7VTaZp65ICJjuAQRaVcIQ==}
+    engines: {node: '>=16.20.0'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@typescript/typescript-win32-x64@7.0.2':
+    resolution: {integrity: sha512-0BQ3HkAHHlKLSp1qRvf3SUhGpGsDuhB/jgFw75guyqbxJqEaS0Cw/VFO8i2nHglJUzQCRtMMR/IBAKE3ETMC4g==}
+    engines: {node: '>=16.20.0'}
+    cpu: [x64]
+    os: [win32]
 
   '@unional/async-context@10.0.1':
     resolution: {integrity: sha512-DzMfm1m8+UORpjNbJeMoXE0D2ffLcFqa8GmXM0tCIjtQGvZDbB2WO/BvoxD9NkU1BEx3SdKS1RybNg8THUf83A==}
@@ -6293,6 +6413,11 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
+  typescript@7.0.2:
+    resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
+    engines: {node: '>=16.20.0'}
+    hasBin: true
+
   ufo@1.6.4:
     resolution: {integrity: sha512-JFNbkD1Svwe0KvGi8GOeLcP4kAWQ609twvCdcHxq1oSL8svv39ZuSvajcD8B+5D0eL4+s1Is2D/O6KN3qcTeRA==}
 
@@ -7888,12 +8013,12 @@ snapshots:
   '@colors/colors@1.5.0':
     optional: true
 
-  '@commitlint/cli@21.2.0(@types/node@24.13.3)(typescript@5.9.3)':
+  '@commitlint/cli@21.2.0(@types/node@24.13.3)(typescript@7.0.2)':
     dependencies:
       '@commitlint/config-conventional': 21.2.0
       '@commitlint/format': 21.2.0
       '@commitlint/lint': 21.2.0
-      '@commitlint/load': 21.2.0(@types/node@24.13.3)(typescript@5.9.3)
+      '@commitlint/load': 21.2.0(@types/node@24.13.3)(typescript@7.0.2)
       '@commitlint/read': 21.2.0
       '@commitlint/types': 21.2.0
       tinyexec: 1.2.4
@@ -7938,14 +8063,14 @@ snapshots:
       '@commitlint/rules': 21.2.0
       '@commitlint/types': 21.2.0
 
-  '@commitlint/load@21.2.0(@types/node@24.13.3)(typescript@5.9.3)':
+  '@commitlint/load@21.2.0(@types/node@24.13.3)(typescript@7.0.2)':
     dependencies:
       '@commitlint/config-validator': 21.2.0
       '@commitlint/execute-rule': 21.0.1
       '@commitlint/resolve-extends': 21.2.0
       '@commitlint/types': 21.2.0
-      cosmiconfig: 9.0.2(typescript@5.9.3)
-      cosmiconfig-typescript-loader: 6.3.0(@types/node@24.13.3)(cosmiconfig@9.0.2(typescript@5.9.3))(typescript@5.9.3)
+      cosmiconfig: 9.0.2(typescript@7.0.2)
+      cosmiconfig-typescript-loader: 6.3.0(@types/node@24.13.3)(cosmiconfig@9.0.2(typescript@7.0.2))(typescript@7.0.2)
       es-toolkit: 1.49.0
       is-plain-obj: 4.1.0
       picocolors: 1.1.1
@@ -8425,9 +8550,9 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@just-func/types@0.6.1(typescript@5.9.3)':
+  '@just-func/types@0.6.1(typescript@7.0.2)':
     dependencies:
-      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -9528,14 +9653,74 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@unional/async-context@10.0.1(typescript@5.9.3)':
+  '@typescript/typescript-aix-ppc64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-darwin-arm64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-darwin-x64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-freebsd-arm64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-freebsd-x64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-arm64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-arm@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-loong64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-mips64el@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-ppc64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-riscv64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-s390x@7.0.2':
+    optional: true
+
+  '@typescript/typescript-linux-x64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-netbsd-arm64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-netbsd-x64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-openbsd-arm64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-openbsd-x64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-sunos-x64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-win32-arm64@7.0.2':
+    optional: true
+
+  '@typescript/typescript-win32-x64@7.0.2':
+    optional: true
+
+  '@unional/async-context@10.0.1(typescript@7.0.2)':
     dependencies:
       iso-error: 7.0.0
-      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
-  '@unional/fixture@6.0.2(typescript@5.9.3)':
+  '@unional/fixture@6.0.2(typescript@7.0.2)':
     dependencies:
       '@types/diff-match-patch': 1.0.36
       chalk: 5.6.2
@@ -9550,17 +9735,17 @@ snapshots:
       minimatch: 8.0.7
       pad-left: 2.1.0
       rimraf: 3.0.2
-      standard-log: 13.3.1(typescript@5.9.3)
-      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+      standard-log: 13.3.1(typescript@7.0.2)
+      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@7.0.2))
       tersify: 4.0.8
-      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
       unpartial: 1.0.8
     transitivePeerDependencies:
       - typescript
 
-  '@unional/gizmo@3.0.1(typescript@5.9.3)':
+  '@unional/gizmo@3.0.1(typescript@7.0.2)':
     dependencies:
-      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -9876,6 +10061,17 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
+  assertron@11.7.1(typescript@7.0.2):
+    dependencies:
+      is-promise: 4.0.0
+      iso-error: 7.0.0
+      path-equal: 1.2.8
+      satisfier: 5.4.6
+      tersify: 4.0.8
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
+    transitivePeerDependencies:
+      - typescript
+
   assign-symbols@1.0.0: {}
 
   ast-types@0.13.3: {}
@@ -9890,10 +10086,10 @@ snapshots:
       estree-walker: 3.0.3
       js-tokens: 10.0.0
 
-  async-fp@10.0.1(typescript@5.9.3):
+  async-fp@10.0.1(typescript@7.0.2):
     dependencies:
-      '@unional/async-context': 10.0.1(typescript@5.9.3)
-      '@unional/gizmo': 3.0.1(typescript@5.9.3)
+      '@unional/async-context': 10.0.1(typescript@7.0.2)
+      '@unional/gizmo': 3.0.1(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -10188,19 +10384,19 @@ snapshots:
     optionalDependencies:
       '@colors/colors': 1.5.0
 
-  clibuilder@11.3.1(typescript@5.9.3):
+  clibuilder@11.3.1(typescript@7.0.2):
     dependencies:
       find-installed-packages: 4.0.1
       js-yaml: 4.1.1
       jsonc-parser: 3.3.1
       pad-right: 0.2.2
       search-packages: 2.2.3
-      standard-log: 13.3.1(typescript@5.9.3)
-      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@5.9.3))
+      standard-log: 13.3.1(typescript@7.0.2)
+      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@7.0.2))
       tersify: 4.0.8
       tmp: 0.2.7
       tslib: 2.8.1
-      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
       wordwrap: 1.0.0
       zod: 3.25.76
     transitivePeerDependencies:
@@ -10320,12 +10516,12 @@ snapshots:
 
   core-util-is@1.0.3: {}
 
-  cosmiconfig-typescript-loader@6.3.0(@types/node@24.13.3)(cosmiconfig@9.0.2(typescript@5.9.3))(typescript@5.9.3):
+  cosmiconfig-typescript-loader@6.3.0(@types/node@24.13.3)(cosmiconfig@9.0.2(typescript@7.0.2))(typescript@7.0.2):
     dependencies:
       '@types/node': 24.13.3
-      cosmiconfig: 9.0.2(typescript@5.9.3)
+      cosmiconfig: 9.0.2(typescript@7.0.2)
       jiti: 2.6.1
-      typescript: 5.9.3
+      typescript: 7.0.2
 
   cosmiconfig@7.1.0:
     dependencies:
@@ -10335,14 +10531,14 @@ snapshots:
       path-type: 4.0.0
       yaml: 1.10.3
 
-  cosmiconfig@9.0.2(typescript@5.9.3):
+  cosmiconfig@9.0.2(typescript@7.0.2):
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.1
       js-yaml: 4.1.1
       parse-json: 5.2.0
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 7.0.2
 
   cp-file@10.0.0:
     dependencies:
@@ -11184,6 +11380,13 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
+  google-cloud-api@8.0.1(typescript@7.0.2):
+    dependencies:
+      iso-error: 7.0.0
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
+    transitivePeerDependencies:
+      - typescript
+
   gopd@1.2.0: {}
 
   graceful-fs@4.2.11: {}
@@ -11509,6 +11712,13 @@ snapshots:
   iso-error-google-cloud-api@7.0.1(iso-error@7.0.0)(typescript@5.9.3):
     dependencies:
       google-cloud-api: 8.0.1(typescript@5.9.3)
+      iso-error: 7.0.0
+    transitivePeerDependencies:
+      - typescript
+
+  iso-error-google-cloud-api@7.0.1(iso-error@7.0.0)(typescript@7.0.2):
+    dependencies:
+      google-cloud-api: 8.0.1(typescript@7.0.2)
       iso-error: 7.0.0
     transitivePeerDependencies:
       - typescript
@@ -12617,7 +12827,7 @@ snapshots:
       glob: 13.0.6
       package-json-from-dist: 1.0.1
 
-  rolldown-plugin-dts@0.28.5(rolldown@1.2.7)(typescript@5.9.3):
+  rolldown-plugin-dts@0.28.5(rolldown@1.2.7)(typescript@7.0.2):
     dependencies:
       dts-resolver: 3.0.0
       get-tsconfig: 5.0.0-beta.6
@@ -12627,7 +12837,7 @@ snapshots:
       yuku-codegen: 0.9.3
       yuku-parser: 0.9.3
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - oxc-resolver
 
@@ -12933,19 +13143,19 @@ snapshots:
 
   stackframe@1.3.4: {}
 
-  standard-log-color@13.3.1(standard-log@13.3.1(typescript@5.9.3)):
+  standard-log-color@13.3.1(standard-log@13.3.1(typescript@7.0.2)):
     dependencies:
       color-map: 2.0.6
-      standard-log: 13.3.1(typescript@5.9.3)
+      standard-log: 13.3.1(typescript@7.0.2)
       supports-color: 8.1.1
       unpartial: 1.0.8
 
-  standard-log@13.3.1(typescript@5.9.3):
+  standard-log@13.3.1(typescript@7.0.2):
     dependencies:
-      '@just-func/types': 0.6.1(typescript@5.9.3)
+      '@just-func/types': 0.6.1(typescript@7.0.2)
       iso-error: 7.0.0
       ms: 2.1.3
-      type-plus: 8.0.0-beta.12(typescript@5.9.3)
+      type-plus: 8.0.0-beta.12(typescript@7.0.2)
       unpartial: 1.0.8
     transitivePeerDependencies:
       - typescript
@@ -13161,7 +13371,7 @@ snapshots:
 
   ts-toolbelt@9.6.0: {}
 
-  tsdown@0.23.0(typescript@5.9.3):
+  tsdown@0.23.0(typescript@7.0.2):
     dependencies:
       cac: 7.0.0
       defu: 6.1.7
@@ -13171,14 +13381,14 @@ snapshots:
       obug: 2.1.4
       picomatch: 4.0.7
       rolldown: 1.2.7
-      rolldown-plugin-dts: 0.28.5(rolldown@1.2.7)(typescript@5.9.3)
+      rolldown-plugin-dts: 0.28.5(rolldown@1.2.7)(typescript@7.0.2)
       tinyexec: 1.3.1
       tinyglobby: 0.2.17
       tree-kill: 1.2.2
       unconfig-core: 7.5.0
       verkit: 0.4.0
     optionalDependencies:
-      typescript: 5.9.3
+      typescript: 7.0.2
     transitivePeerDependencies:
       - '@typescript/native-preview'
       - '@volar/typescript'
@@ -13217,6 +13427,12 @@ snapshots:
       typescript: 5.9.3
       unpartial: 1.0.7
 
+  type-plus@8.0.0-beta.12(typescript@7.0.2):
+    dependencies:
+      tersify: 4.0.6
+      typescript: 7.0.2
+      unpartial: 1.0.7
+
   typedarray@0.0.6: {}
 
   types-ramda@0.29.10:
@@ -13226,6 +13442,29 @@ snapshots:
   typescript@4.9.5: {}
 
   typescript@5.9.3: {}
+
+  typescript@7.0.2:
+    optionalDependencies:
+      '@typescript/typescript-aix-ppc64': 7.0.2
+      '@typescript/typescript-darwin-arm64': 7.0.2
+      '@typescript/typescript-darwin-x64': 7.0.2
+      '@typescript/typescript-freebsd-arm64': 7.0.2
+      '@typescript/typescript-freebsd-x64': 7.0.2
+      '@typescript/typescript-linux-arm': 7.0.2
+      '@typescript/typescript-linux-arm64': 7.0.2
+      '@typescript/typescript-linux-loong64': 7.0.2
+      '@typescript/typescript-linux-mips64el': 7.0.2
+      '@typescript/typescript-linux-ppc64': 7.0.2
+      '@typescript/typescript-linux-riscv64': 7.0.2
+      '@typescript/typescript-linux-s390x': 7.0.2
+      '@typescript/typescript-linux-x64': 7.0.2
+      '@typescript/typescript-netbsd-arm64': 7.0.2
+      '@typescript/typescript-netbsd-x64': 7.0.2
+      '@typescript/typescript-openbsd-arm64': 7.0.2
+      '@typescript/typescript-openbsd-x64': 7.0.2
+      '@typescript/typescript-sunos-x64': 7.0.2
+      '@typescript/typescript-win32-arm64': 7.0.2
+      '@typescript/typescript-win32-x64': 7.0.2
 
   ufo@1.6.4: {}
 
