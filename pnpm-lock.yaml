@@ -184,9 +184,6 @@ importers:
       '@types/md5':
         specifier: ^2.3.2
         version: 2.3.6
-      '@types/mkdirp':
-        specifier: ^2.0.0
-        version: 2.0.0
       '@types/node':
         specifier: ^24.0.0
         version: 24.13.3
@@ -2854,10 +2851,6 @@ packages:
     resolution: {integrity: sha512-zmPitbQ8+6zNutpwgcQuLcsEpn/Cj54Kbn7L5pX0Os5kdWplB7xPgEh/g+SWOB/qmows2gpuCaPyduq8ZZRnxA==}
     deprecated: This is a stub types definition. minimatch provides its own type definitions, so you do not need this installed.
 
-  '@types/mkdirp@2.0.0':
-    resolution: {integrity: sha512-c/iUqMymAlxLAyIK3u5SzrwkrkyOdv1XDc91T+b5FsY7Jr6ERhUD19jJHOhPW4GD6tmN6mFEorfSdks525pwdQ==}
-    deprecated: This is a stub types definition. mkdirp provides its own type definitions, so you do not need this installed.
-
   '@types/node-fetch@2.6.13':
     resolution: {integrity: sha512-QGpRVpzSaUs30JBSGPjOg4Uveu384erbHBoT1zeONvyCfwQxIkUshLAOqN/k9EjGviPRmWTTe6aH2qySWKTVSw==}
 
@@ -5346,11 +5339,6 @@ packages:
 
   mkdirp@1.0.4:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  mkdirp@2.1.6:
-    resolution: {integrity: sha512-+hEnITedc8LAtIP9u3HJDFIdcLV2vXP33sqLLIzkv1Db1zO/1OxbvYf0Y1OC/S/Qo5dxHXepofhmxL02PsKe+A==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -9746,10 +9734,6 @@ snapshots:
     dependencies:
       minimatch: 10.2.5
 
-  '@types/mkdirp@2.0.0':
-    dependencies:
-      mkdirp: 2.1.6
-
   '@types/node-fetch@2.6.13':
     dependencies:
       '@types/node': 24.13.3
@@ -12364,8 +12348,6 @@ snapshots:
       minimist: 1.2.8
 
   mkdirp@1.0.4: {}
-
-  mkdirp@2.1.6: {}
 
   mkdirp@3.0.1: {}
 
