@@ -56,7 +56,7 @@
 	},
 	"dependencies": {
 		"@mocktomata/service": "workspace:^",
-		"chalk": "^5.1.2",
+		"chalk": "^6.0.0",
 		"clibuilder": "^11.3.1",
 		"validate.js": "^0.13.1"
 	},
