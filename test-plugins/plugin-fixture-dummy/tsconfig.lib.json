@@ -3,7 +3,7 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"outDir": "lib",
-		"target": "es5",
+		"target": "es2015",
 		"tsBuildInfoFile": ".tsc/lib.buildInfo"
 	}
 }
