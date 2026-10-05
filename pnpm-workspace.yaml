@@ -53,3 +53,5 @@ minimumReleaseAgeExclude:
   - google-cloud-api@7.0.2
   # min-release-age: lift google-cloud-api@8.0.1 until 2026-09-29T10:00:00Z
   - 'google-cloud-api@8.0.1'
+  # Renovate security update: axios@1.20.0
+  - axios@1.20.0
