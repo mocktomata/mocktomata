@@ -7,3 +7,5 @@ ignores:
   - tsdown
   - typescript
   - jsdom
+  # Wraps the `test:*` scripts; depcheck stopped detecting it as of cross-env v10.
+  - cross-env
