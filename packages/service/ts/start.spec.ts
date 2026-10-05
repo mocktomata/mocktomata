@@ -4,14 +4,12 @@ import path from 'node:path'
 import { json, prettyPrintSpecRecord } from '@mocktomata/framework'
 import { createIO } from '@mocktomata/nodejs'
 import { a } from 'assertron'
-import f from 'node-fetch'
+import fetch from 'node-fetch'
 import { createStandardLogForTest } from 'standard-log/testing'
 import { dirSync } from 'tmp'
 import { describe, test, vi } from 'vitest'
 import { btoa } from './base64.js'
 import { start } from './index.js'
-
-const fetch = f.default
 
 it('throws EADDRINUSE if the specified port is being used (hapi)', async () => {
 	const runningServer = await start({ port: 3710 })
