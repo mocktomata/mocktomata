@@ -64,7 +64,7 @@
 		"error-stack-parser": "^2.1.4",
 		"iso-error": "^7.0.0",
 		"json-bigint": "^1.0.0",
-		"pathe": "^1.1.0",
+		"pathe": "^2.0.0",
 		"standard-log": "^13.3.1",
 		"standard-log-color": "^13.3.1",
 		"tersify": "^4.0.8",
