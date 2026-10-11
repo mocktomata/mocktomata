@@ -59,7 +59,7 @@
 		"json5": "^2.2.1",
 		"mkdirp": "^3.0.0",
 		"sanitize-filename": "^1.6.3",
-		"type-plus": "8.0.0-beta.12"
+		"type-plus": "8.0.0"
 	},
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
@@ -72,13 +72,13 @@
 		"@mocktomata/plugin-fixture-no-activate": "workspace:^",
 		"@unional/fixture": "^6.0.2",
 		"@vitest/coverage-v8": "^5.0.0",
-		"assertron": "^11.7.1",
+		"assertron": "^11.7.2",
 		"depcheck": "^1.4.3",
 		"dirname-filename-esm": "^1.1.1",
 		"npm-run-all2": "^9.0.0",
 		"rimraf": "^6.0.0",
 		"satisfier": "^5.4.6",
-		"standard-log": "^13.3.1",
+		"standard-log": "^13.3.2",
 		"tmp": "^0.2.1",
 		"tsdown": "^0.23.0",
 		"typescript": "~7.0.0",

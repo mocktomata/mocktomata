@@ -1,5 +1,5 @@
 import { a } from 'assertron'
-import { testType } from 'type-plus'
+import { testType } from 'type-plus/testing'
 import { Dummy } from '../test_artifacts/test_subjects.js'
 import { demetarize, metarize } from './metarize.js'
 

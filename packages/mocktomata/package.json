@@ -73,17 +73,17 @@
 		"@mocktomata/io-remote": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
 		"@mocktomata/service": "workspace:^",
-		"async-fp": "^10.0.1",
+		"async-fp": "^10.0.2",
 		"global-store": "^1.0.0-beta.21",
-		"standard-log": "^13.3.1",
-		"standard-log-color": "^13.3.1",
-		"type-plus": "8.0.0-beta.12"
+		"standard-log": "^13.3.2",
+		"standard-log-color": "^13.3.2",
+		"type-plus": "8.0.0"
 	},
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-deep-link": "workspace:^",
 		"@mocktomata/plugin-fixture-dummy": "workspace:^",
 		"@vitest/coverage-v8": "^5.0.0",
-		"assertron": "^11.7.1",
+		"assertron": "^11.7.2",
 		"cross-env": "^10.0.0",
 		"depcheck": "^1.4.3",
 		"jsdom": "^30.0.1",
