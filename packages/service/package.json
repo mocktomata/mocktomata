@@ -58,14 +58,14 @@
 		"@hapi/hapi": "^21.4.10",
 		"@mocktomata/framework": "workspace:^",
 		"@mocktomata/nodejs": "workspace:^",
-		"standard-log": "^13.3.1",
-		"standard-log-color": "^13.3.1",
-		"type-plus": "8.0.0-beta.12"
+		"standard-log": "^13.3.2",
+		"standard-log-color": "^13.3.2",
+		"type-plus": "8.0.0"
 	},
 	"devDependencies": {
 		"@types/node": "^24.0.0",
 		"@vitest/coverage-v8": "^5.0.0",
-		"assertron": "^11.7.1",
+		"assertron": "^11.7.2",
 		"depcheck": "^1.4.3",
 		"node-fetch": "^3.0.0",
 		"npm-run-all2": "^9.0.0",
