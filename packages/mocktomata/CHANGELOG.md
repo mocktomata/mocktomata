@@ -1,5 +1,19 @@
 # Change Log
 
+## 10.1.2
+
+### Patch Changes
+
+- 2429036: Update `type-plus` to 8.0.0, and `async-fp`, `standard-log`, `standard-log-color` and `clibuilder` to their latest versions.
+- Updated dependencies [bccc3d2]
+- Updated dependencies [19c5b2e]
+- Updated dependencies [364664c]
+- Updated dependencies [2429036]
+  - @mocktomata/service@10.1.2
+  - @mocktomata/nodejs@10.1.2
+  - @mocktomata/framework@10.1.2
+  - @mocktomata/io-remote@10.1.2
+
 ## 10.1.1
 
 ### Patch Changes

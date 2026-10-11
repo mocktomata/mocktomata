@@ -1,5 +1,17 @@
 # Change Log
 
+## 10.1.2
+
+### Patch Changes
+
+- bccc3d2: Upgrade `@hapi/hapi` to v21, which ships its own types (drops the `@types/hapi__hapi` stub).
+- 2429036: Update `type-plus` to 8.0.0, and `async-fp`, `standard-log`, `standard-log-color` and `clibuilder` to their latest versions.
+- Updated dependencies [19c5b2e]
+- Updated dependencies [364664c]
+- Updated dependencies [2429036]
+  - @mocktomata/nodejs@10.1.2
+  - @mocktomata/framework@10.1.2
+
 ## 10.1.1
 
 ### Patch Changes
