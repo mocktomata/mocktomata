@@ -1,5 +1,15 @@
 # Change Log
 
+## 10.1.2
+
+### Patch Changes
+
+- 19c5b2e: Upgrade `mkdirp` to v3.
+- 2429036: Update `type-plus` to 8.0.0, and `async-fp`, `standard-log`, `standard-log-color` and `clibuilder` to their latest versions.
+- Updated dependencies [364664c]
+- Updated dependencies [2429036]
+  - @mocktomata/framework@10.1.2
+
 ## 10.1.1
 
 ### Patch Changes

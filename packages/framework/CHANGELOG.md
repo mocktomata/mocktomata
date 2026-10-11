@@ -1,5 +1,12 @@
 # Change Log
 
+## 10.1.2
+
+### Patch Changes
+
+- 364664c: Upgrade `pathe` to v2.
+- 2429036: Update `type-plus` to 8.0.0, and `async-fp`, `standard-log`, `standard-log-color` and `clibuilder` to their latest versions.
+
 ## 10.1.1
 
 ### Patch Changes

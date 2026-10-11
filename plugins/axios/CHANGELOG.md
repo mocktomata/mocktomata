@@ -1,5 +1,9 @@
 # @mocktomata/plugin-axios
 
+## 3.0.3
+
+No changes in this release.
+
 ## 3.0.2
 
 ## 3.0.1
