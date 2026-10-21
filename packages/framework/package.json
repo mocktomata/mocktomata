@@ -68,7 +68,7 @@
 		"standard-log": "^13.3.2",
 		"standard-log-color": "^13.3.2",
 		"tersify": "^4.0.8",
-		"type-plus": "8.0.0"
+		"type-plus": "8.0.1"
 	},
 	"devDependencies": {
 		"@types/json-bigint": "^1.0.1",
