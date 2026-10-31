@@ -1,5 +1,11 @@
 # @mocktomata/plugin-axios
 
+## 3.0.4
+
+### Patch Changes
+
+- d5e5db6: Include `CHANGELOG.md` in the published package.
+
 ## 3.0.3
 
 No changes in this release.

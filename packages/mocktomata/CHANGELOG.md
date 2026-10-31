@@ -1,5 +1,16 @@
 # Change Log
 
+## 10.1.3
+
+### Patch Changes
+
+- d5e5db6: Include `CHANGELOG.md` in the published package.
+- Updated dependencies [d5e5db6]
+  - @mocktomata/framework@10.1.3
+  - @mocktomata/io-remote@10.1.3
+  - @mocktomata/nodejs@10.1.3
+  - @mocktomata/service@10.1.3
+
 ## 10.1.2
 
 ### Patch Changes
