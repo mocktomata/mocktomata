@@ -1,5 +1,13 @@
 # @mocktomata/cli
 
+## 10.1.3
+
+### Patch Changes
+
+- d5e5db6: Include `CHANGELOG.md` in the published package.
+- Updated dependencies [d5e5db6]
+  - @mocktomata/service@10.1.3
+
 ## 10.1.2
 
 ### Patch Changes
