@@ -34,7 +34,8 @@
 		"!**/test-util",
 		"!**/test_util",
 		"!**/test-artifacts",
-		"!**/test_artifacts"
+		"!**/test_artifacts",
+		"CHANGELOG.md"
 	],
 	"scripts": {
 		"build": "tsdown",
