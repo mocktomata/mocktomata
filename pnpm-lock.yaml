@@ -217,6 +217,9 @@ importers:
       '@mocktomata/service':
         specifier: workspace:^
         version: link:../service
+      args-minus:
+        specifier: ^0.2.2
+        version: 0.2.2
       chalk:
         specifier: ^5.1.2
         version: 5.6.2
