@@ -7,6 +7,9 @@ import googlePlugin from 'iso-error-google-cloud-api'
 import { createHttpError, HttpError } from 'iso-error-web'
 import { mockto } from 'mocktomata'
 
+// axios-mock-adapter resolves axios's CJS types, which TypeScript treats as unrelated to the ESM ones.
+type AdapterInstance = ConstructorParameters<typeof MockAdapter.default>[0]
+
 afterAll(() => mockto.cleanup())
 
 mockto('1 + 1 = 2', (specName, spec) => {
@@ -32,7 +35,7 @@ export class Calculator {
 describe('with axios-mock-adaptor', () => {
 	mockto('throws with cause', (specName, spec) => {
 		it(specName, async () => {
-			const mock = new MockAdapter.default(axios)
+			const mock = new MockAdapter.default(axios as AdapterInstance)
 			mock.onGet().reply(424, {
 				code: 5,
 				details: [
