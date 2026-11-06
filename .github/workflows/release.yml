@@ -8,6 +8,13 @@ on:
 jobs:
   code:
     uses: mocktomata/.github/.github/workflows/pnpm-verify-cross-platform.yml@main
+  # One check per platform for the README badges, read from the `code` jobs above.
+  platforms:
+    uses: ./.github/workflows/platforms.yml
+    needs: code
+    if: always()
+    permissions:
+      actions: read
   release:
     uses: mocktomata/.github/.github/workflows/pnpm-release-changeset.yml@main
     needs: code
