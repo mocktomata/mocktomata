@@ -6,3 +6,5 @@ ignores:
   - rimraf
   - tsdown
   - typescript
+  # Type-only: needed so the declaration of `serveCommand` can name clibuilder's `t` option types.
+  - args-minus
