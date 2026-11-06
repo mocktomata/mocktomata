@@ -3,6 +3,7 @@
 import { tersify } from 'tersify'
 import { notDefined } from '../constants.js'
 import type { SpecRecord } from '../spec_record/types.js'
+import { prettifyKey } from './property_key.js'
 
 export namespace prettifyAction {
 	export type Options = OptionsForGetInvoke | OptionsForReturnThrow
@@ -27,11 +28,11 @@ export function prettifyAction(state: prettifyAction.State, actionId: SpecRecord
 		case 'get':
 			return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} access <ref:${
 				state.refId
-			}>.${action.key}`
+			}>${prettifyKey(action.key)}`
 		case 'set':
 			return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} set <ref:${
 				state.refId
-			}>.${action.key} = ${tersifyValue(action.value)}`
+			}>${prettifyKey(action.key)} = ${tersifyValue(action.value)}`
 		case 'invoke': {
 			const argsStr = action.payload.length === 0 ? '' : `, ${action.payload.map(tersifyValue).join(', ')}`
 			return `${state.ref.plugin} <act:${actionId}> ${prettifyPerformer(action.performer)} invoke <ref:${

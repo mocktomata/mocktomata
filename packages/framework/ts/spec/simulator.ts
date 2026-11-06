@@ -177,7 +177,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 				refId: state.refId,
 				performer,
 				tick: timeTracker.elapse(),
-				key
+				key: record.keys.peek(key)
 			}
 
 			if (!isMatchingGetAction(action, expected)) {
@@ -191,6 +191,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 				return undefined
 			}
 
+			record.keys.claim(key)
 			const actionId = record.addAction(action)
 			logAction(context, state, actionId, action)
 			processNextAction(context)
@@ -203,7 +204,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 			}
 
 			const resultActionId = record.addAction(resultAction)
-			const resultContext = getPropertyContext(context, actionId, key)
+			const resultContext = getPropertyContext(context, actionId, action.key)
 
 			const result = resolveValue(resultContext, resultAction.payload)
 
@@ -225,7 +226,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 				refId: state.refId,
 				performer,
 				tick: timeTracker.elapse(),
-				key,
+				key: record.keys.peek(key),
 				value: notDefined
 			}
 
@@ -239,7 +240,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 			const ref = record.findRef(value)
 			if (ref) {
 				if (ref.testDouble === notDefined) {
-					buildTestDouble(getPropertyContext(context, actionId, key), ref)
+					buildTestDouble(getPropertyContext(context, actionId, action.key), ref)
 				}
 				action.value = record.getRefId(ref)
 			} else {
@@ -249,6 +250,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 				timeTracker.stop()
 				throw createActionMismatch(context, action, expected)
 			}
+			record.keys.claim(key)
 			logAction(context, context.state, actionId, action)
 			processNextAction(context)
 			const resultAction = record.getExpectedResultAction(actionId)
@@ -258,7 +260,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 				return true
 			}
 			const resultActionId = record.addAction(resultAction)
-			const resultContext = getPropertyContext(context, actionId, key)
+			const resultContext = getPropertyContext(context, actionId, action.key)
 			const result = resolveValue(resultContext, resultAction.payload)
 
 			logAction(context, resultContext.state, resultActionId, resultAction)
@@ -459,14 +461,12 @@ function processNextAction(context: Simulator.Context) {
 	if (!nextAction) return
 	switch (nextAction.type) {
 		case 'get':
-			if (nextAction.performer === 'mockto') {
-				processGet(context, nextAction)
+			if (nextAction.performer === 'mockto' && processGet(context, nextAction)) {
 				processNextAction(context)
 			}
 			break
 		case 'set':
-			if (nextAction.performer === 'mockto') {
-				processSet(context, nextAction)
+			if (nextAction.performer === 'mockto' && processSet(context, nextAction)) {
 				processNextAction(context)
 			}
 			break
@@ -526,17 +526,27 @@ function processInstantiate(
 	return new target(...args)
 }
 
+/**
+ * Returns `false` when the key cannot be recreated:
+ * a unique symbol that the simulation has not accessed yet.
+ */
 function processGet(context: Simulator.Context, nextAction: SpecRecord.GetAction) {
 	const { record } = context
+	const key = record.keys.resolve(nextAction.key)
+	if (key === undefined) return false
 	const ref = record.getRef(nextAction.refId)
-	ref?.testDouble[nextAction.key]
+	ref?.testDouble[key]
+	return true
 }
 
 function processSet(context: Simulator.Context, nextAction: SpecRecord.SetAction) {
 	const { record } = context
+	const key = record.keys.resolve(nextAction.key)
+	if (key === undefined) return false
 	const ref = record.getRef(nextAction.refId)
 
-	ref!.testDouble[nextAction.key] = resolveValue(context, nextAction.value)
+	ref!.testDouble[key] = resolveValue(context, nextAction.value)
+	return true
 }
 
 function resolveValue(context: Simulator.Context, value: any, handler?: () => any) {

@@ -47,3 +47,37 @@ test('simulate without plugin install throws', () => {
 	)
 	a.throws(() => simulator.createStub(() => {}), PluginsNotLoaded)
 })
+
+test('simulates a record saved before symbol keys were supported', async () => {
+	const { context } = createTestContext()
+	const sim = createSimulator(
+		context.extend(loadConfig).extend(loadPlugins).extend(initTimeTrackers),
+		'string keys record',
+		{
+			refs: [
+				{ plugin: '@mocktomata/object', profile: 'target', meta: { type: 'object', props: { a: 1, b: {} } } },
+				{
+					plugin: '@mocktomata/object',
+					profile: 'target',
+					source: { type: 'result', id: 2 },
+					meta: { type: 'object', props: { c: 'x' } }
+				},
+				{ plugin: '@mocktomata/string', profile: 'target', source: { type: 'result', id: 4 }, meta: 'x' }
+			],
+			actions: [
+				{ type: 'get', refId: '0', performer: 'user', tick: 0, key: 'a' },
+				{ type: 'return', actionId: 0, tick: 0, payload: 1 },
+				{ type: 'get', refId: '0', performer: 'user', tick: 0, key: 'b' },
+				{ type: 'return', actionId: 2, tick: 0, payload: '1' },
+				{ type: 'get', refId: '1', performer: 'user', tick: 0, key: 'c' },
+				{ type: 'return', actionId: 4, tick: 0, payload: '2' }
+			]
+		},
+		{ timeout: 10 }
+	)
+
+	const stub = await sim.createStub({ a: 2, b: { c: 'y' } })
+	expect(stub.a).toBe(1)
+	expect(stub.b.c).toBe('x')
+	sim.end()
+})

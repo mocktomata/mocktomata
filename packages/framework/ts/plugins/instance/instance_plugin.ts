@@ -24,7 +24,9 @@ export const instancePlugin: SpecPlugin<
 			get(target: any, key: string) {
 				if (!hasProperty(subject, key)) return undefined
 				const prop = subject[key]
-				if (typeof prop === 'function') {
+				// a symbol cannot be saved in `functionCalls`,
+				// so a symbol method is read as a property and invoked on its own reference.
+				if (typeof prop === 'function' && typeof key !== 'symbol') {
 					return (...args: any[]) => {
 						meta.functionCalls.push(key)
 						return invoke({ site: key, thisArg: spy, args }, ({ args }) => prop.apply(target, args))

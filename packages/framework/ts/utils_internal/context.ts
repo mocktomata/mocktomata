@@ -4,7 +4,7 @@ import type { SpecRecord } from '../spec_record/types.js'
 export function getPropertyContext<C extends { state: Recorder.State }>(
 	context: C,
 	sourceId: SpecRecord.ActionId,
-	key: SpecRecord.SupportedKeyTypes
+	key: SpecRecord.ActionKey
 ): C {
 	return {
 		...context,
