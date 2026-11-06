@@ -1,6 +1,7 @@
 import type { AsyncContext } from 'async-fp'
 import { prettyPrintSpecRecord } from '../spec_record/index.js'
 import { assertMockable, assertSpecName } from './asserts.js'
+import { toMaskCriterion } from './masking.js'
 import { createSimulator } from './simulator.js'
 import type { createSpec } from './types.internal.js'
 import type { Spec } from './types.js'
@@ -33,9 +34,11 @@ export async function createSimulateSpec(
 				simulator.end()
 				return loaded
 			},
-			ignoreMismatch() {},
-			maskValue(value: string, replaceWith?: string) {
-				simulator.addMaskValue(value, replaceWith)
+			ignoreMismatch(value: unknown, options?: Spec.IgnoreMismatchOptions) {
+				simulator.addIgnoreValue(value, options)
+			},
+			maskValue(value: string | RegExp, replaceWithOrOptions?: string | Spec.MaskValueOptions) {
+				simulator.addMaskValue(toMaskCriterion(value, replaceWithOrOptions))
 			}
 		}
 	)
