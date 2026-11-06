@@ -113,7 +113,7 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
 				refId: state.refId,
 				performer: performer || getDefaultPerformer(state.ref.profile),
 				tick: timeTracker.elapse(),
-				key
+				key: record.keys.claim(key)
 			}
 			const actionId = record.addAction(action)
 			logAction(context, context.state, actionId, action)
@@ -126,14 +126,14 @@ export function createPluginSpyContext(context: Recorder.Context): SpecPlugin.Sp
 				refId: state.refId,
 				performer: performer || getDefaultPerformer(state.ref.profile),
 				tick: timeTracker.elapse(),
-				key,
+				key: record.keys.claim(key),
 				value: notDefined
 			}
 
 			const actionId = record.addAction(action)
 
 			handleResult(context, actionId, action.type, () => {
-				const spiedValue = getSpy(getPropertyContext(context, actionId, key), value, {
+				const spiedValue = getSpy(getPropertyContext(context, actionId, action.key), value, {
 					profile: getSubjectProfile(state.ref.profile)
 				})
 				action.value = record.findRefId(spiedValue) || value

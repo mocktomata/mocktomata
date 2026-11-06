@@ -138,7 +138,7 @@ export namespace SpecPlugin {
 				thisArg: T
 				args: A
 				performer?: SpecRecord.Performer
-				site?: SpecRecord.SupportedKeyTypes
+				site?: SpecRecord.SiteKey
 			}
 			export type Handler<V, T, A> = (context: Context<T, A>) => V
 			export type Context<T, A> = {
@@ -198,7 +198,7 @@ export namespace SpecPlugin {
 				thisArg: any
 				args: any[]
 				performer?: SpecRecord.Performer
-				site?: SpecRecord.SupportedKeyTypes
+				site?: SpecRecord.SiteKey
 			}
 		}
 
@@ -218,7 +218,7 @@ export namespace SpecPlugin {
 
 		export type PluginInvokeAction = {
 			type: 'invoke'
-			site?: SpecRecord.SupportedKeyTypes
+			site?: SpecRecord.SiteKey
 			thisArg: any
 			args: any[]
 		}
@@ -226,7 +226,7 @@ export namespace SpecPlugin {
 
 	export type InvokeOptions = {
 		performer?: SpecRecord.Performer
-		site?: SpecRecord.SupportedKeyTypes
+		site?: SpecRecord.SiteKey
 		meta?: SpecRecord.Meta
 	}
 

@@ -36,5 +36,11 @@ export function hasProperty(subject: any, property: SpecRecord.SupportedKeyTypes
 		const proto = Object.getPrototypeOf(subject)
 		return proto ? hasProperty(proto, property) : false
 	}
+	if (typeof property === 'symbol') {
+		if (Object.getOwnPropertySymbols(subject).indexOf(property) >= 0) return true
+
+		const proto = Object.getPrototypeOf(subject)
+		return proto ? hasProperty(proto, property) : false
+	}
 	return false
 }

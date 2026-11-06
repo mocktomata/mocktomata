@@ -4,6 +4,7 @@ import { findPlugin } from '../spec_plugin/index.js'
 import type { SpecPlugin } from '../spec_plugin/types.js'
 import type { SpecRecord } from '../spec_record/types.js'
 import { maskSpecRecord } from './masking.js'
+import { createPropertyKeyRegistry } from './property_key.js'
 import type { MaskCriterion, SpecRecordLive } from './types.internal.js'
 
 export function createSpecRecordBuilder(specName: string) {
@@ -14,6 +15,7 @@ export function createSpecRecordBuilder(specName: string) {
 		specName,
 		refs,
 		actions,
+		keys: createPropertyKeyRegistry(),
 		getSpecRecord: (maskValues: MaskCriterion[]) => getSpecRecord(refs, actions, maskValues),
 		// getRef: (id: SpecRecord.ReferenceId | SpecRecord.ActionId) => getRef({ refs, actions }, id),
 		// getRefId: (ref: SpecRecordLive.Reference) => getRefId(refs, ref),
@@ -52,6 +54,7 @@ export function createSpecRecordValidator(specName: string, loaded: SpecRecord) 
 		specName,
 		refs,
 		actions,
+		keys: createPropertyKeyRegistry(),
 		setPlugins(instances: SpecPlugin.Instance[]) {
 			plugins = instances
 		},

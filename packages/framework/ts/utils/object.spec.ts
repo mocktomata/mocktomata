@@ -45,3 +45,16 @@ describe(`${hasProperty.name}()`, () => {
 		})
 	})
 })
+
+describe(`${hasProperty.name}() with symbol`, () => {
+	it('returns true for own symbol property', () => {
+		const key = Symbol('k')
+		expect(hasProperty({ [key]: 1 }, key)).toBe(true)
+	})
+	it('returns true for symbol property in prototype', () => {
+		expect(hasProperty([], Symbol.iterator)).toBe(true)
+	})
+	it('returns false for missing symbol property', () => {
+		expect(hasProperty({}, Symbol.iterator)).toBe(false)
+	})
+})

@@ -1,5 +1,6 @@
 import type { SpecRecord } from '../spec_record/types.js'
 import { maskString } from './masking.js'
+import { isMatchingKey } from './property_key.js'
 import type { SpecRecordValidator } from './record.js'
 import type { MaskCriterion } from './types.internal.js'
 import type { Spec } from './types.js'
@@ -40,7 +41,7 @@ export function isMatchingGetAction(
 		expected.type === 'get' &&
 		actual.refId === expected.refId &&
 		actual.performer === expected.performer &&
-		actual.key === expected.key
+		isMatchingKey(actual.key, expected.key)
 	)
 }
 
@@ -53,7 +54,11 @@ export function isMatchingSetAction(
 	// wrong type
 	if (expected.type !== 'set') return false
 
-	if (actual.refId !== expected.refId || actual.performer !== expected.performer || actual.key !== expected.key)
+	if (
+		actual.refId !== expected.refId ||
+		actual.performer !== expected.performer ||
+		!isMatchingKey(actual.key, expected.key)
+	)
 		return false
 
 	// compare primitive values

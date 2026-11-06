@@ -42,7 +42,7 @@ export namespace SpecRecord {
 	export type PropertySource = {
 		type: 'property'
 		id: ActionId
-		key: SupportedKeyTypes
+		key: ActionKey
 	}
 
 	export type ThisSource = {
@@ -72,7 +72,7 @@ export namespace SpecRecord {
 	export type ThisSite = { type: 'this' }
 	export type PropertySite = {
 		type: 'property'
-		key: SupportedKeyTypes
+		key: ActionKey
 	}
 	export type ResultSite = { type: 'result' }
 
@@ -81,7 +81,7 @@ export namespace SpecRecord {
 		refId: ReferenceId
 		performer: Performer
 		tick: number
-		key: SupportedKeyTypes
+		key: ActionKey
 	}
 
 	export type SetAction = {
@@ -89,7 +89,7 @@ export namespace SpecRecord {
 		refId: ReferenceId
 		performer: Performer
 		tick: number
-		key: SupportedKeyTypes
+		key: ActionKey
 		/**
 		 * Value of the set operation.
 		 * This is the same as the set operation result,
@@ -115,7 +115,7 @@ export namespace SpecRecord {
 		tick: number
 		thisArg: any
 		payload: any[]
-		site?: SupportedKeyTypes
+		site?: SiteKey
 		// site?: Site,
 		meta?: Meta
 	}
@@ -139,8 +139,34 @@ export namespace SpecRecord {
 	export type Performer = 'user' | 'mockto' | 'plugin'
 
 	/**
-	 * Key types that works with `komondor`.
-	 * Note that `symbol` is not supported.
+	 * Property key types a plugin can pass to `getProperty()` and `setProperty()`.
 	 */
-	export type SupportedKeyTypes = string | number
+	export type SupportedKeyTypes = string | number | symbol
+
+	/**
+	 * Key of an invoke `site`.
+	 * Symbol keys are not supported here.
+	 */
+	export type SiteKey = string | number
+
+	/**
+	 * A property key as saved in the record.
+	 *
+	 * String and number keys are saved as is.
+	 * A symbol key is saved as a `SymbolKey`.
+	 */
+	export type ActionKey = string | number | SymbolKey
+
+	/**
+	 * A symbol property key as saved in the record.
+	 *
+	 * - `wellKnown`: a well-known symbol, such as `Symbol.iterator` (saved as `'iterator'`).
+	 * - `key`: a registered symbol, `Symbol.for(key)`.
+	 * - `unique`: a unique symbol, `Symbol(description)`.
+	 *   It is numbered by the order it is first accessed in the spec.
+	 */
+	export type SymbolKey =
+		| { type: 'symbol'; wellKnown: string }
+		| { type: 'symbol'; key: string }
+		| { type: 'symbol'; unique: number; description?: string }
 }
