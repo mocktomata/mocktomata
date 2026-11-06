@@ -64,7 +64,7 @@
 		"type-plus": "8.0.0"
 	},
 	"devDependencies": {
-		"@types/node": "^24.0.0",
+		"@types/node": "^26.0.0",
 		"@vitest/coverage-v8": "^5.0.0",
 		"assertron": "^11.7.2",
 		"depcheck": "^1.4.3",
