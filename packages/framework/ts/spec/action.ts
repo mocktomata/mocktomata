@@ -5,14 +5,14 @@ import type { MaskCriterion } from './types.internal.js'
 import type { Spec } from './types.js'
 
 /**
- * What the simulation needs to compare an argument or an assigned value with the record.
- */
-/**
  * The built-in string plugin, registered by `es2015` and `es2020`.
  * Other plugins may record a string in a different form, so only its references are compared.
  */
 const stringPluginName = '@mocktomata/string'
 
+/**
+ * What the simulation needs to compare an argument or an assigned value with the record.
+ */
 export type MatchingContext = {
 	argumentMatching: Spec.ArgumentMatching
 	maskCriteria: MaskCriterion[]
