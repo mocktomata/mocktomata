@@ -285,8 +285,8 @@ importers:
         specifier: ^4.0.8
         version: 4.0.8
       type-plus:
-        specifier: 8.0.0
-        version: 8.0.0(typescript@7.0.2)
+        specifier: 8.0.1
+        version: 8.0.1(typescript@7.0.2)
     devDependencies:
       '@types/json-bigint':
         specifier: ^1.0.1
@@ -419,8 +419,8 @@ importers:
         specifier: ^13.3.2
         version: 13.3.2(standard-log@13.3.2)
       type-plus:
-        specifier: 8.0.0
-        version: 8.0.0(typescript@7.0.2)
+        specifier: 8.0.1
+        version: 8.0.1(typescript@7.0.2)
     devDependencies:
       '@mocktomata/plugin-fixture-deep-link':
         specifier: workspace:^
@@ -477,8 +477,8 @@ importers:
         specifier: ^1.6.3
         version: 1.6.4
       type-plus:
-        specifier: 8.0.0
-        version: 8.0.0(typescript@7.0.2)
+        specifier: 8.0.1
+        version: 8.0.1(typescript@7.0.2)
     devDependencies:
       '@mocktomata/plugin-fixture-activate-not-fn':
         specifier: workspace:^
@@ -628,8 +628,8 @@ importers:
         specifier: ^13.3.2
         version: 13.3.2(standard-log@13.3.2)
       type-plus:
-        specifier: 8.0.0
-        version: 8.0.0(typescript@7.0.2)
+        specifier: 8.0.1
+        version: 8.0.1(typescript@7.0.2)
     devDependencies:
       '@types/node':
         specifier: ^24.0.0
@@ -6563,6 +6563,15 @@ packages:
     peerDependencies:
       typescript: '>= 5.4.0'
 
+  type-plus@8.0.1:
+    resolution: {integrity: sha512-x1OtyTGuqmmnNu5+iL93KVsHLl6PMeRWUDN8yz+X4f86TuEcXSzX7EAdBK+3CFSp2jyVnQuzvof1Z/3Noc3Dig==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    peerDependencies:
+      typescript: '>= 5.4.0'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   typedarray@0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
 
@@ -10221,7 +10230,7 @@ snapshots:
       path-equal: 1.2.8
       satisfier: 5.4.6
       tersify: 4.0.8
-      type-plus: 8.0.0(typescript@5.9.3)
+      type-plus: 8.0.1(typescript@5.9.3)
     transitivePeerDependencies:
       - typescript
 
@@ -10232,7 +10241,7 @@ snapshots:
       path-equal: 1.2.8
       satisfier: 5.4.6
       tersify: 4.0.8
-      type-plus: 8.0.0(typescript@7.0.2)
+      type-plus: 8.0.1(typescript@7.0.2)
     transitivePeerDependencies:
       - typescript
 
@@ -13582,12 +13591,6 @@ snapshots:
       media-typer: 0.3.0
       mime-types: 2.1.35
 
-  type-plus@8.0.0(typescript@5.9.3):
-    dependencies:
-      unpartial: 1.0.8
-    optionalDependencies:
-      typescript: 5.9.3
-
   type-plus@8.0.0(typescript@7.0.2):
     dependencies:
       unpartial: 1.0.8
@@ -13599,6 +13602,18 @@ snapshots:
       tersify: 4.0.8
       typescript: 7.0.2
       unpartial: 1.0.8
+
+  type-plus@8.0.1(typescript@5.9.3):
+    dependencies:
+      unpartial: 1.0.8
+    optionalDependencies:
+      typescript: 5.9.3
+
+  type-plus@8.0.1(typescript@7.0.2):
+    dependencies:
+      unpartial: 1.0.8
+    optionalDependencies:
+      typescript: 7.0.2
 
   typedarray@0.0.6: {}
 

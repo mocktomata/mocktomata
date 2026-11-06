@@ -61,7 +61,7 @@
 		"@mocktomata/nodejs": "workspace:^",
 		"standard-log": "^13.3.2",
 		"standard-log-color": "^13.3.2",
-		"type-plus": "8.0.0"
+		"type-plus": "8.0.1"
 	},
 	"devDependencies": {
 		"@types/node": "^24.0.0",
