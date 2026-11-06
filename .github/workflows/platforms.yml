@@ -1,0 +1,50 @@
+name: platforms
+# Reports one check per platform (linux, macos, windows) from the `verify` jobs
+# that already ran, so the README can show a badge per platform without running
+# the suite again. A platform passes only when every Node version on it passed.
+#
+# Called from `release.yml` after `code`, it reads its own run.
+# Dispatched by hand, it reads the run given in `run-id`.
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      run-id:
+        description: 'ID of the run whose verify jobs to read'
+        type: string
+        required: true
+jobs:
+  platform:
+    name: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            os: ubuntu-latest
+          - platform: macos
+            os: macos-latest
+          - platform: windows
+            os: windows-latest
+    steps:
+      - name: Check verify jobs on ${{ matrix.os }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.run-id || github.run_id }}
+          OS: ${{ matrix.os }}
+        run: |
+          jobs=$(gh api --paginate \
+            "repos/$GITHUB_REPOSITORY/actions/runs/$RUN_ID/jobs?filter=latest&per_page=100" \
+            --jq '.jobs[] | select(.name | test("verify \\(" + env.OS + ", ")) | "\(.conclusion) \(.name)"')
+          if [[ -z "$jobs" ]]; then
+            echo "::error::No verify jobs for $OS in run $RUN_ID"
+            exit 1
+          fi
+          echo "$jobs"
+          if grep -qv '^success ' <<<"$jobs"; then
+            echo "::error::A verify job on $OS did not succeed"
+            exit 1
+          fi

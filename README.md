@@ -4,6 +4,9 @@
 [![NPM downloads][downloads-image]][downloads-url]
 
 [![GitHub NodeJS][github-nodejs]][github-action-url]
+[![Linux][github-linux]][github-platforms-url]
+[![macOS][github-macos]][github-platforms-url]
+[![Windows][github-windows]][github-platforms-url]
 [![Codecov][codecov-image]][codecov-url]
 
 [![Visual Studio Code][vscode-image]][vscode-url]
@@ -32,7 +35,11 @@ To understand more about us, please take a look at <https://mocktomata.github.io
 [downloads-image]: https://img.shields.io/npm/dm/mocktomata.svg?style=flat
 [downloads-url]: https://npmjs.org/package/mocktomata
 [github-action-url]: https://github.com/mocktomata/mocktomata/actions
+[github-linux]: https://img.shields.io/github/check-runs/mocktomata/mocktomata/main?nameFilter=platforms%20%2F%20linux&label=Linux
+[github-macos]: https://img.shields.io/github/check-runs/mocktomata/mocktomata/main?nameFilter=platforms%20%2F%20macos&label=macOS
 [github-nodejs]: https://github.com/mocktomata/mocktomata/workflows/release/badge.svg
+[github-platforms-url]: https://github.com/mocktomata/mocktomata/actions/workflows/release.yml?query=branch%3Amain
+[github-windows]: https://img.shields.io/github/check-runs/mocktomata/mocktomata/main?nameFilter=platforms%20%2F%20windows&label=Windows
 [mocktomata]: https://github.com/mocktomata/mocktomata/blob/main/packages/mocktomata
 [npm-image]: https://img.shields.io/npm/v/mocktomata.svg?style=flat
 [npm-url]: https://www.npmjs.com/package/mocktomata
