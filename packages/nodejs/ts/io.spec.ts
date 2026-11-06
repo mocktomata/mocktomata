@@ -73,6 +73,13 @@ describe(`${createIO.name}()`, () => {
 			})
 		})
 
+		it('loads argumentMatching from mocktomata.json', async () => {
+			const [io, reporter] = setupIOTest('mjson-argument-matching')
+			const config = await io.loadConfig()
+			t.deepStrictEqual(config, { argumentMatching: 'strings' })
+			expect(reporter.getLogMessages()).toEqual([])
+		})
+
 		it('loads config from environment', async () => {
 			const [io] = setupIOTest('no-config', {
 				[MOCKTOMATA_MODE]: 'live',

@@ -23,6 +23,20 @@ export namespace Spec {
 		 * @return the resulting `SpecRecord` for debugging purposes.
 		 */
 		done(): Promise<SpecRecord>
+		/**
+		 * Accept a value that changes between runs.
+		 *
+		 * Call it before creating the spec subject.
+		 * When the spec is saved, the value is recorded as inert:
+		 * during simulation, the value in its place is not compared,
+		 * and the recorded value is used.
+		 *
+		 * Works on numbers, booleans, bigints, and strings.
+		 * Strings are compared only when `argumentMatching` is `'strings'`,
+		 * or when they are assigned to a property.
+		 *
+		 * @param value the value to accept.
+		 */
 		ignoreMismatch(value: unknown): void
 		/**
 		 * Mask some sensitive value from logs and record.
@@ -45,7 +59,30 @@ export namespace Spec {
 		overrideMode?: OverrideMode
 		filePathFilter?: RegExp
 		specNameFilter?: RegExp
+		/**
+		 * Which arguments of function calls and `new` are compared with the record during simulation.
+		 * The `argumentMatching` option of a spec overrides it.
+		 *
+		 * Default to `'behavior'`.
+		 */
+		argumentMatching?: ArgumentMatching
 	}
+
+	/**
+	 * Which arguments of function calls and `new` are compared with the record during simulation.
+	 *
+	 * - `'behavior'`: numbers, booleans, and bigints are compared.
+	 * Strings are not, so values such as paths, timestamps, and ids can change between runs.
+	 * - `'strings'`: strings at the top level of the arguments are also compared.
+	 * Strings inside objects and arrays are not.
+	 *
+	 * The comparison masks the value with the `maskValue()` criteria of the current run first.
+	 * Values passed to `ignoreMismatch()` are not compared.
+	 *
+	 * This setting does not apply to property assignments.
+	 * A string assigned to a property is always compared.
+	 */
+	export type ArgumentMatching = 'behavior' | 'strings'
 
 	export type OverrideMode = Extract<Mode, 'live' | 'save' | 'simulate'>
 	export type Context = {
@@ -56,6 +93,7 @@ export namespace Spec {
 			overrideMode?: Mode
 			filePathFilter?: RegExp
 			specNameFilter?: RegExp
+			argumentMatching?: ArgumentMatching
 		} & Log.Config
 		specName: string
 		options: Options
@@ -125,6 +163,14 @@ export namespace Spec {
 		 * such as creating different demos.
 		 */
 		specPath?: string
+		/**
+		 * Which arguments of function calls and `new` are compared with the record during simulation.
+		 * Overrides the `argumentMatching` in the config.
+		 *
+		 * Default to the config value, or `'behavior'`.
+		 * @see Spec.ArgumentMatching
+		 */
+		argumentMatching?: ArgumentMatching
 	}
 
 	export type MaskValueFn = (value: string | RegExp, replaceWith?: string | undefined) => void

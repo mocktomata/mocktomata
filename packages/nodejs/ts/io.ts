@@ -37,14 +37,14 @@ ${configFilenames.map((c) => `- ${c}`).join('\n')}`)
 			const config = trimProps({
 				...configs.reduce(
 					(p, v) => {
-						const { ecmaVersion, mocktomataDir, plugins, logLevel, ...rest } = v[1] as any
+						const { ecmaVersion, mocktomataDir, plugins, logLevel, argumentMatching, ...rest } = v[1] as any
 						const extraKeys = Object.keys(rest)
 						if (extraKeys.length > 0) {
 							log.warn(`Config file '${v[0]}' contains unrecognized properties: ${extraKeys.join(', ')}`)
 						}
 
 						// biome-ignore lint/performance/noAccumulatingSpread: the accumulator is one flat config object and the list is the handful of config sources found on disk.
-						return { ...p, ecmaVersion, mocktomataDir, plugins, logLevel }
+						return { ...p, ecmaVersion, mocktomataDir, plugins, logLevel, argumentMatching }
 					},
 					{} as Record<string, unknown>
 				),

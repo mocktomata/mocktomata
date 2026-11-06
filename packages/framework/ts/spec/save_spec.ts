@@ -35,7 +35,8 @@ export async function createSaveSpec(
 			},
 			ignoreMismatch(value: any) {
 				const valueType = typeof value
-				if (valueType !== 'bigint' && valueType !== 'boolean' && valueType !== 'number') return
+				if (valueType !== 'bigint' && valueType !== 'boolean' && valueType !== 'number' && valueType !== 'string')
+					return
 				recorder.addInertValue(value)
 			},
 			maskValue(value: string, replaceWith?: string) {

@@ -15,6 +15,12 @@ export namespace Config {
 		 * Default to true.
 		 */
 		emitLog?: boolean
+		/**
+		 * Which arguments of function calls and `new` are compared with the record during simulation.
+		 * Default to `'behavior'`.
+		 * @see Spec.ArgumentMatching
+		 */
+		argumentMatching?: Spec.ArgumentMatching
 	} & Partial<SpecPlugin.Config>
 
 	export type IO = {
