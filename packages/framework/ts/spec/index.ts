@@ -1,3 +1,4 @@
+export type { ArgumentMismatchDetail } from './action.js'
 export * from './errors.js'
 export * from './spec_mode.js'
 export * from './spec_object.js'

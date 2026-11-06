@@ -8,10 +8,13 @@ import type { Logger } from '../standard_log.types.js'
 import { createTimeTracker, type TimeTracker } from '../time_trackter/index.js'
 import { getArgumentContext, getPropertyContext, getResultContext, getThisContext } from '../utils_internal/index.js'
 import {
+	type ArgumentMismatchDetail,
+	findArgumentMismatch,
 	isMatchingGetAction,
 	isMatchingInstantiateAction,
 	isMatchingInvokeAction,
-	isMatchingSetAction
+	isMatchingSetAction,
+	type MatchingContext
 } from './action.js'
 import { ActionMismatch, ExtraAction, ExtraReference, NoSupportedPlugin, PluginsNotLoaded } from './errors.js'
 import {
@@ -22,6 +25,7 @@ import {
 	logMissingResultAction,
 	logRecordingTimeout
 } from './logs.js'
+import { maskString } from './masking.js'
 import { createSpecRecordValidator, type SpecRecordValidator, type ValidateReference } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
 import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
@@ -34,6 +38,7 @@ export namespace Simulator {
 		timeTracker: TimeTracker
 		log: Logger
 		maskCriteria: MaskCriterion[]
+		argumentMatching: Spec.ArgumentMatching
 		record: SpecRecordValidator
 		state: Recorder.State
 		spyOptions: Array<Recorder.SpyOption>
@@ -70,7 +75,7 @@ export function createSimulator(
 
 	return {
 		createStub: <S>(subject: S) =>
-			getContext().then(({ plugins, maskCriteria, log, stackFrame }) => {
+			getContext().then(({ plugins, maskCriteria, log, stackFrame, config }) => {
 				assertPluginsLoaded(plugins, specName, loaded.refs)
 				record.setPlugins(plugins)
 
@@ -106,6 +111,7 @@ export function createSimulator(
 					record,
 					timeTracker,
 					maskCriteria,
+					argumentMatching: options.argumentMatching ?? config.argumentMatching ?? 'behavior',
 					stackFrame,
 					spyOptions: [],
 					pendingPluginActions: []
@@ -239,9 +245,9 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 			} else {
 				action.value = value
 			}
-			if (!isMatchingSetAction(record, action, expected)) {
+			if (!isMatchingSetAction(record, context, action, expected)) {
 				timeTracker.stop()
-				throw new ActionMismatch(record.specName, action, expected)
+				throw createActionMismatch(context, action, expected)
 			}
 			logAction(context, context.state, actionId, action)
 			processNextAction(context)
@@ -325,9 +331,9 @@ function invoke(context: Simulator.Context, { thisArg, args, performer, site }: 
 
 	buildSpiedArgs(context, action, actionId, args)
 
-	if (!isMatchingInvokeAction(record, action, expected)) {
+	if (!isMatchingInvokeAction(record, context, action, expected)) {
 		timeTracker.stop()
-		throw new ActionMismatch(record.specName, action, expected)
+		throw createActionMismatch(context, action, expected, findArgumentMismatch(record, context, action, expected))
 	}
 
 	logAction(context, context.state, actionId, action)
@@ -377,9 +383,9 @@ function instantiate(
 
 	const spiedArgs = buildSpiedArgs(context, action, actionId, args)
 
-	if (!isMatchingInstantiateAction(record, action, expected)) {
+	if (!isMatchingInstantiateAction(record, context, action, expected)) {
 		timeTracker.stop()
-		throw new ActionMismatch(record.specName, action, expected)
+		throw createActionMismatch(context, action, expected, findArgumentMismatch(record, context, action, expected))
 	}
 
 	logAction(context, context.state, actionId, action)
@@ -400,6 +406,22 @@ function instantiate(
 	logAction(context, resultContext.state, resultActionId, resultAction)
 	if (resultAction.type === 'return') return result
 	throw result
+}
+
+/**
+ * The received action can carry the raw values of this run,
+ * so they are masked before they go into the error message.
+ */
+function createActionMismatch(
+	context: Pick<Simulator.Context, 'record'> & MatchingContext,
+	action: SpecRecord.SetAction | SpecRecord.InvokeAction | SpecRecord.InstantiateAction,
+	expected: SpecRecord.Action,
+	argument?: ArgumentMismatchDetail
+) {
+	const mask = (value: unknown) => (typeof value === 'string' ? maskString(context.maskCriteria, value) : value)
+	const masked =
+		action.type === 'set' ? { ...action, value: mask(action.value) } : { ...action, payload: action.payload.map(mask) }
+	return new ActionMismatch(context.record.specName, masked, expected, { argument })
 }
 
 function buildSpiedArgs(

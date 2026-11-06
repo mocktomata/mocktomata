@@ -284,6 +284,28 @@ describe(`${loadConfig.name}()`, () => {
 			)
 		})
 	})
+
+	describe('argumentMatching', () => {
+		it('gets undefined when not configured', async () => {
+			const result = await testLoadConfig()
+
+			a.satisfies(result, { config: { argumentMatching: undefined } })
+		})
+
+		it.each(['behavior', 'strings'] as const)('gets %s', async (argumentMatching) => {
+			const result = await testLoadConfig({ config: { argumentMatching } })
+
+			a.satisfies(result, { config: { argumentMatching } })
+		})
+
+		it.each<[string, unknown]>([
+			['not string', 1],
+			['empty string', ''],
+			['not a level', 'deep']
+		])('throws when value is %s', async (_, argumentMatching) => {
+			await a.throws(testLoadConfig({ config: { argumentMatching: argumentMatching as any } }), ConfigPropertyInvalid)
+		})
+	})
 })
 
 describe('config()', () => {

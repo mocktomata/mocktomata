@@ -23,7 +23,7 @@ incubator.sequence(
 		})
 	}
 )
-incubator('non-primitive value are skipped (still work as normal)', (specName, spec) => {
+incubator('a string value works as normal', (specName, spec) => {
 	test(specName, async () => {
 		spec.ignoreMismatch('192.168.0.123')
 		const s = await spec((x: string) => x)
@@ -106,6 +106,21 @@ incubator.sequence('in instantiate param', (specName, { save, simulate }) => {
 		const stub = await simulate(Subject)
 		const actual2 = new stub(100)
 		expect(actual2.getValue()).toBe(1) // still get the saved value
+		await simulate.done()
+	})
+})
+incubator.sequence('on set with string', (specName, { save, simulate }) => {
+	test(specName, async () => {
+		const subject = { a: 'a' }
+		save.ignoreMismatch('x')
+		const spy = await save(subject)
+		spy.a = 'x'
+		expect(spy.a).toBe('x')
+		await save.done()
+
+		const stub = await simulate(subject)
+		stub.a = 'y'
+		expect(stub.a).toBe('x') // still get the saved value
 		await simulate.done()
 	})
 })

@@ -3,6 +3,7 @@ import { tersify } from 'tersify'
 import { MocktomataError } from '../errors.js'
 import type { SpecRecord } from '../spec_record/types.js'
 import { prettifyAction } from './action.format.js'
+import type { ArgumentMismatchDetail } from './action.js'
 import type { Recorder } from './types.internal.js'
 
 export class SpecIDCannotBeEmpty extends MocktomataError {
@@ -81,22 +82,51 @@ export class MissingAction extends MocktomataError {
 	}
 }
 
+export namespace ActionMismatch {
+	export type Options = ModuleError.Options & {
+		/**
+		 * Describes the argument that does not match, when the action is otherwise the expected one.
+		 */
+		argument?: ArgumentMismatchDetail
+	}
+}
+
 export class ActionMismatch extends MocktomataError {
+	/**
+	 * Describes the argument that does not match, when the action is otherwise the expected one.
+	 * Strings in it are masked with the `maskValue()` criteria of the run.
+	 */
+	public argument: ArgumentMismatchDetail | undefined
 	constructor(
 		public specName: string,
 		public actual: MismatchActionModel | undefined,
 		public expected: MismatchActionModel | undefined,
-		options?: ModuleError.Options
+		options?: ActionMismatch.Options
 	) {
+		const { argument, ...errorOptions } = options ?? {}
 		super(
 			`Recorded data for '${specName}' doesn't match with simulation.
 Expecting action:
 ${tersifyAction(expected)}
 Received:
-${tersifyAction(actual)}`,
-			options
+${tersifyAction(actual)}${argument ? `\n${describeArgumentMismatch(argument)}` : ''}`,
+			errorOptions
 		)
+		this.argument = argument
 	}
+}
+
+// The strings are masked before they reach here, so they are safe to print.
+function describeArgumentMismatch({ argumentMatching, index, strings }: ArgumentMismatchDetail) {
+	const lines = [`Argument ${index} does not match the record (argumentMatching: '${argumentMatching}').`]
+	if (strings) {
+		lines.push(`  expected: ${JSON.stringify(strings.expected)}`, `  received: ${JSON.stringify(strings.received)}`)
+	}
+	lines.push(
+		'To accept a value that changes between runs, pass it to spec.ignoreMismatch() and save the spec again.',
+		'A string can also be masked with spec.maskValue().'
+	)
+	return lines.join('\n')
 }
 
 export class NoSupportedPlugin extends MocktomataError {

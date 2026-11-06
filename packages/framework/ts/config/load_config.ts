@@ -36,7 +36,8 @@ export function buildConfig(input: Config.Input, _input2?: Config.Input): Config
 		plugins: resolvePlugins(input),
 		filePathFilter: resolveFilePathFilter(input),
 		specNameFilter: resolveSpecNameFilter(input),
-		overrideMode: resolveOverrideMode(input)
+		overrideMode: resolveOverrideMode(input),
+		argumentMatching: resolveArgumentMatching(input)
 	}
 }
 
@@ -102,4 +103,14 @@ function extractMode(value?: unknown) {
 	if (['save', 'live', 'simulate'].indexOf(v) < 0)
 		throw new ConfigPropertyInvalid('overrideMode', value, { ssf: loadConfig })
 	return v as Spec.OverrideMode
+}
+
+const argumentMatchingLevels: readonly Spec.ArgumentMatching[] = ['behavior', 'strings']
+
+function resolveArgumentMatching(config: Config.Input) {
+	const value: unknown = config.argumentMatching
+	if (value === undefined) return undefined
+	if (typeof value !== 'string' || !argumentMatchingLevels.includes(value as Spec.ArgumentMatching))
+		throw new ConfigPropertyInvalid('argumentMatching', value, { ssf: loadConfig })
+	return value as Spec.ArgumentMatching
 }
