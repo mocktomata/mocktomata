@@ -1,5 +1,24 @@
 # Change Log
 
+## 10.2.0
+
+### Minor Changes
+
+- 2aeedf5: Add the opt-in `argumentMatching` setting. Set it to `'strings'` in `Spec.Options` or in `mocktomata.json` to also compare string arguments of function calls and `new` during simulation. The default `'behavior'` keeps the current rules.
+  
+  - The comparison masks the value with the `maskValue()` criteria of the current run first.
+  - `ignoreMismatch()` now accepts strings.
+  - `ActionMismatch` names the `argumentMatching` level and the argument that differs, with strings masked.
+  - A string assigned to a property now matches its recorded value when both are masked, and a string with no recorded reference throws `ActionMismatch` instead of a `TypeError`.
+- e84c1dd: Support symbol property keys. Reading and writing a property keyed by a well-known symbol (such as `Symbol.iterator`), a registered symbol (`Symbol.for(key)`), or a unique symbol is now recorded and simulated, so a spec'd object can be iterated with `for...of`.
+
+### Patch Changes
+
+- Updated dependencies [2aeedf5]
+- Updated dependencies [e84c1dd]
+  - @mocktomata/framework@10.2.0
+  - @mocktomata/nodejs@10.2.0
+
 ## 10.1.3
 
 ### Patch Changes
