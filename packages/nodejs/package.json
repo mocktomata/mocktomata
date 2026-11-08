@@ -60,7 +60,7 @@
 		"json5": "^2.2.1",
 		"mkdirp": "^3.0.0",
 		"sanitize-filename": "^1.6.3",
-		"type-plus": "8.0.0"
+		"type-plus": "8.0.1"
 	},
 	"devDependencies": {
 		"@mocktomata/plugin-fixture-activate-not-fn": "workspace:^",
