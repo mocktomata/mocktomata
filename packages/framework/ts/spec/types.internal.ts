@@ -9,6 +9,15 @@ import type { Spec } from './types.js'
 export type MaskCriterion = {
 	value: string | RegExp
 	replaceWith?: string
+	/**
+	 * Put the value of this run back in place of the placeholder during simulation.
+	 */
+	restore?: boolean
+}
+
+export type IgnoreMismatchEntry = {
+	value: unknown
+	options?: Spec.IgnoreMismatchOptions
 }
 
 export namespace createSpec {
@@ -62,6 +71,14 @@ export namespace SpecRecordLive {
 		 * Not being used atm. May remove.
 		 */
 		overrideProfiles: SpecRecord.SubjectProfile[]
+		/**
+		 * Simulation only.
+		 * The value of this run that stands for this reference when it comes back:
+		 * the value handed out in place of the recorded one,
+		 * or the value of this run paired with a recorded `ignoreMismatch()` value.
+		 * See `createReplay()`.
+		 */
+		current?: { value: unknown }
 	}
 	export type Action = SpecRecord.Action
 

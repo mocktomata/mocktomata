@@ -30,14 +30,17 @@ export namespace Spec {
 		 * When the spec is saved, the value is recorded as inert:
 		 * during simulation, the value in its place is not compared,
 		 * and the recorded value is used.
+		 * Pass the value of this run to `ignoreMismatch()` too:
+		 * once it takes the place of the recorded value, every later use of it matches.
 		 *
 		 * Works on numbers, booleans, bigints, and strings.
 		 * Strings are compared only when `argumentMatching` is `'strings'`,
 		 * or when they are assigned to a property.
 		 *
 		 * @param value the value to accept.
+		 * @param options how the recorded value is replayed. See `Spec.IgnoreMismatchOptions`.
 		 */
-		ignoreMismatch(value: unknown): void
+		ignoreMismatch(value: unknown, options?: IgnoreMismatchOptions): void
 		/**
 		 * Mask some sensitive value from logs and record.
 		 *
@@ -50,9 +53,62 @@ export namespace Spec {
 		 * When the value is regex, it will be check against each log and each metadata in the record.
 		 * Most of the time, regex with start and end anchor (`^` and `$`) will not work as expected.
 		 *
-		 * @param replaceWith value to replace with (Default: `[masked]`)
+		 * @param replaceWithOrOptions the value to replace with (Default: `[masked]`),
+		 * or the options. See `Spec.MaskValueOptions`.
 		 */
-		maskValue(value: string | RegExp, replaceWith?: string): void
+		maskValue(value: string | RegExp, replaceWithOrOptions?: string | MaskValueOptions): void
+	}
+
+	export type IgnoreMismatchOptions = {
+		/**
+		 * What simulation returns where the recorded value comes back.
+		 *
+		 * - `'recorded'`: the recorded value.
+		 * - `'substitute'`: the value of this run, once it takes the place of the recorded value.
+		 *
+		 * With `'substitute'`, the value of this run is paired with the recorded value
+		 * when it is passed as an argument of a call or `new`, or assigned to a property,
+		 * where the recorded value was.
+		 * From then on, a replayed value that is strictly equal (`===`) to the recorded value is replaced.
+		 * That covers return values, thrown values, resolved promises, property reads, and callback arguments,
+		 * including values nested in returned objects and arrays.
+		 * A string is never replaced inside a longer string,
+		 * and a value derived from the input (such as `x + 1`) still returns the recorded result.
+		 *
+		 * A short or common value, such as `1` or `'a'`, can also match unrelated data.
+		 * Use `'substitute'` only for values that are distinct.
+		 *
+		 * This has an effect only during simulation, and does not change the record.
+		 *
+		 * Default to `'recorded'`.
+		 */
+		replay?: 'recorded' | 'substitute'
+	}
+
+	export type MaskValueOptions = {
+		/**
+		 * The value to replace with.
+		 *
+		 * Default to `[masked]`.
+		 */
+		replaceWith?: string
+		/**
+		 * During simulation, put the value of this run back in place of the placeholder
+		 * in each replayed string that contains it.
+		 *
+		 * Use it when the code needs the real value where it is returned, such as a token it decodes.
+		 *
+		 * It works only when it is unambiguous:
+		 * the value must be a string, not a regex,
+		 * and no other `maskValue()` criterion of the run may use the same placeholder.
+		 * Otherwise the value stays masked and a warning is logged.
+		 * Give each criterion a distinct `replaceWith` to fix it.
+		 *
+		 * The value is never written to the record or the logs.
+		 *
+		 * Default to `false`.
+		 */
+		restore?: boolean
 	}
 
 	export type Config = {
@@ -173,5 +229,6 @@ export namespace Spec {
 		argumentMatching?: ArgumentMatching
 	}
 
-	export type MaskValueFn = (value: string | RegExp, replaceWith?: string | undefined) => void
+	export type MaskValueFn = (value: string | RegExp, replaceWithOrOptions?: string | MaskValueOptions) => void
+	export type IgnoreMismatchFn = (value: unknown, options?: IgnoreMismatchOptions) => void
 }

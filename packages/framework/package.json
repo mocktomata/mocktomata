@@ -80,6 +80,7 @@
 		"delay": "^7.0.0",
 		"depcheck": "^1.4.3",
 		"dirname-filename-esm": "^1.1.1",
+		"fast-check": "^4.10.2",
 		"iso-error-google-cloud-api": "^8.0.0",
 		"iso-error-web": "^3.0.0",
 		"jsdom": "^30.0.1",

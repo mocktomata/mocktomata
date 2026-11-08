@@ -207,7 +207,10 @@ function addRef(refs: SpecRecord.Reference[], ref: SpecRecord.Reference) {
 }
 
 function findRefBySubjectOrTestDouble<R extends ValidateReference>(refs: R[], value: any): R | undefined {
-	const ref = refs.find((r) => r.testDouble === value || r.subject === value)
+	// A value of this run can stand for a reference. See `SpecRecordLive.Reference.current`.
+	const ref = refs.find(
+		(r) => r.testDouble === value || r.subject === value || (r.current && r.current.value === value)
+	)
 	if (ref) return ref
 	const nextRef = refs.find((r) => !r.claimed)
 	if (nextRef?.inert) {

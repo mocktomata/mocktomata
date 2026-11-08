@@ -41,8 +41,7 @@ export function createRecorder(context: AsyncContext<createSpec.Context>, specNa
 					options: { plugin: '@mocktomata/inert', inert: true }
 				})
 			),
-		addMaskValue: (value: string | RegExp, replaceWith?: string) =>
-			getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
+		addMaskValue: (criterion: MaskCriterion) => getContext().then(({ maskCriteria }) => maskCriteria.push(criterion))
 	}
 }
 
@@ -215,6 +214,8 @@ export function getSpy<S>(
 
 	const ref = record.findRef(subject)
 	if (ref) {
+		// In simulation, a value of this run that stands for the reference is passed on as it is.
+		if (ref.current && ref.current.value === subject) return subject
 		// subject already have a ref.
 		// e.g. when an input spy is being returned in a function call
 		if (ref.testDouble === notDefined) {
