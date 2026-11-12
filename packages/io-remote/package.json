@@ -61,7 +61,7 @@
 		"@vitest/coverage-v8": "^5.0.0",
 		"assertron": "^11.7.2",
 		"depcheck": "^1.4.3",
-		"jsdom": "^30.0.1",
+		"jsdom": "^31.0.0",
 		"npm-run-all2": "^9.0.0",
 		"rimraf": "^6.0.0",
 		"standard-log": "^13.3.2",
