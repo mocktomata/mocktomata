@@ -1,6 +1,6 @@
 {
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["github>unional/renovate-preset"],
+	"extends": ["github>repobuddy/renovate-preset"],
 	"dependencyDashboard": true,
 	"packageRules": [
 		{
@@ -19,11 +19,6 @@
 			"description": "chalk 6 requires Node >=22, but @mocktomata/cli supports Node >=20. Lift when the engines floor is raised.",
 			"matchPackageNames": ["chalk"],
 			"allowedVersions": "<6"
-		},
-		{
-			"description": "Majors are always a human call, whatever the depType.",
-			"matchUpdateTypes": ["major"],
-			"automerge": false
 		}
 	]
 }
