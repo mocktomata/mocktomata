@@ -584,8 +584,8 @@ importers:
         specifier: workspace:^
         version: link:../../../../test-plugins/plugin-fixture-cjs-b
       standard-log:
-        specifier: 13.3.2
-        version: 13.3.2
+        specifier: 13.3.3
+        version: 13.3.3
 
   packages/nodejs/fixtures/plugin-esm:
     dependencies:
@@ -611,8 +611,8 @@ importers:
         specifier: workspace:^
         version: link:../../../../test-plugins/plugin-fixture-no-activate
       standard-log:
-        specifier: 13.3.2
-        version: 13.3.2
+        specifier: 13.3.3
+        version: 13.3.3
 
   packages/nodejs/fixtures/two-configs: {}
 
@@ -2143,9 +2143,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
-
-  '@just-func/types@0.6.1':
-    resolution: {integrity: sha512-uIE3xNCNcyIsM/YhOAEEh8xNwDhcT5KMM6F4R/aQGVijt6sMePjd7CDPeVrXd2XFks2nGiin/cEMTYhAIaXa6A==}
 
   '@manypkg/find-root@3.1.0':
     resolution: {integrity: sha512-BcSqCyKhBVZ5YkSzOiheMCV41kqAFptW6xGqYSTjkVTl9XQpr+pqHhwgGCOHQtjDCv7Is6EFyA14Sm5GVbVABA==}
@@ -6185,11 +6182,11 @@ packages:
     peerDependencies:
       standard-log: '>=11.0.1'
 
-  standard-log@13.3.1:
-    resolution: {integrity: sha512-WcDZypKwq35deXwUV1/ttKodpijdGYSaRVVPHHGNtAIPbvS4rC6xIs1faPtXEUBD33W4RdtJKCZ7/oV1uIrQFw==}
-
   standard-log@13.3.2:
     resolution: {integrity: sha512-a+PHeSvl2YBZcOo6EgSggiwxWHtdqoDCgsHfmhFx1Qp8+sHTuuNQQoO2T0xBxRipkdw2lz/qPszId7esko7eWA==}
+
+  standard-log@13.3.3:
+    resolution: {integrity: sha512-3xz7RGK9ayF6At+AKC3MjHy+LU1RgnZYe/wJbKpP6L9ThMqVQRfkYbStjcWJN4BnsE6GBXq0DLDwHtuuF+Vj3A==}
 
   static-extend@0.1.2:
     resolution: {integrity: sha512-72E9+uLc27Mt718pMHt9VMNiAL4LMsmDbBva8mxWUCkT07fSzEGMYUCk0XWY6lp0j6RBAG4cJ3mWuZv2OE3s0g==}
@@ -8497,12 +8494,6 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@just-func/types@0.6.1(typescript@7.0.2)':
-    dependencies:
-      type-plus: 8.0.0-beta.12(typescript@7.0.2)
-    transitivePeerDependencies:
-      - typescript
-
   '@manypkg/find-root@3.1.0':
     dependencies:
       '@manypkg/tools': 2.1.2
@@ -10335,8 +10326,8 @@ snapshots:
       jsonc-parser: 3.3.1
       pad-right: 0.2.2
       search-packages: 2.2.3
-      standard-log: 13.3.1(typescript@7.0.2)
-      standard-log-color: 13.3.1(standard-log@13.3.1(typescript@7.0.2))
+      standard-log: 13.3.3
+      standard-log-color: 13.3.1(standard-log@13.3.3)
       tersify: 4.0.8
       tmp: 0.2.7
       tslib: 2.8.1
@@ -13076,17 +13067,17 @@ snapshots:
 
   stackframe@1.3.4: {}
 
-  standard-log-color@13.3.1(standard-log@13.3.1(typescript@7.0.2)):
-    dependencies:
-      color-map: 2.0.6
-      standard-log: 13.3.1(typescript@7.0.2)
-      supports-color: 8.1.1
-      unpartial: 1.0.8
-
   standard-log-color@13.3.1(standard-log@13.3.2):
     dependencies:
       color-map: 2.0.6
       standard-log: 13.3.2
+      supports-color: 8.1.1
+      unpartial: 1.0.8
+
+  standard-log-color@13.3.1(standard-log@13.3.3):
+    dependencies:
+      color-map: 2.0.6
+      standard-log: 13.3.3
       supports-color: 8.1.1
       unpartial: 1.0.8
 
@@ -13097,17 +13088,13 @@ snapshots:
       supports-color: 8.1.1
       unpartial: 1.0.8
 
-  standard-log@13.3.1(typescript@7.0.2):
+  standard-log@13.3.2:
     dependencies:
-      '@just-func/types': 0.6.1(typescript@7.0.2)
       iso-error: 7.0.0
       ms: 2.1.3
-      type-plus: 8.0.0-beta.12(typescript@7.0.2)
       unpartial: 1.0.8
-    transitivePeerDependencies:
-      - typescript
 
-  standard-log@13.3.2:
+  standard-log@13.3.3:
     dependencies:
       iso-error: 7.0.0
       ms: 2.1.3
