@@ -1,6 +1,6 @@
 import { start } from '@mocktomata/service'
 import chalk from 'chalk'
-import { command, z } from 'clibuilder'
+import { command, t } from 'clibuilder'
 import { validate } from './validate.js'
 
 export const serveCommand = command({
@@ -9,7 +9,7 @@ export const serveCommand = command({
 	options: {
 		port: {
 			description: 'port number (default: 3698)',
-			type: z.optional(z.number())
+			type: t.number().optional()
 		}
 	},
 	context: {
