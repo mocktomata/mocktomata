@@ -11,11 +11,6 @@
 			"platformAutomerge": true
 		},
 		{
-			"description": "Runtime dependencies ship to consumers, so they stay manual: each one needs a changeset and a look at what actually changed.",
-			"matchDepTypes": ["dependencies", "peerDependencies", "optionalDependencies"],
-			"automerge": false
-		},
-		{
 			"description": "chalk 6 requires Node >=22, but @mocktomata/cli supports Node >=20. Lift when the engines floor is raised.",
 			"matchPackageNames": ["chalk"],
 			"allowedVersions": "<6"
