@@ -24,11 +24,11 @@ export async function createMockSpec(
 			async done() {
 				return (spec as any).actualSpec?.done() ?? { refs: [], actions: [] }
 			},
-			ignoreMismatch(value: unknown) {
-				;(spec as any).actualSpec?.ignoreMismatch(value)
+			ignoreMismatch(value: unknown, options?: Spec.IgnoreMismatchOptions) {
+				;(spec as any).actualSpec?.ignoreMismatch(value, options)
 			},
-			maskValue(value: string, replaceWith?: string) {
-				;(spec as any).actualSpec?.maskValue(value, replaceWith)
+			maskValue(value: string | RegExp, replaceWithOrOptions?: string | Spec.MaskValueOptions) {
+				;(spec as any).actualSpec?.maskValue(value, replaceWithOrOptions)
 			}
 		}
 	)

@@ -40,7 +40,7 @@ export namespace Zucchini {
 		run: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
 		teardown: <T = any>(clause: string, ...inputs: any[]) => Promise<T>
 		done: () => Promise<SpecRecord>
-		ignoreMismatch: (value: any) => void
+		ignoreMismatch: Spec.IgnoreMismatchFn
 		maskValue: Spec.MaskValueFn
 		mode: () => Spec.Mode
 		reporter: MemoryLogReporter
