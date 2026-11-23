@@ -3,10 +3,11 @@ import type { LogLevel } from 'standard-log'
 import { createAutoSpec } from './auto_spec.js'
 import { InvokeMetaMethodAfterSpec } from './errors.js'
 import { createLiveSpec } from './live_spec.js'
+import { toMaskCriterion } from './masking.js'
 import { createMockSpec } from './mock_spec.js'
 import { createSaveSpec } from './save_spec.js'
 import { createSimulateSpec } from './simulate_spec.js'
-import type { MaskCriterion } from './types.internal.js'
+import type { IgnoreMismatchEntry, MaskCriterion } from './types.internal.js'
 import type { Spec } from './types.js'
 
 export function createSpecObject(context: AsyncContext<Spec.Context>) {
@@ -22,7 +23,7 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
 	let s: Spec | undefined
 	type InitState = {
 		enableLog: boolean
-		ignoreValues: any[]
+		ignoreValues: IgnoreMismatchEntry[]
 		maskCriteria: MaskCriterion[]
 		logLevel?: LogLevel
 	}
@@ -35,25 +36,25 @@ export function createSpecFns(context: AsyncContext<Spec.Context>) {
 		if (s) return s
 		const { mode, specName, options, specRelativePath } = await context.get()
 		const spec = (s = await createSpec(context, specName, specRelativePath, mode, options))
-		initState.ignoreValues.forEach((v) => {
-			spec.ignoreMismatch(v)
+		initState.ignoreValues.forEach(({ value, options }) => {
+			spec.ignoreMismatch(value, options)
 		})
-		initState.maskCriteria.forEach((v) => {
-			spec.maskValue(v.value, v.replaceWith)
+		initState.maskCriteria.forEach(({ value, replaceWith, restore }) => {
+			spec.maskValue(value, { replaceWith, restore })
 		})
 		return spec
 	}
 
-	function ignoreMismatch(value: any) {
+	function ignoreMismatch(value: unknown, options?: Spec.IgnoreMismatchOptions) {
 		if (s) throw new InvokeMetaMethodAfterSpec('ignoreMismatch')
-		initState.ignoreValues.push(value)
+		initState.ignoreValues.push({ value, options })
 	}
 	let maskLog: Promise<void> | undefined
-	function maskValue(value: string | RegExp, replaceWith?: string) {
+	function maskValue(value: string | RegExp, replaceWithOrOptions?: string | Spec.MaskValueOptions) {
 		if (s) {
 			maskLog = context.get().then(({ log }) => log.warn('maskValue is called after spec is invoked'))
 		}
-		initState.maskCriteria.push({ value, replaceWith })
+		initState.maskCriteria.push(toMaskCriterion(value, replaceWithOrOptions))
 	}
 
 	let actualMode: Spec.Mode

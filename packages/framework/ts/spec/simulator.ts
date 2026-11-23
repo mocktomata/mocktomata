@@ -28,6 +28,7 @@ import {
 import { maskString } from './masking.js'
 import { createSpecRecordValidator, type SpecRecordValidator, type ValidateReference } from './record.js'
 import { createPluginSpyContext } from './recorder.js'
+import { createReplay, isIgnorableValue, type Replay } from './replay.js'
 import type { createSpec, MaskCriterion, Recorder, SpecRecordLive } from './types.internal.js'
 import type { Spec } from './types.js'
 import { referenceMismatch } from './validations.js'
@@ -40,6 +41,7 @@ export namespace Simulator {
 		maskCriteria: MaskCriterion[]
 		argumentMatching: Spec.ArgumentMatching
 		record: SpecRecordValidator
+		replay: Replay
 		state: Recorder.State
 		spyOptions: Array<Recorder.SpyOption>
 		pendingPluginActions: Array<
@@ -66,6 +68,7 @@ export function createSimulator(
 		return {}
 	})
 	const record = createSpecRecordValidator(specName, loaded)
+	const replay = createReplay()
 
 	let c: Promise<createSpec.Context>
 	async function getContext() {
@@ -78,6 +81,8 @@ export function createSimulator(
 			getContext().then(({ plugins, maskCriteria, log, stackFrame, config }) => {
 				assertPluginsLoaded(plugins, specName, loaded.refs)
 				record.setPlugins(plugins)
+				// A context built by hand may have no mask criteria.
+				replay.updateRestores(log, maskCriteria ?? [])
 
 				// const plugin = subject === notDefined ? getPlugin(expected.plugin) : findPlugin(subject)
 				const plugin = findPlugin(plugins, subject)
@@ -109,6 +114,7 @@ export function createSimulator(
 					plugins,
 					log,
 					record,
+					replay,
 					timeTracker,
 					maskCriteria,
 					argumentMatching: options.argumentMatching ?? config.argumentMatching ?? 'behavior',
@@ -139,8 +145,10 @@ export function createSimulator(
 				logMissingActionAtDone({ log }, { ref, refId }, record.specName, actionId, action)
 			}
 		},
-		addMaskValue: (value: string | RegExp, replaceWith?: string) =>
-			getContext().then(({ maskCriteria }) => maskCriteria.push({ value, replaceWith }))
+		addMaskValue: (criterion: MaskCriterion) => getContext().then(({ maskCriteria }) => maskCriteria.push(criterion)),
+		addIgnoreValue: (value: unknown, options?: Spec.IgnoreMismatchOptions) => {
+			if (isIgnorableValue(value)) replay.addIgnored(value, options?.replay === 'substitute')
+		}
 	}
 }
 
@@ -250,6 +258,7 @@ function createPluginStubContext(context: Simulator.Context): SpecPlugin.StubCon
 				timeTracker.stop()
 				throw createActionMismatch(context, action, expected)
 			}
+			pairInertValue(context, (expected as SpecRecord.SetAction).value, value)
 			record.keys.claim(key)
 			logAction(context, context.state, actionId, action)
 			processNextAction(context)
@@ -337,6 +346,7 @@ function invoke(context: Simulator.Context, { thisArg, args, performer, site }: 
 		timeTracker.stop()
 		throw createActionMismatch(context, action, expected, findArgumentMismatch(record, context, action, expected))
 	}
+	pairInertArguments(context, (expected as typeof action).payload, args)
 
 	logAction(context, context.state, actionId, action)
 	processNextAction(context)
@@ -389,6 +399,7 @@ function instantiate(
 		timeTracker.stop()
 		throw createActionMismatch(context, action, expected, findArgumentMismatch(record, context, action, expected))
 	}
+	pairInertArguments(context, (expected as typeof action).payload, args)
 
 	logAction(context, context.state, actionId, action)
 	processNextAction(context)
@@ -424,6 +435,26 @@ function createActionMismatch(
 	const masked =
 		action.type === 'set' ? { ...action, value: mask(action.value) } : { ...action, payload: action.payload.map(mask) }
 	return new ActionMismatch(context.record.specName, masked, expected, { argument })
+}
+
+/**
+ * Pairs each recorded inert value with the argument of this run that takes its place,
+ * once the action is matched.
+ */
+function pairInertArguments(context: Simulator.Context, expectedPayload: unknown[], args: unknown[]) {
+	expectedPayload.forEach((expected, index) => {
+		if (index < args.length) pairInertValue(context, expected, args[index])
+	})
+}
+
+function pairInertValue(context: Simulator.Context, expected: unknown, value: unknown) {
+	if (typeof expected !== 'string') return
+	const expectedRef = context.record.getLoadedRef(expected)
+	if (!expectedRef?.inert) return
+	if (context.replay.pair(context.log, expectedRef.meta, value)) {
+		// After the pairing, the value of this run stands for the recorded value.
+		context.record.getRef(expected)!.current = { value }
+	}
 }
 
 function buildSpiedArgs(
@@ -567,9 +598,11 @@ function resolveValue(context: Simulator.Context, value: any, handler?: () => an
 				valueRef
 			)
 		}
-		return valueRef.testDouble
+		const replayed = context.replay.apply(valueRef.testDouble)
+		if (replayed !== valueRef.testDouble) valueRef.current = { value: replayed }
+		return replayed
 	}
-	return value
+	return context.replay.apply(value)
 }
 function processInvoke(context: Simulator.Context, actionId: SpecRecord.ActionId, action: SpecRecord.InvokeAction) {
 	const { record } = context
