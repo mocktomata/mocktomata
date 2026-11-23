@@ -6,6 +6,9 @@ import webPlugin, { Conflict } from 'iso-error-web'
 import { incubator } from 'mocktomata/plugins'
 import { plugin } from './plugin.js'
 
+// axios-mock-adapter resolves axios's CJS types, which TypeScript treats as unrelated to the ESM ones.
+type AdapterInstance = ConstructorParameters<typeof MockAdapter.default>[0]
+
 beforeAll(() => {
 	incubator.config({
 		plugins: [plugin]
@@ -15,7 +18,7 @@ beforeAll(() => {
 incubator('mock get call status', (specName, spec) => {
 	it(specName, async () => {
 		const i = axios.create()
-		const mock = new MockAdapter.default(i)
+		const mock = new MockAdapter.default(i as AdapterInstance)
 		mock.onGet().reply(409)
 		const s = await spec(i)
 		const err = await a.throws(s.get('http://api.mathjs.org/v4/?expr=2*(7-3)'))
@@ -32,7 +35,7 @@ incubator('mock get failure with iso-error', (specName, spec) => {
 		const converter = new SerializableConverter()
 		converter.addPlugin(webPlugin)
 
-		const mock = new MockAdapter.default(i)
+		const mock = new MockAdapter.default(i as AdapterInstance)
 		mock.onGet().reply(409, {
 			error: converter.toSerializable(new Conflict('name conflict'))
 		})
@@ -57,7 +60,7 @@ incubator('bad mock get failure with iso-error', (specName, spec) => {
 		const converter = new SerializableConverter()
 		converter.addPlugin(webPlugin)
 
-		const mock = new MockAdapter.default(i)
+		const mock = new MockAdapter.default(i as AdapterInstance)
 		mock.onGet().reply(409, {
 			error: converter.toSerializable(new Conflict('name conflict'))
 		})
