@@ -48,3 +48,5 @@ minimumReleaseAgeExclude:
   - '@mocktomata/*'
   - '@repobuddy/*'
   - '@unional/*'
+  # Renovate security update: axios@1.20.0
+  - axios@1.20.0
